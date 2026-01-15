@@ -1,65 +1,179 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Header */}
+      <header className="fixed top-0 w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
+            ReplySequence
+          </div>
+          <button className="px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold hover:opacity-90 transition-opacity">
+            Join Waitlist
+          </button>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Copy */}
+            <div>
+              <div className="inline-block mb-4 px-4 py-2 rounded-full border border-pink-500/30 bg-pink-500/10">
+                <span className="text-sm text-pink-400">🚀 Zoom Meeting Automation</span>
+              </div>
+
+              <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                Turn Your Zoom Calls Into{' '}
+                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
+                  Perfect Follow-Ups
+                </span>
+              </h1>
+
+              <p className="text-xl text-gray-400 mb-8 leading-relaxed">
+                ReplySequence turns your Zoom calls into high-quality, on-brand follow-up emails that are automatically drafted from transcripts, logged to your CRM, and ready to send with almost no manual effort.
+              </p>
+
+              <div className="flex gap-4 mb-8">
+                <button className="px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/25">
+                  Join Beta Waitlist
+                </button>
+                <button className="px-8 py-4 rounded-full border border-white/10 text-white font-semibold text-lg hover:bg-white/5 transition-colors">
+                  Watch Demo
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 text-gray-400">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 border-2 border-[#0a0a0a]" />
+                  ))}
+                </div>
+                <span className="text-sm">Join 1,200+ sales teams on the waitlist</span>
+              </div>
+            </div>
+
+            {/* Right: Mockup */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-red-500/20 blur-3xl" />
+              <div className="relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+                {/* Placeholder for mockup - replace with actual screenshot */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600" />
+                    <div>
+                      <div className="h-3 w-32 bg-gradient-to-r from-pink-500/50 to-purple-500/50 rounded" />
+                      <div className="h-2 w-24 bg-white/20 rounded mt-2" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="h-3 w-full bg-white/20 rounded" />
+                    <div className="h-3 w-5/6 bg-white/20 rounded" />
+                    <div className="h-3 w-4/6 bg-white/20 rounded" />
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10">
+                    <div className="flex gap-2">
+                      <div className="flex-1 h-10 rounded-lg bg-gradient-to-r from-pink-500/30 to-purple-500/30 border border-pink-500/30" />
+                      <div className="w-24 h-10 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'AI-Powered Drafts',
+                description: 'Automatically generate follow-up emails from Zoom transcripts with perfect context.',
+                icon: '🤖'
+              },
+              {
+                title: 'CRM Integration',
+                description: 'Seamlessly log all interactions to your CRM without manual data entry.',
+                icon: '🔗'
+              },
+              {
+                title: 'Brand Voice Match',
+                description: 'Follow-ups that sound like you, not a robot. On-brand every time.',
+                icon: '✨'
+              }
+            ].map((feature, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 hover:border-pink-500/30 transition-colors">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-bold mb-2 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Email Capture */}
+      <section className="py-20 px-6 border-t border-white/5">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-4">
+            Join the <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 bg-clip-text text-transparent">Beta Waitlist</span>
+          </h2>
+          <p className="text-gray-400 mb-8">
+            Be among the first to automate your follow-ups. Limited spots available for pilot program.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+          {/* Tally Form Embed */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+            <div
+              data-tally-src="https://tally.so/embed/https://tally.so/r/D4pv0j?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+              style={{ width: '100%', minHeight: '400px' }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};
+                  if("undefined"!=typeof Tally)v();
+                  else if(d.querySelector('script[src="'+w+'"]')==null){
+                    var s=d.createElement("script");
+                    s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);
+                  }
+                `
+              }}
+            />
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Social Proof */}
+      <section className="py-20 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-gray-500 text-sm mb-8">Trusted by sales teams at</p>
+          <div className="flex flex-wrap justify-center items-center gap-12 opacity-50">
+            {['TechCorp', 'SalesHub', 'GrowthCo', 'ScaleUp', 'CloudBase'].map((company, i) => (
+              <div key={i} className="text-2xl font-bold text-gray-600">{company}</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+          <div className="mb-4">
+            <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
+              ReplySequence
+            </span>
+          </div>
+          <p>© 2026 ReplySequence. Built by Playground Giants.</p>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }
