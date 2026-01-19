@@ -1,0 +1,78 @@
+import { Queue, Worker, Job } from 'bullmq';
+import { createRedisConnection } from '../redis';
+
+// Job data interface
+export interface TranscriptJobData {
+  meetingId: string;
+  zoomMeetingId: string;
+  transcriptDownloadUrl: string;
+  accessToken: string;
+}
+
+// Job result interface
+export interface TranscriptJobResult {
+  success: boolean;
+  transcriptId?: string;
+  error?: string;
+}
+
+// Queue name constant
+export const TRANSCRIPT_QUEUE_NAME = 'transcript-processing';
+
+// Create the transcript processing queue
+export const transcriptQueue = new Queue<TranscriptJobData, TranscriptJobResult>(
+  TRANSCRIPT_QUEUE_NAME,
+  {
+    connection: createRedisConnection(),
+    defaultJobOptions: {
+      attempts: 4, // 1 initial + 3 retries
+      backoff: {
+        type: 'exponential',
+        delay: 1000, // 1s, 2s, 4s exponential backoff
+      },
+      removeOnComplete: {
+        count: 100, // Keep last 100 completed jobs
+      },
+      removeOnFail: {
+        count: 500, // Keep last 500 failed jobs for debugging
+      },
+    },
+  }
+);
+
+// Add a job to the queue
+export async function addTranscriptJob(
+  data: TranscriptJobData
+): Promise<Job<TranscriptJobData, TranscriptJobResult>> {
+  const job = await transcriptQueue.add('process-transcript', data, {
+    jobId: `transcript-${data.meetingId}`, // Prevents duplicate jobs for same meeting
+  });
+
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Transcript job added to queue',
+    jobId: job.id,
+    meetingId: data.meetingId,
+    zoomMeetingId: data.zoomMeetingId,
+  }));
+
+  return job;
+}
+
+// Get queue statistics
+export async function getQueueStats() {
+  const [waiting, active, completed, failed, delayed] = await Promise.all([
+    transcriptQueue.getWaitingCount(),
+    transcriptQueue.getActiveCount(),
+    transcriptQueue.getCompletedCount(),
+    transcriptQueue.getFailedCount(),
+    transcriptQueue.getDelayedCount(),
+  ]);
+
+  return { waiting, active, completed, failed, delayed };
+}
+
+// Graceful shutdown
+export async function closeTranscriptQueue(): Promise<void> {
+  await transcriptQueue.close();
+}

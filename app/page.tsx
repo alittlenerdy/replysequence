@@ -7,9 +7,14 @@ export default function LandingPage() {
           <div className="text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
             ReplySequence
           </div>
-          <button className="px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold hover:opacity-90 transition-opacity">
+          <a
+            href="https://tally.so/r/D4pv0j"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold hover:opacity-90 transition-opacity"
+          >
             Join Waitlist
-          </button>
+          </a>
         </div>
       </header>
 
@@ -35,9 +40,14 @@ export default function LandingPage() {
               </p>
 
               <div className="flex gap-4 mb-8">
-                <button className="px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/25">
+                <a
+                  href="https://tally.so/r/D4pv0j"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/25"
+                >
                   Join Beta Waitlist
-                </button>
+                </a>
                 <button className="px-8 py-4 rounded-full border border-white/10 text-white font-semibold text-lg hover:bg-white/5 transition-colors">
                   Watch Demo
                 </button>
@@ -129,24 +139,17 @@ export default function LandingPage() {
             Be among the first to automate your follow-ups. Limited spots available for pilot program.
           </p>
 
-          {/* Tally Form Embed */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-            <div
-              data-tally-src="https://tally.so/embed/https://tally.so/r/D4pv0j?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-              style={{ width: '100%', minHeight: '400px' }}
-            />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};
-                  if("undefined"!=typeof Tally)v();
-                  else if(d.querySelector('script[src="'+w+'"]')==null){
-                    var s=d.createElement("script");
-                    s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);
-                  }
-                `
-              }}
-            />
+          {/* CTA Button */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-12 border border-white/10">
+            <a
+              href="https://tally.so/r/D4pv0j"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-12 py-5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 text-white font-semibold text-xl hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/25"
+            >
+              Join Beta Waitlist →
+            </a>
+            <p className="text-gray-400 text-sm mt-6">Takes 30 seconds • No credit card required • Limited to 100 pilot users</p>
           </div>
         </div>
       </section>
