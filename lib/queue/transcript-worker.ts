@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq';
-import { createRedisConnection } from '../redis';
+import { getRedisConnectionOptions } from '../redis';
 import { db, transcripts, meetings } from '../db';
 import { eq } from 'drizzle-orm';
 import { parseVTT } from '../transcript/vtt-parser';
@@ -94,7 +94,7 @@ export function createTranscriptWorker(): Worker<TranscriptJobData, TranscriptJo
       }
     },
     {
-      connection: createRedisConnection(),
+      connection: getRedisConnectionOptions(),
       concurrency: 5, // Process up to 5 jobs concurrently
     }
   );

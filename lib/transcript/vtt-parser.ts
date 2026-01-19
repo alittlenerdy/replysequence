@@ -37,7 +37,7 @@ function parseTimestamp(timestamp: string): number {
  */
 function extractSpeaker(text: string): { speaker: string; content: string } {
   // Match pattern like "John Doe: Hello everyone"
-  const speakerMatch = text.match(/^([^:]+):\s*(.*)$/s);
+  const speakerMatch = text.match(/^([^:]+):\s*(.*)$/);
 
   if (speakerMatch) {
     return {

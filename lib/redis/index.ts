@@ -12,16 +12,14 @@ export const redis = new Redis(redisUrl, {
   },
 });
 
-// Create a separate connection for BullMQ (recommended)
-export function createRedisConnection(): Redis {
-  return new Redis(redisUrl, {
+// Connection options for BullMQ (avoids ioredis version mismatch)
+export function getRedisConnectionOptions() {
+  return {
+    host: new URL(redisUrl).hostname || 'localhost',
+    port: parseInt(new URL(redisUrl).port || '6379'),
     maxRetriesPerRequest: null,
     enableReadyCheck: false,
-    retryStrategy(times) {
-      const delay = Math.min(times * 50, 2000);
-      return delay;
-    },
-  });
+  };
 }
 
 // Health check function

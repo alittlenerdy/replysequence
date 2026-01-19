@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     console.log(JSON.stringify({
       level: 'info',
       message: 'Unhandled Zoom event type',
-      event: payload.event,
+      event: (payload as { event: string }).event,
     }));
 
     return NextResponse.json({ received: true }, { status: 200 });

@@ -1,5 +1,5 @@
-import { Queue, Worker, Job } from 'bullmq';
-import { createRedisConnection } from '../redis';
+import { Queue, Job } from 'bullmq';
+import { getRedisConnectionOptions } from '../redis';
 
 // Job data interface
 export interface TranscriptJobData {
@@ -23,7 +23,7 @@ export const TRANSCRIPT_QUEUE_NAME = 'transcript-processing';
 export const transcriptQueue = new Queue<TranscriptJobData, TranscriptJobResult>(
   TRANSCRIPT_QUEUE_NAME,
   {
-    connection: createRedisConnection(),
+    connection: getRedisConnectionOptions(),
     defaultJobOptions: {
       attempts: 4, // 1 initial + 3 retries
       backoff: {
