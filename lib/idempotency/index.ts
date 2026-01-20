@@ -1,4 +1,4 @@
-import { redis } from '../redis';
+import { getRedis } from '../redis';
 
 // Constants
 const IDEMPOTENCY_PREFIX = 'idempotency:zoom:';
@@ -11,7 +11,7 @@ const TTL_SECONDS = 24 * 60 * 60; // 24 hours in seconds
  */
 export async function isEventProcessed(eventId: string): Promise<boolean> {
   const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
-  const exists = await redis.exists(key);
+  const exists = await getRedis().exists(key);
   return exists === 1;
 }
 
@@ -30,7 +30,7 @@ export async function markEventProcessed(
     ...metadata,
   });
 
-  await redis.setex(key, TTL_SECONDS, value);
+  await getRedis().setex(key, TTL_SECONDS, value);
 
   console.log(JSON.stringify({
     level: 'info',
@@ -53,7 +53,7 @@ export async function acquireEventLock(eventId: string): Promise<boolean> {
   });
 
   // SETNX with EX (set if not exists with expiry) - atomic operation
-  const result = await redis.set(key, value, 'EX', TTL_SECONDS, 'NX');
+  const result = await getRedis().set(key, value, 'EX', TTL_SECONDS, 'NX');
 
   if (result === 'OK') {
     console.log(JSON.stringify({
@@ -81,7 +81,7 @@ export async function getEventMetadata(
   eventId: string
 ): Promise<Record<string, unknown> | null> {
   const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
-  const value = await redis.get(key);
+  const value = await getRedis().get(key);
 
   if (!value) {
     return null;
@@ -101,7 +101,7 @@ export async function getEventMetadata(
  */
 export async function removeEventLock(eventId: string): Promise<void> {
   const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
-  await redis.del(key);
+  await getRedis().del(key);
 
   console.log(JSON.stringify({
     level: 'info',

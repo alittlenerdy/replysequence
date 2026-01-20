@@ -1,30 +1,62 @@
 import Redis from 'ioredis';
 
-// Create Redis connection for general use
+// Redis URL configuration
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
-export const redis = new Redis(redisUrl, {
-  maxRetriesPerRequest: null, // Required for BullMQ
-  enableReadyCheck: false,
-  retryStrategy(times) {
-    const delay = Math.min(times * 50, 2000);
-    return delay;
-  },
-});
+// Singleton instance for lazy connection
+let redisInstance: Redis | null = null;
+
+/**
+ * Get Redis client with lazy initialization.
+ * Connection is only established when first called at runtime,
+ * not during module load (which happens during Next.js build).
+ */
+export function getRedis(): Redis {
+  if (!redisInstance) {
+    redisInstance = new Redis(redisUrl, {
+      maxRetriesPerRequest: null, // Required for BullMQ
+      enableReadyCheck: false,
+      lazyConnect: true, // Don't connect until first command
+      retryStrategy(times) {
+        if (times > 10) {
+          console.error('Redis: Max retries reached, stopping reconnection');
+          return null; // Stop retrying
+        }
+        const delay = Math.min(times * 100, 3000);
+        console.log(`Redis: Reconnecting in ${delay}ms (attempt ${times})`);
+        return delay;
+      },
+    });
+
+    redisInstance.on('error', (err) => {
+      console.error('Redis connection error:', err.message);
+    });
+
+    redisInstance.on('connect', () => {
+      console.log('Redis: Connected');
+    });
+  }
+
+  return redisInstance;
+}
 
 // Connection options for BullMQ (avoids ioredis version mismatch)
 export function getRedisConnectionOptions() {
+  const url = new URL(redisUrl);
   return {
-    host: new URL(redisUrl).hostname || 'localhost',
-    port: parseInt(new URL(redisUrl).port || '6379'),
+    host: url.hostname || 'localhost',
+    port: parseInt(url.port || '6379'),
+    password: url.password || undefined,
     maxRetriesPerRequest: null,
     enableReadyCheck: false,
+    lazyConnect: true,
   };
 }
 
 // Health check function
 export async function checkRedisConnection(): Promise<boolean> {
   try {
+    const redis = getRedis();
     const pong = await redis.ping();
     return pong === 'PONG';
   } catch (error) {
@@ -35,5 +67,8 @@ export async function checkRedisConnection(): Promise<boolean> {
 
 // Graceful shutdown
 export async function closeRedisConnection(): Promise<void> {
-  await redis.quit();
+  if (redisInstance) {
+    await redisInstance.quit();
+    redisInstance = null;
+  }
 }
