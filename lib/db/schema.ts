@@ -87,7 +87,7 @@ export const rawEvents = pgTable(
     eventType: varchar('event_type', { length: 100 }).notNull(),
     zoomEventId: varchar('zoom_event_id', { length: 255 }).notNull(),
     payload: jsonb('payload').notNull(),
-    status: varchar('status', { length: 50 }).$type<RawEventStatus>().notNull().default('received'),
+    status: text('status').notNull().default('pending'),
     // Extracted fields for quick access
     meetingId: varchar('meeting_id', { length: 255 }),
     endTime: timestamp('end_time', { withTimezone: true }),

@@ -128,7 +128,7 @@ async function storeRawEvent(
       eventType,
       zoomEventId,
       payload: parsedPayload,
-      status: 'received',
+      status: 'pending',
       meetingId: extractedData?.meetingId,
       endTime: extractedData?.endTime,
       recordingAvailable: extractedData?.recordingAvailable,
