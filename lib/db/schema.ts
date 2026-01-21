@@ -37,6 +37,7 @@ export const meetings = pgTable(
     hostEmail: varchar('host_email', { length: 255 }).notNull(),
     topic: varchar('topic', { length: 500 }),
     startTime: timestamp('start_time', { withTimezone: true }),
+    endTime: timestamp('end_time', { withTimezone: true }),
     duration: integer('duration'), // in minutes
     participants: jsonb('participants').$type<Participant[]>().default([]),
     status: varchar('status', { length: 50 }).$type<MeetingStatus>().notNull().default('pending'),

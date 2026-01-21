@@ -8,6 +8,13 @@
       "when": 1768969153303,
       "tag": "0000_omniscient_karnak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769032735530,
+      "tag": "0001_odd_violations",
+      "breakpoints": true
     }
   ]
 }

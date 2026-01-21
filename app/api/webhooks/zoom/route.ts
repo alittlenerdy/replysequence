@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyZoomSignature, generateChallengeResponse } from '@/lib/zoom/signature';
 import { acquireEventLock } from '@/lib/idempotency';
-import { db, meetings, rawEvents } from '@/lib/db';
-import { addTranscriptJob } from '@/lib/queue/transcript-queue';
-import { getZoomAccessToken } from '@/lib/transcript/downloader';
+import { db, rawEvents } from '@/lib/db';
+import { processZoomEvent } from '@/lib/process-zoom-event';
 import { eq } from 'drizzle-orm';
 import type {
   ZoomWebhookPayload,
-  RecordingCompletedPayload,
   MeetingEndedPayload,
-  ExtractedMeetingMetadata,
-  ExtractedMeetingEndedData,
+  RecordingCompletedPayload,
 } from '@/lib/zoom/types';
+import type { RawEvent } from '@/lib/db/schema';
 
 // Disable body parsing to access raw body for signature verification
 export const dynamic = 'force-dynamic';
@@ -73,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     // Handle recording.completed event
     if (payload.event === 'recording.completed') {
-      return await handleRecordingCompleted(payload);
+      return await handleRecordingCompleted(payload, rawBody, startTime);
     }
 
     // Unknown event type - store as raw event and acknowledge
@@ -112,14 +110,25 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Extracted data from meeting.ended payload
+ */
+interface ExtractedMeetingEndedData {
+  meetingId: string;
+  endTime: Date;
+  recordingAvailable: 'pending' | 'no';
+  transcriptAvailable: 'pending' | 'no';
+}
+
+/**
  * Store raw event in database for audit trail and reprocessing
+ * Returns the full rawEvent object for immediate processing
  */
 async function storeRawEvent(
   eventType: string,
   zoomEventId: string,
   rawBody: string,
   extractedData?: Partial<ExtractedMeetingEndedData>
-): Promise<string> {
+): Promise<RawEvent> {
   const parsedPayload = JSON.parse(rawBody);
 
   const [rawEvent] = await db
@@ -144,7 +153,7 @@ async function storeRawEvent(
     zoomEventId,
   }));
 
-  return rawEvent.id;
+  return rawEvent;
 }
 
 /**
@@ -205,7 +214,7 @@ async function handleMeetingEnded(
   }
 
   // Store raw event in database
-  const rawEventId = await storeRawEvent(
+  const rawEvent = await storeRawEvent(
     'meeting.ended',
     eventId,
     rawBody,
@@ -214,18 +223,29 @@ async function handleMeetingEnded(
 
   console.log(JSON.stringify({
     level: 'info',
-    message: 'meeting.ended event processed',
-    rawEventId,
+    message: 'meeting.ended event stored',
+    rawEventId: rawEvent.id,
     meetingId: extractedData.meetingId,
     endTime: extractedData.endTime.toISOString(),
     duration: Date.now() - startTime,
   }));
 
-  // Return success with event ID
+  // Process event asynchronously (non-blocking)
+  // Fire-and-forget: don't await, let it run in background
+  processZoomEvent(rawEvent).catch((error) => {
+    console.log(JSON.stringify({
+      level: 'error',
+      message: 'Background event processing failed',
+      rawEventId: rawEvent.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }));
+  });
+
+  // Return success immediately with event ID
   return NextResponse.json(
     {
       received: true,
-      eventId: rawEventId,
+      eventId: rawEvent.id,
       meetingId: extractedData.meetingId,
     },
     { status: 200 }
@@ -249,10 +269,12 @@ function extractMeetingEndedData(
 }
 
 async function handleRecordingCompleted(
-  payload: RecordingCompletedPayload
+  payload: RecordingCompletedPayload,
+  rawBody: string,
+  startTime: number
 ): Promise<NextResponse> {
   const { object } = payload.payload;
-  const eventId = `${object.uuid}-${payload.event_ts}`;
+  const eventId = `recording.completed-${object.uuid}-${payload.event_ts}`;
 
   // Idempotency check - prevent duplicate processing
   const acquired = await acquireEventLock(eventId);
@@ -264,114 +286,56 @@ async function handleRecordingCompleted(
       zoomMeetingId: object.uuid,
     }));
 
+    // Return existing event ID if we have it
+    const [existingEvent] = await db
+      .select({ id: rawEvents.id })
+      .from(rawEvents)
+      .where(eq(rawEvents.zoomEventId, eventId))
+      .limit(1);
+
     return NextResponse.json(
-      { received: true, duplicate: true },
+      {
+        received: true,
+        duplicate: true,
+        eventId: existingEvent?.id || null,
+      },
       { status: 200 }
     );
   }
 
-  // Extract meeting metadata
-  const metadata = extractMeetingMetadata(object);
-
-  // Check if we have a transcript
-  if (!metadata.transcriptDownloadUrl) {
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'No transcript available for recording',
-      zoomMeetingId: metadata.zoomMeetingId,
-    }));
-
-    return NextResponse.json(
-      { received: true, transcript: false },
-      { status: 200 }
-    );
-  }
-
-  // Store meeting in database
-  const [meeting] = await db
-    .insert(meetings)
-    .values({
-      zoomMeetingId: metadata.zoomMeetingId,
-      hostEmail: metadata.hostEmail,
-      topic: metadata.topic,
-      startTime: metadata.startTime,
-      duration: metadata.duration,
-      participants: metadata.participants,
-      status: 'pending',
-      zoomEventId: eventId,
-      transcriptDownloadUrl: metadata.transcriptDownloadUrl,
-      recordingDownloadUrl: metadata.recordingDownloadUrl,
-    })
-    .returning();
+  // Store raw event in database
+  const rawEvent = await storeRawEvent(
+    'recording.completed',
+    eventId,
+    rawBody
+  );
 
   console.log(JSON.stringify({
     level: 'info',
-    message: 'Meeting stored in database',
-    meetingId: meeting.id,
-    zoomMeetingId: metadata.zoomMeetingId,
+    message: 'recording.completed event stored',
+    rawEventId: rawEvent.id,
+    zoomMeetingId: object.uuid,
+    duration: Date.now() - startTime,
   }));
 
-  // Get Zoom access token and queue transcript processing
-  try {
-    const accessToken = await getZoomAccessToken();
-
-    await addTranscriptJob({
-      meetingId: meeting.id,
-      zoomMeetingId: metadata.zoomMeetingId,
-      transcriptDownloadUrl: metadata.transcriptDownloadUrl,
-      accessToken,
-    });
-
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Transcript processing job queued',
-      meetingId: meeting.id,
-      zoomMeetingId: metadata.zoomMeetingId,
-    }));
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
+  // Process event asynchronously (non-blocking)
+  // Fire-and-forget: don't await, let it run in background
+  processZoomEvent(rawEvent).catch((error) => {
     console.log(JSON.stringify({
       level: 'error',
-      message: 'Failed to queue transcript job',
-      meetingId: meeting.id,
-      error: errorMessage,
+      message: 'Background event processing failed',
+      rawEventId: rawEvent.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
     }));
+  });
 
-    // Don't fail the webhook - meeting is saved, job can be retried manually
-  }
-
-  // Return 200 OK immediately (async processing via queue)
+  // Return success immediately with event ID
   return NextResponse.json(
     {
       received: true,
-      meetingId: meeting.id,
+      eventId: rawEvent.id,
+      zoomMeetingId: object.uuid,
     },
     { status: 200 }
   );
-}
-
-function extractMeetingMetadata(
-  object: RecordingCompletedPayload['payload']['object']
-): ExtractedMeetingMetadata {
-  // Find transcript file
-  const transcriptFile = object.recording_files.find(
-    (file) => file.file_type === 'TRANSCRIPT' && file.status === 'completed'
-  );
-
-  // Find main video recording
-  const videoFile = object.recording_files.find(
-    (file) => file.file_type === 'MP4' && file.status === 'completed'
-  );
-
-  return {
-    zoomMeetingId: object.uuid,
-    hostEmail: object.host_email || 'unknown@unknown.com',
-    topic: object.topic || 'Untitled Meeting',
-    startTime: new Date(object.start_time),
-    duration: object.duration,
-    participants: [], // Zoom doesn't include participants in recording.completed
-    transcriptDownloadUrl: transcriptFile?.download_url || null,
-    recordingDownloadUrl: videoFile?.download_url || null,
-  };
 }
