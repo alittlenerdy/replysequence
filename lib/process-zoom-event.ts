@@ -1,6 +1,7 @@
 import { db, meetings, rawEvents } from '@/lib/db';
 import { eq } from 'drizzle-orm';
-import type { RawEvent, Meeting, NewMeeting } from '@/lib/db/schema';
+import { fetchTranscriptWithRetry } from '@/lib/fetch-zoom-transcript';
+import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
   RecordingCompletedPayload,
@@ -210,9 +211,10 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
 
 /**
  * Process a recording.completed event
- * Updates Meeting record with recording/transcript URLs
+ * Updates Meeting record with recording/transcript URLs and fetches transcript
  */
 async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessResult> {
+  const startTime = Date.now();
   const payload = rawEvent.payload as unknown as RecordingCompletedPayload;
   const recordingObject = payload.payload?.object;
 
@@ -254,9 +256,11 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     duration: recordingObject.duration || null,
     recordingDownloadUrl: videoFile?.download_url || null,
     transcriptDownloadUrl: transcriptFile?.download_url || null,
-    status: 'pending', // Ready for transcript processing
+    status: 'processing', // Processing transcript
     updatedAt: new Date(),
   };
+
+  let meetingId: string;
 
   if (existingMeeting) {
     // Update existing meeting with recording data
@@ -265,14 +269,15 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       .set(meetingData)
       .where(eq(meetings.id, existingMeeting.id));
 
+    meetingId = existingMeeting.id;
+
     log('info', 'Meeting updated from recording.completed', {
       rawEventId: rawEvent.id,
-      meetingId: existingMeeting.id,
+      meetingId,
       zoomMeetingId,
       hasTranscript: !!transcriptFile,
+      latencyMs: Date.now() - startTime,
     });
-
-    return { success: true, meetingId: existingMeeting.id, action: 'updated' };
   } else {
     // Create new meeting with recording data
     const [newMeeting] = await db
@@ -284,14 +289,68 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       } as NewMeeting)
       .returning();
 
+    meetingId = newMeeting.id;
+
     log('info', 'Meeting created from recording.completed', {
       rawEventId: rawEvent.id,
-      meetingId: newMeeting.id,
+      meetingId,
+      zoomMeetingId,
+      latencyMs: Date.now() - startTime,
+    });
+  }
+
+  // If transcript is available, fetch it
+  if (transcriptFile?.download_url) {
+    log('info', 'Starting transcript fetch', {
+      rawEventId: rawEvent.id,
+      meetingId,
       zoomMeetingId,
     });
 
-    return { success: true, meetingId: newMeeting.id, action: 'created' };
+    const transcriptResult = await fetchTranscriptWithRetry(meetingId);
+
+    log('info', 'Transcript fetch completed', {
+      rawEventId: rawEvent.id,
+      meetingId,
+      zoomMeetingId,
+      success: transcriptResult.success,
+      transcriptId: transcriptResult.transcriptId,
+      status: transcriptResult.status,
+      latency: transcriptResult.latency,
+      totalLatencyMs: Date.now() - startTime,
+    });
+
+    if (!transcriptResult.success) {
+      // Transcript fetch failed, but meeting was created/updated successfully
+      // The transcript can be retried later
+      log('warn', 'Transcript fetch failed but meeting saved', {
+        rawEventId: rawEvent.id,
+        meetingId,
+        error: transcriptResult.error,
+      });
+    }
+  } else {
+    // No transcript available, mark meeting as ready (no transcript to fetch)
+    await db
+      .update(meetings)
+      .set({
+        status: 'ready',
+        updatedAt: new Date(),
+      })
+      .where(eq(meetings.id, meetingId));
+
+    log('info', 'No transcript available, meeting marked as ready', {
+      rawEventId: rawEvent.id,
+      meetingId,
+      zoomMeetingId,
+    });
   }
+
+  return {
+    success: true,
+    meetingId,
+    action: existingMeeting ? 'updated' : 'created',
+  };
 }
 
 /**

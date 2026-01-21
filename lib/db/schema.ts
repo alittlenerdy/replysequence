@@ -11,7 +11,10 @@ import {
 } from 'drizzle-orm/pg-core';
 
 // Meeting status enum values
-export type MeetingStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type MeetingStatus = 'pending' | 'processing' | 'ready' | 'completed' | 'failed';
+
+// Transcript status enum values
+export type TranscriptStatus = 'pending' | 'fetching' | 'ready' | 'failed';
 
 // Participant type for JSONB storage
 export interface Participant {
@@ -63,17 +66,22 @@ export const transcripts = pgTable(
     meetingId: uuid('meeting_id')
       .notNull()
       .references(() => meetings.id, { onDelete: 'cascade' }),
-    content: text('content').notNull(), // Full transcript text
+    content: text('content').notNull(), // Full transcript text (parsed)
+    vttContent: text('vtt_content'), // Raw VTT content from Zoom
     speakerSegments: jsonb('speaker_segments').$type<SpeakerSegment[]>().default([]),
     source: varchar('source', { length: 50 }).notNull().default('zoom'), // 'zoom', 'manual', etc.
     language: varchar('language', { length: 10 }).default('en'),
     wordCount: integer('word_count'),
+    status: varchar('status', { length: 20 }).$type<TranscriptStatus>().notNull().default('pending'),
+    fetchAttempts: integer('fetch_attempts').notNull().default(0),
+    lastFetchError: text('last_fetch_error'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     index('transcripts_meeting_id_idx').on(table.meetingId),
     index('transcripts_source_idx').on(table.source),
+    index('transcripts_status_idx').on(table.status),
   ]
 );
 

@@ -15,6 +15,13 @@
       "when": 1769032735530,
       "tag": "0001_odd_violations",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769033979963,
+      "tag": "0002_flimsy_chameleon",
+      "breakpoints": true
     }
   ]
 }
