@@ -230,18 +230,29 @@ async function handleMeetingEnded(
     duration: Date.now() - startTime,
   }));
 
-  // Process event asynchronously (non-blocking)
-  // Fire-and-forget: don't await, let it run in background
-  processZoomEvent(rawEvent).catch((error) => {
+  // Process event synchronously before returning
+  // Zoom webhooks have 30s timeout, processing should be fast
+  try {
+    const result = await processZoomEvent(rawEvent);
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Event processing completed in webhook handler',
+      rawEventId: rawEvent.id,
+      action: result.action,
+      meetingId: result.meetingId,
+    }));
+  } catch (error) {
     console.log(JSON.stringify({
       level: 'error',
-      message: 'Background event processing failed',
+      message: 'Event processing failed in webhook handler',
       rawEventId: rawEvent.id,
       error: error instanceof Error ? error.message : 'Unknown error',
     }));
-  });
+    // Don't fail the webhook - raw event is stored for retry
+  }
 
-  // Return success immediately with event ID
+  // Return success with event ID
   return NextResponse.json(
     {
       received: true,
@@ -318,18 +329,27 @@ async function handleRecordingCompleted(
     duration: Date.now() - startTime,
   }));
 
-  // Process event asynchronously (non-blocking)
-  // Fire-and-forget: don't await, let it run in background
-  processZoomEvent(rawEvent).catch((error) => {
+  // Process event synchronously before returning
+  try {
+    const result = await processZoomEvent(rawEvent);
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Event processing completed in webhook handler',
+      rawEventId: rawEvent.id,
+      action: result.action,
+      meetingId: result.meetingId,
+    }));
+  } catch (error) {
     console.log(JSON.stringify({
       level: 'error',
-      message: 'Background event processing failed',
+      message: 'Event processing failed in webhook handler',
       rawEventId: rawEvent.id,
       error: error instanceof Error ? error.message : 'Unknown error',
     }));
-  });
+  }
 
-  // Return success immediately with event ID
+  // Return success with event ID
   return NextResponse.json(
     {
       received: true,
