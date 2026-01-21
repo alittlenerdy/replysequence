@@ -1,5 +1,5 @@
 {
-  "id": "2cb343a7-29db-42f2-832d-c2a6f8332902",
+  "id": "ce5fd1c7-8209-4933-a751-8ff2a9eb25a7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -192,10 +192,10 @@
         },
         "status": {
           "name": "status",
-          "type": "varchar(50)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'received'"
+          "default": "'pending'"
         },
         "meeting_id": {
           "name": "meeting_id",

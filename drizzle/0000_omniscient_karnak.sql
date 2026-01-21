@@ -19,7 +19,7 @@ CREATE TABLE "raw_events" (
 	"event_type" varchar(100) NOT NULL,
 	"zoom_event_id" varchar(255) NOT NULL,
 	"payload" jsonb NOT NULL,
-	"status" varchar(50) DEFAULT 'received' NOT NULL,
+	"status" text DEFAULT 'pending' NOT NULL,
 	"meeting_id" varchar(255),
 	"end_time" timestamp with time zone,
 	"recording_available" varchar(10),
