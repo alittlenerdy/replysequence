@@ -19,32 +19,40 @@ export interface TranscriptJobResult {
 // Queue name constant
 export const TRANSCRIPT_QUEUE_NAME = 'transcript-processing';
 
-// Create the transcript processing queue
-export const transcriptQueue = new Queue<TranscriptJobData, TranscriptJobResult>(
-  TRANSCRIPT_QUEUE_NAME,
-  {
-    connection: getRedisConnectionOptions(),
-    defaultJobOptions: {
-      attempts: 4, // 1 initial + 3 retries
-      backoff: {
-        type: 'exponential',
-        delay: 1000, // 1s, 2s, 4s exponential backoff
-      },
-      removeOnComplete: {
-        count: 100, // Keep last 100 completed jobs
-      },
-      removeOnFail: {
-        count: 500, // Keep last 500 failed jobs for debugging
-      },
-    },
+// Lazy singleton for the queue - only connects at runtime, not during build
+let transcriptQueueInstance: Queue<TranscriptJobData, TranscriptJobResult> | null = null;
+
+function getTranscriptQueue(): Queue<TranscriptJobData, TranscriptJobResult> {
+  if (!transcriptQueueInstance) {
+    transcriptQueueInstance = new Queue<TranscriptJobData, TranscriptJobResult>(
+      TRANSCRIPT_QUEUE_NAME,
+      {
+        connection: getRedisConnectionOptions(),
+        defaultJobOptions: {
+          attempts: 4, // 1 initial + 3 retries
+          backoff: {
+            type: 'exponential',
+            delay: 1000, // 1s, 2s, 4s exponential backoff
+          },
+          removeOnComplete: {
+            count: 100, // Keep last 100 completed jobs
+          },
+          removeOnFail: {
+            count: 500, // Keep last 500 failed jobs for debugging
+          },
+        },
+      }
+    );
   }
-);
+  return transcriptQueueInstance;
+}
 
 // Add a job to the queue
 export async function addTranscriptJob(
   data: TranscriptJobData
 ): Promise<Job<TranscriptJobData, TranscriptJobResult>> {
-  const job = await transcriptQueue.add('process-transcript', data, {
+  const queue = getTranscriptQueue();
+  const job = await queue.add('process-transcript', data, {
     jobId: `transcript-${data.meetingId}`, // Prevents duplicate jobs for same meeting
   });
 
@@ -61,12 +69,13 @@ export async function addTranscriptJob(
 
 // Get queue statistics
 export async function getQueueStats() {
+  const queue = getTranscriptQueue();
   const [waiting, active, completed, failed, delayed] = await Promise.all([
-    transcriptQueue.getWaitingCount(),
-    transcriptQueue.getActiveCount(),
-    transcriptQueue.getCompletedCount(),
-    transcriptQueue.getFailedCount(),
-    transcriptQueue.getDelayedCount(),
+    queue.getWaitingCount(),
+    queue.getActiveCount(),
+    queue.getCompletedCount(),
+    queue.getFailedCount(),
+    queue.getDelayedCount(),
   ]);
 
   return { waiting, active, completed, failed, delayed };
@@ -74,5 +83,8 @@ export async function getQueueStats() {
 
 // Graceful shutdown
 export async function closeTranscriptQueue(): Promise<void> {
-  await transcriptQueue.close();
+  if (transcriptQueueInstance) {
+    await transcriptQueueInstance.close();
+    transcriptQueueInstance = null;
+  }
 }

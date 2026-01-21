@@ -76,8 +76,44 @@ export const transcripts = pgTable(
   ]
 );
 
+// Raw event status enum values
+export type RawEventStatus = 'received' | 'processing' | 'processed' | 'failed';
+
+// Raw events table - stores incoming webhook payloads for audit and reprocessing
+export const rawEvents = pgTable(
+  'raw_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    eventType: varchar('event_type', { length: 100 }).notNull(),
+    zoomEventId: varchar('zoom_event_id', { length: 255 }).notNull(),
+    payload: jsonb('payload').notNull(),
+    status: varchar('status', { length: 50 }).$type<RawEventStatus>().notNull().default('received'),
+    // Extracted fields for quick access
+    meetingId: varchar('meeting_id', { length: 255 }),
+    endTime: timestamp('end_time', { withTimezone: true }),
+    recordingAvailable: varchar('recording_available', { length: 10 }),
+    transcriptAvailable: varchar('transcript_available', { length: 10 }),
+    // Error tracking
+    errorMessage: text('error_message'),
+    // Timestamps
+    receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
+    processedAt: timestamp('processed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('raw_events_zoom_event_id_idx').on(table.zoomEventId),
+    index('raw_events_event_type_idx').on(table.eventType),
+    index('raw_events_status_idx').on(table.status),
+    index('raw_events_meeting_id_idx').on(table.meetingId),
+    index('raw_events_received_at_idx').on(table.receivedAt),
+  ]
+);
+
 // Type exports for use in application code
 export type Meeting = typeof meetings.$inferSelect;
 export type NewMeeting = typeof meetings.$inferInsert;
 export type Transcript = typeof transcripts.$inferSelect;
 export type NewTranscript = typeof transcripts.$inferInsert;
+export type RawEvent = typeof rawEvents.$inferSelect;
+export type NewRawEvent = typeof rawEvents.$inferInsert;

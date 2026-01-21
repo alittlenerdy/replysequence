@@ -1,6 +1,8 @@
 // Zoom webhook event types
 export type ZoomEventType =
   | 'endpoint.url_validation'
+  | 'meeting.ended'
+  | 'meeting.started'
   | 'recording.completed'
   | 'recording.started'
   | 'recording.stopped'
@@ -83,8 +85,40 @@ export interface RecordingCompletedPayload {
   };
 }
 
+// Meeting object in meeting.ended webhook payload
+export interface MeetingEndedObject {
+  uuid: string;
+  id: number;
+  host_id: string;
+  topic: string;
+  type: number; // 1=instant, 2=scheduled, 3=recurring, 4=PMI, 8=recurring fixed
+  start_time: string;
+  end_time: string;
+  timezone: string;
+  duration: number;
+  host_email?: string;
+  participant_count?: number;
+  // Indicates if recording/transcript will be available
+  // Note: actual files come via recording.completed event
+}
+
+// Meeting ended event payload
+export interface MeetingEndedPayload {
+  event: 'meeting.ended';
+  event_ts: number;
+  payload: {
+    account_id: string;
+    operator?: string;
+    operator_id?: string;
+    object: MeetingEndedObject;
+  };
+}
+
 // Union type for all webhook payloads
-export type ZoomWebhookPayload = UrlValidationPayload | RecordingCompletedPayload;
+export type ZoomWebhookPayload =
+  | UrlValidationPayload
+  | RecordingCompletedPayload
+  | MeetingEndedPayload;
 
 // Extracted meeting metadata for database storage
 export interface ExtractedMeetingMetadata {
@@ -100,4 +134,12 @@ export interface ExtractedMeetingMetadata {
   }>;
   transcriptDownloadUrl: string | null;
   recordingDownloadUrl: string | null;
+}
+
+// Extracted data from meeting.ended event
+export interface ExtractedMeetingEndedData {
+  meetingId: string;
+  endTime: Date;
+  recordingAvailable: 'pending' | 'no'; // pending = we expect recording.completed later
+  transcriptAvailable: 'pending' | 'no'; // pending = we expect it with recording
 }
