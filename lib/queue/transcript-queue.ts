@@ -6,7 +6,7 @@ export interface TranscriptJobData {
   meetingId: string;
   zoomMeetingId: string;
   transcriptDownloadUrl: string;
-  accessToken: string;
+  // accessToken fetched fresh by worker - tokens expire quickly
 }
 
 // Job result interface

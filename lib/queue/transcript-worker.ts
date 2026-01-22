@@ -3,7 +3,7 @@ import { getRedisConnectionOptions } from '../redis';
 import { db, transcripts, meetings } from '../db';
 import { eq } from 'drizzle-orm';
 import { parseVTT } from '../transcript/vtt-parser';
-import { downloadTranscript } from '../transcript/downloader';
+import { downloadTranscript, getZoomAccessToken } from '../transcript/downloader';
 import {
   TranscriptJobData,
   TranscriptJobResult,
@@ -15,7 +15,8 @@ export function createTranscriptWorker(): Worker<TranscriptJobData, TranscriptJo
   const worker = new Worker<TranscriptJobData, TranscriptJobResult>(
     TRANSCRIPT_QUEUE_NAME,
     async (job: Job<TranscriptJobData, TranscriptJobResult>) => {
-      const { meetingId, zoomMeetingId, transcriptDownloadUrl, accessToken } = job.data;
+      const { meetingId, zoomMeetingId, transcriptDownloadUrl } = job.data;
+      const startTime = Date.now();
 
       console.log(JSON.stringify({
         level: 'info',
@@ -33,28 +34,84 @@ export function createTranscriptWorker(): Worker<TranscriptJobData, TranscriptJo
           .set({ status: 'processing', updatedAt: new Date() })
           .where(eq(meetings.id, meetingId));
 
+        // Get fresh OAuth token (tokens expire quickly)
+        const tokenStart = Date.now();
+        const accessToken = await getZoomAccessToken();
+        console.log(JSON.stringify({
+          level: 'info',
+          message: 'OAuth token acquired',
+          jobId: job.id,
+          meetingId,
+          latencyMs: Date.now() - tokenStart,
+        }));
+
         // Download transcript from Zoom
+        const downloadStart = Date.now();
         const vttContent = await downloadTranscript(transcriptDownloadUrl, accessToken);
+        console.log(JSON.stringify({
+          level: 'info',
+          message: 'Transcript downloaded',
+          jobId: job.id,
+          meetingId,
+          contentLength: vttContent.length,
+          latencyMs: Date.now() - downloadStart,
+        }));
 
         // Parse VTT to extract speaker segments
+        const parseStart = Date.now();
         const { fullText, segments, wordCount } = parseVTT(vttContent);
+        console.log(JSON.stringify({
+          level: 'info',
+          message: 'Transcript parsed',
+          jobId: job.id,
+          meetingId,
+          wordCount,
+          segmentCount: segments.length,
+          latencyMs: Date.now() - parseStart,
+        }));
 
-        // Store transcript in database
-        const [transcript] = await db
-          .insert(transcripts)
-          .values({
-            meetingId,
-            content: fullText,
-            speakerSegments: segments,
-            source: 'zoom',
-            wordCount,
-          })
-          .returning();
+        // Store transcript in database (upsert - update if exists)
+        const dbStart = Date.now();
+        const [existingTranscript] = await db
+          .select()
+          .from(transcripts)
+          .where(eq(transcripts.meetingId, meetingId))
+          .limit(1);
 
-        // Update meeting status to completed
+        let transcript;
+        if (existingTranscript) {
+          [transcript] = await db
+            .update(transcripts)
+            .set({
+              content: fullText,
+              vttContent,
+              speakerSegments: segments,
+              wordCount,
+              status: 'ready',
+              lastFetchError: null,
+              updatedAt: new Date(),
+            })
+            .where(eq(transcripts.id, existingTranscript.id))
+            .returning();
+        } else {
+          [transcript] = await db
+            .insert(transcripts)
+            .values({
+              meetingId,
+              content: fullText,
+              vttContent,
+              speakerSegments: segments,
+              source: 'zoom',
+              wordCount,
+              status: 'ready',
+            })
+            .returning();
+        }
+
+        // Update meeting status to ready
         await db
           .update(meetings)
-          .set({ status: 'completed', updatedAt: new Date() })
+          .set({ status: 'ready', updatedAt: new Date() })
           .where(eq(meetings.id, meetingId));
 
         console.log(JSON.stringify({
@@ -64,6 +121,8 @@ export function createTranscriptWorker(): Worker<TranscriptJobData, TranscriptJo
           meetingId,
           transcriptId: transcript.id,
           wordCount,
+          dbLatencyMs: Date.now() - dbStart,
+          totalLatencyMs: Date.now() - startTime,
         }));
 
         return {

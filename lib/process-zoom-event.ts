@@ -1,6 +1,6 @@
 import { db, meetings, rawEvents } from '@/lib/db';
 import { eq } from 'drizzle-orm';
-import { fetchTranscriptWithRetry } from '@/lib/fetch-zoom-transcript';
+import { addTranscriptJob } from '@/lib/queue/transcript-queue';
 import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
@@ -260,7 +260,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     duration: recordingObject.duration || null,
     recordingDownloadUrl: videoFile?.download_url || null,
     transcriptDownloadUrl: transcriptFile?.download_url || null,
-    status: 'processing', // Processing transcript
+    status: 'pending', // Will be updated when transcript job completes
     updatedAt: new Date(),
   };
 
@@ -303,36 +303,21 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     });
   }
 
-  // If transcript is available, fetch it
+  // If transcript is available, enqueue job to fetch it
   if (transcriptFile?.download_url) {
-    log('info', 'Starting transcript fetch', {
+    const job = await addTranscriptJob({
+      meetingId,
+      zoomMeetingId,
+      transcriptDownloadUrl: transcriptFile.download_url,
+    });
+
+    log('info', 'Transcript job enqueued from recording.completed', {
       rawEventId: rawEvent.id,
       meetingId,
       zoomMeetingId,
+      jobId: job.id,
+      latencyMs: Date.now() - startTime,
     });
-
-    const transcriptResult = await fetchTranscriptWithRetry(meetingId);
-
-    log('info', 'Transcript fetch completed', {
-      rawEventId: rawEvent.id,
-      meetingId,
-      zoomMeetingId,
-      success: transcriptResult.success,
-      transcriptId: transcriptResult.transcriptId,
-      status: transcriptResult.status,
-      latency: transcriptResult.latency,
-      totalLatencyMs: Date.now() - startTime,
-    });
-
-    if (!transcriptResult.success) {
-      // Transcript fetch failed, but meeting was created/updated successfully
-      // The transcript can be retried later
-      log('warn', 'Transcript fetch failed but meeting saved', {
-        rawEventId: rawEvent.id,
-        meetingId,
-        error: transcriptResult.error,
-      });
-    }
   } else {
     // No transcript available, mark meeting as ready (no transcript to fetch)
     await db
@@ -359,7 +344,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
 
 /**
  * Process a recording.transcript_completed event
- * Fetches transcript for an existing meeting when transcript becomes available
+ * Enqueues background job to fetch transcript (avoids webhook timeout)
  */
 async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessResult> {
   const startTime = Date.now();
@@ -404,6 +389,8 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     .where(eq(meetings.zoomMeetingId, zoomMeetingId))
     .limit(1);
 
+  let meetingId: string;
+
   if (!existingMeeting) {
     // Meeting doesn't exist yet - create it with transcript URL
     log('info', 'Meeting not found, creating from transcript_completed', {
@@ -420,62 +407,39 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
         startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,
         duration: recordingObject.duration || null,
         transcriptDownloadUrl: transcriptFile.download_url,
-        status: 'processing',
+        status: 'pending',
       })
       .returning();
 
-    // Fetch the transcript
-    const transcriptResult = await fetchTranscriptWithRetry(newMeeting.id);
+    meetingId = newMeeting.id;
+  } else {
+    // Meeting exists - update with transcript URL
+    await db
+      .update(meetings)
+      .set({
+        transcriptDownloadUrl: transcriptFile.download_url,
+        status: 'pending',
+        updatedAt: new Date(),
+      })
+      .where(eq(meetings.id, existingMeeting.id));
 
-    log('info', 'Transcript fetch completed for new meeting', {
-      rawEventId: rawEvent.id,
-      meetingId: newMeeting.id,
-      zoomMeetingId,
-      success: transcriptResult.success,
-      latency: transcriptResult.latency,
-      totalLatencyMs: Date.now() - startTime,
-    });
-
-    return { success: true, meetingId: newMeeting.id, action: 'created' };
+    meetingId = existingMeeting.id;
   }
 
-  // Meeting exists - update with transcript URL and fetch
-  await db
-    .update(meetings)
-    .set({
-      transcriptDownloadUrl: transcriptFile.download_url,
-      status: 'processing',
-      updatedAt: new Date(),
-    })
-    .where(eq(meetings.id, existingMeeting.id));
-
-  log('info', 'Meeting updated with transcript URL', {
-    rawEventId: rawEvent.id,
-    meetingId: existingMeeting.id,
+  // Enqueue transcript job (processed by background worker)
+  const job = await addTranscriptJob({
+    meetingId,
     zoomMeetingId,
+    transcriptDownloadUrl: transcriptFile.download_url,
   });
 
-  // Fetch the transcript
-  const transcriptResult = await fetchTranscriptWithRetry(existingMeeting.id);
-
-  log('info', 'Transcript fetch completed', {
+  log('info', 'Transcript job enqueued', {
     rawEventId: rawEvent.id,
-    meetingId: existingMeeting.id,
+    meetingId,
     zoomMeetingId,
-    success: transcriptResult.success,
-    transcriptId: transcriptResult.transcriptId,
-    status: transcriptResult.status,
-    latency: transcriptResult.latency,
-    totalLatencyMs: Date.now() - startTime,
+    jobId: job.id,
+    latencyMs: Date.now() - startTime,
   });
-
-  if (!transcriptResult.success) {
-    log('warn', 'Transcript fetch failed', {
-      rawEventId: rawEvent.id,
-      meetingId: existingMeeting.id,
-      error: transcriptResult.error,
-    });
-  }
 
   return { success: true, meetingId: existingMeeting.id, action: 'updated' };
 }
