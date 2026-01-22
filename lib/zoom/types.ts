@@ -85,6 +85,17 @@ export interface RecordingCompletedPayload {
   };
 }
 
+// Recording transcript completed event payload
+// Sent when transcript processing finishes (after recording.completed)
+export interface RecordingTranscriptCompletedPayload {
+  event: 'recording.transcript_completed';
+  event_ts: number;
+  payload: {
+    account_id: string;
+    object: RecordingObject; // Contains recording_files with TRANSCRIPT type
+  };
+}
+
 // Meeting object in meeting.ended webhook payload
 export interface MeetingEndedObject {
   uuid: string;
@@ -118,6 +129,7 @@ export interface MeetingEndedPayload {
 export type ZoomWebhookPayload =
   | UrlValidationPayload
   | RecordingCompletedPayload
+  | RecordingTranscriptCompletedPayload
   | MeetingEndedPayload;
 
 // Extracted meeting metadata for database storage

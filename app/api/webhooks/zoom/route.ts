@@ -8,6 +8,7 @@ import type {
   ZoomWebhookPayload,
   MeetingEndedPayload,
   RecordingCompletedPayload,
+  RecordingTranscriptCompletedPayload,
 } from '@/lib/zoom/types';
 import type { RawEvent } from '@/lib/db/schema';
 
@@ -72,6 +73,11 @@ export async function POST(request: NextRequest) {
     // Handle recording.completed event
     if (payload.event === 'recording.completed') {
       return await handleRecordingCompleted(payload, rawBody, startTime);
+    }
+
+    // Handle recording.transcript_completed event
+    if (payload.event === 'recording.transcript_completed') {
+      return await handleTranscriptCompleted(payload, rawBody, startTime);
     }
 
     // Unknown event type - store as raw event and acknowledge
@@ -344,6 +350,86 @@ async function handleRecordingCompleted(
     console.log(JSON.stringify({
       level: 'error',
       message: 'Event processing failed in webhook handler',
+      rawEventId: rawEvent.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }));
+  }
+
+  // Return success with event ID
+  return NextResponse.json(
+    {
+      received: true,
+      eventId: rawEvent.id,
+      zoomMeetingId: object.uuid,
+    },
+    { status: 200 }
+  );
+}
+
+async function handleTranscriptCompleted(
+  payload: RecordingTranscriptCompletedPayload,
+  rawBody: string,
+  startTime: number
+): Promise<NextResponse> {
+  const { object } = payload.payload;
+  const eventId = `recording.transcript_completed-${object.uuid}-${payload.event_ts}`;
+
+  // Idempotency check - prevent duplicate processing
+  const acquired = await acquireEventLock(eventId);
+  if (!acquired) {
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Duplicate recording.transcript_completed event ignored',
+      eventId,
+      zoomMeetingId: object.uuid,
+    }));
+
+    const [existingEvent] = await db
+      .select({ id: rawEvents.id })
+      .from(rawEvents)
+      .where(eq(rawEvents.zoomEventId, eventId))
+      .limit(1);
+
+    return NextResponse.json(
+      {
+        received: true,
+        duplicate: true,
+        eventId: existingEvent?.id || null,
+      },
+      { status: 200 }
+    );
+  }
+
+  // Store raw event in database
+  const rawEvent = await storeRawEvent(
+    'recording.transcript_completed',
+    eventId,
+    rawBody
+  );
+
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'recording.transcript_completed event stored',
+    rawEventId: rawEvent.id,
+    zoomMeetingId: object.uuid,
+    duration: Date.now() - startTime,
+  }));
+
+  // Process event synchronously before returning
+  try {
+    const result = await processZoomEvent(rawEvent);
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Transcript event processing completed',
+      rawEventId: rawEvent.id,
+      action: result.action,
+      meetingId: result.meetingId,
+    }));
+  } catch (error) {
+    console.log(JSON.stringify({
+      level: 'error',
+      message: 'Transcript event processing failed',
       rawEventId: rawEvent.id,
       error: error instanceof Error ? error.message : 'Unknown error',
     }));

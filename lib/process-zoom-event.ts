@@ -5,6 +5,7 @@ import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
   RecordingCompletedPayload,
+  RecordingTranscriptCompletedPayload,
 } from '@/lib/zoom/types';
 
 /**
@@ -80,6 +81,9 @@ export async function processZoomEvent(rawEvent: RawEvent): Promise<ProcessResul
         break;
       case 'recording.completed':
         result = await processRecordingCompleted(rawEvent);
+        break;
+      case 'recording.transcript_completed':
+        result = await processTranscriptCompleted(rawEvent);
         break;
       default:
         log('warn', 'Unknown event type, marking as processed', {
@@ -351,6 +355,129 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     meetingId,
     action: existingMeeting ? 'updated' : 'created',
   };
+}
+
+/**
+ * Process a recording.transcript_completed event
+ * Fetches transcript for an existing meeting when transcript becomes available
+ */
+async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessResult> {
+  const startTime = Date.now();
+  const payload = rawEvent.payload as unknown as RecordingTranscriptCompletedPayload;
+  const recordingObject = payload.payload?.object;
+
+  if (!recordingObject?.uuid) {
+    log('error', 'Invalid recording.transcript_completed payload: missing uuid', {
+      rawEventId: rawEvent.id,
+    });
+    return { success: false, action: 'failed', error: 'Missing recording uuid' };
+  }
+
+  const zoomMeetingId = recordingObject.uuid;
+
+  // Find transcript file in the payload
+  const transcriptFile = recordingObject.recording_files?.find(
+    (f) => f.file_type === 'TRANSCRIPT' && f.status === 'completed'
+  );
+
+  log('info', 'Processing recording.transcript_completed', {
+    rawEventId: rawEvent.id,
+    zoomMeetingId,
+    hasTranscript: !!transcriptFile,
+    transcriptUrl: transcriptFile?.download_url ? 'present' : 'missing',
+  });
+
+  if (!transcriptFile?.download_url) {
+    log('warn', 'No transcript file in transcript_completed event', {
+      rawEventId: rawEvent.id,
+      zoomMeetingId,
+      fileCount: recordingObject.recording_files?.length || 0,
+      fileTypes: recordingObject.recording_files?.map((f) => f.file_type) || [],
+    });
+    return { success: true, action: 'skipped' };
+  }
+
+  // Find existing meeting by zoom_meeting_id
+  const [existingMeeting] = await db
+    .select()
+    .from(meetings)
+    .where(eq(meetings.zoomMeetingId, zoomMeetingId))
+    .limit(1);
+
+  if (!existingMeeting) {
+    // Meeting doesn't exist yet - create it with transcript URL
+    log('info', 'Meeting not found, creating from transcript_completed', {
+      rawEventId: rawEvent.id,
+      zoomMeetingId,
+    });
+
+    const [newMeeting] = await db
+      .insert(meetings)
+      .values({
+        zoomMeetingId,
+        hostEmail: recordingObject.host_email || 'unknown@unknown.com',
+        topic: recordingObject.topic || 'Untitled Meeting',
+        startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,
+        duration: recordingObject.duration || null,
+        transcriptDownloadUrl: transcriptFile.download_url,
+        status: 'processing',
+      })
+      .returning();
+
+    // Fetch the transcript
+    const transcriptResult = await fetchTranscriptWithRetry(newMeeting.id);
+
+    log('info', 'Transcript fetch completed for new meeting', {
+      rawEventId: rawEvent.id,
+      meetingId: newMeeting.id,
+      zoomMeetingId,
+      success: transcriptResult.success,
+      latency: transcriptResult.latency,
+      totalLatencyMs: Date.now() - startTime,
+    });
+
+    return { success: true, meetingId: newMeeting.id, action: 'created' };
+  }
+
+  // Meeting exists - update with transcript URL and fetch
+  await db
+    .update(meetings)
+    .set({
+      transcriptDownloadUrl: transcriptFile.download_url,
+      status: 'processing',
+      updatedAt: new Date(),
+    })
+    .where(eq(meetings.id, existingMeeting.id));
+
+  log('info', 'Meeting updated with transcript URL', {
+    rawEventId: rawEvent.id,
+    meetingId: existingMeeting.id,
+    zoomMeetingId,
+  });
+
+  // Fetch the transcript
+  const transcriptResult = await fetchTranscriptWithRetry(existingMeeting.id);
+
+  log('info', 'Transcript fetch completed', {
+    rawEventId: rawEvent.id,
+    meetingId: existingMeeting.id,
+    zoomMeetingId,
+    success: transcriptResult.success,
+    transcriptId: transcriptResult.transcriptId,
+    status: transcriptResult.status,
+    latency: transcriptResult.latency,
+    totalLatencyMs: Date.now() - startTime,
+  });
+
+  if (!transcriptResult.success) {
+    log('warn', 'Transcript fetch failed', {
+      rawEventId: rawEvent.id,
+      meetingId: existingMeeting.id,
+      error: transcriptResult.error,
+    });
+  }
+
+  return { success: true, meetingId: existingMeeting.id, action: 'updated' };
 }
 
 /**
