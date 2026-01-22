@@ -37,3 +37,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~25 min
 
 ---
+
+## [2025-01-21 18:15] - Handle recording.transcript_completed webhook
+**Commit:** 93f72ca
+**Files Changed:** lib/zoom/types.ts, lib/process-zoom-event.ts, app/api/webhooks/zoom/route.ts
+**Summary:** Zoom sends transcript separately from recording. Added RecordingTranscriptCompletedPayload type, processTranscriptCompleted handler, and handleTranscriptCompleted in webhook route. Updates existing meeting with transcript URL and fetches transcript.
+**Key Issues:** recording.completed was arriving with hasTranscript=false, transcript came in separate event
+**Duration:** ~15 min
+
+---
