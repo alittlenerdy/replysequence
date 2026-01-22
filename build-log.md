@@ -46,3 +46,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-21 19:45] - Move transcript fetch to background queue
+**Commit:** fdbb26f
+**Files Changed:** lib/queue/transcript-queue.ts, lib/queue/transcript-worker.ts, lib/process-zoom-event.ts, app/api/jobs/process-transcript/route.ts
+**Summary:** Transcript fetch was timing out in webhook handler. Moved to Redis Bull queue. Worker now fetches fresh OAuth token (removed from job data). Created /api/jobs/process-transcript endpoint for serverless job processing with exponential backoff retry.
+**Key Issues:** OAuth tokens expire quickly - can't store in job. Webhook was timing out waiting for Zoom download.
+**Duration:** ~20 min
+
+---
