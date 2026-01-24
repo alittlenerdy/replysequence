@@ -82,3 +82,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~10 min
 
 ---
+
+## [2025-01-24 01:00] - Remove queue, use download_token from webhook root
+**Commit:** 03fc960
+**Files Changed:** lib/process-zoom-event.ts, lib/zoom/types.ts, lib/transcript/downloader.ts
+**Summary:** Removed Redis queue - transcript processing now synchronous in webhook handler. Confirmed download_token IS in webhook at root level (payload.download_token, not nested). Removed lib/zoom/api-client.ts - OAuth not needed. Transcript download uses `{download_url}?access_token={download_token}`. recording.completed fires first with hasTranscript=false, then recording.transcript_completed fires ~4s later with actual transcript.
+**Key Issues:** Queue jobs weren't being processed; OAuth kept failing. Direct webhook token approach is simplest.
+**Duration:** ~2 hours (iterative debugging)
+
+---
