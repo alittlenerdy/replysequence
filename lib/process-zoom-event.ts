@@ -376,13 +376,32 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     (f) => f.file_type === 'TRANSCRIPT' && f.status === 'completed'
   );
 
+  // Log the FULL payload details for debugging
   log('info', 'Processing recording.transcript_completed', {
     rawEventId: rawEvent.id,
     zoomMeetingId,
     hasDownloadToken: !!downloadToken,
+    downloadTokenLength: downloadToken?.length || 0,
+    downloadTokenPreview: downloadToken ? downloadToken.substring(0, 20) + '...' : 'missing',
     hasTranscriptFile: !!transcriptFile,
-    transcriptUrl: transcriptFile?.download_url ? 'present' : 'missing',
+    transcriptUrl: transcriptFile?.download_url || 'missing',
+    transcriptFileSize: transcriptFile?.file_size || 0,
+    allFileTypes: recordingObject.recording_files?.map(f => ({
+      type: f.file_type,
+      status: f.status,
+      size: f.file_size,
+      url: f.download_url?.substring(0, 80) + '...',
+    })) || [],
   });
+
+  // Log the exact values needed for curl testing
+  if (transcriptFile?.download_url && downloadToken) {
+    log('info', 'CURL_TEST_VALUES', {
+      download_url: transcriptFile.download_url,
+      download_token: downloadToken,
+      curl_command: `curl -v "${transcriptFile.download_url}?access_token=${downloadToken}"`,
+    });
+  }
 
   if (!downloadToken) {
     log('error', 'No download_token in transcript_completed payload', {
