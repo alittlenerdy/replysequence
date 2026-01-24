@@ -1,30 +1,27 @@
 /**
- * Download transcript from Zoom API using recording password
+ * Download transcript from Zoom using download_access_token
  * @param downloadUrl - The transcript download URL from Zoom
- * @param password - Recording password from payload.object.password
+ * @param accessToken - download_access_token from Zoom API
  * @param timeoutMs - Timeout in milliseconds (default 30s)
  * @returns VTT content as string
  */
 export async function downloadTranscript(
   downloadUrl: string,
-  password?: string,
+  accessToken: string,
   timeoutMs: number = 30000
 ): Promise<string> {
   const startTime = Date.now();
 
-  // Build URL with password as ?pwd= query param
-  const urlWithPassword = password
-    ? `${downloadUrl}?pwd=${encodeURIComponent(password)}`
-    : downloadUrl;
+  // Build URL with access_token query param
+  const urlWithToken = `${downloadUrl}?access_token=${accessToken}`;
 
   // Log exact values for debugging
   console.log(JSON.stringify({
     level: 'info',
     message: 'Starting transcript download from Zoom',
     download_url: downloadUrl,
-    hasPassword: !!password,
-    password: password || 'missing',
-    urlWithPassword,
+    tokenLength: accessToken.length,
+    urlWithToken: urlWithToken.substring(0, 100) + '...',
     timeoutMs,
   }));
 
@@ -35,7 +32,7 @@ export async function downloadTranscript(
     console.log(JSON.stringify({
       level: 'error',
       message: 'Transcript download timed out',
-      url: urlWithPassword,
+      url: downloadUrl,
       timeoutMs,
       elapsedMs: Date.now() - startTime,
     }));
@@ -44,11 +41,11 @@ export async function downloadTranscript(
   try {
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Fetching transcript',
-      url: urlWithPassword,
+      message: 'Fetching transcript with access_token',
+      url: downloadUrl,
     }));
 
-    const response = await fetch(urlWithPassword, {
+    const response = await fetch(urlWithToken, {
       method: 'GET',
       signal: controller.signal,
     });
