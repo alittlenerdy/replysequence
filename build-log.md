@@ -55,3 +55,21 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~20 min
 
 ---
+
+## [2025-01-21 20:15] - Fix Redis "Connection is closed" in serverless
+**Commit:** (pending)
+**Files Changed:** lib/redis/index.ts, lib/queue/transcript-queue.ts, app/api/jobs/process-transcript/route.ts
+**Summary:** Fixed stale Redis connection issue in serverless. Singleton Queue pattern fails between invocations because connection closes but instance remains cached. Changed to fresh connections per request with proper cleanup. Added TLS support for rediss:// URLs (Upstash, Railway).
+**Key Issues:** Queue singleton holding closed connection; URL parsing not handling TLS
+**Duration:** ~15 min
+
+---
+
+## [2025-01-23 12:00] - Remove Zoom OAuth, use download_token from webhook
+**Commit:** 1449f0d
+**Files Changed:** lib/transcript/downloader.ts, lib/queue/transcript-queue.ts, lib/queue/transcript-worker.ts, lib/process-zoom-event.ts, lib/zoom/types.ts, app/api/jobs/process-transcript/route.ts
+**Summary:** Removed all OAuth token fetching. Zoom provides download_token in webhook payload - use it directly as access_token query param to download transcripts. Deleted unused lib/fetch-zoom-transcript.ts. Updated TranscriptJobData to carry downloadToken. OAuth was failing for 8+ hours.
+**Key Issues:** OAuth consistently failing with various errors. Download token approach is simpler and more reliable.
+**Duration:** ~15 min
+
+---
