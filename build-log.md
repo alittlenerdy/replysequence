@@ -91,3 +91,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~2 hours (iterative debugging)
 
 ---
+
+## [2025-01-24 02:30] - Add Claude API draft generation
+**Commit:** b7a0007
+**Files Changed:** lib/claude-client.ts, lib/prompts/discovery-call.ts, lib/generate-draft.ts, lib/db/schema.ts, drizzle/0003_smiling_vivisector.sql
+**Summary:** Built Claude API integration for generating follow-up email drafts from meeting transcripts. Created claude-client.ts with singleton pattern and cost calculation. Added discovery-call prompt template with system/user prompt structure. Implemented generateDraft() with retry logic (3 attempts, exponential backoff). Added drafts table with cost tracking columns (input_tokens, output_tokens, cost_usd, latency_ms). Uses claude-sonnet-4-5-20250929 model.
+**Key Issues:** None - clean implementation.
+**Duration:** ~15 min
+
+---
