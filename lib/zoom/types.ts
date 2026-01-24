@@ -64,6 +64,8 @@ export interface RecordingObject {
   participant_audio_files?: RecordingFile[];
   password?: string;
   host_email?: string;
+  // Download token provided by Zoom for authenticated downloads
+  download_token?: string;
 }
 
 // URL validation event payload

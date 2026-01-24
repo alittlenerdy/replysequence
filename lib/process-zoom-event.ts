@@ -304,11 +304,14 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
   }
 
   // If transcript is available, enqueue job to fetch it
-  if (transcriptFile?.download_url) {
+  // Use download_token from webhook payload for authentication (no OAuth needed)
+  const downloadToken = recordingObject.download_token;
+  if (transcriptFile?.download_url && downloadToken) {
     const job = await addTranscriptJob({
       meetingId,
       zoomMeetingId,
       transcriptDownloadUrl: transcriptFile.download_url,
+      downloadToken,
     });
 
     log('info', 'Transcript job enqueued from recording.completed', {
@@ -317,6 +320,12 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       zoomMeetingId,
       jobId: job.id,
       latencyMs: Date.now() - startTime,
+    });
+  } else if (transcriptFile?.download_url && !downloadToken) {
+    log('warn', 'Transcript available but no download_token in payload', {
+      rawEventId: rawEvent.id,
+      meetingId,
+      zoomMeetingId,
     });
   } else {
     // No transcript available, mark meeting as ready (no transcript to fetch)
@@ -426,11 +435,22 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     meetingId = existingMeeting.id;
   }
 
+  // Use download_token from webhook payload for authentication (no OAuth needed)
+  const downloadToken = recordingObject.download_token;
+  if (!downloadToken) {
+    log('error', 'No download_token in transcript_completed payload', {
+      rawEventId: rawEvent.id,
+      zoomMeetingId,
+    });
+    return { success: false, action: 'failed', error: 'Missing download_token in payload' };
+  }
+
   // Enqueue transcript job (processed by background worker)
   const job = await addTranscriptJob({
     meetingId,
     zoomMeetingId,
     transcriptDownloadUrl: transcriptFile.download_url,
+    downloadToken,
   });
 
   log('info', 'Transcript job enqueued', {
@@ -441,7 +461,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     latencyMs: Date.now() - startTime,
   });
 
-  return { success: true, meetingId: existingMeeting.id, action: 'updated' };
+  return { success: true, meetingId, action: existingMeeting ? 'updated' : 'created' };
 }
 
 /**

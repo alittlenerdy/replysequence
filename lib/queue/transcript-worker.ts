@@ -3,7 +3,7 @@ import { getRedisConnectionOptions } from '../redis';
 import { db, transcripts, meetings } from '../db';
 import { eq } from 'drizzle-orm';
 import { parseVTT } from '../transcript/vtt-parser';
-import { downloadTranscript, getZoomAccessToken } from '../transcript/downloader';
+import { downloadTranscript } from '../transcript/downloader';
 import {
   TranscriptJobData,
   TranscriptJobResult,
@@ -15,7 +15,7 @@ export function createTranscriptWorker(): Worker<TranscriptJobData, TranscriptJo
   const worker = new Worker<TranscriptJobData, TranscriptJobResult>(
     TRANSCRIPT_QUEUE_NAME,
     async (job: Job<TranscriptJobData, TranscriptJobResult>) => {
-      const { meetingId, zoomMeetingId, transcriptDownloadUrl } = job.data;
+      const { meetingId, zoomMeetingId, transcriptDownloadUrl, downloadToken } = job.data;
       const startTime = Date.now();
 
       console.log(JSON.stringify({
@@ -34,20 +34,9 @@ export function createTranscriptWorker(): Worker<TranscriptJobData, TranscriptJo
           .set({ status: 'processing', updatedAt: new Date() })
           .where(eq(meetings.id, meetingId));
 
-        // Get fresh OAuth token (tokens expire quickly)
-        const tokenStart = Date.now();
-        const accessToken = await getZoomAccessToken();
-        console.log(JSON.stringify({
-          level: 'info',
-          message: 'OAuth token acquired',
-          jobId: job.id,
-          meetingId,
-          latencyMs: Date.now() - tokenStart,
-        }));
-
-        // Download transcript from Zoom
+        // Download transcript from Zoom using download token from webhook
         const downloadStart = Date.now();
-        const vttContent = await downloadTranscript(transcriptDownloadUrl, accessToken);
+        const vttContent = await downloadTranscript(transcriptDownloadUrl, downloadToken);
         console.log(JSON.stringify({
           level: 'info',
           message: 'Transcript downloaded',

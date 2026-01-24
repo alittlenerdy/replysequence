@@ -3,11 +3,10 @@ import { Job } from 'bullmq';
 import { db, transcripts, meetings } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
-import { downloadTranscript, getZoomAccessToken } from '@/lib/transcript/downloader';
+import { downloadTranscript } from '@/lib/transcript/downloader';
 import {
   TranscriptJobData,
   TranscriptJobResult,
-  getQueueStats,
 } from '@/lib/queue/transcript-queue';
 import { getRedisConnectionOptions } from '@/lib/redis';
 import { Queue } from 'bullmq';
@@ -24,25 +23,36 @@ export const maxDuration = 60; // 60 second timeout for processing
  * POST: Processes up to N jobs from the queue
  */
 
-// Lazy queue instance
-let queue: Queue<TranscriptJobData, TranscriptJobResult> | null = null;
+/**
+ * Create a fresh Queue instance for serverless.
+ * Each request gets its own connection to avoid stale connection issues.
+ * The connection will be closed when the function completes.
+ */
+async function createQueue(): Promise<Queue<TranscriptJobData, TranscriptJobResult>> {
+  const q = new Queue<TranscriptJobData, TranscriptJobResult>('transcript-processing', {
+    connection: getRedisConnectionOptions(),
+  });
 
-function getQueue(): Queue<TranscriptJobData, TranscriptJobResult> {
-  if (!queue) {
-    queue = new Queue<TranscriptJobData, TranscriptJobResult>('transcript-processing', {
-      connection: getRedisConnectionOptions(),
-    });
-  }
-  return queue;
+  // Wait for connection to be ready
+  await q.waitUntilReady();
+  return q;
 }
 
 export async function GET() {
+  let q: Queue<TranscriptJobData, TranscriptJobResult> | null = null;
   try {
-    const stats = await getQueueStats();
+    q = await createQueue();
+    const [waiting, active, completed, failed, delayed] = await Promise.all([
+      q.getWaitingCount(),
+      q.getActiveCount(),
+      q.getCompletedCount(),
+      q.getFailedCount(),
+      q.getDelayedCount(),
+    ]);
 
     return NextResponse.json({
       success: true,
-      stats,
+      stats: { waiting, active, completed, failed, delayed },
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -50,6 +60,10 @@ export async function GET() {
       { success: false, error: errorMessage },
       { status: 500 }
     );
+  } finally {
+    if (q) {
+      await q.close();
+    }
   }
 }
 
@@ -80,18 +94,28 @@ export async function POST(request: NextRequest) {
     error?: string;
   }> = [];
 
+  let q: Queue<TranscriptJobData, TranscriptJobResult> | null = null;
+
   try {
-    const q = getQueue();
+    q = await createQueue();
 
     // Get waiting jobs
     const jobs = await q.getJobs(['waiting', 'delayed'], 0, maxJobs - 1);
 
     if (jobs.length === 0) {
+      const [waiting, active, completed, failed, delayed] = await Promise.all([
+        q.getWaitingCount(),
+        q.getActiveCount(),
+        q.getCompletedCount(),
+        q.getFailedCount(),
+        q.getDelayedCount(),
+      ]);
+
       return NextResponse.json({
         success: true,
         message: 'No jobs to process',
         processed: 0,
-        stats: await getQueueStats(),
+        stats: { waiting, active, completed, failed, delayed },
       });
     }
 
@@ -128,7 +152,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const stats = await getQueueStats();
+    const [waiting, active, completed, failed, delayed] = await Promise.all([
+      q.getWaitingCount(),
+      q.getActiveCount(),
+      q.getCompletedCount(),
+      q.getFailedCount(),
+      q.getDelayedCount(),
+    ]);
 
     console.log(JSON.stringify({
       level: 'info',
@@ -143,7 +173,7 @@ export async function POST(request: NextRequest) {
       success: true,
       processed: results.length,
       results,
-      stats,
+      stats: { waiting, active, completed, failed, delayed },
       latencyMs: Date.now() - startTime,
     });
   } catch (error) {
@@ -165,6 +195,10 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
+  } finally {
+    if (q) {
+      await q.close();
+    }
   }
 }
 
@@ -174,7 +208,7 @@ export async function POST(request: NextRequest) {
 async function processJob(
   job: Job<TranscriptJobData, TranscriptJobResult>
 ): Promise<TranscriptJobResult> {
-  const { meetingId, zoomMeetingId, transcriptDownloadUrl } = job.data;
+  const { meetingId, zoomMeetingId, transcriptDownloadUrl, downloadToken } = job.data;
   const startTime = Date.now();
 
   console.log(JSON.stringify({
@@ -193,20 +227,9 @@ async function processJob(
       .set({ status: 'processing', updatedAt: new Date() })
       .where(eq(meetings.id, meetingId));
 
-    // Get fresh OAuth token
-    const tokenStart = Date.now();
-    const accessToken = await getZoomAccessToken();
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'OAuth token acquired',
-      jobId: job.id,
-      meetingId,
-      latencyMs: Date.now() - tokenStart,
-    }));
-
-    // Download transcript from Zoom
+    // Download transcript from Zoom using download token from webhook
     const downloadStart = Date.now();
-    const vttContent = await downloadTranscript(transcriptDownloadUrl, accessToken);
+    const vttContent = await downloadTranscript(transcriptDownloadUrl, downloadToken);
     console.log(JSON.stringify({
       level: 'info',
       message: 'Transcript downloaded',
