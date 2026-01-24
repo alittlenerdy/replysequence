@@ -55,8 +55,14 @@ export async function getZoomAccessToken(): Promise<string> {
     accountId: accountId.substring(0, 8) + '...',
   }));
 
-  const tokenUrl = `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${accountId}`;
+  const tokenUrl = 'https://zoom.us/oauth/token';
   const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+  // grant_type and account_id must be in the request body, not query params
+  const body = new URLSearchParams({
+    grant_type: 'account_credentials',
+    account_id: accountId,
+  });
 
   const response = await fetch(tokenUrl, {
     method: 'POST',
@@ -64,6 +70,7 @@ export async function getZoomAccessToken(): Promise<string> {
       Authorization: `Basic ${credentials}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
+    body: body.toString(),
   });
 
   if (!response.ok) {
