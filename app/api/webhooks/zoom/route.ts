@@ -78,6 +78,11 @@ export async function POST(request: NextRequest) {
 
     // Handle recording.transcript_completed event
     if (payload.event === 'recording.transcript_completed') {
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'Routing to handleTranscriptCompleted',
+        event: payload.event,
+      }));
       return await handleTranscriptCompleted(payload, rawBody, startTime);
     }
 
@@ -372,11 +377,33 @@ async function handleTranscriptCompleted(
   rawBody: string,
   startTime: number
 ): Promise<NextResponse> {
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'handleTranscriptCompleted started',
+    hasPayload: !!payload.payload,
+    hasObject: !!payload.payload?.object,
+  }));
+
   const { object } = payload.payload;
   const eventId = `recording.transcript_completed-${object.uuid}-${payload.event_ts}`;
 
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Attempting to acquire event lock',
+    eventId,
+    zoomMeetingId: object.uuid,
+  }));
+
   // Idempotency check - prevent duplicate processing
   const acquired = await acquireEventLock(eventId);
+
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Event lock result for transcript_completed',
+    eventId,
+    acquired,
+  }));
+
   if (!acquired) {
     console.log(JSON.stringify({
       level: 'info',
