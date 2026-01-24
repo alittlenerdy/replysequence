@@ -84,6 +84,8 @@ export interface RecordingCompletedPayload {
   payload: {
     account_id: string;
     object: RecordingObject;
+    // Download token for authenticated file downloads
+    download_token?: string;
   };
 }
 
@@ -95,6 +97,8 @@ export interface RecordingTranscriptCompletedPayload {
   payload: {
     account_id: string;
     object: RecordingObject; // Contains recording_files with TRANSCRIPT type
+    // Download token for authenticated file downloads
+    download_token?: string;
   };
 }
 
