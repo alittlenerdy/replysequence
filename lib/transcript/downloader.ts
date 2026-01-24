@@ -1,24 +1,30 @@
 /**
- * Download transcript from Zoom API using download token
+ * Download transcript from Zoom API using recording password
  * @param downloadUrl - The transcript download URL from Zoom
- * @param downloadToken - Download token from webhook payload (no OAuth needed)
+ * @param password - Recording password from payload.object.password
  * @param timeoutMs - Timeout in milliseconds (default 30s)
  * @returns VTT content as string
  */
 export async function downloadTranscript(
   downloadUrl: string,
-  downloadToken?: string,
+  password?: string,
   timeoutMs: number = 30000
 ): Promise<string> {
   const startTime = Date.now();
+
+  // Build URL with password as ?pwd= query param
+  const urlWithPassword = password
+    ? `${downloadUrl}?pwd=${encodeURIComponent(password)}`
+    : downloadUrl;
 
   // Log exact values for debugging
   console.log(JSON.stringify({
     level: 'info',
     message: 'Starting transcript download from Zoom',
     download_url: downloadUrl,
-    hasToken: !!downloadToken,
-    tokenLength: downloadToken?.length || 0,
+    hasPassword: !!password,
+    password: password || 'missing',
+    urlWithPassword,
     timeoutMs,
   }));
 
@@ -29,30 +35,21 @@ export async function downloadTranscript(
     console.log(JSON.stringify({
       level: 'error',
       message: 'Transcript download timed out',
-      url: downloadUrl,
+      url: urlWithPassword,
       timeoutMs,
       elapsedMs: Date.now() - startTime,
     }));
   }, timeoutMs);
 
   try {
-    // Try without auth first (Zoom URLs may be pre-authenticated)
-    // If token provided, use Bearer header as fallback
-    const headers: Record<string, string> = {};
-    if (downloadToken) {
-      headers['Authorization'] = `Bearer ${downloadToken}`;
-    }
-
     console.log(JSON.stringify({
       level: 'info',
       message: 'Fetching transcript',
-      url: downloadUrl,
-      usingAuth: !!downloadToken,
+      url: urlWithPassword,
     }));
 
-    const response = await fetch(downloadUrl, {
+    const response = await fetch(urlWithPassword, {
       method: 'GET',
-      headers,
       signal: controller.signal,
     });
 

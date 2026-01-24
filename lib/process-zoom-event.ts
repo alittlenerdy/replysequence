@@ -305,12 +305,12 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
   }
 
   // If transcript is available, download it directly (no queue)
-  const downloadToken = payload.payload?.download_token;
+  const password = recordingObject.password;
   if (transcriptFile?.download_url) {
     await fetchAndStoreTranscript(
       meetingId,
       transcriptFile.download_url,
-      downloadToken,
+      password,
       rawEvent.id,
       zoomMeetingId
     );
@@ -356,8 +356,8 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 
   const zoomMeetingId = recordingObject.uuid;
 
-  // Get download_token from payload (at payload level, not inside object)
-  const downloadToken = payload.payload?.download_token;
+  // Get password from payload.object.password (used as ?pwd= query param)
+  const password = recordingObject.password;
 
   // Find transcript file in recording_files
   const transcriptFile = recordingObject.recording_files?.find(
@@ -368,32 +368,15 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
   log('info', 'Processing recording.transcript_completed', {
     rawEventId: rawEvent.id,
     zoomMeetingId,
-    hasDownloadToken: !!downloadToken,
-    downloadTokenLength: downloadToken?.length || 0,
-    downloadTokenPreview: downloadToken ? downloadToken.substring(0, 20) + '...' : 'missing',
+    hasPassword: !!password,
+    password: password || 'missing',
     hasTranscriptFile: !!transcriptFile,
     transcriptUrl: transcriptFile?.download_url || 'missing',
     transcriptFileSize: transcriptFile?.file_size || 0,
-    allFileTypes: recordingObject.recording_files?.map(f => ({
-      type: f.file_type,
-      status: f.status,
-      size: f.file_size,
-      url: f.download_url?.substring(0, 80) + '...',
-    })) || [],
   });
 
-  // Log the exact values needed for curl testing
-  if (transcriptFile?.download_url && downloadToken) {
-    log('info', 'CURL_TEST_VALUES', {
-      download_url: transcriptFile.download_url,
-      download_token: downloadToken,
-      curl_command: `curl -v "${transcriptFile.download_url}?access_token=${downloadToken}"`,
-    });
-  }
-
-  // Log if token is missing but continue anyway - URL may be pre-authenticated
-  if (!downloadToken) {
-    log('warn', 'No download_token in transcript_completed payload - will try without auth', {
+  if (!password) {
+    log('warn', 'No password in transcript_completed payload', {
       rawEventId: rawEvent.id,
       zoomMeetingId,
     });
@@ -457,7 +440,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
   await fetchAndStoreTranscript(
     meetingId,
     transcriptFile.download_url,
-    downloadToken,
+    password,
     rawEvent.id,
     zoomMeetingId
   );
@@ -478,7 +461,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 async function fetchAndStoreTranscript(
   meetingId: string,
   transcriptUrl: string,
-  downloadToken: string | undefined,
+  password: string | undefined,
   rawEventId: string,
   zoomMeetingId: string
 ): Promise<void> {
@@ -489,7 +472,8 @@ async function fetchAndStoreTranscript(
     meetingId,
     zoomMeetingId,
     transcriptUrl,
-    hasToken: !!downloadToken,
+    hasPassword: !!password,
+    password: password || 'missing',
   });
 
   try {
@@ -499,8 +483,8 @@ async function fetchAndStoreTranscript(
       .set({ status: 'processing', updatedAt: new Date() })
       .where(eq(meetings.id, meetingId));
 
-    // Download transcript from Zoom
-    const vttContent = await downloadTranscript(transcriptUrl, downloadToken);
+    // Download transcript from Zoom (password appended as ?pwd=)
+    const vttContent = await downloadTranscript(transcriptUrl, password);
 
     log('info', 'Transcript downloaded', {
       rawEventId,
