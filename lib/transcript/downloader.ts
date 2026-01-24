@@ -12,13 +12,12 @@ export async function downloadTranscript(
 ): Promise<string> {
   const startTime = Date.now();
 
-  // Append access_token as query parameter (Zoom's recommended approach for download tokens)
-  const urlWithToken = `${downloadUrl}?access_token=${downloadToken}`;
-
+  // Log exact values for debugging
   console.log(JSON.stringify({
     level: 'info',
     message: 'Starting transcript download from Zoom',
-    url: downloadUrl.substring(0, 80) + '...',
+    download_url: downloadUrl,
+    download_token: downloadToken,
     tokenLength: downloadToken.length,
     timeoutMs,
   }));
@@ -30,15 +29,19 @@ export async function downloadTranscript(
     console.log(JSON.stringify({
       level: 'error',
       message: 'Transcript download timed out',
-      url: downloadUrl.substring(0, 80) + '...',
+      url: downloadUrl,
       timeoutMs,
       elapsedMs: Date.now() - startTime,
     }));
   }, timeoutMs);
 
   try {
-    const response = await fetch(urlWithToken, {
+    // Use Authorization: Bearer header (not query param)
+    const response = await fetch(downloadUrl, {
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${downloadToken}`,
+      },
       signal: controller.signal,
     });
 
@@ -117,13 +120,11 @@ export async function downloadRecording(
 ): Promise<ArrayBuffer> {
   const startTime = Date.now();
 
-  // Append access_token as query parameter (Zoom's recommended approach for download tokens)
-  const urlWithToken = `${downloadUrl}?access_token=${downloadToken}`;
-
   console.log(JSON.stringify({
     level: 'info',
     message: 'Starting recording download from Zoom',
-    url: downloadUrl.substring(0, 80) + '...',
+    download_url: downloadUrl,
+    tokenLength: downloadToken.length,
     timeoutMs,
   }));
 
@@ -134,15 +135,19 @@ export async function downloadRecording(
     console.log(JSON.stringify({
       level: 'error',
       message: 'Recording download timed out',
-      url: downloadUrl.substring(0, 80) + '...',
+      url: downloadUrl,
       timeoutMs,
       elapsedMs: Date.now() - startTime,
     }));
   }, timeoutMs);
 
   try {
-    const response = await fetch(urlWithToken, {
+    // Use Authorization: Bearer header (not query param)
+    const response = await fetch(downloadUrl, {
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${downloadToken}`,
+      },
       signal: controller.signal,
     });
 
