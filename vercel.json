@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "app/api/webhooks/zoom/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/jobs/process-transcript/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}

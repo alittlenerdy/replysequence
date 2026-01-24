@@ -14,6 +14,7 @@ import type { RawEvent } from '@/lib/db/schema';
 
 // Disable body parsing to access raw body for signature verification
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // 60 second timeout
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
