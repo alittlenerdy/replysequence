@@ -2,7 +2,6 @@ import { db, meetings, rawEvents, transcripts } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
-import { getRecordingWithToken } from '@/lib/zoom/api-client';
 import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
@@ -305,13 +304,21 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     });
   }
 
-  // If transcript is available, download it directly via Zoom API
-  if (transcriptFile?.download_url) {
+  // If transcript is available, download it using download_token from payload
+  const downloadToken = payload.payload?.download_token;
+  if (transcriptFile?.download_url && downloadToken) {
     await fetchAndStoreTranscript(
       meetingId,
+      transcriptFile.download_url,
+      downloadToken,
       rawEvent.id,
       zoomMeetingId
     );
+  } else if (transcriptFile?.download_url && !downloadToken) {
+    log('warn', 'Transcript available but no download_token', {
+      rawEventId: rawEvent.id,
+      zoomMeetingId,
+    });
   } else {
     // No transcript available, mark meeting as ready (no transcript to fetch)
     await db
@@ -354,30 +361,31 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 
   const zoomMeetingId = recordingObject.uuid;
 
-  // Get password from payload.object.password (used as ?pwd= query param)
-  const password = recordingObject.password;
+  // Get download_token from payload.payload.download_token
+  const downloadToken = payload.payload?.download_token;
 
   // Find transcript file in recording_files
   const transcriptFile = recordingObject.recording_files?.find(
     (f) => f.file_type === 'TRANSCRIPT' && f.status === 'completed'
   );
 
-  // Log the FULL payload details for debugging
+  // Log the payload details for debugging
   log('info', 'Processing recording.transcript_completed', {
     rawEventId: rawEvent.id,
     zoomMeetingId,
-    hasPassword: !!password,
-    password: password || 'missing',
+    hasDownloadToken: !!downloadToken,
+    downloadTokenLength: downloadToken?.length || 0,
     hasTranscriptFile: !!transcriptFile,
     transcriptUrl: transcriptFile?.download_url || 'missing',
     transcriptFileSize: transcriptFile?.file_size || 0,
   });
 
-  if (!password) {
-    log('warn', 'No password in transcript_completed payload', {
+  if (!downloadToken) {
+    log('error', 'No download_token in payload', {
       rawEventId: rawEvent.id,
       zoomMeetingId,
     });
+    return { success: false, action: 'failed', error: 'Missing download_token' };
   }
 
   if (!transcriptFile?.download_url) {
@@ -434,9 +442,11 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     meetingId = existingMeeting.id;
   }
 
-  // Download transcript directly via Zoom API
+  // Download transcript directly using download_token from webhook
   await fetchAndStoreTranscript(
     meetingId,
+    transcriptFile.download_url,
+    downloadToken,
     rawEvent.id,
     zoomMeetingId
   );
@@ -452,20 +462,24 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 }
 
 /**
- * Download and store transcript directly (no queue)
- * Uses Zoom API to get download_access_token
+ * Download and store transcript directly
+ * Uses download_token from webhook payload
  */
 async function fetchAndStoreTranscript(
   meetingId: string,
+  transcriptUrl: string,
+  downloadToken: string,
   rawEventId: string,
-  zoomMeetingUuid: string
+  zoomMeetingId: string
 ): Promise<void> {
   const startTime = Date.now();
 
-  log('info', 'Fetching transcript via Zoom API', {
+  log('info', 'Downloading transcript', {
     rawEventId,
     meetingId,
-    zoomMeetingUuid,
+    zoomMeetingId,
+    transcriptUrl,
+    downloadTokenLength: downloadToken.length,
   });
 
   try {
@@ -475,22 +489,8 @@ async function fetchAndStoreTranscript(
       .set({ status: 'processing', updatedAt: new Date() })
       .where(eq(meetings.id, meetingId));
 
-    // Get download_access_token from Zoom API
-    const { transcriptUrl, downloadAccessToken } = await getRecordingWithToken(zoomMeetingUuid);
-
-    if (!transcriptUrl) {
-      throw new Error('No transcript URL in Zoom API response');
-    }
-
-    log('info', 'Got download token from Zoom API', {
-      rawEventId,
-      meetingId,
-      transcriptUrl,
-      tokenLength: downloadAccessToken.length,
-    });
-
     // Download transcript with access_token query param
-    const vttContent = await downloadTranscript(transcriptUrl, downloadAccessToken);
+    const vttContent = await downloadTranscript(transcriptUrl, downloadToken);
 
     log('info', 'Transcript downloaded', {
       rawEventId,
@@ -561,7 +561,7 @@ async function fetchAndStoreTranscript(
     log('error', 'Transcript download/store failed', {
       rawEventId,
       meetingId,
-      zoomMeetingUuid,
+      zoomMeetingId,
       error: errorMessage,
       latencyMs: Date.now() - startTime,
     });
