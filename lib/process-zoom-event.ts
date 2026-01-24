@@ -1,6 +1,7 @@
 import { db, meetings, rawEvents } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { addTranscriptJob } from '@/lib/queue/transcript-queue';
+import { getRecordingDetails } from '@/lib/zoom/api-client';
 import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
@@ -303,30 +304,40 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     });
   }
 
-  // If transcript is available, enqueue job to fetch it
-  // Use download_token from webhook payload for authentication (no OAuth needed)
-  const downloadToken = recordingObject.download_token;
-  if (transcriptFile?.download_url && downloadToken) {
-    const job = await addTranscriptJob({
-      meetingId,
-      zoomMeetingId,
-      transcriptDownloadUrl: transcriptFile.download_url,
-      downloadToken,
-    });
+  // If transcript is available, fetch download token from API and enqueue job
+  if (transcriptFile?.download_url) {
+    try {
+      log('info', 'Fetching recording details from Zoom API', {
+        rawEventId: rawEvent.id,
+        zoomMeetingId,
+      });
 
-    log('info', 'Transcript job enqueued from recording.completed', {
-      rawEventId: rawEvent.id,
-      meetingId,
-      zoomMeetingId,
-      jobId: job.id,
-      latencyMs: Date.now() - startTime,
-    });
-  } else if (transcriptFile?.download_url && !downloadToken) {
-    log('warn', 'Transcript available but no download_token in payload', {
-      rawEventId: rawEvent.id,
-      meetingId,
-      zoomMeetingId,
-    });
+      const recordingDetails = await getRecordingDetails(zoomMeetingId);
+
+      const job = await addTranscriptJob({
+        meetingId,
+        zoomMeetingId,
+        transcriptDownloadUrl: recordingDetails.transcriptUrl || transcriptFile.download_url,
+        downloadToken: recordingDetails.downloadToken,
+      });
+
+      log('info', 'Transcript job enqueued from recording.completed', {
+        rawEventId: rawEvent.id,
+        meetingId,
+        zoomMeetingId,
+        jobId: job.id,
+        latencyMs: Date.now() - startTime,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log('error', 'Failed to fetch recording details for transcript', {
+        rawEventId: rawEvent.id,
+        meetingId,
+        zoomMeetingId,
+        error: errorMessage,
+      });
+      // Don't fail the whole event - transcript can be retried later
+    }
   } else {
     // No transcript available, mark meeting as ready (no transcript to fetch)
     await db
@@ -353,7 +364,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
 
 /**
  * Process a recording.transcript_completed event
- * Enqueues background job to fetch transcript (avoids webhook timeout)
+ * Fetches download token from Zoom API and enqueues background job
  */
 async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessResult> {
   const startTime = Date.now();
@@ -369,27 +380,10 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 
   const zoomMeetingId = recordingObject.uuid;
 
-  // Find transcript file in the payload
-  const transcriptFile = recordingObject.recording_files?.find(
-    (f) => f.file_type === 'TRANSCRIPT' && f.status === 'completed'
-  );
-
   log('info', 'Processing recording.transcript_completed', {
     rawEventId: rawEvent.id,
     zoomMeetingId,
-    hasTranscript: !!transcriptFile,
-    transcriptUrl: transcriptFile?.download_url ? 'present' : 'missing',
   });
-
-  if (!transcriptFile?.download_url) {
-    log('warn', 'No transcript file in transcript_completed event', {
-      rawEventId: rawEvent.id,
-      zoomMeetingId,
-      fileCount: recordingObject.recording_files?.length || 0,
-      fileTypes: recordingObject.recording_files?.map((f) => f.file_type) || [],
-    });
-    return { success: true, action: 'skipped' };
-  }
 
   // Find existing meeting by zoom_meeting_id
   const [existingMeeting] = await db
@@ -401,7 +395,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
   let meetingId: string;
 
   if (!existingMeeting) {
-    // Meeting doesn't exist yet - create it with transcript URL
+    // Meeting doesn't exist yet - create it
     log('info', 'Meeting not found, creating from transcript_completed', {
       rawEventId: rawEvent.id,
       zoomMeetingId,
@@ -415,42 +409,48 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
         topic: recordingObject.topic || 'Untitled Meeting',
         startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,
         duration: recordingObject.duration || null,
-        transcriptDownloadUrl: transcriptFile.download_url,
         status: 'pending',
       })
       .returning();
 
     meetingId = newMeeting.id;
   } else {
-    // Meeting exists - update with transcript URL
-    await db
-      .update(meetings)
-      .set({
-        transcriptDownloadUrl: transcriptFile.download_url,
-        status: 'pending',
-        updatedAt: new Date(),
-      })
-      .where(eq(meetings.id, existingMeeting.id));
-
     meetingId = existingMeeting.id;
   }
 
-  // Use download_token from webhook payload for authentication (no OAuth needed)
-  const downloadToken = recordingObject.download_token;
-  if (!downloadToken) {
-    log('error', 'No download_token in transcript_completed payload', {
+  // Fetch recording details from Zoom API to get download token
+  // The webhook doesn't include the download_token, so we need to call the API
+  log('info', 'Fetching recording details from Zoom API', {
+    rawEventId: rawEvent.id,
+    zoomMeetingId,
+  });
+
+  const recordingDetails = await getRecordingDetails(zoomMeetingId);
+
+  if (!recordingDetails.transcriptUrl) {
+    log('warn', 'No transcript URL in recording details', {
       rawEventId: rawEvent.id,
       zoomMeetingId,
     });
-    return { success: false, action: 'failed', error: 'Missing download_token in payload' };
+    return { success: true, action: 'skipped' };
   }
+
+  // Update meeting with transcript URL
+  await db
+    .update(meetings)
+    .set({
+      transcriptDownloadUrl: recordingDetails.transcriptUrl,
+      status: 'pending',
+      updatedAt: new Date(),
+    })
+    .where(eq(meetings.id, meetingId));
 
   // Enqueue transcript job (processed by background worker)
   const job = await addTranscriptJob({
     meetingId,
     zoomMeetingId,
-    transcriptDownloadUrl: transcriptFile.download_url,
-    downloadToken,
+    transcriptDownloadUrl: recordingDetails.transcriptUrl,
+    downloadToken: recordingDetails.downloadToken,
   });
 
   log('info', 'Transcript job enqueued', {
