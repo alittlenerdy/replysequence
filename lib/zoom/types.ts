@@ -81,11 +81,11 @@ export interface UrlValidationPayload {
 export interface RecordingCompletedPayload {
   event: 'recording.completed';
   event_ts: number;
+  // Download token at root level for authenticated file downloads
+  download_token?: string;
   payload: {
     account_id: string;
     object: RecordingObject;
-    // Download token for authenticated file downloads
-    download_token?: string;
   };
 }
 
@@ -94,11 +94,11 @@ export interface RecordingCompletedPayload {
 export interface RecordingTranscriptCompletedPayload {
   event: 'recording.transcript_completed';
   event_ts: number;
+  // Download token at root level for authenticated file downloads
+  download_token?: string;
   payload: {
     account_id: string;
     object: RecordingObject; // Contains recording_files with TRANSCRIPT type
-    // Download token for authenticated file downloads
-    download_token?: string;
   };
 }
 

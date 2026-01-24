@@ -305,7 +305,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
   }
 
   // If transcript is available, download it using download_token from payload
-  const downloadToken = payload.payload?.download_token;
+  const downloadToken = payload.download_token;
   if (transcriptFile?.download_url && downloadToken) {
     await fetchAndStoreTranscript(
       meetingId,
@@ -361,8 +361,8 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 
   const zoomMeetingId = recordingObject.uuid;
 
-  // Get download_token from payload.payload.download_token
-  const downloadToken = payload.payload?.download_token;
+  // Get download_token from payload.download_token
+  const downloadToken = payload.download_token;
 
   // Find transcript file in recording_files
   const transcriptFile = recordingObject.recording_files?.find(
