@@ -303,14 +303,21 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     });
   }
 
-  // If transcript is available, use download_token from webhook payload
+  // If transcript is available, enqueue job (token may be missing - try without auth)
   const downloadToken = payload.payload?.download_token;
-  if (transcriptFile?.download_url && downloadToken) {
+  if (transcriptFile?.download_url) {
+    if (!downloadToken) {
+      log('warn', 'No download_token in recording.completed - will try without auth', {
+        rawEventId: rawEvent.id,
+        zoomMeetingId,
+      });
+    }
+
     const job = await addTranscriptJob({
       meetingId,
       zoomMeetingId,
       transcriptDownloadUrl: transcriptFile.download_url,
-      downloadToken,
+      downloadToken: downloadToken || undefined,
     });
 
     log('info', 'Transcript job enqueued from recording.completed', {
@@ -318,13 +325,8 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       meetingId,
       zoomMeetingId,
       jobId: job.id,
+      hasToken: !!downloadToken,
       latencyMs: Date.now() - startTime,
-    });
-  } else if (transcriptFile?.download_url && !downloadToken) {
-    log('warn', 'Transcript available but no download_token in payload', {
-      rawEventId: rawEvent.id,
-      meetingId,
-      zoomMeetingId,
     });
   } else {
     // No transcript available, mark meeting as ready (no transcript to fetch)
@@ -403,12 +405,12 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     });
   }
 
+  // Log if token is missing but continue anyway - URL may be pre-authenticated
   if (!downloadToken) {
-    log('error', 'No download_token in transcript_completed payload', {
+    log('warn', 'No download_token in transcript_completed payload - will try without auth', {
       rawEventId: rawEvent.id,
       zoomMeetingId,
     });
-    return { success: false, action: 'failed', error: 'Missing download_token in payload' };
   }
 
   if (!transcriptFile?.download_url) {
@@ -465,12 +467,12 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     meetingId = existingMeeting.id;
   }
 
-  // Enqueue transcript job using download_token from webhook
+  // Enqueue transcript job (token may be undefined - will try without auth)
   const job = await addTranscriptJob({
     meetingId,
     zoomMeetingId,
     transcriptDownloadUrl: transcriptFile.download_url,
-    downloadToken,
+    downloadToken: downloadToken || undefined,
   });
 
   log('info', 'Transcript job enqueued', {

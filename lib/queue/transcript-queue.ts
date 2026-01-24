@@ -6,8 +6,8 @@ export interface TranscriptJobData {
   meetingId: string;
   zoomMeetingId: string;
   transcriptDownloadUrl: string;
-  // Download token provided by Zoom in the webhook payload
-  downloadToken: string;
+  // Download token provided by Zoom in the webhook payload (may be missing)
+  downloadToken?: string;
 }
 
 // Job result interface

@@ -7,7 +7,7 @@
  */
 export async function downloadTranscript(
   downloadUrl: string,
-  downloadToken: string,
+  downloadToken?: string,
   timeoutMs: number = 30000
 ): Promise<string> {
   const startTime = Date.now();
@@ -17,8 +17,8 @@ export async function downloadTranscript(
     level: 'info',
     message: 'Starting transcript download from Zoom',
     download_url: downloadUrl,
-    download_token: downloadToken,
-    tokenLength: downloadToken.length,
+    hasToken: !!downloadToken,
+    tokenLength: downloadToken?.length || 0,
     timeoutMs,
   }));
 
@@ -36,12 +36,23 @@ export async function downloadTranscript(
   }, timeoutMs);
 
   try {
-    // Use Authorization: Bearer header (not query param)
+    // Try without auth first (Zoom URLs may be pre-authenticated)
+    // If token provided, use Bearer header as fallback
+    const headers: Record<string, string> = {};
+    if (downloadToken) {
+      headers['Authorization'] = `Bearer ${downloadToken}`;
+    }
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Fetching transcript',
+      url: downloadUrl,
+      usingAuth: !!downloadToken,
+    }));
+
     const response = await fetch(downloadUrl, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${downloadToken}`,
-      },
+      headers,
       signal: controller.signal,
     });
 
