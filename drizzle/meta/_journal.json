@@ -22,6 +22,13 @@
       "when": 1769033979963,
       "tag": "0002_flimsy_chameleon",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1769297158056,
+      "tag": "0003_smiling_vivisector",
+      "breakpoints": true
     }
   ]
 }

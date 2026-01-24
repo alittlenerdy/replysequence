@@ -8,6 +8,7 @@ import {
   jsonb,
   index,
   uniqueIndex,
+  decimal,
 } from 'drizzle-orm/pg-core';
 
 // Meeting status enum values
@@ -119,6 +120,54 @@ export const rawEvents = pgTable(
   ]
 );
 
+// Draft status enum values
+export type DraftStatus = 'pending' | 'generating' | 'generated' | 'sent' | 'failed';
+
+// Prompt type enum values
+export type PromptType = 'discovery_call' | 'follow_up' | 'proposal' | 'custom';
+
+// Drafts table - stores AI-generated email drafts
+export const drafts = pgTable(
+  'drafts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    transcriptId: uuid('transcript_id')
+      .notNull()
+      .references(() => transcripts.id, { onDelete: 'cascade' }),
+    // Prompt configuration
+    promptType: varchar('prompt_type', { length: 50 }).$type<PromptType>().notNull(),
+    // Generated content
+    subject: text('subject'),
+    body: text('body'),
+    fullResponse: text('full_response'), // Raw response from Claude
+    // Model and cost tracking
+    model: varchar('model', { length: 100 }),
+    inputTokens: integer('input_tokens'),
+    outputTokens: integer('output_tokens'),
+    costUsd: decimal('cost_usd', { precision: 10, scale: 6 }), // Up to $9999.999999
+    latencyMs: integer('latency_ms'),
+    // Status and error tracking
+    status: varchar('status', { length: 20 }).$type<DraftStatus>().notNull().default('pending'),
+    errorMessage: text('error_message'),
+    // Email sending tracking
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+    sentTo: varchar('sent_to', { length: 255 }),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('drafts_meeting_id_idx').on(table.meetingId),
+    index('drafts_transcript_id_idx').on(table.transcriptId),
+    index('drafts_status_idx').on(table.status),
+    index('drafts_prompt_type_idx').on(table.promptType),
+    index('drafts_created_at_idx').on(table.createdAt),
+  ]
+);
+
 // Type exports for use in application code
 export type Meeting = typeof meetings.$inferSelect;
 export type NewMeeting = typeof meetings.$inferInsert;
@@ -126,3 +175,5 @@ export type Transcript = typeof transcripts.$inferSelect;
 export type NewTranscript = typeof transcripts.$inferInsert;
 export type RawEvent = typeof rawEvents.$inferSelect;
 export type NewRawEvent = typeof rawEvents.$inferInsert;
+export type Draft = typeof drafts.$inferSelect;
+export type NewDraft = typeof drafts.$inferInsert;

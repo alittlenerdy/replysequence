@@ -13,6 +13,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "bullmq": "^5.30.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
