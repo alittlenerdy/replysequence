@@ -73,3 +73,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-23 12:30] - Fetch download token from Zoom recordings API
+**Commit:** d7124b9
+**Files Changed:** lib/zoom/api-client.ts (new), lib/process-zoom-event.ts
+**Summary:** Webhook payload does NOT include download_token. Restored OAuth to call Zoom's GET /v2/meetings/{meetingId}/recordings API. Response includes download_access_token which we use to download transcripts. Created dedicated api-client.ts for Zoom API interactions.
+**Key Issues:** Previous assumption that webhook includes download_token was wrong.
+**Duration:** ~10 min
+
+---
