@@ -1,6 +1,7 @@
-import { db, meetings, rawEvents } from '@/lib/db';
+import { db, meetings, rawEvents, transcripts } from '@/lib/db';
 import { eq } from 'drizzle-orm';
-import { addTranscriptJob } from '@/lib/queue/transcript-queue';
+import { downloadTranscript } from '@/lib/transcript/downloader';
+import { parseVTT } from '@/lib/transcript/vtt-parser';
 import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
@@ -303,31 +304,16 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     });
   }
 
-  // If transcript is available, enqueue job (token may be missing - try without auth)
+  // If transcript is available, download it directly (no queue)
   const downloadToken = payload.payload?.download_token;
   if (transcriptFile?.download_url) {
-    if (!downloadToken) {
-      log('warn', 'No download_token in recording.completed - will try without auth', {
-        rawEventId: rawEvent.id,
-        zoomMeetingId,
-      });
-    }
-
-    const job = await addTranscriptJob({
+    await fetchAndStoreTranscript(
       meetingId,
-      zoomMeetingId,
-      transcriptDownloadUrl: transcriptFile.download_url,
-      downloadToken: downloadToken || undefined,
-    });
-
-    log('info', 'Transcript job enqueued from recording.completed', {
-      rawEventId: rawEvent.id,
-      meetingId,
-      zoomMeetingId,
-      jobId: job.id,
-      hasToken: !!downloadToken,
-      latencyMs: Date.now() - startTime,
-    });
+      transcriptFile.download_url,
+      downloadToken,
+      rawEvent.id,
+      zoomMeetingId
+    );
   } else {
     // No transcript available, mark meeting as ready (no transcript to fetch)
     await db
@@ -467,23 +453,138 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     meetingId = existingMeeting.id;
   }
 
-  // Enqueue transcript job (token may be undefined - will try without auth)
-  const job = await addTranscriptJob({
+  // Download transcript directly (no queue)
+  await fetchAndStoreTranscript(
     meetingId,
-    zoomMeetingId,
-    transcriptDownloadUrl: transcriptFile.download_url,
-    downloadToken: downloadToken || undefined,
-  });
+    transcriptFile.download_url,
+    downloadToken,
+    rawEvent.id,
+    zoomMeetingId
+  );
 
-  log('info', 'Transcript job enqueued', {
+  log('info', 'Transcript processed', {
     rawEventId: rawEvent.id,
     meetingId,
     zoomMeetingId,
-    jobId: job.id,
     latencyMs: Date.now() - startTime,
   });
 
   return { success: true, meetingId, action: existingMeeting ? 'updated' : 'created' };
+}
+
+/**
+ * Download and store transcript directly (no queue)
+ */
+async function fetchAndStoreTranscript(
+  meetingId: string,
+  transcriptUrl: string,
+  downloadToken: string | undefined,
+  rawEventId: string,
+  zoomMeetingId: string
+): Promise<void> {
+  const startTime = Date.now();
+
+  log('info', 'Downloading transcript directly', {
+    rawEventId,
+    meetingId,
+    zoomMeetingId,
+    transcriptUrl,
+    hasToken: !!downloadToken,
+  });
+
+  try {
+    // Update meeting status to processing
+    await db
+      .update(meetings)
+      .set({ status: 'processing', updatedAt: new Date() })
+      .where(eq(meetings.id, meetingId));
+
+    // Download transcript from Zoom
+    const vttContent = await downloadTranscript(transcriptUrl, downloadToken);
+
+    log('info', 'Transcript downloaded', {
+      rawEventId,
+      meetingId,
+      contentLength: vttContent.length,
+      latencyMs: Date.now() - startTime,
+    });
+
+    // Parse VTT to extract speaker segments
+    const { fullText, segments, wordCount } = parseVTT(vttContent);
+
+    log('info', 'Transcript parsed', {
+      rawEventId,
+      meetingId,
+      wordCount,
+      segmentCount: segments.length,
+    });
+
+    // Store transcript in database (upsert)
+    const [existingTranscript] = await db
+      .select()
+      .from(transcripts)
+      .where(eq(transcripts.meetingId, meetingId))
+      .limit(1);
+
+    if (existingTranscript) {
+      await db
+        .update(transcripts)
+        .set({
+          content: fullText,
+          vttContent,
+          speakerSegments: segments,
+          wordCount,
+          status: 'ready',
+          lastFetchError: null,
+          updatedAt: new Date(),
+        })
+        .where(eq(transcripts.id, existingTranscript.id));
+    } else {
+      await db
+        .insert(transcripts)
+        .values({
+          meetingId,
+          content: fullText,
+          vttContent,
+          speakerSegments: segments,
+          source: 'zoom',
+          wordCount,
+          status: 'ready',
+        });
+    }
+
+    // Update meeting status to ready
+    await db
+      .update(meetings)
+      .set({ status: 'ready', updatedAt: new Date() })
+      .where(eq(meetings.id, meetingId));
+
+    log('info', 'Transcript stored successfully', {
+      rawEventId,
+      meetingId,
+      wordCount,
+      totalLatencyMs: Date.now() - startTime,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    log('error', 'Transcript download/store failed', {
+      rawEventId,
+      meetingId,
+      zoomMeetingId,
+      error: errorMessage,
+      latencyMs: Date.now() - startTime,
+    });
+
+    // Update meeting status to failed
+    await db
+      .update(meetings)
+      .set({ status: 'failed', updatedAt: new Date() })
+      .where(eq(meetings.id, meetingId));
+
+    // Don't throw - let the event be marked as processed
+    // The error is logged and meeting status is set to failed
+  }
 }
 
 /**
