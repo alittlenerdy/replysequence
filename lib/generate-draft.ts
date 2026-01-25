@@ -276,10 +276,12 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
       };
 
       // Check for specific error types
-      if (lastError.message.includes('timeout') || lastError.name === 'TimeoutError') {
+      const errorCode = (lastError as NodeJS.ErrnoException).code;
+      if (lastError.message.includes('timeout') || lastError.name === 'TimeoutError' || errorCode === 'ETIMEDOUT' || errorCode === 'ESOCKETTIMEDOUT') {
         errorDetails.errorType = 'timeout';
         errorDetails.timeoutMs = CLAUDE_API_TIMEOUT_MS;
-        log('error', 'Claude API timeout', errorDetails);
+        errorDetails.errorCode = errorCode;
+        log('error', 'Claude API timed out after 60 seconds', errorDetails);
       } else if (lastError.message.includes('rate') || lastError.message.includes('429')) {
         errorDetails.errorType = 'rate_limit';
         log('warn', 'Claude API rate limited', errorDetails);

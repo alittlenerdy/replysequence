@@ -3,8 +3,8 @@ import Anthropic from '@anthropic-ai/sdk';
 // Singleton Claude client instance
 let claudeClient: Anthropic | null = null;
 
-// API timeout in milliseconds (25 seconds to stay under Vercel's 60s limit)
-export const CLAUDE_API_TIMEOUT_MS = 25000;
+// API timeout in milliseconds (60 seconds - Vercel function limit)
+export const CLAUDE_API_TIMEOUT_MS = 60000;
 
 /**
  * Get Claude API client with lazy initialization.
