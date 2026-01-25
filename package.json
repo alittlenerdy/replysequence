@@ -17,6 +17,7 @@
     "bullmq": "^5.30.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.45.1",
+    "framer-motion": "^12.29.0",
     "ioredis": "^5.4.2",
     "lightningcss": "^1.30.2",
     "next": "16.1.2",

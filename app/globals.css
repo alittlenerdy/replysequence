@@ -4,8 +4,9 @@
 
 :root {
   /* Background */
-  --background: #FFFFFF;
-  --background-alt: #F8F9FA;
+  --background: #F8F9FA;
+  --background-alt: #F5F5F5;
+  --background-pure: #FFFFFF;
 
   /* Mint (Primary Brand) */
   --mint: #00D9C0;
@@ -25,23 +26,46 @@
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
-/* CTA Button Base Styles */
+/* Floating Gradient Circles - Nike Pegasus Inspired */
 @layer components {
+  .floating-gradient {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.08;
+    background: radial-gradient(circle, #000000 0%, transparent 70%);
+  }
+
+  .floating-gradient-mint {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.1;
+    background: radial-gradient(circle, var(--mint) 0%, transparent 70%);
+  }
+
+  /* CTA Button with Gradient */
   .btn-cta {
-    @apply px-8 py-4 rounded-full font-semibold text-lg text-white transition-all;
-    background-color: var(--neon);
+    @apply px-8 py-4 rounded-full font-bold text-lg text-white transition-all duration-300;
+    background: radial-gradient(circle at 30% 30%, #FF006E 0%, #E0005E 100%);
     border: 2px solid #000000;
+    box-shadow: 0 4px 20px rgba(255, 0, 110, 0.3);
   }
 
   .btn-cta:hover {
-    background-color: var(--neon-hover);
+    background: radial-gradient(circle at 70% 70%, #FF006E 0%, #E0005E 100%);
+    transform: scale(1.02);
+    box-shadow: 0 6px 25px rgba(255, 0, 110, 0.4);
   }
 
   .btn-secondary {
-    @apply px-8 py-4 rounded-full font-semibold text-lg transition-all;
+    @apply px-8 py-4 rounded-full font-bold text-lg transition-all duration-300;
     background-color: transparent;
     border: 2px solid #000000;
     color: var(--text-primary);
@@ -49,5 +73,106 @@ body {
 
   .btn-secondary:hover {
     background-color: var(--background-alt);
+    transform: scale(1.02);
   }
+
+  /* Logo with black border effect */
+  .logo-text {
+    color: var(--mint);
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000,
+      2px 2px 0 #000;
+  }
+}
+
+/* Floating animation keyframes */
+@keyframes float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.05); }
+  50% { transform: translate(-20px, -80px) scale(0.95); }
+  75% { transform: translate(40px, -40px) scale(1.02); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-40px, -30px) scale(0.98); }
+  50% { transform: translate(30px, -60px) scale(1.03); }
+  75% { transform: translate(-20px, -30px) scale(0.97); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -50px) scale(1.04); }
+  66% { transform: translate(-30px, -100px) scale(0.96); }
+}
+
+@keyframes morph {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+  75% { border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%; }
+}
+
+/* Particle animation for hero */
+@keyframes particle-in {
+  0% {
+    opacity: 0;
+    transform: translate(var(--start-x), var(--start-y)) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes particle-out {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--end-x), var(--end-y)) scale(0.5);
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .floating-gradient,
+  .floating-gradient-mint {
+    animation: none !important;
+  }
+
+  .btn-cta:hover,
+  .btn-secondary:hover {
+    transform: none !important;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Gradient overlay for sections */
+.gradient-overlay {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.02) 50%,
+    transparent 100%
+  );
+}
+
+/* Subtle black gradient behind CTAs */
+.cta-gradient-bg {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.03) 0%,
+    transparent 70%
+  );
 }

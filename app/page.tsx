@@ -1,10 +1,18 @@
+'use client';
+
+import FloatingGradients from '@/components/FloatingGradients';
+import HeroAnimation from '@/components/HeroAnimation';
+
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-text-primary">
+    <div className="min-h-screen bg-background text-text-primary font-roboto relative">
+      {/* Floating gradient circles */}
+      <FloatingGradients />
+
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-black/5">
+      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold text-mint">
+          <div className="text-2xl font-black logo-text">
             ReplySequence
           </div>
           <a
@@ -19,16 +27,16 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
+      <section className="pt-32 pb-20 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Copy */}
             <div>
               <div className="inline-block mb-4 px-4 py-2 rounded-full border-2 border-mint bg-mint-tint">
-                <span className="text-sm text-mint-hover font-medium">Zoom Meeting Automation</span>
+                <span className="text-sm text-mint-hover font-bold">Zoom Meeting Automation</span>
               </div>
 
-              <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight text-text-primary">
+              <h1 className="text-5xl lg:text-6xl font-black mb-6 leading-tight text-text-primary">
                 Turn Your Zoom Calls Into{' '}
                 <span className="text-mint">
                   Perfect Follow-Ups
@@ -39,7 +47,7 @@ export default function LandingPage() {
                 ReplySequence turns your Zoom calls into high-quality, on-brand follow-up emails that are automatically drafted from transcripts, logged to your CRM, and ready to send with almost no manual effort.
               </p>
 
-              <div className="flex gap-4 mb-8">
+              <div className="flex flex-wrap gap-4 mb-8">
                 <a
                   href="https://tally.so/r/D4pv0j"
                   target="_blank"
@@ -53,51 +61,29 @@ export default function LandingPage() {
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 text-text-caption">
+              <div className="flex items-center gap-3 text-text-caption">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-mint border-2 border-white" />
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-mint to-mint-hover border-2 border-background"
+                    />
                   ))}
                 </div>
-                <span className="text-sm">Join 1,200+ sales teams on the waitlist</span>
+                <span className="text-sm font-medium">Join 1,200+ sales teams on the waitlist</span>
               </div>
             </div>
 
-            {/* Right: Mockup */}
+            {/* Right: Animated Hero */}
             <div className="relative">
-              <div className="absolute inset-0 bg-mint/10 blur-3xl rounded-full" />
-              <div className="relative bg-background-alt rounded-2xl p-8 border-2 border-black/10">
-                {/* Placeholder for mockup */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 rounded-full bg-mint" />
-                    <div>
-                      <div className="h-3 w-32 bg-mint/50 rounded" />
-                      <div className="h-2 w-24 bg-black/10 rounded mt-2" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="h-3 w-full bg-black/10 rounded" />
-                    <div className="h-3 w-5/6 bg-black/10 rounded" />
-                    <div className="h-3 w-4/6 bg-black/10 rounded" />
-                  </div>
-
-                  <div className="pt-4 border-t border-black/10">
-                    <div className="flex gap-2">
-                      <div className="flex-1 h-10 rounded-lg bg-mint-tint border border-mint/30" />
-                      <div className="w-24 h-10 rounded-lg bg-neon border-2 border-black" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <HeroAnimation />
             </div>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="py-20 px-6 bg-background-alt">
+      <section className="py-20 px-6 bg-background-alt relative z-10 gradient-overlay">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -117,7 +103,10 @@ export default function LandingPage() {
                 icon: '✨'
               }
             ].map((feature, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white border-2 border-black/10 hover:border-mint transition-colors">
+              <div
+                key={i}
+                className="p-6 rounded-2xl bg-background-pure border-2 border-black/10 hover:border-mint hover:shadow-lg hover:shadow-mint/10 transition-all duration-300"
+              >
                 <div className="text-4xl mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-bold mb-2 text-mint">
                   {feature.title}
@@ -130,9 +119,9 @@ export default function LandingPage() {
       </section>
 
       {/* Email Capture */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4 text-text-primary">
+          <h2 className="text-4xl font-black mb-4 text-text-primary">
             Join the <span className="text-mint">Beta Waitlist</span>
           </h2>
           <p className="text-text-secondary mb-8">
@@ -140,7 +129,7 @@ export default function LandingPage() {
           </p>
 
           {/* CTA Button */}
-          <div className="bg-background-alt rounded-2xl p-12 border-2 border-black/10">
+          <div className="bg-background-alt rounded-2xl p-12 border-2 border-black/10 cta-gradient-bg">
             <a
               href="https://tally.so/r/D4pv0j"
               target="_blank"
@@ -155,22 +144,22 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof */}
-      <section className="py-20 px-6 bg-background-alt">
+      <section className="py-20 px-6 bg-background-alt relative z-10">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-text-caption text-sm mb-8">Trusted by sales teams at</p>
+          <p className="text-text-caption text-sm mb-8 font-medium">Trusted by sales teams at</p>
           <div className="flex flex-wrap justify-center items-center gap-12">
             {['TechCorp', 'SalesHub', 'GrowthCo', 'ScaleUp', 'CloudBase'].map((company, i) => (
-              <div key={i} className="text-2xl font-bold text-text-caption">{company}</div>
+              <div key={i} className="text-2xl font-bold text-text-caption/50">{company}</div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-black/10">
+      <footer className="py-12 px-6 border-t border-black/10 relative z-10">
         <div className="max-w-7xl mx-auto text-center text-text-caption text-sm">
           <div className="mb-4">
-            <span className="text-2xl font-bold text-mint">
+            <span className="text-2xl font-black logo-text">
               ReplySequence
             </span>
           </div>
