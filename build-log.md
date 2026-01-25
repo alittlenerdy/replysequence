@@ -100,3 +100,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-24 02:45] - Wire draft generation into Zoom webhook flow
+**Commit:** ebf7b05
+**Files Changed:** lib/process-zoom-event.ts
+**Summary:** Integrated generateDraft() into fetchAndStoreTranscript(). After transcript is downloaded and stored, automatically calls Claude API to generate follow-up email draft. Errors are caught and logged but don't break the webhook flow - draft generation failure won't prevent transcript storage. Uses meeting topic, date, host name, and full transcript text as context.
+**Key Issues:** None - graceful error handling ensures webhook reliability.
+**Duration:** ~5 min
+
+---
