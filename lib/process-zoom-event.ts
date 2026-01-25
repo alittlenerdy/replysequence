@@ -574,55 +574,68 @@ async function fetchAndStoreTranscript(
 
     // Generate email draft from transcript
     // This runs after transcript is saved - errors here won't affect transcript storage
+    log('info', 'Preparing draft generation', { meetingId, transcriptId });
+
     try {
       // Get meeting details for draft context
+      log('info', 'Fetching meeting for draft context', { meetingId });
+
       const [meeting] = await db
         .select()
         .from(meetings)
         .where(eq(meetings.id, meetingId))
         .limit(1);
 
-      if (meeting) {
-        log('info', 'Starting draft generation', {
+      log('info', 'Meeting fetch result', {
+        meetingId,
+        found: !!meeting,
+        topic: meeting?.topic || 'not found',
+      });
+
+      if (!meeting) {
+        log('error', 'Meeting not found for draft generation', { meetingId, transcriptId });
+        return; // Exit early - can't generate draft without meeting context
+      }
+
+      log('info', 'Starting draft generation', {
+        meetingId,
+        transcriptId,
+        topic: meeting.topic,
+      });
+
+      const draftResult = await generateDraft({
+        meetingId,
+        transcriptId,
+        context: {
+          meetingTopic: meeting.topic || 'Meeting',
+          meetingDate: meeting.startTime
+            ? meeting.startTime.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })
+            : new Date().toLocaleDateString('en-US'),
+          hostName: meeting.hostEmail.split('@')[0] || 'Host',
+          transcript: fullText,
+          senderName: meeting.hostEmail.split('@')[0],
+        },
+      });
+
+      if (draftResult.success) {
+        log('info', 'Draft generated successfully', {
           meetingId,
           transcriptId,
-          topic: meeting.topic,
+          draftId: draftResult.draftId,
+          costUsd: draftResult.costUsd?.toFixed(6),
+          latencyMs: draftResult.latencyMs,
         });
-
-        const draftResult = await generateDraft({
+      } else {
+        log('warn', 'Draft generation failed', {
           meetingId,
           transcriptId,
-          context: {
-            meetingTopic: meeting.topic || 'Meeting',
-            meetingDate: meeting.startTime
-              ? meeting.startTime.toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              : new Date().toLocaleDateString('en-US'),
-            hostName: meeting.hostEmail.split('@')[0] || 'Host',
-            transcript: fullText,
-            senderName: meeting.hostEmail.split('@')[0],
-          },
+          error: draftResult.error,
         });
-
-        if (draftResult.success) {
-          log('info', 'Draft generated successfully', {
-            meetingId,
-            transcriptId,
-            draftId: draftResult.draftId,
-            costUsd: draftResult.costUsd?.toFixed(6),
-            latencyMs: draftResult.latencyMs,
-          });
-        } else {
-          log('warn', 'Draft generation failed', {
-            meetingId,
-            transcriptId,
-            error: draftResult.error,
-          });
-        }
       }
     } catch (draftError) {
       // Log but don't throw - draft generation failure shouldn't break the flow
