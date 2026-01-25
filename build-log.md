@@ -136,3 +136,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-25 14:55] - Fix Claude API timeout using Promise.race
+**Commit:** b92ae6b
+**Files Changed:** lib/claude-api.ts
+**Summary:** Fixed Claude API call hanging indefinitely in Vercel serverless. Root cause: AbortController + setTimeout doesn't work reliably because setTimeout callbacks may not fire while event loop is blocked on network I/O. Fix: Use Promise.race between fetch promise and timeout promise. Added verbose logging at each step: before AbortController creation, before timeout setup, before fetch starts, after fetch completes, on timeout trigger, and on any error.
+**Key Issues:** setTimeout in serverless doesn't fire while blocked on I/O - Promise.race is more reliable.
+**Duration:** ~10 min
+
+---
