@@ -63,15 +63,7 @@ export default function LandingPage() {
                 </button>
               </div>
 
-              <div className="flex items-center gap-3 text-text-caption">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-mint to-mint-hover border-2 border-background"
-                    />
-                  ))}
-                </div>
+              <div className="text-text-caption">
                 <span className="text-sm font-medium">Join 1,200+ sales teams on the waitlist</span>
               </div>
             </div>
