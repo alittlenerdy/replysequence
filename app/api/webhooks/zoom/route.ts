@@ -377,99 +377,160 @@ async function handleTranscriptCompleted(
   rawBody: string,
   startTime: number
 ): Promise<NextResponse> {
-  console.log(JSON.stringify({
-    level: 'info',
-    message: 'handleTranscriptCompleted started',
-    hasPayload: !!payload.payload,
-    hasObject: !!payload.payload?.object,
-  }));
-
-  const { object } = payload.payload;
-  const eventId = `recording.transcript_completed-${object.uuid}-${payload.event_ts}`;
-
-  console.log(JSON.stringify({
-    level: 'info',
-    message: 'Attempting to acquire event lock',
-    eventId,
-    zoomMeetingId: object.uuid,
-  }));
-
-  // Idempotency check - prevent duplicate processing
-  const acquired = await acquireEventLock(eventId);
-
-  console.log(JSON.stringify({
-    level: 'info',
-    message: 'Event lock result for transcript_completed',
-    eventId,
-    acquired,
-  }));
-
-  if (!acquired) {
+  // Wrap entire handler in try-catch to catch any unexpected errors
+  try {
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Duplicate recording.transcript_completed event ignored',
+      message: 'handleTranscriptCompleted started',
+      hasPayload: !!payload.payload,
+      hasObject: !!payload.payload?.object,
+    }));
+
+    // Defensive check for payload structure
+    if (!payload.payload?.object?.uuid) {
+      console.log(JSON.stringify({
+        level: 'error',
+        message: 'Invalid transcript_completed payload structure',
+        hasPayload: !!payload.payload,
+        hasObject: !!payload.payload?.object,
+        hasUuid: !!payload.payload?.object?.uuid,
+      }));
+      return NextResponse.json(
+        { received: true, error: 'Invalid payload structure' },
+        { status: 200 }
+      );
+    }
+
+    const { object } = payload.payload;
+    const eventId = `recording.transcript_completed-${object.uuid}-${payload.event_ts}`;
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Attempting to acquire event lock',
       eventId,
       zoomMeetingId: object.uuid,
     }));
 
-    const [existingEvent] = await db
-      .select({ id: rawEvents.id })
-      .from(rawEvents)
-      .where(eq(rawEvents.zoomEventId, eventId))
-      .limit(1);
-
-    return NextResponse.json(
-      {
-        received: true,
-        duplicate: true,
-        eventId: existingEvent?.id || null,
-      },
-      { status: 200 }
-    );
-  }
-
-  // Store raw event in database
-  const rawEvent = await storeRawEvent(
-    'recording.transcript_completed',
-    eventId,
-    rawBody
-  );
-
-  console.log(JSON.stringify({
-    level: 'info',
-    message: 'recording.transcript_completed event stored',
-    rawEventId: rawEvent.id,
-    zoomMeetingId: object.uuid,
-    duration: Date.now() - startTime,
-  }));
-
-  // Process event synchronously before returning
-  try {
-    const result = await processZoomEvent(rawEvent);
+    // Idempotency check - prevent duplicate processing
+    let acquired: boolean;
+    try {
+      acquired = await acquireEventLock(eventId);
+    } catch (lockError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        message: 'Failed to acquire event lock (Redis error)',
+        eventId,
+        error: lockError instanceof Error ? lockError.message : String(lockError),
+        stack: lockError instanceof Error ? lockError.stack : undefined,
+      }));
+      // Continue without lock - better to process duplicate than fail
+      acquired = true;
+    }
 
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Transcript event processing completed',
-      rawEventId: rawEvent.id,
-      action: result.action,
-      meetingId: result.meetingId,
+      message: 'Event lock result for transcript_completed',
+      eventId,
+      acquired,
     }));
-  } catch (error) {
+
+    if (!acquired) {
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'Duplicate recording.transcript_completed event ignored',
+        eventId,
+        zoomMeetingId: object.uuid,
+      }));
+
+      const [existingEvent] = await db
+        .select({ id: rawEvents.id })
+        .from(rawEvents)
+        .where(eq(rawEvents.zoomEventId, eventId))
+        .limit(1);
+
+      return NextResponse.json(
+        {
+          received: true,
+          duplicate: true,
+          eventId: existingEvent?.id || null,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Store raw event in database
+    let rawEvent: RawEvent;
+    try {
+      rawEvent = await storeRawEvent(
+        'recording.transcript_completed',
+        eventId,
+        rawBody
+      );
+    } catch (storeError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        message: 'Failed to store raw event',
+        eventId,
+        error: storeError instanceof Error ? storeError.message : String(storeError),
+        stack: storeError instanceof Error ? storeError.stack : undefined,
+      }));
+      return NextResponse.json(
+        { received: true, error: 'Failed to store event' },
+        { status: 200 }
+      );
+    }
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'recording.transcript_completed event stored',
+      rawEventId: rawEvent.id,
+      zoomMeetingId: object.uuid,
+      duration: Date.now() - startTime,
+    }));
+
+    // Process event synchronously before returning
+    try {
+      const result = await processZoomEvent(rawEvent);
+
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'Transcript event processing completed',
+        rawEventId: rawEvent.id,
+        action: result.action,
+        meetingId: result.meetingId,
+      }));
+    } catch (error) {
+      console.log(JSON.stringify({
+        level: 'error',
+        message: 'Transcript event processing failed',
+        rawEventId: rawEvent.id,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      }));
+    }
+
+    // Return success with event ID
+    return NextResponse.json(
+      {
+        received: true,
+        eventId: rawEvent.id,
+        zoomMeetingId: object.uuid,
+      },
+      { status: 200 }
+    );
+  } catch (unexpectedError) {
+    // Catch-all for any unexpected errors in the handler
     console.log(JSON.stringify({
       level: 'error',
-      message: 'Transcript event processing failed',
-      rawEventId: rawEvent.id,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      message: 'handleTranscriptCompleted crashed unexpectedly',
+      error: unexpectedError instanceof Error ? unexpectedError.message : String(unexpectedError),
+      stack: unexpectedError instanceof Error ? unexpectedError.stack : undefined,
+      duration: Date.now() - startTime,
     }));
-  }
 
-  // Return success with event ID
-  return NextResponse.json(
-    {
-      received: true,
-      eventId: rawEvent.id,
-      zoomMeetingId: object.uuid,
-    },
-    { status: 200 }
-  );
+    return NextResponse.json(
+      { received: true, error: 'Handler crashed' },
+      { status: 200 }
+    );
+  }
 }
