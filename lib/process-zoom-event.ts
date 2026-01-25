@@ -2,6 +2,7 @@ import { db, meetings, rawEvents, transcripts } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
+import { generateDraft } from '@/lib/generate-draft';
 import type { RawEvent, NewMeeting } from '@/lib/db/schema';
 import type {
   MeetingEndedPayload,
@@ -516,6 +517,8 @@ async function fetchAndStoreTranscript(
       .where(eq(transcripts.meetingId, meetingId))
       .limit(1);
 
+    let transcriptId: string;
+
     if (existingTranscript) {
       await db
         .update(transcripts)
@@ -529,8 +532,9 @@ async function fetchAndStoreTranscript(
           updatedAt: new Date(),
         })
         .where(eq(transcripts.id, existingTranscript.id));
+      transcriptId = existingTranscript.id;
     } else {
-      await db
+      const [newTranscript] = await db
         .insert(transcripts)
         .values({
           meetingId,
@@ -540,7 +544,9 @@ async function fetchAndStoreTranscript(
           source: 'zoom',
           wordCount,
           status: 'ready',
-        });
+        })
+        .returning();
+      transcriptId = newTranscript.id;
     }
 
     // Update meeting status to ready
@@ -552,9 +558,71 @@ async function fetchAndStoreTranscript(
     log('info', 'Transcript stored successfully', {
       rawEventId,
       meetingId,
+      transcriptId,
       wordCount,
       totalLatencyMs: Date.now() - startTime,
     });
+
+    // Generate email draft from transcript
+    // This runs after transcript is saved - errors here won't affect transcript storage
+    try {
+      // Get meeting details for draft context
+      const [meeting] = await db
+        .select()
+        .from(meetings)
+        .where(eq(meetings.id, meetingId))
+        .limit(1);
+
+      if (meeting) {
+        log('info', 'Starting draft generation', {
+          meetingId,
+          transcriptId,
+          topic: meeting.topic,
+        });
+
+        const draftResult = await generateDraft({
+          meetingId,
+          transcriptId,
+          context: {
+            meetingTopic: meeting.topic || 'Meeting',
+            meetingDate: meeting.startTime
+              ? meeting.startTime.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
+              : new Date().toLocaleDateString('en-US'),
+            hostName: meeting.hostEmail.split('@')[0] || 'Host',
+            transcript: fullText,
+            senderName: meeting.hostEmail.split('@')[0],
+          },
+        });
+
+        if (draftResult.success) {
+          log('info', 'Draft generated successfully', {
+            meetingId,
+            transcriptId,
+            draftId: draftResult.draftId,
+            costUsd: draftResult.costUsd?.toFixed(6),
+            latencyMs: draftResult.latencyMs,
+          });
+        } else {
+          log('warn', 'Draft generation failed', {
+            meetingId,
+            transcriptId,
+            error: draftResult.error,
+          });
+        }
+      }
+    } catch (draftError) {
+      // Log but don't throw - draft generation failure shouldn't break the flow
+      log('error', 'Draft generation error', {
+        meetingId,
+        transcriptId,
+        error: draftError instanceof Error ? draftError.message : 'Unknown error',
+      });
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
