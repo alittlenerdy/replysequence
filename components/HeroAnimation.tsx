@@ -1,47 +1,53 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Particle configuration
-const PARTICLE_COUNT = 40;
+const PARTICLE_COUNT = 48;
 
 interface Particle {
   id: number;
-  x: number;
-  y: number;
+  // Target position within the hero container (percentage)
+  targetX: number;
+  targetY: number;
+  // Start position from viewport edges (pixels, calculated dynamically)
+  startAngle: number; // Angle from center to determine which edge
   size: number;
   color: 'mint' | 'black';
 }
 
-// Generate particles in a grid pattern
+// Generate particles with target positions and edge origins
 function generateParticles(): Particle[] {
   const particles: Particle[] = [];
   const cols = 8;
-  const rows = 5;
+  const rows = 6;
 
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     const col = i % cols;
     const row = Math.floor(i / cols);
+    // Calculate angle from center to this particle's target position
+    const targetX = (col / (cols - 1)) * 100;
+    const targetY = (row / (rows - 1)) * 100;
+    const angle = Math.atan2(targetY - 50, targetX - 50);
+
     particles.push({
       id: i,
-      x: (col / (cols - 1)) * 100,
-      y: (row / (rows - 1)) * 100,
-      size: Math.random() * 6 + 4,
-      color: Math.random() > 0.7 ? 'mint' : 'black',
+      targetX,
+      targetY,
+      startAngle: angle,
+      size: Math.random() * 8 + 4,
+      color: Math.random() > 0.65 ? 'mint' : 'black',
     });
   }
   return particles;
 }
 
 // Zoom window mockup component
-function ZoomMockup({ opacity }: { opacity: number }) {
+function ZoomMockup() {
   return (
-    <motion.div
-      className="absolute inset-0 flex items-center justify-center"
-      style={{ opacity }}
-    >
-      <div className="w-full max-w-md bg-background-pure rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-full max-w-md bg-white rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
         {/* Zoom header */}
         <div className="bg-black/90 px-4 py-2 flex items-center gap-2">
           <div className="flex gap-1.5">
@@ -78,18 +84,15 @@ function ZoomMockup({ opacity }: { opacity: number }) {
           ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 // Email mockup component
-function EmailMockup({ opacity }: { opacity: number }) {
+function EmailMockup() {
   return (
-    <motion.div
-      className="absolute inset-0 flex items-center justify-center"
-      style={{ opacity }}
-    >
-      <div className="w-full max-w-md bg-background-pure rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-full max-w-md bg-white rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
         {/* Email header */}
         <div className="bg-mint px-4 py-3 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-white/30" />
@@ -116,30 +119,47 @@ function EmailMockup({ opacity }: { opacity: number }) {
           <button className="btn-secondary !px-4 !py-2 !text-sm !border">Edit</button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 export default function HeroAnimation() {
   const [phase, setPhase] = useState<'particles-in' | 'zoom' | 'particles-mid' | 'email' | 'particles-out'>('particles-in');
   const [particles] = useState(generateParticles);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerRect, setContainerRect] = useState({ left: 0, top: 0, width: 0, height: 0 });
+
+  // Get container position for calculating viewport-relative particle origins
+  useEffect(() => {
+    const updateRect = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerRect({
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        });
+      }
+    };
+
+    updateRect();
+    window.addEventListener('resize', updateRect);
+    window.addEventListener('scroll', updateRect);
+
+    return () => {
+      window.removeEventListener('resize', updateRect);
+      window.removeEventListener('scroll', updateRect);
+    };
+  }, []);
 
   // Animation cycle
   useEffect(() => {
     const cycle = () => {
-      // Phase 1: Particles fly in
       setPhase('particles-in');
-
-      // Phase 2: Form Zoom window
       setTimeout(() => setPhase('zoom'), 1500);
-
-      // Phase 3: Dissolve to particles
       setTimeout(() => setPhase('particles-mid'), 4500);
-
-      // Phase 4: Form Email
       setTimeout(() => setPhase('email'), 6000);
-
-      // Phase 5: Dissolve out
       setTimeout(() => setPhase('particles-out'), 9000);
     };
 
@@ -148,60 +168,85 @@ export default function HeroAnimation() {
     return () => clearInterval(interval);
   }, []);
 
+  // Calculate start position from viewport edge based on angle
+  const getEdgePosition = (particle: Particle) => {
+    const angle = particle.startAngle;
+    const distance = Math.max(window.innerWidth, window.innerHeight) * 0.8;
+
+    // Calculate position relative to container center
+    const containerCenterX = containerRect.left + containerRect.width / 2;
+    const containerCenterY = containerRect.top + containerRect.height / 2;
+
+    // Start position in viewport coordinates
+    const startX = containerCenterX + Math.cos(angle) * distance;
+    const startY = containerCenterY + Math.sin(angle) * distance;
+
+    // Convert to position relative to container
+    const relativeStartX = startX - containerRect.left;
+    const relativeStartY = startY - containerRect.top;
+
+    return {
+      startX: (relativeStartX / containerRect.width) * 100,
+      startY: (relativeStartY / containerRect.height) * 100,
+    };
+  };
+
   const getParticleAnimation = (particle: Particle) => {
+    const { startX, startY } = getEdgePosition(particle);
     const centerX = 50;
     const centerY = 50;
-    const startX = particle.x < 50 ? -100 : 200;
-    const startY = particle.y < 50 ? -100 : 200;
 
     switch (phase) {
       case 'particles-in':
         return {
-          x: [`${startX}%`, `${particle.x}%`],
-          y: [`${startY}%`, `${particle.y}%`],
+          left: [`${startX}%`, `${particle.targetX}%`],
+          top: [`${startY}%`, `${particle.targetY}%`],
           opacity: [0, 1],
-          scale: [0.5, 1],
+          scale: [0.3, 1],
         };
       case 'zoom':
       case 'email':
         return {
-          x: `${centerX}%`,
-          y: `${centerY}%`,
+          left: `${centerX}%`,
+          top: `${centerY}%`,
           opacity: 0,
           scale: 0,
         };
       case 'particles-mid':
         return {
-          x: [`${centerX}%`, `${particle.x}%`],
-          y: [`${centerY}%`, `${particle.y}%`],
+          left: [`${centerX}%`, `${particle.targetX}%`],
+          top: [`${centerY}%`, `${particle.targetY}%`],
           opacity: [0, 1],
           scale: [0, 1],
         };
       case 'particles-out':
         return {
-          x: [`${particle.x}%`, `${startX}%`],
-          y: [`${particle.y}%`, `${startY}%`],
+          left: [`${particle.targetX}%`, `${startX}%`],
+          top: [`${particle.targetY}%`, `${startY}%`],
           opacity: [1, 0],
-          scale: [1, 0.5],
+          scale: [1, 0.3],
         };
     }
   };
 
   return (
-    <div className="relative w-full h-[400px] lg:h-[500px]">
+    <div ref={containerRef} className="relative w-full h-[400px] lg:h-[500px] overflow-visible">
       {/* Glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-mint/5 via-transparent to-neon/5 rounded-3xl" />
 
-      {/* Particles */}
-      <div className="absolute inset-0">
+      {/* Particles - overflow visible to allow particles from outside */}
+      <div className="absolute inset-0" style={{ overflow: 'visible' }}>
         {particles.map((particle) => (
           <motion.div
             key={particle.id}
-            className="absolute rounded-full"
+            className="rounded-full"
             style={{
+              position: 'absolute',
               width: particle.size,
               height: particle.size,
               backgroundColor: particle.color === 'mint' ? 'var(--mint)' : '#000',
+              marginLeft: -particle.size / 2,
+              marginTop: -particle.size / 2,
             }}
             animate={getParticleAnimation(particle)}
             transition={{
@@ -223,7 +268,7 @@ export default function HeroAnimation() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0"
           >
-            <ZoomMockup opacity={1} />
+            <ZoomMockup />
           </motion.div>
         )}
         {phase === 'email' && (
@@ -235,14 +280,14 @@ export default function HeroAnimation() {
             transition={{ duration: 0.5 }}
             className="absolute inset-0"
           >
-            <EmailMockup opacity={1} />
+            <EmailMockup />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Label */}
       <motion.div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 text-text-caption text-sm font-medium"
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 text-text-caption text-sm font-medium whitespace-nowrap"
         animate={{
           opacity: phase === 'zoom' || phase === 'email' ? 1 : 0,
         }}
