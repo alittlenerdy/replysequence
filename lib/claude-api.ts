@@ -77,10 +77,10 @@ interface ClaudeErrorResponse {
 }
 
 /**
- * Call Claude API using raw fetch() with Promise.race timeout
+ * Call Claude API using raw fetch() with AbortController timeout
  *
- * Uses Promise.race instead of just AbortController because setTimeout
- * callbacks may not fire in serverless environments while blocked on I/O.
+ * setTimeout WILL fire even if fetch hangs because it runs on a
+ * different part of the event loop (timers phase vs poll phase).
  */
 export async function callClaudeAPI(params: {
   systemPrompt: string;
@@ -103,142 +103,109 @@ export async function callClaudeAPI(params: {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
-    log('error', 'ANTHROPIC_API_KEY environment variable is not set');
+    log('error', 'ANTHROPIC_API_KEY is not set');
     throw new Error('ANTHROPIC_API_KEY environment variable is not set');
   }
 
-  log('info', 'Claude API: Starting request', {
+  const startTime = Date.now();
+
+  log('info', 'Claude API: Starting', {
     model: CLAUDE_MODEL,
     maxTokens,
     timeoutMs,
-    systemPromptLength: systemPrompt.length,
-    userPromptLength: userPrompt.length,
+    promptLengths: { system: systemPrompt.length, user: userPrompt.length },
   });
 
-  const startTime = Date.now();
-
-  // Create AbortController (as backup mechanism)
-  log('info', 'Claude API: Creating AbortController');
+  // Create AbortController for timeout
   const controller = new AbortController();
 
-  // Create timeout promise that rejects after timeoutMs
-  // This is more reliable than setTimeout+AbortController in serverless
-  log('info', 'Claude API: Setting up timeout promise', { timeoutMs });
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
-      controller.abort(); // Also abort fetch as cleanup
-      const elapsed = Date.now() - startTime;
-      log('error', 'Claude API: Timeout promise triggered', { timeoutMs, elapsed });
-      reject(new Error(`Claude API request timed out after ${timeoutMs}ms (elapsed: ${elapsed}ms)`));
-    }, timeoutMs);
-  });
+  // Force abort after timeout - setTimeout WILL fire even if fetch hangs
+  const timeoutId = setTimeout(() => {
+    const elapsed = Date.now() - startTime;
+    log('error', 'Claude API: TIMEOUT - forcing abort', { timeoutMs, elapsed });
+    controller.abort();
+  }, timeoutMs);
 
-  // Create fetch promise
-  log('info', 'Claude API: Starting fetch to api.anthropic.com');
-  const fetchPromise = (async () => {
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: CLAUDE_MODEL,
-          max_tokens: maxTokens,
-          system: systemPrompt,
-          messages: [
-            {
-              role: 'user',
-              content: userPrompt,
-            },
-          ],
-        }),
-        signal: controller.signal,
-      });
-
-      const fetchLatency = Date.now() - startTime;
-      log('info', 'Claude API: Fetch completed', {
-        status: response.status,
-        statusText: response.statusText,
-        fetchLatency,
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        let errorMessage: string;
-
-        try {
-          const errorJson = JSON.parse(errorBody) as ClaudeErrorResponse;
-          errorMessage = errorJson.error?.message || errorBody;
-        } catch {
-          errorMessage = errorBody;
-        }
-
-        log('error', 'Claude API: Error response', {
-          status: response.status,
-          error: errorMessage,
-        });
-
-        throw new Error(`Claude API error (${response.status}): ${errorMessage}`);
-      }
-
-      log('info', 'Claude API: Parsing JSON response');
-      const data = (await response.json()) as ClaudeResponse;
-
-      const totalLatency = Date.now() - startTime;
-      log('info', 'Claude API: Response parsed successfully', {
-        stopReason: data.stop_reason,
-        inputTokens: data.usage.input_tokens,
-        outputTokens: data.usage.output_tokens,
-        contentBlocks: data.content.length,
-        totalLatency,
-      });
-
-      // Extract text content
-      const textBlock = data.content.find((block) => block.type === 'text');
-      if (!textBlock) {
-        throw new Error('No text content in Claude response');
-      }
-
-      return {
-        content: textBlock.text,
-        inputTokens: data.usage.input_tokens,
-        outputTokens: data.usage.output_tokens,
-        stopReason: data.stop_reason,
-      };
-    } catch (error) {
-      const elapsed = Date.now() - startTime;
-
-      // Handle abort (from timeout or manual)
-      if (error instanceof Error && error.name === 'AbortError') {
-        log('error', 'Claude API: Fetch aborted (AbortError)', { elapsed });
-        throw new Error(`Claude API request aborted after ${elapsed}ms`);
-      }
-
-      // Log and re-throw other errors
-      log('error', 'Claude API: Fetch error', {
-        error: error instanceof Error ? error.message : String(error),
-        errorName: error instanceof Error ? error.name : 'unknown',
-        elapsed,
-      });
-      throw error;
-    }
-  })();
-
-  // Race between fetch and timeout
-  log('info', 'Claude API: Racing fetch vs timeout');
   try {
-    const result = await Promise.race([fetchPromise, timeoutPromise]);
-    const totalTime = Date.now() - startTime;
-    log('info', 'Claude API: Request completed successfully', { totalTime });
-    return result;
+    log('info', 'Claude API: Calling fetch()');
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+      signal: controller.signal,
+    });
+
+    // Clear timeout - fetch completed
+    clearTimeout(timeoutId);
+
+    const fetchMs = Date.now() - startTime;
+    log('info', 'Claude API: Fetch returned', {
+      status: response.status,
+      fetchMs,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      let errorMessage: string;
+      try {
+        const errorJson = JSON.parse(errorBody) as ClaudeErrorResponse;
+        errorMessage = errorJson.error?.message || errorBody;
+      } catch {
+        errorMessage = errorBody;
+      }
+      log('error', 'Claude API: HTTP error', { status: response.status, error: errorMessage });
+      throw new Error(`Claude API error (${response.status}): ${errorMessage}`);
+    }
+
+    log('info', 'Claude API: Parsing response JSON');
+    const data = (await response.json()) as ClaudeResponse;
+
+    const totalMs = Date.now() - startTime;
+    log('info', 'Claude API: Success', {
+      stopReason: data.stop_reason,
+      inputTokens: data.usage.input_tokens,
+      outputTokens: data.usage.output_tokens,
+      totalMs,
+    });
+
+    const textBlock = data.content.find((block) => block.type === 'text');
+    if (!textBlock) {
+      throw new Error('No text content in Claude response');
+    }
+
+    return {
+      content: textBlock.text,
+      inputTokens: data.usage.input_tokens,
+      outputTokens: data.usage.output_tokens,
+      stopReason: data.stop_reason,
+    };
   } catch (error) {
-    const totalTime = Date.now() - startTime;
-    log('error', 'Claude API: Request failed', {
+    // Always clear timeout on any exit
+    clearTimeout(timeoutId);
+
+    const elapsed = Date.now() - startTime;
+
+    // Handle abort (timeout triggered)
+    if (error instanceof Error && error.name === 'AbortError') {
+      log('error', 'Claude API: AbortError caught', { elapsed, timeoutMs });
+      throw new Error(`Claude API timeout after ${timeoutMs}ms (elapsed: ${elapsed}ms)`);
+    }
+
+    // Log and re-throw other errors
+    log('error', 'Claude API: Error', {
       error: error instanceof Error ? error.message : String(error),
-      totalTime,
+      name: error instanceof Error ? error.name : 'unknown',
+      elapsed,
     });
     throw error;
   }
