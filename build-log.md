@@ -118,3 +118,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-25 14:21] - Replace Anthropic SDK with raw fetch() for Vercel compatibility
+**Commit:** f0c98a6
+**Files Changed:** lib/claude-api.ts (new), lib/generate-draft.ts
+**Summary:** Replaced Anthropic SDK with raw fetch() implementation for Claude API. SDK timeout mechanisms don't work reliably in Vercel serverless environments, causing API calls to hang indefinitely. New implementation uses native fetch() with AbortController for reliable 30-second timeout. Created lib/claude-api.ts with callClaudeAPI() function and updated generate-draft.ts to use it.
+**Key Issues:** Anthropic SDK timeout option ignored in serverless - AbortController provides proper cancellation.
+**Duration:** ~10 min
+
+---
