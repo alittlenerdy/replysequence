@@ -109,3 +109,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~5 min
 
 ---
+
+## [2025-01-24 03:30] - Fix floating gradients and particle animations
+**Commit:** d4a5555
+**Files Changed:** components/FloatingGradients.tsx, components/HeroAnimation.tsx
+**Summary:** Fixed animation positioning issues. FloatingGradients now uses viewport units (vw/vh) with position:fixed to span entire screen. HeroAnimation particles now calculate start positions from viewport edges using containerRef and getBoundingClientRect. Particles fly in from screen edges based on their target angle relative to container center.
+**Key Issues:** CSS class conflicts prevented position:fixed - switched to inline styles.
+**Duration:** ~15 min
+
+---
