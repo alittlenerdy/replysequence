@@ -145,3 +145,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~10 min
 
 ---
+
+## [2025-01-25 15:20] - Fix transcript storage database query error
+**Commit:** (database fix only)
+**Files Changed:** Supabase transcripts table (direct SQL)
+**Summary:** Fixed transcript storage failing with "Failed query" error. Root cause: drizzle-kit push only added platform column to meetings table but not transcripts table, causing schema mismatch. Schema.ts expected 14 columns but database only had 13 (missing platform). Fix: Added platform column directly via SQL: `ALTER TABLE transcripts ADD COLUMN platform text DEFAULT 'zoom' NOT NULL` and created index.
+**Key Issues:** drizzle-kit push didn't fully sync - transcripts table missing platform column.
+**Duration:** ~5 min
+
+---
