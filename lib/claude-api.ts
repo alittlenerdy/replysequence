@@ -77,9 +77,11 @@ interface ClaudeErrorResponse {
 }
 
 /**
- * Call Claude API using verified Vercel serverless timeout pattern
+ * Call Claude API using Promise.race with guaranteed timeout
  *
- * Uses setTimeout + AbortController with clearTimeout in BOTH success and catch paths.
+ * The timeoutPromise will reject after timeoutMs NO MATTER WHAT,
+ * even if fetchPromise is completely hung. This is the only pattern
+ * that reliably works in Vercel serverless.
  */
 export async function callClaudeAPI({
   systemPrompt,
@@ -98,15 +100,20 @@ export async function callClaudeAPI({
   stopReason: string;
 }> {
   const startTime = Date.now();
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    log('error', 'Timeout - aborting request', { timeoutMs });
-    controller.abort();
-  }, timeoutMs);
 
-  try {
-    log('info', 'Starting Claude API request', { timeoutMs, model: CLAUDE_MODEL });
+  log('info', 'Starting Claude API request', { timeoutMs, model: CLAUDE_MODEL });
 
+  // Create a timeout promise that WILL reject even if fetch hangs forever
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      const elapsed = Date.now() - startTime;
+      log('error', 'Request timeout - rejecting', { elapsed, timeoutMs });
+      reject(new Error(`Request timeout after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  // Create fetch promise
+  const fetchPromise = (async () => {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -120,10 +127,7 @@ export async function callClaudeAPI({
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
       }),
-      signal: controller.signal,
     });
-
-    clearTimeout(timeoutId); // CRITICAL: Clear on success
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -150,21 +154,8 @@ export async function callClaudeAPI({
       outputTokens: data.usage.output_tokens,
       stopReason: data.stop_reason,
     };
+  })();
 
-  } catch (error) {
-    clearTimeout(timeoutId); // CRITICAL: Clear on error too
-
-    const elapsed = Date.now() - startTime;
-
-    if (error instanceof Error && error.name === 'AbortError') {
-      log('error', 'Request aborted', { elapsed, timeoutMs });
-      throw new Error(`Request timeout after ${timeoutMs}ms`);
-    }
-
-    log('error', 'Request failed', {
-      elapsed,
-      error: error instanceof Error ? error.message : String(error),
-    });
-    throw error;
-  }
+  // Race them - timeout WILL fire even if fetch hangs forever
+  return Promise.race([fetchPromise, timeoutPromise]);
 }
