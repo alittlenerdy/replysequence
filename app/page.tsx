@@ -1,7 +1,9 @@
 'use client';
 
-import FloatingGradients from '@/components/FloatingGradients';
-import HeroAnimation from '@/components/HeroAnimation';
+import dynamic from 'next/dynamic';
+
+const FloatingGradients = dynamic(() => import('@/components/FloatingGradients'), { ssr: false });
+const HeroAnimation = dynamic(() => import('@/components/HeroAnimation'), { ssr: false });
 
 export default function LandingPage() {
   return (
