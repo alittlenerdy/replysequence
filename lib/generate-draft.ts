@@ -158,7 +158,15 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         timeoutMs: CLAUDE_API_TIMEOUT_MS,
       });
 
-      const response = await client.messages.create({
+      // Manual timeout wrapper - SDK timeout doesn't work reliably in serverless
+      const timeoutMs = 55000; // 55s to stay under Vercel's 60s limit
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Claude API call timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+      });
+
+      const apiCallPromise = client.messages.create({
         model: CLAUDE_MODEL,
         max_tokens: MAX_OUTPUT_TOKENS,
         system: DISCOVERY_CALL_SYSTEM_PROMPT,
@@ -169,6 +177,8 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
           },
         ],
       });
+
+      const response = await Promise.race([apiCallPromise, timeoutPromise]);
 
       const apiLatencyMs = Date.now() - attemptStartTime;
 
