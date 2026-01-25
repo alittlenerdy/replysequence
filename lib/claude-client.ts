@@ -39,8 +39,8 @@ export function getClaudeClient(): Anthropic {
   return claudeClient;
 }
 
-// Model constants - using claude-sonnet-4-5-20250514 (latest Sonnet)
-export const CLAUDE_MODEL = 'claude-sonnet-4-5-20250514';
+// Model constants - using claude-sonnet-4-20250514 (latest Sonnet)
+export const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
 
 // Pricing per million tokens (as of 2025)
 // Claude Sonnet 4.5 pricing
