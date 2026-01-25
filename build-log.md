@@ -127,3 +127,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~10 min
 
 ---
+
+## [2025-01-25 14:35] - Add multi-platform support and fix RLS warnings
+**Commit:** 843b9a0
+**Files Changed:** lib/db/schema.ts, lib/process-zoom-event.ts, drizzle/0004_real_killmonger.sql
+**Summary:** Added multi-platform support for Zoom, Google Meet, and Microsoft Teams. Created meeting_platform enum type and added platform column to meetings and transcripts tables with 'zoom' default. Enabled Row Level Security on all tables (meetings, transcripts, drafts, raw_events) and created permissive service role policies. Updated Zoom webhook handler to explicitly set platform field on meeting/transcript creation.
+**Key Issues:** None - clean migration applied via drizzle-kit push.
+**Duration:** ~15 min
+
+---
