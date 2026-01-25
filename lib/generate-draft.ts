@@ -1,4 +1,4 @@
-import { getClaudeClient, CLAUDE_MODEL, calculateCost, log, CLAUDE_API_TIMEOUT_MS } from './claude-client';
+import { callClaudeAPI, CLAUDE_MODEL, calculateCost, log, CLAUDE_API_TIMEOUT_MS } from './claude-api';
 import {
   DISCOVERY_CALL_SYSTEM_PROMPT,
   buildDiscoveryCallPrompt,
@@ -143,14 +143,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     const attemptStartTime = Date.now();
 
     try {
-      log('info', 'Getting Claude client', {
-        meetingId,
-        attempt,
-      });
-
-      const client = getClaudeClient();
-
-      log('info', 'Calling Claude API', {
+      log('info', 'Calling Claude API via fetch', {
         attempt,
         model: CLAUDE_MODEL,
         meetingId,
@@ -158,27 +151,13 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         timeoutMs: CLAUDE_API_TIMEOUT_MS,
       });
 
-      // Manual timeout wrapper - SDK timeout doesn't work reliably in serverless
-      const timeoutMs = 55000; // 55s to stay under Vercel's 60s limit
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Claude API call timed out after ${timeoutMs}ms`));
-        }, timeoutMs);
+      // Use raw fetch() with AbortController for reliable timeout in serverless
+      const response = await callClaudeAPI({
+        systemPrompt: DISCOVERY_CALL_SYSTEM_PROMPT,
+        userPrompt,
+        maxTokens: MAX_OUTPUT_TOKENS,
+        timeoutMs: CLAUDE_API_TIMEOUT_MS,
       });
-
-      const apiCallPromise = client.messages.create({
-        model: CLAUDE_MODEL,
-        max_tokens: MAX_OUTPUT_TOKENS,
-        system: DISCOVERY_CALL_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: 'user',
-            content: userPrompt,
-          },
-        ],
-      });
-
-      const response = await Promise.race([apiCallPromise, timeoutPromise]);
 
       const apiLatencyMs = Date.now() - attemptStartTime;
 
@@ -186,14 +165,14 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         meetingId,
         attempt,
         apiLatencyMs,
-        stopReason: response.stop_reason,
-        hasUsage: !!response.usage,
-        contentBlocks: response.content.length,
+        stopReason: response.stopReason,
+        inputTokens: response.inputTokens,
+        outputTokens: response.outputTokens,
       });
 
       // Extract usage stats
-      const inputTokens = response.usage.input_tokens;
-      const outputTokens = response.usage.output_tokens;
+      const inputTokens = response.inputTokens;
+      const outputTokens = response.outputTokens;
       const costUsd = calculateCost(inputTokens, outputTokens);
 
       log('info', 'Token usage calculated', {
@@ -203,18 +182,12 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         costUsd: costUsd.toFixed(6),
       });
 
-      // Extract content
-      const textContent = response.content.find((block) => block.type === 'text');
-      if (!textContent || textContent.type !== 'text') {
-        throw new Error('No text content in Claude response');
-      }
-
       log('info', 'Response content extracted', {
         meetingId,
-        contentLength: textContent.text.length,
+        contentLength: response.content.length,
       });
 
-      const { subject, body } = parseEmailResponse(textContent.text);
+      const { subject, body } = parseEmailResponse(response.content);
 
       log('info', 'Email parsed from response', {
         meetingId,
@@ -237,7 +210,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
           promptType: 'discovery_call',
           subject,
           body,
-          fullResponse: textContent.text,
+          fullResponse: response.content,
           model: CLAUDE_MODEL,
           inputTokens,
           outputTokens,
@@ -291,7 +264,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         errorDetails.errorType = 'timeout';
         errorDetails.timeoutMs = CLAUDE_API_TIMEOUT_MS;
         errorDetails.errorCode = errorCode;
-        log('error', 'Claude API timed out after 60 seconds', errorDetails);
+        log('error', 'Claude API timed out after 30 seconds', errorDetails);
       } else if (lastError.message.includes('rate') || lastError.message.includes('429')) {
         errorDetails.errorType = 'rate_limit';
         log('warn', 'Claude API rate limited', errorDetails);
