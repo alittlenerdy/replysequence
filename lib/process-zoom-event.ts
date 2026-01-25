@@ -617,10 +617,11 @@ async function fetchAndStoreTranscript(
       }
     } catch (draftError) {
       // Log but don't throw - draft generation failure shouldn't break the flow
-      log('error', 'Draft generation error', {
+      log('error', 'Draft generation crashed in process-zoom-event', {
         meetingId,
         transcriptId,
-        error: draftError instanceof Error ? draftError.message : 'Unknown error',
+        error: draftError instanceof Error ? draftError.message : String(draftError),
+        stack: draftError instanceof Error ? draftError.stack : undefined,
       });
     }
   } catch (error) {
