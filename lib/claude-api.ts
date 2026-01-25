@@ -77,7 +77,10 @@ interface ClaudeErrorResponse {
 }
 
 /**
- * Call Claude API using raw fetch() with AbortController timeout
+ * Call Claude API using raw fetch() with Promise.race timeout
+ *
+ * Uses Promise.race instead of just AbortController because setTimeout
+ * callbacks may not fire in serverless environments while blocked on I/O.
  */
 export async function callClaudeAPI(params: {
   systemPrompt: string;
@@ -104,7 +107,7 @@ export async function callClaudeAPI(params: {
     throw new Error('ANTHROPIC_API_KEY environment variable is not set');
   }
 
-  log('info', 'Calling Claude API via fetch', {
+  log('info', 'Claude API: Starting request', {
     model: CLAUDE_MODEL,
     maxTokens,
     timeoutMs,
@@ -112,100 +115,131 @@ export async function callClaudeAPI(params: {
     userPromptLength: userPrompt.length,
   });
 
-  // Create AbortController for timeout
+  const startTime = Date.now();
+
+  // Create AbortController (as backup mechanism)
+  log('info', 'Claude API: Creating AbortController');
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
 
-  try {
-    const startTime = Date.now();
+  // Create timeout promise that rejects after timeoutMs
+  // This is more reliable than setTimeout+AbortController in serverless
+  log('info', 'Claude API: Setting up timeout promise', { timeoutMs });
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      controller.abort(); // Also abort fetch as cleanup
+      const elapsed = Date.now() - startTime;
+      log('error', 'Claude API: Timeout promise triggered', { timeoutMs, elapsed });
+      reject(new Error(`Claude API request timed out after ${timeoutMs}ms (elapsed: ${elapsed}ms)`));
+    }, timeoutMs);
+  });
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: userPrompt,
-          },
-        ],
-      }),
-      signal: controller.signal,
-    });
+  // Create fetch promise
+  log('info', 'Claude API: Starting fetch to api.anthropic.com');
+  const fetchPromise = (async () => {
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: CLAUDE_MODEL,
+          max_tokens: maxTokens,
+          system: systemPrompt,
+          messages: [
+            {
+              role: 'user',
+              content: userPrompt,
+            },
+          ],
+        }),
+        signal: controller.signal,
+      });
 
-    const latencyMs = Date.now() - startTime;
+      const fetchLatency = Date.now() - startTime;
+      log('info', 'Claude API: Fetch completed', {
+        status: response.status,
+        statusText: response.statusText,
+        fetchLatency,
+      });
 
-    // Clear the timeout since request completed
-    clearTimeout(timeoutId);
+      if (!response.ok) {
+        const errorBody = await response.text();
+        let errorMessage: string;
 
-    log('info', 'Claude API response received', {
-      status: response.status,
-      statusText: response.statusText,
-      latencyMs,
-    });
+        try {
+          const errorJson = JSON.parse(errorBody) as ClaudeErrorResponse;
+          errorMessage = errorJson.error?.message || errorBody;
+        } catch {
+          errorMessage = errorBody;
+        }
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      let errorMessage: string;
+        log('error', 'Claude API: Error response', {
+          status: response.status,
+          error: errorMessage,
+        });
 
-      try {
-        const errorJson = JSON.parse(errorBody) as ClaudeErrorResponse;
-        errorMessage = errorJson.error?.message || errorBody;
-      } catch {
-        errorMessage = errorBody;
+        throw new Error(`Claude API error (${response.status}): ${errorMessage}`);
       }
 
-      log('error', 'Claude API error response', {
-        status: response.status,
-        error: errorMessage,
+      log('info', 'Claude API: Parsing JSON response');
+      const data = (await response.json()) as ClaudeResponse;
+
+      const totalLatency = Date.now() - startTime;
+      log('info', 'Claude API: Response parsed successfully', {
+        stopReason: data.stop_reason,
+        inputTokens: data.usage.input_tokens,
+        outputTokens: data.usage.output_tokens,
+        contentBlocks: data.content.length,
+        totalLatency,
       });
 
-      throw new Error(`Claude API error (${response.status}): ${errorMessage}`);
+      // Extract text content
+      const textBlock = data.content.find((block) => block.type === 'text');
+      if (!textBlock) {
+        throw new Error('No text content in Claude response');
+      }
+
+      return {
+        content: textBlock.text,
+        inputTokens: data.usage.input_tokens,
+        outputTokens: data.usage.output_tokens,
+        stopReason: data.stop_reason,
+      };
+    } catch (error) {
+      const elapsed = Date.now() - startTime;
+
+      // Handle abort (from timeout or manual)
+      if (error instanceof Error && error.name === 'AbortError') {
+        log('error', 'Claude API: Fetch aborted (AbortError)', { elapsed });
+        throw new Error(`Claude API request aborted after ${elapsed}ms`);
+      }
+
+      // Log and re-throw other errors
+      log('error', 'Claude API: Fetch error', {
+        error: error instanceof Error ? error.message : String(error),
+        errorName: error instanceof Error ? error.name : 'unknown',
+        elapsed,
+      });
+      throw error;
     }
+  })();
 
-    const data = (await response.json()) as ClaudeResponse;
-
-    log('info', 'Claude API response parsed', {
-      stopReason: data.stop_reason,
-      inputTokens: data.usage.input_tokens,
-      outputTokens: data.usage.output_tokens,
-      contentBlocks: data.content.length,
-    });
-
-    // Extract text content
-    const textBlock = data.content.find((block) => block.type === 'text');
-    if (!textBlock) {
-      throw new Error('No text content in Claude response');
-    }
-
-    return {
-      content: textBlock.text,
-      inputTokens: data.usage.input_tokens,
-      outputTokens: data.usage.output_tokens,
-      stopReason: data.stop_reason,
-    };
+  // Race between fetch and timeout
+  log('info', 'Claude API: Racing fetch vs timeout');
+  try {
+    const result = await Promise.race([fetchPromise, timeoutPromise]);
+    const totalTime = Date.now() - startTime;
+    log('info', 'Claude API: Request completed successfully', { totalTime });
+    return result;
   } catch (error) {
-    // Clear timeout on error
-    clearTimeout(timeoutId);
-
-    // Handle abort (timeout)
-    if (error instanceof Error && error.name === 'AbortError') {
-      log('error', 'Claude API request timed out', {
-        timeoutMs,
-      });
-      throw new Error(`Claude API request timed out after ${timeoutMs}ms`);
-    }
-
-    // Re-throw other errors
+    const totalTime = Date.now() - startTime;
+    log('error', 'Claude API: Request failed', {
+      error: error instanceof Error ? error.message : String(error),
+      totalTime,
+    });
     throw error;
   }
 }
