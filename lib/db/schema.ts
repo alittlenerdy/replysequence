@@ -1,5 +1,6 @@
 import {
   pgTable,
+  pgEnum,
   uuid,
   varchar,
   text,
@@ -10,6 +11,10 @@ import {
   uniqueIndex,
   decimal,
 } from 'drizzle-orm/pg-core';
+
+// Platform enum for multi-platform support
+export const meetingPlatformEnum = pgEnum('meeting_platform', ['zoom', 'google_meet', 'microsoft_teams']);
+export type MeetingPlatform = 'zoom' | 'google_meet' | 'microsoft_teams';
 
 // Meeting status enum values
 export type MeetingStatus = 'pending' | 'processing' | 'ready' | 'completed' | 'failed';
@@ -37,7 +42,8 @@ export const meetings = pgTable(
   'meetings',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    zoomMeetingId: varchar('zoom_meeting_id', { length: 255 }).notNull(),
+    platform: meetingPlatformEnum('platform').notNull().default('zoom'),
+    zoomMeetingId: varchar('zoom_meeting_id', { length: 255 }).notNull(), // TODO: rename to externalMeetingId
     hostEmail: varchar('host_email', { length: 255 }).notNull(),
     topic: varchar('topic', { length: 500 }),
     startTime: timestamp('start_time', { withTimezone: true }),
@@ -55,6 +61,7 @@ export const meetings = pgTable(
     uniqueIndex('meetings_zoom_meeting_id_idx').on(table.zoomMeetingId),
     index('meetings_host_email_idx').on(table.hostEmail),
     index('meetings_status_idx').on(table.status),
+    index('meetings_platform_idx').on(table.platform),
     index('meetings_created_at_idx').on(table.createdAt),
   ]
 );
@@ -67,6 +74,7 @@ export const transcripts = pgTable(
     meetingId: uuid('meeting_id')
       .notNull()
       .references(() => meetings.id, { onDelete: 'cascade' }),
+    platform: meetingPlatformEnum('platform').notNull().default('zoom'),
     content: text('content').notNull(), // Full transcript text (parsed)
     vttContent: text('vtt_content'), // Raw VTT content from Zoom
     speakerSegments: jsonb('speaker_segments').$type<SpeakerSegment[]>().default([]),
@@ -81,6 +89,7 @@ export const transcripts = pgTable(
   },
   (table) => [
     index('transcripts_meeting_id_idx').on(table.meetingId),
+    index('transcripts_platform_idx').on(table.platform),
     index('transcripts_source_idx').on(table.source),
     index('transcripts_status_idx').on(table.status),
   ]

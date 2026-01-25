@@ -29,6 +29,13 @@
       "when": 1769297158056,
       "tag": "0003_smiling_vivisector",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769373139532,
+      "tag": "0004_real_killmonger",
+      "breakpoints": true
     }
   ]
 }

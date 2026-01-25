@@ -3,7 +3,10 @@ import { eq } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
-import type { RawEvent, NewMeeting } from '@/lib/db/schema';
+import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
+
+// Default platform for Zoom webhook events
+const ZOOM_PLATFORM: MeetingPlatform = 'zoom';
 import type {
   MeetingEndedPayload,
   RecordingCompletedPayload,
@@ -201,6 +204,7 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
         ...meetingData,
         zoomMeetingId,
         hostEmail: meetingData.hostEmail!,
+        platform: ZOOM_PLATFORM,
         status: 'pending',
       } as NewMeeting)
       .returning();
@@ -209,6 +213,7 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
       rawEventId: rawEvent.id,
       meetingId: newMeeting.id,
       zoomMeetingId,
+      platform: ZOOM_PLATFORM,
     });
 
     return { success: true, meetingId: newMeeting.id, action: 'created' };
@@ -292,6 +297,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
         ...meetingData,
         zoomMeetingId,
         hostEmail: meetingData.hostEmail!,
+        platform: ZOOM_PLATFORM,
       } as NewMeeting)
       .returning();
 
@@ -301,6 +307,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       rawEventId: rawEvent.id,
       meetingId,
       zoomMeetingId,
+      platform: ZOOM_PLATFORM,
       latencyMs: Date.now() - startTime,
     });
   }
@@ -424,6 +431,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
         startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,
         duration: recordingObject.duration || null,
         transcriptDownloadUrl: transcriptFile.download_url,
+        platform: ZOOM_PLATFORM,
         status: 'pending',
       })
       .returning();
@@ -541,6 +549,7 @@ async function fetchAndStoreTranscript(
           content: fullText,
           vttContent,
           speakerSegments: segments,
+          platform: ZOOM_PLATFORM,
           source: 'zoom',
           wordCount,
           status: 'ready',
