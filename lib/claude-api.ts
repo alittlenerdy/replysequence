@@ -9,8 +9,8 @@
 // Model constant
 export const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
 
-// API timeout in milliseconds (30 seconds)
-export const CLAUDE_API_TIMEOUT_MS = 30000;
+// API timeout in milliseconds (25 seconds - leave buffer for Vercel)
+export const CLAUDE_API_TIMEOUT_MS = 25000;
 
 // Pricing per million tokens
 export const CLAUDE_PRICING = {
