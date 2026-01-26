@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
+    "@clerk/nextjs": "^6.36.10",
     "bullmq": "^5.30.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.45.1",
