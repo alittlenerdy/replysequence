@@ -7,6 +7,40 @@ import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
 
 // Default platform for Zoom webhook events
 const ZOOM_PLATFORM: MeetingPlatform = 'zoom';
+
+// Database query timeout (5 seconds)
+const DB_QUERY_TIMEOUT_MS = 5000;
+
+/**
+ * Wrap a database query with a timeout
+ * Returns null on timeout instead of throwing
+ */
+async function withDbTimeout<T>(
+  queryPromise: Promise<T>,
+  timeoutMs: number,
+  queryName: string
+): Promise<{ result: T; timedOut: false } | { result: null; timedOut: true }> {
+  let timeoutId: NodeJS.Timeout;
+
+  const timeoutPromise = new Promise<{ result: null; timedOut: true }>((resolve) => {
+    timeoutId = setTimeout(() => {
+      log('error', `Database query timed out: ${queryName}`, { timeoutMs });
+      resolve({ result: null, timedOut: true });
+    }, timeoutMs);
+  });
+
+  try {
+    const result = await Promise.race([
+      queryPromise.then(r => ({ result: r, timedOut: false as const })),
+      timeoutPromise,
+    ]);
+    clearTimeout(timeoutId!);
+    return result;
+  } catch (error) {
+    clearTimeout(timeoutId!);
+    throw error;
+  }
+}
 import type {
   MeetingEndedPayload,
   RecordingCompletedPayload,
@@ -494,57 +528,94 @@ async function fetchAndStoreTranscript(
     const { fullText, segments, wordCount } = parseVTT(vttContent);
     log('info', 'Step 9 complete: VTT parsed', { meetingId, wordCount, segmentCount: segments.length });
 
-    log('info', 'Step 10: Checking for existing transcript in DB', { meetingId });
-    const [existingTranscript] = await db
-      .select()
+    log('info', 'Step 10A: About to query for existing transcript', { meetingId });
+
+    // Query only the id column to avoid fetching large JSONB/text columns
+    const transcriptQuery = db
+      .select({ id: transcripts.id })
       .from(transcripts)
       .where(eq(transcripts.meetingId, meetingId))
       .limit(1);
-    log('info', 'Step 10 complete: Transcript query done', { meetingId, exists: !!existingTranscript });
+
+    log('info', 'Step 10B: Executing transcript query with timeout', { meetingId, timeoutMs: DB_QUERY_TIMEOUT_MS });
+
+    const queryResult = await withDbTimeout(transcriptQuery, DB_QUERY_TIMEOUT_MS, 'check existing transcript');
+
+    let existingTranscript: { id: string } | undefined;
+
+    if (queryResult.timedOut) {
+      log('warn', 'Step 10C: Query timed out, assuming no existing transcript', { meetingId });
+      existingTranscript = undefined;
+    } else {
+      existingTranscript = queryResult.result[0];
+      log('info', 'Step 10C: Query completed successfully', { meetingId, exists: !!existingTranscript, transcriptId: existingTranscript?.id });
+    }
 
     let transcriptId: string;
 
     if (existingTranscript) {
-      log('info', 'Step 11: Updating existing transcript', { transcriptId: existingTranscript.id });
-      await db
-        .update(transcripts)
-        .set({
-          content: fullText,
-          vttContent,
-          speakerSegments: segments,
-          wordCount,
-          status: 'ready',
-          lastFetchError: null,
-          updatedAt: new Date(),
-        })
-        .where(eq(transcripts.id, existingTranscript.id));
+      log('info', 'Step 11A: Updating existing transcript', { transcriptId: existingTranscript.id });
+      const updateResult = await withDbTimeout(
+        db.update(transcripts)
+          .set({
+            content: fullText,
+            vttContent,
+            speakerSegments: segments,
+            wordCount,
+            status: 'ready',
+            lastFetchError: null,
+            updatedAt: new Date(),
+          })
+          .where(eq(transcripts.id, existingTranscript.id)),
+        DB_QUERY_TIMEOUT_MS,
+        'update transcript'
+      );
+      if (updateResult.timedOut) {
+        log('error', 'Step 11B: Transcript update timed out', { transcriptId: existingTranscript.id });
+        throw new Error('Transcript update timed out');
+      }
       transcriptId = existingTranscript.id;
-      log('info', 'Step 11 complete: Transcript updated', { transcriptId });
+      log('info', 'Step 11B: Transcript updated successfully', { transcriptId });
     } else {
-      log('info', 'Step 11: Inserting new transcript', { meetingId });
-      const [newTranscript] = await db
-        .insert(transcripts)
-        .values({
-          meetingId,
-          content: fullText,
-          vttContent,
-          speakerSegments: segments,
-          platform: ZOOM_PLATFORM,
-          source: 'zoom',
-          wordCount,
-          status: 'ready',
-        })
-        .returning();
-      transcriptId = newTranscript.id;
-      log('info', 'Step 11 complete: Transcript inserted', { transcriptId });
+      log('info', 'Step 11A: Inserting new transcript', { meetingId });
+      const insertResult = await withDbTimeout(
+        db.insert(transcripts)
+          .values({
+            meetingId,
+            content: fullText,
+            vttContent,
+            speakerSegments: segments,
+            platform: ZOOM_PLATFORM,
+            source: 'zoom',
+            wordCount,
+            status: 'ready',
+          })
+          .returning({ id: transcripts.id }),
+        DB_QUERY_TIMEOUT_MS,
+        'insert transcript'
+      );
+      if (insertResult.timedOut) {
+        log('error', 'Step 11B: Transcript insert timed out', { meetingId });
+        throw new Error('Transcript insert timed out');
+      }
+      transcriptId = insertResult.result[0].id;
+      log('info', 'Step 11B: Transcript inserted successfully', { transcriptId });
     }
 
-    log('info', 'Step 12: Updating meeting status to ready', { meetingId });
-    await db
-      .update(meetings)
-      .set({ status: 'ready', updatedAt: new Date() })
-      .where(eq(meetings.id, meetingId));
-    log('info', 'Step 12 complete: Meeting status updated to ready', { meetingId });
+    log('info', 'Step 12A: Updating meeting status to ready', { meetingId });
+    const meetingUpdateResult = await withDbTimeout(
+      db.update(meetings)
+        .set({ status: 'ready', updatedAt: new Date() })
+        .where(eq(meetings.id, meetingId)),
+      DB_QUERY_TIMEOUT_MS,
+      'update meeting status'
+    );
+    if (meetingUpdateResult.timedOut) {
+      log('error', 'Step 12B: Meeting status update timed out', { meetingId });
+      // Don't throw - transcript was already saved, just log the error
+    } else {
+      log('info', 'Step 12B: Meeting status updated to ready', { meetingId });
+    }
 
     log('info', 'Step 13: Preparing draft generation', { meetingId, transcriptId });
 
