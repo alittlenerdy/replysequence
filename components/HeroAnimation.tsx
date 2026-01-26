@@ -43,43 +43,83 @@ function generateParticles(): Particle[] {
   return particles;
 }
 
+// Avatar data for meeting participants
+const meetingParticipants = [
+  { initials: 'JD', name: 'John Doe', color: '#2563EB' },
+  { initials: 'SK', name: 'Sarah Kim', color: '#8B5CF6' },
+  { initials: 'AM', name: 'Alex Morgan', color: '#06B6D4' },
+  { initials: 'RW', name: 'Rachel Wang', color: '#64748B' },
+];
+
 // Zoom window mockup component
 function ZoomMockup() {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
         {/* Zoom header */}
-        <div className="bg-black/90 px-4 py-2 flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <div className="w-3 h-3 rounded-full bg-green-500" />
+        <div className="bg-black/90 px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
+            </div>
+            <span className="text-white/80 text-xs ml-2">Discovery Call - Q1 Planning</span>
           </div>
-          <span className="text-white/80 text-xs ml-2">Zoom Meeting</span>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-red-400 text-xs font-medium">REC</span>
+          </div>
         </div>
-        {/* Video grid */}
-        <div className="p-4 bg-black/5">
+        {/* Video grid with avatars */}
+        <div className="p-3 bg-gradient-to-b from-black/5 to-black/10">
           <div className="grid grid-cols-2 gap-2">
-            {[1, 2, 3, 4].map((i) => (
+            {meetingParticipants.map((participant, i) => (
               <div
                 key={i}
-                className="aspect-video bg-gradient-to-br from-mint/20 to-mint/40 rounded-lg flex items-center justify-center"
+                className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex flex-col items-center justify-center relative overflow-hidden"
               >
-                <div className="w-10 h-10 rounded-full bg-mint/50" />
+                {/* Avatar circle with initials */}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg"
+                  style={{ backgroundColor: participant.color }}
+                >
+                  {participant.initials}
+                </div>
+                {/* Name label */}
+                <span className="text-white/80 text-[10px] mt-1.5 font-medium">
+                  {participant.name}
+                </span>
+                {/* Mic indicator */}
+                {i !== 1 && (
+                  <div className="absolute bottom-1.5 right-1.5 w-4 h-4 rounded-full bg-black/50 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-green-400" />
+                  </div>
+                )}
+                {i === 1 && (
+                  <div className="absolute bottom-1.5 right-1.5 w-4 h-4 rounded-full bg-red-500/80 flex items-center justify-center">
+                    <div className="w-1.5 h-0.5 bg-white rounded-full" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
         {/* Controls */}
-        <div className="bg-black/90 px-4 py-3 flex justify-center gap-4">
-          {['Mic', 'Cam', 'Share', 'End'].map((label) => (
+        <div className="bg-black/90 px-4 py-3 flex justify-center gap-3">
+          {[
+            { label: 'Mic', icon: 'M', active: true },
+            { label: 'Cam', icon: 'C', active: true },
+            { label: 'Share', icon: 'S', active: false },
+            { label: 'End', icon: 'E', active: false, danger: true },
+          ].map((btn) => (
             <div
-              key={label}
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-xs ${
-                label === 'End' ? 'bg-neon' : 'bg-white/20'
+              key={btn.label}
+              className={`w-9 h-9 rounded-full flex items-center justify-center text-xs transition-colors ${
+                btn.danger ? 'bg-red-500 hover:bg-red-600' : btn.active ? 'bg-white/20' : 'bg-white/10'
               }`}
             >
-              <span className="text-white">{label[0]}</span>
+              <span className="text-white text-[10px] font-medium">{btn.icon}</span>
             </div>
           ))}
         </div>
@@ -93,30 +133,69 @@ function EmailMockup() {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
-        {/* Email header */}
-        <div className="bg-mint px-4 py-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/30" />
-          <div>
-            <div className="text-white font-bold text-sm">Follow-up: Discovery Call</div>
-            <div className="text-white/70 text-xs">To: prospect@company.com</div>
+        {/* Email header bar */}
+        <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-400" />
+            <div className="w-3 h-3 rounded-full bg-yellow-400" />
+            <div className="w-3 h-3 rounded-full bg-green-400" />
+          </div>
+          <span className="text-gray-400 text-xs">New Message</span>
+        </div>
+        {/* Email metadata */}
+        <div className="px-4 py-3 border-b border-gray-100 space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400 text-xs w-12">To:</span>
+            <span className="text-gray-700 text-xs font-medium">sarah.kim@acmecorp.com</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400 text-xs w-12">From:</span>
+            <span className="text-gray-700 text-xs">john.doe@yourcompany.com</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400 text-xs w-12">Subject:</span>
+            <span className="text-gray-900 text-xs font-semibold">Follow-up: Q1 Planning Discussion</span>
           </div>
         </div>
-        {/* Email body */}
-        <div className="p-4 space-y-3">
-          <div className="h-3 bg-black/10 rounded w-3/4" />
-          <div className="h-3 bg-black/10 rounded w-full" />
-          <div className="h-3 bg-black/10 rounded w-5/6" />
-          <div className="h-3 bg-black/10 rounded w-2/3" />
-          <div className="h-6" />
-          <div className="h-3 bg-mint/30 rounded w-4/5" />
-          <div className="h-3 bg-mint/30 rounded w-3/4" />
-          <div className="h-6" />
-          <div className="h-3 bg-black/10 rounded w-1/2" />
+        {/* Email body with realistic content */}
+        <div className="px-4 py-4 text-[11px] leading-relaxed text-gray-700 space-y-3 max-h-[180px] overflow-hidden">
+          <p>Hi Sarah,</p>
+          <p>
+            Thanks for taking the time to meet today. It was great discussing the Q1 roadmap
+            and how we can support your team&apos;s goals.
+          </p>
+          <p>
+            <span className="font-semibold text-gray-900">Key points from our call:</span>
+          </p>
+          <ul className="list-disc list-inside space-y-1 text-gray-600">
+            <li>Timeline: Launch by March 15th</li>
+            <li>Budget: $50K approved for Phase 1</li>
+            <li>Next step: Technical review Thursday</li>
+          </ul>
+          <p>
+            Looking forward to the technical deep-dive. Let me know if you need
+            anything before then.
+          </p>
+          <p className="text-gray-500">
+            Best,<br />
+            <span className="font-medium text-gray-700">John Doe</span><br />
+            <span className="text-gray-400">Account Executive</span>
+          </p>
         </div>
         {/* Email actions */}
-        <div className="px-4 py-3 border-t border-black/10 flex gap-2">
-          <button className="btn-cta !px-4 !py-2 !text-sm">Send</button>
-          <button className="btn-secondary !px-4 !py-2 !text-sm !border">Edit</button>
+        <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between bg-gray-50">
+          <div className="flex gap-2">
+            <button className="btn-cta !px-4 !py-1.5 !text-xs !rounded-lg">Send</button>
+            <button className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Edit</button>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-5 h-5 rounded bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400 text-[10px]">A</span>
+            </div>
+            <div className="w-5 h-5 rounded bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400 text-[10px]">+</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
