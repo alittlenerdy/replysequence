@@ -248,6 +248,7 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
       .values({
         ...meetingData,
         zoomMeetingId,
+        platformMeetingId: zoomMeetingId, // Generic platform ID for multi-platform support
         hostEmail: meetingData.hostEmail!,
         platform: ZOOM_PLATFORM,
         status: 'pending',
@@ -350,6 +351,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       .values({
         ...meetingData,
         zoomMeetingId,
+        platformMeetingId: zoomMeetingId, // Generic platform ID for multi-platform support
         hostEmail: meetingData.hostEmail!,
         platform: ZOOM_PLATFORM,
       } as NewMeeting)
@@ -482,6 +484,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
       .insert(meetings)
       .values({
         zoomMeetingId,
+        platformMeetingId: zoomMeetingId, // Generic platform ID for multi-platform support
         hostEmail: recordingObject.host_email || 'unknown@unknown.com',
         topic: recordingObject.topic || 'Untitled Meeting',
         startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,

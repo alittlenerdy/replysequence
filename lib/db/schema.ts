@@ -43,7 +43,8 @@ export const meetings = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     platform: meetingPlatformEnum('platform').notNull().default('zoom'),
-    zoomMeetingId: varchar('zoom_meeting_id', { length: 255 }).notNull(), // TODO: rename to externalMeetingId
+    zoomMeetingId: varchar('zoom_meeting_id', { length: 255 }).notNull(), // Legacy: kept for backwards compatibility
+    platformMeetingId: varchar('platform_meeting_id', { length: 255 }), // Generic external ID (Zoom UUID, Google Meet code, Teams ID)
     hostEmail: varchar('host_email', { length: 255 }).notNull(),
     topic: varchar('topic', { length: 500 }),
     startTime: timestamp('start_time', { withTimezone: true }),
@@ -62,6 +63,7 @@ export const meetings = pgTable(
     index('meetings_host_email_idx').on(table.hostEmail),
     index('meetings_status_idx').on(table.status),
     index('meetings_platform_idx').on(table.platform),
+    index('meetings_platform_meeting_id_idx').on(table.platform, table.platformMeetingId),
     index('meetings_created_at_idx').on(table.createdAt),
   ]
 );
