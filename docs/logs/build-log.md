@@ -190,3 +190,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~5 min
 
 ---
+
+## [2025-01-25 21:00] - Fix Redis lock hang in serverless
+**Commit:** bf8f532
+**Files Changed:** lib/redis/index.ts, lib/idempotency/index.ts
+**Summary:** Fixed Redis lock acquisition hanging after TCP connection. Root causes: (1) `maxRetriesPerRequest: null` caused infinite retries, (2) `enableReadyCheck: false` allowed commands before ready, (3) `withTimeout()` never cleared setTimeout on success. Fixes: Changed to finite retries (3), enabled ready check, added connect/command timeouts (5s), disabled offline queue, fixed withTimeout() to clear via .finally(), added LOCK-1 through LOCK-7 step logging, explicit connection check before SET command.
+**Key Issues:** Logs showed "Redis: Connected" then nothing - commands sent before connection fully ready, infinite retries blocking event loop.
+**Duration:** ~30 min (including research)
+
+---
