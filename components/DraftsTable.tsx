@@ -54,6 +54,14 @@ export function DraftsTable({
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
         );
+      case 'microsoft_teams':
+        return (
+          <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19.2 6.4h-2.4V4.8c0-.88-.72-1.6-1.6-1.6H8.8c-.88 0-1.6.72-1.6 1.6v1.6H4.8c-.88 0-1.6.72-1.6 1.6v9.6c0 .88.72 1.6 1.6 1.6h14.4c.88 0 1.6-.72 1.6-1.6V8c0-.88-.72-1.6-1.6-1.6zM8.8 4.8h6.4v1.6H8.8V4.8zm10.4 12.8H4.8V8h14.4v9.6z"/>
+            <circle cx="12" cy="11.2" r="2"/>
+            <path d="M12 14c-2.21 0-4 1.34-4 3v.8h8V17c0-1.66-1.79-3-4-3z"/>
+          </svg>
+        );
       default:
         return (
           <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
