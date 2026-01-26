@@ -163,3 +163,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~5 min
 
 ---
+
+## [2025-01-25 16:30] - Comprehensive logging and timeout handling for webhook hang
+**Commit:** ebf0406
+**Files Changed:** app/api/webhooks/zoom/route.ts, lib/idempotency/index.ts, lib/process-zoom-event.ts
+**Summary:** Researched Next.js/Vercel serverless async issues. Found that Redis lazyConnect and cold start DB connections can hang forever. Added: (1) 3s timeout wrapper around Redis operations with graceful fallback, (2) skip idempotency if REDIS_URL not set, (3) HANDLER ENTRY/EXIT logging with env var presence check, (4) step-by-step logging A1-A5 in webhook handler, (5) B1 logging in processZoomEvent, (6) 55s processing timeout wrapper to prevent indefinite hang.
+**Key Issues:** Webhook logs "Routing to handleTranscriptCompleted" but nothing after - suspected Redis or DB connection hanging on cold start.
+**Duration:** ~20 min
+
+---
