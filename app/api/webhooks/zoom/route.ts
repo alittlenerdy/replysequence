@@ -16,6 +16,44 @@ import type { RawEvent } from '@/lib/db/schema';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 60 second timeout
 
+// Processing timeout - if processing takes longer, return 200 anyway
+const PROCESSING_TIMEOUT_MS = 55000; // 55 seconds (5s buffer before Vercel timeout)
+
+/**
+ * Wrap a promise with a timeout that returns a fallback value instead of throwing
+ */
+async function withProcessingTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  fallback: T,
+  operation: string
+): Promise<{ result: T; timedOut: boolean }> {
+  let timeoutId: NodeJS.Timeout;
+
+  const timeoutPromise = new Promise<{ result: T; timedOut: boolean }>((resolve) => {
+    timeoutId = setTimeout(() => {
+      console.log(JSON.stringify({
+        level: 'warn',
+        message: `${operation} timed out after ${timeoutMs}ms`,
+        timeoutMs,
+      }));
+      resolve({ result: fallback, timedOut: true });
+    }, timeoutMs);
+  });
+
+  try {
+    const result = await Promise.race([
+      promise.then(r => ({ result: r, timedOut: false })),
+      timeoutPromise,
+    ]);
+    clearTimeout(timeoutId!);
+    return result;
+  } catch (error) {
+    clearTimeout(timeoutId!);
+    throw error;
+  }
+}
+
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
 
@@ -377,11 +415,24 @@ async function handleTranscriptCompleted(
   rawBody: string,
   startTime: number
 ): Promise<NextResponse> {
+  // ============ HANDLER ENTRY POINT ============
+  console.log(JSON.stringify({
+    level: 'info',
+    message: '>>> HANDLER ENTRY: handleTranscriptCompleted',
+    timestamp: new Date().toISOString(),
+    elapsedMs: Date.now() - startTime,
+    envCheck: {
+      hasRedisUrl: !!process.env.REDIS_URL,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+    },
+  }));
+
   // Wrap entire handler in try-catch to catch any unexpected errors
   try {
     console.log(JSON.stringify({
       level: 'info',
-      message: 'handleTranscriptCompleted started',
+      message: 'A1: Checking payload structure',
       hasPayload: !!payload.payload,
       hasObject: !!payload.payload?.object,
     }));
@@ -390,7 +441,7 @@ async function handleTranscriptCompleted(
     if (!payload.payload?.object?.uuid) {
       console.log(JSON.stringify({
         level: 'error',
-        message: 'Invalid transcript_completed payload structure',
+        message: 'A1 FAILED: Invalid transcript_completed payload structure',
         hasPayload: !!payload.payload,
         hasObject: !!payload.payload?.object,
         hasUuid: !!payload.payload?.object?.uuid,
@@ -400,13 +451,14 @@ async function handleTranscriptCompleted(
         { status: 200 }
       );
     }
+    console.log(JSON.stringify({ level: 'info', message: 'A1 DONE: Payload valid' }));
 
     const { object } = payload.payload;
     const eventId = `recording.transcript_completed-${object.uuid}-${payload.event_ts}`;
 
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Attempting to acquire event lock',
+      message: 'A2: About to call acquireEventLock',
       eventId,
       zoomMeetingId: object.uuid,
     }));
@@ -415,31 +467,28 @@ async function handleTranscriptCompleted(
     let acquired: boolean;
     try {
       acquired = await acquireEventLock(eventId);
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'A2 DONE: acquireEventLock returned',
+        eventId,
+        acquired,
+      }));
     } catch (lockError) {
       console.log(JSON.stringify({
         level: 'error',
-        message: 'Failed to acquire event lock (Redis error)',
+        message: 'A2 ERROR: acquireEventLock threw',
         eventId,
         error: lockError instanceof Error ? lockError.message : String(lockError),
-        stack: lockError instanceof Error ? lockError.stack : undefined,
       }));
       // Continue without lock - better to process duplicate than fail
       acquired = true;
     }
 
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Event lock result for transcript_completed',
-      eventId,
-      acquired,
-    }));
-
     if (!acquired) {
       console.log(JSON.stringify({
         level: 'info',
-        message: 'Duplicate recording.transcript_completed event ignored',
+        message: 'A3: Duplicate event, querying existing',
         eventId,
-        zoomMeetingId: object.uuid,
       }));
 
       const [existingEvent] = await db
@@ -448,17 +497,26 @@ async function handleTranscriptCompleted(
         .where(eq(rawEvents.zoomEventId, eventId))
         .limit(1);
 
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'A3 DONE: Returning duplicate response',
+        eventId,
+        existingEventId: existingEvent?.id,
+      }));
+
       return NextResponse.json(
-        {
-          received: true,
-          duplicate: true,
-          eventId: existingEvent?.id || null,
-        },
+        { received: true, duplicate: true, eventId: existingEvent?.id || null },
         { status: 200 }
       );
     }
 
     // Store raw event in database
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'A4: About to call storeRawEvent',
+      eventId,
+    }));
+
     let rawEvent: RawEvent;
     try {
       rawEvent = await storeRawEvent(
@@ -466,13 +524,17 @@ async function handleTranscriptCompleted(
         eventId,
         rawBody
       );
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'A4 DONE: storeRawEvent returned',
+        rawEventId: rawEvent.id,
+      }));
     } catch (storeError) {
       console.log(JSON.stringify({
         level: 'error',
-        message: 'Failed to store raw event',
+        message: 'A4 ERROR: storeRawEvent threw',
         eventId,
         error: storeError instanceof Error ? storeError.message : String(storeError),
-        stack: storeError instanceof Error ? storeError.stack : undefined,
       }));
       return NextResponse.json(
         { received: true, error: 'Failed to store event' },
@@ -480,41 +542,55 @@ async function handleTranscriptCompleted(
       );
     }
 
+    // Process event with timeout wrapper
     console.log(JSON.stringify({
       level: 'info',
-      message: 'recording.transcript_completed event stored',
+      message: 'A5: About to call processZoomEvent with timeout wrapper',
       rawEventId: rawEvent.id,
-      zoomMeetingId: object.uuid,
-      duration: Date.now() - startTime,
+      timeoutMs: PROCESSING_TIMEOUT_MS,
     }));
 
-    // Process event synchronously before returning
-    try {
-      const result = await processZoomEvent(rawEvent);
+    const processingPromise = processZoomEvent(rawEvent);
+    const { result, timedOut } = await withProcessingTimeout(
+      processingPromise.then(r => r),
+      PROCESSING_TIMEOUT_MS - (Date.now() - startTime), // Remaining time
+      { success: false, action: 'failed' as const, error: 'Processing timeout' },
+      'processZoomEvent'
+    );
 
+    if (timedOut) {
+      console.log(JSON.stringify({
+        level: 'warn',
+        message: 'A5 TIMEOUT: processZoomEvent exceeded time limit',
+        rawEventId: rawEvent.id,
+        elapsedMs: Date.now() - startTime,
+      }));
+    } else {
       console.log(JSON.stringify({
         level: 'info',
-        message: 'Transcript event processing completed',
+        message: 'A5 DONE: processZoomEvent completed',
         rawEventId: rawEvent.id,
         action: result.action,
         meetingId: result.meetingId,
-      }));
-    } catch (error) {
-      console.log(JSON.stringify({
-        level: 'error',
-        message: 'Transcript event processing failed',
-        rawEventId: rawEvent.id,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+        elapsedMs: Date.now() - startTime,
       }));
     }
 
     // Return success with event ID
+    console.log(JSON.stringify({
+      level: 'info',
+      message: '<<< HANDLER EXIT: Returning 200 OK',
+      rawEventId: rawEvent.id,
+      totalDurationMs: Date.now() - startTime,
+      timedOut,
+    }));
+
     return NextResponse.json(
       {
         received: true,
         eventId: rawEvent.id,
         zoomMeetingId: object.uuid,
+        timedOut,
       },
       { status: 200 }
     );
@@ -522,7 +598,7 @@ async function handleTranscriptCompleted(
     // Catch-all for any unexpected errors in the handler
     console.log(JSON.stringify({
       level: 'error',
-      message: 'handleTranscriptCompleted crashed unexpectedly',
+      message: '!!! HANDLER CRASH: Unexpected error',
       error: unexpectedError instanceof Error ? unexpectedError.message : String(unexpectedError),
       stack: unexpectedError instanceof Error ? unexpectedError.stack : undefined,
       duration: Date.now() - startTime,

@@ -3,6 +3,19 @@ import { getRedis } from '../redis';
 // Constants
 const IDEMPOTENCY_PREFIX = 'idempotency:zoom:';
 const TTL_SECONDS = 24 * 60 * 60; // 24 hours in seconds
+const REDIS_TIMEOUT_MS = 3000; // 3 second timeout for Redis operations
+
+/**
+ * Wrap a promise with a timeout
+ */
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ]);
+}
 
 /**
  * Check if an event has already been processed (idempotency check)
@@ -52,24 +65,56 @@ export async function acquireEventLock(eventId: string): Promise<boolean> {
     processedAt: new Date().toISOString(),
   });
 
-  // SETNX with EX (set if not exists with expiry) - atomic operation
-  const result = await getRedis().set(key, value, 'EX', TTL_SECONDS, 'NX');
-
-  if (result === 'OK') {
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Event lock acquired',
-      eventId,
-    }));
-    return true;
-  }
-
   console.log(JSON.stringify({
     level: 'info',
-    message: 'Event already processed (duplicate)',
+    message: 'acquireEventLock: starting',
     eventId,
+    hasRedisUrl: !!process.env.REDIS_URL,
   }));
-  return false;
+
+  // Check if Redis is configured
+  if (!process.env.REDIS_URL) {
+    console.log(JSON.stringify({
+      level: 'warn',
+      message: 'acquireEventLock: REDIS_URL not configured, skipping idempotency check',
+      eventId,
+    }));
+    return true; // Allow processing if Redis unavailable
+  }
+
+  try {
+    // SETNX with EX (set if not exists with expiry) - atomic operation with timeout
+    const result = await withTimeout(
+      getRedis().set(key, value, 'EX', TTL_SECONDS, 'NX'),
+      REDIS_TIMEOUT_MS,
+      'Redis SET'
+    );
+
+    if (result === 'OK') {
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'Event lock acquired',
+        eventId,
+      }));
+      return true;
+    }
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Event already processed (duplicate)',
+      eventId,
+    }));
+    return false;
+  } catch (error) {
+    console.log(JSON.stringify({
+      level: 'error',
+      message: 'acquireEventLock: Redis operation failed',
+      eventId,
+      error: error instanceof Error ? error.message : String(error),
+    }));
+    // Allow processing on Redis failure - better to process duplicate than fail
+    return true;
+  }
 }
 
 /**

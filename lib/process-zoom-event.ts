@@ -53,10 +53,11 @@ function log(
 export async function processZoomEvent(rawEvent: RawEvent): Promise<ProcessResult> {
   const startTime = Date.now();
 
-  log('info', 'Starting event processing', {
+  log('info', '>>> processZoomEvent ENTRY', {
     rawEventId: rawEvent.id,
     eventType: rawEvent.eventType,
     zoomEventId: rawEvent.zoomEventId,
+    currentStatus: rawEvent.status,
   });
 
   // Skip already processed events (idempotency)
@@ -70,12 +71,13 @@ export async function processZoomEvent(rawEvent: RawEvent): Promise<ProcessResul
 
   try {
     // Mark as processing
+    log('info', 'B1: About to update rawEvents status to processing', { rawEventId: rawEvent.id });
     await db
       .update(rawEvents)
       .set({ status: 'processing', updatedAt: new Date() })
       .where(eq(rawEvents.id, rawEvent.id));
 
-    log('info', 'Event marked as processing', { rawEventId: rawEvent.id });
+    log('info', 'B1 DONE: Event marked as processing', { rawEventId: rawEvent.id });
 
     let result: ProcessResult;
 

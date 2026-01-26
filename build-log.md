@@ -154,3 +154,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~5 min
 
 ---
+
+## [2025-01-25 16:00] - Add step-by-step diagnostic logging to transcript handler
+**Commit:** 9d19f1a
+**Files Changed:** lib/process-zoom-event.ts
+**Summary:** Added numbered step logging (Steps 1-16) to processTranscriptCompleted and fetchAndStoreTranscript functions. Logs at each database query, transcript download, VTT parsing, and draft generation step. Will identify exactly which operation hangs during webhook processing.
+**Key Issues:** Webhook receiving transcript_completed event but hanging somewhere in processing pipeline. Test endpoint proved Claude API works (1.9s response), so hang is elsewhere.
+**Duration:** ~5 min
+
+---
