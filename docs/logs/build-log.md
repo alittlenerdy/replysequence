@@ -226,3 +226,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-26 23:00] - Add user dashboard with draft management
+**Commit:** 5fc5a20
+**Files Changed:** 14 files - app/dashboard/page.tsx, components/Dashboard.tsx, components/DraftsTable.tsx, components/DraftPreviewModal.tsx, components/DraftEditor.tsx, components/DashboardFilters.tsx, components/DashboardStats.tsx, components/EmptyState.tsx, components/ui/StatusBadge.tsx, lib/dashboard-queries.ts, app/api/drafts/route.ts, app/api/drafts/update/route.ts, app/api/drafts/send/route.ts, app/page.tsx
+**Summary:** Built full-featured dashboard for viewing and managing AI-generated email drafts. Features: SSR drafts table with meeting info, preview modal with edit/send, inline editing with auto-save, filters (status/search/date range), pagination, stats cards, empty state with onboarding, loading skeletons, responsive design. API routes for list/update/send operations. Email sending simulated (ready for Resend integration).
+**Key Issues:** None - Clerk auth not installed yet so dashboard is unprotected. Will add auth in future PR.
+**Duration:** ~45 min
+
+---
