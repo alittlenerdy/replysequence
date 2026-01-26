@@ -7,6 +7,11 @@ const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 // Singleton instance for lazy connection
 let redisInstance: Redis | null = null;
 
+// Logger helper
+function log(level: 'info' | 'warn' | 'error', message: string, data: Record<string, unknown> = {}): void {
+  console.log(JSON.stringify({ level, message, timestamp: new Date().toISOString(), ...data }));
+}
+
 /**
  * Parse Redis URL into connection options.
  * Handles both redis:// and rediss:// (TLS) URLs.
@@ -16,8 +21,16 @@ function parseRedisUrl(url: string): RedisOptions {
   const options: RedisOptions = {
     host: parsed.hostname || 'localhost',
     port: parseInt(parsed.port || '6379'),
-    maxRetriesPerRequest: null, // Required for BullMQ
-    enableReadyCheck: false,
+    // CRITICAL: Use finite retry limit, not null (which means infinite)
+    maxRetriesPerRequest: 3,
+    // Enable ready check to ensure connection is fully ready before commands
+    enableReadyCheck: true,
+    // Connection timeout - fail fast if can't connect
+    connectTimeout: 5000,
+    // Command timeout - don't let commands hang forever
+    commandTimeout: 5000,
+    // Disable offline queue - fail immediately if not connected
+    enableOfflineQueue: false,
   };
 
   if (parsed.password) {
@@ -42,35 +55,64 @@ function parseRedisUrl(url: string): RedisOptions {
  * For serverless: checks if connection is still alive and reconnects if needed.
  */
 export function getRedis(): Redis {
+  log('info', 'getRedis: called', { hasExistingInstance: !!redisInstance, status: redisInstance?.status });
+
   // Check if existing connection is closed/ended
-  if (redisInstance && redisInstance.status === 'end') {
-    console.log('Redis: Previous connection closed, creating new one');
+  if (redisInstance && (redisInstance.status === 'end' || redisInstance.status === 'close')) {
+    log('warn', 'getRedis: Previous connection closed, creating new one', { status: redisInstance.status });
     redisInstance = null;
   }
 
   if (!redisInstance) {
+    log('info', 'getRedis: Creating new Redis instance');
     const options = parseRedisUrl(redisUrl);
+
+    log('info', 'getRedis: Redis options', {
+      host: options.host,
+      port: options.port,
+      maxRetriesPerRequest: options.maxRetriesPerRequest,
+      enableReadyCheck: options.enableReadyCheck,
+      connectTimeout: options.connectTimeout,
+      commandTimeout: options.commandTimeout,
+      enableOfflineQueue: options.enableOfflineQueue,
+      hasTls: !!options.tls,
+    });
+
     redisInstance = new Redis({
       ...options,
       lazyConnect: true, // Don't connect until first command
       retryStrategy(times) {
-        if (times > 10) {
-          console.error('Redis: Max retries reached, stopping reconnection');
+        if (times > 3) {
+          log('error', 'Redis: Max retries reached, stopping reconnection', { attempts: times });
           return null; // Stop retrying
         }
-        const delay = Math.min(times * 100, 3000);
-        console.log(`Redis: Reconnecting in ${delay}ms (attempt ${times})`);
+        const delay = Math.min(times * 200, 2000);
+        log('info', 'Redis: Reconnecting', { attempt: times, delayMs: delay });
         return delay;
       },
     });
 
     redisInstance.on('error', (err) => {
-      console.error('Redis connection error:', err.message);
+      log('error', 'Redis: Connection error', { error: err.message });
     });
 
     redisInstance.on('connect', () => {
-      console.log('Redis: Connected');
+      log('info', 'Redis: TCP connected');
     });
+
+    redisInstance.on('ready', () => {
+      log('info', 'Redis: Ready for commands');
+    });
+
+    redisInstance.on('close', () => {
+      log('warn', 'Redis: Connection closed');
+    });
+
+    redisInstance.on('reconnecting', () => {
+      log('info', 'Redis: Reconnecting...');
+    });
+
+    log('info', 'getRedis: Redis instance created', { status: redisInstance.status });
   }
 
   return redisInstance;

@@ -3,18 +3,29 @@ import { getRedis } from '../redis';
 // Constants
 const IDEMPOTENCY_PREFIX = 'idempotency:zoom:';
 const TTL_SECONDS = 24 * 60 * 60; // 24 hours in seconds
-const REDIS_TIMEOUT_MS = 3000; // 3 second timeout for Redis operations
+const REDIS_TIMEOUT_MS = 5000; // 5 second timeout for Redis operations
+
+// Logger helper
+function log(level: 'info' | 'warn' | 'error', message: string, data: Record<string, unknown> = {}): void {
+  console.log(JSON.stringify({ level, message, timestamp: new Date().toISOString(), ...data }));
+}
 
 /**
- * Wrap a promise with a timeout
+ * Wrap a promise with a timeout - properly clears timeout on success
  */
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
-    ),
-  ]);
+  let timeoutId: NodeJS.Timeout;
+
+  const timeoutPromise = new Promise<T>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      log('error', `withTimeout: ${operation} timed out`, { timeoutMs });
+      reject(new Error(`${operation} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  return Promise.race([promise, timeoutPromise]).finally(() => {
+    clearTimeout(timeoutId);
+  });
 }
 
 /**
@@ -60,58 +71,84 @@ export async function markEventProcessed(
  * @returns true if this is the first time processing (acquired lock), false if already processed
  */
 export async function acquireEventLock(eventId: string): Promise<boolean> {
+  const startTime = Date.now();
   const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
   const value = JSON.stringify({
     processedAt: new Date().toISOString(),
   });
 
-  console.log(JSON.stringify({
-    level: 'info',
-    message: 'acquireEventLock: starting',
+  log('info', 'LOCK-1: acquireEventLock entry', {
     eventId,
+    key,
     hasRedisUrl: !!process.env.REDIS_URL,
-  }));
+  });
 
   // Check if Redis is configured
   if (!process.env.REDIS_URL) {
-    console.log(JSON.stringify({
-      level: 'warn',
-      message: 'acquireEventLock: REDIS_URL not configured, skipping idempotency check',
-      eventId,
-    }));
-    return true; // Allow processing if Redis unavailable
+    log('warn', 'LOCK-2: REDIS_URL not configured, skipping', { eventId });
+    return true;
   }
 
   try {
+    log('info', 'LOCK-2: About to call getRedis()', { eventId });
+    const redis = getRedis();
+
+    log('info', 'LOCK-3: Got Redis instance', {
+      eventId,
+      status: redis.status,
+    });
+
+    // If not connected, try to connect explicitly first
+    if (redis.status !== 'ready' && redis.status !== 'connect') {
+      log('info', 'LOCK-4: Redis not ready, connecting...', { status: redis.status });
+      try {
+        await withTimeout(redis.connect(), 5000, 'Redis connect');
+        log('info', 'LOCK-4: Redis connect completed', { status: redis.status });
+      } catch (connectError) {
+        log('error', 'LOCK-4: Redis connect failed', {
+          error: connectError instanceof Error ? connectError.message : String(connectError),
+        });
+        // Allow processing on connection failure
+        return true;
+      }
+    }
+
+    log('info', 'LOCK-5: About to execute SET command', {
+      eventId,
+      key,
+      ttlSeconds: TTL_SECONDS,
+      redisStatus: redis.status,
+    });
+
     // SETNX with EX (set if not exists with expiry) - atomic operation with timeout
     const result = await withTimeout(
-      getRedis().set(key, value, 'EX', TTL_SECONDS, 'NX'),
+      redis.set(key, value, 'EX', TTL_SECONDS, 'NX'),
       REDIS_TIMEOUT_MS,
       'Redis SET'
     );
 
+    const elapsed = Date.now() - startTime;
+    log('info', 'LOCK-6: SET command completed', {
+      eventId,
+      result,
+      elapsedMs: elapsed,
+    });
+
     if (result === 'OK') {
-      console.log(JSON.stringify({
-        level: 'info',
-        message: 'Event lock acquired',
-        eventId,
-      }));
+      log('info', 'LOCK-7: Lock acquired successfully', { eventId, elapsedMs: elapsed });
       return true;
     }
 
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Event already processed (duplicate)',
-      eventId,
-    }));
+    log('info', 'LOCK-7: Lock NOT acquired (duplicate)', { eventId, elapsedMs: elapsed });
     return false;
   } catch (error) {
-    console.log(JSON.stringify({
-      level: 'error',
-      message: 'acquireEventLock: Redis operation failed',
+    const elapsed = Date.now() - startTime;
+    log('error', 'LOCK-ERROR: Redis operation failed', {
       eventId,
       error: error instanceof Error ? error.message : String(error),
-    }));
+      errorName: error instanceof Error ? error.name : 'unknown',
+      elapsedMs: elapsed,
+    });
     // Allow processing on Redis failure - better to process duplicate than fail
     return true;
   }
