@@ -235,3 +235,13 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~45 min
 
 ---
+
+## [2025-01-26 23:45] - Optimize draft quality with context-aware prompts
+**Commit:** deb2141
+**Files Changed:** lib/prompts/optimized-followup.ts (new), lib/meeting-type-detector.ts (new), lib/quality-scorer.ts (new), lib/generate-draft.ts, lib/db/schema.ts, scripts/test-prompt-quality.ts (new), supabase/migrations/003_add_quality_scoring.sql (new), docs/guides/prompt-optimization.md (new)
+**Summary:** Major overhaul of draft generation quality. Added meeting type detection (sales_call, internal_sync, client_review, technical_discussion) with 80% accuracy. Optimized prompts with hook-driven subjects (<60 chars), structured body (Greeting→Context→Value→CTA), and good/bad examples. Action items now format as "[ ] Owner: Task (Deadline)". Quality scoring system (0-100) evaluates subject specificity, body quality, action item clarity, and structure. Reduced MAX_OUTPUT_TOKENS to 2048 for faster, punchier drafts.
+**Key Issues:** Tone detection accuracy lower than expected (20%) - works for neutral/formal but struggles with casual detection. Low priority for v1.
+**Test Results:** 85/100 average quality score, 80% meeting type accuracy
+**Duration:** ~40 min
+
+---
