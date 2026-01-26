@@ -17,14 +17,22 @@ export default function LandingPage() {
           <div className="text-2xl font-black logo-text">
             ReplySequence
           </div>
-          <a
-            href="https://tally.so/r/D4pv0j"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-cta !px-6 !py-2 !text-base"
-          >
-            Join Waitlist
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="/dashboard"
+              className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+            >
+              Dashboard
+            </a>
+            <a
+              href="https://tally.so/r/D4pv0j"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-cta !px-6 !py-2 !text-base"
+            >
+              Join Waitlist
+            </a>
+          </div>
         </div>
       </header>
 
