@@ -134,8 +134,20 @@ export const rawEvents = pgTable(
 // Draft status enum values
 export type DraftStatus = 'pending' | 'generating' | 'generated' | 'sent' | 'failed';
 
+// Meeting type for context-aware drafts
+export type DetectedMeetingType = 'sales_call' | 'internal_sync' | 'client_review' | 'technical_discussion' | 'general';
+
+// Tone type for drafts
+export type DraftTone = 'formal' | 'casual' | 'neutral';
+
+// Action item structure
+export interface ActionItem {
+  owner: string;
+  task: string;
+  deadline: string;
+}
+
 // Drafts table - stores AI-generated email drafts
-// Schema matches production database exactly
 export const drafts = pgTable(
   'drafts',
   {
@@ -160,6 +172,15 @@ export const drafts = pgTable(
     generationStartedAt: timestamp('generation_started_at', { withTimezone: true }),
     generationCompletedAt: timestamp('generation_completed_at', { withTimezone: true }),
     generationDurationMs: integer('generation_duration_ms'),
+    // Quality scoring (0-100)
+    qualityScore: integer('quality_score'),
+    // Meeting context detection
+    meetingType: text('meeting_type').$type<DetectedMeetingType>(),
+    toneUsed: text('tone_used').$type<DraftTone>(),
+    // Extracted action items (JSON array)
+    actionItems: jsonb('action_items').$type<ActionItem[]>(),
+    // Key points referenced from transcript
+    keyPointsReferenced: jsonb('key_points_referenced').$type<string[]>(),
     // Error tracking
     errorMessage: text('error_message'),
     retryCount: integer('retry_count'),
@@ -174,6 +195,8 @@ export const drafts = pgTable(
     index('drafts_transcript_id_idx').on(table.transcriptId),
     index('drafts_status_idx').on(table.status),
     index('drafts_created_at_idx').on(table.createdAt),
+    index('drafts_quality_score_idx').on(table.qualityScore),
+    index('drafts_meeting_type_idx').on(table.meetingType),
   ]
 );
 

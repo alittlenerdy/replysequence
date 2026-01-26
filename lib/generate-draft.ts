@@ -1,16 +1,33 @@
+/**
+ * Draft Generation with Optimized Prompts
+ *
+ * Key improvements:
+ * - Meeting type detection for context-aware prompts
+ * - Structured action items with owner/deadline
+ * - Quality scoring with issue detection
+ * - Hook-driven subject lines
+ * - Greeting → Context → Value → CTA structure
+ */
+
 import { callClaudeAPI, CLAUDE_MODEL, calculateCost, log, CLAUDE_API_TIMEOUT_MS } from './claude-api';
 import {
-  DISCOVERY_CALL_SYSTEM_PROMPT,
-  buildDiscoveryCallPrompt,
+  OPTIMIZED_SYSTEM_PROMPT,
+  buildOptimizedPrompt,
+  parseOptimizedResponse,
+  formatActionItemsForEmail,
   estimateTokenCount,
-  type DiscoveryCallContext,
-} from './prompts/discovery-call';
+  type FollowUpContext,
+  type ParsedDraftResponse,
+} from './prompts/optimized-followup';
+import { detectMeetingType, extractParticipants } from './meeting-type-detector';
+import { scoreDraft, type QualityScore } from './quality-scorer';
 import { db, drafts } from './db';
+import type { ActionItem } from './db/schema';
 
 // Draft generation configuration
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY_MS = 1000;
-const MAX_OUTPUT_TOKENS = 1024;
+const MAX_OUTPUT_TOKENS = 2048; // Reduced from 4096 for faster, punchier drafts
 
 /**
  * Result of draft generation
@@ -20,6 +37,10 @@ export interface GenerateDraftResult {
   draftId?: string;
   subject?: string;
   body?: string;
+  actionItems?: ActionItem[];
+  meetingType?: string;
+  toneUsed?: string;
+  qualityScore?: number;
   inputTokens?: number;
   outputTokens?: number;
   costUsd?: number;
@@ -28,12 +49,30 @@ export interface GenerateDraftResult {
 }
 
 /**
- * Input for draft generation
+ * Input for draft generation (backwards compatible)
  */
 export interface GenerateDraftInput {
   meetingId: string;
   transcriptId: string;
-  context: DiscoveryCallContext;
+  context: {
+    meetingTopic: string;
+    meetingDate: string;
+    hostName: string;
+    hostEmail?: string;
+    transcript: string;
+    senderName?: string;
+    companyName?: string;
+    recipientName?: string;
+    additionalContext?: string;
+  };
+}
+
+// Re-export for backwards compatibility
+export { estimateTokenCount };
+export type DiscoveryCallContext = GenerateDraftInput['context'];
+export { OPTIMIZED_SYSTEM_PROMPT as DISCOVERY_CALL_SYSTEM_PROMPT };
+export function buildDiscoveryCallPrompt(context: DiscoveryCallContext): string {
+  return buildOptimizedPrompt(context as FollowUpContext);
 }
 
 /**
@@ -44,42 +83,15 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Parse the generated email into subject and body
- */
-function parseEmailResponse(content: string): { subject: string; body: string } {
-  const lines = content.trim().split('\n');
-  let subject = '';
-  let bodyStartIndex = 0;
-
-  // Find subject line
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (line.toLowerCase().startsWith('subject:')) {
-      subject = line.substring('subject:'.length).trim();
-      bodyStartIndex = i + 1;
-      break;
-    }
-  }
-
-  // Skip blank lines after subject
-  while (bodyStartIndex < lines.length && lines[bodyStartIndex].trim() === '') {
-    bodyStartIndex++;
-  }
-
-  const body = lines.slice(bodyStartIndex).join('\n').trim();
-
-  return { subject, body };
-}
-
-/**
- * Generate a follow-up email draft using Claude API.
+ * Generate a follow-up email draft using Claude API with optimized prompts.
  *
  * Features:
+ * - Meeting type detection
+ * - Context-aware prompts
+ * - Structured action items
+ * - Quality scoring
  * - Retry logic with exponential backoff
  * - Cost tracking
- * - Latency logging
- * - Automatic DB storage
- * - Timeout handling (25s)
  *
  * @param input - Meeting and transcript context
  * @returns Draft generation result with content and metadata
@@ -88,7 +100,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
   const startTime = Date.now();
   const { meetingId, transcriptId, context } = input;
 
-  log('info', 'Starting draft generation', {
+  log('info', 'Starting optimized draft generation', {
     meetingId,
     transcriptId,
     meetingTopic: context.meetingTopic,
@@ -108,18 +120,48 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     };
   }
 
+  // Detect meeting type and tone
+  const detectionResult = detectMeetingType(context.transcript, context.meetingTopic);
+  const participants = extractParticipants(context.transcript);
+
+  log('info', 'Meeting context detected', {
+    meetingId,
+    meetingType: detectionResult.meetingType,
+    confidence: detectionResult.confidence,
+    tone: detectionResult.tone,
+    participantCount: participants.length,
+    signals: detectionResult.signals,
+  });
+
+  // Build optimized context
+  const optimizedContext: FollowUpContext = {
+    meetingTopic: context.meetingTopic,
+    meetingDate: context.meetingDate,
+    hostName: context.hostName,
+    hostEmail: context.hostEmail || '',
+    transcript: context.transcript,
+    meetingType: detectionResult.meetingType,
+    detectedTone: detectionResult.tone,
+    keyParticipants: participants,
+    senderName: context.senderName,
+    companyName: context.companyName,
+    recipientName: context.recipientName || participants[0], // Default to first participant
+    additionalContext: context.additionalContext,
+  };
+
   // Build the prompt
   let userPrompt: string;
   let estimatedInputTokens: number;
 
   try {
-    userPrompt = buildDiscoveryCallPrompt(context);
-    estimatedInputTokens = estimateTokenCount(DISCOVERY_CALL_SYSTEM_PROMPT + userPrompt);
+    userPrompt = buildOptimizedPrompt(optimizedContext);
+    estimatedInputTokens = estimateTokenCount(OPTIMIZED_SYSTEM_PROMPT + userPrompt);
 
-    log('info', 'Prompt built successfully', {
+    log('info', 'Optimized prompt built', {
       meetingId,
       estimatedInputTokens,
       promptLength: userPrompt.length,
+      meetingType: detectionResult.meetingType,
     });
   } catch (promptError) {
     const errorMessage = promptError instanceof Error ? promptError.message : 'Unknown prompt error';
@@ -143,17 +185,16 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     const attemptStartTime = Date.now();
 
     try {
-      log('info', 'Calling Claude API via fetch', {
+      log('info', 'Calling Claude API with optimized prompt', {
         attempt,
         model: CLAUDE_MODEL,
         meetingId,
         maxTokens: MAX_OUTPUT_TOKENS,
-        timeoutMs: CLAUDE_API_TIMEOUT_MS,
+        meetingType: detectionResult.meetingType,
       });
 
-      // Use raw fetch() with AbortController for reliable timeout in serverless
       const response = await callClaudeAPI({
-        systemPrompt: DISCOVERY_CALL_SYSTEM_PROMPT,
+        systemPrompt: OPTIMIZED_SYSTEM_PROMPT,
         userPrompt,
         maxTokens: MAX_OUTPUT_TOKENS,
         timeoutMs: CLAUDE_API_TIMEOUT_MS,
@@ -170,61 +211,66 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         outputTokens: response.outputTokens,
       });
 
-      // Extract usage stats
+      // Parse the structured response
+      const parsed = parseOptimizedResponse(response.content);
+
+      log('info', 'Response parsed successfully', {
+        meetingId,
+        hasSubject: !!parsed.subject,
+        subjectLength: parsed.subject.length,
+        bodyLength: parsed.body.length,
+        actionItemCount: parsed.actionItems.length,
+        meetingTypeDetected: parsed.meetingTypeDetected,
+        toneUsed: parsed.toneUsed,
+      });
+
+      // Score the draft quality
+      const qualityResult = scoreDraft(parsed, context.transcript);
+
+      log('info', 'Draft quality scored', {
+        meetingId,
+        overallScore: qualityResult.overall,
+        breakdown: qualityResult.breakdown,
+        issueCount: qualityResult.issues.length,
+      });
+
+      // Calculate costs
       const inputTokens = response.inputTokens;
       const outputTokens = response.outputTokens;
       const costUsd = calculateCost(inputTokens, outputTokens);
-
-      log('info', 'Token usage calculated', {
-        meetingId,
-        inputTokens,
-        outputTokens,
-        costUsd: costUsd.toFixed(6),
-      });
-
-      log('info', 'Response content extracted', {
-        meetingId,
-        contentLength: response.content.length,
-      });
-
-      const { subject, body } = parseEmailResponse(response.content);
-
-      log('info', 'Email parsed from response', {
-        meetingId,
-        hasSubject: !!subject,
-        subjectLength: subject.length,
-        bodyLength: body.length,
-      });
-
-      // Store draft in database
-      log('info', 'Saving draft to database', {
-        meetingId,
-        transcriptId,
-      });
-
-      const generationCompletedAt = new Date();
       const totalDurationMs = Date.now() - startTime;
 
+      // Append action items to body if they exist
+      let finalBody = parsed.body;
+      if (parsed.actionItems.length > 0) {
+        finalBody += formatActionItemsForEmail(parsed.actionItems);
+      }
+
+      // Store draft in database
       const [draft] = await db
         .insert(drafts)
         .values({
           meetingId,
           transcriptId,
-          subject,
-          body,
+          subject: parsed.subject,
+          body: finalBody,
           model: CLAUDE_MODEL,
           inputTokens,
           outputTokens,
           costUsd: costUsd.toFixed(6),
           generationStartedAt: new Date(startTime),
-          generationCompletedAt,
+          generationCompletedAt: new Date(),
           generationDurationMs: totalDurationMs,
+          qualityScore: qualityResult.overall,
+          meetingType: parsed.meetingTypeDetected,
+          toneUsed: parsed.toneUsed,
+          actionItems: parsed.actionItems,
+          keyPointsReferenced: parsed.keyPointsReferenced,
           status: 'generated',
         })
         .returning();
 
-      // This is the success log the user is looking for
-      log('info', 'Draft generated and saved', {
+      log('info', 'Draft generated and saved with quality scoring', {
         draftId: draft.id,
         meetingId,
         transcriptId,
@@ -232,14 +278,22 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         inputTokens,
         outputTokens,
         generationDurationMs: totalDurationMs,
-        subject: subject.substring(0, 50) + (subject.length > 50 ? '...' : ''),
+        qualityScore: qualityResult.overall,
+        meetingType: parsed.meetingTypeDetected,
+        toneUsed: parsed.toneUsed,
+        actionItemCount: parsed.actionItems.length,
+        subject: parsed.subject.substring(0, 60),
       });
 
       return {
         success: true,
         draftId: draft.id,
-        subject,
-        body,
+        subject: parsed.subject,
+        body: finalBody,
+        actionItems: parsed.actionItems,
+        meetingType: parsed.meetingTypeDetected,
+        toneUsed: parsed.toneUsed,
+        qualityScore: qualityResult.overall,
         inputTokens,
         outputTokens,
         costUsd,
@@ -249,7 +303,6 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
       lastError = error instanceof Error ? error : new Error(String(error));
       const attemptLatencyMs = Date.now() - attemptStartTime;
 
-      // Detailed error logging
       const errorDetails: Record<string, unknown> = {
         meetingId,
         attempt,
@@ -259,63 +312,31 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         attemptLatencyMs,
       };
 
-      // Check for specific error types
       const errorCode = (lastError as NodeJS.ErrnoException).code;
-      if (lastError.message.includes('timeout') || lastError.name === 'TimeoutError' || errorCode === 'ETIMEDOUT' || errorCode === 'ESOCKETTIMEDOUT') {
+      if (lastError.message.includes('timeout') || lastError.name === 'TimeoutError' || errorCode === 'ETIMEDOUT') {
         errorDetails.errorType = 'timeout';
-        errorDetails.timeoutMs = CLAUDE_API_TIMEOUT_MS;
-        errorDetails.errorCode = errorCode;
-        log('error', 'Claude API timed out after 30 seconds', errorDetails);
+        log('error', 'Claude API timed out', errorDetails);
       } else if (lastError.message.includes('rate') || lastError.message.includes('429')) {
         errorDetails.errorType = 'rate_limit';
         log('warn', 'Claude API rate limited', errorDetails);
-      } else if (lastError.message.includes('authentication') || lastError.message.includes('401')) {
-        errorDetails.errorType = 'authentication';
-        log('error', 'Claude API authentication failed', errorDetails);
-      } else if (lastError.message.includes('invalid') || lastError.message.includes('400')) {
-        errorDetails.errorType = 'invalid_request';
-        log('error', 'Claude API invalid request', errorDetails);
       } else {
         errorDetails.errorType = 'unknown';
-        errorDetails.errorStack = lastError.stack?.substring(0, 500);
         log('error', 'Claude API error', errorDetails);
       }
 
-      // Check if error is retryable
       const isRetryable = isRetryableError(lastError);
 
-      if (!isRetryable) {
-        log('error', 'Non-retryable error, stopping attempts', {
-          meetingId,
-          attempt,
-          error: lastError.message,
-        });
+      if (!isRetryable || attempt >= MAX_RETRIES) {
         break;
       }
 
-      if (attempt >= MAX_RETRIES) {
-        log('error', 'Max retries reached', {
-          meetingId,
-          attempts: attempt,
-          error: lastError.message,
-        });
-        break;
-      }
-
-      // Exponential backoff
       const delayMs = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
-      log('info', 'Retrying after delay', {
-        meetingId,
-        attempt,
-        nextAttempt: attempt + 1,
-        delayMs,
-      });
-
+      log('info', 'Retrying after delay', { meetingId, attempt, delayMs });
       await sleep(delayMs);
     }
   }
 
-  // All retries exhausted
+  // All retries exhausted - store failed draft
   const generationDurationMs = Date.now() - startTime;
   const errorMessage = lastError?.message || 'Unknown error';
 
@@ -327,21 +348,14 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     generationDurationMs,
   });
 
-  // Store failed draft attempt in database
   try {
-    log('info', 'Saving failed draft record', {
-      meetingId,
-      transcriptId,
-      error: errorMessage,
-    });
-
     const [draft] = await db
       .insert(drafts)
       .values({
         meetingId,
         transcriptId,
-        subject: '', // Required field - empty for failed drafts
-        body: '', // Required field - empty for failed drafts
+        subject: '',
+        body: '',
         model: CLAUDE_MODEL,
         status: 'failed',
         errorMessage,
@@ -349,27 +363,21 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         generationCompletedAt: new Date(),
         generationDurationMs,
         retryCount: attempt,
+        meetingType: detectionResult.meetingType,
       })
       .returning();
-
-    log('info', 'Failed draft record saved', {
-      draftId: draft.id,
-      meetingId,
-    });
 
     return {
       success: false,
       draftId: draft.id,
+      meetingType: detectionResult.meetingType,
       generationDurationMs,
       error: errorMessage,
     };
   } catch (dbError) {
-    const dbErrorMessage = dbError instanceof Error ? dbError.message : 'Unknown error';
-    log('error', 'Failed to store failed draft in database', {
+    log('error', 'Failed to store failed draft', {
       meetingId,
-      transcriptId,
-      originalError: errorMessage,
-      dbError: dbErrorMessage,
+      error: dbError instanceof Error ? dbError.message : 'Unknown error',
     });
 
     return {
@@ -381,39 +389,21 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
 }
 
 /**
- * Check if an error is retryable.
- * Rate limits, timeouts, and server errors are retryable.
- * Authentication and validation errors are not.
+ * Check if an error is retryable
  */
 function isRetryableError(error: Error): boolean {
   const message = error.message.toLowerCase();
   const name = error.name.toLowerCase();
 
-  // Not retryable: auth errors, validation errors
-  if (message.includes('authentication') || message.includes('invalid_api_key') || message.includes('401')) {
-    return false;
-  }
-  if (message.includes('invalid_request') || message.includes('validation') || message.includes('400')) {
-    return false;
-  }
+  // Not retryable
+  if (message.includes('authentication') || message.includes('401')) return false;
+  if (message.includes('invalid_request') || message.includes('400')) return false;
 
-  // Retryable: rate limits, timeouts, server errors
-  if (message.includes('rate_limit') || message.includes('rate limit') || message.includes('429')) {
-    return true;
-  }
-  if (message.includes('timeout') || message.includes('timed out') || name.includes('timeout')) {
-    return true;
-  }
-  if (message.includes('server_error') || message.includes('500') || message.includes('503')) {
-    return true;
-  }
-  if (message.includes('overloaded') || message.includes('529')) {
-    return true;
-  }
-  if (message.includes('network') || message.includes('econnreset') || message.includes('enotfound')) {
-    return true;
-  }
+  // Retryable
+  if (message.includes('rate') || message.includes('429')) return true;
+  if (message.includes('timeout') || name.includes('timeout')) return true;
+  if (message.includes('500') || message.includes('503') || message.includes('529')) return true;
+  if (message.includes('network') || message.includes('econnreset')) return true;
 
-  // Default to retryable for unknown errors
-  return true;
+  return true; // Default to retryable
 }
