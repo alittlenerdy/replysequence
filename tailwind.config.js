@@ -16,16 +16,16 @@ module.exports = {
           alt: '#F5F5F5',
           pure: '#FFFFFF',
         },
-        // Mint (Primary Brand)
+        // Primary Blue (Brand)
         mint: {
-          DEFAULT: '#00D9C0',
-          hover: '#00C4AF',
-          tint: '#E6FFF9',
+          DEFAULT: '#2563EB',
+          hover: '#1D4ED8',
+          tint: '#EFF6FF',
         },
-        // Neon Pink (CTAs)
+        // Blue (CTAs)
         neon: {
-          DEFAULT: '#FF006E',
-          hover: '#E0005E',
+          DEFAULT: '#3B82F6',
+          hover: '#2563EB',
         },
         // Text colors
         text: {

@@ -8,14 +8,14 @@
   --background-alt: #F5F5F5;
   --background-pure: #FFFFFF;
 
-  /* Mint (Primary Brand) */
-  --mint: #00D9C0;
-  --mint-hover: #00C4AF;
-  --mint-tint: #E6FFF9;
+  /* Primary Blue (Brand) */
+  --mint: #2563EB;
+  --mint-hover: #1D4ED8;
+  --mint-tint: #EFF6FF;
 
-  /* Neon Pink (CTAs) */
-  --neon: #FF006E;
-  --neon-hover: #E0005E;
+  /* Blue (CTAs) */
+  --neon: #3B82F6;
+  --neon-hover: #2563EB;
 
   /* Text */
   --text-primary: #000000;
@@ -53,15 +53,15 @@ body {
   /* CTA Button with Gradient */
   .btn-cta {
     @apply px-8 py-4 rounded-full font-bold text-lg text-white transition-all duration-300;
-    background: radial-gradient(circle at 30% 30%, #FF006E 0%, #E0005E 100%);
+    background: radial-gradient(circle at 30% 30%, #3B82F6 0%, #2563EB 100%);
     border: 2px solid #000000;
-    box-shadow: 0 4px 20px rgba(255, 0, 110, 0.3);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
   }
 
   .btn-cta:hover {
-    background: radial-gradient(circle at 70% 70%, #FF006E 0%, #E0005E 100%);
+    background: radial-gradient(circle at 70% 70%, #3B82F6 0%, #2563EB 100%);
     transform: scale(1.02);
-    box-shadow: 0 6px 25px rgba(255, 0, 110, 0.4);
+    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
   }
 
   .btn-secondary {

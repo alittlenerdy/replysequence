@@ -78,7 +78,7 @@ export default function FloatingGradients() {
             left: g.x,
             top: g.y,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(0,217,192,0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
           animate={{
