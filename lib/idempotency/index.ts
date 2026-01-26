@@ -78,8 +78,8 @@ export async function acquireEventLock(eventId: string): Promise<boolean> {
   });
 
   log('info', 'LOCK-1: acquireEventLock entry', {
-    eventId,
-    key,
+    inputEventId: eventId,
+    fullRedisKey: key,
     hasRedisUrl: !!process.env.REDIS_URL,
   });
 

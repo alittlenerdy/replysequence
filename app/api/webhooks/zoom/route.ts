@@ -216,10 +216,22 @@ async function handleMeetingEnded(
   startTime: number
 ): Promise<NextResponse> {
   const { object } = payload.payload;
+  // Lock key: {event_type}-{meeting_uuid} (no timestamp - one lock per event type per meeting)
+  const lockKey = `meeting.ended-${object.uuid}`;
+  // Event ID for database: includes timestamp for uniqueness
   const eventId = `meeting.ended-${object.uuid}-${payload.event_ts}`;
 
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Lock key generated',
+    lockKey,
+    eventId,
+    eventType: 'meeting.ended',
+    meetingUuid: object.uuid,
+  }));
+
   // Idempotency check - prevent duplicate processing
-  const acquired = await acquireEventLock(eventId);
+  const acquired = await acquireEventLock(lockKey);
   if (!acquired) {
     console.log(JSON.stringify({
       level: 'info',
@@ -335,10 +347,22 @@ async function handleRecordingCompleted(
   startTime: number
 ): Promise<NextResponse> {
   const { object } = payload.payload;
+  // Lock key: {event_type}-{meeting_uuid} (no timestamp - one lock per event type per meeting)
+  const lockKey = `recording.completed-${object.uuid}`;
+  // Event ID for database: includes timestamp for uniqueness
   const eventId = `recording.completed-${object.uuid}-${payload.event_ts}`;
 
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Lock key generated',
+    lockKey,
+    eventId,
+    eventType: 'recording.completed',
+    meetingUuid: object.uuid,
+  }));
+
   // Idempotency check - prevent duplicate processing
-  const acquired = await acquireEventLock(eventId);
+  const acquired = await acquireEventLock(lockKey);
   if (!acquired) {
     console.log(JSON.stringify({
       level: 'info',
@@ -454,22 +478,28 @@ async function handleTranscriptCompleted(
     console.log(JSON.stringify({ level: 'info', message: 'A1 DONE: Payload valid' }));
 
     const { object } = payload.payload;
+    // Lock key: {event_type}-{meeting_uuid} (no timestamp - one lock per event type per meeting)
+    const lockKey = `recording.transcript_completed-${object.uuid}`;
+    // Event ID for database: includes timestamp for uniqueness
     const eventId = `recording.transcript_completed-${object.uuid}-${payload.event_ts}`;
 
     console.log(JSON.stringify({
       level: 'info',
-      message: 'A2: About to call acquireEventLock',
+      message: 'A2: Lock key generated for transcript_completed',
+      lockKey,
       eventId,
-      zoomMeetingId: object.uuid,
+      eventType: 'recording.transcript_completed',
+      meetingUuid: object.uuid,
     }));
 
     // Idempotency check - prevent duplicate processing
     let acquired: boolean;
     try {
-      acquired = await acquireEventLock(eventId);
+      acquired = await acquireEventLock(lockKey);
       console.log(JSON.stringify({
         level: 'info',
         message: 'A2 DONE: acquireEventLock returned',
+        lockKey,
         eventId,
         acquired,
       }));
@@ -477,6 +507,7 @@ async function handleTranscriptCompleted(
       console.log(JSON.stringify({
         level: 'error',
         message: 'A2 ERROR: acquireEventLock threw',
+        lockKey,
         eventId,
         error: lockError instanceof Error ? lockError.message : String(lockError),
       }));
@@ -487,7 +518,8 @@ async function handleTranscriptCompleted(
     if (!acquired) {
       console.log(JSON.stringify({
         level: 'info',
-        message: 'A3: Duplicate event, querying existing',
+        message: 'A3: Duplicate event detected (lock already exists)',
+        lockKey,
         eventId,
       }));
 
