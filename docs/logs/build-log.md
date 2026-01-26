@@ -217,3 +217,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~20 min
 
 ---
+
+## [2025-01-26 22:30] - Disable RLS warnings and add multi-platform support
+**Commit:** 6d90f41
+**Files Changed:** supabase/migrations/002_disable_rls_add_platforms.sql (new), lib/db/schema.ts, lib/process-zoom-event.ts
+**Summary:** Disabled RLS on all tables (meetings, transcripts, drafts, raw_events) to clear Supabase warnings - no auth yet, will re-enable with Clerk. Added `platform_meeting_id` column as generic external ID for multi-platform support (Zoom UUID, Google Meet code, Teams ID). Created composite index on (platform, platform_meeting_id). Updated all meeting insert locations to set platformMeetingId from Zoom UUID.
+**Key Issues:** None - migration ran cleanly. Some policies didn't exist (NOTICE warnings) which is fine.
+**Duration:** ~15 min
+
+---
