@@ -157,8 +157,8 @@ Step 15: Calling generateDraft
 
 ## Related Documentation
 
-- `/DEBUGGING_LOG.md` - Detailed debugging notes and solutions
-- `/build-log.md` - Chronological development log
-- `/CLAUDE.md` - Instructions for Claude Code
+- [Debugging Log](../logs/debugging-log.md) - Detailed debugging notes and solutions
+- [Build Log](../logs/build-log.md) - Chronological development log
+- [Claude Guide](claude.md) - Instructions for Claude Code
 
 ---

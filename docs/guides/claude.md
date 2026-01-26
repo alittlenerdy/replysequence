@@ -2,7 +2,7 @@
 
 ## Build Logging
 
-After completing any autonomous task, append an entry to `/build-log.md`:
+After completing any autonomous task, append an entry to `/docs/logs/build-log.md`:
 
 ```markdown
 ## [YYYY-MM-DD HH:MM] - [Task Description]
