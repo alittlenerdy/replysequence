@@ -524,11 +524,6 @@ async function handleTranscriptCompleted(
         eventId,
         rawBody
       );
-      console.log(JSON.stringify({
-        level: 'info',
-        message: 'A4 DONE: storeRawEvent returned',
-        rawEventId: rawEvent.id,
-      }));
     } catch (storeError) {
       console.log(JSON.stringify({
         level: 'error',
@@ -542,38 +537,42 @@ async function handleTranscriptCompleted(
       );
     }
 
-    // Process event with timeout wrapper
+    // Sync log immediately after await to confirm execution continues
     console.log(JSON.stringify({
       level: 'info',
-      message: 'A5: About to call processZoomEvent with timeout wrapper',
+      message: 'A4 DONE: storeRawEvent returned successfully',
       rawEventId: rawEvent.id,
-      timeoutMs: PROCESSING_TIMEOUT_MS,
+      elapsedMs: Date.now() - startTime,
     }));
 
-    const processingPromise = processZoomEvent(rawEvent);
-    const { result, timedOut } = await withProcessingTimeout(
-      processingPromise.then(r => r),
-      PROCESSING_TIMEOUT_MS - (Date.now() - startTime), // Remaining time
-      { success: false, action: 'failed' as const, error: 'Processing timeout' },
-      'processZoomEvent'
-    );
+    // Process event - USE SAME PATTERN AS handleRecordingCompleted (which works)
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'A5: About to call processZoomEvent (direct await, no wrapper)',
+      rawEventId: rawEvent.id,
+    }));
 
-    if (timedOut) {
-      console.log(JSON.stringify({
-        level: 'warn',
-        message: 'A5 TIMEOUT: processZoomEvent exceeded time limit',
-        rawEventId: rawEvent.id,
-        elapsedMs: Date.now() - startTime,
-      }));
-    } else {
+    try {
+      const result = await processZoomEvent(rawEvent);
+
       console.log(JSON.stringify({
         level: 'info',
-        message: 'A5 DONE: processZoomEvent completed',
+        message: 'A5 DONE: processZoomEvent completed successfully',
         rawEventId: rawEvent.id,
         action: result.action,
         meetingId: result.meetingId,
         elapsedMs: Date.now() - startTime,
       }));
+    } catch (processError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        message: 'A5 ERROR: processZoomEvent threw exception',
+        rawEventId: rawEvent.id,
+        error: processError instanceof Error ? processError.message : String(processError),
+        stack: processError instanceof Error ? processError.stack?.substring(0, 500) : undefined,
+        elapsedMs: Date.now() - startTime,
+      }));
+      // Don't fail the webhook - raw event is stored for retry
     }
 
     // Return success with event ID
@@ -582,7 +581,6 @@ async function handleTranscriptCompleted(
       message: '<<< HANDLER EXIT: Returning 200 OK',
       rawEventId: rawEvent.id,
       totalDurationMs: Date.now() - startTime,
-      timedOut,
     }));
 
     return NextResponse.json(
@@ -590,7 +588,6 @@ async function handleTranscriptCompleted(
         received: true,
         eventId: rawEvent.id,
         zoomMeetingId: object.uuid,
-        timedOut,
       },
       { status: 200 }
     );
