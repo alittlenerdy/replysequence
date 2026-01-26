@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
+import { syncSentEmailToCrm } from '@/lib/airtable';
+import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
   try {
@@ -86,6 +88,38 @@ export async function POST(request: NextRequest) {
       recipientEmail,
       messageId: result.messageId,
     }));
+
+    // Sync to Airtable CRM (non-blocking - don't await in critical path)
+    // This runs after email is confirmed sent
+    // Map google_meet to zoom for Airtable (only Zoom and Teams supported)
+    const crmPlatform = draft.meetingPlatform === 'microsoft_teams' ? 'microsoft_teams' : 'zoom';
+    syncSentEmailToCrm({
+      recipientEmail,
+      meetingTitle: draft.meetingTopic || 'Meeting',
+      meetingDate: draft.meetingStartTime || new Date(),
+      platform: crmPlatform,
+      draftSubject: draft.subject,
+      draftBody: draft.body,
+    }).then((crmResult) => {
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'CRM sync completed',
+        draftId,
+        recipientEmail,
+        crmSuccess: crmResult.success,
+        contactFound: crmResult.contactFound,
+        meetingRecordId: crmResult.meetingRecordId,
+      }));
+    }).catch((crmError) => {
+      // Log but don't fail - email was already sent successfully
+      console.error(JSON.stringify({
+        level: 'error',
+        message: 'CRM sync failed (non-blocking)',
+        draftId,
+        recipientEmail,
+        error: crmError instanceof Error ? crmError.message : String(crmError),
+      }));
+    });
 
     return NextResponse.json({
       success: true,

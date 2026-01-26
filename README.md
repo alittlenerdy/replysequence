@@ -9,6 +9,7 @@ Turn Zoom and Microsoft Teams meetings into perfect follow-up emails.
 - **Quality Scoring**: Automatic scoring (0-100) with meeting type detection
 - **Dashboard**: View, edit, and send drafts from a unified interface
 - **Email Integration**: Send emails via Resend with one click
+- **CRM Integration**: Automatic logging to Airtable with contact matching
 
 ## Getting Started
 
@@ -87,6 +88,8 @@ See `.env.example` for all required variables:
 | `ANTHROPIC_API_KEY` | Claude API key for draft generation |
 | `RESEND_API_KEY` | Resend API key for email sending |
 | `CLERK_*` | Clerk authentication keys |
+| `AIRTABLE_API_KEY` | Airtable personal access token |
+| `AIRTABLE_BASE_ID` | Airtable base ID (starts with `app`) |
 
 ## Architecture
 
@@ -103,7 +106,8 @@ lib/
 ├── process-teams-event.ts   # Teams event processing
 ├── teams-api.ts             # Graph API client
 ├── generate-draft.ts        # Claude draft generation
-└── email.ts                 # Resend email sending
+├── email.ts                 # Resend email sending
+└── airtable.ts              # Airtable CRM integration
 ```
 
 ## Deploy on Vercel
