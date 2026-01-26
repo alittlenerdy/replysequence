@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import MouseTrail from "@/components/MouseTrail";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -23,6 +24,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${roboto.variable} antialiased`}>
+          <MouseTrail />
           {children}
         </body>
       </html>
