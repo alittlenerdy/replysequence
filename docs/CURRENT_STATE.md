@@ -1,3 +1,164 @@
-# CURRENT_STATE-audit
+# ReplySequence Current State
 
-# ReplySequence Current State Audit **Date:** January 19, 2026   **Audited by:** Claude (via Vercel deployment analysis)   **Last Deploy:** Sprint 1 complete (commit: 1d6795fc612e9b6af0474ed34c7f7e5aeab1332d)  ---  ## ðŸŽ¯ DEPLOYMENT STATUS  ### âœ… Live Production - **URL:** [https://replysequence.vercel.app](https://replysequence.vercel.app) - **Status:** READY (deployed successfully) - **Deploy Time:** Jan 19, 2026 @ ~4:39 PM UTC - **Build Duration:** ~27 seconds - **Region:** iad1 (US East)  ---  ## ðŸ› ï¸ TECH STACK CONFIRMED  ### Framework & Runtime - **Next.js:** 16.1.2 (latest, using Turbopack) - **Node.js:** 24.x - **Bundler:** Turbopack (experimental, faster than Webpack) - **Deployment:** Vercel (3 Lambda functions)  ### Infrastructure (Inferred from build logs) - **Database:** PostgreSQL (mentioned in Week 1 task, not visible in build) - **Queue:** Redis + BullMQ (mentioned in build errors - see Issues section) - **Auth:** Clerk (mentioned in Week 1 context) - **AI:** Claude API (for draft generation)  ### Packages Detected - **129 packages installed** during last build - Deprecated warnings: `@esbuild-kit/esm-loader`, `@esbuild-kit/core-utils` (non-critical) - Using `ioredis` for Redis connection  ---  ## ðŸ“ CODEBASE STRUCTURE (Inferred from 37 deployed files)  Unable to access GitHub directly due to network restrictions, but based on Next.js 16.1.2 structure:  ``` /replysequence â”œâ”€â”€ app/                    # App Router (Next.js 16) â”‚   â”œâ”€â”€ page.tsx           # Landing page â”‚   â”œâ”€â”€ layout.tsx         # Root layout â”‚   â””â”€â”€ api/               # API routes â”‚       â””â”€â”€ webhooks/      # Zoom webhook endpoint â”‚           â””â”€â”€ zoom/ â”‚               â””â”€â”€ route.ts â”œâ”€â”€ lib/                   # Utility functions â”‚   â”œâ”€â”€ queue.ts          # BullMQ job queue â”‚   â”œâ”€â”€ redis.ts          # Redis connection â”‚   â””â”€â”€ supabase.ts       # Database client â”œâ”€â”€ components/           # React components â”œâ”€â”€ public/              # Static assets â”œâ”€â”€ .env                 # Environment variables (loaded in build) â””â”€â”€ package.json         # Dependencies ```  **Total files deployed:** 37 (includes compiled assets, not source files)  ---  ## âœ… WHAT'S BUILT (Sprint 1 Complete)  Based on commit message "Sprint 1: Zoom ingestion foundation complete":  ### 1. **Zoom Webhook Endpoint** - POST `/api/webhooks/zoom` likely exists - Should handle signature verification - Should trigger async job processing  ### 2. **Job Queue Infrastructure** - BullMQ + Redis setup exists (evidence: Redis connection errors) - Queue workers configured - Job processing logic in place  ### 3. **Database Schema** - PostgreSQL tables likely created:   - `meetings` (Zoom meeting data)   - `participants` (attendees)   - `transcripts` (meeting transcripts)   - `drafts` (generated email drafts)   - `events` (webhook event log for deduplication)  ### 4. **Transcript Retrieval** - Integration with Zoom API to fetch recordings - Transcript parsing logic  ### 5. **Draft Generation** - Claude API integration - Email draft creation from transcript  ### 6. **Landing Page** - Basic Next.js page deployed (visible at root URL) - Marketing/onboarding content  ---  ## âŒ WHAT'S MISSING (Not Yet Built)  ### Week 2-3 Features (Next Up) - **Email sending infrastructure** (Resend integration) - **HubSpot OAuth** (connect CRM, match contacts) - **Approve/Send UI** (review drafts before sending) - **User dashboard** (view generated drafts, history) - **Metrics tracking** (latency, quality, error rates)  ### Week 4-8 Features (Upcoming) - **Pilot onboarding flow** - **Stripe billing/paywall** - **Gmail/Outlook OAuth** (send from user's email) - **Performance optimization** (<2 min latency) - **Case study content**  ---  ## ðŸš¨ CRITICAL ISSUES DETECTED  ### 1. **Redis Connection Error During Build** âš ï¸ **Severity:** HIGH   **Location:** Build logs show multiple `ECONNREFUSED 127.0.0.1:6379` errors  **Problem:** ``` [ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) ```  **Why this happens:** - Redis client is being imported/instantiated at the **module level** (top of file) - Next.js tries to connect during build time (static page generation) - No Redis server available during Vercel build  **Impact:** - Build succeeds despite errors (good) - But unhandled error events could cause runtime issues - App may crash on first Redis operation  **Fix Required:** ```typescript // âŒ WRONG (connects at module load time) import { Redis } from 'ioredis'; export const redis = new Redis(process.env.REDIS*URL);  // âœ… CORRECT (lazy connection) import { Redis } from 'ioredis'; let redis: Redis | null = null;  export function getRedis() {   if (!redis) {     redis = new Redis(process.env.REDIS*URL, {       lazyConnect: true,       maxRetriesPerRequest: 3,     });   }   return redis; } ```  **File to fix:** `lib/redis.ts` (or wherever Redis is instantiated)  ---  ### 2. **Environment Variables Not Visible** **Severity:** MEDIUM   **Status:** Unknown if properly configured  **Required env vars (based on Week 1 tasks):** ```bash # Zoom ZOOM*CLIENT*ID= ZOOM*CLIENT*SECRET= ZOOM*WEBHOOK*SECRET*TOKEN=  # Database DATABASE*URL=postgresql://... SUPABASE*URL= SUPABASE*ANON*KEY=  # Redis/Queue REDIS*URL=redis://...  # AI ANTHROPIC*API*KEY=  # Auth (Clerk) NEXT*PUBLIC*CLERK*PUBLISHABLE*KEY= CLERK*SECRET*KEY= ```  **Action needed:** Verify all are set in Vercel project settings  ---  ### 3. **No Verification of Webhook Endpoint** **Severity:** MEDIUM   **Status:** Unknown if tested with real Zoom webhook  **Questions to answer:** - Does `/api/webhooks/zoom` return 200 in <500ms? - Is Zoom signature verification working? - Are webhooks actually being received from Zoom? - Is deduplication working (no duplicate processing)?  **Action needed:** Test with real Zoom call + ngrok/Vercel preview  ---  ## ðŸ“Š BUILD PERFORMANCE  - **Build time:** ~27 seconds (excellent) - **Compile time:** 6.9 seconds (Turbopack) - **TypeScript check:** Passed - **Static pages generated:** 5 - **Lambda functions:** 3  ---  ## ðŸŽ¯ NEXT ACTIONS (Monday, Jan 20)  ### Priority 1: Fix Redis Connection Error 1. Update `lib/redis.ts` to use lazy connection 2. Add proper error handling for Redis operations 3. Test locally to ensure no build-time connections 4. Redeploy to Vercel  ### Priority 2: Verify Sprint 1 Actually Works 1. Set up ngrok or use Vercel preview URL 2. Configure Zoom webhook to point to your endpoint 3. Run a test Zoom call 4. Verify:    - Webhook received (check logs)    - Transcript retrieved (check database)    - Draft generated (check database)    - No duplicate processing (run same webhook twice)  ### Priority 3: Start Week 2 Stress Testing - Run 5+ internal Zoom calls - Measure end-to-end latency - Document any bugs or edge cases - Prepare for Week 3 pilot recruitment  ---  ## ðŸ“ˆ METRICS TO TRACK (Not Yet Implemented)  ### Gate 1 Criteria (Due Jan 25) - [ ] Webhook endpoint responding <500ms - [ ] Transcript retrieval <5 min after recording - [ ] 1+ meeting processed end-to-end - [ ] Draft stored in database - [ ] No duplicate processing  ### Current Status - âœ… Code deployed successfully - âš ï¸ Redis connection issue needs fixing - â“ End-to-end flow not yet verified  ---  ## ðŸ”— USEFUL LINKS  - **Production:** [https://replysequence.vercel.app](https://replysequence.vercel.app) - **GitHub:** [https://github.com/alittlenerdy/replysequence](https://github.com/alittlenerdy/replysequence) - **Vercel Project:** [https://vercel.com/littleghosts/replysequence](https://vercel.com/littleghosts/replysequence) - **Last Commit:** 1d6795fc612e9b6af0474ed34c7f7e5aeab1332d  ---  ## ðŸ“ NOTES FOR CLAUDE CODE  When working on this project: 1. Always use lazy Redis connections (don't instantiate at module level) 2. All API routes should be in `app/api/` directory 3. Database queries use Supabase client 4. Auth uses Clerk (user sessions) 5. Environment variables are loaded from Vercel (not .env in repo) 6. Turbopack is enabled (faster dev/build times)  ---  ## âœ… VERDICT: SPRINT 1 = 95% COMPLETE  **What's working:** - Deployment pipeline âœ… - Next.js app structure âœ… - Webhook endpoint code âœ… - Job queue setup âœ… - Database schema âœ…  **What needs fixing:** - Redis connection error (critical) âš ï¸ - End-to-end verification (pending) â“  **Ready for Gate 1:** Almost. Fix Redis, then test with real Zoom call.  ---  **Edwin Land built 5 failed instant cameras before Polaroid worked. You're on iteration 1, and the foundation is solid. Fix the Redis connection, test the webhook, and you'll hit Gate 1 by Friday.**
+**Last Updated:** January 25, 2026
+**Status:** Production-ready, webhook processing verified working
+
+---
+
+## Deployment Status
+
+- **URL:** https://replysequence.vercel.app
+- **Status:** READY (deployed successfully)
+- **Region:** iad1 (US East)
+- **Vercel Plan:** Pro (60s function timeout enabled)
+
+---
+
+## Tech Stack
+
+### Framework & Runtime
+- **Next.js:** 16.x (App Router)
+- **Node.js:** 24.x
+- **Deployment:** Vercel (Fluid Compute enabled)
+
+### Infrastructure
+- **Database:** PostgreSQL via Supabase (Drizzle ORM)
+- **Cache/Queue:** Redis via Upstash
+- **AI:** Claude API (Sonnet 4) for draft generation
+
+---
+
+## What's Working (January 25, 2026)
+
+### Zoom Integration
+- Webhook endpoint receiving all event types
+- Signature verification working
+- Idempotency via Redis locks
+- `meeting.ended` events processed
+- `recording.completed` events processed
+- `recording.transcript_completed` events processed
+
+### Transcript Pipeline
+- Download using `download_token` from webhook payload
+- VTT parsing with speaker segments
+- Storage in database with full text search support
+
+### Draft Generation
+- Claude API integration with 25s timeout
+- Automatic draft generation after transcript storage
+- Cost tracking (input/output tokens, USD)
+
+---
+
+## Resolved Issues
+
+### Step 10 Database Query Hang (RESOLVED)
+- **Issue:** Query hung at "Checking for existing transcript in DB"
+- **Root Cause:** Fetching ALL columns including large JSONB/TEXT fields
+- **Solution:** Select only ID column, add 5s timeout wrapper
+- **Details:** See `/DEBUGGING_LOG.md`
+
+### Redis Connection Hang (RESOLVED)
+- **Issue:** Handler hung after "Routing to handleTranscriptCompleted"
+- **Root Cause:** Redis lazyConnect waiting forever if REDIS_URL not set
+- **Solution:** 3s timeout wrapper, skip idempotency if Redis unavailable
+
+---
+
+## Database Query Best Practices
+
+**CRITICAL:** Always use selective `.select()` to avoid fetching large columns.
+
+```typescript
+// BAD - Fetches everything including large JSONB/TEXT columns
+const existing = await db.select().from(table).where(eq(table.id, id)).limit(1);
+
+// GOOD - Only fetches what you need
+const existing = await db.select({ id: table.id }).from(table).where(eq(table.id, id)).limit(1);
+
+// GOOD - With timeout wrapper for serverless
+const result = await withDbTimeout(
+  db.select({ id: table.id }).from(table).where(eq(table.id, id)).limit(1),
+  5000,
+  'check existing record'
+);
+```
+
+See `/DEBUGGING_LOG.md` for the full `withDbTimeout()` implementation.
+
+---
+
+## Environment Variables Required
+
+```bash
+# Database
+DATABASE_URL=postgresql://...
+
+# Redis (Upstash)
+REDIS_URL=rediss://...
+
+# Zoom
+ZOOM_WEBHOOK_SECRET_TOKEN=...
+
+# AI
+ANTHROPIC_API_KEY=...
+```
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `app/api/webhooks/zoom/route.ts` | Webhook handler with comprehensive logging |
+| `lib/process-zoom-event.ts` | Event processing with step logging |
+| `lib/claude-api.ts` | Claude API with timeout handling |
+| `lib/idempotency/index.ts` | Redis lock with timeout |
+| `lib/db/index.ts` | Database connection pool |
+
+---
+
+## Logging Pattern
+
+All handlers use step-by-step logging for debugging:
+
+```
+>>> HANDLER ENTRY: handleTranscriptCompleted
+A1: Checking payload structure
+A2: About to call acquireEventLock
+A4: About to call storeRawEvent
+A5: About to call processZoomEvent
+>>> processZoomEvent ENTRY
+B1: About to update rawEvents status
+Step 1: Parsing transcript_completed payload
+Step 10A: About to query for existing transcript
+Step 10B: Executing transcript query with timeout
+Step 10C: Query completed successfully
+Step 11A: Inserting new transcript
+Step 11B: Transcript inserted successfully
+Step 12A: Updating meeting status to ready
+Step 12B: Meeting status updated to ready
+Step 13: Preparing draft generation
+Step 15: Calling generateDraft
+<<< HANDLER EXIT: Returning 200 OK
+```
+
+---
+
+## Next Steps
+
+1. Monitor production logs for any remaining issues
+2. Verify draft quality with real meeting transcripts
+3. Build approval/send UI for generated drafts
+4. Add email sending via Resend
+5. Integrate HubSpot for CRM contact matching
+
+---
+
+## Related Documentation
+
+- `/DEBUGGING_LOG.md` - Detailed debugging notes and solutions
+- `/build-log.md` - Chronological development log
+- `/CLAUDE.md` - Instructions for Claude Code
+
+---
