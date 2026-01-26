@@ -199,3 +199,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~30 min (including research)
 
 ---
+
+## [2025-01-26 21:20] - Fix transcript_completed processing not calling processZoomEvent
+**Commit:** 3e43265
+**Files Changed:** app/api/webhooks/zoom/route.ts
+**Summary:** handleTranscriptCompleted was stopping after storing raw event - processZoomEvent never called. Root cause: Used complex `withProcessingTimeout` wrapper while working `handleRecordingCompleted` used simple direct await. Fix: Removed timeout wrapper, use same try/catch pattern as recording handler. Added immediate sync log after storeRawEvent to confirm execution continues.
+**Key Issues:** Logs showed "Raw event stored" then nothing - complex promise wrapper was breaking execution flow or swallowing errors silently.
+**Duration:** ~15 min
+
+---
