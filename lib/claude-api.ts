@@ -77,11 +77,10 @@ interface ClaudeErrorResponse {
 }
 
 /**
- * Call Claude API using Promise.race with guaranteed timeout
+ * Call Claude API using EXACT pattern from working test endpoint
  *
- * The timeoutPromise will reject after timeoutMs NO MATTER WHAT,
- * even if fetchPromise is completely hung. This is the only pattern
- * that reliably works in Vercel serverless.
+ * Uses AbortController with detailed logging between each step
+ * to identify where any hang occurs.
  */
 export async function callClaudeAPI({
   systemPrompt,
@@ -103,17 +102,13 @@ export async function callClaudeAPI({
 
   log('info', 'Starting Claude API request', { timeoutMs, model: CLAUDE_MODEL });
 
-  // Create a timeout promise that WILL reject even if fetch hangs forever
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
-      const elapsed = Date.now() - startTime;
-      log('error', 'Request timeout - rejecting', { elapsed, timeoutMs });
-      reject(new Error(`Request timeout after ${timeoutMs}ms`));
-    }, timeoutMs);
-  });
+  try {
+    // Use EXACT same pattern as working test endpoint
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  // Create fetch promise
-  const fetchPromise = (async () => {
+    log('info', 'Calling fetch to Claude API');
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -127,23 +122,33 @@ export async function callClaudeAPI({
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
+
+    const elapsed = Date.now() - startTime;
+    log('info', 'Claude API response received', { status: response.status, elapsed });
 
     if (!response.ok) {
       const errorText = await response.text();
+      log('error', 'Claude API error', { status: response.status, error: errorText });
       throw new Error(`API error ${response.status}: ${errorText}`);
     }
 
+    log('info', 'Parsing Claude API response');
     const data = (await response.json()) as ClaudeResponse;
+
+    log('info', 'Finding text block in response');
     const textBlock = data.content.find((b) => b.type === 'text');
 
     if (!textBlock) {
+      log('error', 'No text content in Claude response', { content: JSON.stringify(data.content) });
       throw new Error('No text content in response');
     }
 
-    const latency = Date.now() - startTime;
     log('info', 'Claude API success', {
-      latency,
+      latency: Date.now() - startTime,
       inputTokens: data.usage.input_tokens,
       outputTokens: data.usage.output_tokens,
     });
@@ -154,8 +159,16 @@ export async function callClaudeAPI({
       outputTokens: data.usage.output_tokens,
       stopReason: data.stop_reason,
     };
-  })();
+  } catch (error: unknown) {
+    const elapsed = Date.now() - startTime;
+    const err = error as Error;
 
-  // Race them - timeout WILL fire even if fetch hangs forever
-  return Promise.race([fetchPromise, timeoutPromise]);
+    if (err.name === 'AbortError') {
+      log('error', 'Request timeout - aborted', { elapsed, timeoutMs });
+      throw new Error(`Request timeout after ${timeoutMs}ms`);
+    }
+
+    log('error', 'Claude API request failed', { error: err.message, elapsed });
+    throw error;
+  }
 }
