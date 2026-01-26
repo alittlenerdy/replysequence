@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
+import { sendEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,39 +46,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Integrate actual email sending (Resend, SendGrid, etc.)
-    // For now, we'll simulate sending by marking the draft as sent
-    // In production, you would:
-    // 1. Call your email provider API
-    // 2. Handle errors and retries
-    // 3. Only mark as sent if the API call succeeds
-
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Sending email (simulated)',
+      message: 'Sending email via Resend',
       draftId,
       recipientEmail,
       subject: draft.subject,
     }));
 
-    // Simulate a small delay like a real API call would have
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Send email via Resend
+    const result = await sendEmail({
+      to: recipientEmail,
+      subject: draft.subject,
+      body: draft.body,
+      replyTo: draft.meetingHostEmail,
+    });
 
-    // Mark draft as sent
+    if (!result.success) {
+      console.error(JSON.stringify({
+        level: 'error',
+        message: 'Email send failed',
+        draftId,
+        recipientEmail,
+        error: result.error,
+      }));
+      return NextResponse.json(
+        { error: result.error || 'Failed to send email' },
+        { status: 500 }
+      );
+    }
+
+    // Mark draft as sent only after successful email delivery
     await markDraftAsSent(draftId, recipientEmail);
 
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Draft marked as sent',
+      message: 'Email sent and draft marked as sent',
       draftId,
       recipientEmail,
+      messageId: result.messageId,
     }));
 
     return NextResponse.json({
       success: true,
       message: 'Email sent successfully',
-      // Note: In production, remove this warning
-      warning: 'Email sending is simulated. Integrate Resend or SendGrid for actual delivery.',
+      messageId: result.messageId,
     });
   } catch (error) {
     console.error('Failed to send draft:', error);
