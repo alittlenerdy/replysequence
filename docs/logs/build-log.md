@@ -181,3 +181,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-25 20:35] - Add granular logging to Claude API call
+**Commit:** 3e0480a
+**Files Changed:** lib/claude-api.ts
+**Summary:** Claude API call hanging at Step 15. Added granular step logging (15A-15M) to identify exact hang point: 15A (entry), 15B (AbortController), 15C (timeout setup), 15D (build body), 15E (JSON.stringify), 15F (body serialized), 15G (fetch call), 15H (fetch complete), 15I (response received), 15K (parse JSON), 15L (find text block), 15M (success). Also added 15-TIMEOUT, 15-ABORT, and 15-CRASH for error cases.
+**Key Issues:** Logs showed "Starting Claude API request" then nothing - need to identify which exact operation hangs.
+**Duration:** ~5 min
+
+---
