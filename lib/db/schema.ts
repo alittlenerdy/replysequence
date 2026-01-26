@@ -132,10 +132,8 @@ export const rawEvents = pgTable(
 // Draft status enum values
 export type DraftStatus = 'pending' | 'generating' | 'generated' | 'sent' | 'failed';
 
-// Prompt type enum values
-export type PromptType = 'discovery_call' | 'follow_up' | 'proposal' | 'custom';
-
 // Drafts table - stores AI-generated email drafts
+// Schema matches production database exactly
 export const drafts = pgTable(
   'drafts',
   {
@@ -146,33 +144,33 @@ export const drafts = pgTable(
     transcriptId: uuid('transcript_id')
       .notNull()
       .references(() => transcripts.id, { onDelete: 'cascade' }),
-    // Prompt configuration
-    promptType: varchar('prompt_type', { length: 50 }).$type<PromptType>().notNull(),
     // Generated content
-    subject: text('subject'),
-    body: text('body'),
-    fullResponse: text('full_response'), // Raw response from Claude
+    subject: text('subject').notNull(),
+    body: text('body').notNull(),
+    // Status tracking
+    status: text('status').$type<DraftStatus>().notNull(),
     // Model and cost tracking
-    model: varchar('model', { length: 100 }),
+    model: text('model').notNull(),
     inputTokens: integer('input_tokens'),
     outputTokens: integer('output_tokens'),
-    costUsd: decimal('cost_usd', { precision: 10, scale: 6 }), // Up to $9999.999999
-    latencyMs: integer('latency_ms'),
-    // Status and error tracking
-    status: varchar('status', { length: 20 }).$type<DraftStatus>().notNull().default('pending'),
+    costUsd: decimal('cost_usd', { precision: 10, scale: 6 }),
+    // Generation timing
+    generationStartedAt: timestamp('generation_started_at', { withTimezone: true }),
+    generationCompletedAt: timestamp('generation_completed_at', { withTimezone: true }),
+    generationDurationMs: integer('generation_duration_ms'),
+    // Error tracking
     errorMessage: text('error_message'),
+    retryCount: integer('retry_count'),
     // Email sending tracking
     sentAt: timestamp('sent_at', { withTimezone: true }),
-    sentTo: varchar('sent_to', { length: 255 }),
+    sentTo: text('sent_to'),
     // Timestamps
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   },
   (table) => [
     index('drafts_meeting_id_idx').on(table.meetingId),
     index('drafts_transcript_id_idx').on(table.transcriptId),
     index('drafts_status_idx').on(table.status),
-    index('drafts_prompt_type_idx').on(table.promptType),
     index('drafts_created_at_idx').on(table.createdAt),
   ]
 );

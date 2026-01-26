@@ -659,7 +659,7 @@ async function fetchAndStoreTranscript(
           transcriptId,
           draftId: draftResult.draftId,
           costUsd: draftResult.costUsd?.toFixed(6),
-          latencyMs: draftResult.latencyMs,
+          generationDurationMs: draftResult.generationDurationMs,
         });
       } else {
         log('warn', 'Step 15 FAILED: Draft generation returned failure', {

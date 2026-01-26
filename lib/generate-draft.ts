@@ -23,7 +23,7 @@ export interface GenerateDraftResult {
   inputTokens?: number;
   outputTokens?: number;
   costUsd?: number;
-  latencyMs?: number;
+  generationDurationMs?: number;
   error?: string;
 }
 
@@ -104,7 +104,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     return {
       success: false,
       error: 'No transcript content provided',
-      latencyMs: Date.now() - startTime,
+      generationDurationMs: Date.now() - startTime,
     };
   }
 
@@ -130,7 +130,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     return {
       success: false,
       error: `Failed to build prompt: ${errorMessage}`,
-      latencyMs: Date.now() - startTime,
+      generationDurationMs: Date.now() - startTime,
     };
   }
 
@@ -202,25 +202,26 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         transcriptId,
       });
 
+      const generationCompletedAt = new Date();
+      const totalDurationMs = Date.now() - startTime;
+
       const [draft] = await db
         .insert(drafts)
         .values({
           meetingId,
           transcriptId,
-          promptType: 'discovery_call',
           subject,
           body,
-          fullResponse: response.content,
           model: CLAUDE_MODEL,
           inputTokens,
           outputTokens,
           costUsd: costUsd.toFixed(6),
-          latencyMs: Date.now() - startTime,
+          generationStartedAt: new Date(startTime),
+          generationCompletedAt,
+          generationDurationMs: totalDurationMs,
           status: 'generated',
         })
         .returning();
-
-      const totalLatencyMs = Date.now() - startTime;
 
       // This is the success log the user is looking for
       log('info', 'Draft generated and saved', {
@@ -230,7 +231,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         cost: costUsd.toFixed(6),
         inputTokens,
         outputTokens,
-        latencyMs: totalLatencyMs,
+        generationDurationMs: totalDurationMs,
         subject: subject.substring(0, 50) + (subject.length > 50 ? '...' : ''),
       });
 
@@ -242,7 +243,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         inputTokens,
         outputTokens,
         costUsd,
-        latencyMs: totalLatencyMs,
+        generationDurationMs: totalDurationMs,
       };
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
@@ -315,7 +316,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
   }
 
   // All retries exhausted
-  const latencyMs = Date.now() - startTime;
+  const generationDurationMs = Date.now() - startTime;
   const errorMessage = lastError?.message || 'Unknown error';
 
   log('error', 'Draft generation failed', {
@@ -323,7 +324,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     transcriptId,
     attempts: attempt,
     error: errorMessage,
-    latencyMs,
+    generationDurationMs,
   });
 
   // Store failed draft attempt in database
@@ -339,11 +340,15 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
       .values({
         meetingId,
         transcriptId,
-        promptType: 'discovery_call',
+        subject: '', // Required field - empty for failed drafts
+        body: '', // Required field - empty for failed drafts
         model: CLAUDE_MODEL,
         status: 'failed',
         errorMessage,
-        latencyMs,
+        generationStartedAt: new Date(startTime),
+        generationCompletedAt: new Date(),
+        generationDurationMs,
+        retryCount: attempt,
       })
       .returning();
 
@@ -355,7 +360,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     return {
       success: false,
       draftId: draft.id,
-      latencyMs,
+      generationDurationMs,
       error: errorMessage,
     };
   } catch (dbError) {
@@ -369,7 +374,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
 
     return {
       success: false,
-      latencyMs,
+      generationDurationMs,
       error: errorMessage,
     };
   }
