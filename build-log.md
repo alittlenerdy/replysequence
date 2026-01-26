@@ -172,3 +172,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~20 min
 
 ---
+
+## [2025-01-25 20:15] - Fix Step 10 database query hang
+**Commit:** 999a660
+**Files Changed:** lib/process-zoom-event.ts
+**Summary:** Step 10 query was hanging because it selected ALL columns from transcripts table including large JSONB (speakerSegments) and TEXT (vttContent, content) fields. Fixed by: (1) Changed .select() to .select({ id: transcripts.id }) to only fetch id, (2) Added withDbTimeout() helper with 5s timeout, (3) Added step logging 10A/10B/10C, (4) Timeout fallback assumes no existing transcript and inserts new, (5) Added timeout wrappers to Step 11 and 12, (6) Insert now uses .returning({ id: transcripts.id }) instead of full row.
+**Key Issues:** Logs showed Step 10 "Checking for existing transcript in DB" then nothing - query was fetching huge JSONB/TEXT columns causing hang.
+**Duration:** ~15 min
+
+---
