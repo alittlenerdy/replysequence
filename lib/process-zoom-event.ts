@@ -3,6 +3,15 @@ import { eq } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
+import {
+  startPipeline,
+  startStage,
+  endStage,
+  endPipeline,
+  STAGES,
+  measureAsync,
+  measureSync,
+} from '@/lib/performance';
 import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
 
 // Default platform for Zoom webhook events
@@ -263,6 +272,12 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
 async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessResult> {
   const startTime = Date.now();
   const payload = rawEvent.payload as unknown as RecordingCompletedPayload;
+
+  // Start performance instrumentation
+  const pipelineId = `recording-${rawEvent.id}`;
+  startPipeline(pipelineId);
+  startStage(pipelineId, STAGES.WEBHOOK_RECEIVED, { eventType: 'recording.completed' });
+  endStage(pipelineId, STAGES.WEBHOOK_RECEIVED);
   const recordingObject = payload.payload?.object;
 
   if (!recordingObject?.uuid) {
@@ -290,11 +305,13 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
   });
 
   // Check if meeting exists
+  startStage(pipelineId, STAGES.MEETING_FETCHED, { zoomMeetingId });
   const [existingMeeting] = await db
     .select()
     .from(meetings)
     .where(eq(meetings.zoomMeetingId, zoomMeetingId))
     .limit(1);
+  endStage(pipelineId, STAGES.MEETING_FETCHED, { found: !!existingMeeting });
 
   const meetingData: Partial<NewMeeting> = {
     hostEmail: recordingObject.host_email || 'unknown@unknown.com',
@@ -309,6 +326,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
 
   let meetingId: string;
 
+  startStage(pipelineId, STAGES.MEETING_CREATED, { action: existingMeeting ? 'update' : 'create' });
   if (existingMeeting) {
     // Update existing meeting with recording data
     await db
@@ -347,6 +365,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       latencyMs: Date.now() - startTime,
     });
   }
+  endStage(pipelineId, STAGES.MEETING_CREATED, { meetingId });
 
   // If transcript is available, download it using download_token from payload
   const downloadToken = payload.download_token;
@@ -356,7 +375,8 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       transcriptFile.download_url,
       downloadToken,
       rawEvent.id,
-      zoomMeetingId
+      zoomMeetingId,
+      pipelineId
     );
   } else if (transcriptFile?.download_url && !downloadToken) {
     log('warn', 'Transcript available but no download_token', {
@@ -380,6 +400,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     });
   }
 
+  endPipeline(pipelineId, { success: true, meetingId });
   return {
     success: true,
     meetingId,
@@ -392,15 +413,18 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
  * Uses download_token from webhook payload to fetch transcript
  */
 async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessResult> {
-  const startTime = Date.now();
+  // Start performance tracking for this pipeline
+  const pipelineId = `transcript-${rawEvent.id}`;
+  startPipeline(pipelineId);
 
-  log('info', 'Step 1: Parsing transcript_completed payload', { rawEventId: rawEvent.id });
+  log('info', 'Step 1: Parsing transcript_completed payload', { rawEventId: rawEvent.id, pipelineId });
 
   const payload = rawEvent.payload as unknown as RecordingTranscriptCompletedPayload;
   const recordingObject = payload.payload?.object;
 
   if (!recordingObject?.uuid) {
     log('error', 'Step 1 FAILED: Missing uuid in payload', { rawEventId: rawEvent.id });
+    endPipeline(pipelineId, { status: 'failed', reason: 'missing_uuid' });
     return { success: false, action: 'failed', error: 'Missing recording uuid' };
   }
 
@@ -419,13 +443,18 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
 
   if (!downloadToken) {
     log('error', 'Step 2 FAILED: No download_token', { rawEventId: rawEvent.id, zoomMeetingId });
+    endPipeline(pipelineId, { status: 'failed', reason: 'missing_download_token' });
     return { success: false, action: 'failed', error: 'Missing download_token' };
   }
 
   if (!transcriptFile?.download_url) {
     log('warn', 'Step 2 SKIPPED: No transcript file', { rawEventId: rawEvent.id, zoomMeetingId });
+    endPipeline(pipelineId, { status: 'skipped', reason: 'no_transcript_file' });
     return { success: true, action: 'skipped' };
   }
+
+  // Track meeting fetch/create stage
+  startStage(pipelineId, STAGES.MEETING_FETCHED, { zoomMeetingId });
 
   log('info', 'Step 3: Querying database for existing meeting', { zoomMeetingId });
 
@@ -434,6 +463,8 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     .from(meetings)
     .where(eq(meetings.zoomMeetingId, zoomMeetingId))
     .limit(1);
+
+  endStage(pipelineId, STAGES.MEETING_FETCHED, { found: !!existingMeeting });
 
   log('info', 'Step 3 complete: Database query finished', {
     zoomMeetingId,
@@ -444,6 +475,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
   let meetingId: string;
 
   if (!existingMeeting) {
+    startStage(pipelineId, STAGES.MEETING_CREATED, { zoomMeetingId });
     log('info', 'Step 4: Creating new meeting in database', { zoomMeetingId });
 
     const [newMeeting] = await db
@@ -461,6 +493,7 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
       .returning();
 
     meetingId = newMeeting.id;
+    endStage(pipelineId, STAGES.MEETING_CREATED, { meetingId });
     log('info', 'Step 4 complete: Meeting created', { meetingId });
   } else {
     log('info', 'Step 4: Updating existing meeting', { meetingId: existingMeeting.id });
@@ -485,13 +518,21 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     transcriptFile.download_url,
     downloadToken,
     rawEvent.id,
-    zoomMeetingId
+    zoomMeetingId,
+    pipelineId
   );
+
+  // End the pipeline with final metrics
+  const metrics = endPipeline(pipelineId, {
+    status: 'success',
+    meetingId,
+    action: existingMeeting ? 'updated' : 'created',
+  });
 
   log('info', 'Step 5 complete: fetchAndStoreTranscript finished', {
     meetingId,
     zoomMeetingId,
-    latencyMs: Date.now() - startTime,
+    totalPipelineDurationMs: metrics?.totalDurationMs,
   });
 
   return { success: true, meetingId, action: existingMeeting ? 'updated' : 'created' };
@@ -506,11 +547,12 @@ async function fetchAndStoreTranscript(
   transcriptUrl: string,
   downloadToken: string,
   rawEventId: string,
-  zoomMeetingId: string
+  zoomMeetingId: string,
+  pipelineId: string
 ): Promise<void> {
   const startTime = Date.now();
 
-  log('info', 'Step 6: Starting fetchAndStoreTranscript', { meetingId, zoomMeetingId });
+  log('info', 'Step 6: Starting fetchAndStoreTranscript', { meetingId, zoomMeetingId, pipelineId });
 
   try {
     log('info', 'Step 7: Updating meeting status to processing', { meetingId });
@@ -520,12 +562,18 @@ async function fetchAndStoreTranscript(
       .where(eq(meetings.id, meetingId));
     log('info', 'Step 7 complete: Meeting status updated', { meetingId });
 
+    // Track transcript download
+    startStage(pipelineId, STAGES.TRANSCRIPT_DOWNLOAD, { meetingId });
     log('info', 'Step 8: Calling downloadTranscript', { meetingId, transcriptUrl: transcriptUrl.substring(0, 50) + '...' });
     const vttContent = await downloadTranscript(transcriptUrl, downloadToken);
+    endStage(pipelineId, STAGES.TRANSCRIPT_DOWNLOAD, { contentLength: vttContent.length });
     log('info', 'Step 8 complete: Transcript downloaded', { meetingId, contentLength: vttContent.length });
 
+    // Track VTT parsing
+    startStage(pipelineId, STAGES.TRANSCRIPT_PARSE, { contentLength: vttContent.length });
     log('info', 'Step 9: Parsing VTT content', { meetingId });
     const { fullText, segments, wordCount } = parseVTT(vttContent);
+    endStage(pipelineId, STAGES.TRANSCRIPT_PARSE, { wordCount, segmentCount: segments.length });
     log('info', 'Step 9 complete: VTT parsed', { meetingId, wordCount, segmentCount: segments.length });
 
     log('info', 'Step 10A: About to query for existing transcript', { meetingId });
@@ -553,6 +601,9 @@ async function fetchAndStoreTranscript(
 
     let transcriptId: string;
 
+    // Track transcript storage
+    startStage(pipelineId, STAGES.TRANSCRIPT_STORED, { meetingId });
+
     if (existingTranscript) {
       log('info', 'Step 11A: Updating existing transcript', { transcriptId: existingTranscript.id });
       const updateResult = await withDbTimeout(
@@ -572,6 +623,7 @@ async function fetchAndStoreTranscript(
       );
       if (updateResult.timedOut) {
         log('error', 'Step 11B: Transcript update timed out', { transcriptId: existingTranscript.id });
+        endStage(pipelineId, STAGES.TRANSCRIPT_STORED, { success: false, reason: 'timeout' });
         throw new Error('Transcript update timed out');
       }
       transcriptId = existingTranscript.id;
@@ -596,11 +648,14 @@ async function fetchAndStoreTranscript(
       );
       if (insertResult.timedOut) {
         log('error', 'Step 11B: Transcript insert timed out', { meetingId });
+        endStage(pipelineId, STAGES.TRANSCRIPT_STORED, { success: false, reason: 'timeout' });
         throw new Error('Transcript insert timed out');
       }
       transcriptId = insertResult.result[0].id;
       log('info', 'Step 11B: Transcript inserted successfully', { transcriptId });
     }
+
+    endStage(pipelineId, STAGES.TRANSCRIPT_STORED, { transcriptId });
 
     log('info', 'Step 12A: Updating meeting status to ready', { meetingId });
     const meetingUpdateResult = await withDbTimeout(
@@ -633,6 +688,8 @@ async function fetchAndStoreTranscript(
         return;
       }
 
+      // Track draft generation
+      startStage(pipelineId, STAGES.DRAFT_GENERATION, { meetingId, transcriptId, transcriptLength: fullText.length });
       log('info', 'Step 15: Calling generateDraft', { meetingId, transcriptId, transcriptLength: fullText.length });
       const draftResult = await generateDraft({
         meetingId,
@@ -654,6 +711,11 @@ async function fetchAndStoreTranscript(
       });
 
       if (draftResult.success) {
+        endStage(pipelineId, STAGES.DRAFT_GENERATION, {
+          success: true,
+          draftId: draftResult.draftId,
+          generationDurationMs: draftResult.generationDurationMs,
+        });
         log('info', 'Step 15 complete: Draft generated successfully', {
           meetingId,
           transcriptId,
@@ -662,6 +724,10 @@ async function fetchAndStoreTranscript(
           generationDurationMs: draftResult.generationDurationMs,
         });
       } else {
+        endStage(pipelineId, STAGES.DRAFT_GENERATION, {
+          success: false,
+          error: draftResult.error,
+        });
         log('warn', 'Step 15 FAILED: Draft generation returned failure', {
           meetingId,
           transcriptId,
@@ -669,6 +735,10 @@ async function fetchAndStoreTranscript(
         });
       }
     } catch (draftError) {
+      endStage(pipelineId, STAGES.DRAFT_GENERATION, {
+        success: false,
+        error: draftError instanceof Error ? draftError.message : 'Unknown error',
+      });
       log('error', 'Step 15 CRASHED: Draft generation threw error', {
         meetingId,
         transcriptId,
