@@ -208,3 +208,12 @@ Auto-generated summary of all Claude Code work.
 **Duration:** ~15 min
 
 ---
+
+## [2025-01-26 22:00] - Add pipeline performance instrumentation
+**Commit:** 94c2e05
+**Files Changed:** lib/performance.ts (new), lib/process-zoom-event.ts, docs/guides/performance-profile.md (new)
+**Summary:** Added timing instrumentation across all pipeline stages to track latency from webhook receipt to draft generation. Created lib/performance.ts with startPipeline/startStage/endStage/endPipeline utilities. Instrumented both processRecordingCompleted and processTranscriptCompleted with stage tracking for webhook_received, lock_acquired, meeting_fetched, meeting_created, transcript_download, transcript_parse, transcript_stored, draft_generation, draft_stored. Logs structured JSON with stage breakdowns and targetMet flag (<2 min target).
+**Key Issues:** TypeScript error when adding pipelineId parameter to fetchAndStoreTranscript - needed to update both call sites (recording + transcript handlers).
+**Duration:** ~20 min
+
+---
