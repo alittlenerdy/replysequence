@@ -128,6 +128,86 @@ function ZoomMockup() {
   );
 }
 
+// CRM mockup component (Airtable-style)
+function CrmMockup() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-full max-w-md bg-white rounded-xl border-2 border-black/20 shadow-2xl overflow-hidden">
+        {/* CRM header */}
+        <div className="bg-gradient-to-r from-[#2563EB] to-[#3B82F6] px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>
+            </svg>
+            <span className="text-white font-bold text-sm">Contact Updated</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-green-400" />
+            <span className="text-white/80 text-xs">Synced</span>
+          </div>
+        </div>
+
+        {/* Contact card */}
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white font-bold text-sm shadow-md">
+              SK
+            </div>
+            <div>
+              <div className="font-bold text-gray-900 text-sm">Sarah Kim</div>
+              <div className="text-gray-500 text-xs">VP of Engineering</div>
+              <div className="text-blue-600 text-xs font-medium">Acme Corp</div>
+            </div>
+          </div>
+        </div>
+
+        {/* CRM fields */}
+        <div className="p-4 space-y-3 bg-gray-50/50">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 text-xs">Status</span>
+            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+              Active
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 text-xs">Last Meeting</span>
+            <span className="text-gray-900 text-xs font-medium">Just now</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 text-xs">Meeting Type</span>
+            <span className="text-gray-900 text-xs">Discovery Call</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 text-xs">Duration</span>
+            <span className="text-gray-900 text-xs">32 min</span>
+          </div>
+        </div>
+
+        {/* Activity log */}
+        <div className="px-4 py-3 border-t border-gray-100">
+          <div className="text-xs text-gray-500 mb-2">Activity Log</div>
+          <div className="space-y-2">
+            <div className="flex items-start gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5" />
+              <div>
+                <span className="text-xs text-gray-700">Meeting transcript processed</span>
+                <span className="text-xs text-gray-400 ml-1">2s ago</span>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5" />
+              <div>
+                <span className="text-xs text-gray-700">Contact record updated</span>
+                <span className="text-xs text-gray-400 ml-1">1s ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Email mockup component
 function EmailMockup() {
   return (
@@ -203,7 +283,7 @@ function EmailMockup() {
 }
 
 export default function HeroAnimation() {
-  const [phase, setPhase] = useState<'particles-in' | 'zoom' | 'particles-mid' | 'email' | 'particles-out'>('particles-in');
+  const [phase, setPhase] = useState<'particles-in' | 'zoom' | 'particles-mid' | 'crm' | 'particles-mid2' | 'email' | 'particles-out'>('particles-in');
   const [particles] = useState(generateParticles);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerRect, setContainerRect] = useState({ left: 0, top: 0, width: 0, height: 0 });
@@ -232,18 +312,20 @@ export default function HeroAnimation() {
     };
   }, []);
 
-  // Animation cycle
+  // Animation cycle: Meeting → CRM → Email
   useEffect(() => {
     const cycle = () => {
       setPhase('particles-in');
-      setTimeout(() => setPhase('zoom'), 1500);
-      setTimeout(() => setPhase('particles-mid'), 4500);
-      setTimeout(() => setPhase('email'), 6000);
-      setTimeout(() => setPhase('particles-out'), 9000);
+      setTimeout(() => setPhase('zoom'), 1500);          // Meeting shows
+      setTimeout(() => setPhase('particles-mid'), 4500); // Transition
+      setTimeout(() => setPhase('crm'), 6000);           // CRM shows
+      setTimeout(() => setPhase('particles-mid2'), 8500); // Transition
+      setTimeout(() => setPhase('email'), 10000);        // Email shows
+      setTimeout(() => setPhase('particles-out'), 13000); // Exit
     };
 
     cycle();
-    const interval = setInterval(cycle, 10500);
+    const interval = setInterval(cycle, 14500);
     return () => clearInterval(interval);
   }, []);
 
@@ -284,6 +366,7 @@ export default function HeroAnimation() {
           scale: [0.3, 1],
         };
       case 'zoom':
+      case 'crm':
       case 'email':
         return {
           left: `${centerX}%`,
@@ -292,6 +375,7 @@ export default function HeroAnimation() {
           scale: 0,
         };
       case 'particles-mid':
+      case 'particles-mid2':
         return {
           left: [`${centerX}%`, `${particle.targetX}%`],
           top: [`${centerY}%`, `${particle.targetY}%`],
@@ -350,6 +434,18 @@ export default function HeroAnimation() {
             <ZoomMockup />
           </motion.div>
         )}
+        {phase === 'crm' && (
+          <motion.div
+            key="crm"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
+          >
+            <CrmMockup />
+          </motion.div>
+        )}
         {phase === 'email' && (
           <motion.div
             key="email"
@@ -364,15 +460,25 @@ export default function HeroAnimation() {
         )}
       </AnimatePresence>
 
-      {/* Label */}
+      {/* Step indicator */}
       <motion.div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 text-text-caption text-sm font-medium whitespace-nowrap"
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-sm font-medium whitespace-nowrap"
         animate={{
-          opacity: phase === 'zoom' || phase === 'email' ? 1 : 0,
+          opacity: phase === 'zoom' || phase === 'crm' || phase === 'email' ? 1 : 0,
         }}
       >
-        {phase === 'zoom' && 'Zoom Call Recording'}
-        {phase === 'email' && 'AI-Generated Follow-up'}
+        {/* Step dots */}
+        <div className="flex items-center gap-1.5 mr-2">
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'zoom' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'crm' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'email' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+        </div>
+        {/* Step label */}
+        <span className="text-text-caption">
+          {phase === 'zoom' && '1. Meeting Recorded'}
+          {phase === 'crm' && '2. Logged to CRM'}
+          {phase === 'email' && '3. Follow-up Generated'}
+        </span>
       </motion.div>
     </div>
   );
