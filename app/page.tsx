@@ -42,37 +42,46 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Copy */}
             <div>
-              {/* Teams Badge */}
-              <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white text-sm font-bold shadow-lg shadow-blue-500/25 animate-pulse-slow">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
-                </svg>
-                Now with Microsoft Teams
-              </div>
-
-              <h1 className="text-5xl lg:text-6xl font-black mb-6 leading-tight text-text-primary">
-                Turn Your Zoom, Teams, or Online Meetings Into{' '}
+              <h1 className="text-6xl lg:text-7xl font-black mb-6 leading-none tracking-tight text-text-primary">
+                Turn Meetings Into Follow-Ups.{' '}
                 <span className="text-mint">
-                  Perfect Follow-Ups
+                  Automatically.
                 </span>
               </h1>
 
-              <p className="text-xl text-text-secondary mb-8 leading-relaxed">
-                ReplySequence turns your video calls into high-quality, on-brand follow-up emails that are automatically drafted from transcripts, logged to your CRM, and ready to send with almost no manual effort. Works with Zoom, Microsoft Teams, and more.
+              <p className="text-xl text-text-secondary mb-4 leading-relaxed">
+                AI-powered follow-up emails drafted from your meeting transcripts, logged to your CRM, and ready to send.
               </p>
+
+              {/* Platform logos */}
+              <div className="flex items-center gap-2 mb-8 text-text-caption">
+                <span className="text-sm font-medium">Works with</span>
+                {/* Zoom logo */}
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#2D8CFF">
+                    <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
+                  </svg>
+                  <span className="text-xs font-semibold text-[#2D8CFF]">Zoom</span>
+                </div>
+                <span className="text-sm">&</span>
+                {/* Teams logo */}
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#5B5FC7]/10">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5B5FC7">
+                    <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
+                  </svg>
+                  <span className="text-xs font-semibold text-[#5B5FC7]">Teams</span>
+                </div>
+              </div>
 
               <div className="flex flex-wrap gap-4 mb-8">
                 <a
                   href="https://tally.so/r/D4pv0j"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-cta"
+                  className="btn-cta hover:scale-105 transition-transform"
                 >
                   Join Beta Waitlist
                 </a>
-                <button className="btn-secondary">
-                  Watch Demo
-                </button>
               </div>
 
               <div className="text-text-caption">
