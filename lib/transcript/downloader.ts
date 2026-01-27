@@ -1,7 +1,7 @@
 /**
  * Download transcript from Zoom using download_access_token
  * @param downloadUrl - The transcript download URL from Zoom
- * @param accessToken - download_access_token from Zoom API
+ * @param accessToken - download_access_token from Zoom API (download_token from webhook)
  * @param timeoutMs - Timeout in milliseconds (default 30s)
  * @returns VTT content as string
  */
@@ -13,15 +13,16 @@ export async function downloadTranscript(
   const startTime = Date.now();
 
   // Build URL with access_token query param
+  // Per Zoom docs: download_token should be passed as ?access_token= query param
   const urlWithToken = `${downloadUrl}?access_token=${accessToken}`;
 
-  // Log exact values for debugging
+  // [TRANSCRIPT-4] Starting download
   console.log(JSON.stringify({
     level: 'info',
-    message: 'Starting transcript download from Zoom',
-    download_url: downloadUrl,
-    tokenLength: accessToken.length,
-    urlWithToken: urlWithToken.substring(0, 100) + '...',
+    message: '[TRANSCRIPT-4] Starting download',
+    url: downloadUrl.substring(0, 80) + '...',
+    hasToken: !!accessToken,
+    tokenLength: accessToken?.length || 0,
     timeoutMs,
   }));
 
@@ -39,32 +40,21 @@ export async function downloadTranscript(
   }, timeoutMs);
 
   try {
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Fetching transcript with access_token',
-      url: downloadUrl,
-    }));
-
     const response = await fetch(urlWithToken, {
       method: 'GET',
+      headers: {
+        'Accept': 'text/vtt, text/plain, */*',
+      },
       signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
 
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Transcript download response received',
-      status: response.status,
-      statusText: response.statusText,
-      elapsedMs: Date.now() - startTime,
-    }));
-
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Could not read error body');
       console.log(JSON.stringify({
         level: 'error',
-        message: 'Failed to download transcript - non-OK response',
+        message: '[TRANSCRIPT-4] Download failed - non-OK response',
         status: response.status,
         statusText: response.statusText,
         errorBody: errorText.substring(0, 500),
@@ -78,11 +68,18 @@ export async function downloadTranscript(
     }
 
     const content = await response.text();
+    const contentLength = content.length;
+    const startsWithWebVTT = content.trim().startsWith('WEBVTT');
+    const firstLine = content.split('\n')[0];
 
+    // [TRANSCRIPT-4] Download complete
     console.log(JSON.stringify({
       level: 'info',
-      message: 'Transcript downloaded successfully',
-      contentLength: content.length,
+      message: '[TRANSCRIPT-4] Download complete',
+      status: response.status,
+      contentLength,
+      firstLine,
+      startsWithWebVTT,
       elapsedMs: Date.now() - startTime,
     }));
 
