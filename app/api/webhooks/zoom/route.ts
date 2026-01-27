@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyZoomSignature, generateChallengeResponse } from '@/lib/zoom/signature';
-import { acquireEventLock } from '@/lib/idempotency';
+import { acquireEventLock, removeEventLock } from '@/lib/idempotency';
 import { db, rawEvents } from '@/lib/db';
 import { processZoomEvent } from '@/lib/process-zoom-event';
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import type {
   ZoomWebhookPayload,
   MeetingEndedPayload,
@@ -362,30 +362,75 @@ async function handleRecordingCompleted(
   }));
 
   // Idempotency check - prevent duplicate processing
-  const acquired = await acquireEventLock(lockKey);
-  if (!acquired) {
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Duplicate recording.completed event ignored',
-      eventId,
-      zoomMeetingId: object.uuid,
-    }));
+  let acquired = await acquireEventLock(lockKey);
 
-    // Return existing event ID if we have it
+  if (!acquired) {
+    // Smart retry: Check if previous attempt actually succeeded
     const [existingEvent] = await db
-      .select({ id: rawEvents.id })
+      .select({
+        id: rawEvents.id,
+        status: rawEvents.status,
+        errorMessage: rawEvents.errorMessage,
+        createdAt: rawEvents.createdAt
+      })
       .from(rawEvents)
       .where(eq(rawEvents.zoomEventId, eventId))
+      .orderBy(desc(rawEvents.createdAt))
       .limit(1);
 
-    return NextResponse.json(
-      {
-        received: true,
-        duplicate: true,
-        eventId: existingEvent?.id || null,
-      },
-      { status: 200 }
-    );
+    if (existingEvent) {
+      const isFailedOrStuck = existingEvent.status === 'failed' || existingEvent.status === 'processing';
+
+      if (isFailedOrStuck) {
+        const ageMinutes = Math.floor((Date.now() - new Date(existingEvent.createdAt).getTime()) / 60000);
+        console.log(JSON.stringify({
+          level: 'info',
+          message: 'Previous recording.completed attempt failed/stuck, allowing reprocess',
+          eventId,
+          previousEventId: existingEvent.id,
+          previousStatus: existingEvent.status,
+          previousError: existingEvent.errorMessage,
+          ageMinutes,
+        }));
+
+        // Clear the old lock to allow reprocessing
+        await removeEventLock(lockKey);
+        acquired = true; // Allow processing to continue
+      } else if (existingEvent.status === 'processed') {
+        console.log(JSON.stringify({
+          level: 'info',
+          message: 'Duplicate recording.completed event (previous succeeded)',
+          eventId,
+          existingEventId: existingEvent.id,
+          existingStatus: existingEvent.status,
+        }));
+
+        return NextResponse.json({
+          received: true,
+          duplicate: true,
+          eventId: existingEvent.id,
+        }, { status: 200 });
+      }
+    } else {
+      // Lock exists but no raw_event found - shouldn't happen, allow processing
+      console.log(JSON.stringify({
+        level: 'warn',
+        message: 'Lock exists but no raw_event found for recording.completed, allowing processing',
+        eventId,
+        lockKey,
+      }));
+      await removeEventLock(lockKey);
+      acquired = true;
+    }
+  }
+
+  if (!acquired) {
+    // Still not acquired after retry logic - return duplicate
+    return NextResponse.json({
+      received: true,
+      duplicate: true,
+      eventId: null,
+    }, { status: 200 });
   }
 
   // Store raw event in database
@@ -516,30 +561,85 @@ async function handleTranscriptCompleted(
     }
 
     if (!acquired) {
+      // Smart retry: Check if previous attempt actually succeeded
       console.log(JSON.stringify({
         level: 'info',
-        message: 'A3: Duplicate event detected (lock already exists)',
+        message: 'A3: Lock not acquired, checking previous attempt status',
         lockKey,
         eventId,
       }));
 
       const [existingEvent] = await db
-        .select({ id: rawEvents.id })
+        .select({
+          id: rawEvents.id,
+          status: rawEvents.status,
+          errorMessage: rawEvents.errorMessage,
+          createdAt: rawEvents.createdAt
+        })
         .from(rawEvents)
         .where(eq(rawEvents.zoomEventId, eventId))
+        .orderBy(desc(rawEvents.createdAt))
         .limit(1);
 
+      if (existingEvent) {
+        const isFailedOrStuck = existingEvent.status === 'failed' || existingEvent.status === 'processing';
+
+        if (isFailedOrStuck) {
+          const ageMinutes = Math.floor((Date.now() - new Date(existingEvent.createdAt).getTime()) / 60000);
+          console.log(JSON.stringify({
+            level: 'info',
+            message: 'A3: Previous transcript_completed attempt failed/stuck, allowing reprocess',
+            eventId,
+            previousEventId: existingEvent.id,
+            previousStatus: existingEvent.status,
+            previousError: existingEvent.errorMessage,
+            ageMinutes,
+          }));
+
+          // Clear the old lock to allow reprocessing
+          await removeEventLock(lockKey);
+          acquired = true; // Allow processing to continue
+        } else if (existingEvent.status === 'processed') {
+          console.log(JSON.stringify({
+            level: 'info',
+            message: 'A3 DONE: Duplicate transcript_completed (previous succeeded)',
+            eventId,
+            existingEventId: existingEvent.id,
+            existingStatus: existingEvent.status,
+          }));
+
+          return NextResponse.json({
+            received: true,
+            duplicate: true,
+            eventId: existingEvent.id,
+          }, { status: 200 });
+        }
+      } else {
+        // Lock exists but no raw_event found - shouldn't happen, allow processing
+        console.log(JSON.stringify({
+          level: 'warn',
+          message: 'A3: Lock exists but no raw_event found, allowing processing',
+          eventId,
+          lockKey,
+        }));
+        await removeEventLock(lockKey);
+        acquired = true;
+      }
+    }
+
+    if (!acquired) {
+      // Still not acquired after retry logic - return duplicate
       console.log(JSON.stringify({
         level: 'info',
-        message: 'A3 DONE: Returning duplicate response',
+        message: 'A3 FINAL: Still not acquired after retry logic',
         eventId,
-        existingEventId: existingEvent?.id,
       }));
 
-      return NextResponse.json(
-        { received: true, duplicate: true, eventId: existingEvent?.id || null },
-        { status: 200 }
-      );
+      return NextResponse.json({
+        received: true,
+        duplicate: true,
+        eventId: null,
+      }, { status: 200 });
     }
 
     // Store raw event in database
