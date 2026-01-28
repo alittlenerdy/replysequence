@@ -3,28 +3,25 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
-// Generate random bubbles for left and right margins
-function generateBubbles(side: 'left' | 'right', count: number) {
+// Generate random bubbles across entire viewport
+function generateBubbles(count: number) {
   return Array.from({ length: count }, (_, i) => ({
-    id: `${side}-${i}`,
-    size: Math.floor(Math.random() * 60) + 20, // 20-80px diameter
-    x: side === 'left'
-      ? Math.random() * 80 // 0-80px from left edge
-      : Math.random() * 80, // 0-80px from right edge
+    id: `bubble-${i}`,
+    size: Math.floor(Math.random() * 80) + 30, // 30-110px diameter
+    x: Math.random() * 100, // 0-100vw (full width)
     startY: -100 - Math.random() * 200, // Start above viewport
-    delay: Math.random() * 8, // Stagger start times
-    duration: 12 + Math.random() * 10, // 12-22 seconds to fall
-    isMint: Math.random() > 0.6, // 40% chance of mint color
-    opacity: 0.08 + Math.random() * 0.08, // 0.08-0.16 opacity
+    delay: Math.random() * 6, // Stagger start times
+    duration: 10 + Math.random() * 8, // 10-18 seconds to fall
+    isMint: Math.random() > 0.5, // 50% chance of mint color
+    opacity: 0.55 + Math.random() * 0.3, // 0.55-0.85 opacity (darker)
   }));
 }
 
 export default function DashboardMarginBubbles() {
-  // Generate bubbles once on mount
-  const leftBubbles = useMemo(() => generateBubbles('left', 8), []);
-  const rightBubbles = useMemo(() => generateBubbles('right', 8), []);
+  // Generate bubbles across full viewport
+  const bubbles = useMemo(() => generateBubbles(20), []);
 
-  const renderBubble = (bubble: ReturnType<typeof generateBubbles>[0], side: 'left' | 'right') => {
+  const renderBubble = (bubble: ReturnType<typeof generateBubbles>[0]) => {
     const baseColor = bubble.isMint
       ? `rgba(37, 99, 235, ${bubble.opacity})`
       : `rgba(0, 0, 0, ${bubble.opacity})`;
@@ -36,9 +33,9 @@ export default function DashboardMarginBubbles() {
           position: 'absolute',
           width: bubble.size,
           height: bubble.size,
-          [side]: bubble.x,
+          left: `${bubble.x}vw`,
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${baseColor} 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${baseColor} 0%, ${baseColor} 50%, transparent 85%)`,
           pointerEvents: 'none',
         }}
         initial={{
@@ -56,45 +53,26 @@ export default function DashboardMarginBubbles() {
           delay: bubble.delay,
           repeat: Infinity,
           ease: 'linear',
-          times: [0, 0.1, 0.9, 1], // Fade in at start, fade out at end
+          times: [0, 0.1, 0.9, 1],
         }}
       />
     );
   };
 
   return (
-    <>
-      {/* Left margin bubbles */}
-      <div
-        className="pointer-events-none"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '120px',
-          height: '100vh',
-          overflow: 'hidden',
-          zIndex: 0,
-        }}
-      >
-        {leftBubbles.map((bubble) => renderBubble(bubble, 'left'))}
-      </div>
-
-      {/* Right margin bubbles */}
-      <div
-        className="pointer-events-none"
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          width: '120px',
-          height: '100vh',
-          overflow: 'hidden',
-          zIndex: 0,
-        }}
-      >
-        {rightBubbles.map((bubble) => renderBubble(bubble, 'right'))}
-      </div>
-    </>
+    <div
+      className="pointer-events-none"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        zIndex: 0,
+      }}
+    >
+      {bubbles.map((bubble) => renderBubble(bubble))}
+    </div>
   );
 }
