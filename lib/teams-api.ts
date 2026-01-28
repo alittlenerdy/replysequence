@@ -91,7 +91,7 @@ export async function getAccessToken(): Promise<string> {
     expiresAt: Date.now() + data.expires_in * 1000,
   };
 
-  log('info', 'Access token obtained', {
+  log('info', '[TEAMS-2] Graph API token obtained', {
     expiresIn: data.expires_in,
   });
 

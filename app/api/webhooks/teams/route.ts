@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     const rawBody = await request.text();
     const payload: GraphChangeNotification = JSON.parse(rawBody);
 
-    log('info', 'Teams webhook notification received', {
+    log('info', '[TEAMS-1] Webhook received', {
       notificationCount: payload.value?.length || 0,
       hasValidationTokens: !!payload.validationTokens?.length,
     });

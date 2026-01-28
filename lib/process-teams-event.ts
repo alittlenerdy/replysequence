@@ -281,7 +281,7 @@ async function fetchAndStoreTeamsTranscript(
 ): Promise<void> {
   const startTime = Date.now();
 
-  log('info', 'Fetching Teams transcript', {
+  log('info', '[TEAMS-3] Transcript file located via Graph API', {
     meetingId,
     userId,
     graphMeetingId,
@@ -295,9 +295,10 @@ async function fetchAndStoreTeamsTranscript(
     // Fetch transcript content (VTT format)
     const vttContent = await getTranscriptContentByUrl(transcriptUrl);
 
-    log('info', 'Teams transcript downloaded', {
+    log('info', '[TEAMS-4] VTT transcript downloaded', {
       meetingId,
       contentLength: vttContent.length,
+      sizeBytes: vttContent.length,
     });
 
     // Parse VTT content
@@ -334,7 +335,7 @@ async function fetchAndStoreTeamsTranscript(
         .where(eq(transcripts.id, existingTranscript.id));
 
       transcriptRecordId = existingTranscript.id;
-      log('info', 'Updated existing transcript', { transcriptId: transcriptRecordId });
+      log('info', '[TEAMS-5] Transcript stored in database (updated)', { transcriptId: transcriptRecordId });
     } else {
       // Create new transcript
       const [newTranscript] = await db
@@ -352,7 +353,7 @@ async function fetchAndStoreTeamsTranscript(
         .returning({ id: transcripts.id });
 
       transcriptRecordId = newTranscript.id;
-      log('info', 'Created new transcript', { transcriptId: transcriptRecordId });
+      log('info', '[TEAMS-5] Transcript stored in database (created)', { transcriptId: transcriptRecordId });
     }
 
     // Update meeting status
@@ -409,7 +410,7 @@ async function generateDraftForMeeting(
       return;
     }
 
-    log('info', 'Generating draft for Teams meeting', {
+    log('info', '[TEAMS-6] Draft generation triggered', {
       meetingId,
       transcriptId,
       topic: meeting.topic,
