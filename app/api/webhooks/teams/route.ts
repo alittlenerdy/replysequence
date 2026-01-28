@@ -60,15 +60,18 @@ export async function GET(request: NextRequest) {
 /**
  * Handle POST request - Change notifications
  * Microsoft sends POST with notification payload when transcripts/recordings are created
+ * Also handles validation requests which may come as POST with validationToken query param
  */
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
 
   try {
-    // Check for validation token in query (sometimes sent as POST during initial setup)
+    // Check for validation token in query (Microsoft sends this during subscription creation)
     const validationToken = request.nextUrl.searchParams.get('validationToken');
     if (validationToken) {
-      log('info', 'Teams subscription validation via POST');
+      log('info', 'Teams subscription validation via POST query param', {
+        tokenLength: validationToken.length,
+      });
       return new NextResponse(validationToken, {
         status: 200,
         headers: { 'Content-Type': 'text/plain' },
@@ -76,6 +79,24 @@ export async function POST(request: NextRequest) {
     }
 
     const rawBody = await request.text();
+
+    // Check if body contains validationToken (alternative validation format)
+    if (rawBody.includes('validationToken')) {
+      try {
+        const bodyJson = JSON.parse(rawBody);
+        if (bodyJson.validationToken) {
+          log('info', 'Teams subscription validation via POST body', {
+            tokenLength: bodyJson.validationToken.length,
+          });
+          return new NextResponse(bodyJson.validationToken, {
+            status: 200,
+            headers: { 'Content-Type': 'text/plain' },
+          });
+        }
+      } catch {
+        // Not valid JSON with validationToken, continue normal processing
+      }
+    }
     const payload: GraphChangeNotification = JSON.parse(rawBody);
 
     log('info', '[TEAMS-1] Webhook received', {
