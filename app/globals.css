@@ -489,3 +489,251 @@ body {
 .light .theme-toggle:hover {
   background: var(--background-pure);
 }
+
+/* ===================================
+   DASHBOARD PREMIUM ANIMATIONS
+   =================================== */
+
+/* Animated Gradient Text for Dashboard Header */
+.dashboard-gradient-text {
+  background: linear-gradient(
+    90deg,
+    #3b82f6 0%,
+    #8b5cf6 25%,
+    #d946ef 50%,
+    #8b5cf6 75%,
+    #3b82f6 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: dashboardGradient 4s linear infinite;
+}
+
+@keyframes dashboardGradient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Stat Card Hover Effect */
+.stat-card {
+  @apply transition-all duration-300 ease-out;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.light .stat-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Glow on Hover */
+.stat-icon-container {
+  @apply transition-all duration-300;
+}
+
+.stat-card:hover .stat-icon-container {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px currentColor;
+}
+
+/* Shimmer Loading Skeleton */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #374151;
+}
+
+.light .skeleton {
+  background: #e5e7eb;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+.light .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+}
+
+@keyframes skeletonShimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Table Row Stagger Animation */
+@keyframes tableRowFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.table-row-animated {
+  animation: tableRowFadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Dashboard Page Fade In */
+@keyframes dashboardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-fade-in {
+  animation: dashboardFadeIn 0.5s ease-out forwards;
+}
+
+/* Stats Container Stagger */
+.stats-container > * {
+  animation: statCardFadeIn 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.stats-container > *:nth-child(1) { animation-delay: 0.1s; }
+.stats-container > *:nth-child(2) { animation-delay: 0.2s; }
+.stats-container > *:nth-child(3) { animation-delay: 0.3s; }
+.stats-container > *:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes statCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Empty State Floating Animation */
+@keyframes emptyStateFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.empty-state-icon {
+  animation: emptyStateFloat 3s ease-in-out infinite;
+}
+
+/* Empty State Pulse Ring */
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: pulseRing 2s ease-out infinite;
+}
+
+/* Back to Home Link Hover */
+.back-link {
+  @apply relative transition-all duration-300;
+}
+
+.back-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transition: width 0.3s ease;
+}
+
+.back-link:hover::after {
+  width: 100%;
+}
+
+/* Cost Display Glow */
+.cost-display {
+  @apply transition-all duration-300;
+}
+
+.cost-display:hover {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Search Input Focus Animation */
+.search-input-animated {
+  @apply transition-all duration-300;
+}
+
+.search-input-animated:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Filter Button Active State */
+.filter-btn-active {
+  @apply relative;
+}
+
+.filter-btn-active::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-gradient-text,
+  .skeleton::after,
+  .table-row-animated,
+  .dashboard-fade-in,
+  .stats-container > *,
+  .empty-state-icon,
+  .pulse-ring {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .stat-card:hover,
+  .stat-card:hover .stat-icon-container {
+    transform: none !important;
+  }
+}

@@ -108,10 +108,11 @@ export function DraftsTable({
               </tr>
             </thead>
             <tbody className="bg-gray-800 light:bg-white divide-y divide-gray-700 light:divide-gray-200">
-              {drafts.map((draft) => (
+              {drafts.map((draft, index) => (
                 <tr
                   key={draft.id}
-                  className="hover:bg-gray-700 light:hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="table-row-animated hover:bg-gray-700 light:hover:bg-gray-50 cursor-pointer transition-colors"
+                  style={{ animationDelay: `${index * 50}ms` }}
                   onClick={() => setSelectedDraft(draft)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">

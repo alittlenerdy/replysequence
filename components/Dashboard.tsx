@@ -7,6 +7,8 @@ import { DraftsTable } from './DraftsTable';
 import { DashboardFilters } from './DashboardFilters';
 import { DashboardStats } from './DashboardStats';
 import { EmptyState } from './EmptyState';
+import { SkeletonStats } from './ui/SkeletonCard';
+import { SkeletonTable } from './ui/SkeletonTable';
 
 interface DashboardProps {
   initialDrafts: DraftWithMeeting[];
@@ -118,15 +120,17 @@ export function Dashboard({
       <header className="bg-gray-900 light:bg-white border-b border-gray-700 light:border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-display font-bold text-white light:text-gray-900">Dashboard</h1>
+            <div className="dashboard-fade-in">
+              <h1 className="text-2xl font-display font-bold">
+                <span className="dashboard-gradient-text">Dashboard</span>
+              </h1>
               <p className="mt-1 text-sm text-gray-400 light:text-gray-500">
                 Manage your AI-generated email drafts
               </p>
             </div>
             <a
               href="/"
-              className="text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+              className="back-link text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
             >
               Back to Home
             </a>
@@ -137,7 +141,11 @@ export function Dashboard({
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
-        <DashboardStats stats={stats} />
+        {isLoading && drafts.length === 0 ? (
+          <SkeletonStats />
+        ) : (
+          <DashboardStats stats={stats} />
+        )}
 
         {/* Filters */}
         <DashboardFilters
@@ -152,10 +160,7 @@ export function Dashboard({
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-12 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
-            <p className="mt-4 text-sm text-gray-400 light:text-gray-500">Loading drafts...</p>
-          </div>
+          <SkeletonTable />
         )}
 
         {/* Content */}

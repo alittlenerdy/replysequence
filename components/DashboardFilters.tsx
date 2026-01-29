@@ -39,7 +39,7 @@ export function DashboardFilters({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-4 mb-6">
+    <div className="dashboard-fade-in bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-4 mb-6" style={{ animationDelay: '0.2s' }}>
       <div className="flex flex-col md:flex-row gap-4">
         {/* Search */}
         <div className="flex-1">
@@ -56,7 +56,7 @@ export function DashboardFilters({
               placeholder="Search by meeting name or subject..."
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-600 light:border-gray-300 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 bg-gray-700 light:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="search-input-animated block w-full pl-10 pr-3 py-2 border border-gray-600 light:border-gray-300 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 bg-gray-700 light:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
             />
           </div>
         </div>
@@ -99,7 +99,7 @@ export function DashboardFilters({
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="px-3 py-2 text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-gray-700 light:hover:bg-gray-100 rounded-lg transition-colors"
+            className="px-3 py-2 text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-gray-700 light:hover:bg-gray-100 rounded-lg transition-all duration-300 hover:scale-105"
           >
             Clear
           </button>
