@@ -89,18 +89,20 @@ body {
     background-clip: text;
     position: relative;
     display: inline-block;
-    animation: pulseGlow 2s ease-in-out infinite;
+    isolation: isolate;
   }
 
-  .gradient-glow::after {
+  .gradient-glow::before {
     content: '';
     position: absolute;
-    inset: -4px;
+    inset: -8px -16px;
     background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
-    filter: blur(24px);
-    opacity: 0.4;
+    filter: blur(30px);
+    opacity: 0.5;
     z-index: -1;
-    border-radius: 8px;
+    border-radius: 12px;
+    pointer-events: none;
+    animation: pulseGlow 2s ease-in-out infinite;
   }
 
   /* Platform icon pill hover effect */
