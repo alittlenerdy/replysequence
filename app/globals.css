@@ -83,26 +83,28 @@ body {
 
   /* Gradient glow text effect */
   .gradient-glow {
-    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #DB2777 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    font-weight: 900;
     position: relative;
     display: inline-block;
     isolation: isolate;
+    filter: contrast(1.1) saturate(1.2);
   }
 
   .gradient-glow::before {
     content: '';
     position: absolute;
-    inset: -8px -16px;
-    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
-    filter: blur(30px);
-    opacity: 0.5;
+    inset: -12px -24px;
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #DB2777 100%);
+    filter: blur(45px);
+    opacity: 0.6;
     z-index: -1;
-    border-radius: 12px;
+    border-radius: 20px;
     pointer-events: none;
-    animation: pulseGlow 2s ease-in-out infinite;
+    animation: pulseGlow 2.5s ease-in-out infinite;
   }
 
   /* Platform icon pill hover effect */
