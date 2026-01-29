@@ -18,50 +18,89 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     {
       label: 'Total Drafts',
       value: stats.total,
+      // Flashy envelope icon with gradient
       icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#60a5fa" />
+              <stop offset="100%" stopColor="#3b82f6" />
+            </linearGradient>
+          </defs>
+          <path d="M3 8L10.89 13.26C11.2187 13.4793 11.6049 13.5963 12 13.5963C12.3951 13.5963 12.7813 13.4793 13.11 13.26L21 8M5 19H19C19.5304 19 20.0391 18.7893 20.4142 18.4142C20.7893 18.0391 21 17.5304 21 17V7C21 6.46957 20.7893 5.96086 20.4142 5.58579C20.0391 5.21071 19.5304 5 19 5H5C4.46957 5 3.96086 5.21071 3.58579 5.58579C3.21071 5.96086 3 6.46957 3 7V17C3 17.5304 3.21071 18.0391 3.58579 18.4142C3.96086 18.7893 4.46957 19 5 19Z" stroke="url(#blueGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      gradient: 'from-blue-500 to-blue-600',
-      glowColor: 'rgba(59, 130, 246, 0.4)',
+      gradient: 'from-blue-500 via-blue-400 to-cyan-400',
+      shadowColor: 'shadow-blue-500/50',
+      glowColor: 'rgba(59, 130, 246, 0.6)',
+      borderHover: 'group-hover:border-blue-400/50',
       delay: 0,
     },
     {
       label: 'Ready to Send',
       value: stats.generated,
+      // Flashy edit/draft icon
       icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fbbf24" />
+              <stop offset="100%" stopColor="#f59e0b" />
+            </linearGradient>
+          </defs>
+          <path d="M11 5H6C5.46957 5 4.96086 5.21071 4.58579 5.58579C4.21071 5.96086 4 6.46957 4 7V18C4 18.5304 4.21071 19.0391 4.58579 19.4142C4.96086 19.7893 5.46957 20 6 20H17C17.5304 20 18.0391 19.7893 18.4142 19.4142C18.7893 19.0391 19 18.5304 19 18V13" stroke="url(#amberGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M17.586 3.58601C17.7705 3.39499 17.9912 3.24262 18.2352 3.13781C18.4792 3.03299 18.7416 2.97782 19.0072 2.97551C19.2728 2.9732 19.5361 3.0238 19.7819 3.12437C20.0277 3.22493 20.251 3.37343 20.4388 3.56122C20.6266 3.74901 20.7751 3.97231 20.8756 4.2181C20.9762 4.46389 21.0268 4.72725 21.0245 4.99281C21.0222 5.25837 20.967 5.52081 20.8622 5.76482C20.7574 6.00883 20.605 6.22952 20.414 6.41401L11.828 15H9V12.172L17.586 3.58601Z" stroke="url(#amberGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      gradient: 'from-amber-500 to-orange-500',
-      glowColor: 'rgba(245, 158, 11, 0.4)',
+      gradient: 'from-amber-400 via-yellow-400 to-orange-400',
+      shadowColor: 'shadow-amber-500/50',
+      glowColor: 'rgba(251, 191, 36, 0.6)',
+      borderHover: 'group-hover:border-amber-400/50',
       delay: 100,
     },
     {
       label: 'Sent',
       value: stats.sent,
+      // Flashy checkmark/success icon
       icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4ade80" />
+              <stop offset="100%" stopColor="#22c55e" />
+            </linearGradient>
+          </defs>
+          <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18457 2.99721 7.13633 4.39828 5.49707C5.79935 3.85782 7.69279 2.71538 9.79619 2.24015C11.8996 1.76491 14.1003 1.98234 16.07 2.86" stroke="url(#greenGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M22 4L12 14.01L9 11.01" stroke="url(#greenGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      gradient: 'from-green-500 to-emerald-500',
-      glowColor: 'rgba(34, 197, 94, 0.4)',
+      gradient: 'from-green-400 via-emerald-400 to-teal-400',
+      shadowColor: 'shadow-green-500/50',
+      glowColor: 'rgba(34, 197, 94, 0.6)',
+      borderHover: 'group-hover:border-green-400/50',
       delay: 200,
     },
     {
       label: 'Avg Cost',
       value: stats.avgCost,
       isCost: true,
+      // Flashy dollar/cost icon
       icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none">
+          <defs>
+            <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#c084fc" />
+              <stop offset="100%" stopColor="#a855f7" />
+            </linearGradient>
+          </defs>
+          <path d="M12 1V23" stroke="url(#purpleGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="url(#purpleGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      gradient: 'from-purple-500 to-violet-500',
-      glowColor: 'rgba(168, 85, 247, 0.4)',
+      gradient: 'from-purple-400 via-violet-400 to-fuchsia-400',
+      shadowColor: 'shadow-purple-500/50',
+      glowColor: 'rgba(168, 85, 247, 0.6)',
+      borderHover: 'group-hover:border-purple-400/50',
       delay: 300,
     },
   ];
@@ -71,26 +110,44 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       {statCards.map((stat) => (
         <div
           key={stat.label}
-          className="group relative bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl p-5 border border-gray-700/50 light:border-gray-200 cursor-pointer transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-[1.02] animate-card-fade-in"
+          className={`
+            group relative overflow-hidden
+            bg-gray-900/50 light:bg-white/70
+            backdrop-blur-xl
+            rounded-2xl p-5
+            border border-white/10 light:border-gray-200
+            cursor-pointer
+            transition-all duration-500 ease-out
+            hover:-translate-y-3 hover:scale-[1.02]
+            ${stat.borderHover}
+            animate-card-fade-in
+          `}
           style={{
             animationDelay: `${stat.delay}ms`,
             animationFillMode: 'backwards',
           }}
         >
-          {/* Glow effect on hover */}
+          {/* Animated glow on hover */}
           <div
-            className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"
-            style={{
-              boxShadow: `0 20px 50px ${stat.glowColor}`,
-            }}
+            className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
+            style={{ background: `radial-gradient(circle at center, ${stat.glowColor}, transparent 70%)` }}
           />
 
-          {/* Icon container with gradient background and pulse */}
-          <div
-            className={`mb-4 inline-flex rounded-xl p-3 bg-gradient-to-br ${stat.gradient} shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl`}
-          >
-            {/* Icon with pulse animation */}
-            <div className="text-white animate-pulse-slow">
+          {/* Icon container with gradient glow */}
+          <div className={`
+            relative mb-4 inline-flex rounded-xl p-3
+            bg-gradient-to-br ${stat.gradient}
+            ${stat.shadowColor} shadow-lg
+            transition-all duration-300
+            group-hover:scale-110 group-hover:shadow-xl
+            group-hover:rotate-3
+          `}>
+            {/* Animated shine effect */}
+            <div className="absolute inset-0 rounded-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            </div>
+            {/* Icon with pulse */}
+            <div className="relative text-white animate-pulse-slow">
               {stat.icon}
             </div>
           </div>
@@ -117,8 +174,8 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             {stat.label}
           </div>
 
-          {/* Border glow on hover */}
-          <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-white/20 transition-all duration-300 pointer-events-none" />
+          {/* Corner accent */}
+          <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${stat.gradient} opacity-5 rounded-bl-full`} />
         </div>
       ))}
     </div>

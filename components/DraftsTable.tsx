@@ -62,29 +62,53 @@ export function DraftsTable({
     switch (platform) {
       case 'zoom':
         return (
-          <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>
-          </svg>
+          <div className="relative group/icon">
+            <div className="absolute inset-0 bg-blue-500/30 rounded-lg blur-md group-hover/icon:bg-blue-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
+                <path d="M15 10L20 7V17L15 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
         );
       case 'google_meet':
         return (
-          <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
+          <div className="relative group/icon">
+            <div className="absolute inset-0 bg-green-500/30 rounded-lg blur-md group-hover/icon:bg-green-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                <path d="M15 8L19.5 5.5V18.5L15 16V8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
+                <circle cx="9" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+            </div>
+          </div>
         );
       case 'microsoft_teams':
         return (
-          <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19.2 6.4h-2.4V4.8c0-.88-.72-1.6-1.6-1.6H8.8c-.88 0-1.6.72-1.6 1.6v1.6H4.8c-.88 0-1.6.72-1.6 1.6v9.6c0 .88.72 1.6 1.6 1.6h14.4c.88 0 1.6-.72 1.6-1.6V8c0-.88-.72-1.6-1.6-1.6zM8.8 4.8h6.4v1.6H8.8V4.8zm10.4 12.8H4.8V8h14.4v9.6z"/>
-            <circle cx="12" cy="11.2" r="2"/>
-            <path d="M12 14c-2.21 0-4 1.34-4 3v.8h8V17c0-1.66-1.79-3-4-3z"/>
-          </svg>
+          <div className="relative group/icon">
+            <div className="absolute inset-0 bg-purple-500/30 rounded-lg blur-md group-hover/icon:bg-purple-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/30">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                <rect x="2" y="6" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
+                <circle cx="18" cy="7" r="3" stroke="currentColor" strokeWidth="2"/>
+                <path d="M16 14H22V17C22 18.1046 21.1046 19 20 19H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
+          </div>
         );
       default:
         return (
-          <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
+          <div className="relative group/icon">
+            <div className="absolute inset-0 bg-gray-500/30 rounded-lg blur-md group-hover/icon:bg-gray-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 shadow-lg shadow-gray-500/30">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
+                <path d="M15 10L20 7V17L15 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
         );
     }
   };

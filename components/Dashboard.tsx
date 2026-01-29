@@ -115,56 +115,76 @@ export function Dashboard({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative overflow-hidden">
-      {/* Animated floating gradient orbs - VISIBLE background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-        {/* Blue orb - top left */}
+    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 relative overflow-hidden">
+      {/* ANIMATED FLOATING ORBS - HIGH VISIBILITY */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {/* Large blue orb - top left - VERY VISIBLE */}
         <div
-          className="absolute rounded-full animate-float-slow"
+          className="absolute w-[600px] h-[600px] rounded-full animate-float-slow"
           style={{
-            top: '5%',
-            left: '10%',
-            width: '500px',
-            height: '500px',
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.1) 40%, transparent 70%)',
-            filter: 'blur(40px)',
+            top: '-10%',
+            left: '-5%',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0.2) 30%, rgba(59, 130, 246, 0.05) 60%, transparent 80%)',
+            filter: 'blur(20px)',
           }}
         />
-        {/* Purple orb - top right */}
+
+        {/* Purple orb - center right - BRIGHT */}
         <div
-          className="absolute rounded-full animate-float-medium"
+          className="absolute w-[500px] h-[500px] rounded-full animate-float-medium"
           style={{
-            top: '20%',
-            right: '5%',
-            width: '450px',
-            height: '450px',
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(168, 85, 247, 0.1) 40%, transparent 70%)',
-            filter: 'blur(40px)',
+            top: '15%',
+            right: '-10%',
+            background: 'radial-gradient(circle, rgba(147, 51, 234, 0.5) 0%, rgba(147, 51, 234, 0.25) 30%, rgba(147, 51, 234, 0.08) 60%, transparent 80%)',
+            filter: 'blur(25px)',
+            animationDelay: '-7s',
+          }}
+        />
+
+        {/* Pink/magenta orb - bottom left */}
+        <div
+          className="absolute w-[450px] h-[450px] rounded-full animate-float-fast"
+          style={{
+            bottom: '5%',
+            left: '20%',
+            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, rgba(236, 72, 153, 0.2) 30%, rgba(236, 72, 153, 0.05) 60%, transparent 80%)',
+            filter: 'blur(20px)',
+            animationDelay: '-3s',
+          }}
+        />
+
+        {/* Cyan accent orb - middle */}
+        <div
+          className="absolute w-[350px] h-[350px] rounded-full animate-float-slow"
+          style={{
+            top: '50%',
+            left: '40%',
+            background: 'radial-gradient(circle, rgba(34, 211, 238, 0.3) 0%, rgba(34, 211, 238, 0.1) 40%, transparent 70%)',
+            filter: 'blur(30px)',
+            animationDelay: '-12s',
+          }}
+        />
+
+        {/* Small bright accent orb - top center */}
+        <div
+          className="absolute w-[200px] h-[200px] rounded-full animate-float-fast"
+          style={{
+            top: '10%',
+            left: '50%',
+            background: 'radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(251, 191, 36, 0.1) 50%, transparent 80%)',
+            filter: 'blur(15px)',
             animationDelay: '-5s',
-          }}
-        />
-        {/* Pink orb - bottom center */}
-        <div
-          className="absolute rounded-full animate-float-fast"
-          style={{
-            bottom: '10%',
-            left: '30%',
-            width: '400px',
-            height: '400px',
-            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(236, 72, 153, 0.08) 40%, transparent 70%)',
-            filter: 'blur(40px)',
-            animationDelay: '-10s',
           }}
         />
       </div>
 
-      {/* Header - semi-transparent */}
-      <header className="relative bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700/50 light:border-gray-200" style={{ zIndex: 10 }}>
+      {/* Header - glass effect */}
+      <header className="relative bg-gray-900/70 light:bg-white/70 backdrop-blur-xl border-b border-white/10 light:border-gray-200" style={{ zIndex: 20 }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="animate-fade-in-up">
               <h1 className="text-2xl font-display font-bold">
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
                   Dashboard
                 </span>
               </h1>
@@ -185,7 +205,7 @@ export function Dashboard({
         </div>
       </header>
 
-      {/* Main Content - relative z-index above orbs */}
+      {/* Main Content */}
       <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ zIndex: 10 }}>
         {/* Stats */}
         {isLoading && drafts.length === 0 ? (
