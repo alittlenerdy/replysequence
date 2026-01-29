@@ -7,10 +7,10 @@ interface EmptyStateProps {
 
 export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+    <div className="bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-12 text-center">
       {/* Icon */}
-      <div className="mx-auto w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
-        <svg className="w-8 h-8 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="mx-auto w-16 h-16 bg-blue-900/30 light:bg-blue-50 rounded-full flex items-center justify-center mb-4">
+        <svg className="w-8 h-8 text-blue-400 light:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -22,21 +22,21 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
 
       {hasFilters ? (
         <>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No drafts found</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-sm mx-auto">
+          <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No drafts found</h3>
+          <p className="text-gray-400 light:text-gray-500 mb-4 max-w-sm mx-auto">
             No drafts match your current filters. Try adjusting your search or filters.
           </p>
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-400 light:text-blue-600 bg-blue-900/30 light:bg-blue-50 rounded-lg hover:bg-blue-900/50 light:hover:bg-blue-100 transition-colors"
           >
             Clear Filters
           </button>
         </>
       ) : (
         <>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No drafts yet</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+          <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No drafts yet</h3>
+          <p className="text-gray-400 light:text-gray-500 mb-6 max-w-md mx-auto">
             Record a Zoom meeting with transcription enabled. ReplySequence will automatically
             generate a follow-up email draft when the transcript is ready.
           </p>
@@ -54,7 +54,7 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
             </a>
             <a
               href="/docs"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-colors"
             >
               View Documentation
             </a>
@@ -64,34 +64,34 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
 
       {/* How it works */}
       {!hasFilters && (
-        <div className="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">How it works</h4>
+        <div className="mt-10 pt-8 border-t border-gray-700 light:border-gray-200">
+          <h4 className="text-sm font-medium text-white light:text-gray-900 mb-4">How it works</h4>
           <div className="flex flex-col md:flex-row gap-6 justify-center">
             <div className="flex items-start gap-3 text-left max-w-xs">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-900/30 light:bg-blue-100 rounded-full flex items-center justify-center text-blue-400 light:text-blue-600 text-sm font-bold">
                 1
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">Record a meeting</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Enable cloud recording with audio transcript in Zoom</p>
+                <p className="text-sm font-medium text-white light:text-gray-900">Record a meeting</p>
+                <p className="text-xs text-gray-400 light:text-gray-500">Enable cloud recording with audio transcript in Zoom</p>
               </div>
             </div>
             <div className="flex items-start gap-3 text-left max-w-xs">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-900/30 light:bg-blue-100 rounded-full flex items-center justify-center text-blue-400 light:text-blue-600 text-sm font-bold">
                 2
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">AI analyzes transcript</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Claude extracts key points and action items</p>
+                <p className="text-sm font-medium text-white light:text-gray-900">AI analyzes transcript</p>
+                <p className="text-xs text-gray-400 light:text-gray-500">Claude extracts key points and action items</p>
               </div>
             </div>
             <div className="flex items-start gap-3 text-left max-w-xs">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-bold">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-900/30 light:bg-blue-100 rounded-full flex items-center justify-center text-blue-400 light:text-blue-600 text-sm font-bold">
                 3
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">Review and send</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Edit the draft if needed, then send with one click</p>
+                <p className="text-sm font-medium text-white light:text-gray-900">Review and send</p>
+                <p className="text-xs text-gray-400 light:text-gray-500">Edit the draft if needed, then send with one click</p>
               </div>
             </div>
           </div>

@@ -73,72 +73,72 @@ export function DraftsTable({
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 overflow-hidden">
         {/* Table Header */}
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <div className="px-6 py-4 border-b border-gray-700 light:border-gray-200 bg-gray-900 light:bg-gray-50">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Email Drafts</h2>
-            <span className="text-sm text-gray-500 dark:text-gray-400">{total} total</span>
+            <h2 className="text-lg font-semibold text-white light:text-gray-900">Email Drafts</h2>
+            <span className="text-sm text-gray-400 light:text-gray-500">{total} total</span>
           </div>
         </div>
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
+          <table className="min-w-full divide-y divide-gray-700 light:divide-gray-200">
+            <thead className="bg-gray-900 light:bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Meeting
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Cost
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-gray-800 light:bg-white divide-y divide-gray-700 light:divide-gray-200">
               {drafts.map((draft) => (
                 <tr
                   key={draft.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                  className="hover:bg-gray-700 light:hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => setSelectedDraft(draft)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       {getPlatformIcon(draft.meetingPlatform)}
                       <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <div className="text-sm font-medium text-white light:text-gray-900">
                           {draft.meetingTopic || 'Untitled Meeting'}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-gray-400 light:text-gray-500">
                           {draft.meetingHostEmail}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 dark:text-gray-200">
+                    <div className="text-sm text-gray-200 light:text-gray-900">
                       {truncateSubject(draft.subject)}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={draft.status} size="sm" />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 light:text-gray-500">
                     {draft.costUsd ? `$${parseFloat(draft.costUsd).toFixed(4)}` : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -147,7 +147,7 @@ export function DraftsTable({
                         e.stopPropagation();
                         setSelectedDraft(draft);
                       }}
-                      className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors"
+                      className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-900 transition-colors"
                     >
                       View
                     </button>
@@ -160,23 +160,23 @@ export function DraftsTable({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+          <div className="px-6 py-4 border-t border-gray-700 light:border-gray-200 bg-gray-900 light:bg-gray-50">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-gray-400 light:text-gray-500">
                 Page {page} of {totalPages}
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => onPageChange(page - 1)}
                   disabled={page <= 1}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-md hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => onPageChange(page + 1)}
                   disabled={page >= totalPages}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-md hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Next
                 </button>

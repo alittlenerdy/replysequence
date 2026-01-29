@@ -436,3 +436,55 @@ body {
 .dark .theme-toggle:hover {
   background: var(--background-alt);
 }
+
+/* Light Mode Overrides */
+.light {
+  --background: #F8F9FA;
+  --background-alt: #F5F5F5;
+  --background-pure: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: #4A4A4A;
+  --text-caption: #8E8E8E;
+  --mint: #2563EB;
+  --mint-hover: #1D4ED8;
+  --mint-tint: #EFF6FF;
+}
+
+.light .animated-gradient-bg {
+  background: linear-gradient(
+    125deg,
+    rgba(37, 99, 235, 0.03) 0%,
+    rgba(147, 51, 234, 0.03) 25%,
+    rgba(219, 39, 119, 0.03) 50%,
+    rgba(59, 130, 246, 0.03) 75%,
+    rgba(37, 99, 235, 0.03) 100%
+  );
+}
+
+.light .bento-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.light .bento-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: var(--mint);
+}
+
+.light .floating-gradient {
+  opacity: 0.08;
+}
+
+.light .floating-gradient-mint {
+  opacity: 0.1;
+}
+
+.light .theme-toggle {
+  background: var(--background-alt);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.light .theme-toggle:hover {
+  background: var(--background-pure);
+}

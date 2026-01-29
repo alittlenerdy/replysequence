@@ -3,28 +3,45 @@
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // Dark is default
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = stored === 'dark' || (!stored && prefersDark);
-    setIsDark(shouldBeDark);
-    if (shouldBeDark) {
-      document.documentElement.classList.add('dark');
+    const html = document.documentElement;
+
+    // Dark mode is default
+    if (stored === 'light') {
+      html.classList.remove('dark');
+      html.classList.add('light');
+      setIsDark(false);
+    } else {
+      // Default to dark
+      html.classList.add('dark');
+      html.classList.remove('light');
+      setIsDark(true);
+      if (!stored) {
+        localStorage.setItem('theme', 'dark');
+      }
     }
   }, []);
 
   const toggleTheme = () => {
+    const html = document.documentElement;
     const newIsDark = !isDark;
     setIsDark(newIsDark);
-    localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+
     if (newIsDark) {
-      document.documentElement.classList.add('dark');
+      // Switch to dark mode
+      html.classList.add('dark');
+      html.classList.remove('light');
+      localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      // Switch to light mode
+      html.classList.remove('dark');
+      html.classList.add('light');
+      localStorage.setItem('theme', 'light');
     }
   };
 
@@ -47,7 +64,7 @@ export default function ThemeToggle() {
           />
         </svg>
       ) : (
-        <svg className="w-5 h-5 text-text-secondary" fill="currentColor" viewBox="0 0 20 20">
+        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
       )}

@@ -13,10 +13,15 @@ export default function DashboardLayout({
   // Sync theme from localStorage on mount
   useEffect(() => {
     const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    const html = document.documentElement;
+
+    if (theme === 'light') {
+      html.classList.remove('dark');
+      html.classList.add('light');
     } else {
-      document.documentElement.classList.remove('dark');
+      // Default to dark
+      html.classList.add('dark');
+      html.classList.remove('light');
     }
   }, []);
 

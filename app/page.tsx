@@ -12,7 +12,7 @@ const FloatingElements = dynamic(() => import('@/components/FloatingElements'), 
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-sans relative">
+    <div className="min-h-screen bg-gray-900 light:bg-white text-white light:text-gray-900 font-sans relative">
       {/* Animated gradient background */}
       <AnimatedBackground />
 
@@ -20,15 +20,15 @@ export default function LandingPage() {
       <FloatingGradients />
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+      <header className="fixed top-0 w-full z-50 bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-display font-bold text-blue-600 dark:text-blue-400">
+          <div className="text-2xl font-display font-bold text-blue-400 light:text-blue-600">
             ReplySequence
           </div>
           <div className="flex items-center gap-4">
             <a
               href="/dashboard"
-              className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
             >
               Dashboard
             </a>
@@ -46,21 +46,21 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 z-10">
+      <section className="relative min-h-screen pt-32 pb-20 px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 light:from-blue-50 light:via-purple-50 light:to-pink-50 z-10">
         <FloatingElements />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight text-gray-900 dark:text-white">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight text-white light:text-gray-900">
               Turn Meetings Into Follow-Ups.{' '}
               <span className="gradient-glow font-display font-extrabold">Automatically.</span>
             </h1>
 
-            <p className="text-xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 light:text-gray-700 mb-6 leading-relaxed max-w-3xl mx-auto">
               AI-powered follow-up emails drafted from your meeting transcripts, logged to your CRM, and ready to send.
             </p>
 
             {/* Platform logos */}
-            <div className="flex items-center justify-center gap-2 mb-8 text-gray-600 dark:text-gray-400 flex-wrap">
+            <div className="flex items-center justify-center gap-2 mb-8 text-gray-400 light:text-gray-600 flex-wrap">
               <span className="text-sm font-medium">Works with</span>
               {/* Zoom logo */}
               <div className="platform-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10 cursor-pointer">
@@ -98,12 +98,12 @@ export default function LandingPage() {
             </div>
 
             {/* Trust signal with avatars */}
-            <div className="flex items-center justify-center gap-3 text-gray-600 dark:text-gray-400 animate-fade-in-up-delay">
+            <div className="flex items-center justify-center gap-3 text-gray-400 light:text-gray-600 animate-fade-in-up-delay">
               <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-white dark:border-gray-800 shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-white dark:border-gray-800 shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-white dark:border-gray-800 shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-white dark:border-gray-800 shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-gray-800 light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-gray-800 light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-gray-800 light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-gray-800 light:border-white shadow-sm" />
               </div>
               <span className="text-sm font-medium">Join 1,200+ sales teams on the waitlist</span>
             </div>
@@ -123,17 +123,17 @@ export default function LandingPage() {
       <BentoGrid />
 
       {/* Email Capture */}
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 relative z-10">
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-800 to-gray-900 light:from-blue-50 light:to-purple-50 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-display font-bold mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-4xl font-display font-bold mb-4 text-white light:text-gray-900">
             Join the <span className="text-shimmer font-display font-extrabold">Beta Waitlist</span>
           </h2>
-          <p className="text-gray-700 dark:text-gray-300 mb-8">
+          <p className="text-gray-300 light:text-gray-700 mb-8">
             Be among the first to automate your follow-ups. Limited spots available for pilot program.
           </p>
 
           {/* CTA Button */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-12 border border-gray-200 dark:border-gray-700 shadow-xl">
+          <div className="bg-gray-800 light:bg-white rounded-2xl p-12 border border-gray-700 light:border-gray-200 shadow-xl">
             <a
               href="https://tally.so/r/D4pv0j"
               target="_blank"
@@ -142,32 +142,32 @@ export default function LandingPage() {
             >
               Join Beta Waitlist
             </a>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mt-6">Takes 30 seconds - No credit card required - Limited to 100 pilot users</p>
+            <p className="text-gray-400 light:text-gray-600 text-sm mt-6">Takes 30 seconds - No credit card required - Limited to 100 pilot users</p>
           </div>
         </div>
       </section>
 
       {/* Social Proof */}
-      <section className="py-20 px-4 bg-white dark:bg-gray-900 relative z-10">
+      <section className="py-20 px-4 bg-gray-900 light:bg-white relative z-10">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-8 font-medium">Trusted by sales teams at</p>
+          <p className="text-gray-400 light:text-gray-600 text-sm mb-8 font-medium">Trusted by sales teams at</p>
           <div className="flex flex-wrap justify-center items-center gap-12">
             {['TechCorp', 'SalesHub', 'GrowthCo', 'ScaleUp', 'CloudBase'].map((company, i) => (
-              <div key={i} className="text-2xl font-bold text-gray-400 dark:text-gray-600">{company}</div>
+              <div key={i} className="text-2xl font-bold text-gray-600 light:text-gray-400">{company}</div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-950 relative z-10">
-        <div className="max-w-7xl mx-auto text-center text-gray-600 dark:text-gray-400 text-sm">
+      <footer className="py-12 px-4 border-t border-gray-700 light:border-gray-200 bg-gray-950 light:bg-gray-50 relative z-10">
+        <div className="max-w-7xl mx-auto text-center text-gray-400 light:text-gray-600 text-sm">
           <div className="mb-4">
-            <span className="text-2xl font-display font-bold text-blue-600 dark:text-blue-400">
+            <span className="text-2xl font-display font-bold text-blue-400 light:text-blue-600">
               ReplySequence
             </span>
           </div>
-          <p>© 2026 ReplySequence. Built by Playground Giants.</p>
+          <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
         </div>
       </footer>
     </div>

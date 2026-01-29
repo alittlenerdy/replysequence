@@ -20,36 +20,36 @@ function generateBubbles(count: number) {
 export default function DashboardMarginBubbles() {
   // Generate bubbles across full viewport
   const bubbles = useMemo(() => generateBubbles(20), []);
-  const [isDark, setIsDark] = useState(false);
+  const [isLight, setIsLight] = useState(false);
 
-  // Check for dark mode
+  // Check for light mode (dark is now default)
   useEffect(() => {
-    const checkDarkMode = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
+    const checkLightMode = () => {
+      setIsLight(document.documentElement.classList.contains('light'));
     };
 
-    checkDarkMode();
+    checkLightMode();
 
     // Watch for class changes
-    const observer = new MutationObserver(checkDarkMode);
+    const observer = new MutationObserver(checkLightMode);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     return () => observer.disconnect();
   }, []);
 
   const renderBubble = (bubble: ReturnType<typeof generateBubbles>[0]) => {
-    // Light mode: pale pastels at higher opacity
-    // Dark mode: brighter colors at lower opacity
-    const colors = isDark
+    // Dark mode (default): brighter colors at lower opacity
+    // Light mode: dark colors at higher opacity
+    const colors = isLight
       ? [
-          `rgba(59, 130, 246, ${bubble.opacity * 0.4})`,  // blue-500
-          `rgba(147, 51, 234, ${bubble.opacity * 0.4})`,  // purple-600
-          `rgba(236, 72, 153, ${bubble.opacity * 0.4})`,  // pink-500
-        ]
-      : [
           `rgba(37, 99, 235, ${bubble.opacity})`,   // blue-600
           `rgba(0, 0, 0, ${bubble.opacity})`,       // black
           `rgba(147, 51, 234, ${bubble.opacity * 0.6})`, // purple-600
+        ]
+      : [
+          `rgba(59, 130, 246, ${bubble.opacity * 0.4})`,  // blue-500
+          `rgba(147, 51, 234, ${bubble.opacity * 0.4})`,  // purple-600
+          `rgba(236, 72, 153, ${bubble.opacity * 0.4})`,  // pink-500
         ];
 
     const baseColor = colors[bubble.colorType];

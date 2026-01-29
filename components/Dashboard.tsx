@@ -113,20 +113,20 @@ export function Dashboard({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 relative z-10">
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative z-10">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-gray-900 light:bg-white border-b border-gray-700 light:border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-display font-bold text-gray-900 dark:text-white">Dashboard</h1>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <h1 className="text-2xl font-display font-bold text-white light:text-gray-900">Dashboard</h1>
+              <p className="mt-1 text-sm text-gray-400 light:text-gray-500">
                 Manage your AI-generated email drafts
               </p>
             </div>
             <a
               href="/"
-              className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
             >
               Back to Home
             </a>
@@ -152,9 +152,9 @@ export function Dashboard({
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+          <div className="bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-12 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
-            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading drafts...</p>
+            <p className="mt-4 text-sm text-gray-400 light:text-gray-500">Loading drafts...</p>
           </div>
         )}
 
