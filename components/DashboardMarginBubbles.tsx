@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 
 // Generate random bubbles across entire viewport
 function generateBubbles(count: number) {
@@ -12,19 +12,47 @@ function generateBubbles(count: number) {
     startY: -100 - Math.random() * 200, // Start above viewport
     delay: Math.random() * 6, // Stagger start times
     duration: 10 + Math.random() * 8, // 10-18 seconds to fall
-    isMint: Math.random() > 0.5, // 50% chance of mint color
-    opacity: 0.55 + Math.random() * 0.3, // 0.55-0.85 opacity (darker)
+    colorType: Math.floor(Math.random() * 3), // 0=blue, 1=purple, 2=pink
+    opacity: 0.55 + Math.random() * 0.3, // 0.55-0.85 opacity
   }));
 }
 
 export default function DashboardMarginBubbles() {
   // Generate bubbles across full viewport
   const bubbles = useMemo(() => generateBubbles(20), []);
+  const [isDark, setIsDark] = useState(false);
+
+  // Check for dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+
+    checkDarkMode();
+
+    // Watch for class changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
 
   const renderBubble = (bubble: ReturnType<typeof generateBubbles>[0]) => {
-    const baseColor = bubble.isMint
-      ? `rgba(37, 99, 235, ${bubble.opacity})`
-      : `rgba(0, 0, 0, ${bubble.opacity})`;
+    // Light mode: pale pastels at higher opacity
+    // Dark mode: brighter colors at lower opacity
+    const colors = isDark
+      ? [
+          `rgba(59, 130, 246, ${bubble.opacity * 0.4})`,  // blue-500
+          `rgba(147, 51, 234, ${bubble.opacity * 0.4})`,  // purple-600
+          `rgba(236, 72, 153, ${bubble.opacity * 0.4})`,  // pink-500
+        ]
+      : [
+          `rgba(37, 99, 235, ${bubble.opacity})`,   // blue-600
+          `rgba(0, 0, 0, ${bubble.opacity})`,       // black
+          `rgba(147, 51, 234, ${bubble.opacity * 0.6})`, // purple-600
+        ];
+
+    const baseColor = colors[bubble.colorType];
 
     return (
       <motion.div
