@@ -7,9 +7,9 @@ export default function VideoDemo() {
 
   return (
     <section className="py-20 px-4 bg-white dark:bg-gray-900 relative z-10">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-black mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-4xl font-display font-bold mb-4 text-gray-900 dark:text-white">
             See It In <span className="text-shimmer">Action</span>
           </h2>
           <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mx-auto">
@@ -25,24 +25,24 @@ export default function VideoDemo() {
               <div className="absolute inset-0 bg-gradient-to-br from-mint/5 to-neon/5" />
 
               {/* Fake UI Preview */}
-              <div className="absolute inset-8 rounded-2xl bg-background-pure shadow-2xl border border-black/5 overflow-hidden">
-                <div className="h-12 bg-background-alt border-b border-black/5 flex items-center px-4 gap-2">
+              <div className="absolute inset-6 md:inset-8 lg:inset-10 rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden scale-100 md:scale-105">
+                <div className="h-12 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex items-center px-4 gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-400" />
                   <div className="w-3 h-3 rounded-full bg-yellow-400" />
                   <div className="w-3 h-3 rounded-full bg-green-400" />
-                  <div className="ml-4 flex-1 h-6 bg-background rounded-lg" />
+                  <div className="ml-4 flex-1 h-6 bg-white dark:bg-gray-600 rounded-lg" />
                 </div>
                 <div className="p-6 grid grid-cols-3 gap-4">
                   <div className="col-span-2 space-y-3">
-                    <div className="h-4 bg-mint/20 rounded w-3/4" />
-                    <div className="h-3 bg-background-alt rounded w-full" />
-                    <div className="h-3 bg-background-alt rounded w-5/6" />
-                    <div className="h-3 bg-background-alt rounded w-4/6" />
-                    <div className="mt-6 h-24 bg-gradient-to-r from-mint/10 to-neon/10 rounded-xl" />
+                    <div className="h-4 bg-blue-500/20 rounded w-3/4" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-full" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-5/6" />
+                    <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-4/6" />
+                    <div className="mt-6 h-24 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl" />
                   </div>
                   <div className="space-y-3">
-                    <div className="h-20 bg-background-alt rounded-xl" />
-                    <div className="h-20 bg-background-alt rounded-xl" />
+                    <div className="h-20 bg-gray-200 dark:bg-gray-600 rounded-xl" />
+                    <div className="h-20 bg-gray-200 dark:bg-gray-600 rounded-xl" />
                   </div>
                 </div>
               </div>
@@ -77,17 +77,17 @@ export default function VideoDemo() {
         </div>
 
         {/* Video Stats */}
-        <div className="flex justify-center gap-8 mt-8 text-center">
+        <div className="flex justify-center gap-8 md:gap-12 mt-8 text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">30 sec</div>
+            <div className="text-2xl md:text-3xl font-display font-bold text-blue-600 dark:text-blue-400">30 sec</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Meeting to Draft</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">98%</div>
+            <div className="text-2xl md:text-3xl font-display font-bold text-blue-600 dark:text-blue-400">98%</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Accuracy Rate</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">5+ hrs</div>
+            <div className="text-2xl md:text-3xl font-display font-bold text-blue-600 dark:text-blue-400">5+ hrs</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Saved Weekly</div>
           </div>
         </div>

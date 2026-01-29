@@ -12,7 +12,7 @@ const FloatingElements = dynamic(() => import('@/components/FloatingElements'), 
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-text-primary font-roboto relative">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-sans relative">
       {/* Animated gradient background */}
       <AnimatedBackground />
 
@@ -20,15 +20,15 @@ export default function LandingPage() {
       <FloatingGradients />
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
+      <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-black logo-text">
+          <div className="text-2xl font-display font-bold text-blue-600 dark:text-blue-400">
             ReplySequence
           </div>
           <div className="flex items-center gap-4">
             <a
               href="/dashboard"
-              className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+              className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               Dashboard
             </a>
@@ -50,9 +50,9 @@ export default function LandingPage() {
         <FloatingElements />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight text-gray-900 dark:text-white">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight text-gray-900 dark:text-white">
               Turn Meetings Into Follow-Ups.{' '}
-              <span className="gradient-glow">Automatically.</span>
+              <span className="gradient-glow font-display font-extrabold">Automatically.</span>
             </h1>
 
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed max-w-3xl mx-auto">
@@ -125,8 +125,8 @@ export default function LandingPage() {
       {/* Email Capture */}
       <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-black mb-4 text-gray-900 dark:text-white">
-            Join the <span className="text-shimmer">Beta Waitlist</span>
+          <h2 className="text-4xl font-display font-bold mb-4 text-gray-900 dark:text-white">
+            Join the <span className="text-shimmer font-display font-extrabold">Beta Waitlist</span>
           </h2>
           <p className="text-gray-700 dark:text-gray-300 mb-8">
             Be among the first to automate your follow-ups. Limited spots available for pilot program.
@@ -160,10 +160,10 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 relative z-10">
+      <footer className="py-12 px-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-950 relative z-10">
         <div className="max-w-7xl mx-auto text-center text-gray-600 dark:text-gray-400 text-sm">
           <div className="mb-4">
-            <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+            <span className="text-2xl font-display font-bold text-blue-600 dark:text-blue-400">
               ReplySequence
             </span>
           </div>

@@ -5,8 +5,8 @@ export default function BentoGrid() {
     <section className="py-20 px-4 bg-gray-50 dark:bg-gray-800 relative z-10">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-black mb-4 text-gray-900 dark:text-white">
-            Everything You Need to <span className="text-blue-600 dark:text-blue-400">Close Faster</span>
+          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4 text-gray-900 dark:text-white">
+            Everything You Need to <span className="gradient-glow font-display font-extrabold">Close Faster</span>
           </h2>
           <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mx-auto">
             One platform. Every follow-up. Zero missed opportunities.
@@ -25,7 +25,7 @@ export default function BentoGrid() {
                 </div>
                 <span className="text-xs font-bold text-white/80 uppercase tracking-wider">AI-Powered</span>
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-white">
+              <h3 className="text-2xl font-display font-semibold mb-3 text-white">
                 Instant Draft Generation
               </h3>
               <p className="text-white/85 mb-6 flex-grow">
@@ -57,7 +57,7 @@ export default function BentoGrid() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">CRM Sync</h3>
+            <h3 className="text-lg font-display font-semibold mb-2 text-gray-900 dark:text-white">CRM Sync</h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm">
               Auto-log every interaction to Salesforce, HubSpot, or your CRM of choice. Never manually update a record again.
             </p>
@@ -70,7 +70,7 @@ export default function BentoGrid() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Your Voice</h3>
+            <h3 className="text-lg font-display font-semibold mb-2 text-gray-900 dark:text-white">Your Voice</h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm">
               Train the AI on your writing style. Every email sounds authentically you, not a generic template.
             </p>
@@ -83,7 +83,7 @@ export default function BentoGrid() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">All Platforms</h3>
+            <h3 className="text-lg font-display font-semibold mb-2 text-gray-900 dark:text-white">All Platforms</h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm">
               Works with Zoom, Teams, and Google Meet. One tool for all your video calls.
             </p>
@@ -98,7 +98,7 @@ export default function BentoGrid() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Smart Analytics</h3>
+                <h3 className="text-lg font-display font-semibold mb-2 text-gray-900 dark:text-white">Smart Analytics</h3>
                 <p className="text-gray-700 dark:text-gray-300 text-sm max-w-md">
                   Track open rates, response times, and follow-up effectiveness. Know exactly what works and optimize your outreach.
                 </p>

@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import MouseTrail from "@/components/MouseTrail";
 import "./globals.css";
 
-const roboto = Roboto({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
-  variable: "--font-roboto",
+  variable: "--font-inter",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -22,8 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${roboto.variable} antialiased`}>
+      <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+        <body className="antialiased">
           <MouseTrail />
           {children}
         </body>
