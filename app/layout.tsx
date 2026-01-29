@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/next";
 import MouseTrail from "@/components/MouseTrail";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <body className="antialiased">
           <MouseTrail />
           {children}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
