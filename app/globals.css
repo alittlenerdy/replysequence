@@ -81,31 +81,32 @@ body {
     color: var(--mint);
   }
 
-  /* Gradient glow text effect */
+  /* Gradient text that actually works */
   .gradient-glow {
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #9333ea 50%, #db2777 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-weight: 900;
+    font-weight: 800;
     position: relative;
     display: inline-block;
-    isolation: isolate;
-    padding: 0 0.25rem;
-    letter-spacing: -0.02em;
+    padding: 0.1em 0.2em;
   }
 
-  .gradient-glow::before {
-    content: '';
+  /* Add the actual glow effect behind */
+  .gradient-glow::after {
+    content: 'Automatically.';
     position: absolute;
-    inset: -10px -20px;
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
-    filter: blur(25px);
-    opacity: 0.4;
+    left: 0;
+    top: 0;
+    background: linear-gradient(135deg, #2563eb 0%, #9333ea 50%, #db2777 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    filter: blur(12px);
+    opacity: 0.6;
     z-index: -1;
-    border-radius: 12px;
-    pointer-events: none;
-    animation: pulseGlow 2s ease-in-out infinite;
   }
 
   /* Platform icon pill hover effect */
