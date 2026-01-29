@@ -60,8 +60,8 @@ body {
 
   .btn-cta:hover {
     background: radial-gradient(circle at 70% 70%, #3B82F6 0%, #2563EB 100%);
-    transform: scale(1.02);
-    box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.1);
   }
 
   .btn-secondary {
@@ -80,6 +80,48 @@ body {
   .logo-text {
     color: var(--mint);
   }
+
+  /* Gradient glow text effect */
+  .gradient-glow {
+    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    display: inline-block;
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .gradient-glow::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+    filter: blur(24px);
+    opacity: 0.4;
+    z-index: -1;
+    border-radius: 8px;
+  }
+
+  /* Platform icon pill hover effect */
+  .platform-pill {
+    @apply transition-all duration-300;
+  }
+
+  .platform-pill:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Trust signal avatars */
+  .trust-avatars {
+    @apply flex -space-x-2;
+  }
+
+  .trust-avatar {
+    @apply w-8 h-8 rounded-full border-2 border-white;
+  }
+
 }
 
 /* Floating animation keyframes */
@@ -169,4 +211,37 @@ body {
     rgba(0, 0, 0, 0.03) 0%,
     transparent 70%
   );
+}
+
+/* Pulse glow animation for gradient text */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.85;
+    filter: brightness(1.1);
+  }
+}
+
+/* Fade in up animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up-delay {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out 0.3s forwards;
 }

@@ -39,6 +39,9 @@ module.exports = {
         'float-medium': 'float 15s ease-in-out infinite',
         'float-fast': 'float 10s ease-in-out infinite',
         'pulse-slow': 'pulse 4s ease-in-out infinite',
+        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+        'fade-in-up-delay': 'fadeInUp 0.6s ease-out 0.2s forwards',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -46,6 +49,14 @@ module.exports = {
           '25%': { transform: 'translateY(-20px) translateX(10px) rotate(5deg)' },
           '50%': { transform: 'translateY(-10px) translateX(-10px) rotate(-5deg)' },
           '75%': { transform: 'translateY(-30px) translateX(5px) rotate(3deg)' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
         },
       },
     },
