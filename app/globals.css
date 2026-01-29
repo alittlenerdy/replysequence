@@ -494,6 +494,82 @@ body {
    DASHBOARD PREMIUM ANIMATIONS
    =================================== */
 
+/* Slow pulse animation for icons */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Floating gradient orbs for dashboard background */
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.dashboard-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  animation: float-orb 20s ease-in-out infinite;
+}
+
+.dashboard-orb-1 {
+  top: 10%;
+  left: 15%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.dashboard-orb-2 {
+  top: 40%;
+  right: 10%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+  animation-delay: -5s;
+}
+
+.dashboard-orb-3 {
+  bottom: 20%;
+  left: 30%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+  animation-delay: -10s;
+}
+
+.light .dashboard-orb-1 {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+}
+
+.light .dashboard-orb-2 {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 70%);
+}
+
+.light .dashboard-orb-3 {
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
+}
+
 /* Animated Gradient Text for Dashboard Header */
 .dashboard-gradient-text {
   background: linear-gradient(

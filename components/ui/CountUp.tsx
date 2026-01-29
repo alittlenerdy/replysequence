@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 interface CountUpProps {
   end: number;
@@ -8,7 +8,6 @@ interface CountUpProps {
   prefix?: string;
   suffix?: string;
   decimals?: number;
-  startOnMount?: boolean;
 }
 
 export function CountUp({
@@ -17,56 +16,45 @@ export function CountUp({
   prefix = '',
   suffix = '',
   decimals = 0,
-  startOnMount = true,
 }: CountUpProps) {
-  const [count, setCount] = useState(startOnMount ? 0 : end);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!startOnMount || hasAnimated) return;
-
-    // Use Intersection Observer to start animation when visible
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-          animateCount();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
+    // Handle zero case
+    if (end === 0) {
+      setCount(0);
+      return;
     }
 
-    return () => observer.disconnect();
-  }, [end, hasAnimated, startOnMount]);
+    // Reset to 0 before animating
+    setCount(0);
 
-  const animateCount = () => {
-    const startTime = performance.now();
-    const startValue = 0;
+    // Small delay to ensure the 0 is rendered first (makes animation visible)
+    const startDelay = setTimeout(() => {
+      const startTime = performance.now();
 
-    const updateCount = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
 
-      // Ease-out cubic for smooth deceleration
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const currentValue = startValue + (end - startValue) * easeOut;
+        // Ease-out cubic for smooth deceleration
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentValue = easeOut * end;
 
-      setCount(currentValue);
+        setCount(currentValue);
 
-      if (progress < 1) {
-        requestAnimationFrame(updateCount);
-      } else {
-        setCount(end);
-      }
-    };
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setCount(end); // Ensure we end exactly on the target
+        }
+      };
 
-    requestAnimationFrame(updateCount);
-  };
+      requestAnimationFrame(animate);
+    }, 100); // 100ms delay ensures component is mounted and visible
+
+    return () => clearTimeout(startDelay);
+  }, [end, duration]);
 
   const formatNumber = (num: number) => {
     if (decimals > 0) {
@@ -76,7 +64,7 @@ export function CountUp({
   };
 
   return (
-    <span ref={ref}>
+    <span className="tabular-nums">
       {prefix}
       {formatNumber(count)}
       {suffix}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftPreviewModal } from './DraftPreviewModal';
@@ -23,6 +23,24 @@ export function DraftsTable({
   onDraftUpdated,
 }: DraftsTableProps) {
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
+  const [visibleRows, setVisibleRows] = useState(0);
+
+  // Stagger reveal rows one by one
+  useEffect(() => {
+    setVisibleRows(0); // Reset on drafts change
+
+    const timer = setInterval(() => {
+      setVisibleRows((prev) => {
+        if (prev >= drafts.length) {
+          clearInterval(timer);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 50); // 50ms between each row
+
+    return () => clearInterval(timer);
+  }, [drafts]);
 
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
@@ -111,8 +129,17 @@ export function DraftsTable({
               {drafts.map((draft, index) => (
                 <tr
                   key={draft.id}
-                  className="table-row-animated hover:bg-gray-700 light:hover:bg-gray-50 cursor-pointer transition-colors"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className={`
+                    transition-all duration-300 ease-out
+                    ${index < visibleRows
+                      ? 'opacity-100 translate-x-0'
+                      : 'opacity-0 -translate-x-4'}
+                    hover:bg-gray-700/70 light:hover:bg-blue-50
+                    hover:shadow-lg hover:shadow-purple-500/5
+                    cursor-pointer
+                    border-b border-gray-700/50 light:border-gray-200
+                    hover:border-purple-500/30
+                  `}
                   onClick={() => setSelectedDraft(draft)}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -148,7 +175,17 @@ export function DraftsTable({
                         e.stopPropagation();
                         setSelectedDraft(draft);
                       }}
-                      className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-900 transition-colors"
+                      className="
+                        px-3 py-1.5 rounded-lg
+                        text-blue-400 light:text-blue-600
+                        bg-blue-500/10 light:bg-blue-50
+                        hover:bg-blue-500/20 light:hover:bg-blue-100
+                        hover:text-blue-300 light:hover:text-blue-700
+                        hover:shadow-md hover:shadow-blue-500/20
+                        hover:scale-105
+                        active:scale-95
+                        transition-all duration-200
+                      "
                     >
                       View
                     </button>

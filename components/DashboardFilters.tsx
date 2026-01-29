@@ -39,7 +39,14 @@ export function DashboardFilters({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="dashboard-fade-in bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-4 mb-6" style={{ animationDelay: '0.2s' }}>
+    <div
+      className="bg-gray-800/80 light:bg-white backdrop-blur-sm rounded-xl shadow-lg border border-gray-700/50 light:border-gray-200 p-4 mb-6"
+      style={{
+        animation: 'statCardFadeIn 0.5s ease-out forwards',
+        animationDelay: '0.3s',
+        opacity: 0,
+      }}
+    >
       <div className="flex flex-col md:flex-row gap-4">
         {/* Search */}
         <div className="flex-1">
@@ -56,7 +63,25 @@ export function DashboardFilters({
               placeholder="Search by meeting name or subject..."
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="search-input-animated block w-full pl-10 pr-3 py-2 border border-gray-600 light:border-gray-300 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 bg-gray-700 light:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              className="
+                block w-full pl-10 pr-3 py-3
+                border border-gray-600 light:border-gray-300
+                rounded-lg text-sm
+                text-white light:text-gray-900
+                placeholder-gray-500 light:placeholder-gray-400
+                bg-gray-700/50 light:bg-white
+
+                focus:outline-none
+                focus:border-purple-500
+                focus:ring-4 focus:ring-purple-500/30
+                focus:bg-gray-700 light:focus:bg-white
+                focus:shadow-lg focus:shadow-purple-500/20
+
+                hover:border-gray-500 light:hover:border-gray-400
+                hover:bg-gray-700 light:hover:bg-gray-50
+
+                transition-all duration-300
+              "
             />
           </div>
         </div>
@@ -68,7 +93,22 @@ export function DashboardFilters({
             id="status"
             value={status}
             onChange={(e) => onStatusChange(e.target.value as DraftStatus | 'all')}
-            className="block w-full px-3 py-2 border border-gray-600 light:border-gray-300 rounded-lg text-sm text-white light:text-gray-900 bg-gray-700 light:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="
+              block w-full px-3 py-3
+              border border-gray-600 light:border-gray-300
+              rounded-lg text-sm
+              text-white light:text-gray-900
+              bg-gray-700/50 light:bg-white
+
+              hover:border-purple-500/50
+              hover:bg-gray-700 light:hover:bg-gray-50
+              focus:border-purple-500
+              focus:ring-2 focus:ring-purple-500/30
+              focus:outline-none
+
+              transition-all duration-200
+              cursor-pointer
+            "
           >
             {statusOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -85,7 +125,22 @@ export function DashboardFilters({
             id="dateRange"
             value={dateRange}
             onChange={(e) => onDateRangeChange(e.target.value as 'week' | 'month' | 'all')}
-            className="block w-full px-3 py-2 border border-gray-600 light:border-gray-300 rounded-lg text-sm text-white light:text-gray-900 bg-gray-700 light:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="
+              block w-full px-3 py-3
+              border border-gray-600 light:border-gray-300
+              rounded-lg text-sm
+              text-white light:text-gray-900
+              bg-gray-700/50 light:bg-white
+
+              hover:border-purple-500/50
+              hover:bg-gray-700 light:hover:bg-gray-50
+              focus:border-purple-500
+              focus:ring-2 focus:ring-purple-500/30
+              focus:outline-none
+
+              transition-all duration-200
+              cursor-pointer
+            "
           >
             {dateOptions.map((option) => (
               <option key={option.value} value={option.value}>

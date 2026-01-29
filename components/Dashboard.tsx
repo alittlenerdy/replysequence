@@ -115,7 +115,14 @@ export function Dashboard({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative z-10">
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative">
+      {/* Floating gradient orbs - visible background animation */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="dashboard-orb dashboard-orb-1" />
+        <div className="dashboard-orb dashboard-orb-2" />
+        <div className="dashboard-orb dashboard-orb-3" />
+      </div>
+
       {/* Header */}
       <header className="bg-gray-900 light:bg-white border-b border-gray-700 light:border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
