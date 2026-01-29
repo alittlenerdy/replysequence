@@ -43,9 +43,9 @@ module.exports = {
         },
       },
       animation: {
-        'float-slow': 'floatOrb 20s ease-in-out infinite',
-        'float-medium': 'floatOrb 15s ease-in-out infinite',
-        'float-fast': 'floatOrb 10s ease-in-out infinite',
+        'float-slow': 'floatOrb 12s ease-in-out infinite',
+        'float-medium': 'floatOrb 8s ease-in-out infinite',
+        'float-fast': 'floatOrb 5s ease-in-out infinite',
         'pulse-slow': 'pulseSlow 3s ease-in-out infinite',
         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
         'fade-in-up-delay': 'fadeInUp 0.6s ease-out 0.2s forwards',
@@ -60,8 +60,9 @@ module.exports = {
       keyframes: {
         floatOrb: {
           '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
-          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+          '25%': { transform: 'translate(50px, -40px) scale(1.15)' },
+          '50%': { transform: 'translate(20px, 30px) scale(0.95)' },
+          '75%': { transform: 'translate(-40px, -20px) scale(1.1)' },
         },
         pulseSlow: {
           '0%, 100%': { transform: 'scale(1)', opacity: '1' },
