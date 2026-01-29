@@ -115,21 +115,58 @@ export function Dashboard({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative">
-      {/* Floating gradient orbs - visible background animation */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="dashboard-orb dashboard-orb-1" />
-        <div className="dashboard-orb dashboard-orb-2" />
-        <div className="dashboard-orb dashboard-orb-3" />
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative overflow-hidden">
+      {/* Animated floating gradient orbs - VISIBLE background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        {/* Blue orb - top left */}
+        <div
+          className="absolute rounded-full animate-float-slow"
+          style={{
+            top: '5%',
+            left: '10%',
+            width: '500px',
+            height: '500px',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.1) 40%, transparent 70%)',
+            filter: 'blur(40px)',
+          }}
+        />
+        {/* Purple orb - top right */}
+        <div
+          className="absolute rounded-full animate-float-medium"
+          style={{
+            top: '20%',
+            right: '5%',
+            width: '450px',
+            height: '450px',
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(168, 85, 247, 0.1) 40%, transparent 70%)',
+            filter: 'blur(40px)',
+            animationDelay: '-5s',
+          }}
+        />
+        {/* Pink orb - bottom center */}
+        <div
+          className="absolute rounded-full animate-float-fast"
+          style={{
+            bottom: '10%',
+            left: '30%',
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(236, 72, 153, 0.08) 40%, transparent 70%)',
+            filter: 'blur(40px)',
+            animationDelay: '-10s',
+          }}
+        />
       </div>
 
-      {/* Header */}
-      <header className="bg-gray-900 light:bg-white border-b border-gray-700 light:border-gray-200">
+      {/* Header - semi-transparent */}
+      <header className="relative bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700/50 light:border-gray-200" style={{ zIndex: 10 }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="dashboard-fade-in">
+            <div className="animate-fade-in-up">
               <h1 className="text-2xl font-display font-bold">
-                <span className="dashboard-gradient-text">Dashboard</span>
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">
+                  Dashboard
+                </span>
               </h1>
               <p className="mt-1 text-sm text-gray-400 light:text-gray-500">
                 Manage your AI-generated email drafts
@@ -137,16 +174,19 @@ export function Dashboard({
             </div>
             <a
               href="/"
-              className="back-link text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-all duration-300"
             >
-              Back to Home
+              <span className="relative">
+                Back to Home
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300" />
+              </span>
             </a>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content - relative z-index above orbs */}
+      <main className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ zIndex: 10 }}>
         {/* Stats */}
         {isLoading && drafts.length === 0 ? (
           <SkeletonStats />

@@ -91,9 +91,9 @@ export function DraftsTable({
 
   return (
     <>
-      <div className="bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 overflow-hidden">
+      <div className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden animate-card-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}>
         {/* Table Header */}
-        <div className="px-6 py-4 border-b border-gray-700 light:border-gray-200 bg-gray-900 light:bg-gray-50">
+        <div className="px-6 py-4 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white light:text-gray-900">Email Drafts</h2>
             <span className="text-sm text-gray-400 light:text-gray-500">{total} total</span>
@@ -103,7 +103,7 @@ export function DraftsTable({
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-700 light:divide-gray-200">
-            <thead className="bg-gray-900 light:bg-gray-50">
+            <thead className="bg-gray-800/50 light:bg-gray-50/80">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Meeting
@@ -125,7 +125,7 @@ export function DraftsTable({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-gray-800 light:bg-white divide-y divide-gray-700 light:divide-gray-200">
+            <tbody className="bg-gray-900/40 light:bg-white/60 divide-y divide-gray-700/50 light:divide-gray-200">
               {drafts.map((draft, index) => (
                 <tr
                   key={draft.id}
@@ -198,7 +198,7 @@ export function DraftsTable({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-700 light:border-gray-200 bg-gray-900 light:bg-gray-50">
+          <div className="px-6 py-4 border-t border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400 light:text-gray-500">
                 Page {page} of {totalPages}

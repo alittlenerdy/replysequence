@@ -43,10 +43,10 @@ module.exports = {
         },
       },
       animation: {
-        'float-slow': 'float 20s ease-in-out infinite',
-        'float-medium': 'float 15s ease-in-out infinite',
-        'float-fast': 'float 10s ease-in-out infinite',
-        'pulse-slow': 'pulse 4s ease-in-out infinite',
+        'float-slow': 'floatOrb 20s ease-in-out infinite',
+        'float-medium': 'floatOrb 15s ease-in-out infinite',
+        'float-fast': 'floatOrb 10s ease-in-out infinite',
+        'pulse-slow': 'pulseSlow 3s ease-in-out infinite',
         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
         'fade-in-up-delay': 'fadeInUp 0.6s ease-out 0.2s forwards',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
@@ -54,13 +54,18 @@ module.exports = {
         'shimmer': 'shimmer 2s linear infinite',
         'icon-pulse': 'iconPulse 2s ease-in-out infinite',
         'bounce-slow': 'bounceSlow 3s ease-in-out infinite',
+        'card-fade-in': 'cardFadeIn 0.5s ease-out forwards',
+        'row-slide-in': 'rowSlideIn 0.3s ease-out forwards',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0) translateX(0) rotate(0deg)' },
-          '25%': { transform: 'translateY(-20px) translateX(10px) rotate(5deg)' },
-          '50%': { transform: 'translateY(-10px) translateX(-10px) rotate(-5deg)' },
-          '75%': { transform: 'translateY(-30px) translateX(5px) rotate(3deg)' },
+        floatOrb: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+        },
+        pulseSlow: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.15)', opacity: '0.8' },
         },
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
@@ -85,6 +90,14 @@ module.exports = {
         bounceSlow: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        cardFadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        rowSlideIn: {
+          '0%': { opacity: '0', transform: 'translateX(-10px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
         },
       },
     },
