@@ -54,7 +54,7 @@ export default function LandingPage() {
               </p>
 
               {/* Platform logos */}
-              <div className="flex items-center gap-2 mb-8 text-text-caption">
+              <div className="flex items-center gap-2 mb-8 text-text-caption flex-wrap">
                 <span className="text-sm font-medium">Works with</span>
                 {/* Zoom logo */}
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10">
@@ -63,13 +63,20 @@ export default function LandingPage() {
                   </svg>
                   <span className="text-xs font-semibold text-[#2D8CFF]">Zoom</span>
                 </div>
-                <span className="text-sm">&</span>
                 {/* Teams logo */}
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#5B5FC7]/10">
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5B5FC7">
                     <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
                   </svg>
                   <span className="text-xs font-semibold text-[#5B5FC7]">Teams</span>
+                </div>
+                {/* Google Meet logo */}
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00897B]/10">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#00897B">
+                    <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                    <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z"/>
+                  </svg>
+                  <span className="text-xs font-semibold text-[#00897B]">Meet</span>
                 </div>
               </div>
 
