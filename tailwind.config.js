@@ -33,6 +33,13 @@ module.exports = {
           secondary: '#4A4A4A',
           caption: '#8E8E8E',
         },
+        // Dark mode colors
+        dark: {
+          bg: '#0A0A0F',
+          'bg-alt': '#12121A',
+          'bg-card': '#1A1A24',
+          border: '#2A2A3A',
+        },
       },
       animation: {
         'float-slow': 'float 20s ease-in-out infinite',
@@ -42,6 +49,10 @@ module.exports = {
         'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
         'fade-in-up-delay': 'fadeInUp 0.6s ease-out 0.2s forwards',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+        'gradient-shift': 'gradientShift 8s ease infinite',
+        'shimmer': 'shimmer 2s linear infinite',
+        'icon-pulse': 'iconPulse 2s ease-in-out infinite',
+        'bounce-slow': 'bounceSlow 3s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -57,6 +68,22 @@ module.exports = {
         pulseGlow: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
+        },
+        gradientShift: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        iconPulse: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.1)', opacity: '0.8' },
+        },
+        bounceSlow: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
     },

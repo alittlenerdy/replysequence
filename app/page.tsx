@@ -4,15 +4,22 @@ import dynamic from 'next/dynamic';
 
 const FloatingGradients = dynamic(() => import('@/components/FloatingGradients'), { ssr: false });
 const HeroAnimation = dynamic(() => import('@/components/HeroAnimation'), { ssr: false });
+const AnimatedBackground = dynamic(() => import('@/components/AnimatedBackground'), { ssr: false });
+const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: false });
+const VideoDemo = dynamic(() => import('@/components/VideoDemo'), { ssr: false });
+const BentoGrid = dynamic(() => import('@/components/BentoGrid'), { ssr: false });
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-text-primary font-roboto relative">
+      {/* Animated gradient background */}
+      <AnimatedBackground />
+
       {/* Floating gradient circles */}
       <FloatingGradients />
 
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5">
+      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="text-2xl font-black logo-text">
             ReplySequence
@@ -24,6 +31,7 @@ export default function LandingPage() {
             >
               Dashboard
             </a>
+            <ThemeToggle />
             <a
               href="https://tally.so/r/D4pv0j"
               target="_blank"
@@ -111,53 +119,24 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 px-6 bg-background-alt relative z-10 gradient-overlay">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'AI-Powered Drafts',
-                description: 'Automatically generate follow-up emails from meeting transcripts with perfect context.',
-              },
-              {
-                title: 'CRM Integration',
-                description: 'Seamlessly log all interactions to your CRM without manual data entry.',
-              },
-              {
-                title: 'Brand Voice Match',
-                description: 'Follow-ups that sound like you, not a robot. On-brand every time.',
-              }
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-2xl bg-background-pure border-2 border-black/10 hover:border-mint hover:shadow-lg hover:shadow-mint/10 transition-all duration-300"
-              >
-                <div className="w-12 h-12 mb-4 rounded-xl bg-gradient-to-br from-mint to-mint-hover flex items-center justify-center">
-                  <div className="w-6 h-6 rounded-full bg-white/30" />
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-mint">
-                  {feature.title}
-                </h3>
-                <p className="text-text-secondary">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Video Demo */}
+      <VideoDemo />
+
+      {/* Bento Grid Features */}
+      <BentoGrid />
 
       {/* Email Capture */}
       <section className="py-20 px-6 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-4xl font-black mb-4 text-text-primary">
-            Join the <span className="text-mint">Beta Waitlist</span>
+            Join the <span className="text-shimmer">Beta Waitlist</span>
           </h2>
           <p className="text-text-secondary mb-8">
             Be among the first to automate your follow-ups. Limited spots available for pilot program.
           </p>
 
           {/* CTA Button */}
-          <div className="bg-background-alt rounded-2xl p-12 border-2 border-black/10 cta-gradient-bg">
+          <div className="bg-background-alt rounded-2xl p-12 border-2 border-black/10 dark:border-white/10 cta-gradient-bg">
             <a
               href="https://tally.so/r/D4pv0j"
               target="_blank"
@@ -184,7 +163,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-black/10 relative z-10">
+      <footer className="py-12 px-6 border-t border-black/10 dark:border-white/10 relative z-10">
         <div className="max-w-7xl mx-auto text-center text-text-caption text-sm">
           <div className="mb-4">
             <span className="text-2xl font-black logo-text">
