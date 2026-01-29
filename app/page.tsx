@@ -9,6 +9,7 @@ const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: fal
 const VideoDemo = dynamic(() => import('@/components/VideoDemo'), { ssr: false });
 const BentoGrid = dynamic(() => import('@/components/BentoGrid'), { ssr: false });
 const FloatingElements = dynamic(() => import('@/components/FloatingElements'), { ssr: false });
+const MobileMenu = dynamic(() => import('@/components/MobileMenu'), { ssr: false });
 
 export default function LandingPage() {
   return (
@@ -21,11 +22,13 @@ export default function LandingPage() {
 
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-display font-bold text-blue-400 light:text-blue-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="text-xl sm:text-2xl font-display font-bold text-blue-400 light:text-blue-600">
             ReplySequence
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-4">
             <a
               href="/dashboard"
               className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
@@ -41,6 +44,12 @@ export default function LandingPage() {
             >
               Join Waitlist
             </a>
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
+            <MobileMenu />
           </div>
         </div>
       </header>
@@ -86,12 +95,12 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 mb-6 justify-center">
+            <div className="flex flex-wrap gap-4 mb-6 justify-center px-4 sm:px-0">
               <a
                 href="https://tally.so/r/D4pv0j"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-cta btn-cta-pulse"
+                className="btn-cta btn-cta-pulse w-full sm:w-auto text-center"
               >
                 Join Beta Waitlist
               </a>
@@ -133,16 +142,16 @@ export default function LandingPage() {
           </p>
 
           {/* CTA Button */}
-          <div className="bg-gray-800 light:bg-white rounded-2xl p-12 border border-gray-700 light:border-gray-200 shadow-xl">
+          <div className="bg-gray-800 light:bg-white rounded-2xl p-6 sm:p-12 border border-gray-700 light:border-gray-200 shadow-xl mx-4 sm:mx-0">
             <a
               href="https://tally.so/r/D4pv0j"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-cta !px-12 !py-5 !text-xl inline-block"
+              className="btn-cta !px-8 sm:!px-12 !py-4 sm:!py-5 !text-lg sm:!text-xl inline-block w-full sm:w-auto text-center"
             >
               Join Beta Waitlist
             </a>
-            <p className="text-gray-400 light:text-gray-600 text-sm mt-6">Takes 30 seconds - No credit card required - Limited to 100 pilot users</p>
+            <p className="text-gray-400 light:text-gray-600 text-xs sm:text-sm mt-6">Takes 30 seconds - No credit card required - Limited to 100 pilot users</p>
           </div>
         </div>
       </section>

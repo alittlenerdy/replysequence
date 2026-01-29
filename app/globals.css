@@ -52,10 +52,11 @@ body {
 
   /* CTA Button with Gradient */
   .btn-cta {
-    @apply px-10 py-4 rounded-xl font-bold text-lg text-white transition-all duration-300;
+    @apply px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg text-white transition-all duration-300;
     background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
     border: none;
     box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
+    max-width: 100%;
   }
 
   .btn-cta:hover {
