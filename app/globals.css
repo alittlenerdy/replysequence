@@ -52,16 +52,25 @@ body {
 
   /* CTA Button with Gradient */
   .btn-cta {
-    @apply px-8 py-4 rounded-full font-bold text-lg text-white transition-all duration-300;
-    background: radial-gradient(circle at 30% 30%, #3B82F6 0%, #2563EB 100%);
-    border: 2px solid #000000;
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    @apply px-10 py-4 rounded-xl font-bold text-lg text-white transition-all duration-300;
+    background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+    border: none;
+    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
   }
 
   .btn-cta:hover {
-    background: radial-gradient(circle at 70% 70%, #3B82F6 0%, #2563EB 100%);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.1);
+    background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(37, 99, 235, 0.5);
+  }
+
+  .btn-cta-pulse {
+    animation: ctaPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4); }
+    50% { box-shadow: 0 8px 40px rgba(37, 99, 235, 0.6), 0 0 0 8px rgba(37, 99, 235, 0.1); }
   }
 
   .btn-secondary {
@@ -81,9 +90,17 @@ body {
     color: var(--mint);
   }
 
-  /* Gradient text that actually works */
+  /* Gradient text with shimmer animation */
   .gradient-glow {
-    background: linear-gradient(135deg, #2563eb 0%, #9333ea 50%, #db2777 100%);
+    background: linear-gradient(
+      90deg,
+      #2563eb 0%,
+      #9333ea 25%,
+      #db2777 50%,
+      #9333ea 75%,
+      #2563eb 100%
+    );
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -91,23 +108,17 @@ body {
     position: relative;
     display: inline-block;
     padding: 0.1em 0.2em;
+    animation: gradientShimmer 3s linear infinite;
   }
 
-  /* Add the actual glow effect behind */
-  .gradient-glow::after {
-    content: 'Automatically.';
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: linear-gradient(135deg, #2563eb 0%, #9333ea 50%, #db2777 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-    filter: blur(12px);
-    opacity: 0.6;
-    z-index: -1;
+@keyframes gradientShimmer {
+  0% {
+    background-position: 0% 50%;
   }
+  100% {
+    background-position: 200% 50%;
+  }
+}
 
   /* Platform icon pill hover effect */
   .platform-pill {
@@ -321,20 +332,41 @@ body {
 
 /* Bento Grid */
 .bento-card {
-  @apply rounded-3xl p-6 transition-all duration-300;
-  background: var(--background-pure);
+  @apply rounded-2xl p-6 transition-all duration-300;
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .bento-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border-color: var(--mint);
 }
 
 .bento-card-featured {
-  @apply bento-card;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+  @apply rounded-2xl p-8 transition-all duration-300;
+  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+}
+
+.bento-card-featured:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.4);
+}
+
+.bento-card-featured .text-text-primary {
+  color: white !important;
+}
+
+.bento-card-featured .text-text-secondary {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.bento-card-featured .text-mint {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Dark Mode Styles */
@@ -362,12 +394,19 @@ body {
 }
 
 .dark .bento-card {
-  background: var(--background-pure);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: #1a1a24;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .dark .bento-card:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border-color: var(--mint);
+}
+
+.dark .bento-card-featured {
+  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
 }
 
 .dark .floating-gradient {

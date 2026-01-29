@@ -6,18 +6,18 @@ export default function VideoDemo() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <section className="py-20 px-6 relative z-10">
+    <section className="py-20 px-4 bg-white dark:bg-gray-900 relative z-10">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-black mb-4 text-text-primary">
+          <h2 className="text-4xl font-black mb-4 text-gray-900 dark:text-white">
             See It In <span className="text-shimmer">Action</span>
           </h2>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
+          <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mx-auto">
             Watch how ReplySequence transforms a 30-minute sales call into a perfect follow-up email in seconds.
           </p>
         </div>
 
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-mint/10 to-neon/10 border border-black/10">
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-gray-200 dark:border-gray-700">
           {!isPlaying ? (
             <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-background-alt to-background relative group cursor-pointer"
                  onClick={() => setIsPlaying(true)}>
@@ -79,16 +79,16 @@ export default function VideoDemo() {
         {/* Video Stats */}
         <div className="flex justify-center gap-8 mt-8 text-center">
           <div>
-            <div className="text-2xl font-bold text-mint">30 sec</div>
-            <div className="text-sm text-text-caption">Meeting to Draft</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">30 sec</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Meeting to Draft</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-mint">98%</div>
-            <div className="text-sm text-text-caption">Accuracy Rate</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">98%</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Accuracy Rate</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-mint">5+ hrs</div>
-            <div className="text-sm text-text-caption">Saved Weekly</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">5+ hrs</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Saved Weekly</div>
           </div>
         </div>
       </div>
