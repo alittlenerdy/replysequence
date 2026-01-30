@@ -12,6 +12,7 @@ import {
   measureAsync,
   measureSync,
 } from '@/lib/performance';
+import { trackEvent } from '@/lib/analytics';
 import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
 
 // Default platform for Zoom webhook events
@@ -763,6 +764,28 @@ async function fetchAndStoreTranscript(
         meetingId,
         transcriptId,
       });
+    }
+
+    // Track meeting_processed analytics event (non-blocking)
+    // Get meeting info for analytics
+    const [meetingForAnalytics] = await db
+      .select()
+      .from(meetings)
+      .where(eq(meetings.id, meetingId))
+      .limit(1);
+
+    if (meetingForAnalytics) {
+      trackEvent(
+        meetingForAnalytics.hostEmail || `zoom-${zoomMeetingId}`,
+        'meeting_processed',
+        {
+          platform: 'zoom',
+          meeting_id: meetingId,
+          transcript_length: fullText.length,
+          speakers_count: segments.length > 0 ? new Set(segments.map(s => s.speaker)).size : 0,
+          duration_minutes: meetingForAnalytics.duration || 0,
+        }
+      ).catch(() => { /* Analytics should never fail the operation */ });
     }
 
     // Draft generation

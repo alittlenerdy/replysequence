@@ -15,6 +15,7 @@ import {
 } from '@/lib/teams-api';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
+import { trackEvent } from '@/lib/analytics';
 import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
 import type { ChangeNotificationItem, TranscriptNotificationPayload } from '@/lib/teams/types';
 
@@ -361,6 +362,27 @@ async function fetchAndStoreTeamsTranscript(
       .update(meetings)
       .set({ status: 'ready', updatedAt: new Date() })
       .where(eq(meetings.id, meetingId));
+
+    // Track meeting_processed analytics event (non-blocking)
+    const [meetingForAnalytics] = await db
+      .select()
+      .from(meetings)
+      .where(eq(meetings.id, meetingId))
+      .limit(1);
+
+    if (meetingForAnalytics) {
+      trackEvent(
+        meetingForAnalytics.hostEmail || `teams-${meetingId}`,
+        'meeting_processed',
+        {
+          platform: 'teams',
+          meeting_id: meetingId,
+          transcript_length: fullText.length,
+          speakers_count: segments.length > 0 ? new Set(segments.map(s => s.speaker)).size : 0,
+          duration_minutes: meetingForAnalytics.duration || 0,
+        }
+      ).catch(() => { /* Analytics should never fail the operation */ });
+    }
 
     // Generate draft email
     await generateDraftForMeeting(meetingId, transcriptRecordId, fullText);

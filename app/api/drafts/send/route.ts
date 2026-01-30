@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
 import { syncSentEmailToCrm } from '@/lib/airtable';
+import { trackEvent } from '@/lib/analytics';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
@@ -90,6 +91,18 @@ export async function POST(request: NextRequest) {
       recipientEmail,
       messageId: result.messageId,
     }));
+
+    // Track analytics event (non-blocking)
+    trackEvent(
+      draft.meetingHostEmail || `draft-${draftId}`,
+      'email_sent',
+      {
+        draft_id: draftId,
+        recipient_count: 1,
+        from_draft: true,
+        crm_logged: false, // Will be updated async
+      }
+    ).catch(() => { /* Analytics should never fail the operation */ });
 
     // Sync to Airtable CRM (non-blocking - don't await in critical path)
     // This runs after email is confirmed sent

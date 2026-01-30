@@ -25,6 +25,7 @@ import { db, drafts, meetings } from './db';
 import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
 import { createMeetingRecord, isAirtableConfigured, type MeetingData } from './airtable';
+import { trackEvent } from './analytics';
 
 // Draft generation configuration
 const MAX_RETRIES = 3;
@@ -286,6 +287,21 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         actionItemCount: parsed.actionItems.length,
         subject: parsed.subject.substring(0, 60),
       });
+
+      // Track analytics event (non-blocking)
+      trackEvent(
+        context.hostEmail || `meeting-${meetingId}`,
+        'draft_generated',
+        {
+          meeting_id: meetingId,
+          draft_id: draft.id,
+          generation_time_seconds: totalDurationMs / 1000,
+          cost_dollars: costUsd,
+          word_count: finalBody.split(/\s+/).length,
+          meeting_type: parsed.meetingTypeDetected,
+          quality_score: qualityResult.overall,
+        }
+      ).catch(() => { /* Analytics should never fail the operation */ });
 
       // Sync to Airtable CRM (non-blocking)
       syncDraftToAirtable({

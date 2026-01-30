@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { PostHogProvider } from "./providers/posthog-provider";
 import MouseTrail from "@/components/MouseTrail";
 import "./globals.css";
 
@@ -29,8 +30,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <body className="antialiased">
-          <MouseTrail />
-          {children}
+          <PostHogProvider>
+            <MouseTrail />
+            {children}
+          </PostHogProvider>
         </body>
       </html>
     </ClerkProvider>
