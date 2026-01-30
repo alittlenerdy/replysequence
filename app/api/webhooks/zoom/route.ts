@@ -363,46 +363,42 @@ async function handleRecordingCompleted(
 
   // Idempotency check - prevent duplicate processing
   let acquired = await acquireEventLock(lockKey);
+  let existingRawEvent: RawEvent | null = null;
 
   if (!acquired) {
     // Smart retry: Check if previous attempt actually succeeded
+    console.log(JSON.stringify({
+      level: 'info',
+      message: '[A3-DUPLICATE-CHECK] Lock not acquired, checking existing raw_event',
+      lockKey,
+      eventId,
+    }));
+
     const [existingEvent] = await db
-      .select({
-        id: rawEvents.id,
-        status: rawEvents.status,
-        errorMessage: rawEvents.errorMessage,
-        createdAt: rawEvents.createdAt
-      })
+      .select()
       .from(rawEvents)
       .where(eq(rawEvents.zoomEventId, eventId))
       .orderBy(desc(rawEvents.createdAt))
       .limit(1);
 
     if (existingEvent) {
-      const isFailedOrStuck = existingEvent.status === 'failed' || existingEvent.status === 'processing';
+      const ageMinutes = Math.floor((Date.now() - new Date(existingEvent.createdAt).getTime()) / 60000);
 
-      if (isFailedOrStuck) {
-        const ageMinutes = Math.floor((Date.now() - new Date(existingEvent.createdAt).getTime()) / 60000);
+      console.log(JSON.stringify({
+        level: 'info',
+        message: '[A3-DUPLICATE-FOUND] Existing raw_event found',
+        eventId,
+        existingEventId: existingEvent.id,
+        status: existingEvent.status,
+        ageMinutes,
+      }));
+
+      if (existingEvent.status === 'processed') {
         console.log(JSON.stringify({
           level: 'info',
-          message: 'Previous recording.completed attempt failed/stuck, allowing reprocess',
-          eventId,
-          previousEventId: existingEvent.id,
-          previousStatus: existingEvent.status,
-          previousError: existingEvent.errorMessage,
-          ageMinutes,
-        }));
-
-        // Clear the old lock to allow reprocessing
-        await removeEventLock(lockKey);
-        acquired = true; // Allow processing to continue
-      } else if (existingEvent.status === 'processed') {
-        console.log(JSON.stringify({
-          level: 'info',
-          message: 'Duplicate recording.completed event (previous succeeded)',
+          message: '[A3-DUPLICATE-SKIP] Already processed, returning 200',
           eventId,
           existingEventId: existingEvent.id,
-          existingStatus: existingEvent.status,
         }));
 
         return NextResponse.json({
@@ -411,11 +407,42 @@ async function handleRecordingCompleted(
           eventId: existingEvent.id,
         }, { status: 200 });
       }
+
+      if (existingEvent.status === 'processing' && ageMinutes < 2) {
+        console.log(JSON.stringify({
+          level: 'info',
+          message: '[A3-DUPLICATE-SKIP] Currently processing (age < 2min), returning 200',
+          eventId,
+          existingEventId: existingEvent.id,
+          ageMinutes,
+        }));
+
+        return NextResponse.json({
+          received: true,
+          duplicate: true,
+          processing: true,
+          eventId: existingEvent.id,
+        }, { status: 200 });
+      }
+
+      // Failed or stuck - reuse existing record
+      console.log(JSON.stringify({
+        level: 'info',
+        message: '[A3-DUPLICATE-RETRY] Reusing existing raw_event for retry',
+        eventId,
+        existingEventId: existingEvent.id,
+        previousStatus: existingEvent.status,
+        ageMinutes,
+      }));
+
+      await removeEventLock(lockKey);
+      existingRawEvent = existingEvent;
+      acquired = true;
     } else {
       // Lock exists but no raw_event found - shouldn't happen, allow processing
       console.log(JSON.stringify({
         level: 'warn',
-        message: 'Lock exists but no raw_event found for recording.completed, allowing processing',
+        message: '[A3-DUPLICATE-CHECK] Lock exists but no raw_event found, allowing new insert',
         eventId,
         lockKey,
       }));
@@ -433,19 +460,40 @@ async function handleRecordingCompleted(
     }, { status: 200 });
   }
 
-  // Store raw event in database
-  const rawEvent = await storeRawEvent(
-    'recording.completed',
-    eventId,
-    rawBody
-  );
+  // Get or create raw event
+  let rawEvent: RawEvent;
+
+  if (existingRawEvent) {
+    // Reuse existing event - just reset status
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Reusing existing raw_event, resetting status',
+      eventId,
+      existingEventId: existingRawEvent.id,
+    }));
+
+    await db
+      .update(rawEvents)
+      .set({ status: 'pending', updatedAt: new Date(), errorMessage: null })
+      .where(eq(rawEvents.id, existingRawEvent.id));
+
+    rawEvent = { ...existingRawEvent, status: 'pending' };
+  } else {
+    // Store new raw event in database
+    rawEvent = await storeRawEvent(
+      'recording.completed',
+      eventId,
+      rawBody
+    );
+  }
 
   console.log(JSON.stringify({
     level: 'info',
-    message: 'recording.completed event stored',
+    message: 'recording.completed event stored/reused',
     rawEventId: rawEvent.id,
     zoomMeetingId: object.uuid,
     duration: Date.now() - startTime,
+    reused: !!existingRawEvent,
   }));
 
   // Process event synchronously before returning
@@ -539,6 +587,8 @@ async function handleTranscriptCompleted(
 
     // Idempotency check - prevent duplicate processing
     let acquired: boolean;
+    let existingRawEvent: RawEvent | null = null; // Track existing event for reuse
+
     try {
       acquired = await acquireEventLock(lockKey);
       console.log(JSON.stringify({
@@ -564,48 +614,37 @@ async function handleTranscriptCompleted(
       // Smart retry: Check if previous attempt actually succeeded
       console.log(JSON.stringify({
         level: 'info',
-        message: 'A3: Lock not acquired, checking previous attempt status',
+        message: '[A3-DUPLICATE-CHECK] Lock not acquired, checking existing raw_event',
         lockKey,
         eventId,
       }));
 
       const [existingEvent] = await db
-        .select({
-          id: rawEvents.id,
-          status: rawEvents.status,
-          errorMessage: rawEvents.errorMessage,
-          createdAt: rawEvents.createdAt
-        })
+        .select()
         .from(rawEvents)
         .where(eq(rawEvents.zoomEventId, eventId))
         .orderBy(desc(rawEvents.createdAt))
         .limit(1);
 
       if (existingEvent) {
-        const isFailedOrStuck = existingEvent.status === 'failed' || existingEvent.status === 'processing';
+        const ageMinutes = Math.floor((Date.now() - new Date(existingEvent.createdAt).getTime()) / 60000);
 
-        if (isFailedOrStuck) {
-          const ageMinutes = Math.floor((Date.now() - new Date(existingEvent.createdAt).getTime()) / 60000);
+        console.log(JSON.stringify({
+          level: 'info',
+          message: '[A3-DUPLICATE-FOUND] Existing raw_event found',
+          eventId,
+          existingEventId: existingEvent.id,
+          status: existingEvent.status,
+          ageMinutes,
+        }));
+
+        if (existingEvent.status === 'processed') {
+          // Already successfully processed - skip
           console.log(JSON.stringify({
             level: 'info',
-            message: 'A3: Previous transcript_completed attempt failed/stuck, allowing reprocess',
-            eventId,
-            previousEventId: existingEvent.id,
-            previousStatus: existingEvent.status,
-            previousError: existingEvent.errorMessage,
-            ageMinutes,
-          }));
-
-          // Clear the old lock to allow reprocessing
-          await removeEventLock(lockKey);
-          acquired = true; // Allow processing to continue
-        } else if (existingEvent.status === 'processed') {
-          console.log(JSON.stringify({
-            level: 'info',
-            message: 'A3 DONE: Duplicate transcript_completed (previous succeeded)',
+            message: '[A3-DUPLICATE-SKIP] Already processed, returning 200',
             eventId,
             existingEventId: existingEvent.id,
-            existingStatus: existingEvent.status,
           }));
 
           return NextResponse.json({
@@ -614,11 +653,43 @@ async function handleTranscriptCompleted(
             eventId: existingEvent.id,
           }, { status: 200 });
         }
+
+        if (existingEvent.status === 'processing' && ageMinutes < 2) {
+          // Currently being processed by another request - skip
+          console.log(JSON.stringify({
+            level: 'info',
+            message: '[A3-DUPLICATE-SKIP] Currently processing (age < 2min), returning 200',
+            eventId,
+            existingEventId: existingEvent.id,
+            ageMinutes,
+          }));
+
+          return NextResponse.json({
+            received: true,
+            duplicate: true,
+            processing: true,
+            eventId: existingEvent.id,
+          }, { status: 200 });
+        }
+
+        // Failed or stuck (processing > 2min) - reuse existing record
+        console.log(JSON.stringify({
+          level: 'info',
+          message: '[A3-DUPLICATE-RETRY] Reusing existing raw_event for retry',
+          eventId,
+          existingEventId: existingEvent.id,
+          previousStatus: existingEvent.status,
+          ageMinutes,
+        }));
+
+        await removeEventLock(lockKey);
+        existingRawEvent = existingEvent; // Reuse this instead of inserting
+        acquired = true;
       } else {
         // Lock exists but no raw_event found - shouldn't happen, allow processing
         console.log(JSON.stringify({
           level: 'warn',
-          message: 'A3: Lock exists but no raw_event found, allowing processing',
+          message: '[A3-DUPLICATE-CHECK] Lock exists but no raw_event found, allowing new insert',
           eventId,
           lockKey,
         }));
@@ -642,31 +713,50 @@ async function handleTranscriptCompleted(
       }, { status: 200 });
     }
 
-    // Store raw event in database
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'A4: About to call storeRawEvent',
-      eventId,
-    }));
-
+    // Get or create raw event
     let rawEvent: RawEvent;
-    try {
-      rawEvent = await storeRawEvent(
-        'recording.transcript_completed',
-        eventId,
-        rawBody
-      );
-    } catch (storeError) {
+
+    if (existingRawEvent) {
+      // Reuse existing event - just reset status for reprocessing
       console.log(JSON.stringify({
-        level: 'error',
-        message: 'A4 ERROR: storeRawEvent threw',
+        level: 'info',
+        message: 'A4: Reusing existing raw_event, resetting status',
         eventId,
-        error: storeError instanceof Error ? storeError.message : String(storeError),
+        existingEventId: existingRawEvent.id,
       }));
-      return NextResponse.json(
-        { received: true, error: 'Failed to store event' },
-        { status: 200 }
-      );
+
+      await db
+        .update(rawEvents)
+        .set({ status: 'pending', updatedAt: new Date(), errorMessage: null })
+        .where(eq(rawEvents.id, existingRawEvent.id));
+
+      rawEvent = { ...existingRawEvent, status: 'pending' };
+    } else {
+      // Store new raw event in database
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'A4: About to call storeRawEvent (new insert)',
+        eventId,
+      }));
+
+      try {
+        rawEvent = await storeRawEvent(
+          'recording.transcript_completed',
+          eventId,
+          rawBody
+        );
+      } catch (storeError) {
+        console.log(JSON.stringify({
+          level: 'error',
+          message: 'A4 ERROR: storeRawEvent threw',
+          eventId,
+          error: storeError instanceof Error ? storeError.message : String(storeError),
+        }));
+        return NextResponse.json(
+          { received: true, error: 'Failed to store event' },
+          { status: 200 }
+        );
+      }
     }
 
     // Sync log immediately after await to confirm execution continues
