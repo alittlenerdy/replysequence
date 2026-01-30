@@ -200,6 +200,34 @@ export const drafts = pgTable(
   ]
 );
 
+// App settings table - stores application-level settings
+// Used for features like viral email signature toggle for paid users
+export const appSettings = pgTable(
+  'app_settings',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    // Settings key (e.g., 'email_signature', 'default_tone')
+    settingKey: varchar('setting_key', { length: 100 }).notNull().unique(),
+    // Settings value stored as JSONB for flexibility
+    settingValue: jsonb('setting_value').notNull(),
+    // Optional: associate with a specific host email (for per-user settings)
+    hostEmail: varchar('host_email', { length: 255 }),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('app_settings_key_host_idx').on(table.settingKey, table.hostEmail),
+    index('app_settings_host_email_idx').on(table.hostEmail),
+  ]
+);
+
+// Email signature settings type
+export interface EmailSignatureSettings {
+  includeSignature: boolean;
+  customTagline?: string;
+}
+
 // Type exports for use in application code
 export type Meeting = typeof meetings.$inferSelect;
 export type NewMeeting = typeof meetings.$inferInsert;
@@ -209,3 +237,5 @@ export type RawEvent = typeof rawEvents.$inferSelect;
 export type NewRawEvent = typeof rawEvents.$inferInsert;
 export type Draft = typeof drafts.$inferSelect;
 export type NewDraft = typeof drafts.$inferInsert;
+export type AppSetting = typeof appSettings.$inferSelect;
+export type NewAppSetting = typeof appSettings.$inferInsert;

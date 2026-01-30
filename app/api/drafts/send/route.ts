@@ -56,12 +56,14 @@ export async function POST(request: NextRequest) {
       subject: draft.subject,
     }));
 
-    // Send email via Resend
+    // Send email via Resend with viral signature footer
     const result = await sendEmail({
       to: recipientEmail,
       subject: draft.subject,
       body: draft.body,
       replyTo: draft.meetingHostEmail,
+      utmContent: draftId,
+      includeSignature: true, // Future: check user settings for paid users
     });
 
     if (!result.success) {
