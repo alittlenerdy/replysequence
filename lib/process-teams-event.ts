@@ -371,17 +371,20 @@ async function fetchAndStoreTeamsTranscript(
       .limit(1);
 
     if (meetingForAnalytics) {
-      trackEvent(
-        meetingForAnalytics.hostEmail || `teams-${meetingId}`,
-        'meeting_processed',
-        {
-          platform: 'teams',
-          meeting_id: meetingId,
-          transcript_length: fullText.length,
-          speakers_count: segments.length > 0 ? new Set(segments.map(s => s.speaker)).size : 0,
-          duration_minutes: meetingForAnalytics.duration || 0,
-        }
-      ).catch(() => { /* Analytics should never fail the operation */ });
+      // Must await for serverless flush to complete
+      try {
+        await trackEvent(
+          meetingForAnalytics.hostEmail || `teams-${meetingId}`,
+          'meeting_processed',
+          {
+            platform: 'teams',
+            meeting_id: meetingId,
+            transcript_length: fullText.length,
+            speakers_count: segments.length > 0 ? new Set(segments.map(s => s.speaker)).size : 0,
+            duration_minutes: meetingForAnalytics.duration || 0,
+          }
+        );
+      } catch { /* Analytics should never fail the operation */ }
     }
 
     // Generate draft email

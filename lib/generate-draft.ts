@@ -288,20 +288,22 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         subject: parsed.subject.substring(0, 60),
       });
 
-      // Track analytics event (non-blocking)
-      trackEvent(
-        context.hostEmail || `meeting-${meetingId}`,
-        'draft_generated',
-        {
-          meeting_id: meetingId,
-          draft_id: draft.id,
-          generation_time_seconds: totalDurationMs / 1000,
-          cost_dollars: costUsd,
-          word_count: finalBody.split(/\s+/).length,
-          meeting_type: parsed.meetingTypeDetected,
-          quality_score: qualityResult.overall,
-        }
-      ).catch(() => { /* Analytics should never fail the operation */ });
+      // Track analytics event (must await for serverless flush)
+      try {
+        await trackEvent(
+          context.hostEmail || `meeting-${meetingId}`,
+          'draft_generated',
+          {
+            meeting_id: meetingId,
+            draft_id: draft.id,
+            generation_time_seconds: totalDurationMs / 1000,
+            cost_dollars: costUsd,
+            word_count: finalBody.split(/\s+/).length,
+            meeting_type: parsed.meetingTypeDetected,
+            quality_score: qualityResult.overall,
+          }
+        );
+      } catch { /* Analytics should never fail the operation */ }
 
       // Sync to Airtable CRM (non-blocking)
       syncDraftToAirtable({

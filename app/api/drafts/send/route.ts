@@ -92,17 +92,19 @@ export async function POST(request: NextRequest) {
       messageId: result.messageId,
     }));
 
-    // Track analytics event (non-blocking)
-    trackEvent(
-      draft.meetingHostEmail || `draft-${draftId}`,
-      'email_sent',
-      {
-        draft_id: draftId,
-        recipient_count: 1,
-        from_draft: true,
-        crm_logged: false, // Will be updated async
-      }
-    ).catch(() => { /* Analytics should never fail the operation */ });
+    // Track analytics event (must await for serverless flush)
+    try {
+      await trackEvent(
+        draft.meetingHostEmail || `draft-${draftId}`,
+        'email_sent',
+        {
+          draft_id: draftId,
+          recipient_count: 1,
+          from_draft: true,
+          crm_logged: false, // Will be updated async
+        }
+      );
+    } catch { /* Analytics should never fail the operation */ }
 
     // Sync to Airtable CRM (non-blocking - don't await in critical path)
     // This runs after email is confirmed sent
