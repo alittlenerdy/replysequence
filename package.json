@@ -22,6 +22,7 @@
     "framer-motion": "^12.29.0",
     "ioredis": "^5.4.2",
     "lightningcss": "^1.30.2",
+    "lucide-react": "^0.563.0",
     "next": "16.1.2",
     "pg": "^8.13.1",
     "posthog-js": "^1.336.4",

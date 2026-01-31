@@ -1,6 +1,16 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import {
+  Clock,
+  FileText,
+  Zap,
+  Link2,
+  BarChart3,
+  Users,
+  ArrowDown,
+} from 'lucide-react';
 
 const FloatingGradients = dynamic(() => import('@/components/FloatingGradients'), { ssr: false });
 const HeroAnimation = dynamic(() => import('@/components/HeroAnimation'), { ssr: false });
@@ -130,6 +140,176 @@ export default function LandingPage() {
 
       {/* Bento Grid Features */}
       <BentoGrid />
+
+      {/* Product Screenshots */}
+      <section className="py-20 px-4 bg-gray-900 light:bg-gray-50 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-display font-bold mb-4 text-white light:text-gray-900">
+              See It In <span className="gradient-glow font-display font-extrabold">Action</span>
+            </h2>
+            <p className="text-gray-300 light:text-gray-700 max-w-2xl mx-auto">
+              From meeting transcript to polished follow-up email in seconds
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                src: '/screenshots/dashboard.svg',
+                alt: 'ReplySequence Dashboard',
+                caption: 'Dashboard Overview',
+                description: 'See all your meetings and drafts in one place',
+              },
+              {
+                src: '/screenshots/draft-editor.svg',
+                alt: 'AI Draft Editor',
+                caption: 'AI-Powered Drafts',
+                description: 'Review and customize AI-generated emails',
+              },
+              {
+                src: '/screenshots/email-preview.svg',
+                alt: 'Email Preview',
+                caption: 'Email Preview',
+                description: 'Preview before sending to your contacts',
+              },
+              {
+                src: '/screenshots/integrations.svg',
+                alt: 'Platform Integrations',
+                caption: 'Seamless Integrations',
+                description: 'Connect Zoom, Teams, and Google Meet',
+              },
+            ].map((screenshot, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-2xl bg-gray-800 light:bg-white border border-gray-700 light:border-gray-200 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500/50"
+              >
+                <div className="aspect-video relative">
+                  <Image
+                    src={screenshot.src}
+                    alt={screenshot.alt}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority={index < 2}
+                  />
+                  {/* Gradient overlay for text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                {/* Caption */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                  <h3 className="text-lg font-bold text-white mb-1">{screenshot.caption}</h3>
+                  <p className="text-sm text-gray-300">{screenshot.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pain to Result Mapping */}
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-800 to-gray-900 light:from-white light:to-gray-50 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-display font-bold mb-4 text-white light:text-gray-900">
+              From <span className="text-red-400 light:text-red-500">Pain</span> to{' '}
+              <span className="text-emerald-400 light:text-emerald-500">Results</span>
+            </h2>
+            <p className="text-gray-300 light:text-gray-700 max-w-2xl mx-auto">
+              See exactly how ReplySequence transforms your workflow
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Clock,
+                pain: 'Follow-ups eat 10-15 hours/week',
+                feature: 'Auto-drafted emails in 8 seconds',
+                result: 'Give reps 10 hours/week back',
+              },
+              {
+                icon: FileText,
+                pain: 'Notes scattered & incomplete',
+                feature: 'Transcript parsing + extraction',
+                result: 'Complete context, every time',
+              },
+              {
+                icon: Zap,
+                pain: 'Slow follow-up kills momentum',
+                feature: '8-second generation',
+                result: 'Strike while iron is hot',
+              },
+              {
+                icon: Link2,
+                pain: 'Siloed tools = double entry',
+                feature: 'Email + CRM logging in one',
+                result: 'One action, two updates',
+              },
+              {
+                icon: BarChart3,
+                pain: 'CRM data wrong = vibes forecasts',
+                feature: 'Accurate auto-logging',
+                result: 'Forecasts you can trust',
+              },
+              {
+                icon: Users,
+                pain: 'Scaling multiplies chaos',
+                feature: 'Same process, any team size',
+                result: '10 reps or 100, same quality',
+              },
+            ].map((mapping, index) => {
+              const IconComponent = mapping.icon;
+              return (
+                <div
+                  key={index}
+                  className="group relative rounded-2xl bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-500/30"
+                >
+                  {/* Icon */}
+                  <div className="flex justify-center mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                      <IconComponent className="w-6 h-6 text-blue-400" aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  {/* Pain Point */}
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-red-400" aria-label="Pain point">
+                        Pain
+                      </span>
+                    </div>
+                    <p className="text-sm text-red-300 light:text-red-600 font-medium">
+                      {mapping.pain}
+                    </p>
+                  </div>
+
+                  {/* Arrow with Feature */}
+                  <div className="flex flex-col items-center my-3">
+                    <ArrowDown className="w-5 h-5 text-blue-400 mb-1" aria-hidden="true" />
+                    <span className="text-xs text-blue-400 font-medium text-center px-2">
+                      {mapping.feature}
+                    </span>
+                    <ArrowDown className="w-5 h-5 text-blue-400 mt-1" aria-hidden="true" />
+                  </div>
+
+                  {/* Result */}
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400" aria-label="Result">
+                        Result
+                      </span>
+                    </div>
+                    <p className="text-sm text-emerald-300 light:text-emerald-600 font-medium">
+                      {mapping.result}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       {/* Email Capture */}
       <section className="py-20 px-4 bg-gradient-to-br from-gray-800 to-gray-900 light:from-blue-50 light:to-purple-50 relative z-10">
