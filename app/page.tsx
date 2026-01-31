@@ -7,9 +7,12 @@ import {
   FileText,
   Zap,
   Link2,
+  Link2Off,
   BarChart3,
   Users,
   ArrowDown,
+  FileX,
+  AlertTriangle,
 } from 'lucide-react';
 
 const FloatingGradients = dynamic(() => import('@/components/FloatingGradients'), { ssr: false });
@@ -70,12 +73,12 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight text-white light:text-gray-900">
-              Turn Meetings Into Follow-Ups.{' '}
-              <span className="gradient-glow font-display font-extrabold">Automatically.</span>
+              Stop Losing Deals to{' '}
+              <span className="gradient-glow font-display font-extrabold">Forgotten Promises.</span>
             </h1>
 
             <p className="text-xl text-gray-300 light:text-gray-700 mb-6 leading-relaxed max-w-3xl mx-auto">
-              AI-powered follow-up emails drafted from your meeting transcripts, logged to your CRM, and ready to send.
+              Turn every Zoom call into a perfect follow-up email and CRM update—automatically.
             </p>
 
             {/* Platform logos */}
@@ -131,6 +134,77 @@ export default function LandingPage() {
           {/* Hero Animation below centered text */}
           <div className="relative mt-16">
             <HeroAnimation />
+          </div>
+        </div>
+      </section>
+
+      {/* Pain Points Section */}
+      <section className="py-16 px-4 bg-gray-950 light:bg-gray-50 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-white light:text-gray-900">
+              The Real Cost of Manual Follow-ups
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+              Every VP Sales knows these problems. Most accept them as &quot;the cost of doing business.&quot;
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Clock,
+                headline: 'Follow-ups eat 10-15 hours/week',
+                detail: 'Sales reps only spend 28% of their time actually selling',
+              },
+              {
+                icon: FileX,
+                headline: 'Notes scattered & incomplete',
+                detail: 'Paper notes, Google Docs, half-filled CRM fields',
+              },
+              {
+                icon: Zap,
+                headline: 'Slow follow-up kills momentum',
+                detail: 'Competitor demos while your rep is still writing notes',
+              },
+              {
+                icon: Link2Off,
+                headline: 'Siloed tools = double/triple entry',
+                detail: 'Zoom + email + CRM all disconnected',
+              },
+              {
+                icon: BarChart3,
+                headline: 'CRM data wrong = vibes-based forecasts',
+                detail: 'Missing fields, stale stages, deals falling through cracks',
+              },
+              {
+                icon: Users,
+                headline: 'Scaling multiplies chaos',
+                detail: 'Going from 5→20 reps means 4x the admin work',
+              },
+            ].map((pain, index) => {
+              const IconComponent = pain.icon;
+              return (
+                <div
+                  key={index}
+                  className="group rounded-xl bg-gray-900/50 light:bg-white border border-orange-500/20 light:border-orange-200 p-6 transition-all duration-300 hover:border-orange-500/40 hover:shadow-lg hover:shadow-orange-500/5"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                      <IconComponent className="w-5 h-5 text-orange-400" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white light:text-gray-900 mb-1">
+                        {pain.headline}
+                      </h3>
+                      <p className="text-sm text-gray-400 light:text-gray-600">
+                        {pain.detail}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
