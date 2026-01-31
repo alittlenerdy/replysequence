@@ -10,9 +10,24 @@ import { PostHog } from 'posthog-node'
 
 // Create a NEW client for each request in serverless to avoid stale connections
 function createPostHogClient(): PostHog | null {
+  // Debug: Log which env vars are available
+  const posthogApiKey = process.env.POSTHOG_API_KEY
+  const publicPosthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
+
+  console.log(JSON.stringify({
+    level: 'info',
+    message: '[POSTHOG-DEBUG] Checking env vars',
+    hasPosthogApiKey: !!posthogApiKey,
+    posthogApiKeyLength: posthogApiKey?.length || 0,
+    posthogApiKeyPrefix: posthogApiKey?.substring(0, 4) || 'none',
+    hasPublicKey: !!publicPosthogKey,
+    publicKeyLength: publicPosthogKey?.length || 0,
+    publicKeyPrefix: publicPosthogKey?.substring(0, 4) || 'none',
+  }))
+
   // Server-side should use the Project API Key (phc_), NOT Personal API Key (phx_)
-  // The phc_ key is write-only and safe for event capture
-  const apiKey = process.env.POSTHOG_API_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY
+  // Prefer NEXT_PUBLIC_POSTHOG_KEY since it's definitely the phc_ key
+  const apiKey = publicPosthogKey || posthogApiKey
 
   if (!apiKey) {
     console.warn('[POSTHOG-INIT] No API key configured - analytics disabled')
@@ -22,7 +37,14 @@ function createPostHogClient(): PostHog | null {
   // Validate key format
   const keyPrefix = apiKey.substring(0, 4)
   if (keyPrefix !== 'phc_') {
-    console.warn(`[POSTHOG-INIT] WARNING: API key starts with "${keyPrefix}" - should be "phc_" for event capture`)
+    console.warn(JSON.stringify({
+      level: 'warn',
+      message: '[POSTHOG-INIT] WARNING: Invalid API key format',
+      keyPrefix,
+      keyLength: apiKey.length,
+      expected: 'phc_',
+      hint: 'Check Vercel env vars - POSTHOG_API_KEY should be the phc_ key value, not the variable name',
+    }))
   }
 
   // Use the ingestion host (us.i.posthog.com) for server-side
@@ -32,6 +54,7 @@ function createPostHogClient(): PostHog | null {
     level: 'info',
     message: '[POSTHOG-INIT] Creating PostHog client',
     keyPrefix,
+    keyLength: apiKey.length,
     host,
   }))
 
