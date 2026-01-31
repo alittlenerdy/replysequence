@@ -8,26 +8,41 @@
 
 import { PostHog } from 'posthog-node'
 
-// Lazy initialize PostHog client to avoid issues when env vars are not set
-let posthogClient: PostHog | null = null
+// Create a NEW client for each request in serverless to avoid stale connections
+function createPostHogClient(): PostHog | null {
+  // Server-side should use the Project API Key (phc_), NOT Personal API Key (phx_)
+  // The phc_ key is write-only and safe for event capture
+  const apiKey = process.env.POSTHOG_API_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY
 
-function getPostHogClient(): PostHog | null {
-  if (posthogClient) return posthogClient
-
-  const apiKey = process.env.POSTHOG_API_KEY
   if (!apiKey) {
-    console.warn('[ANALYTICS] POSTHOG_API_KEY not configured - analytics disabled')
+    console.warn('[POSTHOG-INIT] No API key configured - analytics disabled')
     return null
   }
 
-  posthogClient = new PostHog(apiKey, {
-    host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-    // Critical for serverless: flush after each event
+  // Validate key format
+  const keyPrefix = apiKey.substring(0, 4)
+  if (keyPrefix !== 'phc_') {
+    console.warn(`[POSTHOG-INIT] WARNING: API key starts with "${keyPrefix}" - should be "phc_" for event capture`)
+  }
+
+  // Use the ingestion host (us.i.posthog.com) for server-side
+  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
+
+  console.log(JSON.stringify({
+    level: 'info',
+    message: '[POSTHOG-INIT] Creating PostHog client',
+    keyPrefix,
+    host,
+  }))
+
+  const client = new PostHog(apiKey, {
+    host,
+    // Critical for serverless: flush immediately
     flushAt: 1,
     flushInterval: 0,
   })
 
-  return posthogClient
+  return client
 }
 
 // Event name types for type safety
@@ -102,10 +117,21 @@ export async function trackEvent(
   event: AnalyticsEvent,
   properties: EventProperties = {}
 ): Promise<void> {
-  const client = getPostHogClient()
+  // Create fresh client for each event (serverless best practice)
+  const client = createPostHogClient()
   if (!client) return
 
+  const startTime = Date.now()
+
   try {
+    console.log(JSON.stringify({
+      level: 'info',
+      message: '[POSTHOG-1] Calling capture()',
+      event,
+      distinctId: userId.substring(0, 30),
+    }))
+
+    // Capture the event
     client.capture({
       distinctId: userId,
       event,
@@ -113,28 +139,43 @@ export async function trackEvent(
         ...properties,
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'development',
+        source: 'server-side',
       },
     })
 
     console.log(JSON.stringify({
       level: 'info',
-      message: `[ANALYTICS-${event.toUpperCase()}] Event tracked`,
-      userId: userId.substring(0, 20),
+      message: '[POSTHOG-2] Capture queued, calling shutdown()',
       event,
+    }))
+
+    // Use shutdown() instead of flush() - more reliable for serverless
+    // shutdown() ensures all pending events are sent before returning
+    await client.shutdown()
+
+    const durationMs = Date.now() - startTime
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: '[POSTHOG-3] Shutdown complete - event should be sent',
+      event,
+      distinctId: userId.substring(0, 30),
+      durationMs,
       ...Object.fromEntries(
         Object.entries(properties).filter(([_, v]) => v !== undefined)
       ),
     }))
-
-    // Flush immediately for serverless
-    await client.flush()
   } catch (error) {
-    // Never let analytics break the app
+    const durationMs = Date.now() - startTime
+
+    // Log the actual error
     console.error(JSON.stringify({
       level: 'error',
-      message: '[ANALYTICS-ERROR] Failed to track event',
+      message: '[POSTHOG-ERROR] Failed to track event',
       event,
       error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack?.substring(0, 300) : undefined,
+      durationMs,
     }))
   }
 }
@@ -149,7 +190,7 @@ export async function identifyUser(
   userId: string,
   properties: Record<string, string | number | boolean | undefined> = {}
 ): Promise<void> {
-  const client = getPostHogClient()
+  const client = createPostHogClient()
   if (!client) return
 
   try {
@@ -163,34 +204,15 @@ export async function identifyUser(
 
     console.log(JSON.stringify({
       level: 'info',
-      message: '[ANALYTICS-IDENTIFY] User identified',
+      message: '[POSTHOG-IDENTIFY] User identified',
       userId: userId.substring(0, 20),
     }))
 
-    await client.flush()
-  } catch (error) {
-    console.error(JSON.stringify({
-      level: 'error',
-      message: '[ANALYTICS-ERROR] Failed to identify user',
-      error: error instanceof Error ? error.message : String(error),
-    }))
-  }
-}
-
-/**
- * Shutdown PostHog client gracefully
- * Call this at the end of long-running processes
- */
-export async function shutdownAnalytics(): Promise<void> {
-  const client = getPostHogClient()
-  if (!client) return
-
-  try {
     await client.shutdown()
   } catch (error) {
     console.error(JSON.stringify({
       level: 'error',
-      message: '[ANALYTICS-ERROR] Failed to shutdown',
+      message: '[POSTHOG-ERROR] Failed to identify user',
       error: error instanceof Error ? error.message : String(error),
     }))
   }
