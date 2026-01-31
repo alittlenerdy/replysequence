@@ -184,6 +184,13 @@ export async function markDraftAsSent(
 }
 
 /**
+ * Delete a draft by ID
+ */
+export async function deleteDraft(id: string): Promise<void> {
+  await db.delete(drafts).where(eq(drafts.id, id));
+}
+
+/**
  * Get draft statistics
  */
 export async function getDraftStats(): Promise<{

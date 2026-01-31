@@ -24,8 +24,10 @@ export async function POST(request: NextRequest) {
     if (subject !== undefined) updateData.subject = subject;
     if (draftBody !== undefined) updateData.body = draftBody;
 
+    console.log('[EDIT-2] Saving changes, subject:', subject?.substring(0, 50) || '(unchanged)');
     await updateDraft(draftId, updateData);
 
+    console.log('[EDIT-3] Changes saved successfully');
     console.log(JSON.stringify({
       level: 'info',
       message: 'Draft updated',

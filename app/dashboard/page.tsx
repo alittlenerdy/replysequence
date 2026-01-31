@@ -11,11 +11,13 @@ export const metadata = {
 };
 
 async function DashboardContent() {
+  console.log('[DASHBOARD-1] Fetching initial drafts server-side');
   // Fetch initial data server-side
   const [draftsResult, stats] = await Promise.all([
     getDraftsWithMeetings({ page: 1, limit: 10 }),
     getDraftStats(),
   ]);
+  console.log('[DASHBOARD-2] Drafts loaded, count:', draftsResult.drafts.length);
 
   return (
     <Dashboard

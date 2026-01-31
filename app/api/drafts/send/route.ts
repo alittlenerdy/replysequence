@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('[SEND-1] Sending email, to:', recipientEmail);
     console.log(JSON.stringify({
       level: 'info',
       message: 'Sending email via Resend',
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
     // Mark draft as sent only after successful email delivery
     await markDraftAsSent(draftId, recipientEmail);
 
+    console.log('[SEND-2] Email sent successfully, messageId:', result.messageId);
     console.log(JSON.stringify({
       level: 'info',
       message: 'Email sent and draft marked as sent',

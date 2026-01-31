@@ -46,6 +46,7 @@ export function Dashboard({
 
   const fetchDrafts = useCallback(async () => {
     setIsLoading(true);
+    console.log('[DASHBOARD-1] Fetching drafts, filters:', { page, status, search, dateRange });
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -62,9 +63,10 @@ export function Dashboard({
         setTotal(data.total);
         setTotalPages(data.totalPages);
         setStats(data.stats);
+        console.log('[DASHBOARD-2] Drafts loaded, count:', data.drafts.length);
       }
     } catch (error) {
-      console.error('Failed to fetch drafts:', error);
+      console.error('[DASHBOARD-ERROR] Failed to fetch drafts:', error);
     } finally {
       setIsLoading(false);
     }
