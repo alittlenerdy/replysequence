@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db, rawEvents } from '@/lib/db';
 import { processMeetEvent } from '@/lib/process-meet-event';
 import { validatePubSubMessage } from '@/lib/meet-api';
+import { recordWebhookFailure } from '@/lib/webhook-retry';
 import type { PubSubPushMessage, MeetWorkspaceEvent } from '@/lib/meet/types';
 import type { RawEvent } from '@/lib/db/schema';
 
@@ -114,9 +115,26 @@ export async function POST(request: NextRequest) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
     log('error', '[MEET-1] Webhook processing error', {
+      tag: '[WEBHOOK-ERROR]',
+      platform: 'google_meet',
       error: errorMessage,
       duration: Date.now() - startTime,
     });
+
+    // Record failure for retry
+    try {
+      await recordWebhookFailure(
+        'google_meet',
+        'unknown',
+        { error: 'Failed to parse webhook payload', originalError: errorMessage },
+        errorMessage
+      );
+    } catch (recordError) {
+      log('error', 'Failed to record webhook failure', {
+        tag: '[WEBHOOK-ERROR]',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      });
+    }
 
     // Return 200 to prevent Pub/Sub from retrying
     // We log the error for investigation
@@ -190,11 +208,31 @@ async function handleConferenceEnded(
       duration: Date.now() - startTime,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     log('error', '[MEET-10] Event processing failed', {
+      tag: '[WEBHOOK-ERROR]',
+      platform: 'google_meet',
+      eventType: 'meet.conference.ended',
       rawEventId: rawEvent.id,
-      error: error instanceof Error ? error.message : String(error),
+      conferenceRecordName,
+      error: errorMessage,
       duration: Date.now() - startTime,
     });
+
+    // Record failure for retry
+    try {
+      await recordWebhookFailure(
+        'google_meet',
+        'meet.conference.ended',
+        rawEvent.payload,
+        errorMessage
+      );
+    } catch (recordError) {
+      log('error', 'Failed to record webhook failure for retry', {
+        tag: '[WEBHOOK-ERROR]',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      });
+    }
     // Don't fail the webhook - event is stored for retry
   }
 

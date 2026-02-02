@@ -3,8 +3,23 @@
     "app/api/webhooks/zoom/route.ts": {
       "maxDuration": 60
     },
+    "app/api/webhooks/teams/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/webhooks/meet/route.ts": {
+      "maxDuration": 60
+    },
     "app/api/jobs/process-transcript/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/process-webhook-retries/route.ts": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/process-webhook-retries",
+      "schedule": "* * * * *"
+    }
+  ]
 }

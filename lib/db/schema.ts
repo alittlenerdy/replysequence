@@ -228,6 +228,68 @@ export interface EmailSignatureSettings {
   customTagline?: string;
 }
 
+// Webhook failure status enum values
+export type WebhookFailureStatus = 'pending' | 'retrying' | 'completed' | 'dead_letter';
+
+// Failure history entry for tracking retry attempts
+export interface FailureHistoryEntry {
+  attempt: number;
+  error: string;
+  timestamp: string;
+}
+
+// Webhook failures table - stores failed webhooks for retry
+export const webhookFailures = pgTable(
+  'webhook_failures',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    platform: meetingPlatformEnum('platform').notNull(),
+    eventType: varchar('event_type', { length: 100 }).notNull(),
+    payload: jsonb('payload').notNull(),
+    error: text('error').notNull(),
+    attempts: integer('attempts').notNull().default(1),
+    maxAttempts: integer('max_attempts').notNull().default(3),
+    nextRetryAt: timestamp('next_retry_at', { withTimezone: true }),
+    lastAttemptAt: timestamp('last_attempt_at', { withTimezone: true }).notNull().defaultNow(),
+    status: varchar('status', { length: 20 }).$type<WebhookFailureStatus>().notNull().default('pending'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('webhook_failures_platform_idx').on(table.platform),
+    index('webhook_failures_status_idx').on(table.status),
+    index('webhook_failures_next_retry_at_idx').on(table.nextRetryAt),
+    index('webhook_failures_created_at_idx').on(table.createdAt),
+  ]
+);
+
+// Dead letter queue table - stores webhooks that exhausted all retries
+export const deadLetterQueue = pgTable(
+  'dead_letter_queue',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    platform: meetingPlatformEnum('platform').notNull(),
+    eventType: varchar('event_type', { length: 100 }).notNull(),
+    payload: jsonb('payload').notNull(),
+    error: text('error').notNull(),
+    totalAttempts: integer('total_attempts').notNull(),
+    failureHistory: jsonb('failure_history').$type<FailureHistoryEntry[]>().notNull().default([]),
+    alertSent: varchar('alert_sent', { length: 10 }).notNull().default('false'),
+    resolved: varchar('resolved', { length: 10 }).notNull().default('false'),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    resolutionNotes: text('resolution_notes'),
+    webhookFailureId: uuid('webhook_failure_id').references(() => webhookFailures.id),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('dead_letter_queue_platform_idx').on(table.platform),
+    index('dead_letter_queue_resolved_idx').on(table.resolved),
+    index('dead_letter_queue_created_at_idx').on(table.createdAt),
+    index('dead_letter_queue_alert_sent_idx').on(table.alertSent),
+  ]
+);
+
 // Type exports for use in application code
 export type Meeting = typeof meetings.$inferSelect;
 export type NewMeeting = typeof meetings.$inferInsert;
@@ -239,3 +301,7 @@ export type Draft = typeof drafts.$inferSelect;
 export type NewDraft = typeof drafts.$inferInsert;
 export type AppSetting = typeof appSettings.$inferSelect;
 export type NewAppSetting = typeof appSettings.$inferInsert;
+export type WebhookFailure = typeof webhookFailures.$inferSelect;
+export type NewWebhookFailure = typeof webhookFailures.$inferInsert;
+export type DeadLetter = typeof deadLetterQueue.$inferSelect;
+export type NewDeadLetter = typeof deadLetterQueue.$inferInsert;

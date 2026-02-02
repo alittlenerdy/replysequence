@@ -3,6 +3,7 @@ import { verifyZoomSignature, generateChallengeResponse } from '@/lib/zoom/signa
 import { acquireEventLock, removeEventLock } from '@/lib/idempotency';
 import { db, rawEvents } from '@/lib/db';
 import { processZoomEvent } from '@/lib/process-zoom-event';
+import { recordWebhookFailure } from '@/lib/webhook-retry';
 import { eq, desc } from 'drizzle-orm';
 import type {
   ZoomWebhookPayload,
@@ -145,10 +146,31 @@ export async function POST(request: NextRequest) {
 
     console.log(JSON.stringify({
       level: 'error',
+      tag: '[WEBHOOK-ERROR]',
       message: 'Zoom webhook processing error',
+      platform: 'zoom',
       error: errorMessage,
       duration: Date.now() - startTime,
+      timestamp: new Date().toISOString(),
     }));
+
+    // Record failure for retry
+    try {
+      const rawBody = '{}'; // Body already consumed, store minimal info
+      await recordWebhookFailure(
+        'zoom',
+        'unknown',
+        { error: 'Failed to parse webhook payload', originalError: errorMessage },
+        errorMessage
+      );
+    } catch (recordError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        tag: '[WEBHOOK-ERROR]',
+        message: 'Failed to record webhook failure',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      }));
+    }
 
     // Return 200 to prevent Zoom from retrying
     // We log the error for investigation
@@ -305,12 +327,35 @@ async function handleMeetingEnded(
       meetingId: result.meetingId,
     }));
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.log(JSON.stringify({
       level: 'error',
+      tag: '[WEBHOOK-ERROR]',
       message: 'Event processing failed in webhook handler',
+      platform: 'zoom',
+      eventType: 'meeting.ended',
       rawEventId: rawEvent.id,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      meetingId: extractedData.meetingId,
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
     }));
+
+    // Record failure for retry
+    try {
+      await recordWebhookFailure(
+        'zoom',
+        'meeting.ended',
+        rawEvent.payload,
+        errorMessage
+      );
+    } catch (recordError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        tag: '[WEBHOOK-ERROR]',
+        message: 'Failed to record webhook failure for retry',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      }));
+    }
     // Don't fail the webhook - raw event is stored for retry
   }
 
@@ -508,12 +553,35 @@ async function handleRecordingCompleted(
       meetingId: result.meetingId,
     }));
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.log(JSON.stringify({
       level: 'error',
+      tag: '[WEBHOOK-ERROR]',
       message: 'Event processing failed in webhook handler',
+      platform: 'zoom',
+      eventType: 'recording.completed',
       rawEventId: rawEvent.id,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      zoomMeetingId: object.uuid,
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
     }));
+
+    // Record failure for retry
+    try {
+      await recordWebhookFailure(
+        'zoom',
+        'recording.completed',
+        rawEvent.payload,
+        errorMessage
+      );
+    } catch (recordError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        tag: '[WEBHOOK-ERROR]',
+        message: 'Failed to record webhook failure for retry',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      }));
+    }
   }
 
   // Return success with event ID
@@ -786,14 +854,36 @@ async function handleTranscriptCompleted(
         elapsedMs: Date.now() - startTime,
       }));
     } catch (processError) {
+      const errorMessage = processError instanceof Error ? processError.message : String(processError);
       console.log(JSON.stringify({
         level: 'error',
+        tag: '[WEBHOOK-ERROR]',
         message: 'A5 ERROR: processZoomEvent threw exception',
+        platform: 'zoom',
+        eventType: 'recording.transcript_completed',
         rawEventId: rawEvent.id,
-        error: processError instanceof Error ? processError.message : String(processError),
+        error: errorMessage,
         stack: processError instanceof Error ? processError.stack?.substring(0, 500) : undefined,
         elapsedMs: Date.now() - startTime,
+        timestamp: new Date().toISOString(),
       }));
+
+      // Record failure for retry
+      try {
+        await recordWebhookFailure(
+          'zoom',
+          'recording.transcript_completed',
+          rawEvent.payload,
+          errorMessage
+        );
+      } catch (recordError) {
+        console.log(JSON.stringify({
+          level: 'error',
+          tag: '[WEBHOOK-ERROR]',
+          message: 'Failed to record webhook failure for retry',
+          error: recordError instanceof Error ? recordError.message : String(recordError),
+        }));
+      }
       // Don't fail the webhook - raw event is stored for retry
     }
 
@@ -815,13 +905,35 @@ async function handleTranscriptCompleted(
     );
   } catch (unexpectedError) {
     // Catch-all for any unexpected errors in the handler
+    const errorMessage = unexpectedError instanceof Error ? unexpectedError.message : String(unexpectedError);
     console.log(JSON.stringify({
       level: 'error',
+      tag: '[WEBHOOK-ERROR]',
       message: '!!! HANDLER CRASH: Unexpected error',
-      error: unexpectedError instanceof Error ? unexpectedError.message : String(unexpectedError),
+      platform: 'zoom',
+      eventType: 'recording.transcript_completed',
+      error: errorMessage,
       stack: unexpectedError instanceof Error ? unexpectedError.stack : undefined,
       duration: Date.now() - startTime,
+      timestamp: new Date().toISOString(),
     }));
+
+    // Attempt to record failure for retry (may fail if crash was severe)
+    try {
+      await recordWebhookFailure(
+        'zoom',
+        'recording.transcript_completed',
+        { error: 'Handler crash', rawBody: 'unavailable' },
+        errorMessage
+      );
+    } catch (recordError) {
+      console.log(JSON.stringify({
+        level: 'error',
+        tag: '[WEBHOOK-ERROR]',
+        message: 'Failed to record webhook failure for retry',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      }));
+    }
 
     return NextResponse.json(
       { received: true, error: 'Handler crashed' },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db, rawEvents } from '@/lib/db';
 import { processTeamsEvent } from '@/lib/process-teams-event';
 import { validateClientState, parseResourcePath } from '@/lib/teams-api';
+import { recordWebhookFailure } from '@/lib/webhook-retry';
 import type { GraphChangeNotification, ChangeNotificationItem } from '@/lib/teams/types';
 import type { RawEvent } from '@/lib/db/schema';
 
@@ -138,9 +139,26 @@ export async function POST(request: NextRequest) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
     log('error', 'Teams webhook processing error', {
+      tag: '[WEBHOOK-ERROR]',
+      platform: 'microsoft_teams',
       error: errorMessage,
       duration: Date.now() - startTime,
     });
+
+    // Record failure for retry
+    try {
+      await recordWebhookFailure(
+        'microsoft_teams',
+        'unknown',
+        { error: 'Failed to parse webhook payload', originalError: errorMessage },
+        errorMessage
+      );
+    } catch (recordError) {
+      log('error', 'Failed to record webhook failure', {
+        tag: '[WEBHOOK-ERROR]',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      });
+    }
 
     // Return 202 to prevent retries - we log errors for investigation
     return NextResponse.json(
@@ -221,10 +239,29 @@ async function processNotification(
       duration: Date.now() - startTime,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     log('error', 'Teams event processing failed', {
+      tag: '[WEBHOOK-ERROR]',
+      platform: 'microsoft_teams',
+      eventType,
       rawEventId: rawEvent.id,
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMessage,
     });
+
+    // Record failure for retry
+    try {
+      await recordWebhookFailure(
+        'microsoft_teams',
+        eventType,
+        rawEvent.payload,
+        errorMessage
+      );
+    } catch (recordError) {
+      log('error', 'Failed to record webhook failure for retry', {
+        tag: '[WEBHOOK-ERROR]',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      });
+    }
     // Don't fail the webhook - event is stored for retry
   }
 
