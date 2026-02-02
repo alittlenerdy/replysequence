@@ -228,6 +228,36 @@ export interface EmailSignatureSettings {
   customTagline?: string;
 }
 
+// Users table - tracks Clerk users and their platform connections
+export const users = pgTable(
+  'users',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clerkId: varchar('clerk_id', { length: 255 }).notNull().unique(),
+    email: varchar('email', { length: 255 }).notNull(),
+    name: varchar('name', { length: 255 }),
+    // Platform connection status
+    zoomConnected: varchar('zoom_connected', { length: 10 }).notNull().default('false'),
+    teamsConnected: varchar('teams_connected', { length: 10 }).notNull().default('false'),
+    meetConnected: varchar('meet_connected', { length: 10 }).notNull().default('false'),
+    // OAuth tokens (would be encrypted in production)
+    zoomAccessToken: text('zoom_access_token'),
+    zoomRefreshToken: text('zoom_refresh_token'),
+    teamsAccessToken: text('teams_access_token'),
+    teamsRefreshToken: text('teams_refresh_token'),
+    meetAccessToken: text('meet_access_token'),
+    meetRefreshToken: text('meet_refresh_token'),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('users_clerk_id_idx').on(table.clerkId),
+    index('users_email_idx').on(table.email),
+    index('users_created_at_idx').on(table.createdAt),
+  ]
+);
+
 // Webhook failure status enum values
 export type WebhookFailureStatus = 'pending' | 'retrying' | 'completed' | 'dead_letter';
 
@@ -305,3 +335,5 @@ export type WebhookFailure = typeof webhookFailures.$inferSelect;
 export type NewWebhookFailure = typeof webhookFailures.$inferInsert;
 export type DeadLetter = typeof deadLetterQueue.$inferSelect;
 export type NewDeadLetter = typeof deadLetterQueue.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;

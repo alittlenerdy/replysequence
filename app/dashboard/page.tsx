@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Dashboard } from '@/components/Dashboard';
+import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
 import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
@@ -72,8 +73,10 @@ function LoadingFallback() {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <DashboardContent />
-    </Suspense>
+    <OnboardingGate>
+      <Suspense fallback={<LoadingFallback />}>
+        <DashboardContent />
+      </Suspense>
+    </OnboardingGate>
   );
 }
