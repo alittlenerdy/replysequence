@@ -22,7 +22,10 @@ export interface PlatformConnectionsResult {
 export async function checkPlatformConnections(): Promise<PlatformConnectionsResult> {
   const { userId } = await auth();
 
+  console.log('[CHECK-CONNECTION] Starting check', { clerkUserId: userId });
+
   if (!userId) {
+    console.log('[CHECK-CONNECTION] No userId from Clerk auth');
     return {
       connected: false,
       platforms: { zoom: false, teams: false, meet: false },
@@ -33,6 +36,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
   const [existingUser] = await db
     .select({
       id: users.id,
+      clerkId: users.clerkId,
       zoomConnected: users.zoomConnected,
       teamsConnected: users.teamsConnected,
       meetConnected: users.meetConnected,
@@ -41,11 +45,27 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     .where(eq(users.clerkId, userId))
     .limit(1);
 
+  console.log('[CHECK-CONNECTION] User query result', {
+    found: !!existingUser,
+    userId: existingUser?.id,
+    clerkId: existingUser?.clerkId,
+    zoomConnected: existingUser?.zoomConnected,
+    teamsConnected: existingUser?.teamsConnected,
+    meetConnected: existingUser?.meetConnected,
+  });
+
   if (existingUser) {
     const zoomConnected = existingUser.zoomConnected === 'true';
     const teamsConnected = existingUser.teamsConnected === 'true';
     const meetConnected = existingUser.meetConnected === 'true';
     const hasConnection = zoomConnected || teamsConnected || meetConnected;
+
+    console.log('[CHECK-CONNECTION] Connection status', {
+      zoomConnected,
+      teamsConnected,
+      meetConnected,
+      hasConnection,
+    });
 
     // Get Zoom email if connected
     let zoomEmail: string | undefined;
@@ -56,6 +76,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         .where(eq(zoomConnections.userId, existingUser.id))
         .limit(1);
       zoomEmail = connection?.zoomEmail;
+      console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail });
     }
 
     return {

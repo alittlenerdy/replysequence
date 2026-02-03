@@ -73,12 +73,21 @@ export async function GET(request: NextRequest) {
     });
 
     // Find or create user in database
+    console.log('[ZOOM-CALLBACK] Looking for user with clerkId:', clerkUserId);
+
     let user = await db.query.users.findFirst({
       where: eq(users.clerkId, clerkUserId),
     });
 
+    console.log('[ZOOM-CALLBACK] User lookup result:', {
+      found: !!user,
+      userId: user?.id,
+      existingZoomConnected: user?.zoomConnected,
+    });
+
     if (!user) {
       // Create new user
+      console.log('[ZOOM-CALLBACK] Creating new user...');
       const [newUser] = await db
         .insert(users)
         .values({
@@ -89,7 +98,9 @@ export async function GET(request: NextRequest) {
         })
         .returning();
       user = newUser;
-      console.log('[ZOOM-CALLBACK] Created new user', { userId: user.id });
+      console.log('[ZOOM-CALLBACK] Created new user', { userId: user.id, zoomConnected: 'true' });
+    } else {
+      console.log('[ZOOM-CALLBACK] Using existing user', { userId: user.id });
     }
 
     // Encrypt tokens
@@ -135,17 +146,32 @@ export async function GET(request: NextRequest) {
     }
 
     // Update user's zoom_connected flag
-    await db
+    console.log('[ZOOM-CALLBACK] Updating user zoomConnected to true', { userId: user.id });
+
+    const updateResult = await db
       .update(users)
       .set({
         zoomConnected: 'true',
         updatedAt: new Date(),
       })
-      .where(eq(users.id, user.id));
+      .where(eq(users.id, user.id))
+      .returning({ id: users.id, zoomConnected: users.zoomConnected });
+
+    console.log('[ZOOM-CALLBACK] Update result:', updateResult);
+
+    // Verify the update worked
+    const verifyUser = await db.query.users.findFirst({
+      where: eq(users.id, user.id),
+    });
+    console.log('[ZOOM-CALLBACK] Verification query:', {
+      userId: verifyUser?.id,
+      zoomConnected: verifyUser?.zoomConnected,
+    });
 
     console.log('[ZOOM-CALLBACK] OAuth flow completed successfully', {
       clerkUserId,
       zoomUserId: zoomUser.id,
+      userZoomConnected: verifyUser?.zoomConnected,
     });
 
     // Redirect to dashboard with success
