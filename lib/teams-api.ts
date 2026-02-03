@@ -2,7 +2,9 @@
  * Microsoft Graph API Client for Teams
  *
  * Handles authentication and API calls for fetching Teams transcripts.
- * Uses OAuth2 client credentials flow (app-only authentication).
+ * Supports both:
+ * - OAuth2 client credentials flow (app-only authentication)
+ * - OAuth2 authorization code flow (user-delegated authentication)
  */
 
 import type {
@@ -21,8 +23,11 @@ const CLIENT_SECRET = process.env.MICROSOFT_TEAMS_CLIENT_SECRET;
 const GRAPH_BASE_URL = 'https://graph.microsoft.com/v1.0';
 const TOKEN_ENDPOINT = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`;
 
-// Token cache
+// Token cache for client credentials flow
 let cachedToken: { token: string; expiresAt: number } | null = null;
+
+// User token for the current request context (set via setUserToken)
+let currentUserToken: string | null = null;
 
 /**
  * Logger helper for structured JSON logging
@@ -44,10 +49,36 @@ function log(
 }
 
 /**
+ * Set a user-delegated OAuth token for the current request
+ * This token will be used instead of client credentials
+ */
+export function setUserToken(token: string | null): void {
+  currentUserToken = token;
+  if (token) {
+    log('info', '[TEAMS-OAUTH-1] User OAuth token set for request');
+  }
+}
+
+/**
+ * Clear the current user token
+ */
+export function clearUserToken(): void {
+  currentUserToken = null;
+}
+
+/**
  * Get an access token using client credentials flow
  * Caches token until 5 minutes before expiration
+ * If a user token is set, returns that instead
  */
 export async function getAccessToken(): Promise<string> {
+  // If user token is set, use it (user-delegated flow)
+  if (currentUserToken) {
+    log('info', '[TEAMS-OAUTH-2] Using user-delegated OAuth token');
+    return currentUserToken;
+  }
+
+  // Fall back to client credentials flow (app-only)
   // Check cached token
   if (cachedToken && Date.now() < cachedToken.expiresAt - 300000) {
     return cachedToken.token;
@@ -57,7 +88,7 @@ export async function getAccessToken(): Promise<string> {
     throw new Error('Microsoft Teams credentials not configured');
   }
 
-  log('info', 'Fetching new Graph API access token');
+  log('info', '[TEAMS-2] Fetching new Graph API access token (client credentials)');
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,

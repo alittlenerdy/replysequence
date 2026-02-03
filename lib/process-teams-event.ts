@@ -5,19 +5,22 @@
  * via Graph API. Parallel structure to process-zoom-event.ts.
  */
 
-import { db, meetings, rawEvents, transcripts } from '@/lib/db';
+import { db, meetings, rawEvents, transcripts, teamsConnections } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import {
   getTranscriptContentByUrl,
   getOnlineMeeting,
   parseResourcePath,
   isTeamsConfigured,
+  setUserToken,
+  clearUserToken,
 } from '@/lib/teams-api';
+import { getValidTeamsToken } from '@/lib/teams-token';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
 import { trackEvent } from '@/lib/analytics';
-import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
-import type { ChangeNotificationItem, TranscriptNotificationPayload } from '@/lib/teams/types';
+import type { RawEvent, MeetingPlatform } from '@/lib/db/schema';
+import type { ChangeNotificationItem } from '@/lib/teams/types';
 
 // Platform constant
 const TEAMS_PLATFORM: MeetingPlatform = 'microsoft_teams';
@@ -156,7 +159,7 @@ async function processTranscriptCreated(
 ): Promise<ProcessResult> {
   const { resource, resourceData, tenantId } = notification;
 
-  log('info', 'Processing Teams transcript.created', {
+  log('info', '[TEAMS-WEBHOOK-1] Processing Teams transcript.created', {
     rawEventId: rawEvent.id,
     resource,
     resourceId: resourceData?.id,
@@ -166,12 +169,44 @@ async function processTranscriptCreated(
   const parsed = parseResourcePath(resource);
 
   if (!parsed.userId || !parsed.meetingId || !parsed.transcriptId) {
-    log('error', 'Could not parse resource path', {
+    log('error', '[TEAMS-WEBHOOK-2] Could not parse resource path', {
       rawEventId: rawEvent.id,
       resource,
       parsed,
     });
     return { success: false, action: 'failed', error: 'Invalid resource path' };
+  }
+
+  // Try to get user OAuth token for the meeting organizer
+  // Look up user by MS User ID in teams_connections table
+  let userToken: string | null = null;
+  try {
+    const [connection] = await db
+      .select({ userId: teamsConnections.userId })
+      .from(teamsConnections)
+      .where(eq(teamsConnections.msUserId, parsed.userId))
+      .limit(1);
+
+    if (connection) {
+      userToken = await getValidTeamsToken(connection.userId);
+      if (userToken) {
+        log('info', '[TEAMS-WEBHOOK-3] Using user OAuth token for Graph API calls', {
+          msUserId: parsed.userId,
+          hasToken: true,
+        });
+        setUserToken(userToken);
+      }
+    }
+
+    if (!userToken) {
+      log('info', '[TEAMS-WEBHOOK-3] No user OAuth token found, using client credentials', {
+        msUserId: parsed.userId,
+      });
+    }
+  } catch (tokenError) {
+    log('warn', '[TEAMS-WEBHOOK-3] Failed to get user OAuth token, falling back to client credentials', {
+      error: tokenError instanceof Error ? tokenError.message : String(tokenError),
+    });
   }
 
   // Create a unique Teams meeting ID
@@ -236,19 +271,24 @@ async function processTranscriptCreated(
   }
 
   // Fetch and store transcript
-  await fetchAndStoreTeamsTranscript(
-    meetingId,
-    parsed.userId,
-    parsed.meetingId,
-    parsed.transcriptId,
-    rawEvent.id
-  );
+  try {
+    await fetchAndStoreTeamsTranscript(
+      meetingId,
+      parsed.userId,
+      parsed.meetingId,
+      parsed.transcriptId,
+      rawEvent.id
+    );
 
-  return {
-    success: true,
-    meetingId,
-    action: existingMeeting ? 'updated' : 'created',
-  };
+    return {
+      success: true,
+      meetingId,
+      action: existingMeeting ? 'updated' : 'created',
+    };
+  } finally {
+    // Always clear user token after processing
+    clearUserToken();
+  }
 }
 
 /**
@@ -282,7 +322,7 @@ async function fetchAndStoreTeamsTranscript(
 ): Promise<void> {
   const startTime = Date.now();
 
-  log('info', '[TEAMS-3] Transcript file located via Graph API', {
+  log('info', '[TEAMS-WEBHOOK-4] Transcript file located via Graph API', {
     meetingId,
     userId,
     graphMeetingId,
@@ -296,7 +336,7 @@ async function fetchAndStoreTeamsTranscript(
     // Fetch transcript content (VTT format)
     const vttContent = await getTranscriptContentByUrl(transcriptUrl);
 
-    log('info', '[TEAMS-4] VTT transcript downloaded', {
+    log('info', '[TEAMS-WEBHOOK-5] VTT transcript downloaded', {
       meetingId,
       contentLength: vttContent.length,
       sizeBytes: vttContent.length,
@@ -336,7 +376,7 @@ async function fetchAndStoreTeamsTranscript(
         .where(eq(transcripts.id, existingTranscript.id));
 
       transcriptRecordId = existingTranscript.id;
-      log('info', '[TEAMS-5] Transcript stored in database (updated)', { transcriptId: transcriptRecordId });
+      log('info', '[TEAMS-WEBHOOK-6] Transcript stored in database (updated)', { transcriptId: transcriptRecordId });
     } else {
       // Create new transcript
       const [newTranscript] = await db
@@ -354,7 +394,7 @@ async function fetchAndStoreTeamsTranscript(
         .returning({ id: transcripts.id });
 
       transcriptRecordId = newTranscript.id;
-      log('info', '[TEAMS-5] Transcript stored in database (created)', { transcriptId: transcriptRecordId });
+      log('info', '[TEAMS-WEBHOOK-6] Transcript stored in database (created)', { transcriptId: transcriptRecordId });
     }
 
     // Update meeting status
@@ -435,7 +475,7 @@ async function generateDraftForMeeting(
       return;
     }
 
-    log('info', '[TEAMS-6] Draft generation triggered', {
+    log('info', '[TEAMS-WEBHOOK-7] Draft generation triggered', {
       meetingId,
       transcriptId,
       topic: meeting.topic,
