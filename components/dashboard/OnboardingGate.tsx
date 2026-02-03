@@ -2,9 +2,11 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { checkPlatformConnections, updatePlatformConnection } from '@/app/actions/checkPlatformConnections';
+import { UserButton } from '@clerk/nextjs';
+import { checkPlatformConnections } from '@/app/actions/checkPlatformConnections';
+// Note: updatePlatformConnection removed - Teams/Meet not yet implemented
 import { Toast } from '@/components/ui/Toast';
-import { Check, ExternalLink, Loader2 } from 'lucide-react';
+import { Check, ExternalLink, Loader2, Unplug, FileText, Video } from 'lucide-react';
 
 interface OnboardingGateProps {
   children: React.ReactNode;
@@ -20,9 +22,12 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   const searchParams = useSearchParams();
   const [connected, setConnected] = useState<boolean | null>(null);
   const [platforms, setPlatforms] = useState<PlatformState>({ zoom: false, teams: false, meet: false });
+  const [zoomEmail, setZoomEmail] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const previousConnected = useRef<boolean | null>(null);
   const hasCheckedUrlParams = useRef(false);
 
@@ -31,6 +36,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       const result = await checkPlatformConnections();
       setPlatforms(result.platforms);
       setConnected(result.connected);
+      setZoomEmail(result.zoomEmail || null);
 
       // Show success toast when connection changes from false to true
       if (previousConnected.current === false && result.connected === true) {
@@ -40,8 +46,8 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
 
       // Check for OAuth success params (only once after initial load)
       if (!hasCheckedUrlParams.current && result.connected) {
-        const zoomConnected = searchParams.get('zoom_connected');
-        if (zoomConnected === 'true') {
+        const zoomConnectedParam = searchParams.get('zoom_connected');
+        if (zoomConnectedParam === 'true') {
           setShowSuccessToast(true);
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
@@ -91,16 +97,36 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       return;
     }
 
-    // Teams and Meet use simulated flow for now (OAuth not yet implemented)
-    console.log('[ONBOARDING] Using simulated flow for', platform);
+    // Teams and Meet - show coming soon message
+    console.log('[ONBOARDING] Platform not yet implemented:', platform);
+    alert(`${platform === 'teams' ? 'Microsoft Teams' : 'Google Meet'} integration coming soon!`);
+    setConnectingPlatform(null);
+  };
+
+  // Handle Zoom disconnect
+  const handleDisconnect = async () => {
+    if (!confirm('Are you sure you want to disconnect Zoom? You will need to reconnect to continue receiving follow-up emails.')) {
+      return;
+    }
+
+    setDisconnecting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      await updatePlatformConnection(platform, true);
-      await checkConnection();
+      const response = await fetch('/api/integrations/zoom/disconnect', {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setShowDashboard(false);
+        await checkConnection();
+      } else {
+        console.error('[ONBOARDING] Failed to disconnect');
+        alert('Failed to disconnect. Please try again.');
+      }
     } catch (error) {
-      console.error('[ONBOARDING] Failed to connect platform:', error);
+      console.error('[ONBOARDING] Disconnect error:', error);
+      alert('Failed to disconnect. Please try again.');
     } finally {
-      setConnectingPlatform(null);
+      setDisconnecting(false);
     }
   };
 
@@ -310,17 +336,169 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
     );
   }
 
-  // Show full dashboard
+  // Show full dashboard if user chooses to view it
+  if (showDashboard) {
+    return (
+      <>
+        {children}
+        {showSuccessToast && (
+          <Toast
+            message="Connected! Your dashboard is ready"
+            type="success"
+            onClose={() => setShowSuccessToast(false)}
+          />
+        )}
+      </>
+    );
+  }
+
+  // Show Step 2: Test instructions (connected but hasn't viewed dashboard yet)
   return (
-    <>
-      {children}
+    <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
+      {/* Top Navigation */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-lg border-b border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Video className="w-6 h-6 text-blue-500" />
+            <span className="text-xl font-bold text-white">ReplySequence</span>
+          </div>
+          <UserButton afterSignOutUrl="/" />
+        </div>
+      </header>
+
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto pt-24 pb-16 px-4">
+        {/* Success Header */}
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+            <Check className="w-4 h-4 text-emerald-400" />
+            <span className="text-emerald-400 text-sm font-medium">Step 2 of 2</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+            <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Zoom Connected!
+            </span>
+          </h1>
+          {zoomEmail && (
+            <p className="text-lg text-gray-400">
+              Connected as <span className="text-white font-medium">{zoomEmail}</span>
+            </p>
+          )}
+        </div>
+
+        {/* Test Instructions Card */}
+        <div className="bg-gray-900/50 border border-gray-700 rounded-2xl p-8 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <FileText className="w-6 h-6 text-blue-400" />
+            Test Your Connection
+          </h2>
+
+          <div className="space-y-4 mb-8">
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-blue-400 font-bold text-sm">1</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">Start a Zoom meeting</p>
+                <p className="text-gray-400 text-sm">Create a new meeting or join one you&apos;re hosting</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-blue-400 font-bold text-sm">2</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">Click &quot;Record to Cloud&quot;</p>
+                <p className="text-gray-400 text-sm">Cloud recording is required for transcript generation</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-blue-400 font-bold text-sm">3</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">Speak for at least 30 seconds</p>
+                <p className="text-gray-400 text-sm">A short discussion generates a better follow-up</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-blue-400 font-bold text-sm">4</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">End the meeting</p>
+                <p className="text-gray-400 text-sm">Zoom will process the recording automatically</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-emerald-400 font-bold text-sm">5</span>
+              </div>
+              <div>
+                <p className="text-white font-medium">Wait 2-3 minutes</p>
+                <p className="text-gray-400 text-sm">We&apos;ll receive the transcript and generate your follow-up email</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={() => setShowDashboard(true)}
+              className="flex-1 min-w-[200px] py-3 px-6 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-all flex items-center justify-center gap-2"
+            >
+              <FileText className="w-5 h-5" />
+              View Dashboard
+            </button>
+            <a
+              href="https://vercel.com/alittlenerdy/replysequence/logs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-[200px] py-3 px-6 rounded-lg font-medium bg-gray-700 text-white hover:bg-gray-600 transition-all flex items-center justify-center gap-2"
+            >
+              <ExternalLink className="w-5 h-5" />
+              View Logs
+            </a>
+          </div>
+        </div>
+
+        {/* Disconnect Section */}
+        <div className="text-center">
+          <button
+            onClick={handleDisconnect}
+            disabled={disconnecting}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
+          >
+            {disconnecting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Disconnecting...
+              </>
+            ) : (
+              <>
+                <Unplug className="w-4 h-4" />
+                Disconnect Zoom
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
       {showSuccessToast && (
         <Toast
-          message="Connected! Your dashboard is ready"
+          message="Zoom connected successfully!"
           type="success"
           onClose={() => setShowSuccessToast(false)}
         />
       )}
-    </>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { db, users } from '@/lib/db';
+import { db, users, zoomConnections } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
 export interface PlatformConnectionsResult {
@@ -12,6 +12,7 @@ export interface PlatformConnectionsResult {
     meet: boolean;
   };
   userId?: string;
+  zoomEmail?: string;
 }
 
 /**
@@ -46,6 +47,17 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     const meetConnected = existingUser.meetConnected === 'true';
     const hasConnection = zoomConnected || teamsConnected || meetConnected;
 
+    // Get Zoom email if connected
+    let zoomEmail: string | undefined;
+    if (zoomConnected) {
+      const [connection] = await db
+        .select({ zoomEmail: zoomConnections.zoomEmail })
+        .from(zoomConnections)
+        .where(eq(zoomConnections.userId, existingUser.id))
+        .limit(1);
+      zoomEmail = connection?.zoomEmail;
+    }
+
     return {
       connected: hasConnection,
       platforms: {
@@ -54,6 +66,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         meet: meetConnected,
       },
       userId: existingUser.id,
+      zoomEmail,
     };
   }
 
