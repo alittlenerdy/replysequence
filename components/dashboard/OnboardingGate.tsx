@@ -81,22 +81,24 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
 
   // Handle platform connection
   const handleConnect = async (platform: 'zoom' | 'teams' | 'meet') => {
+    console.log('[ONBOARDING] handleConnect called', { platform });
     setConnectingPlatform(platform);
 
-    // Zoom uses real OAuth flow
+    // Zoom uses real OAuth flow - redirect immediately
     if (platform === 'zoom') {
-      // Redirect to OAuth authorization endpoint
+      console.log('[ONBOARDING] Redirecting to Zoom OAuth...');
       window.location.href = '/api/auth/zoom';
       return;
     }
 
     // Teams and Meet use simulated flow for now (OAuth not yet implemented)
+    console.log('[ONBOARDING] Using simulated flow for', platform);
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       await updatePlatformConnection(platform, true);
       await checkConnection();
     } catch (error) {
-      console.error('Failed to connect platform:', error);
+      console.error('[ONBOARDING] Failed to connect platform:', error);
     } finally {
       setConnectingPlatform(null);
     }

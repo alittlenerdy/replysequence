@@ -7,9 +7,19 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
+  console.log('[ZOOM-OAUTH] Route handler called');
+  console.log('[ZOOM-OAUTH] Environment check:', {
+    hasClientId: !!process.env.ZOOM_CLIENT_ID,
+    hasClientSecret: !!process.env.ZOOM_CLIENT_SECRET,
+    hasAppUrl: !!process.env.NEXT_PUBLIC_APP_URL,
+    appUrl: process.env.NEXT_PUBLIC_APP_URL,
+  });
+
   const { userId } = await auth();
+  console.log('[ZOOM-OAUTH] Auth result:', { userId: userId ? 'present' : 'missing' });
 
   if (!userId) {
+    console.log('[ZOOM-OAUTH] No userId, redirecting to sign-in');
     return NextResponse.redirect(new URL('/sign-in', process.env.NEXT_PUBLIC_APP_URL));
   }
 
@@ -37,6 +47,7 @@ export async function GET() {
   console.log('[ZOOM-OAUTH] Redirecting to Zoom authorization', {
     userId,
     redirectUri,
+    zoomAuthUrl,
   });
 
   return NextResponse.redirect(zoomAuthUrl);

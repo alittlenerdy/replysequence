@@ -95,19 +95,19 @@ export async function updatePlatformConnection(
   }
 
   try {
-    const updateData: Record<string, string> = {
-      updatedAt: new Date().toISOString(),
-    };
+    // Build update object based on platform
+    const baseUpdate = { updatedAt: new Date() };
 
+    let updateData;
     switch (platform) {
       case 'zoom':
-        updateData.zoomConnected = connected ? 'true' : 'false';
+        updateData = { ...baseUpdate, zoomConnected: connected ? 'true' : 'false' };
         break;
       case 'teams':
-        updateData.teamsConnected = connected ? 'true' : 'false';
+        updateData = { ...baseUpdate, teamsConnected: connected ? 'true' : 'false' };
         break;
       case 'meet':
-        updateData.meetConnected = connected ? 'true' : 'false';
+        updateData = { ...baseUpdate, meetConnected: connected ? 'true' : 'false' };
         break;
     }
 
