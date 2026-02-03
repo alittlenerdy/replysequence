@@ -32,11 +32,11 @@ export async function DELETE() {
       .delete(zoomConnections)
       .where(eq(zoomConnections.userId, user.id));
 
-    // Update user's zoom_connected flag to false
+    // Update user's zoom_connected flag to false (boolean)
     await db
       .update(users)
       .set({
-        zoomConnected: 'false',
+        zoomConnected: false,
         updatedAt: new Date(),
       })
       .where(eq(users.id, user.id));

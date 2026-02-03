@@ -30,8 +30,8 @@ export async function GET() {
       return NextResponse.json({ connected: false });
     }
 
-    // If not connected, return early
-    if (user.zoomConnected !== 'true') {
+    // If not connected, return early (boolean comparison)
+    if (user.zoomConnected !== true) {
       return NextResponse.json({ connected: false });
     }
 

@@ -94,11 +94,11 @@ export async function GET(request: NextRequest) {
           clerkId: clerkUserId,
           email: zoomUser.email,
           name: [zoomUser.first_name, zoomUser.last_name].filter(Boolean).join(' ') || null,
-          zoomConnected: 'true',
+          zoomConnected: true,
         })
         .returning();
       user = newUser;
-      console.log('[ZOOM-CALLBACK] Created new user', { userId: user.id, zoomConnected: 'true' });
+      console.log('[ZOOM-CALLBACK] Created new user', { userId: user.id, zoomConnected: true });
     } else {
       console.log('[ZOOM-CALLBACK] Using existing user', { userId: user.id });
     }
@@ -145,13 +145,13 @@ export async function GET(request: NextRequest) {
       console.log('[ZOOM-CALLBACK] Created new Zoom connection');
     }
 
-    // Update user's zoom_connected flag
+    // Update user's zoom_connected flag (boolean)
     console.log('[ZOOM-CALLBACK] Updating user zoomConnected to true', { userId: user.id });
 
     const updateResult = await db
       .update(users)
       .set({
-        zoomConnected: 'true',
+        zoomConnected: true,
         updatedAt: new Date(),
       })
       .where(eq(users.id, user.id))

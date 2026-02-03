@@ -10,6 +10,7 @@ import {
   index,
   uniqueIndex,
   decimal,
+  boolean,
 } from 'drizzle-orm/pg-core';
 
 // Platform enum for multi-platform support
@@ -236,10 +237,10 @@ export const users = pgTable(
     clerkId: varchar('clerk_id', { length: 255 }).notNull().unique(),
     email: varchar('email', { length: 255 }).notNull(),
     name: varchar('name', { length: 255 }),
-    // Platform connection status
-    zoomConnected: varchar('zoom_connected', { length: 10 }).notNull().default('false'),
-    teamsConnected: varchar('teams_connected', { length: 10 }).notNull().default('false'),
-    meetConnected: varchar('meet_connected', { length: 10 }).notNull().default('false'),
+    // Platform connection status (boolean in database)
+    zoomConnected: boolean('zoom_connected').notNull().default(false),
+    teamsConnected: boolean('teams_connected').notNull().default(false),
+    meetConnected: boolean('meet_connected').notNull().default(false),
     // OAuth tokens (would be encrypted in production)
     zoomAccessToken: text('zoom_access_token'),
     zoomRefreshToken: text('zoom_refresh_token'),

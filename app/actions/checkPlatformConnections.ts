@@ -55,9 +55,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
   });
 
   if (existingUser) {
-    const zoomConnected = existingUser.zoomConnected === 'true';
-    const teamsConnected = existingUser.teamsConnected === 'true';
-    const meetConnected = existingUser.meetConnected === 'true';
+    // Database stores boolean values directly
+    const zoomConnected = existingUser.zoomConnected === true;
+    const teamsConnected = existingUser.teamsConnected === true;
+    const meetConnected = existingUser.meetConnected === true;
     const hasConnection = zoomConnected || teamsConnected || meetConnected;
 
     console.log('[CHECK-CONNECTION] Connection status', {
@@ -92,6 +93,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
   }
 
   // User doesn't exist, create them
+  console.log('[CHECK-CONNECTION] Creating new user for clerkId:', userId);
   const clerkUser = await currentUser();
   const email = clerkUser?.emailAddresses?.[0]?.emailAddress || '';
   const name = clerkUser?.fullName || clerkUser?.firstName || '';
@@ -102,11 +104,12 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       clerkId: userId,
       email,
       name,
-      zoomConnected: 'false',
-      teamsConnected: 'false',
-      meetConnected: 'false',
+      zoomConnected: false,
+      teamsConnected: false,
+      meetConnected: false,
     })
     .returning({ id: users.id });
+  console.log('[CHECK-CONNECTION] Created new user', { userId: newUser.id });
 
   return {
     connected: false,
@@ -129,19 +132,19 @@ export async function updatePlatformConnection(
   }
 
   try {
-    // Build update object based on platform
+    // Build update object based on platform (boolean values)
     const baseUpdate = { updatedAt: new Date() };
 
     let updateData;
     switch (platform) {
       case 'zoom':
-        updateData = { ...baseUpdate, zoomConnected: connected ? 'true' : 'false' };
+        updateData = { ...baseUpdate, zoomConnected: connected };
         break;
       case 'teams':
-        updateData = { ...baseUpdate, teamsConnected: connected ? 'true' : 'false' };
+        updateData = { ...baseUpdate, teamsConnected: connected };
         break;
       case 'meet':
-        updateData = { ...baseUpdate, meetConnected: connected ? 'true' : 'false' };
+        updateData = { ...baseUpdate, meetConnected: connected };
         break;
     }
 
