@@ -258,6 +258,37 @@ export const users = pgTable(
   ]
 );
 
+// Zoom connections table - stores OAuth tokens for Zoom users
+export const zoomConnections = pgTable(
+  'zoom_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Zoom account info
+    zoomUserId: varchar('zoom_user_id', { length: 255 }).notNull(),
+    zoomEmail: varchar('zoom_email', { length: 255 }).notNull(),
+    // Encrypted tokens (AES-256-GCM)
+    accessTokenEncrypted: text('access_token_encrypted').notNull(),
+    refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+    // Token expiration
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
+    // Scopes granted
+    scopes: text('scopes').notNull(), // Space-separated list
+    // Timestamps
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+    lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('zoom_connections_user_id_idx').on(table.userId),
+    index('zoom_connections_zoom_user_id_idx').on(table.zoomUserId),
+    index('zoom_connections_expires_at_idx').on(table.accessTokenExpiresAt),
+  ]
+);
+
 // Webhook failure status enum values
 export type WebhookFailureStatus = 'pending' | 'retrying' | 'completed' | 'dead_letter';
 
@@ -337,3 +368,5 @@ export type DeadLetter = typeof deadLetterQueue.$inferSelect;
 export type NewDeadLetter = typeof deadLetterQueue.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type ZoomConnection = typeof zoomConnections.$inferSelect;
+export type NewZoomConnection = typeof zoomConnections.$inferInsert;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { checkPlatformConnections, updatePlatformConnection } from '@/app/actions/checkPlatformConnections';
 import { Toast } from '@/components/ui/Toast';
 import { Check, ExternalLink, Loader2 } from 'lucide-react';
@@ -16,12 +17,14 @@ interface PlatformState {
 }
 
 export function OnboardingGate({ children }: OnboardingGateProps) {
+  const searchParams = useSearchParams();
   const [connected, setConnected] = useState<boolean | null>(null);
   const [platforms, setPlatforms] = useState<PlatformState>({ zoom: false, teams: false, meet: false });
   const [checking, setChecking] = useState(true);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
   const previousConnected = useRef<boolean | null>(null);
+  const hasCheckedUrlParams = useRef(false);
 
   const checkConnection = useCallback(async () => {
     try {
@@ -34,13 +37,24 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
         setShowSuccessToast(true);
       }
       previousConnected.current = result.connected;
+
+      // Check for OAuth success params (only once after initial load)
+      if (!hasCheckedUrlParams.current && result.connected) {
+        const zoomConnected = searchParams.get('zoom_connected');
+        if (zoomConnected === 'true') {
+          setShowSuccessToast(true);
+          // Clean up URL params
+          window.history.replaceState({}, '', '/dashboard');
+        }
+        hasCheckedUrlParams.current = true;
+      }
     } catch (error) {
       console.error('Failed to check platform connections:', error);
       setConnected(false);
     } finally {
       setChecking(false);
     }
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     checkConnection();
@@ -65,22 +79,19 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
     };
   }, [checkConnection]);
 
-  // Handle platform connection (temporary - will be replaced with OAuth)
+  // Handle platform connection
   const handleConnect = async (platform: 'zoom' | 'teams' | 'meet') => {
     setConnectingPlatform(platform);
 
-    // For now, simulate connection with a demo flow
-    // In production, this would redirect to OAuth
-    const platformUrls: Record<string, string> = {
-      zoom: '/api/auth/zoom',
-      teams: '/api/auth/teams',
-      meet: '/api/auth/meet',
-    };
+    // Zoom uses real OAuth flow
+    if (platform === 'zoom') {
+      // Redirect to OAuth authorization endpoint
+      window.location.href = '/api/auth/zoom';
+      return;
+    }
 
-    // Simulate OAuth redirect
-    // TODO: Replace with actual OAuth flow
+    // Teams and Meet use simulated flow for now (OAuth not yet implemented)
     try {
-      // For demo purposes, mark as connected after a delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       await updatePlatformConnection(platform, true);
       await checkConnection();
