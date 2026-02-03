@@ -12,17 +12,15 @@ import {
   Users,
   ArrowDown,
   FileX,
-  AlertTriangle,
 } from 'lucide-react';
+import { Header } from '@/components/layout/Header';
 
 const FloatingGradients = dynamic(() => import('@/components/FloatingGradients'), { ssr: false });
 const HeroAnimation = dynamic(() => import('@/components/HeroAnimation'), { ssr: false });
 const AnimatedBackground = dynamic(() => import('@/components/AnimatedBackground'), { ssr: false });
-const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: false });
 const VideoDemo = dynamic(() => import('@/components/VideoDemo'), { ssr: false });
 const BentoGrid = dynamic(() => import('@/components/BentoGrid'), { ssr: false });
 const FloatingElements = dynamic(() => import('@/components/FloatingElements'), { ssr: false });
-const MobileMenu = dynamic(() => import('@/components/MobileMenu'), { ssr: false });
 
 export default function LandingPage() {
   return (
@@ -33,39 +31,8 @@ export default function LandingPage() {
       {/* Floating gradient circles */}
       <FloatingGradients />
 
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="text-xl sm:text-2xl font-display font-bold text-blue-400 light:text-blue-600">
-            ReplySequence
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4">
-            <a
-              href="/dashboard"
-              className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
-            >
-              Dashboard
-            </a>
-            <ThemeToggle />
-            <a
-              href="https://tally.so/r/D4pv0j"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-cta !px-6 !py-2 !text-base"
-            >
-              Join Waitlist
-            </a>
-          </div>
-
-          {/* Mobile Navigation */}
-          <div className="flex md:hidden items-center gap-2">
-            <ThemeToggle />
-            <MobileMenu />
-          </div>
-        </div>
-      </header>
+      {/* Header with Sign In/Out */}
+      <Header />
 
       {/* Hero Section */}
       <section className="relative min-h-screen pt-32 pb-20 px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 light:from-blue-50 light:via-purple-50 light:to-pink-50 z-10">
