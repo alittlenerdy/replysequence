@@ -8,11 +8,18 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   console.log('[ZOOM-OAUTH] Route handler called');
+
+  // Debug environment variables
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  const clientId = process.env.ZOOM_CLIENT_ID;
+
   console.log('[ZOOM-OAUTH] Environment check:', {
-    hasClientId: !!process.env.ZOOM_CLIENT_ID,
+    hasClientId: !!clientId,
+    clientIdPrefix: clientId?.substring(0, 8) + '...',
     hasClientSecret: !!process.env.ZOOM_CLIENT_SECRET,
-    hasAppUrl: !!process.env.NEXT_PUBLIC_APP_URL,
-    appUrl: process.env.NEXT_PUBLIC_APP_URL,
+    hasAppUrl: !!rawAppUrl,
+    rawAppUrl,
+    hasTrailingSlash: rawAppUrl.endsWith('/'),
   });
 
   const { userId } = await auth();
@@ -20,18 +27,27 @@ export async function GET() {
 
   if (!userId) {
     console.log('[ZOOM-OAUTH] No userId, redirecting to sign-in');
-    return NextResponse.redirect(new URL('/sign-in', process.env.NEXT_PUBLIC_APP_URL));
+    return NextResponse.redirect(new URL('/sign-in', rawAppUrl || 'http://localhost:3000'));
   }
-
-  const clientId = process.env.ZOOM_CLIENT_ID;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/zoom/callback`;
 
   if (!clientId) {
     console.error('[ZOOM-OAUTH] Missing ZOOM_CLIENT_ID');
     return NextResponse.redirect(
-      new URL('/dashboard?error=configuration', process.env.NEXT_PUBLIC_APP_URL)
+      new URL('/dashboard?error=configuration', rawAppUrl || 'http://localhost:3000')
     );
   }
+
+  // CRITICAL: Remove trailing slash to prevent double-slash in redirect URI
+  const baseUrl = rawAppUrl.replace(/\/+$/, '');
+  const redirectUri = `${baseUrl}/api/auth/zoom/callback`;
+
+  console.log('[ZOOM-OAUTH] URL construction:', {
+    rawAppUrl,
+    baseUrl,
+    redirectUri,
+    expectedInZoom: 'https://replysequence.vercel.app/api/auth/zoom/callback',
+    urlsMatch: redirectUri === 'https://replysequence.vercel.app/api/auth/zoom/callback',
+  });
 
   // Build Zoom OAuth URL
   // Using userId as state parameter for CSRF protection and user identification
@@ -44,10 +60,11 @@ export async function GET() {
 
   const zoomAuthUrl = `https://zoom.us/oauth/authorize?${params.toString()}`;
 
-  console.log('[ZOOM-OAUTH] Redirecting to Zoom authorization', {
+  console.log('[ZOOM-OAUTH] Final authorization URL:', {
     userId,
     redirectUri,
-    zoomAuthUrl,
+    encodedRedirectUri: encodeURIComponent(redirectUri),
+    fullUrl: zoomAuthUrl,
   });
 
   return NextResponse.redirect(zoomAuthUrl);
