@@ -49,17 +49,24 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       previousConnected.current = result.connected;
 
       // Check for OAuth success params (only once after initial load)
-      if (!hasCheckedUrlParams.current && result.connected) {
+      if (!hasCheckedUrlParams.current) {
         const zoomConnectedParam = searchParams.get('zoom_connected');
         const teamsConnectedParam = searchParams.get('teams_connected');
-        if (zoomConnectedParam === 'true') {
+
+        if (zoomConnectedParam === 'true' && result.platforms.zoom) {
+          console.log('[ONBOARDING] Zoom OAuth success detected');
           setSuccessMessage('Zoom connected successfully!');
           setShowSuccessToast(true);
+          // Reset to show Step 2 page
+          setShowDashboard(false);
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
-        } else if (teamsConnectedParam === 'true') {
+        } else if (teamsConnectedParam === 'true' && result.platforms.teams) {
+          console.log('[ONBOARDING] Teams OAuth success detected');
           setSuccessMessage('Microsoft Teams connected successfully!');
           setShowSuccessToast(true);
+          // Reset to show Step 2 page
+          setShowDashboard(false);
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         }

@@ -28,17 +28,40 @@ import type { RawEvent } from '@/lib/db/schema';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-// Verify cron secret to prevent unauthorized access
+// Verify cron request is from Vercel or has valid secret
 function verifyCronAuth(request: NextRequest): boolean {
+  // Method 1: Check for CRON_SECRET in Authorization header
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
-  // If no secret configured, allow in development
-  if (!cronSecret) {
-    return process.env.NODE_ENV === 'development';
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+    console.log('[CRON-AUTH] Verified via CRON_SECRET');
+    return true;
   }
 
-  return authHeader === `Bearer ${cronSecret}`;
+  // Method 2: Check for Vercel's cron verification header
+  // Vercel sets this header for cron jobs when CRON_SECRET is configured
+  const vercelCronHeader = request.headers.get('x-vercel-cron');
+  if (vercelCronHeader) {
+    console.log('[CRON-AUTH] Verified via x-vercel-cron header');
+    return true;
+  }
+
+  // Method 3: Allow in development mode
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[CRON-AUTH] Allowed in development mode');
+    return true;
+  }
+
+  // Log auth failure details for debugging
+  console.log('[CRON-AUTH] Verification failed', {
+    hasAuthHeader: !!authHeader,
+    hasCronSecret: !!cronSecret,
+    hasVercelCronHeader: !!vercelCronHeader,
+    nodeEnv: process.env.NODE_ENV,
+  });
+
+  return false;
 }
 
 export async function GET(request: NextRequest) {
