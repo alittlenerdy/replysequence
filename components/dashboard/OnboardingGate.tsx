@@ -23,10 +23,13 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   const [connected, setConnected] = useState<boolean | null>(null);
   const [platforms, setPlatforms] = useState<PlatformState>({ zoom: false, teams: false, meet: false });
   const [zoomEmail, setZoomEmail] = useState<string | null>(null);
+  const [teamsEmail, setTeamsEmail] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('Connected! Your dashboard is ready');
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [disconnectingPlatform, setDisconnectingPlatform] = useState<string | null>(null);
   const [showDashboard, setShowDashboard] = useState(false);
   const previousConnected = useRef<boolean | null>(null);
   const hasCheckedUrlParams = useRef(false);
@@ -37,6 +40,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       setPlatforms(result.platforms);
       setConnected(result.connected);
       setZoomEmail(result.zoomEmail || null);
+      setTeamsEmail(result.teamsEmail || null);
 
       // Show success toast when connection changes from false to true
       if (previousConnected.current === false && result.connected === true) {
@@ -47,7 +51,14 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       // Check for OAuth success params (only once after initial load)
       if (!hasCheckedUrlParams.current && result.connected) {
         const zoomConnectedParam = searchParams.get('zoom_connected');
+        const teamsConnectedParam = searchParams.get('teams_connected');
         if (zoomConnectedParam === 'true') {
+          setSuccessMessage('Zoom connected successfully!');
+          setShowSuccessToast(true);
+          // Clean up URL params
+          window.history.replaceState({}, '', '/dashboard');
+        } else if (teamsConnectedParam === 'true') {
+          setSuccessMessage('Microsoft Teams connected successfully!');
           setShowSuccessToast(true);
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
@@ -97,21 +108,34 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       return;
     }
 
-    // Teams and Meet - show coming soon message
+    // Teams uses real OAuth flow - redirect immediately
+    if (platform === 'teams') {
+      console.log('[ONBOARDING] Redirecting to Teams OAuth...');
+      window.location.href = '/api/auth/teams';
+      return;
+    }
+
+    // Meet - show coming soon message
     console.log('[ONBOARDING] Platform not yet implemented:', platform);
-    alert(`${platform === 'teams' ? 'Microsoft Teams' : 'Google Meet'} integration coming soon!`);
+    alert('Google Meet integration coming soon!');
     setConnectingPlatform(null);
   };
 
-  // Handle Zoom disconnect
-  const handleDisconnect = async () => {
-    if (!confirm('Are you sure you want to disconnect Zoom? You will need to reconnect to continue receiving follow-up emails.')) {
+  // Handle platform disconnect
+  const handleDisconnect = async (platform: 'zoom' | 'teams') => {
+    const platformName = platform === 'zoom' ? 'Zoom' : 'Microsoft Teams';
+    if (!confirm(`Are you sure you want to disconnect ${platformName}? You will need to reconnect to continue receiving follow-up emails from ${platformName} meetings.`)) {
       return;
     }
 
     setDisconnecting(true);
+    setDisconnectingPlatform(platform);
     try {
-      const response = await fetch('/api/integrations/zoom/disconnect', {
+      const endpoint = platform === 'zoom'
+        ? '/api/integrations/zoom/disconnect'
+        : '/api/integrations/teams/disconnect';
+
+      const response = await fetch(endpoint, {
         method: 'DELETE',
       });
 
@@ -119,14 +143,15 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
         setShowDashboard(false);
         await checkConnection();
       } else {
-        console.error('[ONBOARDING] Failed to disconnect');
+        console.error(`[ONBOARDING] Failed to disconnect ${platform}`);
         alert('Failed to disconnect. Please try again.');
       }
     } catch (error) {
-      console.error('[ONBOARDING] Disconnect error:', error);
+      console.error(`[ONBOARDING] Disconnect error for ${platform}:`, error);
       alert('Failed to disconnect. Please try again.');
     } finally {
       setDisconnecting(false);
+      setDisconnectingPlatform(null);
     }
   };
 
@@ -381,12 +406,18 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
             <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Zoom Connected!
+              {platforms.zoom && platforms.teams ? 'Platforms Connected!' :
+               platforms.teams ? 'Teams Connected!' : 'Zoom Connected!'}
             </span>
           </h1>
-          {zoomEmail && (
+          {platforms.zoom && zoomEmail && (
             <p className="text-lg text-gray-400">
-              Connected as <span className="text-white font-medium">{zoomEmail}</span>
+              Zoom: <span className="text-white font-medium">{zoomEmail}</span>
+            </p>
+          )}
+          {platforms.teams && teamsEmail && (
+            <p className="text-lg text-gray-400">
+              Teams: <span className="text-white font-medium">{teamsEmail}</span>
             </p>
           )}
         </div>
@@ -404,7 +435,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
                 <span className="text-blue-400 font-bold text-sm">1</span>
               </div>
               <div>
-                <p className="text-white font-medium">Start a Zoom meeting</p>
+                <p className="text-white font-medium">Start a {platforms.teams ? 'Teams' : 'Zoom'} meeting</p>
                 <p className="text-gray-400 text-sm">Create a new meeting or join one you&apos;re hosting</p>
               </div>
             </div>
@@ -414,8 +445,8 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
                 <span className="text-blue-400 font-bold text-sm">2</span>
               </div>
               <div>
-                <p className="text-white font-medium">Click &quot;Record to Cloud&quot;</p>
-                <p className="text-gray-400 text-sm">Cloud recording is required for transcript generation</p>
+                <p className="text-white font-medium">{platforms.teams ? 'Enable transcription' : 'Click "Record to Cloud"'}</p>
+                <p className="text-gray-400 text-sm">{platforms.teams ? 'Transcription must be enabled in meeting settings' : 'Cloud recording is required for transcript generation'}</p>
               </div>
             </div>
 
@@ -435,7 +466,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
               </div>
               <div>
                 <p className="text-white font-medium">End the meeting</p>
-                <p className="text-gray-400 text-sm">Zoom will process the recording automatically</p>
+                <p className="text-gray-400 text-sm">{platforms.teams ? 'Teams will process the transcript automatically' : 'Zoom will process the recording automatically'}</p>
               </div>
             </div>
 
@@ -471,30 +502,51 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
         </div>
 
         {/* Disconnect Section */}
-        <div className="text-center">
-          <button
-            onClick={handleDisconnect}
-            disabled={disconnecting}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
-          >
-            {disconnecting ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Disconnecting...
-              </>
-            ) : (
-              <>
-                <Unplug className="w-4 h-4" />
-                Disconnect Zoom
-              </>
-            )}
-          </button>
+        <div className="text-center space-x-4">
+          {platforms.zoom && (
+            <button
+              onClick={() => handleDisconnect('zoom')}
+              disabled={disconnecting}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
+            >
+              {disconnecting && disconnectingPlatform === 'zoom' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Disconnecting...
+                </>
+              ) : (
+                <>
+                  <Unplug className="w-4 h-4" />
+                  Disconnect Zoom
+                </>
+              )}
+            </button>
+          )}
+          {platforms.teams && (
+            <button
+              onClick={() => handleDisconnect('teams')}
+              disabled={disconnecting}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
+            >
+              {disconnecting && disconnectingPlatform === 'teams' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Disconnecting...
+                </>
+              ) : (
+                <>
+                  <Unplug className="w-4 h-4" />
+                  Disconnect Teams
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
       {showSuccessToast && (
         <Toast
-          message="Zoom connected successfully!"
+          message={successMessage}
           type="success"
           onClose={() => setShowSuccessToast(false)}
         />
