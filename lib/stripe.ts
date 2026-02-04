@@ -12,8 +12,8 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 // Price IDs for ReplySequence products
 // Live mode price IDs (production defaults)
 export const STRIPE_PRICES = {
-  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_1Sv2mDS20m94FbvlhyrmKVjv',   // $29/mo
-  team: process.env.STRIPE_TEAM_PRICE_ID || 'price_1Sv2oVS20m94FbvlLa8C69Bw', // $97/mo
+  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_1Sv2oVS20m94FbvlLa8C69Bw',   // $97/mo - ReplySequence Pro
+  team: process.env.STRIPE_TEAM_PRICE_ID || 'price_1SxDlNS20m94FbvlCOKIirQc', // $29/mo - ReplySequence Team
 } as const;
 
 export type PriceTier = keyof typeof STRIPE_PRICES;
