@@ -1,18 +1,23 @@
 import { Suspense } from 'react';
-import { Dashboard } from '@/components/Dashboard';
+import { currentUser } from '@clerk/nextjs/server';
+import { DraftsView } from '@/components/dashboard/DraftsView';
 import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
+import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Dashboard | ReplySequence',
+  title: 'Drafts | ReplySequence',
   description: 'View and manage your AI-generated email drafts',
 };
 
 async function DashboardContent() {
   console.log('[DASHBOARD-1] Fetching initial drafts server-side');
+  const user = await currentUser();
+  const firstName = user?.firstName || 'there';
+
   // Fetch initial data server-side
   const [draftsResult, stats] = await Promise.all([
     getDraftsWithMeetings({ page: 1, limit: 10 }),
@@ -21,13 +26,19 @@ async function DashboardContent() {
   console.log('[DASHBOARD-2] Drafts loaded, count:', draftsResult.drafts.length);
 
   return (
-    <Dashboard
-      initialDrafts={draftsResult.drafts}
-      initialTotal={draftsResult.total}
-      initialPage={draftsResult.page}
-      initialTotalPages={draftsResult.totalPages}
-      initialStats={stats}
-    />
+    <DashboardShell firstName={firstName}>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-white">Email Drafts</h2>
+        <p className="text-gray-400 mt-1">View and manage your AI-generated follow-up emails</p>
+      </div>
+      <DraftsView
+        initialDrafts={draftsResult.drafts}
+        initialTotal={draftsResult.total}
+        initialPage={draftsResult.page}
+        initialTotalPages={draftsResult.totalPages}
+        initialStats={stats}
+      />
+    </DashboardShell>
   );
 }
 

@@ -21,10 +21,10 @@ export const metadata: Metadata = {
   description: "Turn Zoom, Teams, and Meet calls into perfect follow-up emails. AI-powered, automatically drafted, CRM-ready.",
   icons: {
     icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg?v=2', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=2', sizes: 'any' },
     ],
-    apple: '/icon.svg',
+    apple: '/icon.svg?v=2',
   },
 };
 
