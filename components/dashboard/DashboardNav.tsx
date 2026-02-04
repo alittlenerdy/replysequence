@@ -2,38 +2,102 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings } from 'lucide-react';
+import { FileText, BarChart3, Settings, type LucideIcon } from 'lucide-react';
+import { useRef, useCallback } from 'react';
 
-export function DashboardNav() {
+interface Tab {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+const tabs: Tab[] = [
+  { name: 'Drafts', href: '/dashboard', icon: FileText },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+];
+
+interface DashboardNavProps {
+  pendingDrafts?: number;
+}
+
+export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
   const pathname = usePathname();
+  const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  const tabs = [
-    { name: 'Drafts', href: '/dashboard', icon: FileText },
-    { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-  ];
+  // Add badge to Drafts tab if there are pending drafts
+  const tabsWithBadges = tabs.map(tab =>
+    tab.name === 'Drafts' && pendingDrafts > 0
+      ? { ...tab, badge: pendingDrafts }
+      : tab
+  );
+
+  // Keyboard navigation handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number) => {
+    let nextIndex: number | null = null;
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        nextIndex = index > 0 ? index - 1 : tabs.length - 1;
+        break;
+      case 'ArrowRight':
+        nextIndex = index < tabs.length - 1 ? index + 1 : 0;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = tabs.length - 1;
+        break;
+    }
+
+    if (nextIndex !== null) {
+      e.preventDefault();
+      tabRefs.current[nextIndex]?.focus();
+    }
+  }, []);
 
   return (
-    <div className="border-b border-white/10 light:border-gray-200 mb-8">
-      <nav className="flex gap-1">
-        {tabs.map((tab) => {
+    <div className="hidden md:block border-b border-white/10 light:border-gray-200 mb-8">
+      <nav
+        className="flex gap-1"
+        role="tablist"
+        aria-label="Dashboard navigation"
+      >
+        {tabsWithBadges.map((tab, index) => {
           const isActive = pathname === tab.href;
           const Icon = tab.icon;
+          const badge = 'badge' in tab ? tab.badge : undefined;
 
           return (
             <Link
               key={tab.href}
+              ref={(el) => { tabRefs.current[index] = el; }}
               href={tab.href}
+              role="tab"
+              aria-selected={isActive}
+              aria-current={isActive ? 'page' : undefined}
+              tabIndex={isActive ? 0 : -1}
+              onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
-                flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm transition-all
+                relative flex items-center gap-2 px-5 py-3.5 border-b-2 font-medium text-sm transition-all duration-200
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
                 ${isActive
                   ? 'border-blue-500 text-white light:text-blue-600 bg-blue-500/10 light:bg-blue-50'
                   : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100'
                 }
               `}
             >
-              <Icon className="w-4 h-4" />
-              {tab.name}
+              <Icon className="w-4 h-4" aria-hidden="true" />
+              <span>{tab.name}</span>
+              {badge !== undefined && badge > 0 && (
+                <span
+                  className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full bg-blue-500 text-white"
+                  aria-label={`${badge} pending drafts`}
+                >
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
             </Link>
           );
         })}

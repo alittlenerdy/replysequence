@@ -25,8 +25,11 @@ async function DashboardContent() {
   ]);
   console.log('[DASHBOARD-2] Drafts loaded, count:', draftsResult.drafts.length);
 
+  // Pending drafts = generated (ready to send) status
+  const pendingDrafts = stats.generated;
+
   return (
-    <DashboardShell firstName={firstName}>
+    <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">Email Drafts</h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">View and manage your AI-generated follow-up emails</p>

@@ -3,6 +3,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
+import { getDraftStats } from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,11 +37,15 @@ function AnalyticsLoading() {
 }
 
 async function AnalyticsContent() {
-  const user = await currentUser();
+  const [user, stats] = await Promise.all([
+    currentUser(),
+    getDraftStats(),
+  ]);
   const firstName = user?.firstName || 'there';
+  const pendingDrafts = stats.generated;
 
   return (
-    <DashboardShell firstName={firstName}>
+    <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics</h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>

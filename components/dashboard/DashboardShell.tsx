@@ -4,14 +4,16 @@ import Link from 'next/link';
 import { UserButton } from '@clerk/nextjs';
 import { Video } from 'lucide-react';
 import { DashboardNav } from './DashboardNav';
+import { MobileBottomNav } from './MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 
 interface DashboardShellProps {
   children: React.ReactNode;
   firstName?: string;
+  pendingDrafts?: number;
 }
 
-export function DashboardShell({ children, firstName = 'there' }: DashboardShellProps) {
+export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0 }: DashboardShellProps) {
   return (
     <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50">
       {/* Header */}
@@ -27,7 +29,7 @@ export function DashboardShell({ children, firstName = 'there' }: DashboardShell
             {/* User Menu */}
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <span className="text-sm text-gray-300 light:text-gray-600">
+              <span className="hidden sm:inline text-sm text-gray-300 light:text-gray-600">
                 Hey, <span className="font-medium text-white light:text-gray-900">{firstName}</span>!
               </span>
               <UserButton afterSignOutUrl="/" />
@@ -37,13 +39,16 @@ export function DashboardShell({ children, firstName = 'there' }: DashboardShell
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Navigation Tabs */}
-        <DashboardNav />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+        {/* Desktop Navigation Tabs */}
+        <DashboardNav pendingDrafts={pendingDrafts} />
 
         {/* Page Content */}
         {children}
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav pendingDrafts={pendingDrafts} />
     </div>
   );
 }
