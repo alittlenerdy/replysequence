@@ -15,7 +15,9 @@ export default withSentryConfig(nextConfig, {
   project: "javascript-nextjs",
 
   // Disable source map upload until auth token is configured with correct permissions
-  disableSourceMapUpload: true,
+  sourcemaps: {
+    disable: true,
+  },
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
