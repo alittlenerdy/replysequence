@@ -2,11 +2,9 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
 import { checkPlatformConnections } from '@/app/actions/checkPlatformConnections';
 import { Toast } from '@/components/ui/Toast';
-import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
-import { Check, ExternalLink, Loader2, Unplug, FileText, Video } from 'lucide-react';
+import { Check, ExternalLink, Loader2 } from 'lucide-react';
 
 interface OnboardingGateProps {
   children: React.ReactNode;
@@ -22,20 +20,10 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   const searchParams = useSearchParams();
   const [connected, setConnected] = useState<boolean | null>(null);
   const [platforms, setPlatforms] = useState<PlatformState>({ zoom: false, teams: false, meet: false });
-  const [zoomEmail, setZoomEmail] = useState<string | null>(null);
-  const [teamsEmail, setTeamsEmail] = useState<string | null>(null);
-  const [meetEmail, setMeetEmail] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState('Connected! Your dashboard is ready');
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
-  const [disconnecting, setDisconnecting] = useState(false);
-  const [disconnectingPlatform, setDisconnectingPlatform] = useState<string | null>(null);
-  // Check if this is a fresh OAuth redirect (show Step 2) or returning user (show dashboard)
-  const isFreshOAuth = searchParams.get('zoom_connected') === 'true' ||
-                       searchParams.get('teams_connected') === 'true' ||
-                       searchParams.get('meet_connected') === 'true';
-  const [showDashboard, setShowDashboard] = useState(!isFreshOAuth);
   const previousConnected = useRef<boolean | null>(null);
   const hasCheckedUrlParams = useRef(false);
 
@@ -44,9 +32,6 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       const result = await checkPlatformConnections();
       setPlatforms(result.platforms);
       setConnected(result.connected);
-      setZoomEmail(result.zoomEmail || null);
-      setTeamsEmail(result.teamsEmail || null);
-      setMeetEmail(result.meetEmail || null);
 
       // Show success toast when connection changes from false to true
       if (previousConnected.current === false && result.connected === true) {
@@ -58,27 +43,22 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
       if (!hasCheckedUrlParams.current) {
         const zoomConnectedParam = searchParams.get('zoom_connected');
         const teamsConnectedParam = searchParams.get('teams_connected');
-
         const meetConnectedParam = searchParams.get('meet_connected');
 
         if (zoomConnectedParam === 'true' && result.platforms.zoom) {
           console.log('[ONBOARDING] Zoom OAuth success detected');
-          setSuccessMessage('Zoom connected successfully!');
+          setSuccessMessage('Zoom connected! You\'re ready to go.');
           setShowSuccessToast(true);
-          // showDashboard is already false from initialization for fresh OAuth
-          // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         } else if (teamsConnectedParam === 'true' && result.platforms.teams) {
           console.log('[ONBOARDING] Teams OAuth success detected');
-          setSuccessMessage('Microsoft Teams connected successfully!');
+          setSuccessMessage('Microsoft Teams connected! You\'re ready to go.');
           setShowSuccessToast(true);
-          // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         } else if (meetConnectedParam === 'true' && result.platforms.meet) {
           console.log('[ONBOARDING] Meet OAuth success detected');
-          setSuccessMessage('Google Meet connected successfully!');
+          setSuccessMessage('Google Meet connected! You\'re ready to go.');
           setShowSuccessToast(true);
-          // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         }
         hasCheckedUrlParams.current = true;
@@ -143,48 +123,6 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
     setConnectingPlatform(null);
   };
 
-  // Handle platform disconnect
-  const handleDisconnect = async (platform: 'zoom' | 'teams' | 'meet') => {
-    const platformNames = {
-      zoom: 'Zoom',
-      teams: 'Microsoft Teams',
-      meet: 'Google Meet',
-    };
-    const platformName = platformNames[platform];
-    if (!confirm(`Are you sure you want to disconnect ${platformName}? You will need to reconnect to continue receiving follow-up emails from ${platformName} meetings.`)) {
-      return;
-    }
-
-    setDisconnecting(true);
-    setDisconnectingPlatform(platform);
-    try {
-      const endpoints = {
-        zoom: '/api/integrations/zoom/disconnect',
-        teams: '/api/integrations/teams/disconnect',
-        meet: '/api/integrations/meet/disconnect',
-      };
-      const endpoint = endpoints[platform];
-
-      const response = await fetch(endpoint, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setShowDashboard(false);
-        await checkConnection();
-      } else {
-        console.error(`[ONBOARDING] Failed to disconnect ${platform}`);
-        alert('Failed to disconnect. Please try again.');
-      }
-    } catch (error) {
-      console.error(`[ONBOARDING] Disconnect error for ${platform}:`, error);
-      alert('Failed to disconnect. Please try again.');
-    } finally {
-      setDisconnecting(false);
-      setDisconnectingPlatform(null);
-    }
-  };
-
   // Show loading state
   if (checking) {
     return (
@@ -214,7 +152,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
           {/* Header */}
           <div className="mb-12 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
-              <span className="text-blue-400 text-sm font-medium">Step 1 of 2</span>
+              <span className="text-blue-400 text-sm font-medium">Get Started</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -391,221 +329,10 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
     );
   }
 
-  // Show full dashboard if user chooses to view it
-  if (showDashboard) {
-    return (
-      <>
-        {children}
-        {showSuccessToast && (
-          <Toast
-            message="Connected! Your dashboard is ready"
-            type="success"
-            onClose={() => setShowSuccessToast(false)}
-          />
-        )}
-      </>
-    );
-  }
-
-  // Show Step 2: Test instructions (connected but hasn't viewed dashboard yet)
+  // Connected: show the dashboard immediately
   return (
-    <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
-      {/* Top Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-lg border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Video className="w-6 h-6 text-blue-500" />
-            <span className="text-xl font-bold text-white">ReplySequence</span>
-          </div>
-          <UserButton afterSignOutUrl="/" />
-        </div>
-      </header>
-
-      {/* Animated background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto pt-24 pb-16 px-4">
-        {/* Success Header */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
-            <Check className="w-4 h-4 text-emerald-400" />
-            <span className="text-emerald-400 text-sm font-medium">Step 2 of 2</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-            <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {[platforms.zoom, platforms.teams, platforms.meet].filter(Boolean).length > 1
-                ? 'Platforms Connected!'
-                : platforms.teams ? 'Teams Connected!'
-                : platforms.meet ? 'Google Meet Connected!'
-                : 'Zoom Connected!'}
-            </span>
-          </h1>
-          {platforms.zoom && zoomEmail && (
-            <p className="text-lg text-gray-400">
-              Zoom: <span className="text-white font-medium">{zoomEmail}</span>
-            </p>
-          )}
-          {platforms.teams && teamsEmail && (
-            <p className="text-lg text-gray-400">
-              Teams: <span className="text-white font-medium">{teamsEmail}</span>
-            </p>
-          )}
-          {platforms.meet && meetEmail && (
-            <p className="text-lg text-gray-400">
-              Meet: <span className="text-white font-medium">{meetEmail}</span>
-            </p>
-          )}
-        </div>
-
-        {/* Test Instructions Card */}
-        <div className="bg-gray-900/50 border border-gray-700 rounded-2xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-            <FileText className="w-6 h-6 text-blue-400" />
-            Test Your Connection
-          </h2>
-
-          <div className="space-y-4 mb-8">
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-400 font-bold text-sm">1</span>
-              </div>
-              <div>
-                <p className="text-white font-medium">Start a {platforms.teams ? 'Teams' : 'Zoom'} meeting</p>
-                <p className="text-gray-400 text-sm">Create a new meeting or join one you&apos;re hosting</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-400 font-bold text-sm">2</span>
-              </div>
-              <div>
-                <p className="text-white font-medium">{platforms.teams ? 'Enable transcription' : 'Click "Record to Cloud"'}</p>
-                <p className="text-gray-400 text-sm">{platforms.teams ? 'Transcription must be enabled in meeting settings' : 'Cloud recording is required for transcript generation'}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-400 font-bold text-sm">3</span>
-              </div>
-              <div>
-                <p className="text-white font-medium">Speak for at least 30 seconds</p>
-                <p className="text-gray-400 text-sm">A short discussion generates a better follow-up</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-blue-400 font-bold text-sm">4</span>
-              </div>
-              <div>
-                <p className="text-white font-medium">End the meeting</p>
-                <p className="text-gray-400 text-sm">{platforms.teams ? 'Teams will process the transcript automatically' : 'Zoom will process the recording automatically'}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-emerald-400 font-bold text-sm">5</span>
-              </div>
-              <div>
-                <p className="text-white font-medium">Wait 2-3 minutes</p>
-                <p className="text-gray-400 text-sm">We&apos;ll receive the transcript and generate your follow-up email</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            <button
-              onClick={() => setShowDashboard(true)}
-              className="flex-1 min-w-[200px] py-3 px-6 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition-all flex items-center justify-center gap-2"
-            >
-              <FileText className="w-5 h-5" />
-              View Dashboard
-            </button>
-            <a
-              href="https://vercel.com/alittlenerdy/replysequence/logs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 min-w-[200px] py-3 px-6 rounded-lg font-medium bg-gray-700 text-white hover:bg-gray-600 transition-all flex items-center justify-center gap-2"
-            >
-              <ExternalLink className="w-5 h-5" />
-              View Logs
-            </a>
-          </div>
-        </div>
-
-        {/* Analytics Dashboard */}
-        <div className="mb-8">
-          <AnalyticsDashboard />
-        </div>
-
-        {/* Disconnect Section */}
-        <div className="text-center space-x-4">
-          {platforms.zoom && (
-            <button
-              onClick={() => handleDisconnect('zoom')}
-              disabled={disconnecting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
-            >
-              {disconnecting && disconnectingPlatform === 'zoom' ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Disconnecting...
-                </>
-              ) : (
-                <>
-                  <Unplug className="w-4 h-4" />
-                  Disconnect Zoom
-                </>
-              )}
-            </button>
-          )}
-          {platforms.teams && (
-            <button
-              onClick={() => handleDisconnect('teams')}
-              disabled={disconnecting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
-            >
-              {disconnecting && disconnectingPlatform === 'teams' ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Disconnecting...
-                </>
-              ) : (
-                <>
-                  <Unplug className="w-4 h-4" />
-                  Disconnect Teams
-                </>
-              )}
-            </button>
-          )}
-          {platforms.meet && (
-            <button
-              onClick={() => handleDisconnect('meet')}
-              disabled={disconnecting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50"
-            >
-              {disconnecting && disconnectingPlatform === 'meet' ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Disconnecting...
-                </>
-              ) : (
-                <>
-                  <Unplug className="w-4 h-4" />
-                  Disconnect Meet
-                </>
-              )}
-            </button>
-          )}
-        </div>
-      </div>
-
+    <>
+      {children}
       {showSuccessToast && (
         <Toast
           message={successMessage}
@@ -613,6 +340,6 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
           onClose={() => setShowSuccessToast(false)}
         />
       )}
-    </div>
+    </>
   );
 }
