@@ -1,6 +1,7 @@
 /**
  * GET /api/analytics
  * Returns analytics data for the current user's dashboard
+ * Enhanced with time-series data, platform breakdown, and funnel metrics
  */
 
 import { auth } from '@clerk/nextjs/server';
@@ -8,15 +9,64 @@ import { NextResponse } from 'next/server';
 import { eq, inArray, count, sql } from 'drizzle-orm';
 import { db, users, meetings, drafts, zoomConnections, teamsConnections, meetConnections } from '@/lib/db';
 
+// Daily data point for charts
+export interface DailyDataPoint {
+  date: string;
+  count: number;
+}
+
+// Platform breakdown
+export interface PlatformStat {
+  platform: string;
+  count: number;
+  color: string;
+}
+
+// Email funnel metrics
+export interface EmailFunnel {
+  total: number;
+  ready: number;
+  sent: number;
+  conversionRate: number;
+}
+
+// Enhanced analytics response
 export interface AnalyticsData {
+  // Core stats
   totalMeetings: number;
   emailsGenerated: number;
   emailsSent: number;
   timeSavedMinutes: number;
+  // Trends
+  dailyMeetings: DailyDataPoint[];
+  dailyEmails: DailyDataPoint[];
+  // Platform breakdown
+  platformBreakdown: PlatformStat[];
+  // Funnel
+  emailFunnel: EmailFunnel;
 }
 
 // Average time to write a follow-up email manually (in minutes)
 const MINUTES_PER_EMAIL = 15;
+
+// Platform colors for charts
+const PLATFORM_COLORS: Record<string, string> = {
+  zoom: '#3B82F6',   // Blue
+  teams: '#A855F7',  // Purple
+  meet: '#10B981',   // Green
+};
+
+// Generate array of last N days for chart data
+function generateDateRange(days: number): string[] {
+  const dates: string[] = [];
+  const today = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    dates.push(date.toISOString().split('T')[0]);
+  }
+  return dates;
+}
 
 export async function GET() {
   const { userId: clerkUserId } = await auth();
@@ -36,20 +86,26 @@ export async function GET() {
       .where(eq(users.clerkId, clerkUserId))
       .limit(1);
 
+    // Default empty response
+    const emptyResponse: AnalyticsData = {
+      totalMeetings: 0,
+      emailsGenerated: 0,
+      emailsSent: 0,
+      timeSavedMinutes: 0,
+      dailyMeetings: generateDateRange(14).map(date => ({ date, count: 0 })),
+      dailyEmails: generateDateRange(14).map(date => ({ date, count: 0 })),
+      platformBreakdown: [],
+      emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
+    };
+
     if (!user) {
-      // Return zeros for new users
-      return NextResponse.json<AnalyticsData>({
-        totalMeetings: 0,
-        emailsGenerated: 0,
-        emailsSent: 0,
-        timeSavedMinutes: 0,
-      });
+      return NextResponse.json<AnalyticsData>(emptyResponse);
     }
 
-    // Collect all emails associated with this user (user email + connected platform emails)
+    // Collect all emails associated with this user
     const userEmails: string[] = [user.email];
 
-    // Get Zoom email if connected
+    // Get connected platform emails
     const [zoomConn] = await db
       .select({ zoomEmail: zoomConnections.zoomEmail })
       .from(zoomConnections)
@@ -57,7 +113,6 @@ export async function GET() {
       .limit(1);
     if (zoomConn?.zoomEmail) userEmails.push(zoomConn.zoomEmail);
 
-    // Get Teams email if connected
     const [teamsConn] = await db
       .select({ msEmail: teamsConnections.msEmail })
       .from(teamsConnections)
@@ -65,7 +120,6 @@ export async function GET() {
       .limit(1);
     if (teamsConn?.msEmail) userEmails.push(teamsConn.msEmail);
 
-    // Get Meet email if connected
     const [meetConn] = await db
       .select({ googleEmail: meetConnections.googleEmail })
       .from(meetConnections)
@@ -73,45 +127,96 @@ export async function GET() {
       .limit(1);
     if (meetConn?.googleEmail) userEmails.push(meetConn.googleEmail);
 
-    // Deduplicate emails
     const uniqueEmails = [...new Set(userEmails.map(e => e.toLowerCase()))];
 
-    // Count meetings where hostEmail matches any of user's emails
-    const [meetingsCount] = await db
-      .select({ count: count() })
-      .from(meetings)
-      .where(sql`LOWER(${meetings.hostEmail}) IN (${sql.join(uniqueEmails.map(e => sql`${e}`), sql`, `)})`);
-
-    // Get meeting IDs for this user
+    // Get all user meetings with platform info
     const userMeetings = await db
-      .select({ id: meetings.id })
+      .select({
+        id: meetings.id,
+        platform: meetings.platform,
+        createdAt: meetings.createdAt,
+      })
       .from(meetings)
       .where(sql`LOWER(${meetings.hostEmail}) IN (${sql.join(uniqueEmails.map(e => sql`${e}`), sql`, `)})`);
 
     const meetingIds = userMeetings.map(m => m.id);
+    const totalMeetings = userMeetings.length;
 
+    // Platform breakdown
+    const platformCounts: Record<string, number> = {};
+    userMeetings.forEach(m => {
+      const p = m.platform || 'zoom';
+      platformCounts[p] = (platformCounts[p] || 0) + 1;
+    });
+    const platformBreakdown: PlatformStat[] = Object.entries(platformCounts).map(([platform, count]) => ({
+      platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+      count,
+      color: PLATFORM_COLORS[platform] || '#6B7280',
+    }));
+
+    // Daily meetings (last 14 days)
+    const dateRange = generateDateRange(14);
+    const dailyMeetingCounts: Record<string, number> = {};
+    dateRange.forEach(d => { dailyMeetingCounts[d] = 0; });
+    userMeetings.forEach(m => {
+      if (m.createdAt) {
+        const dateStr = new Date(m.createdAt).toISOString().split('T')[0];
+        if (dailyMeetingCounts[dateStr] !== undefined) {
+          dailyMeetingCounts[dateStr]++;
+        }
+      }
+    });
+    const dailyMeetings: DailyDataPoint[] = dateRange.map(date => ({
+      date,
+      count: dailyMeetingCounts[date] || 0,
+    }));
+
+    // Get drafts data
     let emailsGenerated = 0;
     let emailsSent = 0;
+    let emailsReady = 0;
+    const dailyEmailCounts: Record<string, number> = {};
+    dateRange.forEach(d => { dailyEmailCounts[d] = 0; });
 
     if (meetingIds.length > 0) {
-      // Count generated drafts for user's meetings
-      const [draftsCount] = await db
-        .select({ count: count() })
+      // Get all drafts for user's meetings
+      const userDrafts = await db
+        .select({
+          status: drafts.status,
+          createdAt: drafts.createdAt,
+        })
         .from(drafts)
         .where(inArray(drafts.meetingId, meetingIds));
-      emailsGenerated = draftsCount?.count || 0;
 
-      // Count sent drafts
-      const [sentCount] = await db
-        .select({ count: count() })
-        .from(drafts)
-        .where(sql`${drafts.meetingId} IN (${sql.join(meetingIds.map(id => sql`${id}`), sql`, `)}) AND ${drafts.status} = 'sent'`);
-      emailsSent = sentCount?.count || 0;
+      emailsGenerated = userDrafts.length;
+      emailsSent = userDrafts.filter(d => d.status === 'sent').length;
+      emailsReady = userDrafts.filter(d => d.status === 'generated').length;
+
+      // Daily email counts
+      userDrafts.forEach(d => {
+        if (d.createdAt) {
+          const dateStr = new Date(d.createdAt).toISOString().split('T')[0];
+          if (dailyEmailCounts[dateStr] !== undefined) {
+            dailyEmailCounts[dateStr]++;
+          }
+        }
+      });
     }
 
-    const totalMeetings = meetingsCount?.count || 0;
+    const dailyEmails: DailyDataPoint[] = dateRange.map(date => ({
+      date,
+      count: dailyEmailCounts[date] || 0,
+    }));
 
-    // Calculate time saved (15 minutes per email generated)
+    // Email funnel
+    const emailFunnel: EmailFunnel = {
+      total: emailsGenerated,
+      ready: emailsReady,
+      sent: emailsSent,
+      conversionRate: emailsGenerated > 0 ? (emailsSent / emailsGenerated) * 100 : 0,
+    };
+
+    // Time saved
     const timeSavedMinutes = emailsGenerated * MINUTES_PER_EMAIL;
 
     return NextResponse.json<AnalyticsData>({
@@ -119,6 +224,10 @@ export async function GET() {
       emailsGenerated,
       emailsSent,
       timeSavedMinutes,
+      dailyMeetings,
+      dailyEmails,
+      platformBreakdown,
+      emailFunnel,
     });
   } catch (error) {
     console.error('[ANALYTICS] Error fetching analytics:', error);
