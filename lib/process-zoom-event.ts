@@ -13,6 +13,12 @@ import {
   measureSync,
 } from '@/lib/performance';
 import { trackEvent } from '@/lib/analytics';
+import {
+  startProcessing,
+  logProcessingProgress,
+  completeProcessing,
+  failProcessing,
+} from '@/lib/processing-progress';
 import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
 
 // Default platform for Zoom webhook events
@@ -622,13 +628,16 @@ async function fetchAndStoreTranscript(
   log('info', '[TRANSCRIPT-4] fetchAndStoreTranscript entry', { meetingId, zoomMeetingId, pipelineId });
 
   try {
-    await db
-      .update(meetings)
-      .set({ status: 'processing', updatedAt: new Date() })
-      .where(eq(meetings.id, meetingId));
+    // Start processing with progress tracking
+    await startProcessing(meetingId);
 
     // Track transcript download
     startStage(pipelineId, STAGES.TRANSCRIPT_DOWNLOAD, { meetingId });
+    await logProcessingProgress({
+      meetingId,
+      step: 'transcript_download',
+      message: 'Downloading transcript from Zoom...',
+    });
 
     log('info', '[TRANSCRIPT-4] Calling downloadTranscript', {
       meetingId,
@@ -638,6 +647,11 @@ async function fetchAndStoreTranscript(
 
     const vttContent = await downloadTranscript(transcriptUrl, downloadToken);
     endStage(pipelineId, STAGES.TRANSCRIPT_DOWNLOAD, { contentLength: vttContent.length });
+    await logProcessingProgress({
+      meetingId,
+      step: 'transcript_download',
+      message: `Downloaded ${(vttContent.length / 1024).toFixed(1)}KB transcript`,
+    });
 
     // Validate VTT content
     const startsWithWebVTT = vttContent.trim().startsWith('WEBVTT');
@@ -652,8 +666,18 @@ async function fetchAndStoreTranscript(
 
     // Track VTT parsing
     startStage(pipelineId, STAGES.TRANSCRIPT_PARSE, { contentLength: vttContent.length });
+    await logProcessingProgress({
+      meetingId,
+      step: 'transcript_parse',
+      message: 'Parsing VTT transcript...',
+    });
     const { fullText, segments, wordCount } = parseVTT(vttContent);
     endStage(pipelineId, STAGES.TRANSCRIPT_PARSE, { wordCount, segmentCount: segments.length });
+    await logProcessingProgress({
+      meetingId,
+      step: 'transcript_parse',
+      message: `Parsed ${wordCount.toLocaleString()} words, ${segments.length} segments`,
+    });
 
     log('info', '[TRANSCRIPT-5] Parsed segments', {
       meetingId,
@@ -686,6 +710,11 @@ async function fetchAndStoreTranscript(
 
     // Track transcript storage
     startStage(pipelineId, STAGES.TRANSCRIPT_STORED, { meetingId });
+    await logProcessingProgress({
+      meetingId,
+      step: 'transcript_stored',
+      message: 'Saving transcript to database...',
+    });
 
     if (existingTranscript) {
       const updateResult = await withDbTimeout(
@@ -735,6 +764,11 @@ async function fetchAndStoreTranscript(
     }
 
     endStage(pipelineId, STAGES.TRANSCRIPT_STORED, { transcriptId });
+    await logProcessingProgress({
+      meetingId,
+      step: 'transcript_stored',
+      message: 'Transcript saved successfully',
+    });
 
     // [TRANSCRIPT-5] Stored in database
     log('info', '[TRANSCRIPT-5] Stored in database', {
@@ -806,6 +840,11 @@ async function fetchAndStoreTranscript(
 
       // Track draft generation
       startStage(pipelineId, STAGES.DRAFT_GENERATION, { meetingId, transcriptId, transcriptLength: fullText.length });
+      await logProcessingProgress({
+        meetingId,
+        step: 'draft_generation',
+        message: 'Generating follow-up email draft with AI...',
+      });
       const draftResult = await generateDraft({
         meetingId,
         transcriptId,
@@ -838,6 +877,9 @@ async function fetchAndStoreTranscript(
           costUsd: draftResult.costUsd?.toFixed(6),
           generationDurationMs: draftResult.generationDurationMs,
         });
+
+        // Mark processing as complete
+        await completeProcessing(meetingId, { durationMs: Date.now() - startTime });
       } else {
         endStage(pipelineId, STAGES.DRAFT_GENERATION, {
           success: false,
@@ -846,6 +888,12 @@ async function fetchAndStoreTranscript(
         log('warn', 'Draft generation failed', {
           meetingId,
           transcriptId,
+          error: draftResult.error,
+        });
+        await logProcessingProgress({
+          meetingId,
+          step: 'draft_generation',
+          message: `Draft generation failed: ${draftResult.error}`,
           error: draftResult.error,
         });
       }
@@ -877,10 +925,8 @@ async function fetchAndStoreTranscript(
       latencyMs: Date.now() - startTime,
     });
 
-    await db
-      .update(meetings)
-      .set({ status: 'failed', updatedAt: new Date() })
-      .where(eq(meetings.id, meetingId));
+    // Mark processing as failed with error message
+    await failProcessing(meetingId, errorMessage);
   }
 }
 

@@ -20,6 +20,26 @@ export type MeetingPlatform = 'zoom' | 'google_meet' | 'microsoft_teams';
 // Meeting status enum values
 export type MeetingStatus = 'pending' | 'processing' | 'ready' | 'completed' | 'failed';
 
+// Processing step enum values for live progress tracking
+export type ProcessingStep =
+  | 'webhook_received'
+  | 'meeting_fetched'
+  | 'meeting_created'
+  | 'transcript_download'
+  | 'transcript_parse'
+  | 'transcript_stored'
+  | 'draft_generation'
+  | 'completed'
+  | 'failed';
+
+// Processing log entry type
+export interface ProcessingLogEntry {
+  timestamp: string;
+  step: ProcessingStep;
+  message: string;
+  duration_ms?: number;
+}
+
 // Transcript status enum values
 export type TranscriptStatus = 'pending' | 'fetching' | 'ready' | 'failed';
 
@@ -56,6 +76,13 @@ export const meetings = pgTable(
     zoomEventId: varchar('zoom_event_id', { length: 255 }), // For idempotency tracking
     recordingDownloadUrl: text('recording_download_url'),
     transcriptDownloadUrl: text('transcript_download_url'),
+    // Processing progress tracking fields
+    processingStep: text('processing_step').$type<ProcessingStep>(),
+    processingProgress: integer('processing_progress').default(0),
+    processingLogs: jsonb('processing_logs').$type<ProcessingLogEntry[]>().default([]),
+    processingStartedAt: timestamp('processing_started_at', { withTimezone: true }),
+    processingCompletedAt: timestamp('processing_completed_at', { withTimezone: true }),
+    processingError: text('processing_error'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -66,6 +93,8 @@ export const meetings = pgTable(
     index('meetings_platform_idx').on(table.platform),
     index('meetings_platform_meeting_id_idx').on(table.platform, table.platformMeetingId),
     index('meetings_created_at_idx').on(table.createdAt),
+    index('meetings_processing_step_idx').on(table.processingStep),
+    index('meetings_processing_started_at_idx').on(table.processingStartedAt),
   ]
 );
 

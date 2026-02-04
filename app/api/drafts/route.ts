@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 export async function GET(request: NextRequest) {
+  // Apply rate limiting
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(clientId, RATE_LIMITS.API);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams;
 
@@ -21,10 +33,13 @@ export async function GET(request: NextRequest) {
 
     console.log('[DASHBOARD-2] Drafts loaded, count:', draftsResult.drafts.length);
 
-    return NextResponse.json({
-      ...draftsResult,
-      stats,
-    });
+    return NextResponse.json(
+      {
+        ...draftsResult,
+        stats,
+      },
+      { headers: getRateLimitHeaders(rateLimitResult) }
+    );
   } catch (error) {
     console.error('[DASHBOARD-ERROR] Failed to fetch drafts:', error);
     return NextResponse.json(

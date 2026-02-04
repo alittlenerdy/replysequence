@@ -12,6 +12,8 @@ import {
   Users,
   ArrowDown,
   FileX,
+  Shield,
+  Lock,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 
@@ -95,6 +97,31 @@ export default function LandingPage() {
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-gray-800 light:border-white shadow-sm" />
               </div>
               <span className="text-sm font-medium">Join 1,200+ sales teams on the waitlist</span>
+            </div>
+
+            {/* Security Trust Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-6 animate-fade-in-up-delay">
+              <a
+                href="/security"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full hover:bg-green-500/20 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-green-400" />
+                <span className="text-xs font-medium text-green-400">SOC 2 Infrastructure</span>
+              </a>
+              <a
+                href="/security"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full hover:bg-blue-500/20 transition-colors"
+              >
+                <Lock className="w-3.5 h-3.5 text-blue-400" />
+                <span className="text-xs font-medium text-blue-400">256-bit Encryption</span>
+              </a>
+              <a
+                href="/privacy"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full hover:bg-purple-500/20 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-purple-400" />
+                <span className="text-xs font-medium text-purple-400">GDPR Compliant</span>
+              </a>
             </div>
           </div>
 
