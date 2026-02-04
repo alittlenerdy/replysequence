@@ -46,7 +46,7 @@ const pricingTiers: PricingTier[] = [
   {
     name: 'Pro',
     tier: 'pro',
-    price: '$29',
+    price: '$19',
     priceNote: '/month',
     description: 'For individuals who want more power',
     icon: Sparkles,
@@ -65,7 +65,7 @@ const pricingTiers: PricingTier[] = [
   {
     name: 'Team',
     tier: 'team',
-    price: '$97',
+    price: '$29',
     priceNote: '/month',
     description: 'For growing teams and agencies',
     icon: Building2,
