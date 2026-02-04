@@ -64,7 +64,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  console.log(`[STRIPE WEBHOOK] Received event: ${event.type}`);
+  console.log(`[STRIPE WEBHOOK] Received event: ${event.type}`, {
+    eventId: event.id,
+    livemode: event.livemode,
+  });
+
+  // Warn if receiving test mode events in production
+  if (!event.livemode && process.env.NODE_ENV === 'production') {
+    console.warn('[STRIPE WEBHOOK] Received TEST MODE event in production - this may indicate misconfiguration');
+    Sentry.captureMessage('Received test mode Stripe event in production', {
+      level: 'warning',
+      extra: { eventType: event.type, eventId: event.id },
+    });
+  }
 
   try {
     switch (event.type) {
@@ -109,6 +121,14 @@ export async function POST(request: NextRequest) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const customerId = session.customer as string;
   const subscriptionId = session.subscription as string;
+
+  console.log('[STRIPE WEBHOOK] checkout.session.completed received', {
+    customerId,
+    subscriptionId,
+    sessionId: session.id,
+    customerEmail: session.customer_email,
+    clientReferenceId: session.client_reference_id,
+  });
 
   if (!customerId || !subscriptionId) {
     console.error('[STRIPE WEBHOOK] Missing customer or subscription ID in checkout session');
