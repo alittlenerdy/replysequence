@@ -222,10 +222,8 @@ async function PricingContent() {
                       {isCurrentPlan
                         ? 'Current Plan'
                         : tier.tier === 'free'
-                        ? 'Get Started'
-                        : currentTier !== 'free' && tier.tier === 'free'
-                        ? 'Downgrade'
-                        : 'Upgrade'}
+                          ? 'Downgrade'
+                          : 'Upgrade'}
                     </CheckoutButton>
                   </div>
 
