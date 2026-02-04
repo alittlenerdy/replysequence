@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface Dot {
   id: number;
@@ -25,6 +25,28 @@ export default function MouseTrail() {
   const lastSpawnRef = useRef({ x: 0, y: 0 });
   const idCounterRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const [isLightMode, setIsLightMode] = useState(false);
+  const isLightModeRef = useRef(false);
+
+  // Detect light/dark mode (dark is default)
+  useEffect(() => {
+    const checkLightMode = () => {
+      const isLight = document.documentElement.classList.contains('light');
+      setIsLightMode(isLight);
+      isLightModeRef.current = isLight;
+    };
+
+    checkLightMode();
+
+    // Watch for class changes on html element
+    const observer = new MutationObserver(checkLightMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Generate random size for each dot
   const getRandomSize = useCallback(() => {
@@ -95,7 +117,10 @@ export default function MouseTrail() {
       element.style.top = `${dot.y}px`;
       element.style.width = `${dot.size}px`;
       element.style.height = `${dot.size}px`;
-      element.style.backgroundColor = `rgba(0, 0, 0, ${finalOpacity})`;
+      // Neon pink in dark mode, black in light mode
+      element.style.backgroundColor = isLightModeRef.current
+        ? `rgba(0, 0, 0, ${finalOpacity})`
+        : `rgba(255, 0, 110, ${finalOpacity * 0.8})`;
     });
 
     rafRef.current = requestAnimationFrame(updateDots);
