@@ -15,14 +15,14 @@ function SettingsLoading() {
   return (
     <div className="max-w-2xl space-y-4">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 animate-pulse">
+        <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gray-700" />
+            <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
             <div className="flex-1">
-              <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
-              <div className="h-4 w-24 bg-gray-700 rounded" />
+              <div className="h-5 w-32 bg-gray-700 light:bg-gray-200 rounded mb-2" />
+              <div className="h-4 w-24 bg-gray-700 light:bg-gray-200 rounded" />
             </div>
-            <div className="h-9 w-24 bg-gray-700 rounded" />
+            <div className="h-9 w-24 bg-gray-700 light:bg-gray-200 rounded" />
           </div>
         </div>
       ))}
@@ -37,8 +37,8 @@ async function SettingsContent() {
   return (
     <DashboardShell firstName={firstName}>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">Settings</h2>
-        <p className="text-gray-400 mt-1">Manage your platform integrations</p>
+        <h2 className="text-2xl font-bold text-white light:text-gray-900">Settings</h2>
+        <p className="text-gray-400 light:text-gray-500 mt-1">Manage your platform integrations</p>
       </div>
       <IntegrationSettings />
     </DashboardShell>

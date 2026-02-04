@@ -120,14 +120,14 @@ export function IntegrationSettings() {
     return (
       <div className="max-w-2xl space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 animate-pulse">
+          <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gray-700" />
+              <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
               <div className="flex-1">
-                <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
-                <div className="h-4 w-48 bg-gray-700 rounded" />
+                <div className="h-5 w-32 bg-gray-700 light:bg-gray-200 rounded mb-2" />
+                <div className="h-4 w-48 bg-gray-700 light:bg-gray-200 rounded" />
               </div>
-              <div className="h-9 w-24 bg-gray-700 rounded" />
+              <div className="h-9 w-24 bg-gray-700 light:bg-gray-200 rounded" />
             </div>
           </div>
         ))}
@@ -148,8 +148,8 @@ export function IntegrationSettings() {
               key={platform.id}
               className={`border rounded-xl p-6 transition-all ${
                 isConnected
-                  ? 'border-emerald-500/30 bg-emerald-500/5'
-                  : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
+                  ? 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
+                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
               }`}
             >
               <div className="flex items-center gap-4">
@@ -161,7 +161,7 @@ export function IntegrationSettings() {
                 {/* Platform Info */}
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold text-white">{platform.name}</h3>
+                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
                         <Check className="w-3 h-3" />
@@ -169,7 +169,7 @@ export function IntegrationSettings() {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-400 mt-0.5">{platform.description}</p>
+                  <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
                 </div>
 
                 {/* Action Button */}
@@ -208,14 +208,14 @@ export function IntegrationSettings() {
       </div>
 
       {/* Pro Tip */}
-      <div className="mt-8 p-5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+      <div className="mt-8 p-5 bg-blue-500/10 light:bg-blue-50 border border-blue-500/20 light:border-blue-200 rounded-xl">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-            <Lightbulb className="w-4 h-4 text-blue-400" />
+          <div className="w-8 h-8 rounded-lg bg-blue-500/20 light:bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <Lightbulb className="w-4 h-4 text-blue-400 light:text-blue-600" />
           </div>
           <div>
-            <h4 className="text-white font-semibold mb-1">Pro Tip</h4>
-            <p className="text-gray-300 text-sm">
+            <h4 className="text-white light:text-gray-900 font-semibold mb-1">Pro Tip</h4>
+            <p className="text-gray-300 light:text-gray-600 text-sm">
               You can connect multiple platforms! ReplySequence will automatically capture meetings from all connected platforms and generate follow-up emails for each.
             </p>
           </div>
@@ -224,7 +224,7 @@ export function IntegrationSettings() {
 
       {/* Connection Summary */}
       {connectedCount > 0 && (
-        <div className="mt-6 text-center text-sm text-gray-400">
+        <div className="mt-6 text-center text-sm text-gray-400 light:text-gray-500">
           {connectedCount} platform{connectedCount !== 1 ? 's' : ''} connected
         </div>
       )}

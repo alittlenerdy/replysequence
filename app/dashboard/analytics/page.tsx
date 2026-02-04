@@ -16,18 +16,18 @@ function AnalyticsLoading() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-2xl p-5 animate-pulse">
-            <div className="w-10 h-10 rounded-xl bg-gray-700 mb-3" />
-            <div className="h-8 w-16 bg-gray-700 rounded mb-2" />
-            <div className="h-4 w-24 bg-gray-700 rounded" />
+          <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 animate-pulse light:shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-gray-700 light:bg-gray-200 mb-3" />
+            <div className="h-8 w-16 bg-gray-700 light:bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-24 bg-gray-700 light:bg-gray-200 rounded" />
           </div>
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6 h-[220px] animate-pulse">
-            <div className="h-4 w-32 bg-gray-700 rounded mb-4" />
-            <div className="h-[140px] bg-gray-800 rounded" />
+          <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 h-[220px] animate-pulse light:shadow-sm">
+            <div className="h-4 w-32 bg-gray-700 light:bg-gray-200 rounded mb-4" />
+            <div className="h-[140px] bg-gray-800 light:bg-gray-100 rounded" />
           </div>
         ))}
       </div>
@@ -42,8 +42,8 @@ async function AnalyticsContent() {
   return (
     <DashboardShell firstName={firstName}>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">Analytics</h2>
-        <p className="text-gray-400 mt-1">Track your meeting follow-up performance</p>
+        <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics</h2>
+        <p className="text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>
       </div>
       <AnalyticsDashboard />
     </DashboardShell>
