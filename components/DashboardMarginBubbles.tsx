@@ -12,7 +12,7 @@ function generateBubbles(count: number) {
     startY: -100 - Math.random() * 200, // Start above viewport
     delay: Math.random() * 6, // Stagger start times
     duration: 10 + Math.random() * 8, // 10-18 seconds to fall
-    colorType: Math.floor(Math.random() * 3), // 0=blue, 1=purple, 2=pink
+    colorType: Math.floor(Math.random() * 3), // 0=blue, 1=indigo, 2=cyan
     opacity: 0.55 + Math.random() * 0.3, // 0.55-0.85 opacity
   }));
 }
@@ -44,12 +44,12 @@ export default function DashboardMarginBubbles() {
       ? [
           `rgba(37, 99, 235, ${bubble.opacity})`,   // blue-600
           `rgba(0, 0, 0, ${bubble.opacity})`,       // black
-          `rgba(147, 51, 234, ${bubble.opacity * 0.6})`, // purple-600
+          `rgba(79, 70, 229, ${bubble.opacity * 0.6})`, // indigo-600
         ]
       : [
           `rgba(59, 130, 246, ${bubble.opacity * 0.4})`,  // blue-500
-          `rgba(147, 51, 234, ${bubble.opacity * 0.4})`,  // purple-600
-          `rgba(236, 72, 153, ${bubble.opacity * 0.4})`,  // pink-500
+          `rgba(79, 70, 229, ${bubble.opacity * 0.4})`,   // indigo-600
+          `rgba(6, 182, 212, ${bubble.opacity * 0.4})`,   // cyan-500
         ];
 
     const baseColor = colors[bubble.colorType];

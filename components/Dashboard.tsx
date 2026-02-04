@@ -128,16 +128,16 @@ export function Dashboard({
           { size: 15, top: '25%', left: '15%', color: 'rgba(59, 130, 246, 0.3)', delay: -2, speed: 'medium' },
           { size: 25, top: '60%', left: '8%', color: 'rgba(59, 130, 246, 0.35)', delay: -4, speed: 'slow' },
           { size: 12, top: '80%', left: '20%', color: 'rgba(59, 130, 246, 0.25)', delay: -1, speed: 'fast' },
-          // Purple bubbles
-          { size: 18, top: '15%', left: '85%', color: 'rgba(147, 51, 234, 0.4)', delay: -3, speed: 'medium' },
-          { size: 22, top: '40%', left: '90%', color: 'rgba(147, 51, 234, 0.35)', delay: -5, speed: 'slow' },
-          { size: 14, top: '70%', left: '80%', color: 'rgba(147, 51, 234, 0.3)', delay: -2, speed: 'fast' },
-          { size: 16, top: '5%', left: '75%', color: 'rgba(147, 51, 234, 0.25)', delay: 0, speed: 'medium' },
-          // Pink bubbles
-          { size: 20, top: '30%', left: '30%', color: 'rgba(236, 72, 153, 0.35)', delay: -4, speed: 'slow' },
-          { size: 16, top: '50%', left: '25%', color: 'rgba(236, 72, 153, 0.3)', delay: -1, speed: 'fast' },
-          { size: 24, top: '85%', left: '40%', color: 'rgba(236, 72, 153, 0.4)', delay: -3, speed: 'medium' },
-          { size: 12, top: '20%', left: '45%', color: 'rgba(236, 72, 153, 0.25)', delay: -2, speed: 'fast' },
+          // Indigo bubbles
+          { size: 18, top: '15%', left: '85%', color: 'rgba(79, 70, 229, 0.4)', delay: -3, speed: 'medium' },
+          { size: 22, top: '40%', left: '90%', color: 'rgba(79, 70, 229, 0.35)', delay: -5, speed: 'slow' },
+          { size: 14, top: '70%', left: '80%', color: 'rgba(79, 70, 229, 0.3)', delay: -2, speed: 'fast' },
+          { size: 16, top: '5%', left: '75%', color: 'rgba(79, 70, 229, 0.25)', delay: 0, speed: 'medium' },
+          // Cyan bubbles
+          { size: 20, top: '30%', left: '30%', color: 'rgba(6, 182, 212, 0.35)', delay: -4, speed: 'slow' },
+          { size: 16, top: '50%', left: '25%', color: 'rgba(6, 182, 212, 0.3)', delay: -1, speed: 'fast' },
+          { size: 24, top: '85%', left: '40%', color: 'rgba(6, 182, 212, 0.4)', delay: -3, speed: 'medium' },
+          { size: 12, top: '20%', left: '45%', color: 'rgba(6, 182, 212, 0.25)', delay: -2, speed: 'fast' },
           // Cyan bubbles
           { size: 18, top: '45%', left: '60%', color: 'rgba(34, 211, 238, 0.35)', delay: -5, speed: 'slow' },
           { size: 14, top: '65%', left: '55%', color: 'rgba(34, 211, 238, 0.3)', delay: 0, speed: 'medium' },
@@ -150,8 +150,8 @@ export function Dashboard({
           { size: 18, top: '8%', left: '40%', color: 'rgba(251, 191, 36, 0.4)', delay: 0, speed: 'medium' },
           // Extra scattered bubbles
           { size: 10, top: '42%', left: '12%', color: 'rgba(59, 130, 246, 0.3)', delay: -2, speed: 'fast' },
-          { size: 14, top: '68%', left: '95%', color: 'rgba(147, 51, 234, 0.35)', delay: -4, speed: 'medium' },
-          { size: 16, top: '22%', left: '70%', color: 'rgba(236, 72, 153, 0.3)', delay: -1, speed: 'slow' },
+          { size: 14, top: '68%', left: '95%', color: 'rgba(79, 70, 229, 0.35)', delay: -4, speed: 'medium' },
+          { size: 16, top: '22%', left: '70%', color: 'rgba(6, 182, 212, 0.3)', delay: -1, speed: 'slow' },
           { size: 12, top: '88%', left: '15%', color: 'rgba(34, 211, 238, 0.35)', delay: -3, speed: 'fast' },
           { size: 18, top: '3%', left: '55%', color: 'rgba(251, 191, 36, 0.3)', delay: -5, speed: 'medium' },
         ].map((bubble, i) => (
@@ -180,7 +180,7 @@ export function Dashboard({
           <div className="flex items-center justify-between">
             <div className="animate-fade-in-up">
               <h1 className="text-2xl font-display font-bold">
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
+                <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
                   Dashboard
                 </span>
               </h1>
@@ -194,7 +194,7 @@ export function Dashboard({
             >
               <span className="relative">
                 Back to Home
-                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300" />
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 group-hover:w-full transition-all duration-300" />
               </span>
             </a>
           </div>

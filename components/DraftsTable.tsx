@@ -88,8 +88,8 @@ export function DraftsTable({
       case 'microsoft_teams':
         return (
           <div className="relative group/icon">
-            <div className="absolute inset-0 bg-purple-500/30 rounded-lg blur-md group-hover/icon:bg-purple-400/50 transition-all duration-300" />
-            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/30">
+            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 shadow-lg shadow-indigo-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
                 <rect x="2" y="6" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="18" cy="7" r="3" stroke="currentColor" strokeWidth="2"/>
@@ -159,10 +159,10 @@ export function DraftsTable({
                       ? 'opacity-100 translate-x-0'
                       : 'opacity-0 -translate-x-4'}
                     hover:bg-gray-700/70 light:hover:bg-blue-50
-                    hover:shadow-lg hover:shadow-purple-500/5
+                    hover:shadow-lg hover:shadow-blue-500/5
                     cursor-pointer
                     border-b border-gray-700/50 light:border-gray-200
-                    hover:border-purple-500/30
+                    hover:border-blue-500/30
                   `}
                   onClick={() => setSelectedDraft(draft)}
                 >
