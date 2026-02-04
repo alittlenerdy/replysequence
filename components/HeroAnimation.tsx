@@ -46,7 +46,7 @@ function generateParticles(): Particle[] {
 // Avatar data for meeting participants
 const meetingParticipants = [
   { initials: 'JD', name: 'John Doe', color: '#2563EB' },
-  { initials: 'SK', name: 'Sarah Kim', color: '#4F46E5' },
+  { initials: 'SK', name: 'Sarah Kim', color: '#8B5CF6' },
   { initials: 'AM', name: 'Alex Morgan', color: '#06B6D4' },
   { initials: 'RW', name: 'Rachel Wang', color: '#64748B' },
 ];
@@ -150,7 +150,7 @@ function CrmMockup() {
         {/* Contact card */}
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[#4F46E5] flex items-center justify-center text-white font-bold text-sm shadow-md">
+            <div className="w-12 h-12 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white font-bold text-sm shadow-md">
               SK
             </div>
             <div>

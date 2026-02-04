@@ -71,10 +71,10 @@ export function DashboardFilters({
                 bg-gray-700/50 light:bg-white
 
                 focus:outline-none
-                focus:border-blue-500
-                focus:ring-4 focus:ring-blue-500/30
+                focus:border-purple-500
+                focus:ring-4 focus:ring-purple-500/30
                 focus:bg-gray-700 light:focus:bg-white
-                focus:shadow-lg focus:shadow-blue-500/20
+                focus:shadow-lg focus:shadow-purple-500/20
 
                 hover:border-gray-500 light:hover:border-gray-400
                 hover:bg-gray-700 light:hover:bg-gray-50
@@ -99,10 +99,10 @@ export function DashboardFilters({
               text-white light:text-gray-900
               bg-gray-700/50 light:bg-white
 
-              hover:border-blue-500/50
+              hover:border-purple-500/50
               hover:bg-gray-700 light:hover:bg-gray-50
-              focus:border-blue-500
-              focus:ring-2 focus:ring-blue-500/30
+              focus:border-purple-500
+              focus:ring-2 focus:ring-purple-500/30
               focus:outline-none
 
               transition-all duration-200
@@ -131,10 +131,10 @@ export function DashboardFilters({
               text-white light:text-gray-900
               bg-gray-700/50 light:bg-white
 
-              hover:border-blue-500/50
+              hover:border-purple-500/50
               hover:bg-gray-700 light:hover:bg-gray-50
-              focus:border-blue-500
-              focus:ring-2 focus:ring-blue-500/30
+              focus:border-purple-500
+              focus:ring-2 focus:ring-purple-500/30
               focus:outline-none
 
               transition-all duration-200

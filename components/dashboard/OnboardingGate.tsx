@@ -150,7 +150,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
         {/* Animated background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto py-16 px-4">
@@ -160,7 +160,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
               <span className="text-blue-400 text-sm font-medium">Get Started</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Connect a Platform
               </span>
             </h1>

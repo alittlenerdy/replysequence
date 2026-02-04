@@ -117,10 +117,10 @@ export default function MouseTrail() {
       element.style.top = `${dot.y}px`;
       element.style.width = `${dot.size}px`;
       element.style.height = `${dot.size}px`;
-      // Cyan in dark mode, black in light mode
+      // Neon pink in dark mode, black in light mode
       element.style.backgroundColor = isLightModeRef.current
         ? `rgba(0, 0, 0, ${finalOpacity})`
-        : `rgba(6, 182, 212, ${finalOpacity * 0.8})`;
+        : `rgba(255, 0, 110, ${finalOpacity * 0.8})`;
     });
 
     rafRef.current = requestAnimationFrame(updateDots);

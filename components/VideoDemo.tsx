@@ -17,12 +17,12 @@ export default function VideoDemo() {
           </p>
         </div>
 
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-gray-700 light:border-gray-200">
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-gray-700 light:border-gray-200">
           {!isPlaying ? (
             <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 light:from-gray-100 light:to-white relative group cursor-pointer"
                  onClick={() => setIsPlaying(true)}>
               {/* Thumbnail placeholder */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5" />
 
               {/* Fake UI Preview */}
               <div className="absolute inset-6 md:inset-8 lg:inset-10 rounded-2xl bg-gray-800 light:bg-white shadow-2xl border border-gray-700 light:border-gray-200 overflow-hidden scale-100 md:scale-105">
@@ -38,7 +38,7 @@ export default function VideoDemo() {
                     <div className="h-3 bg-gray-600 light:bg-gray-200 rounded w-full" />
                     <div className="h-3 bg-gray-600 light:bg-gray-200 rounded w-5/6" />
                     <div className="h-3 bg-gray-600 light:bg-gray-200 rounded w-4/6" />
-                    <div className="mt-6 h-24 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-xl" />
+                    <div className="mt-6 h-24 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl" />
                   </div>
                   <div className="space-y-3">
                     <div className="h-20 bg-gray-600 light:bg-gray-200 rounded-xl" />
