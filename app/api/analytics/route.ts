@@ -49,10 +49,10 @@ export interface AnalyticsData {
 // Average time to write a follow-up email manually (in minutes)
 const MINUTES_PER_EMAIL = 15;
 
-// Platform colors for charts
+// Platform colors for charts (Deep Blue palette)
 const PLATFORM_COLORS: Record<string, string> = {
-  zoom: '#3B82F6',   // Blue
-  teams: '#A855F7',  // Purple
+  zoom: '#2563EB',   // Deep Blue
+  teams: '#4F46E5',  // Indigo
   meet: '#10B981',   // Green
 };
 

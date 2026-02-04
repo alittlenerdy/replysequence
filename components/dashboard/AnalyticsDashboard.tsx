@@ -166,24 +166,24 @@ export function AnalyticsDashboard() {
           icon={<Calendar className="w-5 h-5" />}
           label="Meetings"
           value={analytics.totalMeetings}
-          gradient="from-blue-500/20 to-blue-600/20"
-          accentColor="#3B82F6"
+          gradient="from-blue-600/20 to-blue-700/20"
+          accentColor="#2563EB"
           delay={0}
         />
         <StatCard
           icon={<Mail className="w-5 h-5" />}
           label="Emails Generated"
           value={analytics.emailsGenerated}
-          gradient="from-purple-500/20 to-purple-600/20"
-          accentColor="#A855F7"
+          gradient="from-indigo-500/20 to-indigo-600/20"
+          accentColor="#4F46E5"
           delay={0.05}
         />
         <StatCard
           icon={<Send className="w-5 h-5" />}
           label="Emails Sent"
           value={analytics.emailsSent}
-          gradient="from-emerald-500/20 to-emerald-600/20"
-          accentColor="#10B981"
+          gradient="from-cyan-500/20 to-cyan-600/20"
+          accentColor="#06B6D4"
           delay={0.1}
         />
         <StatCard
@@ -205,13 +205,13 @@ export function AnalyticsDashboard() {
             <ActivityChart
               data={analytics.dailyMeetings}
               title="Meetings"
-              color="#3B82F6"
+              color="#2563EB"
               gradientId="meetingsGradient"
             />
             <ActivityChart
               data={analytics.dailyEmails}
               title="Emails Generated"
-              color="#A855F7"
+              color="#4F46E5"
               gradientId="emailsGradient"
             />
           </div>
@@ -235,7 +235,7 @@ export function AnalyticsDashboard() {
           transition={{ delay: 0.3 }}
           className="bg-gray-900/50 border border-gray-700 rounded-2xl p-12 text-center"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-600/20 to-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <BarChart3 className="w-8 h-8 text-blue-400" />
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">
@@ -246,11 +246,11 @@ export function AnalyticsDashboard() {
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
+              <div className="w-2 h-2 rounded-full bg-blue-600" />
               Zoom
             </span>
             <span className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-purple-500" />
+              <div className="w-2 h-2 rounded-full bg-indigo-500" />
               Teams
             </span>
             <span className="flex items-center gap-2">

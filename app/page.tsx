@@ -35,7 +35,7 @@ export default function LandingPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen pt-32 pb-20 px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 light:from-blue-50 light:via-purple-50 light:to-pink-50 z-10">
+      <section className="relative min-h-screen pt-32 pb-20 px-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 light:from-blue-50 light:via-indigo-50 light:to-cyan-50 z-10">
         <FloatingElements />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
@@ -90,7 +90,7 @@ export default function LandingPage() {
             <div className="flex items-center justify-center gap-3 text-gray-400 light:text-gray-600 animate-fade-in-up-delay">
               <div className="flex -space-x-2">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-gray-800 light:border-white shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-gray-800 light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-500 border-2 border-gray-800 light:border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-gray-800 light:border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-gray-800 light:border-white shadow-sm" />
               </div>
@@ -353,7 +353,7 @@ export default function LandingPage() {
       </section>
 
       {/* Email Capture */}
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-800 to-gray-900 light:from-blue-50 light:to-purple-50 relative z-10">
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-800 to-gray-900 light:from-blue-50 light:to-indigo-50 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-4xl font-display font-bold mb-4 text-white light:text-gray-900">
             Join the <span className="text-shimmer font-display font-extrabold">Beta Waitlist</span>
