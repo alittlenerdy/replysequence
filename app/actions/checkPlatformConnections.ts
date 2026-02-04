@@ -1,7 +1,7 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { db, users, zoomConnections, teamsConnections } from '@/lib/db';
+import { db, users, zoomConnections, teamsConnections, meetConnections } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
 export interface PlatformConnectionsResult {
@@ -14,6 +14,7 @@ export interface PlatformConnectionsResult {
   userId?: string;
   zoomEmail?: string;
   teamsEmail?: string;
+  meetEmail?: string;
 }
 
 /**
@@ -93,6 +94,18 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail });
     }
 
+    // Get Meet email if connected
+    let meetEmail: string | undefined;
+    if (meetConnected) {
+      const [connection] = await db
+        .select({ googleEmail: meetConnections.googleEmail })
+        .from(meetConnections)
+        .where(eq(meetConnections.userId, existingUser.id))
+        .limit(1);
+      meetEmail = connection?.googleEmail;
+      console.log('[CHECK-CONNECTION] Meet connection found', { meetEmail });
+    }
+
     return {
       connected: hasConnection,
       platforms: {
@@ -103,6 +116,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       userId: existingUser.id,
       zoomEmail,
       teamsEmail,
+      meetEmail,
     };
   }
 
