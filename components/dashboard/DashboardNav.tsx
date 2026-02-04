@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings, type LucideIcon } from 'lucide-react';
+import { FileText, BarChart3, Settings, CreditCard, type LucideIcon } from 'lucide-react';
 import { useRef, useCallback } from 'react';
 
 interface Tab {
@@ -15,6 +15,7 @@ const tabs: Tab[] = [
   { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Pricing', href: '/pricing', icon: CreditCard },
 ];
 
 interface DashboardNavProps {
@@ -65,7 +66,10 @@ export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
         aria-label="Dashboard navigation"
       >
         {tabsWithBadges.map((tab, index) => {
-          const isActive = pathname === tab.href;
+          // Handle exact match for /dashboard, or startsWith for other routes
+          const isActive = tab.href === '/dashboard'
+            ? pathname === '/dashboard'
+            : pathname.startsWith(tab.href);
           const Icon = tab.icon;
           const badge = 'badge' in tab ? tab.badge : undefined;
 

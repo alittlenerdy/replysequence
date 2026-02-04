@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings, type LucideIcon } from 'lucide-react';
+import { FileText, BarChart3, Settings, CreditCard, type LucideIcon } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -14,6 +14,7 @@ const navItems: NavItem[] = [
   { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Pricing', href: '/pricing', icon: CreditCard },
 ];
 
 interface MobileBottomNavProps {
@@ -32,7 +33,10 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          // Handle exact match for /dashboard, or startsWith for other routes
+          const isActive = item.href === '/dashboard'
+            ? pathname === '/dashboard'
+            : pathname.startsWith(item.href);
           const badge = item.name === 'Drafts' ? pendingDrafts : 0;
 
           return (

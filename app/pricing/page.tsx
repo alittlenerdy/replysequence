@@ -3,6 +3,8 @@ import { currentUser } from '@clerk/nextjs/server';
 import { Check, Sparkles, Building2, Zap } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { CheckoutButton } from '@/components/CheckoutButton';
+import { ManageSubscriptionButton } from '@/components/ManageSubscriptionButton';
+import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -87,8 +89,11 @@ async function PricingContent() {
   // Get current user and their subscription
   const user = await currentUser();
   let currentTier: SubscriptionTier = 'free';
+  let hasStripeCustomer = false;
+  let firstName = 'there';
 
   if (user) {
+    firstName = user.firstName || 'there';
     const [dbUser] = await db
       .select()
       .from(users)
@@ -98,30 +103,46 @@ async function PricingContent() {
     if (dbUser?.subscriptionTier) {
       currentTier = dbUser.subscriptionTier;
     }
+    if (dbUser?.stripeCustomerId) {
+      hasStripeCustomer = true;
+    }
   }
 
-  return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
-      <Header />
+  const isPaidUser = currentTier !== 'free' && hasStripeCustomer;
+  const isLoggedIn = !!user;
 
+  const pricingContent = (
+    <>
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4">
+      <section className={isLoggedIn ? 'pb-8' : 'pt-32 pb-16 px-4'}>
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 text-white light:text-gray-900">
-            Simple, Transparent{' '}
-            <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
-              Pricing
-            </span>
+          <h1 className={`font-display font-bold mb-6 text-white light:text-gray-900 ${isLoggedIn ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl lg:text-6xl'}`}>
+            {isLoggedIn ? 'Manage Your Plan' : (
+              <>
+                Simple, Transparent{' '}
+                <span className="bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                  Pricing
+                </span>
+              </>
+            )}
           </h1>
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-            Choose the plan that works for you. All plans include our core features.
-            Upgrade or downgrade anytime.
+            {isLoggedIn
+              ? 'Upgrade, downgrade, or manage your subscription anytime.'
+              : 'Choose the plan that works for you. All plans include our core features. Upgrade or downgrade anytime.'}
           </p>
+
+          {/* Manage Subscription Button for paid users */}
+          {isPaidUser && (
+            <div className="mt-6">
+              <ManageSubscriptionButton />
+            </div>
+          )}
         </div>
       </section>
 
       {/* Pricing Cards */}
-      <section className="pb-20 px-4">
+      <section className={isLoggedIn ? 'pb-12' : 'pb-20 px-4'}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {pricingTiers.map((tier) => {
@@ -138,7 +159,7 @@ async function PricingContent() {
                   }`}
                 >
                   {/* Most Popular Badge */}
-                  {tier.highlighted && (
+                  {tier.highlighted && !isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                       <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-lg">
                         <Sparkles className="w-4 h-4" />
@@ -149,16 +170,16 @@ async function PricingContent() {
 
                   {/* Current Plan Badge */}
                   {isCurrentPlan && (
-                    <div className="absolute -top-4 right-4">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30">
-                        <Check className="w-3 h-3" />
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-semibold border border-emerald-500/30">
+                        <Check className="w-4 h-4" />
                         Current Plan
                       </span>
                     </div>
                   )}
 
                   {/* Header */}
-                  <div className="mb-6">
+                  <div className="mb-6 mt-2">
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                       tier.highlighted
                         ? 'bg-blue-500/20'
@@ -202,6 +223,8 @@ async function PricingContent() {
                         ? 'Current Plan'
                         : tier.tier === 'free'
                         ? 'Get Started'
+                        : currentTier !== 'free' && tier.tier === 'free'
+                        ? 'Downgrade'
                         : 'Upgrade'}
                     </CheckoutButton>
                   </div>
@@ -228,71 +251,93 @@ async function PricingContent() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 px-4 bg-gray-900 light:bg-white border-t border-gray-800 light:border-gray-200">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-white light:text-gray-900 text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-6">
-            {[
-              {
-                q: 'Can I change plans later?',
-                a: 'Yes! You can upgrade or downgrade at any time. Changes take effect immediately and billing is prorated.',
-              },
-              {
-                q: 'What payment methods do you accept?',
-                a: 'We accept all major credit cards (Visa, Mastercard, American Express) through our secure Stripe integration.',
-              },
-              {
-                q: 'Is there a free trial?',
-                a: 'Our Free plan lets you try ReplySequence with limited features. Upgrade when you\'re ready for unlimited AI drafts.',
-              },
-              {
-                q: 'What happens if I cancel?',
-                a: 'You\'ll keep access until the end of your billing period. Your data is retained for 30 days in case you want to reactivate.',
-              },
-            ].map((faq, index) => (
-              <div
-                key={index}
-                className="bg-gray-800/50 light:bg-gray-50 rounded-xl p-6 border border-gray-700 light:border-gray-200"
-              >
-                <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
-                  {faq.q}
-                </h3>
-                <p className="text-gray-400 light:text-gray-600">
-                  {faq.a}
-                </p>
-              </div>
-            ))}
+      {/* FAQ Section - only for non-logged in users */}
+      {!isLoggedIn && (
+        <section className="py-16 px-4 bg-gray-900 light:bg-white border-t border-gray-800 light:border-gray-200">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-white light:text-gray-900 text-center mb-12">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-6">
+              {[
+                {
+                  q: 'Can I change plans later?',
+                  a: 'Yes! You can upgrade or downgrade at any time. Changes take effect immediately and billing is prorated.',
+                },
+                {
+                  q: 'What payment methods do you accept?',
+                  a: 'We accept all major credit cards (Visa, Mastercard, American Express) through our secure Stripe integration.',
+                },
+                {
+                  q: 'Is there a free trial?',
+                  a: 'Our Free plan lets you try ReplySequence with limited features. Upgrade when you\'re ready for unlimited AI drafts.',
+                },
+                {
+                  q: 'What happens if I cancel?',
+                  a: 'You\'ll keep access until the end of your billing period. Your data is retained for 30 days in case you want to reactivate.',
+                },
+              ].map((faq, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-800/50 light:bg-gray-50 rounded-xl p-6 border border-gray-700 light:border-gray-200"
+                >
+                  <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
+                    {faq.q}
+                  </h3>
+                  <p className="text-gray-400 light:text-gray-600">
+                    {faq.a}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Footer CTA */}
-      <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
-            Ready to automate your follow-ups?
-          </h2>
-          <p className="text-gray-400 light:text-gray-600 mb-8">
-            Start free, upgrade when you need more power.
-          </p>
-          <a
-            href="/sign-up"
-            className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
-          >
-            Get Started Free
-          </a>
-        </div>
-      </section>
+      {/* Footer CTA - only for non-logged in users */}
+      {!isLoggedIn && (
+        <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
+              Ready to automate your follow-ups?
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 mb-8">
+              Start free, upgrade when you need more power.
+            </p>
+            <a
+              href="/sign-up"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+            >
+              Get Started Free
+            </a>
+          </div>
+        </section>
+      )}
 
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-gray-800 light:border-gray-200 bg-gray-950 light:bg-gray-50">
-        <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
-          <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
-        </div>
-      </footer>
+      {/* Footer - only for non-logged in users */}
+      {!isLoggedIn && (
+        <footer className="py-8 px-4 border-t border-gray-800 light:border-gray-200 bg-gray-950 light:bg-gray-50">
+          <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
+            <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
+          </div>
+        </footer>
+      )}
+    </>
+  );
+
+  // Wrap in appropriate shell based on auth state
+  if (isLoggedIn) {
+    return (
+      <DashboardShell firstName={firstName} pendingDrafts={0}>
+        {pricingContent}
+      </DashboardShell>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+      <Header />
+      {pricingContent}
     </div>
   );
 }
