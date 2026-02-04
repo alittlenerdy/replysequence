@@ -22,17 +22,20 @@ export interface PlatformConnectionsResult {
  * Creates user record if it doesn't exist.
  */
 export async function checkPlatformConnections(): Promise<PlatformConnectionsResult> {
-  const { userId } = await auth();
+  console.log('[CHECK-CONNECTION] ==== Starting platform connection check ====');
 
-  console.log('[CHECK-CONNECTION] Starting check', { clerkUserId: userId });
+  try {
+    const { userId } = await auth();
 
-  if (!userId) {
-    console.log('[CHECK-CONNECTION] No userId from Clerk auth');
-    return {
-      connected: false,
-      platforms: { zoom: false, teams: false, meet: false },
-    };
-  }
+    console.log('[CHECK-CONNECTION] Clerk auth result:', { clerkUserId: userId, hasUserId: !!userId });
+
+    if (!userId) {
+      console.log('[CHECK-CONNECTION] No userId from Clerk auth');
+      return {
+        connected: false,
+        platforms: { zoom: false, teams: false, meet: false },
+      };
+    }
 
   // Try to find existing user
   const [existingUser] = await db
@@ -144,6 +147,14 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     platforms: { zoom: false, teams: false, meet: false },
     userId: newUser.id,
   };
+  } catch (error) {
+    console.error('[CHECK-CONNECTION] FATAL ERROR:', error);
+    // Return disconnected state on error to show integration cards
+    return {
+      connected: false,
+      platforms: { zoom: false, teams: false, meet: false },
+    };
+  }
 }
 
 /**
