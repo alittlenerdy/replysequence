@@ -229,6 +229,12 @@ export interface EmailSignatureSettings {
   customTagline?: string;
 }
 
+// Subscription tier type
+export type SubscriptionTier = 'free' | 'pro' | 'team';
+
+// Subscription status from Stripe
+export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing' | 'unpaid';
+
 // Users table - tracks Clerk users and their platform connections
 export const users = pgTable(
   'users',
@@ -248,6 +254,12 @@ export const users = pgTable(
     teamsRefreshToken: text('teams_refresh_token'),
     meetAccessToken: text('meet_access_token'),
     meetRefreshToken: text('meet_refresh_token'),
+    // Subscription fields
+    subscriptionTier: text('subscription_tier').$type<SubscriptionTier>().default('free'),
+    stripeCustomerId: text('stripe_customer_id'),
+    stripeSubscriptionId: text('stripe_subscription_id'),
+    subscriptionStatus: text('subscription_status').$type<SubscriptionStatus>(),
+    subscriptionEndDate: timestamp('subscription_end_date', { withTimezone: true }),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -256,6 +268,28 @@ export const users = pgTable(
     index('users_clerk_id_idx').on(table.clerkId),
     index('users_email_idx').on(table.email),
     index('users_created_at_idx').on(table.createdAt),
+    index('users_stripe_customer_id_idx').on(table.stripeCustomerId),
+    index('users_subscription_tier_idx').on(table.subscriptionTier),
+  ]
+);
+
+// Usage action types
+export type UsageAction = 'draft_generated' | 'meeting_processed' | 'email_sent';
+
+// Usage logs table - tracks user actions for free tier limits
+export const usageLogs = pgTable(
+  'usage_logs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    action: text('action').$type<UsageAction>().notNull(),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    index('usage_logs_user_id_idx').on(table.userId),
+    index('usage_logs_created_at_idx').on(table.createdAt),
+    index('usage_logs_action_idx').on(table.action),
   ]
 );
 
@@ -439,3 +473,5 @@ export type TeamsConnection = typeof teamsConnections.$inferSelect;
 export type NewTeamsConnection = typeof teamsConnections.$inferInsert;
 export type MeetConnection = typeof meetConnections.$inferSelect;
 export type NewMeetConnection = typeof meetConnections.$inferInsert;
+export type UsageLog = typeof usageLogs.$inferSelect;
+export type NewUsageLog = typeof usageLogs.$inferInsert;
