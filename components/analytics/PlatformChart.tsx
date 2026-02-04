@@ -57,15 +57,15 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   const data = payload[0].payload;
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 shadow-xl">
+    <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 shadow-xl">
       <div className="flex items-center gap-2">
         <div
           className="w-3 h-3 rounded-full"
           style={{ backgroundColor: data.color }}
         />
-        <span className="text-sm text-white font-medium">{data.platform}</span>
+        <span className="text-sm text-white light:text-gray-900 font-medium">{data.platform}</span>
       </div>
-      <p className="text-lg font-bold text-white mt-1">{data.count} meetings</p>
+      <p className="text-lg font-bold text-white light:text-gray-900 mt-1">{data.count} meetings</p>
     </div>
   );
 }
@@ -79,12 +79,12 @@ export function PlatformChart({ data }: PlatformChartProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"
+      className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-sm font-medium text-gray-400">Platform Distribution</h3>
-        <p className="text-2xl font-bold text-white mt-1">{total} total</p>
+        <h3 className="text-sm font-medium text-gray-400 light:text-gray-500">Platform Distribution</h3>
+        <p className="text-2xl font-bold text-white light:text-gray-900 mt-1">{total} total</p>
       </div>
 
       {hasData ? (
@@ -112,7 +112,7 @@ export function PlatformChart({ data }: PlatformChartProps) {
             </ResponsiveContainer>
             {/* Center text */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-lg font-bold text-white">{total}</span>
+              <span className="text-lg font-bold text-white light:text-gray-900">{total}</span>
             </div>
           </div>
 
@@ -132,10 +132,10 @@ export function PlatformChart({ data }: PlatformChartProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-white font-medium">{item.platform}</span>
-                      <span className="text-sm text-gray-400">{percentage}%</span>
+                      <span className="text-sm text-white light:text-gray-900 font-medium">{item.platform}</span>
+                      <span className="text-sm text-gray-400 light:text-gray-500">{percentage}%</span>
                     </div>
-                    <div className="mt-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="mt-1 h-1.5 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}

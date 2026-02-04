@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { UserButton } from '@clerk/nextjs';
 import { Video } from 'lucide-react';
 import { DashboardNav } from './DashboardNav';
+import ThemeToggle from '@/components/ThemeToggle';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -12,21 +13,22 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children, firstName = 'there' }: DashboardShellProps) {
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50">
       {/* Header */}
-      <header className="bg-gray-900/70 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+      <header className="bg-gray-900/70 light:bg-white/80 backdrop-blur-xl border-b border-white/10 light:border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               <Video className="w-6 h-6 text-blue-500" />
-              <span className="text-xl font-bold text-white">ReplySequence</span>
+              <span className="text-xl font-bold text-white light:text-gray-900">ReplySequence</span>
             </Link>
 
             {/* User Menu */}
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-300">
-                Hey, <span className="font-medium text-white">{firstName}</span>!
+              <ThemeToggle />
+              <span className="text-sm text-gray-300 light:text-gray-600">
+                Hey, <span className="font-medium text-white light:text-gray-900">{firstName}</span>!
               </span>
               <UserButton afterSignOutUrl="/" />
             </div>

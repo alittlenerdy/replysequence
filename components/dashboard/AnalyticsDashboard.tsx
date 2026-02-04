@@ -96,19 +96,19 @@ export function AnalyticsDashboard() {
         {/* Stats skeleton */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-2xl p-5 animate-pulse">
-              <div className="w-10 h-10 rounded-xl bg-gray-700 mb-3" />
-              <div className="h-8 w-16 bg-gray-700 rounded mb-2" />
-              <div className="h-4 w-24 bg-gray-700 rounded" />
+            <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 animate-pulse">
+              <div className="w-10 h-10 rounded-xl bg-gray-700 light:bg-gray-200 mb-3" />
+              <div className="h-8 w-16 bg-gray-700 light:bg-gray-200 rounded mb-2" />
+              <div className="h-4 w-24 bg-gray-700 light:bg-gray-200 rounded" />
             </div>
           ))}
         </div>
         {/* Charts skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6 h-[220px] animate-pulse">
-              <div className="h-4 w-32 bg-gray-700 rounded mb-4" />
-              <div className="h-[140px] bg-gray-800 rounded" />
+            <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 h-[220px] animate-pulse">
+              <div className="h-4 w-32 bg-gray-700 light:bg-gray-200 rounded mb-4" />
+              <div className="h-[140px] bg-gray-800 light:bg-gray-100 rounded" />
             </div>
           ))}
         </div>
@@ -147,13 +147,13 @@ export function AnalyticsDashboard() {
         className="flex items-center justify-between"
       >
         <div>
-          <h2 className="text-xl font-bold text-white">Analytics Dashboard</h2>
-          <p className="text-sm text-gray-400 mt-1">Track your meeting follow-up performance</p>
+          <h2 className="text-xl font-bold text-white light:text-gray-900">Analytics Dashboard</h2>
+          <p className="text-sm text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>
         </div>
         <button
           onClick={() => fetchAnalytics(true)}
           disabled={isRefreshing}
-          className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
+          className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
           title="Refresh analytics"
         >
           <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -233,15 +233,15 @@ export function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-900/50 border border-gray-700 rounded-2xl p-12 text-center"
+          className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-12 text-center"
         >
           <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <BarChart3 className="w-8 h-8 text-blue-400" />
           </div>
-          <h3 className="text-xl font-semibold text-white mb-2">
+          <h3 className="text-xl font-semibold text-white light:text-gray-900 mb-2">
             No Activity Yet
           </h3>
-          <p className="text-gray-400 max-w-md mx-auto mb-6">
+          <p className="text-gray-400 light:text-gray-500 max-w-md mx-auto mb-6">
             Connect a meeting platform and host your first meeting to see your analytics dashboard come to life with charts and insights.
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500">

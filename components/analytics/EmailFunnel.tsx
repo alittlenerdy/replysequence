@@ -36,11 +36,11 @@ function FunnelStage({ icon, label, value, percentage, color, gradient, delay }:
           <div style={{ color }}>{icon}</div>
         </div>
         <div>
-          <p className="text-2xl font-bold text-white">{value}</p>
-          <p className="text-xs text-gray-400">{label}</p>
+          <p className="text-2xl font-bold text-white light:text-gray-900">{value}</p>
+          <p className="text-xs text-gray-400 light:text-gray-500">{label}</p>
         </div>
       </div>
-      <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-2 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
@@ -60,13 +60,13 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"
+      className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-sm font-medium text-gray-400">Email Funnel</h3>
-          <p className="text-xs text-gray-500 mt-1">Track your email journey</p>
+          <h3 className="text-sm font-medium text-gray-400 light:text-gray-500">Email Funnel</h3>
+          <p className="text-xs text-gray-500 light:text-gray-400 mt-1">Track your email journey</p>
         </div>
         {hasData && (
           <div className="text-right">
@@ -120,7 +120,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
           </div>
 
           {/* Flow visualization */}
-          <div className="mt-6 pt-4 border-t border-gray-800">
+          <div className="mt-6 pt-4 border-t border-gray-800 light:border-gray-200">
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <span>Draft generated</span>
               <div className="flex-1 h-px bg-gradient-to-r from-blue-500/50 via-amber-500/50 to-emerald-500/50" />

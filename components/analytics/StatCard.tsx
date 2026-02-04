@@ -56,7 +56,7 @@ export function StatCard({
       />
 
       {/* Card */}
-      <div className="relative bg-gray-900/50 border border-gray-700 hover:border-gray-600 rounded-2xl p-5 transition-all duration-300 overflow-hidden">
+      <div className="relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-all duration-300 overflow-hidden light:shadow-sm">
         {/* Background decoration */}
         <div
           className="absolute -right-8 -top-8 w-24 h-24 rounded-full opacity-10 blur-2xl"
@@ -74,16 +74,16 @@ export function StatCard({
           </div>
 
           {/* Value */}
-          <div className="text-3xl font-bold text-white mb-1">
+          <div className="text-3xl font-bold text-white light:text-gray-900 mb-1">
             <AnimatedCounter value={value} suffix={suffix} />
           </div>
 
           {/* Label */}
-          <div className="text-sm text-gray-400">{label}</div>
+          <div className="text-sm text-gray-400 light:text-gray-500">{label}</div>
 
           {/* Subtitle */}
           {subtitle && (
-            <div className="text-xs text-gray-500 mt-2">{subtitle}</div>
+            <div className="text-xs text-gray-500 light:text-gray-400 mt-2">{subtitle}</div>
           )}
         </div>
       </div>

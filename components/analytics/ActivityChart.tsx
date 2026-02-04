@@ -41,9 +41,9 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   });
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 shadow-xl">
-      <p className="text-xs text-gray-400">{formattedDate}</p>
-      <p className="text-lg font-bold text-white">{payload[0]?.value}</p>
+    <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 shadow-xl">
+      <p className="text-xs text-gray-400 light:text-gray-500">{formattedDate}</p>
+      <p className="text-lg font-bold text-white light:text-gray-900">{payload[0]?.value}</p>
     </div>
   );
 }
@@ -75,14 +75,14 @@ export function ActivityChart({ data, title, color, gradientId }: ActivityChartP
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"
+      className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-medium text-gray-400">{title}</h3>
+          <h3 className="text-sm font-medium text-gray-400 light:text-gray-500">{title}</h3>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-2xl font-bold text-white">{total}</span>
+            <span className="text-2xl font-bold text-white light:text-gray-900">{total}</span>
             {hasData && (
               <span
                 className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
