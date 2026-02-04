@@ -9,10 +9,10 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
 });
 
-// Price IDs from Stripe (verified via Stripe MCP)
+// Price IDs for ReplySequence products
 export const STRIPE_PRICES = {
-  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_1Sv2mDS20m94FbvlhyrmKVjv',
-  team: process.env.STRIPE_TEAM_PRICE_ID || 'price_1Sv2oVS20m94FbvlLa8C69Bw',
+  pro: process.env.STRIPE_PRO_PRICE_ID || 'price_1SxCXGS20m94FbvlGlnD0v02',
+  team: process.env.STRIPE_TEAM_PRICE_ID || 'price_1SxCYaS20m94FbvligZE7tv5',
 } as const;
 
 export type PriceTier = keyof typeof STRIPE_PRICES;
