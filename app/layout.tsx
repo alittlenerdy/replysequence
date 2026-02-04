@@ -17,8 +17,15 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "ReplySequence - Turn Zoom Calls Into Perfect Follow-Ups",
-  description: "AI-powered follow-up emails from your Zoom transcripts. Automatically drafted, CRM-logged, and ready to send.",
+  title: "ReplySequence - AI Follow-Up Emails from Meetings",
+  description: "Turn Zoom, Teams, and Meet calls into perfect follow-up emails. AI-powered, automatically drafted, CRM-ready.",
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
