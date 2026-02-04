@@ -112,37 +112,57 @@ export async function GET() {
     const userEmails: string[] = [user.email];
 
     // Get connected platform emails (with individual error handling)
+    // Zoom connection
     try {
       const [zoomConn] = await db
         .select({ zoomEmail: zoomConnections.zoomEmail })
         .from(zoomConnections)
         .where(eq(zoomConnections.userId, user.id))
         .limit(1);
-      if (zoomConn?.zoomEmail) userEmails.push(zoomConn.zoomEmail);
-    } catch (e) {
-      console.log('[ANALYTICS-WARN] Error fetching zoom connection:', e);
+      if (zoomConn?.zoomEmail) {
+        userEmails.push(zoomConn.zoomEmail);
+        console.log('[ANALYTICS-ZOOM] Found Zoom email:', zoomConn.zoomEmail);
+      }
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      console.log('[ANALYTICS-WARN] Zoom connection error (non-fatal):', errorMessage);
     }
 
+    // Teams connection
     try {
       const [teamsConn] = await db
         .select({ msEmail: teamsConnections.msEmail })
         .from(teamsConnections)
         .where(eq(teamsConnections.userId, user.id))
         .limit(1);
-      if (teamsConn?.msEmail) userEmails.push(teamsConn.msEmail);
-    } catch (e) {
-      console.log('[ANALYTICS-WARN] Error fetching teams connection:', e);
+      if (teamsConn?.msEmail) {
+        userEmails.push(teamsConn.msEmail);
+        console.log('[ANALYTICS-TEAMS] Found Teams email:', teamsConn.msEmail);
+      }
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      console.log('[ANALYTICS-WARN] Teams connection error (non-fatal):', errorMessage);
     }
 
+    // Meet connection - table may not exist yet, completely optional
     try {
       const [meetConn] = await db
         .select({ googleEmail: meetConnections.googleEmail })
         .from(meetConnections)
         .where(eq(meetConnections.userId, user.id))
         .limit(1);
-      if (meetConn?.googleEmail) userEmails.push(meetConn.googleEmail);
-    } catch (e) {
-      console.log('[ANALYTICS-WARN] Error fetching meet connection:', e);
+      if (meetConn?.googleEmail) {
+        userEmails.push(meetConn.googleEmail);
+        console.log('[ANALYTICS-MEET] Found Meet email:', meetConn.googleEmail);
+      }
+    } catch (e: unknown) {
+      // This is expected if meet_connections table doesn't exist yet
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      if (errorMessage.includes('does not exist')) {
+        console.log('[ANALYTICS-MEET] Table not yet created (this is OK)');
+      } else {
+        console.log('[ANALYTICS-WARN] Meet connection error (non-fatal):', errorMessage);
+      }
     }
 
     const uniqueEmails = [...new Set(userEmails.map(e => e.toLowerCase()))];
