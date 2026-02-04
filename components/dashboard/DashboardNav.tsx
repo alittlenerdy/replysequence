@@ -84,19 +84,23 @@ export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
               tabIndex={isActive ? 0 : -1}
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
-                relative flex items-center gap-2 px-5 py-3.5 border-b-2 font-medium text-sm transition-all duration-200
+                relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-all duration-200
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
                 ${isActive
-                  ? 'border-blue-500 text-white light:text-blue-600 bg-blue-500/10 light:bg-blue-50'
-                  : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100'
+                  ? 'border-blue-500 text-white light:text-blue-600 bg-blue-500/10 light:bg-blue-50 font-semibold'
+                  : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100 font-medium'
                 }
               `}
             >
-              <Icon className="w-4 h-4" aria-hidden="true" />
+              <Icon
+                className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}
+                strokeWidth={isActive ? 2.25 : 2}
+                aria-hidden="true"
+              />
               <span>{tab.name}</span>
               {badge !== undefined && badge > 0 && (
                 <span
-                  className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full bg-blue-500 text-white"
+                  className="ml-2 inline-flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-bold rounded-full bg-red-500 text-white shadow-sm shadow-red-500/30"
                   aria-label={`${badge} pending drafts`}
                 >
                   {badge > 99 ? '99+' : badge}

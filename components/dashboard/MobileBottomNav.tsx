@@ -44,14 +44,15 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
               key={item.href}
               href={item.href}
               className={`
-                relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] transition-colors
+                relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] rounded-xl mx-1 transition-all duration-200
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset
                 ${isActive
-                  ? 'text-blue-500'
-                  : 'text-gray-400 light:text-gray-500 active:text-gray-200 light:active:text-gray-700'
+                  ? 'text-blue-500 bg-blue-500/10 light:bg-blue-50'
+                  : 'text-gray-400 light:text-gray-500 active:text-gray-200 light:active:text-gray-700 active:bg-white/5 light:active:bg-gray-100'
                 }
               `}
               aria-current={isActive ? 'page' : undefined}
+              aria-label={`Navigate to ${item.name}`}
             >
               <div className="relative">
                 <Icon
@@ -61,7 +62,7 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
                 />
                 {badge > 0 && (
                   <span
-                    className="absolute -top-1 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white px-1"
+                    className="absolute -top-1.5 -right-2.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white px-1 shadow-lg shadow-red-500/30 animate-pulse"
                     aria-label={`${badge} pending`}
                   >
                     {badge > 9 ? '9+' : badge}
