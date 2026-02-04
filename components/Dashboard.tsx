@@ -9,6 +9,7 @@ import { DashboardStats } from './DashboardStats';
 import { EmptyState } from './EmptyState';
 import { SkeletonStats } from './ui/SkeletonCard';
 import { SkeletonTable } from './ui/SkeletonTable';
+import { AnalyticsDashboard } from './dashboard/AnalyticsDashboard';
 
 interface DashboardProps {
   initialDrafts: DraftWithMeeting[];
@@ -208,6 +209,11 @@ export function Dashboard({
         ) : (
           <DashboardStats stats={stats} />
         )}
+
+        {/* Analytics Dashboard - Charts and Metrics */}
+        <div className="my-8">
+          <AnalyticsDashboard />
+        </div>
 
         {/* Filters */}
         <DashboardFilters
