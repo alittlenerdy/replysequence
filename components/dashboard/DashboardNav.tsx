@@ -14,8 +14,8 @@ interface Tab {
 const tabs: Tab[] = [
   { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-  { name: 'Pricing', href: '/pricing', icon: CreditCard },
 ];
 
 interface DashboardNavProps {

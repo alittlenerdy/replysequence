@@ -8,7 +8,7 @@ const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: fal
 const MobileMenu = dynamic(() => import('@/components/MobileMenu'), { ssr: false });
 
 export function Header() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
 
   return (
     <header className="fixed top-0 w-full z-50 bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
@@ -20,6 +20,13 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
+          <Link
+            href="/pricing"
+            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            Pricing
+          </Link>
+
           {isLoaded && isSignedIn && (
             <Link
               href="/dashboard"
@@ -55,14 +62,19 @@ export function Header() {
           )}
 
           {isLoaded && isSignedIn && (
-            <UserButton
-              afterSignOutUrl="/"
-              appearance={{
-                elements: {
-                  avatarBox: 'h-8 w-8',
-                },
-              }}
-            />
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-300 light:text-gray-600">
+                Hey, {user?.firstName || 'there'}!
+              </span>
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    avatarBox: 'h-8 w-8',
+                  },
+                }}
+              />
+            </div>
           )}
         </div>
 

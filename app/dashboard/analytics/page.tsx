@@ -46,10 +46,6 @@ async function AnalyticsContent() {
 
   return (
     <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics</h2>
-        <p className="text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>
-      </div>
       <AnalyticsDashboard />
     </DashboardShell>
   );
