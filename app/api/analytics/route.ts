@@ -69,75 +69,110 @@ function generateDateRange(days: number): string[] {
 }
 
 export async function GET() {
+  console.log('[ANALYTICS-1] Starting analytics request');
+
   const { userId: clerkUserId } = await auth();
 
   if (!clerkUserId) {
+    console.log('[ANALYTICS-ERROR] Not authenticated');
     return NextResponse.json(
       { error: 'Not authenticated' },
       { status: 401 }
     );
   }
 
+  // Default empty response
+  const emptyResponse: AnalyticsData = {
+    totalMeetings: 0,
+    emailsGenerated: 0,
+    emailsSent: 0,
+    timeSavedMinutes: 0,
+    dailyMeetings: generateDateRange(14).map(date => ({ date, count: 0 })),
+    dailyEmails: generateDateRange(14).map(date => ({ date, count: 0 })),
+    platformBreakdown: [],
+    emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
+  };
+
   try {
     // Find user by Clerk ID
+    console.log('[ANALYTICS-2] Finding user by clerkId:', clerkUserId);
     const [user] = await db
       .select({ id: users.id, email: users.email })
       .from(users)
       .where(eq(users.clerkId, clerkUserId))
       .limit(1);
 
-    // Default empty response
-    const emptyResponse: AnalyticsData = {
-      totalMeetings: 0,
-      emailsGenerated: 0,
-      emailsSent: 0,
-      timeSavedMinutes: 0,
-      dailyMeetings: generateDateRange(14).map(date => ({ date, count: 0 })),
-      dailyEmails: generateDateRange(14).map(date => ({ date, count: 0 })),
-      platformBreakdown: [],
-      emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
-    };
-
     if (!user) {
+      console.log('[ANALYTICS-3] No user found, returning empty response');
       return NextResponse.json<AnalyticsData>(emptyResponse);
     }
+    console.log('[ANALYTICS-4] User found:', user.id);
 
     // Collect all emails associated with this user
     const userEmails: string[] = [user.email];
 
-    // Get connected platform emails
-    const [zoomConn] = await db
-      .select({ zoomEmail: zoomConnections.zoomEmail })
-      .from(zoomConnections)
-      .where(eq(zoomConnections.userId, user.id))
-      .limit(1);
-    if (zoomConn?.zoomEmail) userEmails.push(zoomConn.zoomEmail);
+    // Get connected platform emails (with individual error handling)
+    try {
+      const [zoomConn] = await db
+        .select({ zoomEmail: zoomConnections.zoomEmail })
+        .from(zoomConnections)
+        .where(eq(zoomConnections.userId, user.id))
+        .limit(1);
+      if (zoomConn?.zoomEmail) userEmails.push(zoomConn.zoomEmail);
+    } catch (e) {
+      console.log('[ANALYTICS-WARN] Error fetching zoom connection:', e);
+    }
 
-    const [teamsConn] = await db
-      .select({ msEmail: teamsConnections.msEmail })
-      .from(teamsConnections)
-      .where(eq(teamsConnections.userId, user.id))
-      .limit(1);
-    if (teamsConn?.msEmail) userEmails.push(teamsConn.msEmail);
+    try {
+      const [teamsConn] = await db
+        .select({ msEmail: teamsConnections.msEmail })
+        .from(teamsConnections)
+        .where(eq(teamsConnections.userId, user.id))
+        .limit(1);
+      if (teamsConn?.msEmail) userEmails.push(teamsConn.msEmail);
+    } catch (e) {
+      console.log('[ANALYTICS-WARN] Error fetching teams connection:', e);
+    }
 
-    const [meetConn] = await db
-      .select({ googleEmail: meetConnections.googleEmail })
-      .from(meetConnections)
-      .where(eq(meetConnections.userId, user.id))
-      .limit(1);
-    if (meetConn?.googleEmail) userEmails.push(meetConn.googleEmail);
+    try {
+      const [meetConn] = await db
+        .select({ googleEmail: meetConnections.googleEmail })
+        .from(meetConnections)
+        .where(eq(meetConnections.userId, user.id))
+        .limit(1);
+      if (meetConn?.googleEmail) userEmails.push(meetConn.googleEmail);
+    } catch (e) {
+      console.log('[ANALYTICS-WARN] Error fetching meet connection:', e);
+    }
 
     const uniqueEmails = [...new Set(userEmails.map(e => e.toLowerCase()))];
+    console.log('[ANALYTICS-5] User emails:', uniqueEmails);
 
     // Get all user meetings with platform info
-    const userMeetings = await db
-      .select({
-        id: meetings.id,
-        platform: meetings.platform,
-        createdAt: meetings.createdAt,
-      })
-      .from(meetings)
-      .where(sql`LOWER(${meetings.hostEmail}) IN (${sql.join(uniqueEmails.map(e => sql`${e}`), sql`, `)})`);
+    // Use a safer query approach
+    let userMeetings: { id: string; platform: string | null; createdAt: Date | null }[] = [];
+
+    try {
+      // Build WHERE clause for multiple emails
+      const emailConditions = uniqueEmails.map(email =>
+        sql`LOWER(${meetings.hostEmail}) = ${email}`
+      );
+
+      userMeetings = await db
+        .select({
+          id: meetings.id,
+          platform: meetings.platform,
+          createdAt: meetings.createdAt,
+        })
+        .from(meetings)
+        .where(sql`(${sql.join(emailConditions, sql` OR `)})`);
+
+      console.log('[ANALYTICS-6] Meetings found:', userMeetings.length);
+    } catch (e) {
+      console.log('[ANALYTICS-WARN] Error fetching meetings:', e);
+      // Return empty response if meetings query fails
+      return NextResponse.json<AnalyticsData>(emptyResponse);
+    }
 
     const meetingIds = userMeetings.map(m => m.id);
     const totalMeetings = userMeetings.length;
@@ -179,28 +214,34 @@ export async function GET() {
     dateRange.forEach(d => { dailyEmailCounts[d] = 0; });
 
     if (meetingIds.length > 0) {
-      // Get all drafts for user's meetings
-      const userDrafts = await db
-        .select({
-          status: drafts.status,
-          createdAt: drafts.createdAt,
-        })
-        .from(drafts)
-        .where(inArray(drafts.meetingId, meetingIds));
+      try {
+        // Get all drafts for user's meetings
+        const userDrafts = await db
+          .select({
+            status: drafts.status,
+            createdAt: drafts.createdAt,
+          })
+          .from(drafts)
+          .where(inArray(drafts.meetingId, meetingIds));
 
-      emailsGenerated = userDrafts.length;
-      emailsSent = userDrafts.filter(d => d.status === 'sent').length;
-      emailsReady = userDrafts.filter(d => d.status === 'generated').length;
+        console.log('[ANALYTICS-7] Drafts found:', userDrafts.length);
 
-      // Daily email counts
-      userDrafts.forEach(d => {
-        if (d.createdAt) {
-          const dateStr = new Date(d.createdAt).toISOString().split('T')[0];
-          if (dailyEmailCounts[dateStr] !== undefined) {
-            dailyEmailCounts[dateStr]++;
+        emailsGenerated = userDrafts.length;
+        emailsSent = userDrafts.filter(d => d.status === 'sent').length;
+        emailsReady = userDrafts.filter(d => d.status === 'generated').length;
+
+        // Daily email counts
+        userDrafts.forEach(d => {
+          if (d.createdAt) {
+            const dateStr = new Date(d.createdAt).toISOString().split('T')[0];
+            if (dailyEmailCounts[dateStr] !== undefined) {
+              dailyEmailCounts[dateStr]++;
+            }
           }
-        }
-      });
+        });
+      } catch (e) {
+        console.log('[ANALYTICS-WARN] Error fetching drafts:', e);
+      }
     }
 
     const dailyEmails: DailyDataPoint[] = dateRange.map(date => ({
@@ -219,6 +260,8 @@ export async function GET() {
     // Time saved
     const timeSavedMinutes = emailsGenerated * MINUTES_PER_EMAIL;
 
+    console.log('[ANALYTICS-8] Returning analytics data');
+
     return NextResponse.json<AnalyticsData>({
       totalMeetings,
       emailsGenerated,
@@ -230,10 +273,17 @@ export async function GET() {
       emailFunnel,
     });
   } catch (error) {
-    console.error('[ANALYTICS] Error fetching analytics:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch analytics' },
-      { status: 500 }
-    );
+    console.error('[ANALYTICS-ERROR] Unexpected error:', error);
+    // Return empty data instead of error to prevent dashboard from breaking
+    return NextResponse.json<AnalyticsData>({
+      totalMeetings: 0,
+      emailsGenerated: 0,
+      emailsSent: 0,
+      timeSavedMinutes: 0,
+      dailyMeetings: generateDateRange(14).map(date => ({ date, count: 0 })),
+      dailyEmails: generateDateRange(14).map(date => ({ date, count: 0 })),
+      platformBreakdown: [],
+      emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
+    });
   }
 }

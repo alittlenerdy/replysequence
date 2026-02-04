@@ -31,7 +31,11 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
   const [disconnecting, setDisconnecting] = useState(false);
   const [disconnectingPlatform, setDisconnectingPlatform] = useState<string | null>(null);
-  const [showDashboard, setShowDashboard] = useState(false);
+  // Check if this is a fresh OAuth redirect (show Step 2) or returning user (show dashboard)
+  const isFreshOAuth = searchParams.get('zoom_connected') === 'true' ||
+                       searchParams.get('teams_connected') === 'true' ||
+                       searchParams.get('meet_connected') === 'true';
+  const [showDashboard, setShowDashboard] = useState(!isFreshOAuth);
   const previousConnected = useRef<boolean | null>(null);
   const hasCheckedUrlParams = useRef(false);
 
@@ -61,24 +65,19 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
           console.log('[ONBOARDING] Zoom OAuth success detected');
           setSuccessMessage('Zoom connected successfully!');
           setShowSuccessToast(true);
-          // Reset to show Step 2 page
-          setShowDashboard(false);
+          // showDashboard is already false from initialization for fresh OAuth
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         } else if (teamsConnectedParam === 'true' && result.platforms.teams) {
           console.log('[ONBOARDING] Teams OAuth success detected');
           setSuccessMessage('Microsoft Teams connected successfully!');
           setShowSuccessToast(true);
-          // Reset to show Step 2 page
-          setShowDashboard(false);
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         } else if (meetConnectedParam === 'true' && result.platforms.meet) {
           console.log('[ONBOARDING] Meet OAuth success detected');
           setSuccessMessage('Google Meet connected successfully!');
           setShowSuccessToast(true);
-          // Reset to show Step 2 page
-          setShowDashboard(false);
           // Clean up URL params
           window.history.replaceState({}, '', '/dashboard');
         }
