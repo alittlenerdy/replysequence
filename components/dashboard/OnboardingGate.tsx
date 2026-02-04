@@ -123,8 +123,12 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
     setConnectingPlatform(null);
   };
 
+  // Debug logging
+  console.log('[ONBOARDING-RENDER] State:', { checking, connected, platforms });
+
   // Show loading state
   if (checking) {
+    console.log('[ONBOARDING-RENDER] Showing loading state');
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
@@ -140,6 +144,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
 
   // Show gated state if not connected
   if (!connected) {
+    console.log('[ONBOARDING-RENDER] Showing integration cards (not connected)');
     return (
       <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
         {/* Animated background */}
@@ -330,6 +335,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   }
 
   // Connected: show the dashboard immediately
+  console.log('[ONBOARDING-RENDER] Showing dashboard (connected)');
   return (
     <>
       {children}
