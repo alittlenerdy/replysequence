@@ -67,7 +67,7 @@ export function ProcessingLogs({
       ref={containerRef}
       className={`
         overflow-y-auto overflow-x-hidden
-        bg-gray-900/50 rounded-lg border border-gray-800
+        bg-gray-900/50 light:bg-gray-50 rounded-lg border border-gray-800 light:border-gray-200
         font-mono text-xs
         ${className}
       `}
@@ -88,13 +88,13 @@ export function ProcessingLogs({
                 duration: 0.2,
                 ease: 'easeOut',
               }}
-              className="flex items-start gap-2 px-3 py-2 border-b border-gray-800/50 last:border-0"
+              className="flex items-start gap-2 px-3 py-2 border-b border-gray-800/50 light:border-gray-200/50 last:border-0"
             >
               <Icon className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${colorClass}`} />
-              <span className="text-gray-500 flex-shrink-0">{formatTime(log.timestamp)}</span>
-              <span className="text-gray-300 break-words">{log.message}</span>
+              <span className="text-gray-500 light:text-gray-400 flex-shrink-0">{formatTime(log.timestamp)}</span>
+              <span className="text-gray-300 light:text-gray-700 break-words">{log.message}</span>
               {log.duration_ms !== undefined && (
-                <span className="text-gray-600 ml-auto flex-shrink-0">
+                <span className="text-gray-600 light:text-gray-400 ml-auto flex-shrink-0">
                   {(log.duration_ms / 1000).toFixed(1)}s
                 </span>
               )}
@@ -104,7 +104,7 @@ export function ProcessingLogs({
       </AnimatePresence>
 
       {logs.length === 0 && (
-        <div className="px-3 py-4 text-center text-gray-600">
+        <div className="px-3 py-4 text-center text-gray-600 light:text-gray-400">
           Waiting for processing to start...
         </div>
       )}

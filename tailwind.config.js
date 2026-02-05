@@ -56,6 +56,12 @@ module.exports = {
         'bounce-slow': 'bounceSlow 3s ease-in-out infinite',
         'card-fade-in': 'cardFadeIn 0.5s ease-out forwards',
         'row-slide-in': 'rowSlideIn 0.3s ease-out forwards',
+        // Orbit animations for HeroAnimation - GPU accelerated
+        'orbit-slow': 'orbitSlow 30s linear infinite',
+        'orbit-reverse': 'orbitReverse 25s linear infinite',
+        'orbit-fast': 'orbitFast 20s linear infinite',
+        'orbit-counter': 'orbitCounter 25s linear infinite',
+        'glow-pulse': 'glowPulse 3s ease-in-out infinite',
       },
       keyframes: {
         floatOrb: {
@@ -99,6 +105,27 @@ module.exports = {
         rowSlideIn: {
           '0%': { opacity: '0', transform: 'translateX(-10px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        // Orbit keyframes - GPU accelerated with transform only
+        orbitSlow: {
+          '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
+          '100%': { transform: 'translate(-50%, -50%) rotate(360deg)' },
+        },
+        orbitReverse: {
+          '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
+          '100%': { transform: 'translate(-50%, -50%) rotate(-360deg)' },
+        },
+        orbitFast: {
+          '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
+          '100%': { transform: 'translate(-50%, -50%) rotate(360deg)' },
+        },
+        orbitCounter: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 0 60px rgba(139, 92, 246, 0.5), 0 0 120px rgba(59, 130, 246, 0.3)' },
+          '50%': { boxShadow: '0 0 100px rgba(139, 92, 246, 0.8), 0 0 200px rgba(59, 130, 246, 0.5)' },
         },
       },
     },

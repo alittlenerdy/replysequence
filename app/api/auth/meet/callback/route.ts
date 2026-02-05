@@ -223,7 +223,7 @@ export async function GET(request: NextRequest) {
           .update(userOnboarding)
           .set({
             platformConnected: 'meet',
-            currentStep: 3, // Move to calendar step
+            currentStep: 2, // Stay on platform step to show connected status
             updatedAt: new Date(),
           })
           .where(eq(userOnboarding.clerkId, clerkUserId));
@@ -231,7 +231,7 @@ export async function GET(request: NextRequest) {
         await db.insert(userOnboarding).values({
           clerkId: clerkUserId,
           platformConnected: 'meet',
-          currentStep: 3,
+          currentStep: 2, // Stay on platform step to show connected status
         });
       }
     }
@@ -255,7 +255,19 @@ export async function GET(request: NextRequest) {
 async function exchangeCodeForTokens(code: string): Promise<GoogleTokenResponse> {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/meet/callback`;
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  // CRITICAL: Remove trailing slash to match the redirect_uri used in the auth request
+  const baseUrl = rawAppUrl.replace(/\/+$/, '');
+  const redirectUri = `${baseUrl}/api/auth/meet/callback`;
+
+  console.log('[MEET-OAUTH-TOKEN-EXCHANGE] Starting token exchange:', {
+    hasClientId: !!clientId,
+    clientIdPrefix: clientId?.substring(0, 20) + '...',
+    hasClientSecret: !!clientSecret,
+    clientSecretLength: clientSecret?.length,
+    redirectUri,
+    codeLength: code?.length,
+  });
 
   if (!clientId || !clientSecret) {
     throw new Error('Missing Google OAuth credentials');
@@ -280,11 +292,25 @@ async function exchangeCodeForTokens(code: string): Promise<GoogleTokenResponse>
 
   if (!response.ok) {
     const errorText = await response.text();
+    // Parse error for better diagnosis
+    let errorDetails;
+    try {
+      errorDetails = JSON.parse(errorText);
+    } catch {
+      errorDetails = errorText;
+    }
+
     console.error('[MEET-OAUTH-CALLBACK-ERROR] Token exchange failed:', {
       status: response.status,
-      body: errorText,
+      statusText: response.statusText,
+      errorDetails,
+      // Common error causes:
+      // 401: Invalid client_id or client_secret
+      // 400 redirect_uri_mismatch: redirect_uri doesn't match Google Cloud Console
+      // 400 invalid_grant: Code expired or already used
+      redirectUriUsed: redirectUri,
     });
-    throw new Error(`Token exchange failed: ${response.status}`);
+    throw new Error(`Token exchange failed: ${response.status} - ${typeof errorDetails === 'object' ? errorDetails.error_description || errorDetails.error : errorDetails}`);
   }
 
   return response.json();

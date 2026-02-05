@@ -83,7 +83,16 @@ export async function GET(request: NextRequest) {
     redirectUri,
     scopes,
     fullUrlLength: googleAuthUrl.length,
+    // Debug: Log the full URL (helpful for debugging redirect_uri_mismatch errors)
+    googleAuthUrl: googleAuthUrl.substring(0, 200) + '...',
   });
+
+  // Important: The redirect_uri used here MUST exactly match what's configured in Google Cloud Console
+  // Common issues:
+  // 1. Trailing slash mismatch (https://app.com/callback vs https://app.com/callback/)
+  // 2. HTTP vs HTTPS mismatch
+  // 3. www vs non-www mismatch
+  console.log('[MEET-OAUTH-START-6] IMPORTANT - Verify this redirect_uri is in Google Cloud Console:', redirectUri);
 
   return NextResponse.redirect(googleAuthUrl);
 }

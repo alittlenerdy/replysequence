@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BarChart3, Mail, Calendar, Users, Zap, Settings } from 'lucide-react';
+import { BarChart3, Mail, Calendar, Users, Zap, Settings, ArrowRight, Check } from 'lucide-react';
 import { GradientText } from '@/components/ui/GradientText';
 
 interface BentoCardProps {
@@ -50,110 +50,229 @@ function BentoCard({ title, description, icon, className = '', children, delay =
   );
 }
 
-// Simulated Dashboard Preview
+// Animated Number Counter
+function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
+  return (
+    <motion.span
+      className="font-bold tabular-nums bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
+      animate={{ opacity: [0.7, 1, 0.7] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      {value}{suffix}
+    </motion.span>
+  );
+}
+
+// Simulated Dashboard Preview with animated stats
 function DashboardPreview() {
   return (
     <div className="w-full h-48 bg-gray-800/50 rounded-lg border border-gray-700 p-3 overflow-hidden">
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-purple-500" />
+          <motion.div
+            className="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-purple-500"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
           <div className="h-3 w-20 bg-gray-700 rounded" />
         </div>
-        <div className="h-6 w-16 bg-blue-500/20 rounded border border-blue-500/30" />
+        <motion.div
+          className="h-6 w-16 bg-blue-500/20 rounded border border-blue-500/30"
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
       </div>
 
-      {/* Stats row */}
+      {/* Stats row with animated counters */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {[
-          { value: '24', label: 'Meetings', color: 'blue' },
-          { value: '18', label: 'Drafts', color: 'purple' },
-          { value: '12', label: 'Sent', color: 'green' },
+          { value: 24, label: 'Meetings', color: 'blue' },
+          { value: 18, label: 'Drafts', color: 'purple' },
+          { value: 12, label: 'Sent', color: 'green' },
         ].map((stat, i) => (
           <motion.div
-            key={i}
+            key={stat.label}
             className="bg-gray-900/50 rounded-lg p-2 text-center"
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, delay: i * 0.2, repeat: Infinity }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
           >
-            <div className={`text-lg font-bold text-${stat.color}-400`}>{stat.value}</div>
+            <div className={`text-lg font-bold text-${stat.color}-400`}>
+              <AnimatedNumber value={stat.value} />
+            </div>
             <div className="text-[10px] text-gray-500">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
-      {/* List items */}
+      {/* List items with slide-in animation */}
       <div className="space-y-2">
         {[1, 2].map((i) => (
-          <div key={i} className="flex items-center gap-2 p-2 bg-gray-900/30 rounded-lg">
-            <div className="w-8 h-8 rounded bg-gray-700" />
+          <motion.div
+            key={i}
+            className="flex items-center gap-2 p-2 bg-gray-900/30 rounded-lg"
+            initial={{ x: -20, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 + i * 0.15 }}
+          >
+            <motion.div
+              className="w-8 h-8 rounded bg-gradient-to-br from-gray-600 to-gray-700"
+              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+            />
             <div className="flex-1">
               <div className="h-2 w-3/4 bg-gray-700 rounded mb-1" />
               <div className="h-2 w-1/2 bg-gray-700/50 rounded" />
             </div>
-          </div>
+            <motion.div
+              className="w-2 h-2 rounded-full bg-green-400"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+            />
+          </motion.div>
         ))}
       </div>
     </div>
   );
 }
 
-// Simulated Draft Editor Preview
+// Simulated Draft Editor Preview with typing animation
 function DraftEditorPreview() {
   return (
     <div className="w-full h-32 bg-gray-800/50 rounded-lg border border-gray-700 p-3">
       <div className="flex items-center gap-2 mb-2">
-        <Mail className="w-4 h-4 text-blue-400" />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <Mail className="w-4 h-4 text-blue-400" />
+        </motion.div>
         <div className="h-2 w-24 bg-gray-700 rounded" />
       </div>
       <div className="space-y-1.5">
-        <div className="h-2 w-full bg-gray-700/60 rounded" />
-        <div className="h-2 w-5/6 bg-gray-700/60 rounded" />
-        <div className="h-2 w-4/6 bg-gray-700/60 rounded" />
+        {[1, 0.83, 0.67].map((width, i) => (
+          <motion.div
+            key={i}
+            className="h-2 bg-gray-700/60 rounded"
+            style={{ width: `${width * 100}%` }}
+            initial={{ width: 0 }}
+            whileInView={{ width: `${width * 100}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+          />
+        ))}
       </div>
+      {/* Animated progress bar */}
       <motion.div
-        className="mt-3 h-2 w-1/4 bg-gradient-to-r from-blue-500 to-purple-500 rounded"
-        animate={{ width: ['25%', '40%', '25%'] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        className="mt-3 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded"
+        animate={{ width: ['25%', '60%', '25%'] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
     </div>
   );
 }
 
-// Simulated Meeting List Preview
+// Simulated Meeting List Preview with slide animations
 function MeetingListPreview() {
+  const meetings = [
+    { platform: 'Zoom', color: '#2D8CFF', time: '10:00 AM' },
+    { platform: 'Teams', color: '#5B5FC7', time: '2:30 PM' },
+    { platform: 'Meet', color: '#00897B', time: '4:00 PM' },
+  ];
+
   return (
     <div className="w-full h-32 bg-gray-800/50 rounded-lg border border-gray-700 p-2 space-y-2">
-      {[
-        { platform: 'Zoom', color: '#2D8CFF', time: '10:00 AM' },
-        { platform: 'Teams', color: '#5B5FC7', time: '2:30 PM' },
-        { platform: 'Meet', color: '#00897B', time: '4:00 PM' },
-      ].map((meeting, i) => (
+      {meetings.map((meeting, i) => (
         <motion.div
-          key={i}
+          key={meeting.platform}
           className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-900/50"
-          initial={{ x: -10, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: i * 0.2 }}
+          initial={{ x: -20, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.15 }}
+          whileHover={{ x: 4, backgroundColor: 'rgba(17, 24, 39, 0.8)' }}
         >
-          <div
+          <motion.div
             className="w-6 h-6 rounded flex items-center justify-center"
             style={{ backgroundColor: `${meeting.color}20` }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
           >
             <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: meeting.color }} />
-          </div>
+          </motion.div>
           <div className="flex-1">
             <div className="h-2 w-2/3 bg-gray-700 rounded" />
           </div>
-          <div className="text-[10px] text-gray-500">{meeting.time}</div>
+          <motion.div
+            className="text-[10px] text-gray-500"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+          >
+            {meeting.time}
+          </motion.div>
         </motion.div>
       ))}
     </div>
   );
 }
 
-// Animated Chart
+// CRM Preview with animated connections
+function CRMPreview() {
+  const platforms = [
+    { name: 'Airtable', color: '#18BFFF' },
+    { name: 'HubSpot', color: '#FF7A59' },
+    { name: 'Salesforce', color: '#00A1E0' },
+  ];
+
+  return (
+    <div className="w-full h-28 bg-gray-800/50 rounded-lg border border-gray-700 p-3">
+      <div className="flex items-center justify-between">
+        {platforms.map((platform, i) => (
+          <motion.div
+            key={platform.name}
+            className="flex flex-col items-center gap-1"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.15 }}
+          >
+            <motion.div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: `${platform.color}20` }}
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+            >
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: platform.color }}
+              />
+            </motion.div>
+            <span className="text-[9px] text-gray-500">{platform.name}</span>
+          </motion.div>
+        ))}
+      </div>
+      {/* Animated sync indicator */}
+      <motion.div
+        className="flex items-center justify-center gap-2 mt-3"
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+        >
+          <ArrowRight className="w-3 h-3 text-gray-500" />
+        </motion.div>
+        <span className="text-[10px] text-gray-500">Syncing...</span>
+      </motion.div>
+    </div>
+  );
+}
+
+// Animated Chart with growing bars
 function ChartPreview() {
   const bars = [40, 65, 45, 80, 55, 70, 60];
 
@@ -166,9 +285,53 @@ function ChartPreview() {
           initial={{ height: 0 }}
           whileInView={{ height: `${height}%` }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: i * 0.1 }}
+          transition={{ duration: 0.5, delay: i * 0.08 }}
+          whileHover={{ height: `${Math.min(height + 15, 100)}%`, transition: { duration: 0.2 } }}
         />
       ))}
+    </div>
+  );
+}
+
+// Settings Preview with animated toggles
+function SettingsPreview() {
+  return (
+    <div className="w-full h-28 bg-gray-800/50 rounded-lg border border-gray-700 p-3 space-y-2">
+      {['Tone: Professional', 'Auto-send: Off', 'Template: Default'].map((setting, i) => (
+        <motion.div
+          key={setting}
+          className="flex items-center justify-between"
+          initial={{ x: -10, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.1 }}
+        >
+          <span className="text-[10px] text-gray-400">{setting}</span>
+          <motion.div
+            className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600' : 'bg-blue-500'} flex items-center p-0.5`}
+            whileHover={{ scale: 1.1 }}
+          >
+            <motion.div
+              className="w-3 h-3 rounded-full bg-white"
+              animate={{ x: i === 1 ? 0 : 12 }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
+        </motion.div>
+      ))}
+      {/* Color swatches */}
+      <div className="flex gap-1 mt-2">
+        {['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'].map((color, i) => (
+          <motion.div
+            key={color}
+            className="w-4 h-4 rounded-full border-2 border-transparent"
+            style={{ backgroundColor: color }}
+            whileHover={{ scale: 1.2, borderColor: 'white' }}
+            animate={i === 0 ? { scale: [1, 1.2, 1] } : {}}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -229,7 +392,9 @@ export function BentoGrid() {
             description="Airtable, HubSpot, Salesforce integrations coming soon"
             icon={<Users className="w-6 h-6 text-emerald-400" />}
             delay={0.3}
-          />
+          >
+            <CRMPreview />
+          </BentoCard>
 
           {/* Analytics */}
           <BentoCard
@@ -247,7 +412,9 @@ export function BentoGrid() {
             description="Set your tone, templates, and preferences"
             icon={<Settings className="w-6 h-6 text-orange-400" />}
             delay={0.5}
-          />
+          >
+            <SettingsPreview />
+          </BentoCard>
         </div>
       </div>
     </section>

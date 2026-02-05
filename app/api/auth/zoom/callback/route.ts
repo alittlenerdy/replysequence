@@ -198,7 +198,7 @@ export async function GET(request: NextRequest) {
           .update(userOnboarding)
           .set({
             platformConnected: 'zoom',
-            currentStep: 3, // Move to calendar step
+            currentStep: 2, // Stay on platform step to show connected status
             updatedAt: new Date(),
           })
           .where(eq(userOnboarding.clerkId, clerkUserId));
@@ -206,7 +206,7 @@ export async function GET(request: NextRequest) {
         await db.insert(userOnboarding).values({
           clerkId: clerkUserId,
           platformConnected: 'zoom',
-          currentStep: 3,
+          currentStep: 2, // Stay on platform step to show connected status
         });
       }
     }

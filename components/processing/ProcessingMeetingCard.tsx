@@ -35,14 +35,14 @@ export function ProcessingMeetingCard({
 
   if (isLoading || !data) {
     return (
-      <div className="animate-pulse bg-gray-900/50 rounded-xl p-6 border border-gray-800/50">
-        <div className="h-6 w-48 bg-gray-800 rounded mb-4" />
-        <div className="h-2 w-full bg-gray-800 rounded mb-6" />
+      <div className="animate-pulse bg-gray-900/50 light:bg-white rounded-xl p-6 border border-gray-800/50 light:border-gray-200">
+        <div className="h-6 w-48 bg-gray-800 light:bg-gray-200 rounded mb-4" />
+        <div className="h-2 w-full bg-gray-800 light:bg-gray-200 rounded mb-6" />
         <div className="flex gap-8">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex flex-col items-center gap-2">
-              <div className="h-8 w-8 bg-gray-800 rounded-full" />
-              <div className="h-3 w-12 bg-gray-800 rounded" />
+              <div className="h-8 w-8 bg-gray-800 light:bg-gray-200 rounded-full" />
+              <div className="h-3 w-12 bg-gray-800 light:bg-gray-200 rounded" />
             </div>
           ))}
         </div>

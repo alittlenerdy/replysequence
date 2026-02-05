@@ -51,8 +51,8 @@ export function ProcessingAnimation({
       transition={{ duration: 0.3 }}
       className={`
         relative overflow-hidden rounded-xl
-        bg-gradient-to-br from-gray-900/80 to-gray-950/80
-        border border-gray-800/50
+        bg-gradient-to-br from-gray-900/80 to-gray-950/80 light:from-white light:to-gray-50
+        border border-gray-800/50 light:border-gray-200
         backdrop-blur-sm
         ${className}
       `}
@@ -95,14 +95,14 @@ export function ProcessingAnimation({
               )}
             </div>
             <div>
-              <h3 className="font-semibold text-white">
+              <h3 className="font-semibold text-white light:text-gray-900">
                 {isComplete
                   ? 'Processing Complete'
                   : isFailed
                   ? 'Processing Failed'
                   : 'Processing Meeting'}
               </h3>
-              <p className="text-sm text-gray-400 truncate max-w-[200px]">
+              <p className="text-sm text-gray-400 light:text-gray-500 truncate max-w-[200px]">
                 {status.topic || 'Meeting'}
               </p>
             </div>
@@ -113,7 +113,7 @@ export function ProcessingAnimation({
             {isProcessing && (
               <>
                 <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
-                <span className="text-sm text-gray-400">{formatElapsed(elapsedTime)}</span>
+                <span className="text-sm text-gray-400 light:text-gray-500">{formatElapsed(elapsedTime)}</span>
               </>
             )}
             {isComplete && (
@@ -132,12 +132,12 @@ export function ProcessingAnimation({
         {/* Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-400">Progress</span>
-            <span className="text-sm font-mono text-gray-300">
+            <span className="text-sm text-gray-400 light:text-gray-500">Progress</span>
+            <span className="text-sm font-mono text-gray-300 light:text-gray-600">
               {status.processingProgress}%
             </span>
           </div>
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
             <motion.div
               className={`
                 h-full rounded-full

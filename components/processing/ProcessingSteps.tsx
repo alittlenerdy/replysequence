@@ -58,7 +58,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                       ? 'bg-purple-500/20 border-2 border-purple-500'
                       : isFailed && step.step === 'completed'
                       ? 'bg-red-500/20 border-2 border-red-500'
-                      : 'bg-gray-800/50 border-2 border-gray-600'
+                      : 'bg-gray-800/50 light:bg-gray-100 border-2 border-gray-600 light:border-gray-300'
                   }
                 `}
                 initial={false}
