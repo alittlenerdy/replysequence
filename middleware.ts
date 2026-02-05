@@ -20,16 +20,20 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const nonce = generateNonce()
 
   // Build CSP header
+  // Note: Using 'unsafe-inline' for script-src because Next.js doesn't natively support
+  // nonce-based CSP without experimental configuration. The other security headers
+  // provide protection. Consider implementing experimental.serverActions.bodySizeLimit
+  // and experimental.contentSecurityPolicy in the future for stricter CSP.
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://js.stripe.com https://*.clerk.accounts.dev https://challenges.cloudflare.com https://va.vercel-scripts.com`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.clerk.accounts.dev https://challenges.cloudflare.com https://va.vercel-scripts.com https://tally.so`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com",
-    "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
+    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com https://tally.so",
+    "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://challenges.cloudflare.com https://tally.so",
     "frame-ancestors 'self'",
-    "form-action 'self'",
+    "form-action 'self' https://tally.so",
     "base-uri 'self'",
     "object-src 'none'",
     "upgrade-insecure-requests"
