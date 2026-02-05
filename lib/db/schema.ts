@@ -504,3 +504,56 @@ export type MeetConnection = typeof meetConnections.$inferSelect;
 export type NewMeetConnection = typeof meetConnections.$inferInsert;
 export type UsageLog = typeof usageLogs.$inferSelect;
 export type NewUsageLog = typeof usageLogs.$inferInsert;
+
+// Onboarding step type
+export type OnboardingStep = 1 | 2 | 3 | 4 | 5;
+
+// Email preference type
+export type EmailPreference = 'review' | 'auto_send';
+
+// Platform type for onboarding
+export type ConnectedPlatform = 'zoom' | 'teams' | 'meet' | null;
+
+// User onboarding table - tracks onboarding progress
+export const userOnboarding = pgTable(
+  'user_onboarding',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clerkId: varchar('clerk_id', { length: 255 }).notNull().unique(),
+    currentStep: integer('current_step').$type<OnboardingStep>().notNull().default(1),
+    platformConnected: varchar('platform_connected', { length: 50 }).$type<ConnectedPlatform>(),
+    calendarConnected: boolean('calendar_connected').notNull().default(false),
+    draftGenerated: boolean('draft_generated').notNull().default(false),
+    emailPreference: varchar('email_preference', { length: 20 }).$type<EmailPreference>().default('review'),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('user_onboarding_clerk_id_idx').on(table.clerkId),
+    index('user_onboarding_completed_at_idx').on(table.completedAt),
+  ]
+);
+
+// Onboarding events table - tracks analytics events
+export const onboardingEvents = pgTable(
+  'onboarding_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clerkId: varchar('clerk_id', { length: 255 }).notNull(),
+    eventType: varchar('event_type', { length: 50 }).notNull(),
+    stepNumber: integer('step_number'),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('onboarding_events_clerk_id_idx').on(table.clerkId),
+    index('onboarding_events_event_type_idx').on(table.eventType),
+    index('onboarding_events_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type UserOnboarding = typeof userOnboarding.$inferSelect;
+export type NewUserOnboarding = typeof userOnboarding.$inferInsert;
+export type OnboardingEvent = typeof onboardingEvents.$inferSelect;
+export type NewOnboardingEvent = typeof onboardingEvents.$inferInsert;
