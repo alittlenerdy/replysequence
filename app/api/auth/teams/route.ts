@@ -4,10 +4,14 @@
  */
 
 import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   console.log('[TEAMS-OAUTH] Route handler called');
+
+  // Get redirect parameter for returning to onboarding or dashboard
+  const searchParams = request.nextUrl.searchParams;
+  const returnTo = searchParams.get('redirect') || '/dashboard?teams_connected=true';
 
   // Debug environment variables
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
@@ -47,6 +51,7 @@ export async function GET() {
     baseUrl,
     redirectUri,
     tenantId,
+    returnTo,
   });
 
   // Microsoft Graph API scopes for Teams meeting transcripts
@@ -60,15 +65,18 @@ export async function GET() {
     'OnlineMeetingTranscript.Read.All',
   ].join(' ');
 
+  // Encode returnTo in state along with userId for CSRF protection
+  const statePayload = JSON.stringify({ userId, returnTo });
+  const state = Buffer.from(statePayload).toString('base64');
+
   // Build Microsoft OAuth URL
-  // Using userId as state parameter for CSRF protection and user identification
   const params = new URLSearchParams({
     client_id: clientId,
     response_type: 'code',
     redirect_uri: redirectUri,
     response_mode: 'query',
     scope: scopes,
-    state: userId, // Pass Clerk userId to callback
+    state, // Encoded userId + returnTo
   });
 
   // Use 'common' for multi-tenant or specific tenant ID for single-tenant

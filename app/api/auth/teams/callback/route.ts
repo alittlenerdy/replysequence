@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, users, teamsConnections } from '@/lib/db';
+import { db, users, teamsConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 interface MicrosoftTokenResponse {
@@ -59,10 +59,26 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/sign-in', baseUrl));
   }
 
-  if (state !== clerkUserId) {
+  // Decode state - can be either simple userId or JSON payload with returnTo
+  let stateUserId: string;
+  let returnTo = '/dashboard?teams_connected=true';
+
+  try {
+    const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
+    const parsed = JSON.parse(decoded);
+    stateUserId = parsed.userId;
+    returnTo = parsed.returnTo || returnTo;
+    console.log('[TEAMS-CALLBACK] Decoded state:', { stateUserId, returnTo });
+  } catch {
+    // Fallback for old format where state was just the userId
+    stateUserId = state || '';
+    console.log('[TEAMS-CALLBACK] Using legacy state format:', { stateUserId });
+  }
+
+  if (stateUserId !== clerkUserId) {
     console.error('[TEAMS-CALLBACK] State mismatch - potential CSRF attack', {
       expected: clerkUserId,
-      received: state,
+      received: stateUserId,
     });
     return NextResponse.redirect(new URL('/dashboard?error=invalid_state', baseUrl));
   }
@@ -180,14 +196,42 @@ export async function GET(request: NextRequest) {
       teamsConnected: verifyUser?.teamsConnected,
     });
 
+    // Update user_onboarding table if this is an onboarding flow
+    if (returnTo.includes('/onboarding')) {
+      console.log('[TEAMS-CALLBACK] Updating user_onboarding with platform_connected=teams');
+
+      // Check if record exists
+      const existingOnboarding = await db.query.userOnboarding.findFirst({
+        where: eq(userOnboarding.clerkId, clerkUserId),
+      });
+
+      if (existingOnboarding) {
+        await db
+          .update(userOnboarding)
+          .set({
+            platformConnected: 'teams',
+            currentStep: 3, // Move to calendar step
+            updatedAt: new Date(),
+          })
+          .where(eq(userOnboarding.clerkId, clerkUserId));
+      } else {
+        await db.insert(userOnboarding).values({
+          clerkId: clerkUserId,
+          platformConnected: 'teams',
+          currentStep: 3,
+        });
+      }
+    }
+
     console.log('[TEAMS-CALLBACK] OAuth flow completed successfully', {
       clerkUserId,
       msUserId: msUser.id,
       userTeamsConnected: verifyUser?.teamsConnected,
+      returnTo,
     });
 
-    // Redirect to dashboard with success
-    return NextResponse.redirect(new URL('/dashboard?teams_connected=true', baseUrl));
+    // Redirect to the return URL
+    return NextResponse.redirect(new URL(returnTo, baseUrl));
   } catch (error) {
     console.error('[TEAMS-CALLBACK] Error processing OAuth callback:', error);
     return NextResponse.redirect(

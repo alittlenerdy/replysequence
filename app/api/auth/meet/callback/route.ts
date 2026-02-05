@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, users, meetConnections } from '@/lib/db';
+import { db, users, meetConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 interface GoogleTokenResponse {
@@ -66,10 +66,26 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/sign-in', baseUrl));
   }
 
-  if (state !== clerkUserId) {
+  // Decode state - can be either simple userId or JSON payload with returnTo
+  let stateUserId: string;
+  let returnTo = '/dashboard?meet_connected=true';
+
+  try {
+    const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
+    const parsed = JSON.parse(decoded);
+    stateUserId = parsed.userId;
+    returnTo = parsed.returnTo || returnTo;
+    console.log('[MEET-OAUTH-CALLBACK] Decoded state:', { stateUserId, returnTo });
+  } catch {
+    // Fallback for old format where state was just the userId
+    stateUserId = state || '';
+    console.log('[MEET-OAUTH-CALLBACK] Using legacy state format:', { stateUserId });
+  }
+
+  if (stateUserId !== clerkUserId) {
     console.error('[MEET-OAUTH-CALLBACK-ERROR] State mismatch - potential CSRF attack', {
       expected: clerkUserId,
-      received: state,
+      received: stateUserId,
     });
     return NextResponse.redirect(new URL('/dashboard?error=invalid_state', baseUrl));
   }
@@ -193,13 +209,41 @@ export async function GET(request: NextRequest) {
       })
       .where(eq(users.id, user.id));
 
+    // Update user_onboarding table if this is an onboarding flow
+    if (returnTo.includes('/onboarding')) {
+      console.log('[MEET-OAUTH-CALLBACK] Updating user_onboarding with platform_connected=meet');
+
+      // Check if record exists
+      const existingOnboarding = await db.query.userOnboarding.findFirst({
+        where: eq(userOnboarding.clerkId, clerkUserId),
+      });
+
+      if (existingOnboarding) {
+        await db
+          .update(userOnboarding)
+          .set({
+            platformConnected: 'meet',
+            currentStep: 3, // Move to calendar step
+            updatedAt: new Date(),
+          })
+          .where(eq(userOnboarding.clerkId, clerkUserId));
+      } else {
+        await db.insert(userOnboarding).values({
+          clerkId: clerkUserId,
+          platformConnected: 'meet',
+          currentStep: 3,
+        });
+      }
+    }
+
     console.log('[MEET-OAUTH-CALLBACK-11] OAuth flow completed successfully', {
       clerkUserId,
       googleUserId: googleUser.id,
+      returnTo,
     });
 
-    // Redirect to dashboard with success
-    return NextResponse.redirect(new URL('/dashboard?meet_connected=true', baseUrl));
+    // Redirect to the return URL
+    return NextResponse.redirect(new URL(returnTo, baseUrl));
   } catch (error) {
     console.error('[MEET-OAUTH-CALLBACK-ERROR] Error processing OAuth callback:', error);
     return NextResponse.redirect(

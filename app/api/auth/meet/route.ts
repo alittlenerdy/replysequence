@@ -4,10 +4,14 @@
  */
 
 import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   console.log('[MEET-OAUTH-START-1] Route handler called');
+
+  // Get redirect parameter for returning to onboarding or dashboard
+  const searchParams = request.nextUrl.searchParams;
+  const returnTo = searchParams.get('redirect') || '/dashboard?meet_connected=true';
 
   // Debug environment variables
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
@@ -44,6 +48,7 @@ export async function GET() {
     rawAppUrl,
     baseUrl,
     redirectUri,
+    returnTo,
   });
 
   // Google OAuth 2.0 scopes for Meet transcripts
@@ -56,8 +61,11 @@ export async function GET() {
     'https://www.googleapis.com/auth/meetings.space.readonly',
   ].join(' ');
 
+  // Encode returnTo in state along with userId for CSRF protection
+  const statePayload = JSON.stringify({ userId, returnTo });
+  const state = Buffer.from(statePayload).toString('base64');
+
   // Build Google OAuth URL
-  // Using userId as state parameter for CSRF protection and user identification
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
@@ -65,7 +73,7 @@ export async function GET() {
     scope: scopes,
     access_type: 'offline', // Get refresh token
     prompt: 'consent', // Force consent screen to get refresh token every time
-    state: userId, // Pass Clerk userId to callback
+    state, // Encoded userId + returnTo
   });
 
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;

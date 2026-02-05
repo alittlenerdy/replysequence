@@ -4,10 +4,14 @@
  */
 
 import { auth } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   console.log('[ZOOM-OAUTH] Route handler called');
+
+  // Get redirect parameter for returning to onboarding or dashboard
+  const searchParams = request.nextUrl.searchParams;
+  const returnTo = searchParams.get('redirect') || '/dashboard?zoom_connected=true';
 
   // Debug environment variables
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
@@ -19,7 +23,7 @@ export async function GET() {
     hasClientSecret: !!process.env.ZOOM_CLIENT_SECRET,
     hasAppUrl: !!rawAppUrl,
     rawAppUrl,
-    hasTrailingSlash: rawAppUrl.endsWith('/'),
+    returnTo,
   });
 
   const { userId } = await auth();
@@ -41,21 +45,25 @@ export async function GET() {
   const baseUrl = rawAppUrl.replace(/\/+$/, '');
   const redirectUri = `${baseUrl}/api/auth/zoom/callback`;
 
+  // Encode returnTo in state along with userId for CSRF protection
+  // Format: userId|returnTo (base64 encoded)
+  const statePayload = JSON.stringify({ userId, returnTo });
+  const state = Buffer.from(statePayload).toString('base64');
+
   console.log('[ZOOM-OAUTH] URL construction:', {
     rawAppUrl,
     baseUrl,
     redirectUri,
+    returnTo,
     expectedInZoom: 'https://replysequence.vercel.app/api/auth/zoom/callback',
-    urlsMatch: redirectUri === 'https://replysequence.vercel.app/api/auth/zoom/callback',
   });
 
   // Build Zoom OAuth URL
-  // Using userId as state parameter for CSRF protection and user identification
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: clientId,
     redirect_uri: redirectUri,
-    state: userId, // Pass Clerk userId to callback
+    state, // Encoded userId + returnTo
   });
 
   const zoomAuthUrl = `https://zoom.us/oauth/authorize?${params.toString()}`;
@@ -63,8 +71,6 @@ export async function GET() {
   console.log('[ZOOM-OAUTH] Final authorization URL:', {
     userId,
     redirectUri,
-    encodedRedirectUri: encodeURIComponent(redirectUri),
-    fullUrl: zoomAuthUrl,
   });
 
   return NextResponse.redirect(zoomAuthUrl);
