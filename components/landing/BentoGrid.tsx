@@ -21,7 +21,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className={`group relative rounded-2xl bg-gray-900/50 border border-gray-700 overflow-hidden transition-all duration-300 hover:border-gray-600 ${className}`}
+      className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700 light:border-gray-200 overflow-hidden transition-all duration-300 hover:border-gray-600 light:hover:border-gray-300 light:shadow-lg ${className}`}
     >
       {/* Gradient border on hover */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -29,7 +29,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       {/* Content */}
       <div className="relative p-6 h-full flex flex-col">
         {icon && (
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 border border-gray-700">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
             {icon}
           </div>
         )}
@@ -40,8 +40,8 @@ function BentoCard({ title, description, icon, className = '', children, delay =
           </div>
         )}
 
-        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-        <p className="text-sm text-gray-400">{description}</p>
+        <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{title}</h3>
+        <p className="text-sm text-gray-400 light:text-gray-600">{description}</p>
       </div>
 
       {/* Glow effect */}
@@ -63,10 +63,16 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
   );
 }
 
-// Simulated Dashboard Preview with animated stats
+// Simulated Dashboard Preview with animated stats and email list
 function DashboardPreview() {
+  const emails = [
+    { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
+    { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
+    { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
+  ];
+
   return (
-    <div className="w-full h-48 bg-gray-800/50 rounded-lg border border-gray-700 p-3 overflow-hidden">
+    <div className="w-full h-48 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -75,7 +81,7 @@ function DashboardPreview() {
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
-          <div className="h-3 w-20 bg-gray-700 rounded" />
+          <div className="h-3 w-20 bg-gray-700 light:bg-gray-200 rounded" />
         </div>
         <motion.div
           className="h-6 w-16 bg-blue-500/20 rounded border border-blue-500/30"
@@ -84,51 +90,57 @@ function DashboardPreview() {
         />
       </div>
 
-      {/* Stats row with animated counters */}
+      {/* Stats row with gradient animated counters */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {[
-          { value: 24, label: 'Meetings', color: 'blue' },
-          { value: 18, label: 'Drafts', color: 'purple' },
-          { value: 12, label: 'Sent', color: 'green' },
+          { value: 24, label: 'Meetings' },
+          { value: 18, label: 'Drafts' },
+          { value: 12, label: 'Sent' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
-            className="bg-gray-900/50 rounded-lg p-2 text-center"
+            className="bg-gray-900/50 light:bg-gray-100 rounded-lg p-2 text-center"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
           >
-            <div className={`text-lg font-bold text-${stat.color}-400`}>
+            <div className="text-lg font-bold">
               <AnimatedNumber value={stat.value} />
             </div>
-            <div className="text-[10px] text-gray-500">{stat.label}</div>
+            <div className="text-[10px] text-gray-500 light:text-gray-600">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
-      {/* List items with slide-in animation */}
-      <div className="space-y-2">
-        {[1, 2].map((i) => (
+      {/* Email list with contact names */}
+      <div className="space-y-1.5">
+        {emails.map((email, i) => (
           <motion.div
-            key={i}
-            className="flex items-center gap-2 p-2 bg-gray-900/30 rounded-lg"
+            key={email.name}
+            className="flex items-center gap-2 p-1.5 bg-gray-900/30 light:bg-gray-100/80 rounded-lg"
             initial={{ x: -20, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 + i * 0.15 }}
+            transition={{ delay: 0.3 + i * 0.1 }}
           >
+            {/* Avatar with initials */}
             <motion.div
-              className="w-8 h-8 rounded bg-gradient-to-br from-gray-600 to-gray-700"
-              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[10px] font-medium text-white"
+              animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-            />
-            <div className="flex-1">
-              <div className="h-2 w-3/4 bg-gray-700 rounded mb-1" />
-              <div className="h-2 w-1/2 bg-gray-700/50 rounded" />
+            >
+              {email.name.split(' ').map(n => n[0]).join('')}
+            </motion.div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">{email.name}</div>
+              <div className="text-[9px] text-gray-500 truncate">{email.subject}</div>
             </div>
             <motion.div
-              className="w-2 h-2 rounded-full bg-green-400"
+              className={`w-2 h-2 rounded-full ${
+                email.status === 'sent' ? 'bg-green-400' :
+                email.status === 'draft' ? 'bg-yellow-400' : 'bg-blue-400'
+              }`}
               animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
             />
@@ -142,7 +154,7 @@ function DashboardPreview() {
 // Simulated Draft Editor Preview with typing animation
 function DraftEditorPreview() {
   return (
-    <div className="w-full h-32 bg-gray-800/50 rounded-lg border border-gray-700 p-3">
+    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3">
       <div className="flex items-center gap-2 mb-2">
         <motion.div
           animate={{ scale: [1, 1.1, 1] }}
@@ -150,13 +162,13 @@ function DraftEditorPreview() {
         >
           <Mail className="w-4 h-4 text-blue-400" />
         </motion.div>
-        <div className="h-2 w-24 bg-gray-700 rounded" />
+        <div className="h-2 w-24 bg-gray-700 light:bg-gray-200 rounded" />
       </div>
       <div className="space-y-1.5">
         {[1, 0.83, 0.67].map((width, i) => (
           <motion.div
             key={i}
-            className="h-2 bg-gray-700/60 rounded"
+            className="h-2 bg-gray-700/60 light:bg-gray-300/60 rounded"
             style={{ width: `${width * 100}%` }}
             initial={{ width: 0 }}
             whileInView={{ width: `${width * 100}%` }}
@@ -184,11 +196,11 @@ function MeetingListPreview() {
   ];
 
   return (
-    <div className="w-full h-32 bg-gray-800/50 rounded-lg border border-gray-700 p-2 space-y-2">
+    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-2 space-y-2">
       {meetings.map((meeting, i) => (
         <motion.div
           key={meeting.platform}
-          className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-900/50"
+          className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-900/50 light:bg-gray-100"
           initial={{ x: -20, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true }}
@@ -204,10 +216,10 @@ function MeetingListPreview() {
             <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: meeting.color }} />
           </motion.div>
           <div className="flex-1">
-            <div className="h-2 w-2/3 bg-gray-700 rounded" />
+            <div className="h-2 w-2/3 bg-gray-700 light:bg-gray-300 rounded" />
           </div>
           <motion.div
-            className="text-[10px] text-gray-500"
+            className="text-[10px] text-gray-500 light:text-gray-600"
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
           >
@@ -228,7 +240,7 @@ function CRMPreview() {
   ];
 
   return (
-    <div className="w-full h-28 bg-gray-800/50 rounded-lg border border-gray-700 p-3">
+    <div className="w-full h-28 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3">
       <div className="flex items-center justify-between">
         {platforms.map((platform, i) => (
           <motion.div
@@ -250,7 +262,7 @@ function CRMPreview() {
                 style={{ backgroundColor: platform.color }}
               />
             </motion.div>
-            <span className="text-[9px] text-gray-500">{platform.name}</span>
+            <span className="text-[9px] text-gray-500 light:text-gray-600">{platform.name}</span>
           </motion.div>
         ))}
       </div>
@@ -264,9 +276,9 @@ function CRMPreview() {
           animate={{ rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
         >
-          <ArrowRight className="w-3 h-3 text-gray-500" />
+          <ArrowRight className="w-3 h-3 text-gray-500 light:text-gray-600" />
         </motion.div>
-        <span className="text-[10px] text-gray-500">Syncing...</span>
+        <span className="text-[10px] text-gray-500 light:text-gray-600">Syncing...</span>
       </motion.div>
     </div>
   );
@@ -296,7 +308,7 @@ function ChartPreview() {
 // Settings Preview with animated toggles
 function SettingsPreview() {
   return (
-    <div className="w-full h-28 bg-gray-800/50 rounded-lg border border-gray-700 p-3 space-y-2">
+    <div className="w-full h-28 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 space-y-2">
       {['Tone: Professional', 'Auto-send: Off', 'Template: Default'].map((setting, i) => (
         <motion.div
           key={setting}
@@ -306,13 +318,13 @@ function SettingsPreview() {
           viewport={{ once: true }}
           transition={{ delay: i * 0.1 }}
         >
-          <span className="text-[10px] text-gray-400">{setting}</span>
+          <span className="text-[10px] text-gray-400 light:text-gray-600">{setting}</span>
           <motion.div
-            className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600' : 'bg-blue-500'} flex items-center p-0.5`}
+            className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600 light:bg-gray-300' : 'bg-blue-500'} flex items-center p-0.5`}
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              className="w-3 h-3 rounded-full bg-white"
+              className="w-3 h-3 rounded-full bg-white light:bg-gray-100"
               animate={{ x: i === 1 ? 0 : 12 }}
               transition={{ duration: 0.3 }}
             />
@@ -347,10 +359,10 @@ export function BentoGrid() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
             Your <GradientText>Follow-up Command Center</GradientText>
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
             Everything you need to automate your post-meeting workflow
           </p>
         </motion.div>

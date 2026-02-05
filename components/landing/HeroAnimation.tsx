@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState, useMemo } from 'react';
-import { Zap, CheckCircle2, Mail, BarChart3, FileText } from 'lucide-react';
+import { Video, Users, Calendar, Mail, Database, Sparkles, MessageSquare, FileText } from 'lucide-react';
 
 export function HeroAnimation() {
   const [mounted, setMounted] = useState(false);
@@ -20,13 +20,24 @@ export function HeroAnimation() {
     })),
   []);
 
-  // Orbiting icons configuration - Lucide icons instead of emojis
-  const orbitingIcons = useMemo(() => [
-    { Icon: Mail, angle: 0, color: 'from-blue-500 to-blue-600' },
-    { Icon: FileText, angle: 72, color: 'from-purple-500 to-purple-600' },
-    { Icon: BarChart3, angle: 144, color: 'from-pink-500 to-pink-600' },
-    { Icon: Zap, angle: 216, color: 'from-cyan-500 to-cyan-600' },
-    { Icon: CheckCircle2, angle: 288, color: 'from-emerald-500 to-emerald-600' },
+  // Outer ring icons (largest orbit) - Video platforms
+  const outerRingIcons = useMemo(() => [
+    { Icon: Video, angle: 0, color: '#2D8CFF', label: 'Zoom' },           // Zoom blue
+    { Icon: Users, angle: 120, color: '#5B5FC7', label: 'Teams' },        // Teams purple
+    { Icon: MessageSquare, angle: 240, color: '#00897B', label: 'Meet' }, // Meet teal
+  ], []);
+
+  // Middle ring icons - Core features
+  const middleRingIcons = useMemo(() => [
+    { Icon: Mail, angle: 45, color: '#EA4335', label: 'Email' },          // Email red
+    { Icon: Calendar, angle: 165, color: '#4285F4', label: 'Calendar' },  // Calendar blue
+    { Icon: Database, angle: 285, color: '#FF7A59', label: 'CRM' },       // HubSpot orange
+  ], []);
+
+  // Inner ring icons - AI/Docs
+  const innerRingIcons = useMemo(() => [
+    { Icon: Sparkles, angle: 90, color: '#8B5CF6', label: 'AI' },         // AI purple
+    { Icon: FileText, angle: 270, color: '#10B981', label: 'Docs' },      // Docs green
   ], []);
 
   if (!mounted) return null;
@@ -41,7 +52,7 @@ export function HeroAnimation() {
         transition={{ duration: 1, delay: 0.5 }}
       >
         <div className="relative" style={{ willChange: 'transform' }}>
-          {/* Outer ring */}
+          {/* Outer ring - Video platforms */}
           <div
             className="absolute rounded-full border-2 border-blue-500/30 animate-orbit-slow"
             style={{
@@ -53,23 +64,37 @@ export function HeroAnimation() {
               willChange: 'transform',
             }}
           >
-            {/* Orbiting dots on outer ring */}
-            {[0, 90, 180, 270].map((angle, i) => (
-              <motion.div
-                key={angle}
-                className="absolute w-4 h-4 rounded-full bg-blue-400 shadow-lg shadow-blue-400/50"
-                style={{
-                  top: '50%',
-                  left: '50%',
-                  transform: `rotate(${angle}deg) translateX(min(300px, 45vw)) translateY(-50%)`,
-                }}
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
-              />
-            ))}
+            {/* Platform icons on outer ring */}
+            {outerRingIcons.map((item, i) => {
+              const IconComponent = item.Icon;
+              return (
+                <div
+                  key={item.label}
+                  className="absolute"
+                  style={{
+                    top: '50%',
+                    left: '50%',
+                    transform: `rotate(${item.angle}deg) translateX(min(300px, 45vw)) translateY(-50%)`,
+                  }}
+                >
+                  <motion.div
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-xl flex items-center justify-center animate-orbit-counter"
+                    style={{
+                      backgroundColor: item.color,
+                      boxShadow: `0 4px 20px ${item.color}50`,
+                      willChange: 'transform',
+                    }}
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.8 }}
+                  >
+                    <IconComponent className="w-6 h-6 md:w-7 md:h-7 text-white" strokeWidth={2} />
+                  </motion.div>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Middle ring - counter-rotate */}
+          {/* Middle ring - Core features (counter-rotate) */}
           <div
             className="absolute rounded-full border-2 border-purple-500/40 animate-orbit-reverse"
             style={{
@@ -81,32 +106,37 @@ export function HeroAnimation() {
               willChange: 'transform',
             }}
           >
-            {/* Orbiting icons - Professional Lucide icons */}
-            {orbitingIcons.map((item, i) => {
+            {/* Core feature icons on middle ring */}
+            {middleRingIcons.map((item, i) => {
               const IconComponent = item.Icon;
               return (
-                <motion.div
-                  key={i}
-                  className={`absolute w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br ${item.color} shadow-xl flex items-center justify-center`}
+                <div
+                  key={item.label}
+                  className="absolute"
                   style={{
                     top: '50%',
                     left: '50%',
                     transform: `rotate(${item.angle}deg) translateX(min(225px, 35vw)) translateY(-50%)`,
-                    willChange: 'transform',
                   }}
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
                 >
-                  {/* Counter-rotate to keep icons upright - use CSS animation for better perf */}
-                  <div className="animate-orbit-counter">
-                    <IconComponent className="w-7 h-7 md:w-8 md:h-8 text-white" strokeWidth={2} />
-                  </div>
-                </motion.div>
+                  <motion.div
+                    className="w-11 h-11 md:w-13 md:h-13 rounded-xl shadow-xl flex items-center justify-center animate-orbit-slow"
+                    style={{
+                      backgroundColor: item.color,
+                      boxShadow: `0 4px 16px ${item.color}40`,
+                      willChange: 'transform',
+                    }}
+                    animate={{ scale: [1, 1.08, 1] }}
+                    transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6 }}
+                  >
+                    <IconComponent className="w-5 h-5 md:w-6 md:h-6 text-white" strokeWidth={2} />
+                  </motion.div>
+                </div>
               );
             })}
           </div>
 
-          {/* Inner ring */}
+          {/* Inner ring - AI/Docs */}
           <div
             className="absolute rounded-full border border-pink-500/30 animate-orbit-fast"
             style={{
@@ -118,20 +148,34 @@ export function HeroAnimation() {
               willChange: 'transform',
             }}
           >
-            {/* Small orbiting dots */}
-            {[30, 120, 210, 300].map((angle, i) => (
-              <motion.div
-                key={angle}
-                className="absolute w-3 h-3 rounded-full bg-pink-400 shadow-lg shadow-pink-400/50"
-                style={{
-                  top: '50%',
-                  left: '50%',
-                  transform: `rotate(${angle}deg) translateX(min(150px, 25vw)) translateY(-50%)`,
-                }}
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
-              />
-            ))}
+            {/* AI and Docs icons on inner ring */}
+            {innerRingIcons.map((item, i) => {
+              const IconComponent = item.Icon;
+              return (
+                <div
+                  key={item.label}
+                  className="absolute"
+                  style={{
+                    top: '50%',
+                    left: '50%',
+                    transform: `rotate(${item.angle}deg) translateX(min(150px, 25vw)) translateY(-50%)`,
+                  }}
+                >
+                  <motion.div
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg shadow-lg flex items-center justify-center animate-orbit-reverse"
+                    style={{
+                      backgroundColor: item.color,
+                      boxShadow: `0 4px 12px ${item.color}40`,
+                      willChange: 'transform',
+                    }}
+                    animate={{ scale: [1, 1.12, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+                  >
+                    <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={2} />
+                  </motion.div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Center piece */}

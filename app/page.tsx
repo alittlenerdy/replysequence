@@ -28,7 +28,7 @@ const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m 
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
       {/* Header */}
       <Header />
 
@@ -67,7 +67,7 @@ export default function LandingPage() {
               <GradientText className="font-extrabold">Forgotten Promises.</GradientText>
             </h1>
 
-            <p className="text-xl text-gray-400 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               Turn every Zoom call into a perfect follow-up email and CRM update—automatically.
             </p>
 
@@ -76,7 +76,7 @@ export default function LandingPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="flex items-center justify-center gap-2 mb-8 text-gray-500 flex-wrap"
+              className="flex items-center justify-center gap-2 mb-8 text-gray-500 light:text-gray-600 flex-wrap"
             >
               <span className="text-sm font-medium">Works with</span>
               {/* Zoom logo */}
@@ -124,13 +124,13 @@ export default function LandingPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="flex items-center justify-center gap-3 text-gray-500"
+              className="flex items-center justify-center gap-3 text-gray-500 light:text-gray-600"
             >
               <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-[#0a0a0f] shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-[#0a0a0f] shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-[#0a0a0f] shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-[#0a0a0f] shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
               </div>
               <span className="text-sm font-medium">Join 1,200+ sales teams on the waitlist</span>
             </motion.div>
@@ -194,10 +194,10 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
               The Real Cost of <GradientText variant="secondary">Manual Follow-ups</GradientText>
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
               Every VP Sales knows these problems. Most accept them as &quot;the cost of doing business.&quot;
             </p>
           </motion.div>
@@ -257,10 +257,10 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
               How <GradientText>ReplySequence</GradientText> Works
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
               Connect once, automate forever. Three steps to transform your follow-up workflow.
             </p>
           </motion.div>
@@ -291,10 +291,10 @@ export default function LandingPage() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="relative"
               >
-                <div className="rounded-2xl bg-gray-900/50 border border-gray-700 p-6 h-full hover:border-blue-500/50 transition-colors">
-                  <span className="text-5xl font-bold text-blue-500/20">{item.step}</span>
-                  <h3 className="text-xl font-bold text-white mt-2 mb-3">{item.title}</h3>
-                  <p className="text-gray-400">{item.description}</p>
+                <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 h-full hover:border-blue-500/50 transition-colors">
+                  <span className="text-5xl font-bold text-blue-500/20 light:text-blue-500/30">{item.step}</span>
+                  <h3 className="text-xl font-bold text-white light:text-gray-900 mt-2 mb-3">{item.title}</h3>
+                  <p className="text-gray-400 light:text-gray-600">{item.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -312,11 +312,11 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
               From <span className="text-red-400">Pain</span> to{' '}
               <span className="text-emerald-400">Results</span>
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
               See exactly how ReplySequence transforms your workflow
             </p>
           </motion.div>
@@ -368,17 +368,17 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.5 }}
-                  className="group relative rounded-2xl bg-gray-900/50 border border-gray-700 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-blue-500/30"
+                  className="group relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-blue-500/30"
                 >
                   <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-gray-700">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-gray-700 light:border-gray-200">
                       <IconComponent className="w-6 h-6 text-blue-400" />
                     </div>
                   </div>
 
                   <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-3">
                     <span className="text-xs font-semibold uppercase tracking-wider text-red-400">Pain</span>
-                    <p className="text-sm text-red-300 font-medium mt-1">{mapping.pain}</p>
+                    <p className="text-sm text-red-300 light:text-red-600 font-medium mt-1">{mapping.pain}</p>
                   </div>
 
                   <div className="flex flex-col items-center my-3">
@@ -389,7 +389,7 @@ export default function LandingPage() {
 
                   <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
                     <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Result</span>
-                    <p className="text-sm text-emerald-300 font-medium mt-1">{mapping.result}</p>
+                    <p className="text-sm text-emerald-300 light:text-emerald-600 font-medium mt-1">{mapping.result}</p>
                   </div>
                 </motion.div>
               );
@@ -407,14 +407,14 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
               Join the <GradientText>Beta Waitlist</GradientText>
             </h2>
-            <p className="text-gray-400 mb-8">
+            <p className="text-gray-400 light:text-gray-600 mb-8">
               Be among the first to automate your follow-ups. Limited spots available for pilot program.
             </p>
 
-            <div className="rounded-2xl bg-gray-900/50 border border-gray-700 p-6 sm:p-12 mx-4 sm:mx-0">
+            <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-6 sm:p-12 mx-4 sm:mx-0">
               <GradientButton
                 href="https://tally.so/r/D4pv0j"
                 external
@@ -423,7 +423,7 @@ export default function LandingPage() {
               >
                 Join Beta Waitlist
               </GradientButton>
-              <p className="text-gray-500 text-xs sm:text-sm mt-6">
+              <p className="text-gray-500 light:text-gray-600 text-xs sm:text-sm mt-6">
                 Takes 30 seconds - No credit card required - Limited to 100 pilot users
               </p>
             </div>
@@ -434,7 +434,7 @@ export default function LandingPage() {
       {/* Social Proof */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-500 text-sm mb-8 font-medium">Trusted by sales teams at</p>
+          <p className="text-gray-500 light:text-gray-600 text-sm mb-8 font-medium">Trusted by sales teams at</p>
           <div className="flex flex-wrap justify-center items-center gap-12">
             {['TechCorp', 'SalesHub', 'GrowthCo', 'ScaleUp', 'CloudBase'].map((company, i) => (
               <motion.div
@@ -443,7 +443,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="text-2xl font-bold text-gray-700"
+                className="text-2xl font-bold text-gray-700 light:text-gray-400"
               >
                 {company}
               </motion.div>
@@ -453,8 +453,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-800 relative z-10">
-        <div className="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+      <footer className="py-12 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
+        <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
           <div className="mb-4">
             <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
           </div>

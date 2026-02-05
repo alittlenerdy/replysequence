@@ -220,7 +220,7 @@ export function BlueprintGrid() {
         style={{ opacity: 0.6 }}
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-transparent to-[#0a0a0f]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-transparent to-[#0a0a0f] light:from-gray-50 light:via-transparent light:to-gray-50" />
     </motion.div>
   );
 }

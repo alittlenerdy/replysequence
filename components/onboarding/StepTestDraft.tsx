@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Loader2, Check, Mail, User, Clock } from 'lucide-react';
+import { Sparkles, Loader2, Check, Mail, User, Clock, ArrowRight } from 'lucide-react';
 
 interface StepTestDraftProps {
   draftGenerated: boolean;
@@ -46,6 +46,26 @@ export function StepTestDraft({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showDraft, setShowDraft] = useState(draftGenerated);
   const [generationTime, setGenerationTime] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [showContinue, setShowContinue] = useState(draftGenerated);
+
+  // Countdown effect after draft is shown
+  useEffect(() => {
+    if (showDraft && countdown === null && !showContinue) {
+      setCountdown(3);
+    }
+  }, [showDraft, countdown, showContinue]);
+
+  useEffect(() => {
+    if (countdown !== null && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0) {
+      setShowContinue(true);
+    }
+  }, [countdown]);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -61,9 +81,7 @@ export function StepTestDraft({
         const endTime = Date.now();
         setGenerationTime((endTime - startTime) / 1000);
         setShowDraft(true);
-        setTimeout(() => {
-          onDraftGenerated();
-        }, 500);
+        // Don't auto-advance - wait for user to click Continue
       }
     } catch (error) {
       console.error('Error generating draft:', error);
@@ -72,13 +90,15 @@ export function StepTestDraft({
         const endTime = Date.now();
         setGenerationTime((endTime - startTime) / 1000);
         setShowDraft(true);
-        setTimeout(() => {
-          onDraftGenerated();
-        }, 500);
+        // Don't auto-advance - wait for user to click Continue
       }, 1500);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleContinue = () => {
+    onDraftGenerated();
   };
 
   return (
@@ -229,9 +249,42 @@ export function StepTestDraft({
                         {SAMPLE_DRAFT.body}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 pt-2">
-                      <Check className="w-4 h-4 text-emerald-400" />
-                      <span className="text-sm text-emerald-400">Ready to send!</span>
+                    <div className="flex items-center justify-between pt-4">
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-emerald-400" />
+                        <span className="text-sm text-emerald-400">Ready to send!</span>
+                      </div>
+
+                      {/* Countdown and Continue button */}
+                      <AnimatePresence mode="wait">
+                        {countdown !== null && countdown > 0 && (
+                          <motion.div
+                            key="countdown"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center gap-2 text-gray-400"
+                          >
+                            <span className="text-sm">Review your draft...</span>
+                            <span className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs font-medium">
+                              {countdown}
+                            </span>
+                          </motion.div>
+                        )}
+
+                        {showContinue && (
+                          <motion.button
+                            key="continue"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            onClick={handleContinue}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg shadow-emerald-500/25"
+                          >
+                            Continue
+                            <ArrowRight className="w-4 h-4" />
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </motion.div>
                 )}

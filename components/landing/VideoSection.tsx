@@ -18,10 +18,10 @@ export function VideoSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
             See It In <GradientText>Action</GradientText>
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
             From meeting transcript to polished follow-up email in seconds
           </p>
         </motion.div>
@@ -36,7 +36,7 @@ export function VideoSection() {
           onMouseLeave={() => setIsHovered(false)}
         >
           {/* Video container */}
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 aspect-video group cursor-pointer">
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 light:from-gray-100 light:to-white border border-gray-700 light:border-gray-200 light:shadow-xl aspect-video group cursor-pointer">
             {/* Animated border glow */}
             <motion.div
               className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -143,7 +143,7 @@ export function VideoSection() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.5 }}
-            className="text-center text-sm text-gray-500 mt-4"
+            className="text-center text-sm text-gray-500 light:text-gray-600 mt-4"
           >
             Watch how ReplySequence transforms your meeting follow-ups
           </motion.p>
