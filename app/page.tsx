@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import {
   Clock,
   FileText,
@@ -14,29 +14,48 @@ import {
   FileX,
   Shield,
   Lock,
-  ArrowRight,
-  CheckCircle2,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { FeatureCard } from '@/components/ui/FeatureCard';
 
+// Lazy load heavy animation components
+const BlueprintGrid = dynamic(() => import('@/components/landing/BlueprintGrid').then(m => ({ default: m.BlueprintGrid })), { ssr: false });
+const HeroAnimation = dynamic(() => import('@/components/landing/HeroAnimation').then(m => ({ default: m.HeroAnimation })), { ssr: false });
+const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
+const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white font-sans relative overflow-hidden">
-      {/* Animated gradient background - matching onboarding */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-3/4 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
-
       {/* Header */}
       <Header />
 
-      {/* Hero Section */}
+      {/* Hero Section with Blueprint Grid Background */}
       <section className="relative min-h-screen pt-32 pb-20 px-4 z-10">
+        {/* Blueprint Grid Background */}
+        <BlueprintGrid />
+
+        {/* Animated gradient orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, delay: 1 }}
+          />
+          <motion.div
+            className="absolute top-3/4 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+            transition={{ duration: 8, repeat: Infinity, delay: 2 }}
+          />
+        </div>
+
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -147,53 +166,23 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
 
-          {/* Hero visual */}
+          {/* Hero Animation */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
-            className="relative mt-16"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 1 }}
+            className="relative mt-8"
           >
-            <div className="relative rounded-2xl bg-gray-900/50 border border-gray-700 p-8 backdrop-blur-sm">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                {/* Left: Meeting visualization */}
-                <div className="flex-1 text-center">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 border border-gray-700">
-                    <svg className="w-10 h-10" viewBox="0 0 24 24" fill="#2D8CFF">
-                      <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
-                    </svg>
-                  </div>
-                  <p className="text-gray-400 text-sm">Your Meeting Ends</p>
-                </div>
-
-                {/* Arrow */}
-                <ArrowRight className="w-8 h-8 text-blue-400 hidden md:block" />
-                <ArrowDown className="w-8 h-8 text-blue-400 md:hidden" />
-
-                {/* Center: AI Processing */}
-                <div className="flex-1 text-center">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4 border border-gray-700">
-                    <Zap className="w-10 h-10 text-purple-400" />
-                  </div>
-                  <p className="text-gray-400 text-sm">AI Processes in 8 Seconds</p>
-                </div>
-
-                {/* Arrow */}
-                <ArrowRight className="w-8 h-8 text-blue-400 hidden md:block" />
-                <ArrowDown className="w-8 h-8 text-blue-400 md:hidden" />
-
-                {/* Right: Output */}
-                <div className="flex-1 text-center">
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 flex items-center justify-center mb-4 border border-gray-700">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-400" />
-                  </div>
-                  <p className="text-gray-400 text-sm">Perfect Follow-up Ready</p>
-                </div>
-              </div>
-            </div>
+            <HeroAnimation />
           </motion.div>
         </div>
       </section>
+
+      {/* Video Demo Section */}
+      <VideoSection />
+
+      {/* Bento Grid Features */}
+      <BentoGrid />
 
       {/* Pain Points Section */}
       <section className="py-20 px-4 relative z-10">
@@ -306,80 +295,6 @@ export default function LandingPage() {
                   <span className="text-5xl font-bold text-blue-500/20">{item.step}</span>
                   <h3 className="text-xl font-bold text-white mt-2 mb-3">{item.title}</h3>
                   <p className="text-gray-400">{item.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Product Screenshots */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              See It In <GradientText>Action</GradientText>
-            </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              From meeting transcript to polished follow-up email in seconds
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                src: '/screenshots/dashboard.svg',
-                alt: 'ReplySequence Dashboard',
-                caption: 'Dashboard Overview',
-                description: 'See all your meetings and drafts in one place',
-              },
-              {
-                src: '/screenshots/draft-editor.svg',
-                alt: 'AI Draft Editor',
-                caption: 'AI-Powered Drafts',
-                description: 'Review and customize AI-generated emails',
-              },
-              {
-                src: '/screenshots/email-preview.svg',
-                alt: 'Email Preview',
-                caption: 'Email Preview',
-                description: 'Preview before sending to your contacts',
-              },
-              {
-                src: '/screenshots/integrations.svg',
-                alt: 'Platform Integrations',
-                caption: 'Seamless Integrations',
-                description: 'Connect Zoom, Teams, and Google Meet',
-              },
-            ].map((screenshot, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="group relative overflow-hidden rounded-2xl bg-gray-900/50 border border-gray-700 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-blue-500/50"
-              >
-                <div className="aspect-video relative">
-                  <Image
-                    src={screenshot.src}
-                    alt={screenshot.alt}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority={index < 2}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <h3 className="text-lg font-bold text-white mb-1">{screenshot.caption}</h3>
-                  <p className="text-sm text-gray-400">{screenshot.description}</p>
                 </div>
               </motion.div>
             ))}
