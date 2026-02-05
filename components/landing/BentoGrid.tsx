@@ -54,7 +54,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
 function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
   return (
     <motion.span
-      className="font-bold tabular-nums bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
+      className="font-bold tabular-nums bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
       animate={{ opacity: [0.7, 1, 0.7] }}
       transition={{ duration: 2, repeat: Infinity }}
     >

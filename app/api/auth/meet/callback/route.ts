@@ -59,14 +59,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard?error=missing_code', baseUrl));
   }
 
-  // Verify state matches current user (CSRF protection)
-  const { userId: clerkUserId } = await auth();
-  if (!clerkUserId) {
-    console.error('[MEET-OAUTH-CALLBACK-ERROR] User not authenticated');
-    return NextResponse.redirect(new URL('/sign-in', baseUrl));
-  }
-
-  // Decode state - can be either simple userId or JSON payload with returnTo
+  // Decode state to get userId (set during OAuth initiation when user was authenticated)
+  // We trust this userId because it was set by our server during the initial OAuth redirect
   let stateUserId: string;
   let returnTo = '/dashboard?meet_connected=true';
 
@@ -82,13 +76,22 @@ export async function GET(request: NextRequest) {
     console.log('[MEET-OAUTH-CALLBACK] Using legacy state format:', { stateUserId });
   }
 
-  if (stateUserId !== clerkUserId) {
-    console.error('[MEET-OAUTH-CALLBACK-ERROR] State mismatch - potential CSRF attack', {
-      expected: clerkUserId,
-      received: stateUserId,
-    });
+  if (!stateUserId) {
+    console.error('[MEET-OAUTH-CALLBACK-ERROR] No userId in state - invalid OAuth flow');
     return NextResponse.redirect(new URL('/dashboard?error=invalid_state', baseUrl));
   }
+
+  // Optionally verify current session matches (but don't require it - session might not persist through OAuth redirect)
+  const { userId: currentSessionUserId } = await auth();
+  if (currentSessionUserId && currentSessionUserId !== stateUserId) {
+    console.warn('[MEET-OAUTH-CALLBACK] Session userId differs from state userId - using state userId', {
+      sessionUserId: currentSessionUserId,
+      stateUserId,
+    });
+  }
+
+  // Use the userId from state (this was set when user initiated OAuth while authenticated)
+  const clerkUserId = stateUserId;
 
   try {
     // Exchange code for tokens

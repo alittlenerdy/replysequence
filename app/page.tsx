@@ -292,7 +292,7 @@ export default function LandingPage() {
                 className="relative"
               >
                 <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 h-full hover:border-blue-500/50 transition-colors">
-                  <span className="text-5xl font-bold text-blue-500/20 light:text-blue-500/30">{item.step}</span>
+                  <span className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">{item.step}</span>
                   <h3 className="text-xl font-bold text-white light:text-gray-900 mt-2 mb-3">{item.title}</h3>
                   <p className="text-gray-400 light:text-gray-600">{item.description}</p>
                 </div>

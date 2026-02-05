@@ -20,12 +20,18 @@ export function StepConnectCalendar({
 
   const handleConnect = (provider: 'google' | 'outlook') => {
     setConnecting(provider);
-    // For now, simulate connection since calendar OAuth isn't fully set up
-    // In production, this would redirect to OAuth
-    setTimeout(() => {
-      setConnecting(null);
-      onCalendarConnected();
-    }, 1500);
+    // Store which calendar we're connecting so callback knows
+    sessionStorage.setItem('onboarding_calendar', provider);
+    // Build the return URL for after OAuth completes
+    const returnUrl = `/onboarding?step=3&calendar_connected=true`;
+
+    if (provider === 'google') {
+      // Redirect to Google Calendar OAuth
+      window.location.href = `/api/auth/calendar?redirect=${encodeURIComponent(returnUrl)}`;
+    } else {
+      // Redirect to Outlook Calendar OAuth (Microsoft Graph)
+      window.location.href = `/api/auth/outlook-calendar?redirect=${encodeURIComponent(returnUrl)}`;
+    }
   };
 
   const calendars = [

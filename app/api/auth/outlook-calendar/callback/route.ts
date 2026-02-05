@@ -1,18 +1,18 @@
 /**
- * Microsoft Teams OAuth Callback Route
+ * Outlook Calendar OAuth Callback Route
  * Exchanges authorization code for tokens, stores encrypted tokens
  */
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, users, teamsConnections, userOnboarding } from '@/lib/db';
+import { db, users, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 interface MicrosoftTokenResponse {
   access_token: string;
   token_type: string;
-  refresh_token: string;
+  refresh_token?: string;
   expires_in: number;
   scope: string;
   id_token?: string;
@@ -36,48 +36,54 @@ export async function GET(request: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
+  console.log('[OUTLOOK-CALENDAR-CALLBACK-1] Callback received', {
+    hasCode: !!code,
+    hasState: !!state,
+    error: error || 'none',
+  });
+
   // Handle OAuth errors from Microsoft
   if (error) {
-    console.error('[TEAMS-CALLBACK] OAuth error from Microsoft:', {
+    console.error('[OUTLOOK-CALENDAR-CALLBACK-ERROR] OAuth error from Microsoft:', {
       error,
       description: errorDescription,
     });
     return NextResponse.redirect(
-      new URL(`/dashboard?error=teams_denied&message=${encodeURIComponent(errorDescription || error)}`, baseUrl)
+      new URL(`/dashboard?error=outlook_calendar_denied&message=${encodeURIComponent(errorDescription || error)}`, baseUrl)
     );
   }
 
   if (!code) {
-    console.error('[TEAMS-CALLBACK] Missing authorization code');
+    console.error('[OUTLOOK-CALENDAR-CALLBACK-ERROR] Missing authorization code');
     return NextResponse.redirect(new URL('/dashboard?error=missing_code', baseUrl));
   }
 
   // Decode state to get userId (set during OAuth initiation when user was authenticated)
   // We trust this userId because it was set by our server during the initial OAuth redirect
   let stateUserId: string;
-  let returnTo = '/dashboard?teams_connected=true';
+  let returnTo = '/dashboard?calendar_connected=true';
 
   try {
     const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
     const parsed = JSON.parse(decoded);
     stateUserId = parsed.userId;
     returnTo = parsed.returnTo || returnTo;
-    console.log('[TEAMS-CALLBACK] Decoded state:', { stateUserId, returnTo });
+    console.log('[OUTLOOK-CALENDAR-CALLBACK] Decoded state:', { stateUserId, returnTo });
   } catch {
     // Fallback for old format where state was just the userId
     stateUserId = state || '';
-    console.log('[TEAMS-CALLBACK] Using legacy state format:', { stateUserId });
+    console.log('[OUTLOOK-CALENDAR-CALLBACK] Using legacy state format:', { stateUserId });
   }
 
   if (!stateUserId) {
-    console.error('[TEAMS-CALLBACK] No userId in state - invalid OAuth flow');
+    console.error('[OUTLOOK-CALENDAR-CALLBACK-ERROR] No userId in state - invalid OAuth flow');
     return NextResponse.redirect(new URL('/dashboard?error=invalid_state', baseUrl));
   }
 
   // Optionally verify current session matches (but don't require it - session might not persist through OAuth redirect)
   const { userId: currentSessionUserId } = await auth();
   if (currentSessionUserId && currentSessionUserId !== stateUserId) {
-    console.warn('[TEAMS-CALLBACK] Session userId differs from state userId - using state userId', {
+    console.warn('[OUTLOOK-CALENDAR-CALLBACK] Session userId differs from state userId - using state userId', {
       sessionUserId: currentSessionUserId,
       stateUserId,
     });
@@ -88,27 +94,31 @@ export async function GET(request: NextRequest) {
 
   try {
     // Exchange code for tokens
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-2] Exchanging code for tokens');
     const tokens = await exchangeCodeForTokens(code);
-    console.log('[TEAMS-CALLBACK] Token exchange successful');
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-3] Token exchange successful', {
+      hasAccessToken: !!tokens.access_token,
+      hasRefreshToken: !!tokens.refresh_token,
+      expiresIn: tokens.expires_in,
+    });
 
     // Get Microsoft user info
     const msUser = await getMicrosoftUserInfo(tokens.access_token);
-    console.log('[TEAMS-CALLBACK] Got Microsoft user info', {
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-4] Got Microsoft user info', {
       msUserId: msUser.id,
       msEmail: msUser.mail || msUser.userPrincipalName,
     });
 
     // Find or create user in database
-    console.log('[TEAMS-CALLBACK] Looking for user with clerkId:', clerkUserId);
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-5] Looking for user with clerkId:', clerkUserId);
 
     let user = await db.query.users.findFirst({
       where: eq(users.clerkId, clerkUserId),
     });
 
-    console.log('[TEAMS-CALLBACK] User lookup result:', {
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-6] User lookup result:', {
       found: !!user,
       userId: user?.id,
-      existingTeamsConnected: user?.teamsConnected,
     });
 
     const userEmail = msUser.mail || msUser.userPrincipalName;
@@ -116,127 +126,63 @@ export async function GET(request: NextRequest) {
 
     if (!user) {
       // Create new user
-      console.log('[TEAMS-CALLBACK] Creating new user...');
+      console.log('[OUTLOOK-CALENDAR-CALLBACK-7] Creating new user...');
       const [newUser] = await db
         .insert(users)
         .values({
           clerkId: clerkUserId,
           email: userEmail,
           name: userName,
-          teamsConnected: true,
         })
         .returning();
       user = newUser;
-      console.log('[TEAMS-CALLBACK] Created new user', { userId: user.id, teamsConnected: true });
+      console.log('[OUTLOOK-CALENDAR-CALLBACK-8] Created new user', { userId: user.id });
     } else {
-      console.log('[TEAMS-CALLBACK] Using existing user', { userId: user.id });
+      console.log('[OUTLOOK-CALENDAR-CALLBACK-7] Using existing user', { userId: user.id });
     }
 
-    // Encrypt tokens
+    // Store encrypted tokens for calendar access
     const accessTokenEncrypted = encrypt(tokens.access_token);
-    const refreshTokenEncrypted = encrypt(tokens.refresh_token);
+    const refreshTokenEncrypted = tokens.refresh_token ? encrypt(tokens.refresh_token) : null;
 
-    // Calculate expiration time
-    const accessTokenExpiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-9] Stored calendar tokens');
 
-    // Upsert teams connection
-    const existingConnection = await db.query.teamsConnections.findFirst({
-      where: eq(teamsConnections.userId, user.id),
+    // Update user_onboarding table to mark calendar as connected
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-10] Updating user_onboarding with calendarConnected=true');
+
+    // Check if record exists
+    const existingOnboarding = await db.query.userOnboarding.findFirst({
+      where: eq(userOnboarding.clerkId, clerkUserId),
     });
 
-    if (existingConnection) {
-      // Update existing connection
+    if (existingOnboarding) {
       await db
-        .update(teamsConnections)
+        .update(userOnboarding)
         .set({
-          msUserId: msUser.id,
-          msEmail: userEmail,
-          msDisplayName: userName,
-          accessTokenEncrypted,
-          refreshTokenEncrypted,
-          accessTokenExpiresAt,
-          scopes: tokens.scope,
-          lastRefreshedAt: new Date(),
+          calendarConnected: true,
+          // If coming from onboarding, stay on step 3 (calendar step) to show connected status
+          currentStep: returnTo.includes('/onboarding') ? 3 : existingOnboarding.currentStep,
           updatedAt: new Date(),
         })
-        .where(eq(teamsConnections.userId, user.id));
-      console.log('[TEAMS-CALLBACK] Updated existing Teams connection');
+        .where(eq(userOnboarding.clerkId, clerkUserId));
     } else {
-      // Create new connection
-      await db.insert(teamsConnections).values({
-        userId: user.id,
-        msUserId: msUser.id,
-        msEmail: userEmail,
-        msDisplayName: userName,
-        accessTokenEncrypted,
-        refreshTokenEncrypted,
-        accessTokenExpiresAt,
-        scopes: tokens.scope,
+      await db.insert(userOnboarding).values({
+        clerkId: clerkUserId,
+        calendarConnected: true,
+        currentStep: returnTo.includes('/onboarding') ? 3 : 1,
       });
-      console.log('[TEAMS-CALLBACK] Created new Teams connection');
     }
 
-    // Update user's teams_connected flag (boolean)
-    console.log('[TEAMS-CALLBACK] Updating user teamsConnected to true', { userId: user.id });
-
-    const updateResult = await db
-      .update(users)
-      .set({
-        teamsConnected: true,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, user.id))
-      .returning({ id: users.id, teamsConnected: users.teamsConnected });
-
-    console.log('[TEAMS-CALLBACK] Update result:', updateResult);
-
-    // Verify the update worked
-    const verifyUser = await db.query.users.findFirst({
-      where: eq(users.id, user.id),
-    });
-    console.log('[TEAMS-CALLBACK] Verification query:', {
-      userId: verifyUser?.id,
-      teamsConnected: verifyUser?.teamsConnected,
-    });
-
-    // Update user_onboarding table if this is an onboarding flow
-    if (returnTo.includes('/onboarding')) {
-      console.log('[TEAMS-CALLBACK] Updating user_onboarding with platform_connected=teams');
-
-      // Check if record exists
-      const existingOnboarding = await db.query.userOnboarding.findFirst({
-        where: eq(userOnboarding.clerkId, clerkUserId),
-      });
-
-      if (existingOnboarding) {
-        await db
-          .update(userOnboarding)
-          .set({
-            platformConnected: 'teams',
-            currentStep: 2, // Stay on platform step to show connected status
-            updatedAt: new Date(),
-          })
-          .where(eq(userOnboarding.clerkId, clerkUserId));
-      } else {
-        await db.insert(userOnboarding).values({
-          clerkId: clerkUserId,
-          platformConnected: 'teams',
-          currentStep: 2, // Stay on platform step to show connected status
-        });
-      }
-    }
-
-    console.log('[TEAMS-CALLBACK] OAuth flow completed successfully', {
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-11] OAuth flow completed successfully', {
       clerkUserId,
       msUserId: msUser.id,
-      userTeamsConnected: verifyUser?.teamsConnected,
       returnTo,
     });
 
     // Redirect to the return URL
     return NextResponse.redirect(new URL(returnTo, baseUrl));
   } catch (error) {
-    console.error('[TEAMS-CALLBACK] Error processing OAuth callback:', error);
+    console.error('[OUTLOOK-CALENDAR-CALLBACK-ERROR] Error processing OAuth callback:', error);
     return NextResponse.redirect(
       new URL(`/dashboard?error=oauth_failed&message=${encodeURIComponent(String(error))}`, baseUrl)
     );
@@ -247,13 +193,24 @@ async function exchangeCodeForTokens(code: string): Promise<MicrosoftTokenRespon
   const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID;
   const clientSecret = process.env.MICROSOFT_TEAMS_CLIENT_SECRET;
   const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID || 'common';
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/teams/callback`;
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  const baseUrl = rawAppUrl.replace(/\/+$/, '');
+  const redirectUri = `${baseUrl}/api/auth/outlook-calendar/callback`;
+
+  console.log('[OUTLOOK-CALENDAR-TOKEN-EXCHANGE] Starting token exchange:', {
+    hasClientId: !!clientId,
+    clientIdPrefix: clientId?.substring(0, 20) + '...',
+    hasClientSecret: !!clientSecret,
+    clientSecretLength: clientSecret?.length,
+    redirectUri,
+    codeLength: code?.length,
+  });
 
   if (!clientId || !clientSecret) {
-    throw new Error('Missing Microsoft Teams OAuth credentials');
+    throw new Error('Missing Microsoft OAuth credentials');
   }
 
-  // Microsoft uses POST body parameters (not Basic auth like Zoom)
+  // Microsoft uses POST body parameters
   const params = new URLSearchParams({
     client_id: clientId,
     client_secret: clientSecret,
@@ -274,11 +231,21 @@ async function exchangeCodeForTokens(code: string): Promise<MicrosoftTokenRespon
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('[TEAMS-CALLBACK] Token exchange failed:', {
+    // Parse error for better diagnosis
+    let errorDetails;
+    try {
+      errorDetails = JSON.parse(errorText);
+    } catch {
+      errorDetails = errorText;
+    }
+
+    console.error('[OUTLOOK-CALENDAR-CALLBACK-ERROR] Token exchange failed:', {
       status: response.status,
-      body: errorText,
+      statusText: response.statusText,
+      errorDetails,
+      redirectUriUsed: redirectUri,
     });
-    throw new Error(`Token exchange failed: ${response.status}`);
+    throw new Error(`Token exchange failed: ${response.status} - ${typeof errorDetails === 'object' ? errorDetails.error_description || errorDetails.error : errorDetails}`);
   }
 
   return response.json();
@@ -293,7 +260,7 @@ async function getMicrosoftUserInfo(accessToken: string): Promise<MicrosoftUserI
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('[TEAMS-CALLBACK] Failed to get user info:', {
+    console.error('[OUTLOOK-CALENDAR-CALLBACK-ERROR] Failed to get user info:', {
       status: response.status,
       body: errorText,
     });

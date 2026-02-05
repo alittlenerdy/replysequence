@@ -79,6 +79,7 @@ function OnboardingContent() {
   // Handle OAuth callback params
   useEffect(() => {
     const platform = searchParams.get('platform_connected');
+    const calendarConnected = searchParams.get('calendar_connected');
     const step = searchParams.get('step');
     const success = searchParams.get('success');
 
@@ -90,6 +91,18 @@ function OnboardingContent() {
         currentStep: 3,
       }));
       saveProgress({ platformConnected: connectedPlatform, currentStep: 3 });
+      // Clean URL
+      window.history.replaceState({}, '', '/onboarding');
+    }
+
+    // Handle calendar OAuth callback
+    if (calendarConnected === 'true') {
+      setState(prev => ({
+        ...prev,
+        calendarConnected: true,
+        currentStep: 3, // Stay on calendar step to show connected status
+      }));
+      saveProgress({ calendarConnected: true, currentStep: 3 });
       // Clean URL
       window.history.replaceState({}, '', '/onboarding');
     }
