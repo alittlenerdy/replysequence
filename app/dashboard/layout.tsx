@@ -1,34 +1,44 @@
-'use client';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import { db } from '@/lib/db';
+import { userOnboarding } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { DashboardLayoutClient } from '@/components/dashboard/DashboardLayoutClient';
 
-import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
-
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Sync theme from localStorage on mount
-  useEffect(() => {
-    const theme = localStorage.getItem('theme');
-    const html = document.documentElement;
+  const { userId } = await auth();
 
-    if (theme === 'light') {
-      html.classList.remove('dark');
-      html.classList.add('light');
-    } else {
-      // Default to dark
-      html.classList.add('dark');
-      html.classList.remove('light');
-    }
-  }, []);
+  if (!userId) {
+    console.log('[ONBOARDING-GATE] No user, redirecting to sign-in');
+    redirect('/sign-in');
+  }
 
-  return (
-    <>
-      <DashboardMarginBubbles />
-      {children}
-    </>
-  );
+  // Check onboarding status server-side
+  const [onboarding] = await db
+    .select({
+      completedAt: userOnboarding.completedAt,
+      currentStep: userOnboarding.currentStep,
+    })
+    .from(userOnboarding)
+    .where(eq(userOnboarding.clerkId, userId))
+    .limit(1);
+
+  // If no record or not completed, redirect to onboarding
+  if (!onboarding || !onboarding.completedAt) {
+    console.log('[ONBOARDING-GATE] Redirecting to onboarding:', {
+      userId,
+      hasRecord: !!onboarding,
+      completedAt: onboarding?.completedAt,
+      currentStep: onboarding?.currentStep,
+    });
+    redirect('/onboarding');
+  }
+
+  console.log('[ONBOARDING-GATE] User completed onboarding, showing dashboard:', userId);
+
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 }

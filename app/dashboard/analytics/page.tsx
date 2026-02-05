@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
-import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 import { getDraftStats } from '@/lib/dashboard-queries';
@@ -53,10 +52,8 @@ async function AnalyticsContent() {
 
 export default function AnalyticsPage() {
   return (
-    <OnboardingGate>
-      <Suspense fallback={<AnalyticsLoading />}>
-        <AnalyticsContent />
-      </Suspense>
-    </OnboardingGate>
+    <Suspense fallback={<AnalyticsLoading />}>
+      <AnalyticsContent />
+    </Suspense>
   );
 }

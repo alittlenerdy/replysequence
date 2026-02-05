@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
-import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { BillingDashboard } from '@/components/billing/BillingDashboard';
 import { getDraftStats } from '@/lib/dashboard-queries';
@@ -60,10 +59,8 @@ async function BillingContent() {
 
 export default function BillingPage() {
   return (
-    <OnboardingGate>
-      <Suspense fallback={<BillingLoading />}>
-        <BillingContent />
-      </Suspense>
-    </OnboardingGate>
+    <Suspense fallback={<BillingLoading />}>
+      <BillingContent />
+    </Suspense>
   );
 }

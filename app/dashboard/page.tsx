@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
 import { DraftsView } from '@/components/dashboard/DraftsView';
-import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 
@@ -87,10 +86,8 @@ function LoadingFallback() {
 
 export default function DashboardPage() {
   return (
-    <OnboardingGate>
-      <Suspense fallback={<LoadingFallback />}>
-        <DashboardContent />
-      </Suspense>
-    </OnboardingGate>
+    <Suspense fallback={<LoadingFallback />}>
+      <DashboardContent />
+    </Suspense>
   );
 }

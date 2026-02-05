@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
-import { OnboardingGate } from '@/components/dashboard/OnboardingGate';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { IntegrationSettings } from '@/components/dashboard/IntegrationSettings';
 import { getDraftStats } from '@/lib/dashboard-queries';
@@ -52,10 +51,8 @@ async function SettingsContent() {
 
 export default function SettingsPage() {
   return (
-    <OnboardingGate>
-      <Suspense fallback={<SettingsLoading />}>
-        <SettingsContent />
-      </Suspense>
-    </OnboardingGate>
+    <Suspense fallback={<SettingsLoading />}>
+      <SettingsContent />
+    </Suspense>
   );
 }
