@@ -8,6 +8,7 @@ import { ActivityChart } from '@/components/analytics/ActivityChart';
 import { PlatformChart } from '@/components/analytics/PlatformChart';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
+import { EmailEngagement } from '@/components/analytics/EmailEngagement';
 
 interface DailyDataPoint {
   date: string;
@@ -41,6 +42,17 @@ interface ROIMetrics {
   emailsPerHour: number;
 }
 
+interface EmailEngagementData {
+  sent: number;
+  opened: number;
+  clicked: number;
+  replied: number;
+  openRate: number;
+  clickRate: number;
+  replyRate: number;
+  avgTimeToOpen: number | null;
+}
+
 interface AnalyticsData {
   totalMeetings: number;
   emailsGenerated: number;
@@ -54,6 +66,7 @@ interface AnalyticsData {
   dailyEmails: DailyDataPoint[];
   platformBreakdown: PlatformStat[];
   emailFunnel: EmailFunnelData;
+  engagement: EmailEngagementData;
 }
 
 export function AnalyticsDashboard() {
@@ -228,8 +241,11 @@ export function AnalyticsDashboard() {
 
       {hasData ? (
         <>
-          {/* ROI Calculator - The killer feature */}
-          <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+          {/* ROI Calculator + Email Engagement */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+            <EmailEngagement engagement={analytics.engagement} />
+          </div>
 
           {/* Activity Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

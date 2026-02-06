@@ -30,6 +30,18 @@ export interface EmailFunnel {
   conversionRate: number;
 }
 
+// Email engagement metrics
+export interface EmailEngagement {
+  sent: number;
+  opened: number;
+  clicked: number;
+  replied: number;
+  openRate: number; // percentage
+  clickRate: number; // percentage (of opened)
+  replyRate: number; // percentage (of sent)
+  avgTimeToOpen: number | null; // hours
+}
+
 // Period comparison for trends
 export interface PeriodComparison {
   current: number;
@@ -66,6 +78,8 @@ export interface AnalyticsData {
   platformBreakdown: PlatformStat[];
   // Funnel
   emailFunnel: EmailFunnel;
+  // Email engagement
+  engagement: EmailEngagement;
 }
 
 // Average time to write a follow-up email manually (in minutes)
@@ -134,6 +148,7 @@ export async function GET() {
     dailyEmails: generateDateRange(14).map(date => ({ date, count: 0 })),
     platformBreakdown: [],
     emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
+    engagement: { sent: 0, opened: 0, clicked: 0, replied: 0, openRate: 0, clickRate: 0, replyRate: 0, avgTimeToOpen: null },
   };
 
   try {
@@ -276,13 +291,24 @@ export async function GET() {
     const dailyEmailCounts: Record<string, number> = {};
     dateRange.forEach(d => { dailyEmailCounts[d] = 0; });
 
+    // Email engagement tracking
+    let emailsOpened = 0;
+    let emailsClicked = 0;
+    let emailsReplied = 0;
+    let totalTimeToOpen = 0;
+    let openedWithTime = 0;
+
     if (meetingIds.length > 0) {
       try {
-        // Get all drafts for user's meetings
+        // Get all drafts for user's meetings with engagement data
         const userDrafts = await db
           .select({
             status: drafts.status,
             createdAt: drafts.createdAt,
+            sentAt: drafts.sentAt,
+            openedAt: drafts.openedAt,
+            clickedAt: drafts.clickedAt,
+            repliedAt: drafts.repliedAt,
           })
           .from(drafts)
           .where(inArray(drafts.meetingId, meetingIds));
@@ -292,6 +318,21 @@ export async function GET() {
         emailsGenerated = userDrafts.length;
         emailsSent = userDrafts.filter(d => d.status === 'sent').length;
         emailsReady = userDrafts.filter(d => d.status === 'generated').length;
+
+        // Count engagement metrics
+        userDrafts.forEach(d => {
+          if (d.openedAt) {
+            emailsOpened++;
+            // Calculate time to open in hours
+            if (d.sentAt) {
+              const timeToOpen = (new Date(d.openedAt).getTime() - new Date(d.sentAt).getTime()) / (1000 * 60 * 60);
+              totalTimeToOpen += timeToOpen;
+              openedWithTime++;
+            }
+          }
+          if (d.clickedAt) emailsClicked++;
+          if (d.repliedAt) emailsReplied++;
+        });
 
         // Daily email counts
         userDrafts.forEach(d => {
@@ -318,6 +359,18 @@ export async function GET() {
       ready: emailsReady,
       sent: emailsSent,
       conversionRate: emailsGenerated > 0 ? (emailsSent / emailsGenerated) * 100 : 0,
+    };
+
+    // Email engagement metrics
+    const engagement: EmailEngagement = {
+      sent: emailsSent,
+      opened: emailsOpened,
+      clicked: emailsClicked,
+      replied: emailsReplied,
+      openRate: emailsSent > 0 ? Math.round((emailsOpened / emailsSent) * 100) : 0,
+      clickRate: emailsOpened > 0 ? Math.round((emailsClicked / emailsOpened) * 100) : 0,
+      replyRate: emailsSent > 0 ? Math.round((emailsReplied / emailsSent) * 100) : 0,
+      avgTimeToOpen: openedWithTime > 0 ? Math.round((totalTimeToOpen / openedWithTime) * 10) / 10 : null,
     };
 
     // Time saved
@@ -358,6 +411,7 @@ export async function GET() {
       dailyEmails,
       platformBreakdown,
       emailFunnel,
+      engagement,
     });
   } catch (error) {
     console.error('[ANALYTICS-ERROR] Unexpected error:', error);

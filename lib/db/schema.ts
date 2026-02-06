@@ -217,6 +217,14 @@ export const drafts = pgTable(
     // Email sending tracking
     sentAt: timestamp('sent_at', { withTimezone: true }),
     sentTo: text('sent_to'),
+    // Email engagement tracking
+    trackingId: uuid('tracking_id').defaultRandom(), // Unique ID for tracking pixel/links
+    openedAt: timestamp('opened_at', { withTimezone: true }), // First open time
+    openCount: integer('open_count').default(0), // Total opens
+    lastOpenedAt: timestamp('last_opened_at', { withTimezone: true }), // Most recent open
+    clickedAt: timestamp('clicked_at', { withTimezone: true }), // First click time
+    clickCount: integer('click_count').default(0), // Total link clicks
+    repliedAt: timestamp('replied_at', { withTimezone: true }), // When recipient replied
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   },
@@ -227,6 +235,8 @@ export const drafts = pgTable(
     index('drafts_created_at_idx').on(table.createdAt),
     index('drafts_quality_score_idx').on(table.qualityScore),
     index('drafts_meeting_type_idx').on(table.meetingType),
+    index('drafts_tracking_id_idx').on(table.trackingId),
+    index('drafts_sent_at_idx').on(table.sentAt),
   ]
 );
 
