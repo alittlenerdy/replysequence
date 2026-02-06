@@ -597,3 +597,33 @@ export const meetEventSubscriptions = pgTable(
 
 export type MeetEventSubscription = typeof meetEventSubscriptions.$inferSelect;
 export type NewMeetEventSubscription = typeof meetEventSubscriptions.$inferInsert;
+
+// Calendar watch channels table - tracks Google Calendar push notification subscriptions
+export const calendarWatchChannels = pgTable(
+  'calendar_watch_channels',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Channel identifiers
+    channelId: text('channel_id').notNull().unique(), // Our UUID for the channel
+    resourceId: text('resource_id').notNull(), // Google's resource ID
+    calendarId: text('calendar_id').notNull().default('primary'),
+    // Expiration and sync tracking
+    expiration: timestamp('expiration', { withTimezone: true }).notNull(),
+    syncToken: text('sync_token'), // For incremental event fetching
+    lastNotificationAt: timestamp('last_notification_at', { withTimezone: true }),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('calendar_watch_channels_user_id_idx').on(table.userId),
+    index('calendar_watch_channels_channel_id_idx').on(table.channelId),
+    index('calendar_watch_channels_expiration_idx').on(table.expiration),
+  ]
+);
+
+export type CalendarWatchChannel = typeof calendarWatchChannels.$inferSelect;
+export type NewCalendarWatchChannel = typeof calendarWatchChannels.$inferInsert;
