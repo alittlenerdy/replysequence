@@ -160,3 +160,43 @@ export interface ProcessedMeetEvent {
   endTime?: Date;
   timestamp: Date;
 }
+
+/**
+ * Workspace Events API - Recording file generated event
+ * Triggered when a Meet recording is uploaded to Drive
+ */
+export interface RecordingFileGeneratedEvent {
+  eventType: 'google.workspace.meet.recording.v2.fileGenerated';
+  eventTime: string;
+  recording: {
+    name: string; // Format: conferenceRecords/{record}/recordings/{recording}
+    driveDestination?: {
+      file: string; // Google Drive file ID
+      exportUri: string; // URL to download
+    };
+  };
+}
+
+/**
+ * Workspace Events API - Transcript file generated event
+ * Triggered when a Meet transcript is uploaded to Drive/Docs
+ */
+export interface TranscriptFileGeneratedEvent {
+  eventType: 'google.workspace.meet.transcript.v2.fileGenerated';
+  eventTime: string;
+  transcript: {
+    name: string; // Format: conferenceRecords/{record}/transcripts/{transcript}
+    docsDestination?: {
+      document: string; // Google Docs document ID
+      exportUri: string; // URL to download/view
+    };
+  };
+}
+
+/**
+ * Union type for all Workspace Events we handle
+ */
+export type MeetWorkspaceEventUnion =
+  | MeetWorkspaceEvent
+  | RecordingFileGeneratedEvent
+  | TranscriptFileGeneratedEvent;

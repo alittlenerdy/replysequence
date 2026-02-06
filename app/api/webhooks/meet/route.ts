@@ -3,7 +3,12 @@ import { db, rawEvents } from '@/lib/db';
 import { processMeetEvent } from '@/lib/process-meet-event';
 import { validatePubSubMessage } from '@/lib/meet-api';
 import { recordWebhookFailure } from '@/lib/webhook-retry';
-import type { PubSubPushMessage, MeetWorkspaceEvent } from '@/lib/meet/types';
+import type {
+  PubSubPushMessage,
+  MeetWorkspaceEvent,
+  RecordingFileGeneratedEvent,
+  TranscriptFileGeneratedEvent,
+} from '@/lib/meet/types';
 import type { RawEvent } from '@/lib/db/schema';
 
 // Disable body parsing to access raw body
@@ -105,6 +110,18 @@ export async function POST(request: NextRequest) {
     // Route based on event type
     if (meetEvent.eventType === 'google.workspace.meet.conference.v2.ended') {
       return await handleConferenceEnded(meetEvent, pushMessage, rawBody, startTime);
+    }
+
+    // Handle transcript file generated event
+    if (meetEvent.eventType === 'google.workspace.meet.transcript.v2.fileGenerated') {
+      const transcriptEvent = JSON.parse(eventData) as TranscriptFileGeneratedEvent;
+      return await handleTranscriptFileGenerated(transcriptEvent, pushMessage, rawBody, startTime);
+    }
+
+    // Handle recording file generated event
+    if (meetEvent.eventType === 'google.workspace.meet.recording.v2.fileGenerated') {
+      const recordingEvent = JSON.parse(eventData) as RecordingFileGeneratedEvent;
+      return await handleRecordingFileGenerated(recordingEvent, pushMessage, rawBody, startTime);
     }
 
     // Unknown event type - store for reference and acknowledge
@@ -250,6 +267,191 @@ async function handleConferenceEnded(
       received: true,
       eventId: rawEvent.id,
       conferenceRecordName,
+    },
+    { status: 200 }
+  );
+}
+
+/**
+ * Handle transcript.v2.fileGenerated event
+ * Triggered when a Meet transcript file is ready in Google Docs
+ */
+async function handleTranscriptFileGenerated(
+  transcriptEvent: TranscriptFileGeneratedEvent,
+  pushMessage: PubSubPushMessage,
+  rawBody: string,
+  startTime: number
+): Promise<NextResponse> {
+  const transcriptName = transcriptEvent.transcript?.name;
+
+  if (!transcriptName) {
+    log('error', '[MEET-2] Missing transcript name in fileGenerated event', {
+      eventType: transcriptEvent.eventType,
+    });
+
+    return NextResponse.json(
+      { received: true, error: 'Missing transcript name' },
+      { status: 200 }
+    );
+  }
+
+  // Extract conference record name from transcript name
+  // Format: conferenceRecords/{record}/transcripts/{transcript}
+  const conferenceRecordMatch = transcriptName.match(/^(conferenceRecords\/[^/]+)/);
+  const conferenceRecordName = conferenceRecordMatch?.[1] || transcriptName;
+
+  // Generate unique event ID
+  const eventId = `meet.transcript.fileGenerated-${transcriptName}-${pushMessage.message.messageId}`;
+
+  log('info', '[MEET-3] Storing transcript fileGenerated event', {
+    eventId,
+    transcriptName,
+    conferenceRecordName,
+    docsDestination: transcriptEvent.transcript?.docsDestination?.document,
+  });
+
+  // Store raw event in database
+  const rawEvent = await storeRawEvent(
+    'meet.transcript.fileGenerated',
+    eventId,
+    rawBody,
+    {
+      transcriptName,
+      conferenceRecordName,
+      docsDocument: transcriptEvent.transcript?.docsDestination?.document,
+      exportUri: transcriptEvent.transcript?.docsDestination?.exportUri,
+    }
+  );
+
+  log('info', '[MEET-3] Raw event stored', {
+    rawEventId: rawEvent.id,
+    eventId,
+    duration: Date.now() - startTime,
+  });
+
+  // Process event - fetch transcript and generate draft
+  try {
+    // Create a MeetWorkspaceEvent-compatible object for the processor
+    const meetEvent: MeetWorkspaceEvent = {
+      eventType: transcriptEvent.eventType,
+      eventTime: transcriptEvent.eventTime,
+      conferenceRecord: {
+        name: conferenceRecordName,
+        conferenceRecordName,
+      },
+    };
+
+    const result = await processMeetEvent(rawEvent, meetEvent);
+
+    log('info', '[MEET-10] Transcript processing complete', {
+      rawEventId: rawEvent.id,
+      action: result.action,
+      meetingId: result.meetingId,
+      duration: Date.now() - startTime,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    log('error', '[MEET-10] Transcript event processing failed', {
+      tag: '[WEBHOOK-ERROR]',
+      platform: 'google_meet',
+      eventType: 'meet.transcript.fileGenerated',
+      rawEventId: rawEvent.id,
+      transcriptName,
+      error: errorMessage,
+      duration: Date.now() - startTime,
+    });
+
+    try {
+      await recordWebhookFailure(
+        'google_meet',
+        'meet.transcript.fileGenerated',
+        rawEvent.payload,
+        errorMessage
+      );
+    } catch (recordError) {
+      log('error', 'Failed to record webhook failure for retry', {
+        tag: '[WEBHOOK-ERROR]',
+        error: recordError instanceof Error ? recordError.message : String(recordError),
+      });
+    }
+  }
+
+  return NextResponse.json(
+    {
+      received: true,
+      eventId: rawEvent.id,
+      transcriptName,
+    },
+    { status: 200 }
+  );
+}
+
+/**
+ * Handle recording.v2.fileGenerated event
+ * Triggered when a Meet recording file is ready in Google Drive
+ */
+async function handleRecordingFileGenerated(
+  recordingEvent: RecordingFileGeneratedEvent,
+  pushMessage: PubSubPushMessage,
+  rawBody: string,
+  startTime: number
+): Promise<NextResponse> {
+  const recordingName = recordingEvent.recording?.name;
+
+  if (!recordingName) {
+    log('error', '[MEET-2] Missing recording name in fileGenerated event', {
+      eventType: recordingEvent.eventType,
+    });
+
+    return NextResponse.json(
+      { received: true, error: 'Missing recording name' },
+      { status: 200 }
+    );
+  }
+
+  // Extract conference record name from recording name
+  // Format: conferenceRecords/{record}/recordings/{recording}
+  const conferenceRecordMatch = recordingName.match(/^(conferenceRecords\/[^/]+)/);
+  const conferenceRecordName = conferenceRecordMatch?.[1] || recordingName;
+
+  // Generate unique event ID
+  const eventId = `meet.recording.fileGenerated-${recordingName}-${pushMessage.message.messageId}`;
+
+  log('info', '[MEET-3] Storing recording fileGenerated event', {
+    eventId,
+    recordingName,
+    conferenceRecordName,
+    driveFile: recordingEvent.recording?.driveDestination?.file,
+  });
+
+  // Store raw event in database
+  const rawEvent = await storeRawEvent(
+    'meet.recording.fileGenerated',
+    eventId,
+    rawBody,
+    {
+      recordingName,
+      conferenceRecordName,
+      driveFile: recordingEvent.recording?.driveDestination?.file,
+      exportUri: recordingEvent.recording?.driveDestination?.exportUri,
+    }
+  );
+
+  log('info', '[MEET-3] Recording event stored (no processing - transcript-based flow)', {
+    rawEventId: rawEvent.id,
+    eventId,
+    duration: Date.now() - startTime,
+  });
+
+  // Note: We primarily process transcripts, not recordings
+  // The recording event is stored for reference but doesn't trigger draft generation
+  // If needed in the future, we could extract audio and use speech-to-text
+
+  return NextResponse.json(
+    {
+      received: true,
+      eventId: rawEvent.id,
+      recordingName,
     },
     { status: 200 }
   );

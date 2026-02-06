@@ -96,6 +96,8 @@ export async function processMeetEvent(
     // Route based on event type
     if (rawEvent.eventType === 'meet.conference.ended') {
       result = await processConferenceEnded(rawEvent, meetEvent);
+    } else if (rawEvent.eventType === 'meet.transcript.fileGenerated') {
+      result = await processTranscriptFileGenerated(rawEvent, meetEvent);
     } else {
       log('warn', '[MEET-4] Unknown Meet event type', {
         rawEventId: rawEvent.id,
@@ -236,6 +238,130 @@ async function processConferenceEnded(
   }
 
   // Fetch and store transcript
+  await fetchAndStoreMeetTranscript(
+    meetingId,
+    conferenceRecordName,
+    rawEvent.id
+  );
+
+  return {
+    success: true,
+    meetingId,
+    action: existingMeeting ? 'updated' : 'created',
+  };
+}
+
+/**
+ * Process a transcript.fileGenerated event
+ * This is triggered when a transcript file becomes available in Google Docs
+ */
+async function processTranscriptFileGenerated(
+  rawEvent: RawEvent,
+  meetEvent: MeetWorkspaceEvent
+): Promise<ProcessResult> {
+  const conferenceRecordName = meetEvent.conferenceRecord?.name || meetEvent.conferenceRecord?.conferenceRecordName;
+
+  if (!conferenceRecordName) {
+    log('error', '[MEET-4] Missing conference record name in transcript event', { rawEventId: rawEvent.id });
+    return { success: false, action: 'failed', error: 'Missing conference record' };
+  }
+
+  log('info', '[MEET-4] Processing transcript fileGenerated', {
+    rawEventId: rawEvent.id,
+    conferenceRecordName,
+  });
+
+  // Create unique Meet meeting ID using conference record name
+  const meetMeetingId = `meet-${conferenceRecordName.replace('conferenceRecords/', '')}`;
+
+  // Check if meeting already exists
+  const [existingMeeting] = await db
+    .select()
+    .from(meetings)
+    .where(eq(meetings.platformMeetingId, meetMeetingId))
+    .limit(1);
+
+  let meetingId: string;
+  let meetingTopic = 'Google Meet';
+
+  // Try to fetch conference details from Meet API
+  try {
+    const conferenceDetails = await getConferenceRecord(conferenceRecordName);
+    if (conferenceDetails.space?.meetingCode) {
+      meetingTopic = `Meet: ${conferenceDetails.space.meetingCode}`;
+    }
+
+    log('info', '[MEET-4] Fetched conference details', {
+      conferenceRecordName,
+      meetingCode: conferenceDetails.space?.meetingCode,
+      startTime: conferenceDetails.startTime,
+      endTime: conferenceDetails.endTime,
+    });
+
+    if (existingMeeting) {
+      // Update existing meeting with more details
+      await db
+        .update(meetings)
+        .set({
+          status: 'processing',
+          topic: meetingTopic,
+          startTime: conferenceDetails.startTime ? new Date(conferenceDetails.startTime) : undefined,
+          endTime: conferenceDetails.endTime ? new Date(conferenceDetails.endTime) : undefined,
+          updatedAt: new Date(),
+        })
+        .where(eq(meetings.id, existingMeeting.id));
+
+      meetingId = existingMeeting.id;
+      log('info', '[MEET-4] Updated existing meeting', { meetingId, meetMeetingId });
+    } else {
+      // Create new meeting
+      const [newMeeting] = await db
+        .insert(meetings)
+        .values({
+          zoomMeetingId: meetMeetingId,
+          platformMeetingId: meetMeetingId,
+          platform: MEET_PLATFORM,
+          hostEmail: 'organizer@meet.google.com', // Placeholder
+          topic: meetingTopic,
+          startTime: conferenceDetails.startTime ? new Date(conferenceDetails.startTime) : undefined,
+          endTime: conferenceDetails.endTime ? new Date(conferenceDetails.endTime) : undefined,
+          status: 'processing',
+        })
+        .returning();
+
+      meetingId = newMeeting.id;
+      log('info', '[MEET-4] Created new meeting from transcript event', { meetingId, meetMeetingId, platform: MEET_PLATFORM });
+    }
+  } catch (err) {
+    log('warn', '[MEET-4] Could not fetch conference details, creating meeting anyway', {
+      error: err instanceof Error ? err.message : String(err),
+      conferenceRecordName,
+    });
+
+    if (existingMeeting) {
+      meetingId = existingMeeting.id;
+      await db
+        .update(meetings)
+        .set({ status: 'processing', updatedAt: new Date() })
+        .where(eq(meetings.id, existingMeeting.id));
+    } else {
+      const [newMeeting] = await db
+        .insert(meetings)
+        .values({
+          zoomMeetingId: meetMeetingId,
+          platformMeetingId: meetMeetingId,
+          platform: MEET_PLATFORM,
+          hostEmail: 'organizer@meet.google.com',
+          topic: meetingTopic,
+          status: 'processing',
+        })
+        .returning();
+
+      meetingId = newMeeting.id;
+    }
+  }
+
+  // Fetch and store transcript - since we got a fileGenerated event, it should be ready
   await fetchAndStoreMeetTranscript(
     meetingId,
     conferenceRecordName,
