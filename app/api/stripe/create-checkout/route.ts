@@ -97,6 +97,7 @@ export async function POST(request: NextRequest) {
         tier: tier || 'unknown',
       },
       subscription_data: {
+        trial_period_days: 14,
         metadata: {
           clerkId: user.id,
         },

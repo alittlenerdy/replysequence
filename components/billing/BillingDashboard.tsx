@@ -31,6 +31,7 @@ interface Subscription {
   status: string;
   currentPeriodEnd: string;
   cancelAtPeriodEnd: boolean;
+  trialEnd: string | null;
   plan: {
     amount: number;
     interval: string;
@@ -229,10 +230,29 @@ export function BillingDashboard() {
                     </span>
                   )}
                 </div>
+                {billing.subscription.status === 'trialing' && billing.subscription.trialEnd && (
+                  <div className="flex items-center gap-2 text-sm text-blue-400">
+                    <Clock className="w-4 h-4" />
+                    <span>
+                      {(() => {
+                        const daysRemaining = Math.ceil(
+                          (new Date(billing.subscription.trialEnd!).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                        );
+                        return daysRemaining > 0
+                          ? `${daysRemaining} day${daysRemaining === 1 ? '' : 's'} left in trial`
+                          : 'Trial ends today';
+                      })()}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-500">
                   <Calendar className="w-4 h-4" />
                   <span>
-                    {billing.subscription.cancelAtPeriodEnd ? 'Cancels' : 'Renews'} on{' '}
+                    {billing.subscription.status === 'trialing'
+                      ? 'Billing starts'
+                      : billing.subscription.cancelAtPeriodEnd
+                        ? 'Cancels'
+                        : 'Renews'} on{' '}
                     {new Date(billing.subscription.currentPeriodEnd).toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',

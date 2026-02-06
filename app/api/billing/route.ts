@@ -54,11 +54,14 @@ export async function GET() {
           const cancelAt = (subData.cancel_at_period_end ?? subData.cancelAtPeriodEnd) as boolean;
           const items = subData.items as { data: Array<{ price?: { unit_amount?: number; recurring?: { interval?: string } } }> };
 
+          const trialEnd = (subData.trial_end ?? subData.trialEnd) as number | null;
+
           subscription = {
             id: sub.id,
             status: sub.status,
             currentPeriodEnd: new Date(periodEnd * 1000).toISOString(),
             cancelAtPeriodEnd: cancelAt,
+            trialEnd: trialEnd ? new Date(trialEnd * 1000).toISOString() : null,
             plan: {
               amount: items?.data?.[0]?.price?.unit_amount || 0,
               interval: items?.data?.[0]?.price?.recurring?.interval || 'month',
