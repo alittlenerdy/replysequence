@@ -557,3 +557,43 @@ export type UserOnboarding = typeof userOnboarding.$inferSelect;
 export type NewUserOnboarding = typeof userOnboarding.$inferInsert;
 export type OnboardingEvent = typeof onboardingEvents.$inferSelect;
 export type NewOnboardingEvent = typeof onboardingEvents.$inferInsert;
+
+// Event subscription status type
+export type EventSubscriptionStatus = 'active' | 'suspended' | 'expired';
+
+// Meet event subscriptions table - tracks Workspace Events API subscriptions
+export const meetEventSubscriptions = pgTable(
+  'meet_event_subscriptions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Google's subscription resource name (e.g., "subscriptions/abc123")
+    subscriptionName: text('subscription_name').notNull(),
+    // Target resource (e.g., "//cloudidentity.googleapis.com/users/123")
+    targetResource: text('target_resource').notNull(),
+    // Event types subscribed to (stored as JSON array)
+    eventTypes: jsonb('event_types').$type<string[]>().notNull(),
+    // Subscription state
+    status: varchar('status', { length: 20 }).$type<EventSubscriptionStatus>().notNull().default('active'),
+    // Expiration and renewal tracking
+    expireTime: timestamp('expire_time', { withTimezone: true }).notNull(),
+    lastRenewedAt: timestamp('last_renewed_at', { withTimezone: true }),
+    renewalFailures: integer('renewal_failures').notNull().default(0),
+    // Error tracking
+    lastError: text('last_error'),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('meet_event_subscriptions_user_id_idx').on(table.userId),
+    index('meet_event_subscriptions_status_idx').on(table.status),
+    index('meet_event_subscriptions_expire_time_idx').on(table.expireTime),
+    index('meet_event_subscriptions_subscription_name_idx').on(table.subscriptionName),
+  ]
+);
+
+export type MeetEventSubscription = typeof meetEventSubscriptions.$inferSelect;
+export type NewMeetEventSubscription = typeof meetEventSubscriptions.$inferInsert;
