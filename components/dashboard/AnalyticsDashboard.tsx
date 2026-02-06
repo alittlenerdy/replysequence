@@ -2,11 +2,12 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3 } from 'lucide-react';
+import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { ActivityChart } from '@/components/analytics/ActivityChart';
 import { PlatformChart } from '@/components/analytics/PlatformChart';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
+import { ROICalculator } from '@/components/analytics/ROICalculator';
 
 interface DailyDataPoint {
   date: string;
@@ -26,11 +27,29 @@ interface EmailFunnelData {
   conversionRate: number;
 }
 
+interface PeriodComparison {
+  current: number;
+  previous: number;
+  change: number;
+  trend: 'up' | 'down' | 'neutral';
+}
+
+interface ROIMetrics {
+  hoursSaved: number;
+  dollarValue: number;
+  hourlyRate: number;
+  emailsPerHour: number;
+}
+
 interface AnalyticsData {
   totalMeetings: number;
   emailsGenerated: number;
   emailsSent: number;
   timeSavedMinutes: number;
+  meetingsComparison: PeriodComparison;
+  emailsComparison: PeriodComparison;
+  sentComparison: PeriodComparison;
+  roi: ROIMetrics;
   dailyMeetings: DailyDataPoint[];
   dailyEmails: DailyDataPoint[];
   platformBreakdown: PlatformStat[];
@@ -98,7 +117,7 @@ export function AnalyticsDashboard() {
           {[...Array(4)].map((_, i) => (
             <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 animate-pulse">
               <div className="w-10 h-10 rounded-xl bg-gray-700 light:bg-gray-200 mb-3" />
-              <div className="h-8 w-16 bg-gray-700 light:bg-gray-200 rounded mb-2" />
+              <div className="h-10 w-20 bg-gray-700 light:bg-gray-200 rounded mb-2" />
               <div className="h-4 w-24 bg-gray-700 light:bg-gray-200 rounded" />
             </div>
           ))}
@@ -138,6 +157,10 @@ export function AnalyticsDashboard() {
   const timeSaved = formatTimeSaved(analytics.timeSavedMinutes);
   const hasData = analytics.totalMeetings > 0 || analytics.emailsGenerated > 0;
 
+  // Extract sparkline data from daily data
+  const meetingsSparkline = analytics.dailyMeetings.map(d => d.count);
+  const emailsSparkline = analytics.dailyEmails.map(d => d.count);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -147,7 +170,7 @@ export function AnalyticsDashboard() {
         className="flex items-center justify-between"
       >
         <div>
-          <h2 className="text-xl font-bold text-white light:text-gray-900">Analytics Dashboard</h2>
+          <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics Dashboard</h2>
           <p className="text-sm text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>
         </div>
         <button
@@ -160,7 +183,7 @@ export function AnalyticsDashboard() {
         </button>
       </motion.div>
 
-      {/* Hero Stats */}
+      {/* Hero Stats - Enhanced with trends and sparklines */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           icon={<Calendar className="w-5 h-5" />}
@@ -169,6 +192,8 @@ export function AnalyticsDashboard() {
           gradient="from-blue-500/20 to-blue-600/20"
           accentColor="#3B82F6"
           delay={0}
+          comparison={analytics.meetingsComparison}
+          sparklineData={meetingsSparkline}
         />
         <StatCard
           icon={<Mail className="w-5 h-5" />}
@@ -177,6 +202,8 @@ export function AnalyticsDashboard() {
           gradient="from-purple-500/20 to-purple-600/20"
           accentColor="#A855F7"
           delay={0.05}
+          comparison={analytics.emailsComparison}
+          sparklineData={emailsSparkline}
         />
         <StatCard
           icon={<Send className="w-5 h-5" />}
@@ -185,6 +212,7 @@ export function AnalyticsDashboard() {
           gradient="from-emerald-500/20 to-emerald-600/20"
           accentColor="#10B981"
           delay={0.1}
+          comparison={analytics.sentComparison}
         />
         <StatCard
           icon={<Clock className="w-5 h-5" />}
@@ -200,6 +228,9 @@ export function AnalyticsDashboard() {
 
       {hasData ? (
         <>
+          {/* ROI Calculator - The killer feature */}
+          <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+
           {/* Activity Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ActivityChart
