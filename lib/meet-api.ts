@@ -362,7 +362,7 @@ export async function validatePubSubMessage(
       audience: Array.isArray(payload.aud) ? payload.aud[0] : payload.aud,
     };
   } catch (error) {
-    // Handle specific JWT errors
+    // Handle specific JWT errors from jose library
     if (error instanceof jose.errors.JWTExpired) {
       log('warn', '[MEET-JWT-ERROR] Token expired', {
         error: error.message,
@@ -386,12 +386,45 @@ export async function validatePubSubMessage(
       return { valid: false, error: 'Invalid signature' };
     }
 
-    // Generic error
+    // Handle malformed token errors (JWTInvalid, JWSInvalid)
+    if (error instanceof jose.errors.JWTInvalid) {
+      log('warn', '[MEET-JWT-ERROR] Malformed JWT token', {
+        error: error.message,
+      });
+      return { valid: false, error: 'Malformed token' };
+    }
+
+    if (error instanceof jose.errors.JWSInvalid) {
+      log('warn', '[MEET-JWT-ERROR] Invalid JWS structure', {
+        error: error.message,
+      });
+      return { valid: false, error: 'Invalid token structure' };
+    }
+
+    // Handle SyntaxError from base64/JSON parsing of malformed tokens
+    if (error instanceof SyntaxError) {
+      log('warn', '[MEET-JWT-ERROR] Token parsing failed (malformed)', {
+        error: error.message,
+      });
+      return { valid: false, error: 'Malformed token - parsing failed' };
+    }
+
+    // Handle TypeError (often from null/undefined access on malformed data)
+    if (error instanceof TypeError) {
+      log('warn', '[MEET-JWT-ERROR] Token structure error', {
+        error: error.message,
+      });
+      return { valid: false, error: 'Invalid token format' };
+    }
+
+    // Generic error - catch-all for anything else
     const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorType = error instanceof Error ? error.constructor.name : typeof error;
     log('error', '[MEET-JWT-ERROR] JWT validation failed', {
       error: errorMessage,
+      errorType: errorType,
     });
-    return { valid: false, error: errorMessage };
+    return { valid: false, error: `Validation failed: ${errorMessage}` };
   }
 }
 
