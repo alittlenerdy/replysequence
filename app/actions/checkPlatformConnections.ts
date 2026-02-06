@@ -4,12 +4,26 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { db, users, zoomConnections, teamsConnections, meetConnections } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
+export interface PlatformConnectionDetails {
+  connected: boolean;
+  email?: string;
+  connectedAt?: Date;
+  expiresAt?: Date;
+  isExpiringSoon?: boolean; // Token expires within 24 hours
+  isExpired?: boolean;
+}
+
 export interface PlatformConnectionsResult {
   connected: boolean;
   platforms: {
     zoom: boolean;
     teams: boolean;
     meet: boolean;
+  };
+  details: {
+    zoom: PlatformConnectionDetails;
+    teams: PlatformConnectionDetails;
+    meet: PlatformConnectionDetails;
   };
   userId?: string;
   zoomEmail?: string;
@@ -34,6 +48,11 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       return {
         connected: false,
         platforms: { zoom: false, teams: false, meet: false },
+        details: {
+          zoom: { connected: false },
+          teams: { connected: false },
+          meet: { connected: false },
+        },
       };
     }
 
@@ -73,39 +92,93 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       hasConnection,
     });
 
-    // Get Zoom email if connected
+    const now = new Date();
+    const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    // Helper to check token expiration status
+    const getExpirationStatus = (expiresAt: Date | null) => ({
+      isExpired: expiresAt ? expiresAt < now : false,
+      isExpiringSoon: expiresAt ? (expiresAt > now && expiresAt < twentyFourHoursFromNow) : false,
+    });
+
+    // Get Zoom connection details
     let zoomEmail: string | undefined;
+    let zoomDetails: PlatformConnectionDetails = { connected: false };
     if (zoomConnected) {
       const [connection] = await db
-        .select({ zoomEmail: zoomConnections.zoomEmail })
+        .select({
+          zoomEmail: zoomConnections.zoomEmail,
+          connectedAt: zoomConnections.connectedAt,
+          expiresAt: zoomConnections.accessTokenExpiresAt,
+        })
         .from(zoomConnections)
         .where(eq(zoomConnections.userId, existingUser.id))
         .limit(1);
-      zoomEmail = connection?.zoomEmail;
+      if (connection) {
+        zoomEmail = connection.zoomEmail;
+        const expStatus = getExpirationStatus(connection.expiresAt);
+        zoomDetails = {
+          connected: true,
+          email: connection.zoomEmail,
+          connectedAt: connection.connectedAt,
+          expiresAt: connection.expiresAt,
+          ...expStatus,
+        };
+      }
       console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail });
     }
 
-    // Get Teams email if connected
+    // Get Teams connection details
     let teamsEmail: string | undefined;
+    let teamsDetails: PlatformConnectionDetails = { connected: false };
     if (teamsConnected) {
       const [connection] = await db
-        .select({ msEmail: teamsConnections.msEmail })
+        .select({
+          msEmail: teamsConnections.msEmail,
+          connectedAt: teamsConnections.connectedAt,
+          expiresAt: teamsConnections.accessTokenExpiresAt,
+        })
         .from(teamsConnections)
         .where(eq(teamsConnections.userId, existingUser.id))
         .limit(1);
-      teamsEmail = connection?.msEmail;
+      if (connection) {
+        teamsEmail = connection.msEmail;
+        const expStatus = getExpirationStatus(connection.expiresAt);
+        teamsDetails = {
+          connected: true,
+          email: connection.msEmail,
+          connectedAt: connection.connectedAt,
+          expiresAt: connection.expiresAt,
+          ...expStatus,
+        };
+      }
       console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail });
     }
 
-    // Get Meet email if connected
+    // Get Meet connection details
     let meetEmail: string | undefined;
+    let meetDetails: PlatformConnectionDetails = { connected: false };
     if (meetConnected) {
       const [connection] = await db
-        .select({ googleEmail: meetConnections.googleEmail })
+        .select({
+          googleEmail: meetConnections.googleEmail,
+          connectedAt: meetConnections.connectedAt,
+          expiresAt: meetConnections.accessTokenExpiresAt,
+        })
         .from(meetConnections)
         .where(eq(meetConnections.userId, existingUser.id))
         .limit(1);
-      meetEmail = connection?.googleEmail;
+      if (connection) {
+        meetEmail = connection.googleEmail;
+        const expStatus = getExpirationStatus(connection.expiresAt);
+        meetDetails = {
+          connected: true,
+          email: connection.googleEmail,
+          connectedAt: connection.connectedAt,
+          expiresAt: connection.expiresAt,
+          ...expStatus,
+        };
+      }
       console.log('[CHECK-CONNECTION] Meet connection found', { meetEmail });
     }
 
@@ -115,6 +188,11 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         zoom: zoomConnected,
         teams: teamsConnected,
         meet: meetConnected,
+      },
+      details: {
+        zoom: zoomDetails,
+        teams: teamsDetails,
+        meet: meetDetails,
       },
       userId: existingUser.id,
       zoomEmail,
@@ -145,6 +223,11 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
   return {
     connected: false,
     platforms: { zoom: false, teams: false, meet: false },
+    details: {
+      zoom: { connected: false },
+      teams: { connected: false },
+      meet: { connected: false },
+    },
     userId: newUser.id,
   };
   } catch (error) {
@@ -153,6 +236,11 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     return {
       connected: false,
       platforms: { zoom: false, teams: false, meet: false },
+      details: {
+        zoom: { connected: false },
+        teams: { connected: false },
+        meet: { connected: false },
+      },
     };
   }
 }
