@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     'email',
     'https://www.googleapis.com/auth/calendar.readonly',
     'https://www.googleapis.com/auth/meetings.space.readonly',
-    'https://www.googleapis.com/auth/workspaceevents.readonly', // Workspace Events API for subscriptions
+    'https://www.googleapis.com/auth/workspace-events.readonly', // Workspace Events API for subscriptions
   ];
   const scopes = scopesList.join(' ');
 
