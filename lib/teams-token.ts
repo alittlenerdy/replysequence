@@ -9,10 +9,10 @@ import { eq } from 'drizzle-orm';
 import { db, teamsConnections, users } from '@/lib/db';
 import { encrypt, decrypt } from '@/lib/encryption';
 
-// Configuration from environment
-const CLIENT_ID = process.env.MICROSOFT_TEAMS_CLIENT_ID;
-const CLIENT_SECRET = process.env.MICROSOFT_TEAMS_CLIENT_SECRET;
-const TENANT_ID = process.env.MICROSOFT_TEAMS_TENANT_ID || 'common';
+// Configuration from environment (trim to prevent newline issues)
+const CLIENT_ID = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
+const CLIENT_SECRET = process.env.MICROSOFT_TEAMS_CLIENT_SECRET?.trim();
+const TENANT_ID = process.env.MICROSOFT_TEAMS_TENANT_ID?.trim() || 'common';
 
 // Graph API endpoint
 const TOKEN_ENDPOINT = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`;

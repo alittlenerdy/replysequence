@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
 
   // Debug environment variables
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
-  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID;
-  const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID || 'common';
+  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
+  const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID?.trim() || 'common';
 
   console.log('[TEAMS-OAUTH] Environment check:', {
     hasClientId: !!clientId,

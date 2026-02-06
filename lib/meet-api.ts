@@ -15,10 +15,10 @@ import type {
   ListResponse,
 } from './meet/types';
 
-// Configuration from environment
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
+// Configuration from environment (trim to prevent newline issues)
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET?.trim();
+const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN?.trim();
 
 // API endpoints
 const MEET_API_BASE = 'https://meet.googleapis.com/v2';

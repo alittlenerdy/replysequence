@@ -9,9 +9,9 @@ import { eq } from 'drizzle-orm';
 import { db, meetConnections, users } from '@/lib/db';
 import { encrypt, decrypt } from '@/lib/encryption';
 
-// Configuration from environment
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+// Configuration from environment (trim to prevent newline issues)
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET?.trim();
 
 // Token endpoint
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';

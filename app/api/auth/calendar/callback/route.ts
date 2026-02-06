@@ -193,8 +193,8 @@ export async function GET(request: NextRequest) {
 }
 
 async function exchangeCodeForTokens(code: string): Promise<GoogleTokenResponse> {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   // CRITICAL: Remove trailing slash to match the redirect_uri used in the auth request
   const baseUrl = rawAppUrl.replace(/\/+$/, '');

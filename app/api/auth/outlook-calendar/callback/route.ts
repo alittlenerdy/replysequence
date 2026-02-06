@@ -190,9 +190,9 @@ export async function GET(request: NextRequest) {
 }
 
 async function exchangeCodeForTokens(code: string): Promise<MicrosoftTokenResponse> {
-  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID;
-  const clientSecret = process.env.MICROSOFT_TEAMS_CLIENT_SECRET;
-  const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID || 'common';
+  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
+  const clientSecret = process.env.MICROSOFT_TEAMS_CLIENT_SECRET?.trim();
+  const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID?.trim() || 'common';
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   const baseUrl = rawAppUrl.replace(/\/+$/, '');
   const redirectUri = `${baseUrl}/api/auth/outlook-calendar/callback`;

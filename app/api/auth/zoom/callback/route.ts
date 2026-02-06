@@ -232,8 +232,8 @@ export async function GET(request: NextRequest) {
 }
 
 async function exchangeCodeForTokens(code: string): Promise<ZoomTokenResponse> {
-  const clientId = process.env.ZOOM_CLIENT_ID;
-  const clientSecret = process.env.ZOOM_CLIENT_SECRET;
+  const clientId = process.env.ZOOM_CLIENT_ID?.trim();
+  const clientSecret = process.env.ZOOM_CLIENT_SECRET?.trim();
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/zoom/callback`;
 
   if (!clientId || !clientSecret) {

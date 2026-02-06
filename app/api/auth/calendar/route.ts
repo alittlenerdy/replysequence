@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   // Debug environment variables
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
-  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
 
   console.log('[CALENDAR-OAUTH-START-2] Environment check:', {
     hasClientId: !!clientId,

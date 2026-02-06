@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
 
   // Debug environment variables
   const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
-  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID; // Reuse Teams client ID
-  const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID || 'common';
+  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim(); // Reuse Teams client ID
+  const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID?.trim() || 'common';
 
   console.log('[OUTLOOK-CALENDAR-OAUTH-START-2] Environment check:', {
     hasClientId: !!clientId,

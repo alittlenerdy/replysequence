@@ -14,10 +14,10 @@ import type {
   GraphApiError,
 } from './teams/types';
 
-// Configuration from environment
-const TENANT_ID = process.env.MICROSOFT_TEAMS_TENANT_ID;
-const CLIENT_ID = process.env.MICROSOFT_TEAMS_CLIENT_ID;
-const CLIENT_SECRET = process.env.MICROSOFT_TEAMS_CLIENT_SECRET;
+// Configuration from environment (trim to prevent newline issues)
+const TENANT_ID = process.env.MICROSOFT_TEAMS_TENANT_ID?.trim();
+const CLIENT_ID = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
+const CLIENT_SECRET = process.env.MICROSOFT_TEAMS_CLIENT_SECRET?.trim();
 
 // Graph API endpoints
 const GRAPH_BASE_URL = 'https://graph.microsoft.com/v1.0';
