@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)'])
+const isWebhookRoute = createRouteMatcher(['/api/webhooks(.*)'])
 
 // Generate a random nonce for CSP
 function generateNonce(): string {
@@ -12,6 +13,11 @@ function generateNonce(): string {
 }
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // Skip Clerk auth for webhook routes - they have their own auth (JWT, HMAC)
+  if (isWebhookRoute(req)) {
+    return NextResponse.next()
+  }
+
   if (isProtectedRoute(req)) {
     await auth.protect()
   }
@@ -55,7 +61,7 @@ export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Run for API routes EXCEPT webhooks (they have their own auth)
-    '/(api(?!/webhooks)|trpc)(.*)',
+    // Always run for API routes (webhook auth is handled inside middleware)
+    '/(api|trpc)(.*)',
   ],
 }
