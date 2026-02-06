@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     returnTo,
   });
 
-  // Google OAuth 2.0 scopes for Meet transcripts and Events API
+  // Google OAuth 2.0 scopes for Meet transcripts and Calendar
   // Using delegated permissions (user-consented access)
   const scopesList = [
     'openid',
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     'email',
     'https://www.googleapis.com/auth/calendar.readonly',
     'https://www.googleapis.com/auth/meetings.space.readonly',
-    'https://www.googleapis.com/auth/workspace-events.readonly', // Workspace Events API for subscriptions
+    'https://www.googleapis.com/auth/drive.readonly', // For accessing recordings in Drive
   ];
   const scopes = scopesList.join(' ');
 

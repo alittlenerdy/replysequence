@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     console.log('[MEET-OAUTH-CALLBACK] Scopes granted:', {
       fullScope: tokens.scope,
       apiScopes: grantedScopes,
-      hasEventsScope: tokens.scope.includes('workspace-events'),
+      hasDriveScope: tokens.scope.includes('drive.readonly'),
     });
 
     // Get Google user info
