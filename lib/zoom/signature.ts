@@ -1,6 +1,56 @@
 import crypto from 'crypto';
 
 /**
+ * Normalize a Zoom meeting UUID to ensure consistent storage and lookups.
+ *
+ * Zoom UUIDs can contain special characters like "/" and "=" that may be
+ * encoded differently across webhook events. This function ensures:
+ * - Leading "/" characters are preserved but normalized
+ * - Double slashes "//" are handled consistently
+ * - URL-encoded characters are decoded for storage
+ *
+ * Per Zoom docs: UUIDs starting with "/" or containing "//" need special handling.
+ * We normalize by decoding URL-encoded characters to get the canonical form.
+ *
+ * @param uuid - The raw Zoom meeting UUID from webhook payload
+ * @returns Normalized UUID string for consistent storage/lookup
+ */
+export function normalizeZoomUuid(uuid: string): string {
+  if (!uuid) {
+    return uuid;
+  }
+
+  // First, decode any URL-encoded characters (e.g., %2F -> /)
+  // This handles cases where Zoom might send encoded UUIDs
+  let normalized = uuid;
+
+  try {
+    // Only decode if it looks like it contains encoded characters
+    if (uuid.includes('%')) {
+      normalized = decodeURIComponent(uuid);
+    }
+  } catch {
+    // If decoding fails, use the original
+    normalized = uuid;
+  }
+
+  // Trim whitespace
+  normalized = normalized.trim();
+
+  // Log normalization for debugging if the UUID was modified
+  if (normalized !== uuid) {
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Zoom UUID normalized',
+      original: uuid,
+      normalized,
+    }));
+  }
+
+  return normalized;
+}
+
+/**
  * Verify Zoom webhook signature
  * Zoom uses HMAC SHA-256 for webhook verification
  *

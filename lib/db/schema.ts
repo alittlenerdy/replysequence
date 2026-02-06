@@ -502,6 +502,41 @@ export type TeamsConnection = typeof teamsConnections.$inferSelect;
 export type NewTeamsConnection = typeof teamsConnections.$inferInsert;
 export type MeetConnection = typeof meetConnections.$inferSelect;
 export type NewMeetConnection = typeof meetConnections.$inferInsert;
+
+// Calendar connections table - stores OAuth tokens for Google Calendar users (separate from Meet)
+export const calendarConnections = pgTable(
+  'calendar_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Google account info
+    googleUserId: varchar('google_user_id', { length: 255 }).notNull(),
+    googleEmail: varchar('google_email', { length: 255 }).notNull(),
+    googleDisplayName: varchar('google_display_name', { length: 255 }),
+    // Encrypted tokens (AES-256-GCM)
+    accessTokenEncrypted: text('access_token_encrypted').notNull(),
+    refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+    // Token expiration
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
+    // Scopes granted
+    scopes: text('scopes').notNull(), // Space-separated list
+    // Timestamps
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+    lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('calendar_connections_user_id_idx').on(table.userId),
+    index('calendar_connections_google_user_id_idx').on(table.googleUserId),
+    index('calendar_connections_expires_at_idx').on(table.accessTokenExpiresAt),
+  ]
+);
+
+export type CalendarConnection = typeof calendarConnections.$inferSelect;
+export type NewCalendarConnection = typeof calendarConnections.$inferInsert;
 export type UsageLog = typeof usageLogs.$inferSelect;
 export type NewUsageLog = typeof usageLogs.$inferInsert;
 

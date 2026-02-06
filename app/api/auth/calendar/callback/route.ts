@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, users, userOnboarding } from '@/lib/db';
+import { db, users, userOnboarding, calendarConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 interface GoogleTokenResponse {
@@ -142,13 +142,50 @@ export async function GET(request: NextRequest) {
       console.log('[CALENDAR-OAUTH-CALLBACK-7] Using existing user', { userId: user.id });
     }
 
-    // Store encrypted tokens for calendar access (we can reuse them for calendar API calls)
-    // Note: For simplicity, we store these on the user record
-    // In a production app, you might want a separate calendarConnections table
+    // Store encrypted tokens in calendarConnections table
     const accessTokenEncrypted = encrypt(tokens.access_token);
-    const refreshTokenEncrypted = tokens.refresh_token ? encrypt(tokens.refresh_token) : null;
+    const refreshTokenEncrypted = tokens.refresh_token
+      ? encrypt(tokens.refresh_token)
+      : encrypt(''); // Need a value for required field
 
-    console.log('[CALENDAR-OAUTH-CALLBACK-9] Storing calendar tokens');
+    console.log('[CALENDAR-OAUTH-CALLBACK-9] Storing calendar tokens in calendarConnections table');
+
+    // Check if calendar connection already exists for this user
+    const existingConnection = await db.query.calendarConnections.findFirst({
+      where: eq(calendarConnections.userId, user.id),
+    });
+
+    if (existingConnection) {
+      // Update existing connection
+      await db
+        .update(calendarConnections)
+        .set({
+          googleUserId: googleUser.id,
+          googleEmail: googleUser.email,
+          googleDisplayName: googleUser.name || null,
+          accessTokenEncrypted,
+          refreshTokenEncrypted,
+          accessTokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
+          scopes: tokens.scope,
+          lastRefreshedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(calendarConnections.userId, user.id));
+      console.log('[CALENDAR-OAUTH-CALLBACK-9.1] Updated existing calendar connection');
+    } else {
+      // Create new connection
+      await db.insert(calendarConnections).values({
+        userId: user.id,
+        googleUserId: googleUser.id,
+        googleEmail: googleUser.email,
+        googleDisplayName: googleUser.name || null,
+        accessTokenEncrypted,
+        refreshTokenEncrypted,
+        accessTokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
+        scopes: tokens.scope,
+      });
+      console.log('[CALENDAR-OAUTH-CALLBACK-9.1] Created new calendar connection');
+    }
 
     // Update user_onboarding table to mark calendar as connected
     console.log('[CALENDAR-OAUTH-CALLBACK-10] Updating user_onboarding with calendarConnected=true');
