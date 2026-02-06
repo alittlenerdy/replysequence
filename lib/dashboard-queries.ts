@@ -26,6 +26,7 @@ export interface DraftWithMeeting {
   meetingHostEmail: string;
   meetingStartTime: Date | null;
   meetingPlatform: string;
+  trackingId: string | null;
 }
 
 export interface DraftsQueryParams {
@@ -147,6 +148,7 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       meetingHostEmail: meetings.hostEmail,
       meetingStartTime: meetings.startTime,
       meetingPlatform: meetings.platform,
+      trackingId: drafts.trackingId,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))

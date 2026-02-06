@@ -3,6 +3,7 @@ import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
 import { syncSentEmailToCrm } from '@/lib/airtable';
 import { trackEvent } from '@/lib/analytics';
+import { injectTracking } from '@/lib/email-tracking';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
@@ -56,13 +57,21 @@ export async function POST(request: NextRequest) {
       draftId,
       recipientEmail,
       subject: draft.subject,
+      hasTracking: !!draft.trackingId,
     }));
+
+    // Inject email tracking (pixel + link wrapping) if trackingId exists
+    let emailBody = draft.body;
+    if (draft.trackingId) {
+      emailBody = injectTracking(draft.body, draft.trackingId);
+      console.log('[SEND-1b] Tracking injected for:', draft.trackingId);
+    }
 
     // Send email via Resend with viral signature footer
     const result = await sendEmail({
       to: recipientEmail,
       subject: draft.subject,
-      body: draft.body,
+      body: emailBody,
       replyTo: draft.meetingHostEmail,
       utmContent: draftId,
       includeSignature: true, // Future: check user settings for paid users
