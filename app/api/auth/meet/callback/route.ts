@@ -103,6 +103,14 @@ export async function GET(request: NextRequest) {
       expiresIn: tokens.expires_in,
     });
 
+    // Log granted scopes for verification
+    const grantedScopes = tokens.scope.split(' ').filter(s => s.startsWith('https://'));
+    console.log('[MEET-OAUTH-CALLBACK] Scopes granted:', {
+      fullScope: tokens.scope,
+      apiScopes: grantedScopes,
+      hasEventsScope: tokens.scope.includes('workspaceevents'),
+    });
+
     // Get Google user info
     const googleUser = await getGoogleUserInfo(tokens.access_token);
     console.log('[MEET-OAUTH-CALLBACK-4] Got Google user info', {

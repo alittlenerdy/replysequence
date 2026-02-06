@@ -51,15 +51,22 @@ export async function GET(request: NextRequest) {
     returnTo,
   });
 
-  // Google OAuth 2.0 scopes for Meet transcripts
+  // Google OAuth 2.0 scopes for Meet transcripts and Events API
   // Using delegated permissions (user-consented access)
-  const scopes = [
+  const scopesList = [
     'openid',
     'profile',
     'email',
     'https://www.googleapis.com/auth/calendar.readonly',
     'https://www.googleapis.com/auth/meetings.space.readonly',
-  ].join(' ');
+    'https://www.googleapis.com/auth/workspaceevents.readonly', // Workspace Events API for subscriptions
+  ];
+  const scopes = scopesList.join(' ');
+
+  console.log('[MEET-OAUTH-SCOPES] Requesting scopes:', {
+    scopeCount: scopesList.length,
+    scopesList: scopesList.filter(s => s.startsWith('https://')),
+  });
 
   // Encode returnTo in state along with userId for CSRF protection
   const statePayload = JSON.stringify({ userId, returnTo });
