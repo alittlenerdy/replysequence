@@ -156,6 +156,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     }
 
     // Get Meet connection details
+    // Note: Google access tokens expire in 1 hour, but we have refresh tokens
+    // So we don't show "expiring soon" - only show warning if refresh token is missing
     let meetEmail: string | undefined;
     let meetDetails: PlatformConnectionDetails = { connected: false };
     if (meetConnected) {
@@ -164,22 +166,26 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
           googleEmail: meetConnections.googleEmail,
           connectedAt: meetConnections.connectedAt,
           expiresAt: meetConnections.accessTokenExpiresAt,
+          hasRefreshToken: meetConnections.refreshTokenEncrypted,
         })
         .from(meetConnections)
         .where(eq(meetConnections.userId, existingUser.id))
         .limit(1);
       if (connection) {
         meetEmail = connection.googleEmail;
-        const expStatus = getExpirationStatus(connection.expiresAt);
+        // For Google Meet: only show warning if we don't have a refresh token
+        // Access tokens auto-refresh, so short expiry is normal
+        const hasRefreshToken = !!connection.hasRefreshToken;
         meetDetails = {
           connected: true,
           email: connection.googleEmail,
           connectedAt: connection.connectedAt,
           expiresAt: connection.expiresAt,
-          ...expStatus,
+          isExpired: !hasRefreshToken, // Only "expired" if no refresh token
+          isExpiringSoon: false, // Never "expiring soon" for Google (we auto-refresh)
         };
       }
-      console.log('[CHECK-CONNECTION] Meet connection found', { meetEmail });
+      console.log('[CHECK-CONNECTION] Meet connection found', { meetEmail, hasRefreshToken: !!connection?.hasRefreshToken });
     }
 
     return {
