@@ -5,6 +5,7 @@
  * Uses OAuth2 with refresh tokens for authentication.
  */
 
+import * as jose from 'jose';
 import type {
   GoogleTokenResponse,
   GoogleApiError,
@@ -14,6 +15,19 @@ import type {
   MeetParticipant,
   ListResponse,
 } from './meet/types';
+
+// Google's JWKS endpoint for JWT verification
+const GOOGLE_JWKS = jose.createRemoteJWKSet(
+  new URL('https://www.googleapis.com/oauth2/v3/certs')
+);
+
+// Expected issuer for Google tokens
+const GOOGLE_ISSUER = 'https://accounts.google.com';
+
+// Default audience (can be overridden by env var)
+const DEFAULT_AUDIENCE = process.env.GOOGLE_PUBSUB_AUDIENCE?.trim() ||
+  process.env.NEXT_PUBLIC_APP_URL?.trim()?.replace(/\/$/, '') + '/api/webhooks/meet' ||
+  'https://replysequence.vercel.app/api/webhooks/meet';
 
 // Configuration from environment (trim to prevent newline issues)
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
@@ -263,30 +277,122 @@ export function isMeetConfigured(): boolean {
 }
 
 /**
- * Validate Pub/Sub push message
- * In production, verify the JWT bearer token from Google
+ * JWT Validation Result
  */
-export function validatePubSubMessage(
+export interface JWTValidationResult {
+  valid: boolean;
+  error?: string;
+  email?: string;
+  audience?: string;
+}
+
+/**
+ * Validate Pub/Sub push message JWT
+ * Verifies the bearer token from Google using their public keys
+ *
+ * @param authHeader - The Authorization header from the request
+ * @param expectedAudience - Optional override for expected audience claim
+ * @returns Validation result with details
+ */
+export async function validatePubSubMessage(
   authHeader: string | null,
   expectedAudience?: string
-): boolean {
-  // For initial implementation, we accept messages
-  // TODO: Add JWT validation for production security
-  // The Authorization header contains a bearer token signed by Google
+): Promise<JWTValidationResult> {
+  const audience = expectedAudience || DEFAULT_AUDIENCE;
+
+  log('info', '[MEET-JWT-1] Starting JWT validation', {
+    hasAuthHeader: !!authHeader,
+    expectedAudience: audience,
+  });
+
+  // Step 1: Check for Authorization header
   if (!authHeader) {
-    log('warn', '[MEET-2] No authorization header in Pub/Sub message');
-    return true; // Allow for testing, tighten in production
+    log('warn', '[MEET-JWT-2] No authorization header in Pub/Sub message');
+    return { valid: false, error: 'Missing authorization header' };
   }
 
-  // Basic check that it's a bearer token
+  // Step 2: Check Bearer token format
   if (!authHeader.startsWith('Bearer ')) {
-    log('warn', '[MEET-2] Invalid authorization header format');
-    return false;
+    log('warn', '[MEET-JWT-2] Invalid authorization header format');
+    return { valid: false, error: 'Invalid authorization header format' };
   }
 
-  // TODO: Decode and verify JWT signature
-  // For now, we trust messages from the configured subscription
-  return true;
+  // Step 3: Extract token
+  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  if (!token) {
+    log('warn', '[MEET-JWT-2] Empty bearer token');
+    return { valid: false, error: 'Empty bearer token' };
+  }
+
+  log('info', '[MEET-JWT-3] Token extracted', {
+    tokenLength: token.length,
+    tokenPrefix: token.substring(0, 20) + '...',
+  });
+
+  try {
+    // Step 4: Verify JWT signature using Google's public keys
+    log('info', '[MEET-JWT-4] Verifying JWT signature with Google JWKS');
+
+    const { payload, protectedHeader } = await jose.jwtVerify(token, GOOGLE_JWKS, {
+      issuer: GOOGLE_ISSUER,
+      audience: audience,
+    });
+
+    log('info', '[MEET-JWT-5] JWT signature verified', {
+      algorithm: protectedHeader.alg,
+      keyId: protectedHeader.kid,
+    });
+
+    // Step 5: Log validated claims
+    const email = payload.email as string | undefined;
+    const emailVerified = payload.email_verified as boolean | undefined;
+
+    log('info', '[MEET-JWT-6] JWT claims validated', {
+      issuer: payload.iss,
+      audience: payload.aud,
+      email: email,
+      emailVerified: emailVerified,
+      expiresAt: payload.exp ? new Date(payload.exp * 1000).toISOString() : 'unknown',
+      issuedAt: payload.iat ? new Date(payload.iat * 1000).toISOString() : 'unknown',
+    });
+
+    return {
+      valid: true,
+      email: email,
+      audience: Array.isArray(payload.aud) ? payload.aud[0] : payload.aud,
+    };
+  } catch (error) {
+    // Handle specific JWT errors
+    if (error instanceof jose.errors.JWTExpired) {
+      log('warn', '[MEET-JWT-ERROR] Token expired', {
+        error: error.message,
+      });
+      return { valid: false, error: 'Token expired' };
+    }
+
+    if (error instanceof jose.errors.JWTClaimValidationFailed) {
+      log('warn', '[MEET-JWT-ERROR] Claim validation failed', {
+        error: error.message,
+        claim: error.claim,
+        reason: error.reason,
+      });
+      return { valid: false, error: `Claim validation failed: ${error.claim}` };
+    }
+
+    if (error instanceof jose.errors.JWSSignatureVerificationFailed) {
+      log('warn', '[MEET-JWT-ERROR] Signature verification failed', {
+        error: error.message,
+      });
+      return { valid: false, error: 'Invalid signature' };
+    }
+
+    // Generic error
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    log('error', '[MEET-JWT-ERROR] JWT validation failed', {
+      error: errorMessage,
+    });
+    return { valid: false, error: errorMessage };
+  }
 }
 
 /**

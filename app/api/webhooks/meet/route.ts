@@ -62,17 +62,26 @@ export async function POST(request: NextRequest) {
     const rawBody = await request.text();
     const authHeader = request.headers.get('authorization');
 
-    // Validate Pub/Sub message authenticity
-    if (!validatePubSubMessage(authHeader)) {
+    // Validate Pub/Sub message JWT authenticity
+    const jwtResult = await validatePubSubMessage(authHeader);
+    if (!jwtResult.valid) {
       log('warn', '[MEET-1] Invalid Pub/Sub message authentication', {
         hasAuthHeader: !!authHeader,
+        error: jwtResult.error,
       });
 
+      // Return 403 for claim validation failures (wrong audience), 401 for others
+      const status = jwtResult.error?.includes('Claim validation') ? 403 : 401;
       return NextResponse.json(
-        { error: 'Invalid authentication' },
-        { status: 401 }
+        { error: 'Invalid authentication', details: jwtResult.error },
+        { status }
       );
     }
+
+    log('info', '[MEET-1] JWT validated successfully', {
+      email: jwtResult.email,
+      audience: jwtResult.audience,
+    });
 
     // Parse the Pub/Sub envelope
     const pushMessage: PubSubPushMessage = JSON.parse(rawBody);
