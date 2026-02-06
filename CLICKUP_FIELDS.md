@@ -1,1 +1,0 @@
-../CLICKUP_FIELDS.md
