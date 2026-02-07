@@ -58,11 +58,13 @@ function log(
  *
  * @param rawEvent - The raw event record from the database
  * @param meetEvent - The parsed Workspace event
+ * @param accessToken - Optional access token for user-delegated API calls
  * @returns ProcessResult indicating what action was taken
  */
 export async function processMeetEvent(
   rawEvent: RawEvent,
-  meetEvent: MeetWorkspaceEvent
+  meetEvent: MeetWorkspaceEvent,
+  accessToken?: string
 ): Promise<ProcessResult> {
   const startTime = Date.now();
 
@@ -95,9 +97,9 @@ export async function processMeetEvent(
 
     // Route based on event type
     if (rawEvent.eventType === 'meet.conference.ended') {
-      result = await processConferenceEnded(rawEvent, meetEvent);
+      result = await processConferenceEnded(rawEvent, meetEvent, accessToken);
     } else if (rawEvent.eventType === 'meet.transcript.fileGenerated') {
-      result = await processTranscriptFileGenerated(rawEvent, meetEvent);
+      result = await processTranscriptFileGenerated(rawEvent, meetEvent, accessToken);
     } else {
       log('warn', '[MEET-4] Unknown Meet event type', {
         rawEventId: rawEvent.id,
@@ -154,7 +156,8 @@ export async function processMeetEvent(
  */
 async function processConferenceEnded(
   rawEvent: RawEvent,
-  meetEvent: MeetWorkspaceEvent
+  meetEvent: MeetWorkspaceEvent,
+  accessToken?: string
 ): Promise<ProcessResult> {
   const conferenceRecord = meetEvent.conferenceRecord;
   const conferenceRecordName = conferenceRecord?.name || conferenceRecord?.conferenceRecordName;
@@ -185,7 +188,7 @@ async function processConferenceEnded(
 
   // Try to fetch conference details from Meet API
   try {
-    const conferenceDetails = await getConferenceRecord(conferenceRecordName);
+    const conferenceDetails = await getConferenceRecord(conferenceRecordName, accessToken);
     if (conferenceDetails.space?.meetingCode) {
       meetingTopic = `Meet: ${conferenceDetails.space.meetingCode}`;
     }
@@ -241,7 +244,8 @@ async function processConferenceEnded(
   await fetchAndStoreMeetTranscript(
     meetingId,
     conferenceRecordName,
-    rawEvent.id
+    rawEvent.id,
+    accessToken
   );
 
   return {
@@ -257,7 +261,8 @@ async function processConferenceEnded(
  */
 async function processTranscriptFileGenerated(
   rawEvent: RawEvent,
-  meetEvent: MeetWorkspaceEvent
+  meetEvent: MeetWorkspaceEvent,
+  accessToken?: string
 ): Promise<ProcessResult> {
   const conferenceRecordName = meetEvent.conferenceRecord?.name || meetEvent.conferenceRecord?.conferenceRecordName;
 
@@ -269,6 +274,7 @@ async function processTranscriptFileGenerated(
   log('info', '[MEET-4] Processing transcript fileGenerated', {
     rawEventId: rawEvent.id,
     conferenceRecordName,
+    hasAccessToken: !!accessToken,
   });
 
   // Create unique Meet meeting ID using conference record name
@@ -286,7 +292,7 @@ async function processTranscriptFileGenerated(
 
   // Try to fetch conference details from Meet API
   try {
-    const conferenceDetails = await getConferenceRecord(conferenceRecordName);
+    const conferenceDetails = await getConferenceRecord(conferenceRecordName, accessToken);
     if (conferenceDetails.space?.meetingCode) {
       meetingTopic = `Meet: ${conferenceDetails.space.meetingCode}`;
     }
@@ -365,7 +371,8 @@ async function processTranscriptFileGenerated(
   await fetchAndStoreMeetTranscript(
     meetingId,
     conferenceRecordName,
-    rawEvent.id
+    rawEvent.id,
+    accessToken
   );
 
   return {
@@ -381,18 +388,20 @@ async function processTranscriptFileGenerated(
 async function fetchAndStoreMeetTranscript(
   meetingId: string,
   conferenceRecordName: string,
-  rawEventId: string
+  rawEventId: string,
+  accessToken?: string
 ): Promise<void> {
   const startTime = Date.now();
 
   log('info', '[MEET-5] Starting transcript fetch', {
     meetingId,
     conferenceRecordName,
+    hasAccessToken: !!accessToken,
   });
 
   try {
     // List transcripts for this conference
-    const transcriptList = await listTranscripts(conferenceRecordName);
+    const transcriptList = await listTranscripts(conferenceRecordName, accessToken);
 
     if (transcriptList.length === 0) {
       log('warn', '[MEET-5] No transcripts found for conference', {
@@ -437,7 +446,7 @@ async function fetchAndStoreMeetTranscript(
     });
 
     // Fetch transcript entries
-    const entries = await listTranscriptEntries(readyTranscript.name);
+    const entries = await listTranscriptEntries(readyTranscript.name, accessToken);
 
     log('info', '[MEET-6] Transcript entries downloaded', {
       meetingId,
@@ -445,7 +454,7 @@ async function fetchAndStoreMeetTranscript(
     });
 
     // Fetch participants to map participant IDs to names
-    const participants = await listParticipants(conferenceRecordName);
+    const participants = await listParticipants(conferenceRecordName, accessToken);
     const participantNames = new Map<string, string>();
 
     for (const participant of participants) {

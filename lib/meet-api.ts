@@ -117,12 +117,17 @@ export async function getAccessToken(): Promise<string> {
 
 /**
  * Make an authenticated request to Meet API
+ * @param endpoint - API endpoint
+ * @param options - Fetch options
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 async function meetRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  accessToken?: string
 ): Promise<T> {
-  const token = await getAccessToken();
+  // Use provided token or fall back to global token
+  const token = accessToken || await getAccessToken();
 
   const url = endpoint.startsWith('http') ? endpoint : `${MEET_API_BASE}${endpoint}`;
 
@@ -155,28 +160,34 @@ async function meetRequest<T>(
 
 /**
  * Get a conference record by name
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 export async function getConferenceRecord(
-  conferenceRecordName: string
+  conferenceRecordName: string,
+  accessToken?: string
 ): Promise<ConferenceRecord> {
   log('info', '[MEET-4] Fetching conference record', { conferenceRecordName });
 
   // Extract just the ID if full name provided
   const recordId = conferenceRecordName.replace('conferenceRecords/', '');
-  return meetRequest<ConferenceRecord>(`/conferenceRecords/${recordId}`);
+  return meetRequest<ConferenceRecord>(`/conferenceRecords/${recordId}`, {}, accessToken);
 }
 
 /**
  * List transcripts for a conference record
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 export async function listTranscripts(
-  conferenceRecordName: string
+  conferenceRecordName: string,
+  accessToken?: string
 ): Promise<MeetTranscript[]> {
   log('info', '[MEET-5] Listing transcripts', { conferenceRecordName });
 
   const recordId = conferenceRecordName.replace('conferenceRecords/', '');
   const response = await meetRequest<ListResponse<MeetTranscript>>(
-    `/conferenceRecords/${recordId}/transcripts`
+    `/conferenceRecords/${recordId}/transcripts`,
+    {},
+    accessToken
   );
 
   return (response.transcripts as MeetTranscript[]) || [];
@@ -184,26 +195,32 @@ export async function listTranscripts(
 
 /**
  * Get a specific transcript
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 export async function getTranscript(
-  transcriptName: string
+  transcriptName: string,
+  accessToken?: string
 ): Promise<MeetTranscript> {
   log('info', '[MEET-5] Fetching transcript', { transcriptName });
 
   // The name is already in format conferenceRecords/{record}/transcripts/{transcript}
-  return meetRequest<MeetTranscript>(`/${transcriptName}`);
+  return meetRequest<MeetTranscript>(`/${transcriptName}`, {}, accessToken);
 }
 
 /**
  * List transcript entries
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 export async function listTranscriptEntries(
-  transcriptName: string
+  transcriptName: string,
+  accessToken?: string
 ): Promise<TranscriptEntry[]> {
   log('info', '[MEET-6] Listing transcript entries', { transcriptName });
 
   const response = await meetRequest<ListResponse<TranscriptEntry>>(
-    `/${transcriptName}/entries`
+    `/${transcriptName}/entries`,
+    {},
+    accessToken
   );
 
   return (response.entries as TranscriptEntry[]) || [];
@@ -211,24 +228,30 @@ export async function listTranscriptEntries(
 
 /**
  * Get a specific transcript entry
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 export async function getTranscriptEntry(
-  entryName: string
+  entryName: string,
+  accessToken?: string
 ): Promise<TranscriptEntry> {
-  return meetRequest<TranscriptEntry>(`/${entryName}`);
+  return meetRequest<TranscriptEntry>(`/${entryName}`, {}, accessToken);
 }
 
 /**
  * List participants for a conference record
+ * @param accessToken - Optional access token (uses global token if not provided)
  */
 export async function listParticipants(
-  conferenceRecordName: string
+  conferenceRecordName: string,
+  accessToken?: string
 ): Promise<MeetParticipant[]> {
   log('info', '[MEET-4] Listing participants', { conferenceRecordName });
 
   const recordId = conferenceRecordName.replace('conferenceRecords/', '');
   const response = await meetRequest<ListResponse<MeetParticipant>>(
-    `/conferenceRecords/${recordId}/participants`
+    `/conferenceRecords/${recordId}/participants`,
+    {},
+    accessToken
   );
 
   return (response.participants as MeetParticipant[]) || [];

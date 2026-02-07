@@ -523,9 +523,9 @@ async function processCalendarEvent(
     },
   };
 
-  // Process through existing pipeline
+  // Process through existing pipeline - pass the access token for API calls
   try {
-    const result = await processMeetEvent(rawEvent, meetEvent);
+    const result = await processMeetEvent(rawEvent, meetEvent, accessToken);
     log('info', 'Successfully processed meeting', {
       conferenceRecordName: conferenceRecord.name,
       action: result.action,
