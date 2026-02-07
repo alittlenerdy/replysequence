@@ -11,7 +11,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "subscribe-meet-events": "tsx scripts/subscribe-meet-events.ts"
+    "subscribe-meet-events": "tsx scripts/subscribe-meet-events.ts",
+    "diagnostic": "tsx scripts/diagnostic.ts",
+    "test-meet-poll": "tsx scripts/test-meet-poll.ts",
+    "reencrypt-tokens": "tsx scripts/reencrypt-tokens.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
