@@ -36,26 +36,26 @@ function CountdownAnimation() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="text-emerald-400 font-semibold"
+            className="text-emerald-500 light:text-emerald-600 font-bold text-base"
           >
             ✓ Your email is ready
           </motion.span>
         ) : (
           <motion.div
             key="countdown"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1.5"
           >
-            <span className="text-gray-500">Drafting in</span>
+            <span className="text-gray-400 light:text-gray-600 font-medium">Drafting in</span>
             <motion.span
               key={count}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="text-blue-400 font-bold w-4 text-center"
+              initial={{ opacity: 0, y: -10, scale: 1.2 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.8 }}
+              className="text-blue-400 light:text-blue-600 font-bold text-lg w-5 text-center"
             >
               {count}
             </motion.span>
-            <span className="text-gray-500">seconds...</span>
+            <span className="text-gray-400 light:text-gray-600 font-medium">seconds...</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -138,7 +138,7 @@ export default function LandingPage() {
               transition={{ delay: 0.2, duration: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
             >
-              <div className="px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
+              <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-500/10 to-indigo-500/10 light:from-blue-100 light:to-indigo-100 border-2 border-blue-500/30 light:border-blue-400/50 shadow-lg shadow-blue-500/10 light:shadow-blue-200/50">
                 <CountdownAnimation />
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
