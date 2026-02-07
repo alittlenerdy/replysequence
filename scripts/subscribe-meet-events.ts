@@ -13,17 +13,16 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
-// Load .env.local explicitly BEFORE any other imports that might use env vars
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+// Load .env.local FIRST before anything else
+const envPath = path.resolve(process.cwd(), '.env.local');
+console.log('Loading environment from:', envPath);
+dotenv.config({ path: envPath });
 
-// Debug: show what was loaded
-console.log('Loading environment from:', path.resolve(process.cwd(), '.env.local'));
-console.log('GOOGLE_CLIENT_ID loaded:', process.env.GOOGLE_CLIENT_ID ? 'Yes (starts with ' + process.env.GOOGLE_CLIENT_ID.substring(0, 12) + '...)' : 'NO');
-
-import { db } from '../lib/db';
-import { users, meetConnections } from '../lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { decrypt } from '../lib/encryption';
+// Verify DATABASE_URL is loaded
+console.log('DATABASE_URL loaded:', process.env.DATABASE_URL ? 'Yes' : 'NO');
+if (process.env.DATABASE_URL) {
+  console.log('DATABASE_URL starts with:', process.env.DATABASE_URL.substring(0, 40) + '...');
+}
 
 // Configuration
 const WORKSPACE_EVENTS_API = 'https://workspaceevents.googleapis.com/v1';
@@ -134,7 +133,7 @@ async function createSubscription(
 }
 
 async function main() {
-  console.log('=== Google Meet Workspace Events Subscription ===\n');
+  console.log('\n=== Google Meet Workspace Events Subscription ===\n');
 
   // Check environment with detailed error messages
   const requiredEnvVars = [
@@ -151,19 +150,32 @@ async function main() {
     missingVars.forEach((v) => console.error(`  - ${v}`));
     console.error('\nMake sure these are set in .env.local');
     console.error('Current working directory:', process.cwd());
-    console.error('\nAvailable env vars (GOOGLE_*):');
-    Object.keys(process.env)
-      .filter((k) => k.startsWith('GOOGLE'))
-      .forEach((k) => console.error(`  - ${k}=${process.env[k]?.substring(0, 20)}...`));
     process.exit(1);
   }
 
-  console.log('\nEnvironment check passed:');
+  console.log('Environment check passed:');
   console.log('  GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID?.substring(0, 15) + '...');
   console.log('  GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET?.substring(0, 8) + '...');
   console.log('  ENCRYPTION_SECRET: [set]');
-  console.log('  DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 30) + '...');
-  console.log();
+  console.log('  DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 40) + '...');
+
+  // NOW dynamically import db modules after env is loaded
+  console.log('\nConnecting to database...');
+  const { drizzle } = await import('drizzle-orm/node-postgres');
+  const { Pool } = await import('pg');
+  const { meetConnections, meetEventSubscriptions } = await import('../lib/db/schema');
+  const { eq } = await import('drizzle-orm');
+  const { decrypt } = await import('../lib/encryption');
+
+  // Create database connection with the loaded DATABASE_URL
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 5,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+  });
+
+  const db = drizzle(pool);
 
   // Find a user with Meet connected
   console.log('Looking for users with Google Meet connected...');
@@ -181,6 +193,7 @@ async function main() {
 
   if (connections.length === 0) {
     console.error('\nNo Meet connections found. Please connect Google Meet first via the app.');
+    await pool.end();
     process.exit(1);
   }
 
@@ -199,6 +212,7 @@ async function main() {
   if (!connection.refreshTokenEncrypted) {
     console.error('\nError: No refresh token found for this connection.');
     console.error('Please reconnect Google Meet to get a new refresh token.');
+    await pool.end();
     process.exit(1);
   }
 
@@ -229,8 +243,6 @@ async function main() {
     // Save to database
     console.log('\nSaving subscription to database...');
 
-    const { meetEventSubscriptions } = await import('../lib/db/schema');
-
     await db.insert(meetEventSubscriptions).values({
       userId: connection.userId,
       subscriptionName: subscription.name,
@@ -259,6 +271,8 @@ async function main() {
     console.log('3. Check Vercel logs for webhook events');
     console.log('4. Check the dashboard for the new meeting and draft');
 
+    await pool.end();
+
   } catch (error) {
     if (error instanceof Error && error.message.includes('409')) {
       console.log('\nSubscription already exists for this user.');
@@ -266,6 +280,7 @@ async function main() {
     } else {
       console.error('\nFailed to create subscription:', error);
     }
+    await pool.end();
     process.exit(1);
   }
 }
