@@ -140,7 +140,7 @@ async function main() {
   const requiredEnvVars = [
     'GOOGLE_CLIENT_ID',
     'GOOGLE_CLIENT_SECRET',
-    'ENCRYPTION_KEY',
+    'ENCRYPTION_SECRET',
     'DATABASE_URL',
   ];
 
@@ -161,7 +161,7 @@ async function main() {
   console.log('\nEnvironment check passed:');
   console.log('  GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID?.substring(0, 15) + '...');
   console.log('  GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET?.substring(0, 8) + '...');
-  console.log('  ENCRYPTION_KEY: [set]');
+  console.log('  ENCRYPTION_SECRET: [set]');
   console.log('  DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 30) + '...');
   console.log();
 
