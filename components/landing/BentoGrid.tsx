@@ -188,13 +188,37 @@ function DraftEditorPreview() {
   );
 }
 
-// Simulated Meeting List Preview with slide animations
+// Simulated Meeting List Preview with realistic meeting entries
 function MeetingListPreview() {
   const meetings = [
-    { platform: 'Zoom', color: '#2D8CFF', time: '10:00 AM' },
-    { platform: 'Teams', color: '#5B5FC7', time: '2:30 PM' },
-    { platform: 'Meet', color: '#00897B', time: '4:00 PM' },
+    { platform: 'Zoom', color: '#2D8CFF', time: '10:00 AM', title: 'Q1 Pipeline Review', host: 'Sarah C.' },
+    { platform: 'Teams', color: '#5B5FC7', time: '2:30 PM', title: 'Product Demo Call', host: 'Mike J.' },
+    { platform: 'Meet', color: '#00897B', time: '4:00 PM', title: 'Client Onboarding', host: 'You' },
   ];
+
+  // Platform-specific icons as mini SVGs
+  const PlatformIcon = ({ platform, color }: { platform: string; color: string }) => {
+    if (platform === 'Zoom') {
+      return (
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill={color}>
+          <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
+        </svg>
+      );
+    }
+    if (platform === 'Teams') {
+      return (
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill={color}>
+          <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
+        </svg>
+      );
+    }
+    return (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill={color}>
+        <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+        <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3z"/>
+      </svg>
+    );
+  };
 
   return (
     <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-2 space-y-2 overflow-hidden">
@@ -207,29 +231,31 @@ function MeetingListPreview() {
           transition={{ delay: i * 0.3, duration: 0.5 }}
           whileHover={{ x: 4, backgroundColor: 'rgba(17, 24, 39, 0.8)' }}
         >
+          {/* Platform icon */}
           <motion.div
-            className="w-6 h-6 rounded flex items-center justify-center"
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: `${meeting.color}20` }}
-            animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.4 }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
           >
-            <motion.div
-              className="w-3 h-3 rounded-sm"
-              style={{ backgroundColor: meeting.color }}
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-            />
+            <PlatformIcon platform={meeting.platform} color={meeting.color} />
           </motion.div>
+
+          {/* Meeting info */}
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">
+              {meeting.title}
+            </div>
+            <div className="text-[9px] text-gray-500 light:text-gray-500 truncate">
+              Host: {meeting.host}
+            </div>
+          </div>
+
+          {/* Time badge */}
           <motion.div
-            className="flex-1"
-            animate={{ width: ['60%', '75%', '60%'] }}
-            transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-          >
-            <div className="h-2 bg-gray-700 light:bg-gray-300 rounded" />
-          </motion.div>
-          <motion.div
-            className="text-[10px] text-gray-500 light:text-gray-600 font-medium"
-            animate={{ opacity: [0.4, 1, 0.4] }}
+            className="text-[9px] font-medium px-1.5 py-0.5 rounded"
+            style={{ backgroundColor: `${meeting.color}15`, color: meeting.color }}
+            animate={{ opacity: [0.7, 1, 0.7] }}
             transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
           >
             {meeting.time}
