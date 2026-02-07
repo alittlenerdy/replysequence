@@ -48,6 +48,9 @@ export function OnboardingComplete({
     meet: 'Google Meet',
   };
 
+  // Meet OAuth includes calendar.readonly scope, so calendar is connected when Meet is connected
+  const hasCalendarAccess = calendarConnected || platformConnected === 'meet';
+
   const completionStats = [
     {
       icon: Check,
@@ -56,8 +59,8 @@ export function OnboardingComplete({
     },
     {
       icon: Calendar,
-      label: calendarConnected ? 'Calendar synced' : 'Calendar pending',
-      completed: calendarConnected,
+      label: hasCalendarAccess ? 'Calendar synced' : 'Calendar pending',
+      completed: hasCalendarAccess,
     },
     {
       icon: Sparkles,
