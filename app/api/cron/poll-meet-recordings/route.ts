@@ -492,7 +492,7 @@ async function processCalendarEvent(
   const [rawEvent] = await db
     .insert(rawEvents)
     .values({
-      eventType: 'meet.poll.transcript_ready',
+      eventType: 'meet.transcript.fileGenerated',
       zoomEventId: eventId,
       payload: {
         source: 'calendar_poll',
