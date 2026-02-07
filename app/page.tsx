@@ -1,7 +1,67 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
+
+// Countdown animation component
+function CountdownAnimation() {
+  const [count, setCount] = useState(8);
+  const [showMessage, setShowMessage] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((prev) => {
+        if (prev <= 1) {
+          setShowMessage(true);
+          setTimeout(() => {
+            setShowMessage(false);
+            setCount(8);
+          }, 2000);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center justify-center gap-2 text-sm font-mono">
+      <AnimatePresence mode="wait">
+        {showMessage ? (
+          <motion.span
+            key="message"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="text-emerald-400 font-semibold"
+          >
+            ✓ Your email is ready
+          </motion.span>
+        ) : (
+          <motion.div
+            key="countdown"
+            className="flex items-center gap-1"
+          >
+            <span className="text-gray-500">Drafting in</span>
+            <motion.span
+              key={count}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="text-blue-400 font-bold w-4 text-center"
+            >
+              {count}
+            </motion.span>
+            <span className="text-gray-500">seconds...</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 import {
   Clock,
   FileText,
@@ -67,9 +127,27 @@ export default function LandingPage() {
               <span className="text-white light:text-gray-900">Follow-up.</span>
             </h1>
 
-            <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-400 light:text-gray-600 mb-4 leading-relaxed max-w-3xl mx-auto">
               AI drafts perfect follow-up emails the moment your Zoom, Teams, or Meet call ends. No notes. No typing. Just send.
             </p>
+
+            {/* Countdown animation and speed comparison */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
+            >
+              <div className="px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
+                <CountdownAnimation />
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
+                  10x faster than typing it yourself
+                </span>
+              </div>
+            </motion.div>
 
             {/* Platform logos */}
             <motion.div
