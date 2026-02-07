@@ -45,26 +45,24 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
         <>
           <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No drafts yet</h3>
           <p className="text-gray-400 light:text-gray-500 mb-6 max-w-md mx-auto">
-            Record a Zoom meeting with transcription enabled. ReplySequence will automatically
-            generate a follow-up email draft when the transcript is ready.
+            Record a meeting with transcription enabled on Zoom, Google Meet, or Teams.
+            ReplySequence will automatically generate a follow-up email draft when the transcript is ready.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="https://zoom.us/meeting/schedule"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/settings"
               className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
             >
               <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>
               </svg>
-              Schedule a Zoom Meeting
+              Connect a Platform
             </a>
             <a
-              href="/docs"
+              href="/#how-it-works"
               className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-all duration-300 hover:scale-105"
             >
-              View Documentation
+              Learn How It Works
             </a>
           </div>
         </>
@@ -79,7 +77,7 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
               {
                 step: 1,
                 title: 'Record a meeting',
-                desc: 'Enable cloud recording with audio transcript in Zoom',
+                desc: 'Enable transcription in Zoom, Meet, or Teams',
                 delay: '0.1s',
               },
               {

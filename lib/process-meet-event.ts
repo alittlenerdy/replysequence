@@ -61,13 +61,15 @@ function log(
  * @param meetEvent - The parsed Workspace event
  * @param accessToken - Optional access token for user-delegated API calls
  * @param userId - User ID for multi-tenant data isolation
+ * @param hostEmail - Host email for the meeting (from meet connection)
  * @returns ProcessResult indicating what action was taken
  */
 export async function processMeetEvent(
   rawEvent: RawEvent,
   meetEvent: MeetWorkspaceEvent,
   accessToken?: string,
-  userId?: string
+  userId?: string,
+  hostEmail?: string
 ): Promise<ProcessResult> {
   const startTime = Date.now();
 
@@ -100,9 +102,9 @@ export async function processMeetEvent(
 
     // Route based on event type
     if (rawEvent.eventType === 'meet.conference.ended') {
-      result = await processConferenceEnded(rawEvent, meetEvent, accessToken, userId);
+      result = await processConferenceEnded(rawEvent, meetEvent, accessToken, userId, hostEmail);
     } else if (rawEvent.eventType === 'meet.transcript.fileGenerated') {
-      result = await processTranscriptFileGenerated(rawEvent, meetEvent, accessToken, userId);
+      result = await processTranscriptFileGenerated(rawEvent, meetEvent, accessToken, userId, hostEmail);
     } else {
       log('warn', '[MEET-4] Unknown Meet event type', {
         rawEventId: rawEvent.id,
@@ -161,7 +163,8 @@ async function processConferenceEnded(
   rawEvent: RawEvent,
   meetEvent: MeetWorkspaceEvent,
   accessToken?: string,
-  userId?: string
+  userId?: string,
+  hostEmail?: string
 ): Promise<ProcessResult> {
   const conferenceRecord = meetEvent.conferenceRecord;
   const conferenceRecordName = conferenceRecord?.name || conferenceRecord?.conferenceRecordName;
@@ -233,7 +236,7 @@ async function processConferenceEnded(
         zoomMeetingId: meetMeetingId, // Using zoomMeetingId for backwards compat
         platformMeetingId: meetMeetingId,
         platform: MEET_PLATFORM,
-        hostEmail: 'organizer@meet.google.com', // Placeholder - Meet doesn't expose in events
+        hostEmail: hostEmail || 'unknown@meet.google.com',
         topic: meetingTopic,
         startTime: conferenceRecord?.startTime ? new Date(conferenceRecord.startTime) : undefined,
         endTime: conferenceRecord?.endTime ? new Date(conferenceRecord.endTime) : undefined,
@@ -242,7 +245,7 @@ async function processConferenceEnded(
       .returning();
 
     meetingId = newMeeting.id;
-    log('info', '[MEET-4] Created new meeting', { meetingId, meetMeetingId, platform: MEET_PLATFORM, userId });
+    log('info', '[MEET-4] Created new meeting', { meetingId, meetMeetingId, platform: MEET_PLATFORM, userId, hostEmail });
   }
 
   // Fetch and store transcript
@@ -268,7 +271,8 @@ async function processTranscriptFileGenerated(
   rawEvent: RawEvent,
   meetEvent: MeetWorkspaceEvent,
   accessToken?: string,
-  userId?: string
+  userId?: string,
+  hostEmail?: string
 ): Promise<ProcessResult> {
   const conferenceRecordName = meetEvent.conferenceRecord?.name || meetEvent.conferenceRecord?.conferenceRecordName;
 
@@ -334,7 +338,7 @@ async function processTranscriptFileGenerated(
           zoomMeetingId: meetMeetingId,
           platformMeetingId: meetMeetingId,
           platform: MEET_PLATFORM,
-          hostEmail: 'organizer@meet.google.com', // Placeholder
+          hostEmail: hostEmail || 'unknown@meet.google.com',
           topic: meetingTopic,
           startTime: conferenceDetails.startTime ? new Date(conferenceDetails.startTime) : undefined,
           endTime: conferenceDetails.endTime ? new Date(conferenceDetails.endTime) : undefined,
@@ -343,7 +347,7 @@ async function processTranscriptFileGenerated(
         .returning();
 
       meetingId = newMeeting.id;
-      log('info', '[MEET-4] Created new meeting from transcript event', { meetingId, meetMeetingId, platform: MEET_PLATFORM, userId });
+      log('info', '[MEET-4] Created new meeting from transcript event', { meetingId, meetMeetingId, platform: MEET_PLATFORM, userId, hostEmail });
     }
   } catch (err) {
     log('warn', '[MEET-4] Could not fetch conference details, creating meeting anyway', {
@@ -365,7 +369,7 @@ async function processTranscriptFileGenerated(
           zoomMeetingId: meetMeetingId,
           platformMeetingId: meetMeetingId,
           platform: MEET_PLATFORM,
-          hostEmail: 'organizer@meet.google.com',
+          hostEmail: hostEmail || 'unknown@meet.google.com',
           topic: meetingTopic,
           status: 'processing',
         })

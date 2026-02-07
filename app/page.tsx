@@ -68,7 +68,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
-              Turn every Zoom call into a perfect follow-up email and CRM update—automatically.
+              Turn every video call into a perfect follow-up email and CRM update—automatically.
             </p>
 
             {/* Platform logos */}

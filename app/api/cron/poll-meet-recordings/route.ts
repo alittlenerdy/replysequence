@@ -430,7 +430,8 @@ async function isAlreadyProcessed(conferenceRecordName: string): Promise<boolean
 async function processCalendarEvent(
   accessToken: string,
   event: CalendarEvent,
-  userId: string
+  userId: string,
+  hostEmail: string
 ): Promise<{ processed: boolean; reason: string }> {
   log('debug', 'Processing calendar event', {
     eventId: event.id,
@@ -523,14 +524,15 @@ async function processCalendarEvent(
     },
   };
 
-  // Process through existing pipeline - pass the access token and userId for multi-tenant isolation
+  // Process through existing pipeline - pass the access token, userId, and hostEmail for multi-tenant isolation
   try {
-    const result = await processMeetEvent(rawEvent, meetEvent, accessToken, userId);
+    const result = await processMeetEvent(rawEvent, meetEvent, accessToken, userId, hostEmail);
     log('info', 'Successfully processed meeting', {
       conferenceRecordName: conferenceRecord.name,
       action: result.action,
       meetingId: result.meetingId,
       userId,
+      hostEmail,
     });
     return { processed: true, reason: 'Success' };
   } catch (error) {
@@ -619,7 +621,8 @@ export async function GET(request: NextRequest) {
           const result = await processCalendarEvent(
             accessToken,
             event,
-            connection.userId
+            connection.userId,
+            connection.googleEmail
           );
 
           if (result.processed) {
