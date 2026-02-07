@@ -15,6 +15,7 @@ import {
   getParticipantDisplayName,
   entriesToVTT,
   isMeetConfigured,
+  downloadTranscriptFromDocs,
 } from '@/lib/meet-api';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
@@ -443,6 +444,7 @@ async function fetchAndStoreMeetTranscript(
       meetingId,
       transcriptName: readyTranscript.name,
       state: readyTranscript.state,
+      hasDocsDestination: !!readyTranscript.docsDestination?.document,
     });
 
     // Fetch transcript entries
@@ -453,29 +455,84 @@ async function fetchAndStoreMeetTranscript(
       entryCount: entries.length,
     });
 
-    // Fetch participants to map participant IDs to names
-    const participants = await listParticipants(conferenceRecordName, accessToken);
-    const participantNames = new Map<string, string>();
+    let fullText: string;
+    let vttContent: string;
+    let segments: Array<{ speaker: string; text: string; startTime: string; endTime: string }>;
+    let wordCount: number;
 
-    for (const participant of participants) {
-      participantNames.set(participant.name, getParticipantDisplayName(participant));
+    // If no entries but docsDestination is available, download from Google Docs
+    if (entries.length === 0 && readyTranscript.docsDestination?.document) {
+      const documentId = readyTranscript.docsDestination.document;
+      log('info', '[MEET-6] No entries from API, downloading from Google Docs', {
+        meetingId,
+        documentId,
+      });
+
+      try {
+        const docsContent = await downloadTranscriptFromDocs(documentId, accessToken);
+
+        log('info', '[MEET-6] Transcript downloaded from Google Docs', {
+          meetingId,
+          contentLength: docsContent.length,
+        });
+
+        // Google Docs exports transcript as plain text with timestamps
+        // Format: "Speaker Name\nTimestamp\nText\n\nSpeaker Name\n..."
+        fullText = docsContent;
+        vttContent = ''; // No VTT available from Docs export
+        segments = []; // Could parse Docs format later if needed
+        wordCount = docsContent.split(/\s+/).filter(Boolean).length;
+
+        log('info', '[MEET-7] Transcript from Docs processed', {
+          meetingId,
+          wordCount,
+        });
+      } catch (docsError) {
+        log('error', '[MEET-6] Failed to download from Google Docs', {
+          meetingId,
+          documentId,
+          error: docsError instanceof Error ? docsError.message : String(docsError),
+        });
+        throw docsError;
+      }
+    } else if (entries.length > 0) {
+      // Fetch participants to map participant IDs to names
+      const participants = await listParticipants(conferenceRecordName, accessToken);
+      const participantNames = new Map<string, string>();
+
+      for (const participant of participants) {
+        participantNames.set(participant.name, getParticipantDisplayName(participant));
+      }
+
+      log('info', '[MEET-6] Participant names resolved', {
+        meetingId,
+        participantCount: participants.length,
+      });
+
+      // Convert entries to VTT format for consistent parsing
+      vttContent = entriesToVTT(entries, participantNames);
+
+      log('info', '[MEET-7] Transcript converted to VTT', {
+        meetingId,
+        vttLength: vttContent.length,
+      });
+
+      // Parse VTT content
+      const parsed = parseVTT(vttContent);
+      fullText = parsed.fullText;
+      segments = parsed.segments;
+      wordCount = parsed.wordCount;
+    } else {
+      // No entries and no docs destination - empty transcript
+      log('warn', '[MEET-6] No transcript content available', {
+        meetingId,
+        hasDocsDestination: !!readyTranscript.docsDestination,
+      });
+      fullText = '';
+      vttContent = '';
+      segments = [];
+      wordCount = 0;
     }
-
-    log('info', '[MEET-6] Participant names resolved', {
-      meetingId,
-      participantCount: participants.length,
-    });
-
-    // Convert entries to VTT format for consistent parsing
-    const vttContent = entriesToVTT(entries, participantNames);
-
-    log('info', '[MEET-7] Transcript converted to VTT', {
-      meetingId,
-      vttLength: vttContent.length,
-    });
-
-    // Parse VTT content
-    const { fullText, segments, wordCount } = parseVTT(vttContent);
 
     log('info', '[MEET-7] Transcript parsed', {
       meetingId,

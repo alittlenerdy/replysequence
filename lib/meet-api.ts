@@ -300,6 +300,49 @@ export function isMeetConfigured(): boolean {
 }
 
 /**
+ * Download transcript content from Google Docs
+ * When transcript state is FILE_GENERATED, the content is in a Google Doc
+ * @param documentId - Google Doc document ID
+ * @param accessToken - Optional access token (uses global token if not provided)
+ */
+export async function downloadTranscriptFromDocs(
+  documentId: string,
+  accessToken?: string
+): Promise<string> {
+  log('info', '[MEET-6] Downloading transcript from Google Docs', { documentId });
+
+  const token = accessToken || await getAccessToken();
+
+  // Export as plain text
+  const exportUrl = `https://www.googleapis.com/drive/v3/files/${documentId}/export?mimeType=text/plain`;
+
+  const response = await fetch(exportUrl, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    log('error', '[MEET-6] Failed to download transcript from Docs', {
+      documentId,
+      status: response.status,
+      error: errorText,
+    });
+    throw new Error(`Failed to download transcript: ${response.status}`);
+  }
+
+  const content = await response.text();
+
+  log('info', '[MEET-6] Transcript downloaded from Docs', {
+    documentId,
+    contentLength: content.length,
+  });
+
+  return content;
+}
+
+/**
  * JWT Validation Result
  */
 export interface JWTValidationResult {
