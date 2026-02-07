@@ -234,7 +234,10 @@ export async function GET(request: NextRequest) {
 async function exchangeCodeForTokens(code: string): Promise<ZoomTokenResponse> {
   const clientId = process.env.ZOOM_CLIENT_ID?.trim();
   const clientSecret = process.env.ZOOM_CLIENT_SECRET?.trim();
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/zoom/callback`;
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  // CRITICAL: Remove trailing slash to match the redirect_uri used in the auth request
+  const baseUrl = rawAppUrl.replace(/\/+$/, '');
+  const redirectUri = `${baseUrl}/api/auth/zoom/callback`;
 
   if (!clientId || !clientSecret) {
     throw new Error('Missing Zoom OAuth credentials');

@@ -247,7 +247,10 @@ async function exchangeCodeForTokens(code: string): Promise<MicrosoftTokenRespon
   const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
   const clientSecret = process.env.MICROSOFT_TEAMS_CLIENT_SECRET?.trim();
   const tenantId = process.env.MICROSOFT_TEAMS_TENANT_ID?.trim() || 'common';
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/teams/callback`;
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  // CRITICAL: Remove trailing slash to match the redirect_uri used in the auth request
+  const baseUrl = rawAppUrl.replace(/\/+$/, '');
+  const redirectUri = `${baseUrl}/api/auth/teams/callback`;
 
   if (!clientId || !clientSecret) {
     throw new Error('Missing Microsoft Teams OAuth credentials');
