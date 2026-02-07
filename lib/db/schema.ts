@@ -269,7 +269,7 @@ export interface EmailSignatureSettings {
 }
 
 // Subscription tier type
-export type SubscriptionTier = 'free' | 'pro' | 'team';
+export type SubscriptionTier = 'free' | 'pro' | 'team' | 'agency';
 
 // Subscription status from Stripe
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing' | 'unpaid';
