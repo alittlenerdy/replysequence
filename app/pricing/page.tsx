@@ -30,6 +30,19 @@ interface PricingTier {
   icon: typeof Zap;
 }
 
+// Tier hierarchy for comparison (higher number = higher tier)
+const tierRank: Record<string, number> = {
+  free: 0,
+  pro: 1,
+  team: 2,
+};
+
+function getButtonText(targetTier: string, currentTier: string): string {
+  if (targetTier === currentTier) return 'Current Plan';
+  if (tierRank[targetTier] < tierRank[currentTier]) return 'Downgrade';
+  return 'Upgrade';
+}
+
 const pricingTiers: PricingTier[] = [
   {
     name: 'Free',
@@ -219,11 +232,7 @@ async function PricingContent() {
                       currentTier={currentTier}
                       className="w-full"
                     >
-                      {isCurrentPlan
-                        ? 'Current Plan'
-                        : tier.tier === 'free'
-                          ? 'Downgrade'
-                          : 'Upgrade'}
+                      {getButtonText(tier.tier, currentTier)}
                     </CheckoutButton>
                   </div>
 
