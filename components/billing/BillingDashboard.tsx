@@ -91,7 +91,13 @@ const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string; l
   open: { icon: Clock, color: 'text-amber-400', label: 'Open' },
   draft: { icon: Clock, color: 'text-gray-400', label: 'Draft' },
   void: { icon: AlertCircle, color: 'text-gray-400', label: 'Void' },
+  incomplete: { icon: Clock, color: 'text-amber-400', label: 'Incomplete' },
+  incomplete_expired: { icon: AlertCircle, color: 'text-red-400', label: 'Expired' },
+  paused: { icon: Clock, color: 'text-gray-400', label: 'Paused' },
 };
+
+// Default status for unknown values
+const defaultStatus = { icon: Clock, color: 'text-gray-400', label: 'Unknown' };
 
 function CardBrandIcon({ brand }: { brand: string }) {
   // Simple card brand indicator
@@ -404,8 +410,8 @@ export function BillingDashboard() {
               </thead>
               <tbody>
                 {billing.invoices.map((invoice, index) => {
-                  const status = statusConfig[invoice.status] || { icon: Clock, color: 'text-gray-400', label: invoice.status };
-                  const StatusIcon = status.icon;
+                  const status = statusConfig[invoice.status] || defaultStatus;
+                  const StatusIcon = status?.icon || Clock;
 
                   return (
                     <motion.tr

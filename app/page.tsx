@@ -434,7 +434,7 @@ export default function LandingPage() {
                 Join Beta Waitlist
               </GradientButton>
               <p className="text-gray-500 light:text-gray-600 text-xs sm:text-sm mt-6">
-                Takes 30 seconds - No credit card required - Limited to 100 pilot users
+                Takes 30 seconds - Limited to 100 pilot users
               </p>
             </div>
           </motion.div>

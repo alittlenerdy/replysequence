@@ -68,10 +68,12 @@ function DashboardPreview() {
   const emails = [
     { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
     { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
+    { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
+    { name: 'Alex Kim', subject: 'Budget Review Follow-up', status: 'sent' },
   ];
 
   return (
-    <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3">
+    <div className="w-full h-full min-h-[280px] bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-4">
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -90,7 +92,7 @@ function DashboardPreview() {
       </div>
 
       {/* Stats row with gradient animated counters */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
+      <div className="grid grid-cols-3 gap-3 mb-4">
         {[
           { value: 24, label: 'Meetings' },
           { value: 18, label: 'Drafts' },
@@ -98,22 +100,22 @@ function DashboardPreview() {
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
-            className="bg-gray-900/50 light:bg-gray-100 rounded-lg p-2 text-center"
+            className="bg-gray-900/50 light:bg-gray-100 rounded-lg p-3 text-center"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
           >
-            <div className="text-lg font-bold">
+            <div className="text-xl font-bold">
               <AnimatedNumber value={stat.value} />
             </div>
-            <div className="text-[10px] text-gray-500 light:text-gray-600">{stat.label}</div>
+            <div className="text-xs text-gray-500 light:text-gray-600">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
       {/* Email list with contact names */}
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {emails.map((email, i) => (
           <motion.div
             key={email.name}
@@ -301,11 +303,17 @@ function ChartPreview() {
         <motion.div
           key={i}
           className="flex-1 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t"
-          initial={{ height: 0 }}
-          whileInView={{ height: `${height}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: i * 0.08 }}
-          whileHover={{ height: `${Math.min(height + 15, 100)}%`, transition: { duration: 0.2 } }}
+          animate={{
+            height: [`${height}%`, `${Math.min(height + 20, 95)}%`, `${height}%`],
+            opacity: [0.8, 1, 0.8]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            delay: i * 0.15,
+            ease: 'easeInOut'
+          }}
+          whileHover={{ height: `${Math.min(height + 25, 100)}%`, transition: { duration: 0.2 } }}
         />
       ))}
     </div>
