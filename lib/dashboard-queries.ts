@@ -4,9 +4,27 @@
  */
 
 import { db } from './db';
-import { drafts, meetings, transcripts } from './db/schema';
-import { eq, desc, sql, and, ilike, or } from 'drizzle-orm';
+import { drafts, meetings, transcripts, users } from './db/schema';
+import { eq, desc, sql, and, ilike, or, isNull } from 'drizzle-orm';
 import type { DraftStatus } from './db/schema';
+import { currentUser } from '@clerk/nextjs/server';
+
+/**
+ * Get the current user's database ID from Clerk
+ */
+async function getCurrentUserId(): Promise<string | null> {
+  const user = await currentUser();
+  if (!user) return null;
+
+  // Look up user by Clerk ID
+  const [dbUser] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.clerkId, user.id))
+    .limit(1);
+
+  return dbUser?.id || null;
+}
 
 export interface DraftWithMeeting {
   id: string;
@@ -46,6 +64,7 @@ export interface DraftsQueryResult {
 
 /**
  * Fetch drafts with pagination and filters
+ * IMPORTANT: This filters by the current logged-in user for multi-tenant isolation
  */
 export async function getDraftsWithMeetings(
   params: DraftsQueryParams = {}
@@ -53,8 +72,25 @@ export async function getDraftsWithMeetings(
   const { page = 1, limit = 10, status = 'all', search = '', dateRange = 'all' } = params;
   const offset = (page - 1) * limit;
 
+  // Get current user for filtering
+  const userId = await getCurrentUserId();
+
   // Build where conditions
   const conditions = [];
+
+  // USER FILTER - Critical for multi-tenant isolation
+  // Filter by userId on meetings table (if set), or fall back to no results if no user
+  if (userId) {
+    conditions.push(eq(meetings.userId, userId));
+  } else {
+    // No authenticated user - return empty results
+    return {
+      drafts: [],
+      total: 0,
+      page,
+      totalPages: 0,
+    };
+  }
 
   // Status filter
   if (status !== 'all') {
@@ -194,6 +230,7 @@ export async function deleteDraft(id: string): Promise<void> {
 
 /**
  * Get draft statistics
+ * IMPORTANT: This filters by the current logged-in user for multi-tenant isolation
  */
 export async function getDraftStats(): Promise<{
   total: number;
@@ -203,16 +240,32 @@ export async function getDraftStats(): Promise<{
   avgCost: number;
   avgLatency: number;
 }> {
+  // Get current user for filtering
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    return {
+      total: 0,
+      generated: 0,
+      sent: 0,
+      failed: 0,
+      avgCost: 0,
+      avgLatency: 0,
+    };
+  }
+
   const stats = await db
     .select({
       total: sql<number>`count(*)`,
-      generated: sql<number>`count(*) filter (where status = 'generated')`,
-      sent: sql<number>`count(*) filter (where status = 'sent')`,
-      failed: sql<number>`count(*) filter (where status = 'failed')`,
-      avgCost: sql<number>`avg(cost_usd::numeric)`,
-      avgLatency: sql<number>`avg(generation_duration_ms)`,
+      generated: sql<number>`count(*) filter (where ${drafts.status} = 'generated')`,
+      sent: sql<number>`count(*) filter (where ${drafts.status} = 'sent')`,
+      failed: sql<number>`count(*) filter (where ${drafts.status} = 'failed')`,
+      avgCost: sql<number>`avg(${drafts.costUsd}::numeric)`,
+      avgLatency: sql<number>`avg(${drafts.generationDurationMs})`,
     })
-    .from(drafts);
+    .from(drafts)
+    .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+    .where(eq(meetings.userId, userId));
 
   const result = stats[0];
   return {

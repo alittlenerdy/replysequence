@@ -523,13 +523,14 @@ async function processCalendarEvent(
     },
   };
 
-  // Process through existing pipeline - pass the access token for API calls
+  // Process through existing pipeline - pass the access token and userId for multi-tenant isolation
   try {
-    const result = await processMeetEvent(rawEvent, meetEvent, accessToken);
+    const result = await processMeetEvent(rawEvent, meetEvent, accessToken, userId);
     log('info', 'Successfully processed meeting', {
       conferenceRecordName: conferenceRecord.name,
       action: result.action,
       meetingId: result.meetingId,
+      userId,
     });
     return { processed: true, reason: 'Success' };
   } catch (error) {

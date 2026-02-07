@@ -63,6 +63,7 @@ export const meetings = pgTable(
   'meetings',
   {
     id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }), // Link to user for multi-tenant filtering
     platform: meetingPlatformEnum('platform').notNull().default('zoom'),
     zoomMeetingId: varchar('zoom_meeting_id', { length: 255 }).notNull(), // Legacy: kept for backwards compatibility
     platformMeetingId: varchar('platform_meeting_id', { length: 255 }), // Generic external ID (Zoom UUID, Google Meet code, Teams ID)
@@ -88,6 +89,7 @@ export const meetings = pgTable(
   },
   (table) => [
     uniqueIndex('meetings_zoom_meeting_id_idx').on(table.zoomMeetingId),
+    index('meetings_user_id_idx').on(table.userId),
     index('meetings_host_email_idx').on(table.hostEmail),
     index('meetings_status_idx').on(table.status),
     index('meetings_platform_idx').on(table.platform),

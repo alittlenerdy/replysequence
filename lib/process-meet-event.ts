@@ -60,12 +60,14 @@ function log(
  * @param rawEvent - The raw event record from the database
  * @param meetEvent - The parsed Workspace event
  * @param accessToken - Optional access token for user-delegated API calls
+ * @param userId - User ID for multi-tenant data isolation
  * @returns ProcessResult indicating what action was taken
  */
 export async function processMeetEvent(
   rawEvent: RawEvent,
   meetEvent: MeetWorkspaceEvent,
-  accessToken?: string
+  accessToken?: string,
+  userId?: string
 ): Promise<ProcessResult> {
   const startTime = Date.now();
 
@@ -98,9 +100,9 @@ export async function processMeetEvent(
 
     // Route based on event type
     if (rawEvent.eventType === 'meet.conference.ended') {
-      result = await processConferenceEnded(rawEvent, meetEvent, accessToken);
+      result = await processConferenceEnded(rawEvent, meetEvent, accessToken, userId);
     } else if (rawEvent.eventType === 'meet.transcript.fileGenerated') {
-      result = await processTranscriptFileGenerated(rawEvent, meetEvent, accessToken);
+      result = await processTranscriptFileGenerated(rawEvent, meetEvent, accessToken, userId);
     } else {
       log('warn', '[MEET-4] Unknown Meet event type', {
         rawEventId: rawEvent.id,
@@ -158,7 +160,8 @@ export async function processMeetEvent(
 async function processConferenceEnded(
   rawEvent: RawEvent,
   meetEvent: MeetWorkspaceEvent,
-  accessToken?: string
+  accessToken?: string,
+  userId?: string
 ): Promise<ProcessResult> {
   const conferenceRecord = meetEvent.conferenceRecord;
   const conferenceRecordName = conferenceRecord?.name || conferenceRecord?.conferenceRecordName;
@@ -226,6 +229,7 @@ async function processConferenceEnded(
     const [newMeeting] = await db
       .insert(meetings)
       .values({
+        userId, // Link to user for multi-tenant filtering
         zoomMeetingId: meetMeetingId, // Using zoomMeetingId for backwards compat
         platformMeetingId: meetMeetingId,
         platform: MEET_PLATFORM,
@@ -238,7 +242,7 @@ async function processConferenceEnded(
       .returning();
 
     meetingId = newMeeting.id;
-    log('info', '[MEET-4] Created new meeting', { meetingId, meetMeetingId, platform: MEET_PLATFORM });
+    log('info', '[MEET-4] Created new meeting', { meetingId, meetMeetingId, platform: MEET_PLATFORM, userId });
   }
 
   // Fetch and store transcript
@@ -263,7 +267,8 @@ async function processConferenceEnded(
 async function processTranscriptFileGenerated(
   rawEvent: RawEvent,
   meetEvent: MeetWorkspaceEvent,
-  accessToken?: string
+  accessToken?: string,
+  userId?: string
 ): Promise<ProcessResult> {
   const conferenceRecordName = meetEvent.conferenceRecord?.name || meetEvent.conferenceRecord?.conferenceRecordName;
 
@@ -325,6 +330,7 @@ async function processTranscriptFileGenerated(
       const [newMeeting] = await db
         .insert(meetings)
         .values({
+          userId, // Link to user for multi-tenant filtering
           zoomMeetingId: meetMeetingId,
           platformMeetingId: meetMeetingId,
           platform: MEET_PLATFORM,
@@ -337,7 +343,7 @@ async function processTranscriptFileGenerated(
         .returning();
 
       meetingId = newMeeting.id;
-      log('info', '[MEET-4] Created new meeting from transcript event', { meetingId, meetMeetingId, platform: MEET_PLATFORM });
+      log('info', '[MEET-4] Created new meeting from transcript event', { meetingId, meetMeetingId, platform: MEET_PLATFORM, userId });
     }
   } catch (err) {
     log('warn', '[MEET-4] Could not fetch conference details, creating meeting anyway', {
@@ -355,6 +361,7 @@ async function processTranscriptFileGenerated(
       const [newMeeting] = await db
         .insert(meetings)
         .values({
+          userId, // Link to user for multi-tenant filtering
           zoomMeetingId: meetMeetingId,
           platformMeetingId: meetMeetingId,
           platform: MEET_PLATFORM,
