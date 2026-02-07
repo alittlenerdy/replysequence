@@ -192,7 +192,7 @@ export function BillingDashboard() {
 
   if (!billing) return null;
 
-  const tierInfo = tierConfig[billing.tier];
+  const tierInfo = tierConfig[billing.tier] || tierConfig.free;
   const TierIcon = tierInfo.icon;
 
   return (
