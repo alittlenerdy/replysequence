@@ -57,7 +57,7 @@ interface MeetTranscript {
  * Logger helper
  */
 function log(
-  level: 'info' | 'warn' | 'error',
+  level: 'info' | 'warn' | 'error' | 'debug',
   message: string,
   data: Record<string, unknown> = {}
 ): void {
@@ -109,6 +109,12 @@ async function getRecentlyEndedMeetings(
   const now = new Date();
   const windowStart = new Date(now.getTime() - POLL_WINDOW_MINUTES * 60 * 1000);
 
+  log('debug', 'Calendar query time window', {
+    now: now.toISOString(),
+    windowStart: windowStart.toISOString(),
+    windowMinutes: POLL_WINDOW_MINUTES,
+  });
+
   // Query for events that ended between windowStart and now
   const params = new URLSearchParams({
     timeMin: windowStart.toISOString(),
@@ -134,17 +140,65 @@ async function getRecentlyEndedMeetings(
   const data: CalendarListResponse = await response.json();
   const events = data.items || [];
 
-  // Filter for events with Meet links that have ended
-  const meetEvents = events.filter((event) => {
-    const hasMeetLink = event.hangoutLink || event.conferenceData?.conferenceId;
-    const endTime = event.end?.dateTime ? new Date(event.end.dateTime) : null;
-    const hasEnded = endTime && endTime <= now;
-    return hasMeetLink && hasEnded;
+  log('debug', 'Raw calendar events received', {
+    count: events.length,
+    events: events.map((e) => ({
+      id: e.id,
+      summary: e.summary,
+      start: e.start?.dateTime || e.start?.date,
+      end: e.end?.dateTime || e.end?.date,
+    })),
   });
+
+  // Filter for events with Meet links that have ended
+  const meetEvents: CalendarEvent[] = [];
+
+  for (const event of events) {
+    const hasHangoutLink = !!event.hangoutLink;
+    const hasConferenceData = !!event.conferenceData;
+    const hasConferenceId = !!event.conferenceData?.conferenceId;
+    const hasMeetLink = hasHangoutLink || hasConferenceId;
+
+    const endTimeStr = event.end?.dateTime || event.end?.date;
+    const endTime = endTimeStr ? new Date(endTimeStr) : null;
+    const hasEnded = endTime && endTime <= now;
+
+    // Extract meeting code for logging
+    let meetingCode: string | null = null;
+    if (event.hangoutLink) {
+      const match = event.hangoutLink.match(/meet\.google\.com\/([a-z]{3}-[a-z]{4}-[a-z]{3})/i);
+      meetingCode = match ? match[1] : null;
+    }
+
+    log('debug', 'Evaluating calendar event', {
+      eventId: event.id,
+      summary: event.summary,
+      startTime: event.start?.dateTime || event.start?.date,
+      endTime: endTimeStr,
+      endTimeParsed: endTime?.toISOString(),
+      now: now.toISOString(),
+      hasHangoutLink,
+      hangoutLink: event.hangoutLink,
+      hasConferenceData,
+      hasConferenceId,
+      conferenceId: event.conferenceData?.conferenceId,
+      conferenceSolution: event.conferenceData?.conferenceSolution?.name,
+      entryPoints: event.conferenceData?.entryPoints?.map((ep) => ep.uri),
+      meetingCode,
+      hasMeetLink,
+      hasEnded,
+      passesFilter: hasMeetLink && hasEnded,
+    });
+
+    if (hasMeetLink && hasEnded) {
+      meetEvents.push(event);
+    }
+  }
 
   log('info', 'Found calendar events with Meet links', {
     total: events.length,
     withMeet: meetEvents.length,
+    meetEventSummaries: meetEvents.map((e) => e.summary),
   });
 
   return meetEvents;
@@ -157,7 +211,14 @@ function extractMeetingCode(event: CalendarEvent): string | null {
   // Try hangoutLink first (format: https://meet.google.com/xxx-xxxx-xxx)
   if (event.hangoutLink) {
     const match = event.hangoutLink.match(/meet\.google\.com\/([a-z]{3}-[a-z]{4}-[a-z]{3})/i);
-    if (match) return match[1];
+    if (match) {
+      log('debug', 'Extracted meeting code from hangoutLink', {
+        eventId: event.id,
+        hangoutLink: event.hangoutLink,
+        meetingCode: match[1],
+      });
+      return match[1];
+    }
   }
 
   // Try conferenceData
@@ -165,10 +226,24 @@ function extractMeetingCode(event: CalendarEvent): string | null {
     for (const entry of event.conferenceData.entryPoints) {
       if (entry.uri?.includes('meet.google.com')) {
         const match = entry.uri.match(/meet\.google\.com\/([a-z]{3}-[a-z]{4}-[a-z]{3})/i);
-        if (match) return match[1];
+        if (match) {
+          log('debug', 'Extracted meeting code from conferenceData entryPoint', {
+            eventId: event.id,
+            entryUri: entry.uri,
+            meetingCode: match[1],
+          });
+          return match[1];
+        }
       }
     }
   }
+
+  log('debug', 'Could not extract meeting code from event', {
+    eventId: event.id,
+    summary: event.summary,
+    hangoutLink: event.hangoutLink,
+    conferenceData: event.conferenceData,
+  });
 
   return null;
 }
@@ -193,6 +268,14 @@ async function findConferenceRecord(
     pageSize: '10',
   });
 
+  log('debug', 'Searching for conference record', {
+    meetingCode,
+    filter,
+    calendarEventStart: startTime.toISOString(),
+    calendarEventEnd: endTime.toISOString(),
+    apiUrl: `${MEET_API}/conferenceRecords?${params}`,
+  });
+
   try {
     const response = await fetch(
       `${MEET_API}/conferenceRecords?${params}`,
@@ -214,6 +297,17 @@ async function findConferenceRecord(
     const data = await response.json();
     const records = data.conferenceRecords || [];
 
+    log('debug', 'Conference records API response', {
+      meetingCode,
+      recordCount: records.length,
+      records: records.map((r: ConferenceRecord) => ({
+        name: r.name,
+        startTime: r.startTime,
+        endTime: r.endTime,
+        meetingCode: r.space?.meetingCode,
+      })),
+    });
+
     // Find a record that matches our time window
     for (const record of records) {
       const recordStart = record.startTime ? new Date(record.startTime) : null;
@@ -223,6 +317,20 @@ async function findConferenceRecord(
       if (recordStart && recordEnd) {
         const startDiff = Math.abs(recordStart.getTime() - startTime.getTime());
         const endDiff = Math.abs(recordEnd.getTime() - endTime.getTime());
+
+        log('debug', 'Comparing record times', {
+          meetingCode,
+          recordName: record.name,
+          recordStart: recordStart.toISOString(),
+          recordEnd: recordEnd.toISOString(),
+          calendarStart: startTime.toISOString(),
+          calendarEnd: endTime.toISOString(),
+          startDiffMs: startDiff,
+          endDiffMs: endDiff,
+          startDiffMinutes: Math.round(startDiff / 60000),
+          endDiffMinutes: Math.round(endDiff / 60000),
+          withinTolerance: startDiff < 5 * 60 * 1000 || endDiff < 5 * 60 * 1000,
+        });
 
         // Allow 5 minute tolerance
         if (startDiff < 5 * 60 * 1000 || endDiff < 5 * 60 * 1000) {
@@ -235,7 +343,10 @@ async function findConferenceRecord(
       }
     }
 
-    log('info', 'No matching conference record found', { meetingCode });
+    log('info', 'No matching conference record found', {
+      meetingCode,
+      recordsChecked: records.length,
+    });
     return null;
   } catch (error) {
     log('error', 'Error searching conference records', {
@@ -253,6 +364,11 @@ async function getTranscripts(
   accessToken: string,
   conferenceRecordName: string
 ): Promise<MeetTranscript[]> {
+  log('debug', 'Fetching transcripts for conference record', {
+    conferenceRecordName,
+    apiUrl: `${MEET_API}/${conferenceRecordName}/transcripts`,
+  });
+
   try {
     const response = await fetch(
       `${MEET_API}/${conferenceRecordName}/transcripts`,
@@ -272,7 +388,20 @@ async function getTranscripts(
     }
 
     const data = await response.json();
-    return data.transcripts || [];
+    const transcripts = data.transcripts || [];
+
+    log('debug', 'Transcripts API response', {
+      conferenceRecordName,
+      transcriptCount: transcripts.length,
+      transcripts: transcripts.map((t: MeetTranscript) => ({
+        name: t.name,
+        state: t.state,
+        docsDocument: t.docsDestination?.document,
+        exportUri: t.docsDestination?.exportUri,
+      })),
+    });
+
+    return transcripts;
   } catch (error) {
     log('error', 'Error fetching transcripts', {
       conferenceRecordName,
@@ -303,10 +432,26 @@ async function processCalendarEvent(
   event: CalendarEvent,
   userId: string
 ): Promise<{ processed: boolean; reason: string }> {
+  log('debug', 'Processing calendar event', {
+    eventId: event.id,
+    summary: event.summary,
+    userId,
+  });
+
   const meetingCode = extractMeetingCode(event);
   if (!meetingCode) {
+    log('debug', 'No meeting code found in event', {
+      eventId: event.id,
+      summary: event.summary,
+    });
     return { processed: false, reason: 'No meeting code found' };
   }
+
+  log('debug', 'Found meeting code', {
+    eventId: event.id,
+    summary: event.summary,
+    meetingCode,
+  });
 
   const startTime = event.start?.dateTime ? new Date(event.start.dateTime) : new Date();
   const endTime = event.end?.dateTime ? new Date(event.end.dateTime) : new Date();
@@ -450,10 +595,19 @@ export async function GET(request: NextRequest) {
         errors: [] as string[],
       };
 
+      log('debug', 'Processing user connection', {
+        userId: connection.userId,
+        googleEmail: connection.googleEmail,
+        connectionId: connection.id,
+      });
+
       try {
         // Get access token
+        log('debug', 'Decrypting refresh token');
         const refreshToken = decrypt(connection.refreshTokenEncrypted);
+        log('debug', 'Refresh token decrypted, refreshing access token');
         const accessToken = await refreshAccessToken(refreshToken);
+        log('debug', 'Access token obtained successfully');
 
         // Get recently ended meetings
         const events = await getRecentlyEndedMeetings(accessToken);
