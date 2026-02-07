@@ -552,6 +552,42 @@ export type NewCalendarConnection = typeof calendarConnections.$inferInsert;
 export type UsageLog = typeof usageLogs.$inferSelect;
 export type NewUsageLog = typeof usageLogs.$inferInsert;
 
+// Email event types for granular tracking
+export type EmailEventType = 'sent' | 'opened' | 'clicked' | 'replied' | 'bounced' | 'unsubscribed';
+
+// Email events table - stores granular tracking events for detailed analytics
+export const emailEvents = pgTable(
+  'email_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    draftId: uuid('draft_id')
+      .notNull()
+      .references(() => drafts.id, { onDelete: 'cascade' }),
+    trackingId: uuid('tracking_id').notNull(), // Links to draft.trackingId
+    eventType: varchar('event_type', { length: 20 }).$type<EmailEventType>().notNull(),
+    // For click events - which URL was clicked
+    clickedUrl: text('clicked_url'),
+    // Client info
+    userAgent: text('user_agent'),
+    ipAddress: varchar('ip_address', { length: 45 }), // IPv6 compatible
+    // Geolocation (optional, from IP lookup)
+    country: varchar('country', { length: 2 }),
+    city: varchar('city', { length: 100 }),
+    // Timestamps
+    occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('email_events_draft_id_idx').on(table.draftId),
+    index('email_events_tracking_id_idx').on(table.trackingId),
+    index('email_events_event_type_idx').on(table.eventType),
+    index('email_events_occurred_at_idx').on(table.occurredAt),
+  ]
+);
+
+export type EmailEvent = typeof emailEvents.$inferSelect;
+export type NewEmailEvent = typeof emailEvents.$inferInsert;
+
 // Onboarding step type
 export type OnboardingStep = 1 | 2 | 3 | 4 | 5;
 

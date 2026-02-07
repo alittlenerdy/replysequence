@@ -185,7 +185,45 @@ export function DraftsTable({
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <StatusBadge status={draft.status} size="sm" />
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={draft.status} size="sm" />
+                      {/* Engagement indicators for sent emails */}
+                      {draft.status === 'sent' && (
+                        <div className="flex items-center gap-1">
+                          {(draft.openCount ?? 0) > 0 && (
+                            <span
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500/20 text-purple-400"
+                              title={`${draft.openCount} open${(draft.openCount ?? 0) > 1 ? 's' : ''}`}
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </span>
+                          )}
+                          {(draft.clickCount ?? 0) > 0 && (
+                            <span
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/20 text-amber-400"
+                              title={`${draft.clickCount} click${(draft.clickCount ?? 0) > 1 ? 's' : ''}`}
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                              </svg>
+                            </span>
+                          )}
+                          {draft.repliedAt && (
+                            <span
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400"
+                              title="Replied"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                              </svg>
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}

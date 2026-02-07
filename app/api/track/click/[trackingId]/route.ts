@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, drafts } from '@/lib/db';
+import { db, drafts, emailEvents } from '@/lib/db';
 import { eq, sql } from 'drizzle-orm';
 
 export async function GET(
@@ -42,15 +42,40 @@ export async function GET(
   // Record the click asynchronously
   try {
     if (trackingId && trackingId !== 'undefined') {
-      await db
-        .update(drafts)
-        .set({
-          clickedAt: sql`COALESCE(${drafts.clickedAt}, NOW())`, // Only set first click
-          clickCount: sql`COALESCE(${drafts.clickCount}, 0) + 1`,
-        })
-        .where(eq(drafts.trackingId, trackingId));
+      // Get client info for event logging
+      const userAgent = request.headers.get('user-agent') || undefined;
+      const forwardedFor = request.headers.get('x-forwarded-for');
+      const ipAddress = forwardedFor?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || undefined;
 
-      console.log(`[TRACK-CLICK] Recorded click for tracking ID: ${trackingId}, URL: ${decodedUrl}`);
+      // Find the draft by trackingId to get the draftId
+      const [draft] = await db
+        .select({ id: drafts.id })
+        .from(drafts)
+        .where(eq(drafts.trackingId, trackingId))
+        .limit(1);
+
+      if (draft) {
+        // Update the draft aggregate counts
+        await db
+          .update(drafts)
+          .set({
+            clickedAt: sql`COALESCE(${drafts.clickedAt}, NOW())`, // Only set first click
+            clickCount: sql`COALESCE(${drafts.clickCount}, 0) + 1`,
+          })
+          .where(eq(drafts.trackingId, trackingId));
+
+        // Log granular event to email_events table with clicked URL
+        await db.insert(emailEvents).values({
+          draftId: draft.id,
+          trackingId,
+          eventType: 'clicked',
+          clickedUrl: decodedUrl,
+          userAgent,
+          ipAddress,
+        });
+
+        console.log(`[TRACK-CLICK] Recorded click for tracking ID: ${trackingId}, URL: ${decodedUrl}`);
+      }
     }
   } catch (error) {
     // Log but don't fail - still redirect the user

@@ -45,6 +45,13 @@ export interface DraftWithMeeting {
   meetingStartTime: Date | null;
   meetingPlatform: string;
   trackingId: string | null;
+  // Email engagement tracking fields
+  openedAt: Date | null;
+  openCount: number | null;
+  lastOpenedAt: Date | null;
+  clickedAt: Date | null;
+  clickCount: number | null;
+  repliedAt: Date | null;
 }
 
 export interface DraftsQueryParams {
@@ -125,7 +132,7 @@ export async function getDraftsWithMeetings(
 
   const total = Number(countResult[0]?.count || 0);
 
-  // Get paginated drafts with meeting info
+  // Get paginated drafts with meeting info and tracking data
   const result = await db
     .select({
       id: drafts.id,
@@ -145,6 +152,14 @@ export async function getDraftsWithMeetings(
       meetingHostEmail: meetings.hostEmail,
       meetingStartTime: meetings.startTime,
       meetingPlatform: meetings.platform,
+      trackingId: drafts.trackingId,
+      // Email engagement tracking
+      openedAt: drafts.openedAt,
+      openCount: drafts.openCount,
+      lastOpenedAt: drafts.lastOpenedAt,
+      clickedAt: drafts.clickedAt,
+      clickCount: drafts.clickCount,
+      repliedAt: drafts.repliedAt,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))
@@ -162,7 +177,7 @@ export async function getDraftsWithMeetings(
 }
 
 /**
- * Get a single draft by ID with full details
+ * Get a single draft by ID with full details including tracking data
  */
 export async function getDraftById(id: string): Promise<DraftWithMeeting | null> {
   const result = await db
@@ -185,6 +200,13 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       meetingStartTime: meetings.startTime,
       meetingPlatform: meetings.platform,
       trackingId: drafts.trackingId,
+      // Email engagement tracking
+      openedAt: drafts.openedAt,
+      openCount: drafts.openCount,
+      lastOpenedAt: drafts.lastOpenedAt,
+      clickedAt: drafts.clickedAt,
+      clickCount: drafts.clickCount,
+      repliedAt: drafts.repliedAt,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))

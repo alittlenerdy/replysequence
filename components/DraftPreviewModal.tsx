@@ -390,16 +390,89 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                       </div>
                     </div>
 
-                    {/* Sent Info */}
+                    {/* Sent Info with Engagement Tracking */}
                     {draft.status === 'sent' && draft.sentAt ? (
-                      <div className="bg-green-500/10 rounded-lg p-4 border border-green-500/20">
-                        <div className="flex items-center gap-2 text-green-400">
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="font-medium">Sent to {draft.sentTo}</span>
+                      <div className="space-y-4">
+                        <div className="bg-green-500/10 rounded-lg p-4 border border-green-500/20">
+                          <div className="flex items-center gap-2 text-green-400">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="font-medium">Sent to {draft.sentTo}</span>
+                          </div>
+                          <p className="text-sm text-green-400/70 mt-1">{formatDate(draft.sentAt)}</p>
                         </div>
-                        <p className="text-sm text-green-400/70 mt-1">{formatDate(draft.sentAt)}</p>
+
+                        {/* Email Engagement Stats */}
+                        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                          <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Email Engagement
+                          </h4>
+                          <div className="grid grid-cols-3 gap-4">
+                            {/* Opens */}
+                            <div className="text-center">
+                              <div className={`text-2xl font-bold ${(draft.openCount ?? 0) > 0 ? 'text-purple-400' : 'text-gray-500'}`}>
+                                {draft.openCount ?? 0}
+                              </div>
+                              <div className="text-xs text-gray-500">Opens</div>
+                              {draft.openedAt && (
+                                <div className="text-xs text-gray-600 mt-1">
+                                  First: {new Date(draft.openedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </div>
+                              )}
+                            </div>
+                            {/* Clicks */}
+                            <div className="text-center">
+                              <div className={`text-2xl font-bold ${(draft.clickCount ?? 0) > 0 ? 'text-amber-400' : 'text-gray-500'}`}>
+                                {draft.clickCount ?? 0}
+                              </div>
+                              <div className="text-xs text-gray-500">Clicks</div>
+                              {draft.clickedAt && (
+                                <div className="text-xs text-gray-600 mt-1">
+                                  First: {new Date(draft.clickedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </div>
+                              )}
+                            </div>
+                            {/* Reply Status */}
+                            <div className="text-center">
+                              <div className={`text-2xl font-bold ${draft.repliedAt ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                {draft.repliedAt ? (
+                                  <svg className="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                ) : '-'}
+                              </div>
+                              <div className="text-xs text-gray-500">Replied</div>
+                              {draft.repliedAt && (
+                                <div className="text-xs text-gray-600 mt-1">
+                                  {new Date(draft.repliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Last Activity */}
+                          {draft.lastOpenedAt && (
+                            <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500 text-center">
+                              Last opened: {new Date(draft.lastOpenedAt).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </div>
+                          )}
+
+                          {/* No activity message */}
+                          {!draft.openedAt && !draft.clickedAt && (
+                            <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500 text-center">
+                              No engagement tracked yet. Opens are recorded when recipients view the email.
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ) : null}
                   </div>

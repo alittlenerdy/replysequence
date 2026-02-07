@@ -4,6 +4,7 @@ import { sendEmail } from '@/lib/email';
 import { syncSentEmailToCrm } from '@/lib/airtable';
 import { trackEvent } from '@/lib/analytics';
 import { injectTracking } from '@/lib/email-tracking';
+import { db, emailEvents } from '@/lib/db';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
@@ -93,6 +94,20 @@ export async function POST(request: NextRequest) {
 
     // Mark draft as sent only after successful email delivery
     await markDraftAsSent(draftId, recipientEmail);
+
+    // Log sent event to email_events table for granular tracking
+    if (draft.trackingId) {
+      try {
+        await db.insert(emailEvents).values({
+          draftId,
+          trackingId: draft.trackingId,
+          eventType: 'sent',
+        });
+      } catch (eventError) {
+        // Log but don't fail - email was already sent
+        console.error('[SEND-EVENT] Error logging sent event:', eventError);
+      }
+    }
 
     console.log('[SEND-2] Email sent successfully, messageId:', result.messageId);
     console.log(JSON.stringify({

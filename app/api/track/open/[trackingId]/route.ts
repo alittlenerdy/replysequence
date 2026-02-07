@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, drafts } from '@/lib/db';
+import { db, drafts, emailEvents } from '@/lib/db';
 import { eq, sql } from 'drizzle-orm';
 
 // 1x1 transparent GIF (43 bytes)
@@ -35,17 +35,40 @@ export async function GET(
   // Record the open asynchronously (don't block the response)
   try {
     if (trackingId && trackingId !== 'undefined') {
-      // Update the draft with open tracking data
-      await db
-        .update(drafts)
-        .set({
-          openedAt: sql`COALESCE(${drafts.openedAt}, NOW())`, // Only set first open
-          openCount: sql`COALESCE(${drafts.openCount}, 0) + 1`,
-          lastOpenedAt: sql`NOW()`,
-        })
-        .where(eq(drafts.trackingId, trackingId));
+      // Get client info for event logging
+      const userAgent = request.headers.get('user-agent') || undefined;
+      const forwardedFor = request.headers.get('x-forwarded-for');
+      const ipAddress = forwardedFor?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || undefined;
 
-      console.log(`[TRACK-OPEN] Recorded open for tracking ID: ${trackingId}`);
+      // Find the draft by trackingId to get the draftId
+      const [draft] = await db
+        .select({ id: drafts.id })
+        .from(drafts)
+        .where(eq(drafts.trackingId, trackingId))
+        .limit(1);
+
+      if (draft) {
+        // Update the draft aggregate counts
+        await db
+          .update(drafts)
+          .set({
+            openedAt: sql`COALESCE(${drafts.openedAt}, NOW())`, // Only set first open
+            openCount: sql`COALESCE(${drafts.openCount}, 0) + 1`,
+            lastOpenedAt: sql`NOW()`,
+          })
+          .where(eq(drafts.trackingId, trackingId));
+
+        // Log granular event to email_events table
+        await db.insert(emailEvents).values({
+          draftId: draft.id,
+          trackingId,
+          eventType: 'opened',
+          userAgent,
+          ipAddress,
+        });
+
+        console.log(`[TRACK-OPEN] Recorded open for tracking ID: ${trackingId}`);
+      }
     }
   } catch (error) {
     // Log but don't fail - tracking should never break email viewing
