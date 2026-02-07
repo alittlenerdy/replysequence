@@ -457,7 +457,7 @@ async function fetchAndStoreMeetTranscript(
 
     let fullText: string;
     let vttContent: string;
-    let segments: Array<{ speaker: string; text: string; startTime: string; endTime: string }>;
+    let segments: Array<{ speaker: string; text: string; start_time: number; end_time: number }>;
     let wordCount: number;
 
     // If no entries but docsDestination is available, download from Google Docs
