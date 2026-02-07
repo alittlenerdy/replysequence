@@ -14,12 +14,19 @@
     },
     "app/api/cron/process-webhook-retries/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/poll-meet-recordings/route.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/cron/process-webhook-retries",
       "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/poll-meet-recordings",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

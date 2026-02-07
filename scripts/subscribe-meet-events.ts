@@ -58,6 +58,7 @@ interface ErrorResponse {
     code: number;
     message: string;
     status: string;
+    details?: unknown[];
   };
 }
 
@@ -126,7 +127,9 @@ async function createSubscription(
 
   if (!response.ok) {
     const error = data as ErrorResponse;
-    throw new Error(`API error ${error.error.code}: ${error.error.message}`);
+    // Include full error details for debugging
+    const details = error.error.details ? JSON.stringify(error.error.details, null, 2) : '';
+    throw new Error(`API error ${error.error.code}: ${error.error.message}${details ? '\nDetails: ' + details : ''}`);
   }
 
   return data as SubscriptionResponse;
@@ -274,9 +277,31 @@ async function main() {
     await pool.end();
 
   } catch (error) {
-    if (error instanceof Error && error.message.includes('409')) {
-      console.log('\nSubscription already exists for this user.');
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    if (errorMessage.includes('409')) {
+      console.log('\n=== Subscription Already Exists ===');
+      console.log('A subscription already exists for this user.');
       console.log('Use the renew endpoint or delete the existing subscription first.');
+    } else if (errorMessage.includes('Pub/Sub') || errorMessage.includes('permission') || errorMessage.includes('topic')) {
+      console.log('\n=== Pub/Sub Permission Error ===\n');
+      console.log('The Workspace Events API cannot publish to the Pub/Sub topic.');
+      console.log('\nFull error message:');
+      console.log(errorMessage);
+      console.log('\n--- INSTRUCTIONS ---\n');
+      console.log('1. Go to Google Cloud Console > Pub/Sub > Topics');
+      console.log('2. Click on "meet-recordings" topic (create it if it doesn\'t exist)');
+      console.log('3. Go to the "Permissions" tab');
+      console.log('4. Click "Grant Access"');
+      console.log('5. Add principal: gcp-sa-pubsub@system.gserviceaccount.com');
+      console.log('   OR try: service-724455943699@gcp-sa-pubsub.iam.gserviceaccount.com');
+      console.log('6. Role: Pub/Sub Publisher');
+      console.log('7. Save and retry this script');
+      console.log('\nAlternatively, run this gcloud command:');
+      console.log('  gcloud pubsub topics add-iam-policy-binding meet-recordings \\');
+      console.log('    --project=replysequence \\');
+      console.log('    --member="serviceAccount:service-724455943699@gcp-sa-pubsub.iam.gserviceaccount.com" \\');
+      console.log('    --role="roles/pubsub.publisher"');
     } else {
       console.error('\nFailed to create subscription:', error);
     }
