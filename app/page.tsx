@@ -382,9 +382,19 @@ export default function LandingPage() {
                   </div>
 
                   <div className="flex flex-col items-center my-3">
-                    <ArrowDown className="w-5 h-5 text-blue-400 mb-1" />
+                    <motion.div
+                      animate={{ y: [0, 4, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <ArrowDown className="w-5 h-5 text-blue-400 mb-1" />
+                    </motion.div>
                     <span className="text-xs text-blue-400 font-medium text-center px-2">{mapping.feature}</span>
-                    <ArrowDown className="w-5 h-5 text-blue-400 mt-1" />
+                    <motion.div
+                      animate={{ y: [0, 4, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                    >
+                      <ArrowDown className="w-5 h-5 text-blue-400 mt-1" />
+                    </motion.div>
                   </div>
 
                   <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">

@@ -68,11 +68,10 @@ function DashboardPreview() {
   const emails = [
     { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
     { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
-    { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
   ];
 
   return (
-    <div className="w-full h-48 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
+    <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3">
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -196,31 +195,39 @@ function MeetingListPreview() {
   ];
 
   return (
-    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-2 space-y-2">
+    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-2 space-y-2 overflow-hidden">
       {meetings.map((meeting, i) => (
         <motion.div
           key={meeting.platform}
           className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-900/50 light:bg-gray-100"
-          initial={{ x: -20, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.15 }}
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: i * 0.3, duration: 0.5 }}
           whileHover={{ x: 4, backgroundColor: 'rgba(17, 24, 39, 0.8)' }}
         >
           <motion.div
             className="w-6 h-6 rounded flex items-center justify-center"
             style={{ backgroundColor: `${meeting.color}20` }}
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+            animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.4 }}
           >
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: meeting.color }} />
+            <motion.div
+              className="w-3 h-3 rounded-sm"
+              style={{ backgroundColor: meeting.color }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+            />
           </motion.div>
-          <div className="flex-1">
-            <div className="h-2 w-2/3 bg-gray-700 light:bg-gray-300 rounded" />
-          </div>
           <motion.div
-            className="text-[10px] text-gray-500 light:text-gray-600"
-            animate={{ opacity: [0.5, 1, 0.5] }}
+            className="flex-1"
+            animate={{ width: ['60%', '75%', '60%'] }}
+            transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+          >
+            <div className="h-2 bg-gray-700 light:bg-gray-300 rounded" />
+          </motion.div>
+          <motion.div
+            className="text-[10px] text-gray-500 light:text-gray-600 font-medium"
+            animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
           >
             {meeting.time}
@@ -313,34 +320,41 @@ function SettingsPreview() {
         <motion.div
           key={setting}
           className="flex items-center justify-between"
-          initial={{ x: -10, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: i * 0.15, duration: 0.4 }}
         >
-          <span className="text-[10px] text-gray-400 light:text-gray-600">{setting}</span>
+          <motion.span
+            className="text-[10px] text-gray-400 light:text-gray-600"
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+          >
+            {setting}
+          </motion.span>
           <motion.div
             className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600 light:bg-gray-300' : 'bg-blue-500'} flex items-center p-0.5`}
+            animate={i !== 1 ? { boxShadow: ['0 0 0 0 rgba(59, 130, 246, 0)', '0 0 8px 2px rgba(59, 130, 246, 0.4)', '0 0 0 0 rgba(59, 130, 246, 0)'] } : {}}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
             whileHover={{ scale: 1.1 }}
           >
             <motion.div
               className="w-3 h-3 rounded-full bg-white light:bg-gray-100"
-              animate={{ x: i === 1 ? 0 : 12 }}
+              animate={{ x: i === 1 ? [0, 0] : [12, 12] }}
               transition={{ duration: 0.3 }}
             />
           </motion.div>
         </motion.div>
       ))}
-      {/* Color swatches */}
+      {/* Color swatches with wave animation */}
       <div className="flex gap-1 mt-2">
         {['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'].map((color, i) => (
           <motion.div
             key={color}
-            className="w-4 h-4 rounded-full border-2 border-transparent"
+            className="w-4 h-4 rounded-full border-2 border-transparent cursor-pointer"
             style={{ backgroundColor: color }}
-            whileHover={{ scale: 1.2, borderColor: 'white' }}
-            animate={i === 0 ? { scale: [1, 1.2, 1] } : {}}
-            transition={{ duration: 2, repeat: Infinity }}
+            animate={{ scale: [1, 1.25, 1], y: [0, -3, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+            whileHover={{ scale: 1.3, borderColor: 'white' }}
           />
         ))}
       </div>
