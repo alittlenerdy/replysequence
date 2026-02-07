@@ -10,7 +10,16 @@
  * - Pub/Sub topic already created in Google Cloud
  */
 
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load .env.local explicitly BEFORE any other imports that might use env vars
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+
+// Debug: show what was loaded
+console.log('Loading environment from:', path.resolve(process.cwd(), '.env.local'));
+console.log('GOOGLE_CLIENT_ID loaded:', process.env.GOOGLE_CLIENT_ID ? 'Yes (starts with ' + process.env.GOOGLE_CLIENT_ID.substring(0, 12) + '...)' : 'NO');
+
 import { db } from '../lib/db';
 import { users, meetConnections } from '../lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -127,21 +136,34 @@ async function createSubscription(
 async function main() {
   console.log('=== Google Meet Workspace Events Subscription ===\n');
 
-  // Check environment
-  if (!process.env.GOOGLE_CLIENT_ID) {
-    console.error('Error: GOOGLE_CLIENT_ID not set in .env.local');
-    process.exit(1);
-  }
-  if (!process.env.GOOGLE_CLIENT_SECRET) {
-    console.error('Error: GOOGLE_CLIENT_SECRET not set in .env.local');
-    process.exit(1);
-  }
-  if (!process.env.ENCRYPTION_KEY) {
-    console.error('Error: ENCRYPTION_KEY not set in .env.local');
+  // Check environment with detailed error messages
+  const requiredEnvVars = [
+    'GOOGLE_CLIENT_ID',
+    'GOOGLE_CLIENT_SECRET',
+    'ENCRYPTION_KEY',
+    'DATABASE_URL',
+  ];
+
+  const missingVars = requiredEnvVars.filter((v) => !process.env[v]);
+
+  if (missingVars.length > 0) {
+    console.error('\nMissing required environment variables:');
+    missingVars.forEach((v) => console.error(`  - ${v}`));
+    console.error('\nMake sure these are set in .env.local');
+    console.error('Current working directory:', process.cwd());
+    console.error('\nAvailable env vars (GOOGLE_*):');
+    Object.keys(process.env)
+      .filter((k) => k.startsWith('GOOGLE'))
+      .forEach((k) => console.error(`  - ${k}=${process.env[k]?.substring(0, 20)}...`));
     process.exit(1);
   }
 
-  console.log('Environment check passed.\n');
+  console.log('\nEnvironment check passed:');
+  console.log('  GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID?.substring(0, 15) + '...');
+  console.log('  GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET?.substring(0, 8) + '...');
+  console.log('  ENCRYPTION_KEY: [set]');
+  console.log('  DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 30) + '...');
+  console.log();
 
   // Find a user with Meet connected
   console.log('Looking for users with Google Meet connected...');
