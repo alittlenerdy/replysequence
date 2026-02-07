@@ -165,9 +165,17 @@ function OnboardingContent() {
 
   const handlePlatformConnected = (platform: ConnectedPlatform) => {
     setState(prev => ({ ...prev, platformConnected: platform }));
-    saveProgress({ platformConnected: platform, currentStep: 3 });
     trackEvent('platform_connected', 2, { platform });
-    goToStep(3);
+
+    // Meet OAuth already includes calendar.readonly scope, so skip calendar step
+    if (platform === 'meet') {
+      setState(prev => ({ ...prev, calendarConnected: true }));
+      saveProgress({ platformConnected: platform, calendarConnected: true, currentStep: 4 });
+      goToStep(4); // Skip to test draft step
+    } else {
+      saveProgress({ platformConnected: platform, currentStep: 3 });
+      goToStep(3); // Go to calendar step for Zoom/Teams
+    }
   };
 
   const handleCalendarConnected = () => {
