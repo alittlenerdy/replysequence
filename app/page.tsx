@@ -63,12 +63,12 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              Stop Losing Deals to{' '}
-              <GradientText className="font-extrabold">Forgotten Promises.</GradientText>
+              <GradientText className="font-extrabold">8 Seconds</GradientText> from Call to{' '}
+              <span className="text-white light:text-gray-900">Follow-up.</span>
             </h1>
 
             <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
-              Turn every video call into a perfect follow-up email and CRM update—automatically.
+              AI drafts perfect follow-up emails the moment your Zoom, Teams, or Meet call ends. No notes. No typing. Just send.
             </p>
 
             {/* Platform logos */}
@@ -265,39 +265,81 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                step: '01',
-                title: 'Connect Your Meeting Platform',
-                description: 'Link Zoom, Teams, or Google Meet in one click. We securely access transcripts with your permission.',
-              },
-              {
-                step: '02',
-                title: 'AI Analyzes Your Calls',
-                description: 'Our AI extracts action items, commitments, and key discussion points from every meeting.',
-              },
-              {
-                step: '03',
-                title: 'Review & Send',
-                description: 'Get polished follow-up drafts in your inbox. Review, customize, and send with one click.',
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="relative"
-              >
-                <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 h-full hover:border-blue-500/50 transition-colors">
-                  <span className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">{item.step}</span>
-                  <h3 className="text-xl font-bold text-white light:text-gray-900 mt-2 mb-3">{item.title}</h3>
-                  <p className="text-gray-400 light:text-gray-600">{item.description}</p>
-                </div>
-              </motion.div>
-            ))}
+          <div className="relative">
+            {/* Connecting line for desktop */}
+            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  step: '01',
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
+                  title: 'Connect Your Platform',
+                  description: 'Link Zoom, Teams, or Google Meet in one click. We securely access transcripts with your permission.',
+                  color: 'blue',
+                },
+                {
+                  step: '02',
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
+                  title: 'AI Drafts in 8 Seconds',
+                  description: 'Our AI extracts action items, commitments, and key points—then drafts a perfect follow-up instantly.',
+                  color: 'purple',
+                },
+                {
+                  step: '03',
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
+                  title: 'Review & Send',
+                  description: 'Get polished drafts in your inbox. Customize if needed, then send with one click. CRM updates automatically.',
+                  color: 'pink',
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15, duration: 0.5 }}
+                  className="relative"
+                >
+                  {/* Step indicator circle */}
+                  <div className="flex justify-center mb-6">
+                    <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-2 ${
+                      item.color === 'blue' ? 'border-blue-500/50 bg-blue-500/10 text-blue-400' :
+                      item.color === 'purple' ? 'border-purple-500/50 bg-purple-500/10 text-purple-400' :
+                      'border-pink-500/50 bg-pink-500/10 text-pink-400'
+                    }`}>
+                      {item.icon}
+                      {/* Step number badge */}
+                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                        item.color === 'blue' ? 'bg-blue-500' :
+                        item.color === 'purple' ? 'bg-purple-500' :
+                        'bg-pink-500'
+                      }`}>
+                        {item.step}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Arrow between steps on desktop */}
+                  {index < 2 && (
+                    <motion.div
+                      className="hidden md:block absolute top-10 -right-4 z-10"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <svg className="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </motion.div>
+                  )}
+
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">{item.title}</h3>
+                    <p className="text-gray-400 light:text-gray-600">{item.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
