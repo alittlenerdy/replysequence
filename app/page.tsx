@@ -389,10 +389,10 @@ export default function LandingPage() {
                     }`}>
                       {item.icon}
                       {/* Step number badge */}
-                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                        item.color === 'blue' ? 'bg-blue-500' :
-                        item.color === 'purple' ? 'bg-purple-500' :
-                        'bg-pink-500'
+                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg ${
+                        item.color === 'blue' ? 'bg-gradient-to-br from-blue-500 to-cyan-400' :
+                        item.color === 'purple' ? 'bg-gradient-to-br from-purple-500 to-pink-500' :
+                        'bg-gradient-to-br from-pink-500 to-rose-400'
                       }`}>
                         {item.step}
                       </span>
