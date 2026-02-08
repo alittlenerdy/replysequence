@@ -14,8 +14,16 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Security | ReplySequence',
-  description: 'ReplySequence security practices - enterprise-grade protection for your meeting data.',
+  title: 'Security',
+  description: 'Enterprise-grade security for your meeting data. AES-256 encryption, SOC 2 infrastructure, GDPR compliant, OAuth 2.0 authentication.',
+  openGraph: {
+    title: 'Security | ReplySequence',
+    description: 'Enterprise-grade security for your meeting data. AES-256 encryption, SOC 2 infrastructure, GDPR compliant.',
+    url: 'https://replysequence.vercel.app/security',
+  },
+  alternates: {
+    canonical: 'https://replysequence.vercel.app/security',
+  },
 };
 
 const securityFeatures = [

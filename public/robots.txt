@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow private routes
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /onboarding
+Disallow: /sentry-example-page
+
+# Sitemap
+Sitemap: https://replysequence.vercel.app/sitemap.xml

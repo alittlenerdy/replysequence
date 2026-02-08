@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'How It Works | ReplySequence',
+  title: 'How It Works',
   description:
     'Learn how ReplySequence transforms your Zoom, Teams, and Google Meet calls into perfect follow-up emails in just 8 seconds. Connect, record, and send - it is that simple.',
   keywords: [
@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'How ReplySequence Works',
     description: 'From meeting to perfect follow-up email in 8 seconds. See how it works.',
+  },
+  alternates: {
+    canonical: 'https://replysequence.vercel.app/how-it-works',
   },
 };
 

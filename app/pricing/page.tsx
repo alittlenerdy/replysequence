@@ -14,8 +14,16 @@ import type { SubscriptionTier } from '@/lib/db/schema';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Pricing | ReplySequence',
-  description: 'Choose the plan that fits your team. From free to enterprise.',
+  title: 'Pricing',
+  description: 'Simple, transparent pricing for ReplySequence. Start free with 5 AI drafts/month, upgrade to Pro for unlimited drafts, or go Team for CRM sync and collaboration.',
+  openGraph: {
+    title: 'Pricing | ReplySequence',
+    description: 'Simple, transparent pricing for ReplySequence. Start free, upgrade when you need more power.',
+    url: 'https://replysequence.vercel.app/pricing',
+  },
+  alternates: {
+    canonical: 'https://replysequence.vercel.app/pricing',
+  },
 };
 
 interface PricingTier {
