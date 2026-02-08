@@ -127,9 +127,44 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
           </div>
         </div>
       ) : (
-        <div className="relative text-center py-8">
-          <div className="text-4xl font-bold text-gray-600 mb-2">$0</div>
-          <p className="text-gray-500 text-sm">Generate your first email draft to see your ROI</p>
+        <div className="relative text-center py-6">
+          {/* Animated placeholder */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-4"
+          >
+            <motion.div
+              animate={{ opacity: [0.2, 0.4, 0.2] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-5xl font-black text-gray-600/50"
+            >
+              $0
+            </motion.div>
+          </motion.div>
+
+          <p className="text-gray-400 light:text-gray-500 font-medium mb-2">
+            Start Tracking Your Savings
+          </p>
+          <p className="text-gray-500 text-sm max-w-xs mx-auto mb-4">
+            Generate your first email draft and watch your time savings add up here.
+          </p>
+
+          {/* Preview of what they'll see */}
+          <div className="flex justify-center gap-6 pt-4 border-t border-emerald-500/10">
+            <div className="text-center opacity-50">
+              <Clock className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
+              <p className="text-xs text-gray-500">Hours saved</p>
+            </div>
+            <div className="text-center opacity-50">
+              <Zap className="w-4 h-4 text-amber-400 mx-auto mb-1" />
+              <p className="text-xs text-gray-500">Emails</p>
+            </div>
+            <div className="text-center opacity-50">
+              <TrendingUp className="w-4 h-4 text-blue-400 mx-auto mb-1" />
+              <p className="text-xs text-gray-500">ROI</p>
+            </div>
+          </div>
         </div>
       )}
     </motion.div>

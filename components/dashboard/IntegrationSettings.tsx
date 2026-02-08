@@ -139,6 +139,7 @@ export function IntegrationSettings() {
   };
 
   const connectedCount = Object.values(connectionStatus).filter(Boolean).length;
+  const hasNoConnections = connectedCount === 0;
 
   if (loading) {
     return (
@@ -161,6 +162,39 @@ export function IntegrationSettings() {
 
   return (
     <div className="max-w-2xl">
+      {/* Getting Started Banner - only show when no platforms connected */}
+      {hasNoConnections && (
+        <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl" />
+          <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
+
+          <div className="relative flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                </span>
+                Get Started in 2 Minutes
+              </h3>
+              <p className="text-gray-300 light:text-gray-600 text-sm">
+                Connect your first meeting platform below. Once connected, ReplySequence will automatically
+                capture transcripts and generate follow-up emails after each meeting.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href="/how-it-works"
+                className="text-sm text-blue-400 hover:text-blue-300 whitespace-nowrap"
+              >
+                See how it works
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Platform Cards */}
       <div className="space-y-4">
         {platforms.map((platform) => {

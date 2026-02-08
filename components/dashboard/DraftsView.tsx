@@ -12,6 +12,7 @@ import { SkeletonStats } from '../ui/SkeletonCard';
 import { SkeletonTable } from '../ui/SkeletonTable';
 import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
+import { TimeSavingsWidget } from './TimeSavingsWidget';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -158,11 +159,25 @@ export function DraftsView({
         )}
       </AnimatePresence>
 
-      {/* Stats */}
+      {/* Stats and Time Savings */}
       {isLoading && drafts.length === 0 ? (
         <SkeletonStats />
       ) : (
-        <DashboardStats stats={stats} />
+        <div className="space-y-6">
+          <DashboardStats stats={stats} />
+          {/* Time Savings Widget - positioned prominently */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <TimeSavingsWidget
+              initialData={{
+                totalDrafts: stats.total,
+                sentDrafts: stats.sent,
+                minutesPerDraft: 15,
+                hourlyRate: 100,
+              }}
+              autoFetch={false}
+            />
+          </div>
+        </div>
       )}
 
       {/* Filters */}

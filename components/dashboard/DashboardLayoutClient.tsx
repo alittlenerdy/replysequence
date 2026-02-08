@@ -2,14 +2,21 @@
 
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { OnboardingBanner } from './OnboardingBanner';
 
 const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
+  onboardingIncomplete?: boolean;
+  onboardingStep?: number;
 }
 
-export function DashboardLayoutClient({ children }: DashboardLayoutClientProps) {
+export function DashboardLayoutClient({
+  children,
+  onboardingIncomplete = false,
+  onboardingStep = 1,
+}: DashboardLayoutClientProps) {
   // Sync theme from localStorage on mount
   useEffect(() => {
     const theme = localStorage.getItem('theme');
@@ -28,6 +35,7 @@ export function DashboardLayoutClient({ children }: DashboardLayoutClientProps) 
   return (
     <>
       <DashboardMarginBubbles />
+      {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />}
       {children}
     </>
   );

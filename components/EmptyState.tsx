@@ -50,7 +50,7 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="/settings"
+              href="/dashboard/settings"
               className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
             >
               <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -59,7 +59,7 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
               Connect a Platform
             </a>
             <a
-              href="/#how-it-works"
+              href="/how-it-works"
               className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-all duration-300 hover:scale-105"
             >
               Learn How It Works

@@ -144,9 +144,53 @@ export function ActivityChart({ data, title, color, gradientId }: ActivityChartP
             </AreaChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-full flex items-center justify-center">
-            <p className="text-gray-500 text-sm">No activity yet</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="h-full flex flex-col items-center justify-center"
+          >
+            {/* Empty chart visualization */}
+            <div className="flex items-end gap-1 mb-3 opacity-30">
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: 16 }}
+                transition={{ delay: 0.1 }}
+                className="w-4 rounded-t"
+                style={{ backgroundColor: color }}
+              />
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: 24 }}
+                transition={{ delay: 0.2 }}
+                className="w-4 rounded-t"
+                style={{ backgroundColor: color }}
+              />
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: 12 }}
+                transition={{ delay: 0.3 }}
+                className="w-4 rounded-t"
+                style={{ backgroundColor: color }}
+              />
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: 32 }}
+                transition={{ delay: 0.4 }}
+                className="w-4 rounded-t"
+                style={{ backgroundColor: color }}
+              />
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: 20 }}
+                transition={{ delay: 0.5 }}
+                className="w-4 rounded-t"
+                style={{ backgroundColor: color }}
+              />
+            </div>
+            <p className="text-gray-500 text-sm text-center">
+              Data will appear here after your first meeting
+            </p>
+          </motion.div>
         )}
       </div>
     </motion.div>

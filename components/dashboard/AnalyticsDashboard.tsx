@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign } from 'lucide-react';
+import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { ActivityChart } from '@/components/analytics/ActivityChart';
 import { PlatformChart } from '@/components/analytics/PlatformChart';
@@ -275,35 +275,119 @@ export function AnalyticsDashboard() {
           </div>
         </>
       ) : (
-        /* Empty State */
+        /* Empty State - Enhanced with illustration and CTAs */
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-12 text-center"
+          className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="w-8 h-8 text-blue-400" />
-          </div>
-          <h3 className="text-xl font-semibold text-white light:text-gray-900 mb-2">
-            No Activity Yet
-          </h3>
-          <p className="text-gray-400 light:text-gray-500 max-w-md mx-auto mb-6">
-            Connect a meeting platform and host your first meeting to see your analytics dashboard come to life with charts and insights.
-          </p>
-          <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
-            <span className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
-              Zoom
-            </span>
-            <span className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-purple-500" />
-              Teams
-            </span>
-            <span className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500" />
-              Meet
-            </span>
+          {/* Background decorative elements */}
+          <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
+          <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-gradient-to-tr from-purple-500/10 to-emerald-500/10 rounded-full blur-3xl" />
+
+          <div className="relative">
+            {/* Animated chart illustration */}
+            <div className="relative mx-auto w-32 h-32 mb-6">
+              {/* Pulse rings */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0.5 }}
+                animate={{ scale: 1.2, opacity: 0 }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+              />
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0.5 }}
+                animate={{ scale: 1.2, opacity: 0 }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.5 }}
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+              />
+
+              {/* Main icon container */}
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="relative w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-500/30"
+              >
+                {/* Chart bars animation */}
+                <div className="flex items-end gap-1.5">
+                  <motion.div
+                    initial={{ height: 8 }}
+                    animate={{ height: [8, 24, 16] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
+                    className="w-3 bg-white/90 rounded-sm"
+                  />
+                  <motion.div
+                    initial={{ height: 16 }}
+                    animate={{ height: [16, 32, 24] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse', delay: 0.2 }}
+                    className="w-3 bg-white/90 rounded-sm"
+                  />
+                  <motion.div
+                    initial={{ height: 12 }}
+                    animate={{ height: [12, 28, 20] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse', delay: 0.4 }}
+                    className="w-3 bg-white/90 rounded-sm"
+                  />
+                  <motion.div
+                    initial={{ height: 20 }}
+                    animate={{ height: [20, 36, 28] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse', delay: 0.6 }}
+                    className="w-3 bg-white/90 rounded-sm"
+                  />
+                </div>
+              </motion.div>
+            </div>
+
+            <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">
+              Your Analytics Dashboard Awaits
+            </h3>
+            <p className="text-gray-400 light:text-gray-500 max-w-lg mx-auto mb-8">
+              Once you connect a meeting platform and host your first meeting, you will see powerful insights here:
+              time saved, ROI calculations, engagement metrics, and activity trends.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+              <a
+                href="/dashboard/settings"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+              >
+                <Calendar className="w-4 h-4" />
+                Connect a Platform
+              </a>
+              <a
+                href="/how-it-works"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-300 light:text-gray-700 bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200 rounded-xl hover:bg-gray-700 light:hover:bg-gray-200 transition-all duration-300 hover:scale-105"
+              >
+                Learn How It Works
+              </a>
+            </div>
+
+            {/* What you'll see preview */}
+            <div className="pt-8 border-t border-gray-700 light:border-gray-200">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">What you will unlock</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-emerald-400' },
+                  { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-purple-400' },
+                  { icon: <Clock className="w-5 h-5" />, label: 'Time Saved', color: 'text-amber-400' },
+                  { icon: <BarChart3 className="w-5 h-5" />, label: 'Activity Charts', color: 'text-blue-400' },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    className="p-3 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-gray-700/50 light:border-gray-200"
+                  >
+                    <div className={`${item.color} mb-2`}>{item.icon}</div>
+                    <p className="text-xs text-gray-400 light:text-gray-600">{item.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
         </motion.div>
       )}

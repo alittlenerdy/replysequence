@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Mail, Eye, MousePointerClick, MessageSquare, Clock, TrendingUp, ArrowRight } from 'lucide-react';
+import { Mail, Eye, MousePointerClick, MessageSquare, Clock, TrendingUp, ArrowRight, Send } from 'lucide-react';
 
 interface EmailEngagement {
   sent: number;
@@ -179,12 +179,60 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           </div>
         </>
       ) : (
-        <div className="text-center py-8">
-          <div className="w-12 h-12 bg-gray-800 light:bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Mail className="w-6 h-6 text-gray-600" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-6"
+        >
+          {/* Animated mail illustration */}
+          <div className="relative mx-auto w-16 h-16 mb-4">
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center border border-blue-500/20"
+            >
+              <Mail className="w-8 h-8 text-blue-400/70" />
+            </motion.div>
+            {/* Floating notification dots */}
+            <motion.div
+              animate={{ y: [-2, 2, -2] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute -right-1 -top-1 w-4 h-4 bg-purple-500/50 rounded-full flex items-center justify-center"
+            >
+              <Eye className="w-2 h-2 text-white" />
+            </motion.div>
           </div>
-          <p className="text-gray-500 text-sm">Send your first email to see engagement metrics</p>
-        </div>
+
+          <h4 className="text-white light:text-gray-900 font-medium mb-2">
+            Email Tracking Ready
+          </h4>
+          <p className="text-gray-500 text-sm max-w-xs mx-auto mb-4">
+            Send your first email and track opens, clicks, and replies in real-time.
+          </p>
+
+          {/* Preview funnel - grayed out */}
+          <div className="flex items-center justify-center gap-2 opacity-40">
+            <div className="text-center px-3">
+              <div className="text-lg font-bold text-blue-400">--</div>
+              <div className="text-xs text-gray-500">Sent</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-600" />
+            <div className="text-center px-3">
+              <div className="text-lg font-bold text-purple-400">--</div>
+              <div className="text-xs text-gray-500">Opened</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-600" />
+            <div className="text-center px-3">
+              <div className="text-lg font-bold text-amber-400">--</div>
+              <div className="text-xs text-gray-500">Clicked</div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-600" />
+            <div className="text-center px-3">
+              <div className="text-lg font-bold text-emerald-400">--</div>
+              <div className="text-xs text-gray-500">Replied</div>
+            </div>
+          </div>
+        </motion.div>
       )}
     </motion.div>
   );

@@ -27,18 +27,26 @@ export default async function DashboardLayout({
     .where(eq(userOnboarding.clerkId, userId))
     .limit(1);
 
-  // If no record or not completed, redirect to onboarding
-  if (!onboarding || !onboarding.completedAt) {
-    console.log('[ONBOARDING-GATE] Redirecting to onboarding:', {
+  // Determine if onboarding is incomplete (show banner instead of redirecting)
+  const onboardingIncomplete = !onboarding || !onboarding.completedAt;
+  const currentStep = onboarding?.currentStep ?? 1;
+
+  if (onboardingIncomplete) {
+    console.log('[ONBOARDING-GATE] Onboarding incomplete, showing banner:', {
       userId,
       hasRecord: !!onboarding,
-      completedAt: onboarding?.completedAt,
-      currentStep: onboarding?.currentStep,
+      currentStep,
     });
-    redirect('/onboarding');
+  } else {
+    console.log('[ONBOARDING-GATE] User completed onboarding, showing dashboard:', userId);
   }
 
-  console.log('[ONBOARDING-GATE] User completed onboarding, showing dashboard:', userId);
-
-  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
+  return (
+    <DashboardLayoutClient
+      onboardingIncomplete={onboardingIncomplete}
+      onboardingStep={currentStep}
+    >
+      {children}
+    </DashboardLayoutClient>
+  );
 }

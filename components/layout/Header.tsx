@@ -21,6 +21,12 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
           <Link
+            href="/how-it-works"
+            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            How It Works
+          </Link>
+          <Link
             href="/pricing"
             className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
           >

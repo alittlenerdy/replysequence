@@ -10,6 +10,7 @@ import { StepTestDraft } from '@/components/onboarding/StepTestDraft';
 import { StepEmailPreferences } from '@/components/onboarding/StepEmailPreferences';
 import { OnboardingComplete } from '@/components/onboarding/OnboardingComplete';
 import { ProgressBar } from '@/components/onboarding/ProgressBar';
+import { Celebration } from '@/components/onboarding/Celebration';
 import { X, Loader2 } from 'lucide-react';
 
 export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 'complete';
@@ -24,6 +25,8 @@ export interface OnboardingState {
   emailPreference: EmailPreference;
   isLoading: boolean;
   isReturningUser: boolean;
+  showCelebration: boolean;
+  celebrationType: 'platform' | 'calendar' | 'draft' | null;
 }
 
 function OnboardingContent() {
@@ -38,6 +41,8 @@ function OnboardingContent() {
     emailPreference: 'review',
     isLoading: true,
     isReturningUser: false,
+    showCelebration: false,
+    celebrationType: null,
   });
 
   const [showExitModal, setShowExitModal] = useState(false);
@@ -167,14 +172,19 @@ function OnboardingContent() {
     setState(prev => ({ ...prev, platformConnected: platform }));
     trackEvent('platform_connected', 2, { platform });
 
+    // Show celebration
+    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'platform' }));
+
     // Meet OAuth already includes calendar.readonly scope, so skip calendar step
     if (platform === 'meet') {
       setState(prev => ({ ...prev, calendarConnected: true }));
       saveProgress({ platformConnected: platform, calendarConnected: true, currentStep: 4 });
-      goToStep(4); // Skip to test draft step
+      // Delay transition to allow celebration to play
+      setTimeout(() => goToStep(4), 1200);
     } else {
       saveProgress({ platformConnected: platform, currentStep: 3 });
-      goToStep(3); // Go to calendar step for Zoom/Teams
+      // Delay transition to allow celebration to play
+      setTimeout(() => goToStep(3), 1200);
     }
   };
 
@@ -182,7 +192,11 @@ function OnboardingContent() {
     setState(prev => ({ ...prev, calendarConnected: true }));
     saveProgress({ calendarConnected: true, currentStep: 4 });
     trackEvent('calendar_connected', 3);
-    goToStep(4);
+
+    // Show celebration
+    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'calendar' }));
+    // Delay transition to allow celebration to play
+    setTimeout(() => goToStep(4), 1200);
   };
 
   const handleCalendarSkipped = () => {
@@ -194,7 +208,11 @@ function OnboardingContent() {
     setState(prev => ({ ...prev, draftGenerated: true }));
     saveProgress({ draftGenerated: true, currentStep: 5 });
     trackEvent('draft_generated', 4);
-    goToStep(5);
+
+    // Show celebration
+    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'draft' }));
+    // Delay transition to allow celebration to play
+    setTimeout(() => goToStep(5), 1200);
   };
 
   const handlePreferenceSaved = async (preference: EmailPreference) => {
@@ -226,6 +244,10 @@ function OnboardingContent() {
     router.push('/dashboard');
   };
 
+  const handleCelebrationComplete = () => {
+    setState(prev => ({ ...prev, showCelebration: false, celebrationType: null }));
+  };
+
   // Loading state
   if (state.isLoading) {
     return (
@@ -240,6 +262,14 @@ function OnboardingContent() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] relative overflow-hidden">
+      {/* Celebration overlay */}
+      <Celebration
+        show={state.showCelebration}
+        onComplete={handleCelebrationComplete}
+        duration={1200}
+        variant={state.celebrationType === 'draft' ? 'full' : 'sparkle'}
+      />
+
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />

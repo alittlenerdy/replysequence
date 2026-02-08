@@ -67,6 +67,20 @@ export default function MobileMenu() {
           onClick={(e) => e.stopPropagation()}
         >
           <a
+            href="/how-it-works"
+            onClick={() => setIsOpen(false)}
+            className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            How It Works
+          </a>
+          <a
+            href="/pricing"
+            onClick={() => setIsOpen(false)}
+            className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            Pricing
+          </a>
+          <a
             href="/dashboard"
             onClick={() => setIsOpen(false)}
             className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
