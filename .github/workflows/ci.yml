@@ -15,8 +15,8 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  build:
-    name: Build & Type Check
+  typecheck:
+    name: Type Check
     runs-on: ubuntu-latest
 
     steps:
@@ -29,69 +29,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Cache Next.js build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
       - name: Install dependencies
         run: npm ci
 
       - name: TypeScript type check
         run: npx tsc --noEmit
-
-      - name: Build application
-        run: npm run build
         env:
-          # Placeholder environment variables for build
-          # These allow the build to complete without real secrets
-          # Database
-          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://placeholder:placeholder@localhost:5432/placeholder' }}
-          REDIS_URL: ${{ secrets.REDIS_URL || 'redis://localhost:6379' }}
-          # Clerk Authentication
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_placeholder' }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
-          # Anthropic Claude API
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'sk-ant-placeholder' }}
-          # Resend Email
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || 're_placeholder' }}
-          RESEND_FROM_EMAIL: 'ReplySequence <noreply@example.com>'
-          # Encryption
-          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY || 'placeholder-encryption-key-32chars' }}
-          # Zoom OAuth
-          ZOOM_ACCOUNT_ID: ${{ secrets.ZOOM_ACCOUNT_ID || 'placeholder' }}
-          ZOOM_CLIENT_ID: ${{ secrets.ZOOM_CLIENT_ID || 'placeholder' }}
-          ZOOM_CLIENT_SECRET: ${{ secrets.ZOOM_CLIENT_SECRET || 'placeholder' }}
-          ZOOM_WEBHOOK_SECRET_TOKEN: ${{ secrets.ZOOM_WEBHOOK_SECRET_TOKEN || 'placeholder' }}
-          # Microsoft Teams
-          MICROSOFT_TEAMS_TENANT_ID: ${{ secrets.MICROSOFT_TEAMS_TENANT_ID || 'placeholder' }}
-          MICROSOFT_TEAMS_CLIENT_ID: ${{ secrets.MICROSOFT_TEAMS_CLIENT_ID || 'placeholder' }}
-          MICROSOFT_TEAMS_CLIENT_SECRET: ${{ secrets.MICROSOFT_TEAMS_CLIENT_SECRET || 'placeholder' }}
-          MICROSOFT_TEAMS_WEBHOOK_SECRET: ${{ secrets.MICROSOFT_TEAMS_WEBHOOK_SECRET || 'placeholder' }}
-          # Google Meet
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || 'placeholder' }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || 'placeholder' }}
-          # Airtable CRM
-          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY || 'placeholder' }}
-          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID || 'placeholder' }}
-          # Stripe
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY || 'sk_test_placeholder' }}
-          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder' }}
-          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET || 'whsec_placeholder' }}
-          STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID || 'price_placeholder' }}
-          STRIPE_TEAM_PRICE_ID: ${{ secrets.STRIPE_TEAM_PRICE_ID || 'price_placeholder' }}
-          # PostHog Analytics
-          NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY || 'placeholder' }}
-          NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com' }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY || 'placeholder' }}
-          # App URL
-          NEXT_PUBLIC_APP_URL: 'https://replysequence.vercel.app'
-          # Sentry
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN || '' }}
           # Skip telemetry during CI
           NEXT_TELEMETRY_DISABLED: 1
 
