@@ -109,7 +109,9 @@ export function IntegrationSettings() {
 
   const handleConnect = (platform: PlatformConfig) => {
     setActionLoading(platform.id);
-    window.location.href = platform.connectUrl;
+    // Pass redirect parameter so OAuth returns to Settings after completion
+    const returnUrl = '/dashboard/settings?connected=' + platform.id;
+    window.location.href = `${platform.connectUrl}?redirect=${encodeURIComponent(returnUrl)}`;
   };
 
   const handleDisconnect = async (platform: PlatformConfig) => {

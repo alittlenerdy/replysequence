@@ -102,6 +102,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     });
 
     // Get Zoom connection details
+    // Note: Zoom access tokens expire in 1 hour, but we have refresh tokens
+    // So we don't show "expiring soon" - only show warning if refresh token is missing
     let zoomEmail: string | undefined;
     let zoomDetails: PlatformConnectionDetails = { connected: false };
     if (zoomConnected) {
@@ -110,22 +112,26 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
           zoomEmail: zoomConnections.zoomEmail,
           connectedAt: zoomConnections.connectedAt,
           expiresAt: zoomConnections.accessTokenExpiresAt,
+          hasRefreshToken: zoomConnections.refreshTokenEncrypted,
         })
         .from(zoomConnections)
         .where(eq(zoomConnections.userId, existingUser.id))
         .limit(1);
       if (connection) {
         zoomEmail = connection.zoomEmail;
-        const expStatus = getExpirationStatus(connection.expiresAt);
+        // For Zoom: only show warning if we don't have a refresh token
+        // Access tokens auto-refresh via refresh token, so short expiry is normal
+        const hasRefreshToken = !!connection.hasRefreshToken;
         zoomDetails = {
           connected: true,
           email: connection.zoomEmail,
           connectedAt: connection.connectedAt,
           expiresAt: connection.expiresAt,
-          ...expStatus,
+          isExpired: !hasRefreshToken, // Only "expired" if no refresh token
+          isExpiringSoon: false, // Never "expiring soon" for Zoom (we auto-refresh)
         };
       }
-      console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail });
+      console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail, hasRefreshToken: !!connection?.hasRefreshToken });
     }
 
     // Get Teams connection details
