@@ -85,6 +85,7 @@ const BlueprintGrid = dynamic(() => import('@/components/landing/BlueprintGrid')
 const HeroAnimation = dynamic(() => import('@/components/landing/HeroAnimation').then(m => ({ default: m.HeroAnimation })), { ssr: false });
 const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
 const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
+const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
 
 export default function LandingPage() {
   return (
@@ -582,11 +583,25 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <FAQ />
+
       {/* Footer */}
       <footer className="py-12 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
         <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
           <div className="mb-4">
             <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 mb-4">
+            <a href="/terms" className="hover:text-purple-400 transition-colors">
+              Terms of Service
+            </a>
+            <a href="/privacy" className="hover:text-purple-400 transition-colors">
+              Privacy Policy
+            </a>
+            <a href="/security" className="hover:text-purple-400 transition-colors">
+              Security
+            </a>
           </div>
           <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
         </div>
