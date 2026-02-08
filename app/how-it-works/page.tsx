@@ -114,55 +114,131 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-// Orbiting platform icons
+// Orbiting platform icons - planetary style like homepage
 function OrbitingPlatforms() {
+  const platforms = [
+    { Icon: ZoomIcon, color: '#2D8CFF', angle: 0, label: 'Zoom' },
+    { Icon: TeamsIcon, color: '#5B5FC7', angle: 120, label: 'Teams' },
+    { Icon: MeetIcon, color: '#00897B', angle: 240, label: 'Meet' },
+  ];
+
   return (
-    <div className="relative w-32 h-32">
-      {/* Center glow */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <motion.div
-          className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
+    <div className="relative w-64 h-64 md:w-80 md:h-80">
+      {/* Outer glow effect */}
+      <motion.div
+        className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 blur-2xl"
+        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Orbital ring */}
+      <div
+        className="absolute rounded-full border-2 border-blue-500/20 animate-orbit-slow"
+        style={{
+          width: '100%',
+          height: '100%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        {/* Orbital ring glow */}
+        <div className="absolute inset-0 rounded-full border border-purple-500/10" />
+
+        {/* Platform icons on orbit */}
+        {platforms.map((item, i) => {
+          const IconComponent = item.Icon;
+          return (
+            <div
+              key={item.label}
+              className="absolute"
+              style={{
+                top: '50%',
+                left: '50%',
+                transform: `rotate(${item.angle}deg) translateX(min(128px, 40vw)) translateY(-50%)`,
+              }}
+            >
+              <motion.div
+                className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-xl flex items-center justify-center animate-orbit-counter"
+                style={{
+                  backgroundColor: item.color,
+                  boxShadow: `0 4px 20px ${item.color}50`,
+                }}
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 3, repeat: Infinity, delay: i * 0.8 }}
+              >
+                <IconComponent className="w-6 h-6 md:w-7 md:h-7" />
+              </motion.div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Orbiting icons */}
-      {[
-        { Icon: ZoomIcon, color: '#2D8CFF', delay: 0 },
-        { Icon: TeamsIcon, color: '#5B5FC7', delay: 0.33 },
-        { Icon: MeetIcon, color: '#00897B', delay: 0.66 },
-      ].map(({ Icon, color, delay }, i) => (
+      {/* Inner decorative ring */}
+      <div
+        className="absolute rounded-full border border-purple-500/20 animate-orbit-reverse"
+        style={{
+          width: '60%',
+          height: '60%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      />
+
+      {/* Central glowing core */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Outer glow */}
         <motion.div
-          key={i}
-          className="absolute w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{
-            backgroundColor: `${color}20`,
-            border: `1px solid ${color}50`,
-          }}
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'linear',
-            delay: delay * 8,
-          }}
-          // Position in orbit
-          initial={{
-            x: Math.cos(delay * 2 * Math.PI) * 45 + 45,
-            y: Math.sin(delay * 2 * Math.PI) * 45 + 45,
-          }}
+          className="absolute w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 blur-xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0.9, 0.6] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Core */}
+        <motion.div
+          className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl flex items-center justify-center"
+          style={{ boxShadow: '0 0 40px rgba(139, 92, 246, 0.5)' }}
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <motion.div
-            animate={{ rotate: -360 }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'linear', delay: delay * 8 }}
-          >
-            <Icon className="w-5 h-5" />
-          </motion.div>
+          {/* AI Sparkle icon */}
+          <svg className="w-8 h-8 md:w-10 md:h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+          </svg>
         </motion.div>
-      ))}
+      </div>
+
+      {/* Connection lines from center to platforms */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <defs>
+          <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="rgba(59, 130, 246, 0.3)" />
+            <stop offset="100%" stopColor="rgba(139, 92, 246, 0.3)" />
+          </linearGradient>
+        </defs>
+        {platforms.map((item, i) => {
+          const angle = (item.angle * Math.PI) / 180;
+          const radius = 128;
+          const x2 = 50 + Math.cos(angle) * 40;
+          const y2 = 50 + Math.sin(angle) * 40;
+          return (
+            <motion.line
+              key={i}
+              x1="50%"
+              y1="50%"
+              x2={`${x2}%`}
+              y2={`${y2}%`}
+              stroke="url(#connectionGradient)"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.2, 0.5, 0.2] }}
+              transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+            />
+          );
+        })}
+      </svg>
     </div>
   );
 }
