@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
   ChevronDown,
@@ -16,10 +16,156 @@ import {
   MessageSquare,
   Users,
   FileText,
+  ArrowRight,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
+
+// Floating particles component for hero
+function FloatingParticles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            x: [0, Math.random() * 20 - 10, 0],
+            opacity: [0.2, 0.6, 0.2],
+            scale: [1, 1.5, 1],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 4,
+            repeat: Infinity,
+            delay: Math.random() * 2,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Animated flow line connecting steps
+function FlowLine({ progress }: { progress: number }) {
+  return (
+    <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden lg:block">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-700/50 to-transparent" />
+      <motion.div
+        className="absolute top-0 left-0 w-full bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500"
+        style={{ height: `${progress * 100}%` }}
+      />
+      {/* Glowing dot at the end */}
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-lg shadow-purple-500/50"
+        style={{ top: `${progress * 100}%` }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      />
+    </div>
+  );
+}
+
+// Typewriter effect for example output
+function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
+  const [displayText, setDisplayText] = useState('');
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView && !started) {
+      const timer = setTimeout(() => {
+        setStarted(true);
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i <= text.length) {
+            setDisplayText(text.slice(0, i));
+            i++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 30);
+        return () => clearInterval(interval);
+      }, delay);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, text, delay, started]);
+
+  return (
+    <span ref={ref}>
+      {displayText}
+      {displayText.length < text.length && started && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.5, repeat: Infinity }}
+          className="text-blue-400"
+        >
+          |
+        </motion.span>
+      )}
+    </span>
+  );
+}
+
+// Orbiting platform icons
+function OrbitingPlatforms() {
+  return (
+    <div className="relative w-32 h-32">
+      {/* Center glow */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <motion.div
+          className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+      </div>
+
+      {/* Orbiting icons */}
+      {[
+        { Icon: ZoomIcon, color: '#2D8CFF', delay: 0 },
+        { Icon: TeamsIcon, color: '#5B5FC7', delay: 0.33 },
+        { Icon: MeetIcon, color: '#00897B', delay: 0.66 },
+      ].map(({ Icon, color, delay }, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-10 h-10 rounded-xl flex items-center justify-center"
+          style={{
+            backgroundColor: `${color}20`,
+            border: `1px solid ${color}50`,
+          }}
+          animate={{
+            rotate: 360,
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'linear',
+            delay: delay * 8,
+          }}
+          // Position in orbit
+          initial={{
+            x: Math.cos(delay * 2 * Math.PI) * 45 + 45,
+            y: Math.sin(delay * 2 * Math.PI) * 45 + 45,
+          }}
+        >
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'linear', delay: delay * 8 }}
+          >
+            <Icon className="w-5 h-5" />
+          </motion.div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
 
 // Platform icons as SVG components
 function ZoomIcon({ className }: { className?: string }) {
@@ -60,7 +206,11 @@ function Accordion({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden">
+    <motion.div
+      className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden"
+      whileHover={{ scale: 1.01 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-4 bg-gray-800/50 light:bg-gray-50 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors"
@@ -69,54 +219,76 @@ function Accordion({
           {icon}
           <span className="font-medium text-white light:text-gray-900">{title}</span>
         </div>
-        <ChevronDown
-          className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-        />
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ChevronDown className="w-5 h-5 text-gray-400" />
+        </motion.div>
       </button>
-      <motion.div
-        initial={false}
-        animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden"
-      >
-        <div className="p-4 bg-gray-900/30 light:bg-white text-sm text-gray-400 light:text-gray-600">
-          {children}
-        </div>
-      </motion.div>
-    </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="p-4 bg-gray-900/30 light:bg-white text-sm text-gray-400 light:text-gray-600">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
 // FAQ Item component
-function FAQItem({ question, answer }: { question: string; answer: string }) {
+function FAQItem({ question, answer, index }: { question: string; answer: string; index: number }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.4 }}
+      className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden"
+      whileHover={{ scale: 1.01, borderColor: 'rgba(139, 92, 246, 0.3)' }}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-5 bg-gray-900/50 light:bg-white hover:bg-gray-800/50 light:hover:bg-gray-50 transition-colors text-left"
       >
         <span className="font-semibold text-white light:text-gray-900 pr-4">{question}</span>
-        <ChevronDown
-          className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-        />
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex-shrink-0"
+        >
+          <ChevronDown className="w-5 h-5 text-gray-400" />
+        </motion.div>
       </button>
-      <motion.div
-        initial={false}
-        animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden"
-      >
-        <div className="p-5 pt-0 bg-gray-900/50 light:bg-white text-gray-400 light:text-gray-600">
-          {answer}
-        </div>
-      </motion.div>
-    </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="p-5 pt-0 bg-gray-900/50 light:bg-white text-gray-400 light:text-gray-600">
+              {answer}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
-// Step card component with animation
+// 3D Tilt Step card component
 function StepCard({
   step,
   icon,
@@ -132,34 +304,59 @@ function StepCard({
   children?: React.ReactNode;
   color: 'blue' | 'purple' | 'pink' | 'emerald';
 }) {
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseX = e.clientX - centerX;
+    const mouseY = e.clientY - centerY;
+
+    setRotateX(-mouseY / 20);
+    setRotateY(mouseX / 20);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
+
   const colorClasses = {
     blue: {
       border: 'border-blue-500/50',
       bg: 'bg-blue-500/10',
       text: 'text-blue-400',
-      badge: 'bg-blue-500',
-      glow: 'shadow-blue-500/20',
+      badge: 'bg-gradient-to-r from-blue-500 to-blue-600',
+      glow: 'shadow-blue-500/30',
+      hoverGlow: 'hover:shadow-blue-500/40',
     },
     purple: {
       border: 'border-purple-500/50',
       bg: 'bg-purple-500/10',
       text: 'text-purple-400',
-      badge: 'bg-purple-500',
-      glow: 'shadow-purple-500/20',
+      badge: 'bg-gradient-to-r from-purple-500 to-purple-600',
+      glow: 'shadow-purple-500/30',
+      hoverGlow: 'hover:shadow-purple-500/40',
     },
     pink: {
       border: 'border-pink-500/50',
       bg: 'bg-pink-500/10',
       text: 'text-pink-400',
-      badge: 'bg-pink-500',
-      glow: 'shadow-pink-500/20',
+      badge: 'bg-gradient-to-r from-pink-500 to-pink-600',
+      glow: 'shadow-pink-500/30',
+      hoverGlow: 'hover:shadow-pink-500/40',
     },
     emerald: {
       border: 'border-emerald-500/50',
       bg: 'bg-emerald-500/10',
       text: 'text-emerald-400',
-      badge: 'bg-emerald-500',
-      glow: 'shadow-emerald-500/20',
+      badge: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+      glow: 'shadow-emerald-500/30',
+      hoverGlow: 'hover:shadow-emerald-500/40',
     },
   };
 
@@ -167,50 +364,132 @@ function StepCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      ref={cardRef}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: step * 0.1 }}
-      className={`relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border ${classes.border} p-6 md:p-8`}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.6, delay: step * 0.15, type: 'spring' }}
+      style={{
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transformStyle: 'preserve-3d',
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={`relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border ${classes.border} p-6 md:p-8 transition-all duration-200 shadow-xl ${classes.glow} ${classes.hoverGlow}`}
     >
-      {/* Step number badge */}
-      <div className={`absolute -top-4 left-6 px-4 py-1.5 rounded-full ${classes.badge} text-white text-sm font-bold shadow-lg ${classes.glow}`}>
+      {/* Animated step number badge */}
+      <motion.div
+        className={`absolute -top-4 left-6 px-4 py-1.5 rounded-full ${classes.badge} text-white text-sm font-bold shadow-lg ${classes.glow}`}
+        animate={{ y: [0, -3, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+      >
         Step {step}
-      </div>
+      </motion.div>
 
-      {/* Icon */}
-      <div className={`w-16 h-16 rounded-2xl ${classes.bg} flex items-center justify-center mb-6 mt-2 border ${classes.border}`}>
+      {/* Glowing icon container */}
+      <motion.div
+        className={`w-16 h-16 rounded-2xl ${classes.bg} flex items-center justify-center mb-6 mt-2 border ${classes.border} relative overflow-hidden`}
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+      >
+        {/* Shine effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+          initial={{ x: '-200%' }}
+          whileHover={{ x: '200%' }}
+          transition={{ duration: 0.6 }}
+        />
         <div className={classes.text}>{icon}</div>
-      </div>
+      </motion.div>
 
       {/* Content */}
       <h3 className="text-xl md:text-2xl font-bold text-white light:text-gray-900 mb-3">{title}</h3>
       <p className="text-gray-400 light:text-gray-600 mb-4">{description}</p>
 
-      {/* Additional content (like accordions or examples) */}
+      {/* Additional content */}
       {children}
+
+      {/* Arrow indicator for next step */}
+      {step < 4 && (
+        <motion.div
+          className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-gray-600 hidden lg:block"
+          animate={{ y: [0, 5, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <ArrowRight className="w-6 h-6 rotate-90" />
+        </motion.div>
+      )}
     </motion.div>
   );
 }
 
-export default function HowItWorksPage() {
+// Animated counter for stats
+function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView) {
+      const duration = 1500;
+      const steps = 60;
+      const increment = value / steps;
+      let current = 0;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= value) {
+          setCount(value);
+          clearInterval(timer);
+        } else {
+          setCount(Math.floor(current));
+        }
+      }, duration / steps);
+      return () => clearInterval(timer);
+    }
+  }, [isInView, value]);
+
   return (
-    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900">
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
+}
+
+export default function HowItWorksPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const flowProgress = useTransform(scrollYProgress, [0.1, 0.8], [0, 1]);
+
+  return (
+    <div ref={containerRef} className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 px-4 overflow-hidden">
+      <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+        {/* Floating particles */}
+        <FloatingParticles />
+
         {/* Background gradient orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
-            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3], x: [0, 30, 0] }}
             transition={{ duration: 8, repeat: Infinity }}
           />
           <motion.div
             className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
-            animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3], x: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, delay: 1 }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-500/5 rounded-full blur-3xl"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
           />
         </div>
 
@@ -220,46 +499,91 @@ export default function HowItWorksPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
+            {/* Animated badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 mb-6"
+            >
+              <motion.span
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              >
+                <Sparkles className="w-4 h-4 text-purple-400" />
+              </motion.span>
+              <span className="text-sm font-medium text-gray-300 light:text-gray-700">
+                Powered by Claude AI
+              </span>
+            </motion.div>
+
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               How <GradientText>ReplySequence</GradientText> Works
             </h1>
-            <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
               From meeting to follow-up email in 4 simple steps. No manual note-taking. No forgotten action items. Just perfect follow-ups, every time.
             </p>
           </motion.div>
 
-          {/* Quick stats */}
+          {/* Orbiting platforms showcase */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="flex justify-center mb-10"
+          >
+            <OrbitingPlatforms />
+          </motion.div>
+
+          {/* Animated stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-6 mt-10"
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="flex flex-wrap justify-center gap-6"
           >
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
-              <Zap className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
-                8 seconds to draft
+            <motion.div
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(59, 130, 246, 0.5)' }}
+            >
+              <Zap className="w-5 h-5 text-yellow-400" />
+              <span className="text-lg font-bold text-white light:text-gray-900">
+                <AnimatedCounter value={8} /> seconds
               </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20">
-              <Clock className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
-                Save 10+ hours/week
+              <span className="text-sm text-gray-400 light:text-gray-600">to draft</span>
+            </motion.div>
+            <motion.div
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(16, 185, 129, 0.5)' }}
+            >
+              <Clock className="w-5 h-5 text-emerald-400" />
+              <span className="text-lg font-bold text-white light:text-gray-900">
+                <AnimatedCounter value={10} />+ hours
               </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
-              <CheckCircle className="w-4 h-4 text-purple-400" />
-              <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
-                100% accurate action items
+              <span className="text-sm text-gray-400 light:text-gray-600">saved weekly</span>
+            </motion.div>
+            <motion.div
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(168, 85, 247, 0.5)' }}
+            >
+              <CheckCircle className="w-5 h-5 text-purple-400" />
+              <span className="text-lg font-bold text-white light:text-gray-900">
+                <AnimatedCounter value={100} suffix="%" />
               </span>
-            </div>
+              <span className="text-sm text-gray-400 light:text-gray-600">accurate</span>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Steps Section */}
       <section className="py-16 px-4 relative z-10">
-        <div className="max-w-4xl mx-auto space-y-12">
+        {/* Connecting flow line */}
+        <motion.div style={{ opacity: flowProgress }}>
+          <FlowLine progress={flowProgress.get()} />
+        </motion.div>
+
+        <div className="max-w-4xl mx-auto space-y-16 lg:space-y-24">
           {/* Step 1: Connect Your Platform */}
           <StepCard
             step={1}
@@ -269,35 +593,57 @@ export default function HowItWorksPage() {
             color="blue"
           >
             <div className="mt-6 space-y-3">
-              {/* Platform badges */}
+              {/* Animated platform badges */}
               <div className="flex flex-wrap gap-3 mb-4">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#2D8CFF]/10 border border-[#2D8CFF]/30">
-                  <ZoomIcon className="w-5 h-5" />
-                  <span className="text-sm font-medium text-[#2D8CFF]">Zoom</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#5B5FC7]/10 border border-[#5B5FC7]/30">
-                  <TeamsIcon className="w-5 h-5" />
-                  <span className="text-sm font-medium text-[#5B5FC7]">Teams</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#00897B]/10 border border-[#00897B]/30">
-                  <MeetIcon className="w-5 h-5" />
-                  <span className="text-sm font-medium text-[#00897B]">Meet</span>
-                </div>
+                {[
+                  { name: 'Zoom', color: '#2D8CFF', Icon: ZoomIcon },
+                  { name: 'Teams', color: '#5B5FC7', Icon: TeamsIcon },
+                  { name: 'Meet', color: '#00897B', Icon: MeetIcon },
+                ].map(({ name, color, Icon }, i) => (
+                  <motion.div
+                    key={name}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                    style={{
+                      backgroundColor: `${color}15`,
+                      border: `1px solid ${color}40`,
+                    }}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-sm font-medium" style={{ color }}>{name}</span>
+                  </motion.div>
+                ))}
               </div>
 
-              {/* Benefits list */}
-              <div className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-600">
-                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>One-click OAuth connection</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-600">
-                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Takes less than 30 seconds</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-600">
-                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Minimal permissions - only transcript access</span>
-              </div>
+              {/* Animated checklist */}
+              {[
+                'One-click OAuth connection',
+                'Takes less than 30 seconds',
+                'Minimal permissions - only transcript access',
+              ].map((text, i) => (
+                <motion.div
+                  key={text}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                  className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-600"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + i * 0.1, type: 'spring' }}
+                  >
+                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  </motion.div>
+                  <span>{text}</span>
+                </motion.div>
+              ))}
             </div>
           </StepCard>
 
@@ -310,7 +656,6 @@ export default function HowItWorksPage() {
             color="purple"
           >
             <div className="mt-6 space-y-3">
-              {/* Platform-specific tips */}
               <Accordion
                 title="Zoom Tips"
                 icon={<ZoomIcon className="w-5 h-5" />}
@@ -318,7 +663,7 @@ export default function HowItWorksPage() {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-blue-400 mt-0.5">1.</span>
-                    Enable "Audio Transcript" in your Zoom settings
+                    Enable &ldquo;Audio Transcript&rdquo; in your Zoom settings
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-blue-400 mt-0.5">2.</span>
@@ -358,7 +703,7 @@ export default function HowItWorksPage() {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-teal-400 mt-0.5">1.</span>
-                    Click "Activities" then "Transcripts" to enable
+                    Click &ldquo;Activities&rdquo; then &ldquo;Transcripts&rdquo; to enable
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-teal-400 mt-0.5">2.</span>
@@ -382,8 +727,8 @@ export default function HowItWorksPage() {
             color="pink"
           >
             <div className="mt-6">
-              {/* Example output preview */}
-              <div className="rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 p-4">
+              {/* Animated example output preview with typewriter */}
+              <div className="rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 p-4 overflow-hidden">
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
                   Example Output
                 </div>
@@ -394,9 +739,9 @@ export default function HowItWorksPage() {
                       Key Points
                     </div>
                     <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
-                      <li className="list-disc">Discussed Q1 roadmap priorities</li>
-                      <li className="list-disc">Agreed on new pricing structure</li>
-                      <li className="list-disc">Reviewed competitor analysis</li>
+                      <li className="list-disc"><TypewriterText text="Discussed Q1 roadmap priorities" delay={0} /></li>
+                      <li className="list-disc"><TypewriterText text="Agreed on new pricing structure" delay={800} /></li>
+                      <li className="list-disc"><TypewriterText text="Reviewed competitor analysis" delay={1600} /></li>
                     </ul>
                   </div>
                   <div>
@@ -405,9 +750,9 @@ export default function HowItWorksPage() {
                       Action Items
                     </div>
                     <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
-                      <li className="list-disc">Send proposal by Friday (John)</li>
-                      <li className="list-disc">Schedule follow-up demo (Sarah)</li>
-                      <li className="list-disc">Share updated pricing deck (You)</li>
+                      <li className="list-disc"><TypewriterText text="Send proposal by Friday (John)" delay={2400} /></li>
+                      <li className="list-disc"><TypewriterText text="Schedule follow-up demo (Sarah)" delay={3200} /></li>
+                      <li className="list-disc"><TypewriterText text="Share updated pricing deck (You)" delay={4000} /></li>
                     </ul>
                   </div>
                   <div>
@@ -416,7 +761,7 @@ export default function HowItWorksPage() {
                       Attendees Detected
                     </div>
                     <div className="text-sm text-gray-400 light:text-gray-600 pl-6">
-                      John Smith, Sarah Johnson, + 2 others
+                      <TypewriterText text="John Smith, Sarah Johnson, + 2 others" delay={4800} />
                     </div>
                   </div>
                 </div>
@@ -433,24 +778,27 @@ export default function HowItWorksPage() {
             color="emerald"
           >
             <div className="mt-6 space-y-4">
-              {/* Features list */}
+              {/* Animated features grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
-                  <Edit3 className="w-5 h-5 text-emerald-400" />
-                  <span className="text-sm text-gray-300 light:text-gray-700">One-click editing</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
-                  <Shield className="w-5 h-5 text-emerald-400" />
-                  <span className="text-sm text-gray-300 light:text-gray-700">Review before sending</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
-                  <Zap className="w-5 h-5 text-emerald-400" />
-                  <span className="text-sm text-gray-300 light:text-gray-700">Send instantly</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  <span className="text-sm text-gray-300 light:text-gray-700">CRM auto-update</span>
-                </div>
+                {[
+                  { icon: Edit3, text: 'One-click editing' },
+                  { icon: Shield, text: 'Review before sending' },
+                  { icon: Zap, text: 'Send instantly' },
+                  { icon: CheckCircle, text: 'CRM auto-update' },
+                ].map(({ icon: Icon, text }, i) => (
+                  <motion.div
+                    key={text}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(16, 185, 129, 0.1)' }}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 transition-colors"
+                  >
+                    <Icon className="w-5 h-5 text-emerald-400" />
+                    <span className="text-sm text-gray-300 light:text-gray-700">{text}</span>
+                  </motion.div>
+                ))}
               </div>
             </div>
           </StepCard>
@@ -475,38 +823,36 @@ export default function HowItWorksPage() {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="space-y-4"
-          >
-            <FAQItem
-              question="What platforms are supported?"
-              answer="ReplySequence currently supports Zoom, Microsoft Teams, and Google Meet. We're always working on adding more integrations based on user feedback. All three platforms are fully integrated with OAuth for secure, one-click connections."
-            />
-            <FAQItem
-              question="How long does it take to generate a draft?"
-              answer="Most drafts are generated within 8 seconds of the transcript becoming available. The actual time depends on meeting length - a 30-minute call typically processes in under 10 seconds, while hour-long meetings may take 15-20 seconds."
-            />
-            <FAQItem
-              question="Is my data secure?"
-              answer="Absolutely. We use AES-256 encryption for all data at rest and TLS 1.3 for data in transit. Your meeting transcripts are processed but never used to train AI models. OAuth tokens are encrypted, and we follow SOC 2 security practices. See our Security page for full details."
-            />
-            <FAQItem
-              question="Can I edit drafts before sending?"
-              answer="Yes! Every draft appears in your dashboard where you can review and edit it. Make changes directly in the editor, then send when you're satisfied. You maintain full control over what gets sent."
-            />
-            <FAQItem
-              question="Do I need to install anything?"
-              answer="No installation required. ReplySequence is a web-based application that connects to your meeting platforms via secure OAuth. Just sign up, connect your accounts, and you're ready to go."
-            />
-            <FAQItem
-              question="What if my meeting doesn't have transcription enabled?"
-              answer="ReplySequence requires meeting transcripts to generate follow-ups. If transcription wasn't enabled for a meeting, we won't be able to process it. Make sure to enable transcription before your meetings start - we provide platform-specific guides above!"
-            />
-          </motion.div>
+          <div className="space-y-4">
+            {[
+              {
+                question: 'What platforms are supported?',
+                answer: 'ReplySequence currently supports Zoom, Microsoft Teams, and Google Meet. We\'re always working on adding more integrations based on user feedback. All three platforms are fully integrated with OAuth for secure, one-click connections.',
+              },
+              {
+                question: 'How long does it take to generate a draft?',
+                answer: 'Most drafts are generated within 8 seconds of the transcript becoming available. The actual time depends on meeting length - a 30-minute call typically processes in under 10 seconds, while hour-long meetings may take 15-20 seconds.',
+              },
+              {
+                question: 'Is my data secure?',
+                answer: 'Absolutely. We use AES-256 encryption for all data at rest and TLS 1.3 for data in transit. Your meeting transcripts are processed but never used to train AI models. OAuth tokens are encrypted, and we follow SOC 2 security practices. See our Security page for full details.',
+              },
+              {
+                question: 'Can I edit drafts before sending?',
+                answer: 'Yes! Every draft appears in your dashboard where you can review and edit it. Make changes directly in the editor, then send when you\'re satisfied. You maintain full control over what gets sent.',
+              },
+              {
+                question: 'Do I need to install anything?',
+                answer: 'No installation required. ReplySequence is a web-based application that connects to your meeting platforms via secure OAuth. Just sign up, connect your accounts, and you\'re ready to go.',
+              },
+              {
+                question: 'What if my meeting doesn\'t have transcription enabled?',
+                answer: 'ReplySequence requires meeting transcripts to generate follow-ups. If transcription wasn\'t enabled for a meeting, we won\'t be able to process it. Make sure to enable transcription before your meetings start - we provide platform-specific guides above!',
+              },
+            ].map((faq, index) => (
+              <FAQItem key={faq.question} {...faq} index={index} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -526,7 +872,11 @@ export default function HowItWorksPage() {
               Join thousands of sales professionals who never write another follow-up email from scratch.
             </p>
 
-            <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-8 md:p-12">
+            <motion.div
+              className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-8 md:p-12"
+              whileHover={{ scale: 1.01 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                 <GradientButton
                   href="https://tally.so/r/D4pv0j"
@@ -547,7 +897,7 @@ export default function HowItWorksPage() {
               <p className="text-gray-500 light:text-gray-600 text-sm">
                 Free to try - No credit card required
               </p>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
