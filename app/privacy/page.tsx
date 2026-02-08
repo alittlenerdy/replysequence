@@ -2,12 +2,20 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | ReplySequence',
-  description: 'ReplySequence privacy policy - how we collect, use, and protect your data.',
+  title: 'Privacy Policy',
+  description: 'ReplySequence privacy policy - how we collect, use, and protect your meeting data. GDPR and CCPA compliant.',
+  openGraph: {
+    title: 'Privacy Policy | ReplySequence',
+    description: 'ReplySequence privacy policy - how we collect, use, and protect your meeting data.',
+    url: 'https://replysequence.vercel.app/privacy',
+  },
+  alternates: {
+    canonical: 'https://replysequence.vercel.app/privacy',
+  },
 };
 
 export default function PrivacyPage() {
-  const lastUpdated = 'February 4, 2026';
+  const lastUpdated = 'February 8, 2026';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
