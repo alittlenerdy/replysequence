@@ -244,25 +244,25 @@ function OrbitingPlatforms() {
 }
 
 // Platform icons as SVG components
-function ZoomIcon({ className }: { className?: string }) {
+function ZoomIcon({ className, fill = 'white' }: { className?: string; fill?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="#2D8CFF">
+    <svg className={className} viewBox="0 0 24 24" fill={fill}>
       <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z" />
     </svg>
   );
 }
 
-function TeamsIcon({ className }: { className?: string }) {
+function TeamsIcon({ className, fill = 'white' }: { className?: string; fill?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="#5B5FC7">
+    <svg className={className} viewBox="0 0 24 24" fill={fill}>
       <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z" />
     </svg>
   );
 }
 
-function MeetIcon({ className }: { className?: string }) {
+function MeetIcon({ className, fill = 'white' }: { className?: string; fill?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="#00897B">
+    <svg className={className} viewBox="0 0 24 24" fill={fill}>
       <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
       <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z" />
     </svg>
