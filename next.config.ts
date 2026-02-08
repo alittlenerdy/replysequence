@@ -56,9 +56,9 @@ const nextConfig: NextConfig = {
   // Experimental performance optimizations
   experimental: {
     // Optimize package imports for smaller bundles
+    // Note: framer-motion removed - causes animation issues with this optimization
     optimizePackageImports: [
       'lucide-react',
-      'framer-motion',
       'recharts',
       '@tiptap/react',
       '@tiptap/starter-kit',
