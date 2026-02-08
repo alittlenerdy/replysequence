@@ -27,6 +27,12 @@ export function Header() {
             How It Works
           </Link>
           <Link
+            href="/compare/otter"
+            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            vs Otter.ai
+          </Link>
+          <Link
             href="/pricing"
             className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
           >
