@@ -35,6 +35,44 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Enable React strict mode for better development experience
+  reactStrictMode: true,
+
+  // Optimize images - enable modern formats and compression
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    // Minimize image sizes for faster loading
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    // Allow images from these domains if needed
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+      },
+    ],
+  },
+
+  // Experimental performance optimizations
+  experimental: {
+    // Optimize package imports for smaller bundles
+    optimizePackageImports: [
+      'lucide-react',
+      'framer-motion',
+      'recharts',
+      '@tiptap/react',
+      '@tiptap/starter-kit',
+    ],
+  },
+
+  // Compiler optimizations
+  compiler: {
+    // Remove console.log in production (except errors and warnings)
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+
   async headers() {
     return [
       {

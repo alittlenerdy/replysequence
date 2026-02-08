@@ -1,14 +1,31 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
-import { ActivityChart } from '@/components/analytics/ActivityChart';
-import { PlatformChart } from '@/components/analytics/PlatformChart';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
 import { EmailEngagement } from '@/components/analytics/EmailEngagement';
+
+// Chart loading placeholder
+const ChartSkeleton = () => (
+  <div className="h-64 bg-gray-800/50 light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
+    <BarChart3 className="w-8 h-8 text-gray-600 light:text-gray-400" />
+  </div>
+);
+
+// Dynamic imports for heavy chart components (uses recharts)
+const ActivityChart = dynamic(
+  () => import('@/components/analytics/ActivityChart').then(mod => mod.ActivityChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
+
+const PlatformChart = dynamic(
+  () => import('@/components/analytics/PlatformChart').then(mod => mod.PlatformChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
 
 interface DailyDataPoint {
   date: string;

@@ -6,11 +6,13 @@ import MouseTrail from "@/components/MouseTrail";
 import "./globals.css";
 
 const inter = Inter({
+  display: "swap",
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
 const spaceGrotesk = Space_Grotesk({
+  display: "swap",
   subsets: ["latin"],
   variable: "--font-space-grotesk",
   weight: ["400", "500", "600", "700"],

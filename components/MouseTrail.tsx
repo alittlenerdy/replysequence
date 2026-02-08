@@ -26,7 +26,18 @@ export default function MouseTrail() {
   const idCounterRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const [isLightMode, setIsLightMode] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
   const isLightModeRef = useRef(false);
+
+  // Only enable on desktop devices with pointer (not touch)
+  useEffect(() => {
+    // Check for pointer device and screen width
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    const hasPointer = window.matchMedia('(pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    setIsEnabled(isDesktop && hasPointer && !prefersReducedMotion);
+  }, []);
 
   // Detect light/dark mode (dark is default)
   useEffect(() => {
@@ -166,6 +177,9 @@ export default function MouseTrail() {
   );
 
   useEffect(() => {
+    // Don't start if not enabled
+    if (!isEnabled) return;
+
     // Start animation loop
     rafRef.current = requestAnimationFrame(updateDots);
 
@@ -178,7 +192,12 @@ export default function MouseTrail() {
       }
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [updateDots, handleMouseMove]);
+  }, [updateDots, handleMouseMove, isEnabled]);
+
+  // Don't render anything if not enabled (mobile, touch devices, reduced motion)
+  if (!isEnabled) {
+    return null;
+  }
 
   return (
     <div
