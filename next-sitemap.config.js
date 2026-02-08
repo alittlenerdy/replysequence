@@ -18,9 +18,10 @@ module.exports = {
   ],
   changefreq: 'weekly',
   priority: 0.7,
-  // Add pricing page which is dynamic but should be indexed
+  // Add dynamic pages that should be indexed
   additionalPaths: async (config) => [
     await config.transform(config, '/pricing'),
+    await config.transform(config, '/compare/otter'),
   ],
   transform: async (config, path) => {
     // Custom priority for specific pages
@@ -28,6 +29,7 @@ module.exports = {
       '/': 1.0,
       '/pricing': 0.9,
       '/how-it-works': 0.9,
+      '/compare/otter': 0.85, // SEO comparison page
       '/security': 0.7,
       '/privacy': 0.5,
       '/terms': 0.5,
