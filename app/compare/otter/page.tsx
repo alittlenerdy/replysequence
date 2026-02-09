@@ -253,22 +253,30 @@ export default function OtterComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/40 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 border-2 border-blue-500/50 overflow-hidden group shadow-xl shadow-blue-500/20"
+              style={{ boxShadow: '0 0 40px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
             >
+              {/* Shine effect on hover */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100"
+                initial={{ x: '-200%' }}
+                whileHover={{ x: '200%' }}
+                transition={{ duration: 0.6 }}
+              />
               <motion.div
                 className="absolute top-4 right-4"
-                animate={{ rotate: [0, 10, -10, 0] }}
+                animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
-                <Trophy className="w-6 h-6 text-blue-400" />
+                <Trophy className="w-6 h-6 text-blue-400 drop-shadow-lg" />
               </motion.div>
               <h3 className="text-xl font-bold text-white mb-3">Choose ReplySequence if...</h3>
               <p className="text-gray-300 leading-relaxed">
-                Your #1 goal is <span className="text-blue-400 font-semibold">sending follow-up emails faster</span>.
+                Your #1 goal is <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-semibold">sending follow-up emails faster</span>.
                 You want AI-drafted emails in 8 seconds, not transcripts you have to process yourself.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-blue-400 font-medium">
-                <Zap className="w-4 h-4" />
+              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-medium">
+                <Zap className="w-4 h-4 text-blue-400" />
                 Best for: Sales teams, consultants, anyone who lives in their inbox
               </div>
             </motion.div>
@@ -293,8 +301,10 @@ export default function OtterComparisonPage() {
       </section>
 
       {/* Stats Banner */}
-      <AnimatedSection className="py-8 px-4 border-y border-gray-800 bg-gray-900/30">
-        <div className="max-w-5xl mx-auto">
+      <AnimatedSection className="py-10 px-4 border-y border-blue-500/20 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none" />
+        <div className="max-w-5xl mx-auto relative">
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -303,14 +313,14 @@ export default function OtterComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', color: 'text-blue-400' },
-              { value: '10+ hrs', label: 'Saved per week', color: 'text-white' },
-              { value: '3', label: 'Platforms supported', color: 'text-white' },
-              { value: '$19', label: 'Pro plan / month', color: 'text-emerald-400' },
+              { value: '8 sec', label: 'Email draft time', gradient: 'from-blue-400 to-cyan-400' },
+              { value: '10+ hrs', label: 'Saved per week', gradient: 'from-purple-400 to-pink-400' },
+              { value: '3', label: 'Platforms supported', gradient: 'from-pink-400 to-rose-400' },
+              { value: '$19', label: 'Pro plan / month', gradient: 'from-emerald-400 to-teal-400' },
             ].map((stat, i) => (
-              <motion.div key={i} variants={staggerItem}>
+              <motion.div key={i} variants={staggerItem} className="relative">
                 <motion.div
-                  className={`text-3xl md:text-4xl font-bold ${stat.color} mb-1`}
+                  className={`text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${stat.gradient} mb-1`}
                   initial={{ scale: 0.5 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
@@ -318,7 +328,7 @@ export default function OtterComparisonPage() {
                 >
                   {stat.value}
                 </motion.div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
+                <div className="text-sm text-gray-400">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -373,10 +383,10 @@ export default function OtterComparisonPage() {
                       whileHover={{ scale: 1.01, x: 4 }}
                       className={`grid grid-cols-3 items-center py-4 px-4 rounded-xl transition-all duration-200 ${
                         row.winner === 'replysequence'
-                          ? 'bg-blue-500/5 hover:bg-blue-500/10 border border-blue-500/20'
+                          ? 'bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-transparent hover:from-blue-500/15 hover:via-purple-500/10 border-l-2 border-l-blue-500 border border-blue-500/30 shadow-lg shadow-blue-500/5'
                           : row.winner === 'otter'
                           ? 'bg-gray-800/30 hover:bg-gray-800/50 border border-gray-700/50'
-                          : 'bg-gray-900/30 hover:bg-gray-800/30 border border-transparent'
+                          : 'bg-gray-900/30 hover:bg-gray-800/30 border border-gray-700/30'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -385,7 +395,7 @@ export default function OtterComparisonPage() {
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold"
+                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold shadow-lg shadow-blue-500/30"
                           >
                             Winner
                           </motion.span>
@@ -427,11 +437,12 @@ export default function OtterComparisonPage() {
                 key={index}
                 variants={staggerItem}
                 whileHover={{ scale: 1.02, y: -4 }}
-                className={`relative p-6 rounded-2xl border overflow-hidden ${
+                className={`relative p-6 rounded-2xl border-2 overflow-hidden group ${
                   diff.advantage === 'replysequence'
-                    ? 'bg-gradient-to-br from-blue-500/5 to-purple-500/5 border-blue-500/30'
-                    : 'bg-gray-900/50 border-gray-700'
+                    ? 'bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 border-blue-500/40 shadow-xl shadow-blue-500/10'
+                    : 'bg-gray-900/50 border-gray-600 hover:border-gray-500'
                 }`}
+                style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
               >
                 {/* Stat badge */}
                 <motion.div
@@ -496,16 +507,17 @@ export default function OtterComparisonPage() {
                 key={index}
                 variants={staggerItem}
                 whileHover={{ scale: 1.03, y: -8 }}
-                className={`relative rounded-2xl overflow-hidden ${
+                className={`relative rounded-2xl overflow-hidden group ${
                   tier.highlighted
-                    ? 'border-2 border-blue-500/50 bg-gradient-to-b from-blue-500/10 to-transparent'
-                    : 'border border-gray-800 bg-gray-900/30'
+                    ? 'border-2 border-purple-500/50 bg-gradient-to-b from-purple-500/10 via-blue-500/5 to-transparent shadow-xl shadow-purple-500/10'
+                    : 'border border-gray-700 bg-gray-900/30 hover:border-gray-600'
                 }`}
+                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)' } : {}}
               >
                 {tier.highlighted && (
                   <motion.div
-                    className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500"
-                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+                    animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
                 )}
@@ -516,10 +528,10 @@ export default function OtterComparisonPage() {
                   {/* ReplySequence */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
-                    className="p-5 rounded-xl bg-blue-500/10 border border-blue-500/30 mb-4"
+                    className="p-5 rounded-xl bg-gradient-to-br from-blue-500/15 to-purple-500/10 border border-blue-500/40 mb-4 shadow-lg shadow-blue-500/5"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-blue-400 font-semibold">ReplySequence</span>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">ReplySequence</span>
                       <div className="flex items-baseline">
                         <span className="text-2xl font-bold text-white">{tier.replysequence.price}</span>
                         <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
@@ -571,18 +583,24 @@ export default function OtterComparisonPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 to-gray-900/50 border border-gray-800 overflow-hidden"
+            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900/50 border-2 border-blue-500/30 overflow-hidden shadow-2xl"
+            style={{ boxShadow: '0 0 60px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
           >
             {/* Decorative elements */}
             <motion.div
-              className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+              className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
             <motion.div
-              className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+              className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
               transition={{ duration: 8, repeat: Infinity, delay: 1 }}
+            />
+            <motion.div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"
+              animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
+              transition={{ duration: 10, repeat: Infinity, delay: 2 }}
             />
 
             <div className="relative">
@@ -612,12 +630,12 @@ export default function OtterComparisonPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="p-4 rounded-xl bg-gray-800/50 border border-gray-700"
+                className="p-5 rounded-xl bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-pink-500/10 border border-purple-500/30 shadow-lg shadow-purple-500/5"
               >
-                <p className="text-gray-400 text-sm italic flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                <p className="text-gray-300 text-sm italic flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                   <span>
-                    <strong className="text-gray-300">Pro tip:</strong> Many teams use both—Otter for deep transcription
+                    <strong className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Pro tip:</strong> Many teams use both—Otter for deep transcription
                     and live collaboration, ReplySequence specifically for sending follow-ups faster. Different tools for
                     different jobs.
                   </span>
@@ -629,7 +647,10 @@ export default function OtterComparisonPage() {
       </AnimatedSection>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-t from-blue-500/5 to-transparent">
+      <section className="py-20 px-4 bg-gradient-to-t from-blue-500/10 via-purple-500/5 to-transparent relative overflow-hidden">
+        {/* Background glows */}
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
         <AnimatedSection className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
