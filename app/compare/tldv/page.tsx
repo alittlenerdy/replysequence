@@ -132,18 +132,23 @@ const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    tldv: { price: '$0', period: '/mo', features: ['Unlimited recordings', 'AI summaries', 'Timestamp bookmarks', '30+ languages'] },
+    tldv: { price: '$0', period: '/mo', features: ['Limited features', 'Unlimited recordings', 'Basic AI summaries'] },
   },
   {
     tier: 'Pro',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
-    tldv: { price: '$25', period: '/user/mo', features: ['Advanced AI features', 'CRM integrations', 'Team collaboration', 'Priority support'] },
+    tldv: { price: '$18', period: '/mo (annual)', features: ['Advanced AI features', 'CRM integrations', 'Priority support'] },
     highlighted: true,
   },
   {
+    tier: 'Business / Team',
+    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'Team features', 'CRM sync', 'API access'] },
+    tldv: { price: '$59', period: '/mo (annual)', features: ['Everything in Pro', 'Team collaboration', 'Advanced integrations', '$98/mo if monthly'] },
+  },
+  {
     tier: 'Enterprise',
-    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
-    tldv: { price: 'Custom', period: '', features: ['Everything in Pro', 'SSO & SAML', 'Dedicated support', 'Custom integrations'] },
+    replysequence: { price: 'Contact Us', period: '', features: ['Custom solutions', 'Dedicated support', 'SLA guarantees', 'Custom integrations'] },
+    tldv: { price: 'Custom', period: '', features: ['Everything in Business', 'SSO & SAML', 'Dedicated support', 'Custom integrations'] },
   },
 ];
 
@@ -742,7 +747,7 @@ export default function TldvComparisonPage() {
                 "name": "Is tl;dv free to use?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, tl;dv offers unlimited free recordings with AI summaries, timestamp bookmarks, and 30+ language support on their free plan. Their Pro plan is $25/user/month with CRM integrations and team collaboration. ReplySequence also has a free tier with 5 AI email drafts per month."
+                  "text": "Yes, tl;dv offers a free plan with unlimited recordings and limited features. Their Pro plan is $18/month (annual billing), and Business is $59/month (annual) or $98/month (monthly). ReplySequence also has a free tier with 5 AI email drafts per month, Pro at $19/month, and Team at $29/month."
                 }
               },
               {

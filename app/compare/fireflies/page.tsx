@@ -128,18 +128,18 @@ const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    fireflies: { price: '$0', period: '/mo', features: ['Limited transcription', '800 mins storage', 'Basic AI summaries'] },
+    fireflies: { price: '$0', period: '/mo', features: ['800 min/month transcription', 'Basic AI summaries', 'Limited features'] },
   },
   {
     tier: 'Pro',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
-    fireflies: { price: '$18', period: '/user/mo', features: ['Unlimited transcription', 'Smart Search', 'CRM integrations', 'AI summaries'] },
+    fireflies: { price: '$18', period: '/user/mo', features: ['Unlimited transcription', 'Smart Search', 'CRM integrations', 'AI summaries'], note: '$10/mo billed annually' },
     highlighted: true,
   },
   {
     tier: 'Business / Team',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
-    fireflies: { price: '$29', period: '/user/mo', features: ['Conversation Intelligence', 'Topic Tracker', 'Team insights', 'Admin controls'] },
+    fireflies: { price: '$29', period: '/user/mo', features: ['Conversation Intelligence', 'Topic Tracker', 'Team insights', 'Admin controls'], note: '$19/mo billed annually' },
   },
 ];
 
@@ -571,9 +571,14 @@ export default function FirefliesComparisonPage() {
                   <div className="p-5 rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/5 border border-orange-500/30">
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-orange-400 font-semibold">Fireflies.ai</span>
-                      <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-gray-300">{tier.fireflies.price}</span>
-                        <span className="text-gray-500 text-sm">{tier.fireflies.period}</span>
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-baseline">
+                          <span className="text-2xl font-bold text-gray-300">{tier.fireflies.price}</span>
+                          <span className="text-gray-500 text-sm">{tier.fireflies.period}</span>
+                        </div>
+                        {tier.fireflies.note && (
+                          <span className="text-xs text-gray-500">{tier.fireflies.note}</span>
+                        )}
                       </div>
                     </div>
                     <ul className="space-y-2">
@@ -749,7 +754,7 @@ export default function FirefliesComparisonPage() {
                 "name": "How much does Fireflies.ai cost compared to ReplySequence?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Fireflies Pro is $18/user/month with unlimited transcription and Smart Search. ReplySequence Pro is $19/month with unlimited AI email drafts. Both offer free tiers with limited features."
+                  "text": "Fireflies Pro is $18/user/month ($10/mo billed annually) with unlimited transcription and Smart Search. Fireflies Business is $29/user/month ($19/mo annually). ReplySequence Pro is $19/month with unlimited AI email drafts, and Team is $29/month with team features. Both offer free tiers - Fireflies includes 800 min/month transcription, ReplySequence includes 5 drafts/month."
                 }
               },
               {

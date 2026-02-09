@@ -131,18 +131,18 @@ const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    grain: { price: '$0', period: '/mo', features: ['20 meetings/month', 'AI summaries', 'Limited highlights'] },
+    grain: { price: '$0', period: '/mo', features: ['Limited features', 'Basic recordings', 'Watermarked exports'] },
   },
   {
     tier: 'Starter / Pro',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
-    grain: { price: '$15', period: '/user/mo', features: ['Unlimited meetings', 'Full AI features', 'Unlimited highlights', 'Basic integrations'] },
+    grain: { price: '$15', period: '/seat/mo', features: ['Unlimited recordings', 'AI summaries', 'Basic highlights', 'Standard support'] },
     highlighted: true,
   },
   {
     tier: 'Team / Business',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
-    grain: { price: '$29', period: '/user/mo', features: ['Everything in Starter', 'Advanced integrations', 'Admin controls', 'Priority support'] },
+    grain: { price: '$29', period: '/seat/mo', features: ['Everything in Starter', 'Advanced integrations', 'Admin controls', 'Priority support'] },
   },
 ];
 
@@ -751,7 +751,7 @@ export default function GrainComparisonPage() {
                 "name": "Is ReplySequence cheaper than Grain?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Pricing is comparable. ReplySequence Pro is $19/month with unlimited AI drafts. Grain Starter is $15/user/month. Both offer free tiers to get started."
+                  "text": "Pricing is comparable. ReplySequence Pro is $19/month with unlimited AI drafts. Grain Starter is $15/seat/month with unlimited recordings. Both offer free tiers to get started."
                 }
               },
               {

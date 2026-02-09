@@ -125,18 +125,18 @@ const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    otter: { price: '$0', period: '/mo', features: ['300 minutes/month', 'Basic transcription', 'Limited exports'] },
+    otter: { price: '$0', period: '/mo', features: ['300 minutes/month', '30 min per conversation', 'Basic transcription'] },
   },
   {
-    tier: 'Pro / Business',
+    tier: 'Pro',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
-    otter: { price: '$17', period: '/mo', features: ['1,200 minutes/month', 'Advanced search', 'OtterPilot', 'Custom vocabulary'] },
+    otter: { price: '$16.99', period: '/mo', features: ['1,200 minutes/month', 'OtterPilot', 'Advanced search', '$8.33/mo if annual'] },
     highlighted: true,
   },
   {
     tier: 'Team / Business',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
-    otter: { price: '$30', period: '/mo', features: ['6,000 minutes/month', 'Admin controls', 'Usage analytics', 'Priority support'] },
+    otter: { price: '$30', period: '/mo', features: ['6,000 minutes/month', 'Admin controls', 'Usage analytics', '$20/mo if annual'] },
   },
 ];
 
@@ -735,7 +735,7 @@ export default function OtterComparisonPage() {
                 "name": "Is ReplySequence cheaper than Otter.ai?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Pricing is similar. ReplySequence Pro is $19/month with unlimited AI drafts. Otter Business is $16.99/month with 1,200 transcription minutes."
+                  "text": "Pricing is comparable. ReplySequence Pro is $19/month with unlimited AI drafts. Otter Pro is $16.99/month ($8.33/mo annually) with 1,200 transcription minutes. Otter Business is $30/month ($20/mo annually) with 6,000 minutes."
                 }
               },
               {

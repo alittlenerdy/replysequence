@@ -111,6 +111,7 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'AI Meeting Summaries', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
   { feature: 'Action Item Extraction', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
   { feature: 'Free Unlimited Recordings', replysequence: false, fathom: true, winner: 'fathom', category: 'Core Features' },
+  { feature: 'Free AI Meetings', replysequence: '5/month', fathom: '5/month', winner: 'tie', category: 'Core Features' },
   // CRM & Integrations
   { feature: 'HubSpot Integration', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
   { feature: 'Salesforce Integration', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
@@ -123,25 +124,30 @@ const comparisonData: ComparisonRow[] = [
   // Fathom Advantages
   { feature: 'Team Sharing & Playlists', replysequence: 'Coming Soon', fathom: true, winner: 'fathom', category: 'Collaboration' },
   { feature: 'Highlight Clips', replysequence: false, fathom: true, winner: 'fathom', category: 'Collaboration' },
-  { feature: 'AI Notetaker Bot', replysequence: true, fathom: 'Free', winner: 'fathom', category: 'Collaboration' },
+  { feature: 'AI Notetaker Bot', replysequence: true, fathom: 'Free tier', winner: 'fathom', category: 'Collaboration' },
 ];
 
 const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    fathom: { price: '$0', period: '/mo', features: ['Unlimited recordings', 'AI summaries', 'HubSpot/Salesforce sync', 'Copy-paste formatting'] },
+    fathom: { price: '$0', period: '/mo', features: ['Unlimited recordings', '5 AI-powered meetings/month', 'Basic transcription'] },
   },
   {
-    tier: 'Pro / Team',
+    tier: 'Pro / Premium',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'CRM sync'] },
-    fathom: { price: '$32', period: '/user/mo', features: ['Team collaboration', 'Team playlists', 'Advanced CRM sync', 'Priority support'] },
+    fathom: { price: '$19', period: '/mo', features: ['Unlimited AI meetings', 'AI summaries', 'HubSpot/Salesforce sync', '~$15/mo billed annually'] },
     highlighted: true,
   },
   {
-    tier: 'Team / Enterprise',
+    tier: 'Team',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'Team collaboration', 'API access', 'Priority support'] },
-    fathom: { price: 'Contact', period: 'Sales', features: ['Custom deployment', 'SSO/SAML', 'Dedicated support', 'Custom integrations'] },
+    fathom: { price: '$29', period: '/mo', features: ['Team collaboration', 'Team playlists', 'Advanced CRM sync', '~$19/mo billed annually'] },
+  },
+  {
+    tier: 'Team Pro / Enterprise',
+    replysequence: { price: 'Contact', period: 'Sales', features: ['Custom deployment', 'SSO/SAML', 'Dedicated support', 'Custom integrations'] },
+    fathom: { price: '$39', period: '/mo', features: ['All Team features', 'Priority support', 'Advanced analytics', '~$29/mo billed annually'] },
   },
 ];
 
@@ -162,9 +168,9 @@ const keyDifferences = [
   },
   {
     icon: Gift,
-    title: 'Best Free AI Notetaker',
-    description: 'Fathom offers unlimited free recordings with AI summaries and action items. The most generous free tier in the meeting AI space.',
-    stat: 'Free',
+    title: 'Generous Free Tier',
+    description: 'Fathom offers unlimited free recordings with 5 AI-powered meetings per month. Great for occasional users who need basic transcription.',
+    stat: '5/mo',
     advantage: 'fathom' as const,
   },
   {
@@ -732,7 +738,7 @@ export default function FathomComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Fathom?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence generates follow-up emails from meetings in 8 seconds, while Fathom is a free AI notetaker with meeting summaries and CRM sync. ReplySequence is email-first; Fathom is notes-first with the most generous free tier."
+                  "text": "ReplySequence generates follow-up emails from meetings in 8 seconds, while Fathom is an AI notetaker with meeting summaries and CRM sync. ReplySequence is email-first; Fathom is notes-first with a generous free tier (5 AI meetings/month)."
                 }
               },
               {
@@ -740,7 +746,7 @@ export default function FathomComparisonPage() {
                 "name": "Is Fathom really free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, Fathom offers unlimited free recordings with AI summaries, action items, and basic CRM sync. Fathom Team costs $32/user/month for team collaboration and advanced features. ReplySequence's free tier includes 5 AI email drafts per month."
+                  "text": "Fathom offers a free tier with unlimited recordings and 5 AI-powered meetings per month. Premium plans start at $19/month ($15/month billed annually) for unlimited AI features. Team plans are $29/month and Team Pro is $39/month. ReplySequence's free tier includes 5 AI email drafts per month."
                 }
               },
               {
