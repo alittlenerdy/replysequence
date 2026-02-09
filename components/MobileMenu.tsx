@@ -74,13 +74,6 @@ export default function MobileMenu() {
             How It Works
           </a>
           <a
-            href="/compare/otter"
-            onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
-          >
-            vs Otter.ai
-          </a>
-          <a
             href="/pricing"
             onClick={() => setIsOpen(false)}
             className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
