@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 import {
   Check,
   X,
@@ -15,8 +16,7 @@ import {
   Trophy,
   Timer,
   Target,
-  Scissors,
-  DollarSign,
+  Languages,
 } from 'lucide-react';
 
 // Floating particles for hero
@@ -115,29 +115,35 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'Zoom Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Google Meet Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Microsoft Teams Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Integrations' },
-  // tl;dv Advantages
+  // tl;dv Advantages - Recording
   { feature: 'Unlimited Free Recordings', replysequence: 'Limited', tldv: 'Unlimited', winner: 'tldv', category: 'Recording Features' },
+  { feature: 'Timestamp Bookmarks', replysequence: false, tldv: true, winner: 'tldv', category: 'Recording Features' },
   { feature: 'Video Clip Creation', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Recording Features' },
-  { feature: 'Timestamp Navigation', replysequence: false, tldv: true, winner: 'tldv', category: 'Recording Features' },
-  { feature: 'Shareable Highlights', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Recording Features' },
+  { feature: 'Unlimited Cloud Storage', replysequence: 'Limited', tldv: 'Unlimited', winner: 'tldv', category: 'Recording Features' },
+  // tl;dv Advantages - Language
+  { feature: 'Multi-Language Support', replysequence: 'English Primary', tldv: '30+ Languages', winner: 'tldv', category: 'Language & Localization' },
+  { feature: 'Auto Language Detection', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Language & Localization' },
+  // Collaboration
+  { feature: 'Team Collaboration', replysequence: true, tldv: true, winner: 'tie', category: 'Collaboration' },
+  { feature: 'Shareable Highlights', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Collaboration' },
 ];
 
 const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    tldv: { price: '$0', period: '/mo', features: ['Unlimited recordings', 'AI summaries', 'Basic transcription'] },
+    tldv: { price: '$0', period: '/mo', features: ['Unlimited recordings', 'AI summaries', 'Timestamp bookmarks', '30+ languages'] },
   },
   {
     tier: 'Pro',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
-    tldv: { price: '$20', period: '/user/mo', features: ['Advanced AI features', 'CRM integrations', 'Custom vocabulary', 'Priority support'] },
+    tldv: { price: '$25', period: '/user/mo', features: ['Advanced AI features', 'CRM integrations', 'Team collaboration', 'Priority support'] },
     highlighted: true,
   },
   {
-    tier: 'Business',
+    tier: 'Enterprise',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
-    tldv: { price: '$30', period: '/user/mo', features: ['Everything in Pro', 'Admin controls', 'Usage analytics', 'SSO'] },
+    tldv: { price: 'Custom', period: '', features: ['Everything in Pro', 'SSO & SAML', 'Dedicated support', 'Custom integrations'] },
   },
 ];
 
@@ -157,17 +163,17 @@ const keyDifferences = [
     advantage: 'replysequence' as const,
   },
   {
-    icon: DollarSign,
+    icon: Video,
     title: 'Unlimited Free Recordings',
-    description: 'tl;dv offers unlimited meeting recordings on their free plan—no minute limits. Great if recording is your primary need.',
-    stat: 'Free',
+    description: 'tl;dv offers unlimited meeting recordings and cloud storage on their free plan—no minute limits. Great if recording is your primary need.',
+    stat: 'Free tier',
     advantage: 'tldv' as const,
   },
   {
-    icon: Scissors,
-    title: 'Video Clips & Highlights',
-    description: 'tl;dv excels at creating shareable video clips with timestamps. Perfect for sharing key moments with teammates.',
-    stat: 'Clips',
+    icon: Languages,
+    title: 'Multi-Language Support',
+    description: 'tl;dv supports 30+ languages with automatic detection, perfect for international teams and global meetings.',
+    stat: '30+ langs',
     advantage: 'tldv' as const,
   },
 ];
@@ -199,6 +205,7 @@ export default function TldvComparisonPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
+      <Header />
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
@@ -727,7 +734,7 @@ export default function TldvComparisonPage() {
                 "name": "What is the main difference between ReplySequence and tl;dv?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while tl;dv is a meeting recording platform with video clips and timestamp navigation."
+                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while tl;dv is a meeting recording platform with unlimited free recordings, timestamp bookmarks, and multi-language support for 30+ languages."
                 }
               },
               {
@@ -735,7 +742,7 @@ export default function TldvComparisonPage() {
                 "name": "Is tl;dv free to use?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, tl;dv offers unlimited free recordings on their free plan. ReplySequence also has a free tier with 5 AI email drafts per month."
+                  "text": "Yes, tl;dv offers unlimited free recordings with AI summaries, timestamp bookmarks, and 30+ language support on their free plan. Their Pro plan is $25/user/month with CRM integrations and team collaboration. ReplySequence also has a free tier with 5 AI email drafts per month."
                 }
               },
               {
@@ -743,7 +750,15 @@ export default function TldvComparisonPage() {
                 "name": "Which tool is better for sales teams?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "If your priority is sending follow-up emails quickly after sales calls, ReplySequence is purpose-built for that workflow. If you need to review call recordings and share video clips, tl;dv is a better fit."
+                  "text": "If your priority is sending follow-up emails quickly after sales calls, ReplySequence is purpose-built for that workflow with 8-second email generation. If you need to review call recordings, create timestamp bookmarks, and share video clips with your team, tl;dv is a better fit."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does tl;dv support multiple languages?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, tl;dv supports 30+ languages with automatic language detection, making it ideal for international teams and global meetings. ReplySequence currently focuses primarily on English."
                 }
               },
               {
@@ -751,7 +766,7 @@ export default function TldvComparisonPage() {
                 "name": "Can I use both ReplySequence and tl;dv together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! Some teams use tl;dv for call recordings and video clips while using ReplySequence specifically for fast email follow-ups. They solve different problems."
+                  "text": "Yes! Many teams use tl;dv for unlimited call recordings, video clips, and multi-language support while using ReplySequence specifically for fast email follow-ups. They solve different problems and complement each other well."
                 }
               }
             ]

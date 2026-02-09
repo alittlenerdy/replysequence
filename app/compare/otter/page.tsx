@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 import {
   Check,
   X,
@@ -197,6 +198,7 @@ export default function OtterComparisonPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
+      <Header />
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         {/* Background effects */}

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 import {
   Check,
   X,
@@ -16,7 +17,6 @@ import {
   Timer,
   Target,
   Database,
-  Mail,
 } from 'lucide-react';
 
 // Floating particles for hero
@@ -102,7 +102,7 @@ interface ComparisonRow {
 const comparisonData: ComparisonRow[] = [
   // Email Focus
   { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', fathom: 'Not Available', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', fathom: 'N/A', winner: 'replysequence', category: 'Email Workflow' },
+  { feature: 'Email Generation Speed', replysequence: '8 seconds', fathom: 'Manual copy-paste', winner: 'replysequence', category: 'Email Workflow' },
   { feature: 'Conversational Email Editing', replysequence: true, fathom: false, winner: 'replysequence', category: 'Email Workflow' },
   { feature: 'One-Click Send', replysequence: true, fathom: false, winner: 'replysequence', category: 'Email Workflow' },
   { feature: 'Custom Email Templates', replysequence: true, fathom: false, winner: 'replysequence', category: 'Email Workflow' },
@@ -110,37 +110,38 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'Meeting Transcription', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
   { feature: 'AI Meeting Summaries', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
   { feature: 'Action Item Extraction', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Auto-Recording', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
+  { feature: 'Free Unlimited Recordings', replysequence: false, fathom: true, winner: 'fathom', category: 'Core Features' },
   // CRM & Integrations
   { feature: 'HubSpot Integration', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
   { feature: 'Salesforce Integration', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
   { feature: 'CRM Auto-Population', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
+  { feature: 'Copy-Paste Formatting', replysequence: true, fathom: 'Optimized', winner: 'fathom', category: 'CRM Integration' },
   // Platform Support
   { feature: 'Zoom Integration', replysequence: true, fathom: true, winner: 'tie', category: 'Platform Support' },
   { feature: 'Google Meet Integration', replysequence: true, fathom: true, winner: 'tie', category: 'Platform Support' },
   { feature: 'Microsoft Teams Integration', replysequence: true, fathom: true, winner: 'tie', category: 'Platform Support' },
   // Fathom Advantages
-  { feature: 'Free Tier Generosity', replysequence: '5 drafts/mo', fathom: 'Unlimited recording', winner: 'fathom', category: 'Pricing & Plans' },
+  { feature: 'Team Sharing & Playlists', replysequence: 'Coming Soon', fathom: true, winner: 'fathom', category: 'Collaboration' },
   { feature: 'Highlight Clips', replysequence: false, fathom: true, winner: 'fathom', category: 'Collaboration' },
-  { feature: 'Meeting Templates', replysequence: 'Coming Soon', fathom: true, winner: 'fathom', category: 'Collaboration' },
+  { feature: 'AI Notetaker Bot', replysequence: true, fathom: 'Free', winner: 'fathom', category: 'Collaboration' },
 ];
 
 const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    fathom: { price: '$0', period: '/mo', features: ['Unlimited recording', 'AI summaries', 'Basic action items'] },
+    fathom: { price: '$0', period: '/mo', features: ['Unlimited recordings', 'AI summaries', 'HubSpot/Salesforce sync', 'Copy-paste formatting'] },
   },
   {
     tier: 'Pro / Team',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'CRM sync'] },
-    fathom: { price: '$19', period: '/user/mo', features: ['Team features', 'Advanced integrations', 'Shared notes', 'Custom vocabulary'] },
+    fathom: { price: '$32', period: '/user/mo', features: ['Team collaboration', 'Team playlists', 'Advanced CRM sync', 'Priority support'] },
     highlighted: true,
   },
   {
-    tier: 'Team / Pro',
+    tier: 'Team / Enterprise',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'Team collaboration', 'API access', 'Priority support'] },
-    fathom: { price: '$29', period: '/user/mo', features: ['Everything in Team', 'Priority support', 'Custom branding', 'Advanced analytics'] },
+    fathom: { price: 'Contact', period: 'Sales', features: ['Custom deployment', 'SSO/SAML', 'Dedicated support', 'Custom integrations'] },
   },
 ];
 
@@ -148,12 +149,12 @@ const keyDifferences = [
   {
     icon: Timer,
     title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Not summaries you have to copy into emails—actual personalized emails.',
+    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Not summaries you copy-paste—actual personalized emails ready to send.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
   {
-    icon: Mail,
+    icon: Target,
     title: 'Email-First Workflow',
     description: 'Every feature is optimized for the email follow-up workflow. Draft, edit conversationally with AI, and send—all without switching apps.',
     stat: '1-click',
@@ -161,15 +162,15 @@ const keyDifferences = [
   },
   {
     icon: Gift,
-    title: 'Generous Free Tier',
-    description: 'Fathom offers unlimited free recording and AI summaries. Hard to beat for teams that primarily need note-taking.',
-    stat: 'Unlimited',
+    title: 'Best Free AI Notetaker',
+    description: 'Fathom offers unlimited free recordings with AI summaries and action items. The most generous free tier in the meeting AI space.',
+    stat: 'Free',
     advantage: 'fathom' as const,
   },
   {
     icon: Database,
-    title: 'Clean CRM Integration',
-    description: 'Fathom has polished HubSpot and Salesforce integrations with automatic field population and deal tracking.',
+    title: 'Native CRM Sync',
+    description: 'Fathom has deep HubSpot and Salesforce integrations with automatic field population, deal tracking, and optimized copy-paste formatting.',
     stat: 'Native',
     advantage: 'fathom' as const,
   },
@@ -202,6 +203,7 @@ export default function FathomComparisonPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
+      <Header />
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
@@ -244,8 +246,8 @@ export default function FathomComparisonPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12"
           >
-            Both excellent AI meeting assistants.{' '}
-            <span className="text-white">One is built specifically for email follow-ups.</span>
+            Fathom: best free AI notetaker.{' '}
+            <span className="text-white">ReplySequence: 8-second email drafts.</span>
           </motion.p>
 
           {/* Quick verdict cards */}
@@ -730,7 +732,7 @@ export default function FathomComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Fathom?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while Fathom is a general AI meeting assistant for notes, summaries, and CRM integration. ReplySequence is email-first; Fathom is notes-first."
+                  "text": "ReplySequence generates follow-up emails from meetings in 8 seconds, while Fathom is a free AI notetaker with meeting summaries and CRM sync. ReplySequence is email-first; Fathom is notes-first with the most generous free tier."
                 }
               },
               {
@@ -738,7 +740,7 @@ export default function FathomComparisonPage() {
                 "name": "Is Fathom really free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, Fathom offers a generous free tier with unlimited meeting recording and AI summaries. Their paid plans ($19-29/user/mo) add team features and advanced integrations. ReplySequence's free tier includes 5 AI email drafts per month."
+                  "text": "Yes, Fathom offers unlimited free recordings with AI summaries, action items, and basic CRM sync. Fathom Team costs $32/user/month for team collaboration and advanced features. ReplySequence's free tier includes 5 AI email drafts per month."
                 }
               },
               {
@@ -746,7 +748,15 @@ export default function FathomComparisonPage() {
                 "name": "Which tool is better for sales teams?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "It depends on your bottleneck. If you struggle to write follow-up emails after calls, ReplySequence generates them in 8 seconds. If you need detailed meeting notes and CRM deal tracking, Fathom's free tier is excellent. Many sales teams use both."
+                  "text": "It depends on your bottleneck. If you struggle to write follow-up emails after calls, ReplySequence generates them in 8 seconds. If you need free meeting notes with HubSpot/Salesforce sync, Fathom is excellent. Many sales teams use both."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does Fathom integrate with HubSpot and Salesforce?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, Fathom has native integrations with HubSpot and Salesforce, automatically syncing meeting notes and action items to your CRM. ReplySequence also integrates with these CRMs plus Airtable."
                 }
               },
               {
@@ -754,7 +764,7 @@ export default function FathomComparisonPage() {
                 "name": "Can I use ReplySequence and Fathom together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! Many users leverage Fathom's free tier for meeting notes and summaries, then use ReplySequence specifically for generating and sending follow-up emails quickly. Different tools for different parts of the workflow."
+                  "text": "Absolutely! Many users use Fathom's free tier for meeting notes and CRM updates, then use ReplySequence specifically for generating and sending follow-up emails in 8 seconds. Different tools for different parts of the workflow."
                 }
               }
             ]

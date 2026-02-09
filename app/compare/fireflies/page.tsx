@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 import {
   Check,
   X,
@@ -117,28 +118,28 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'Microsoft Teams Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
   { feature: 'CRM Integrations', replysequence: 'Airtable + Coming Soon', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Integrations' },
   // Fireflies Advantages
-  { feature: 'Searchable Transcript Database', replysequence: 'Coming Soon', fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
-  { feature: 'Cross-Meeting Search', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
-  { feature: 'Team Collaboration', replysequence: 'Coming Soon', fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
-  { feature: 'Meeting Analytics', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
+  { feature: 'Smart Search', replysequence: 'Basic Search', fireflies: 'AI-Powered Search', winner: 'fireflies', category: 'Search & Analytics' },
+  { feature: 'Topic Tracker', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
+  { feature: 'Conversation Intelligence', replysequence: 'Coming Soon', fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
+  { feature: 'Auto-Join Meetings', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
 ];
 
 const pricingComparison = [
   {
     tier: 'Free',
     replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
-    fireflies: { price: '$0', period: '/mo', features: ['Limited transcription', '800 mins storage', 'Basic features'] },
+    fireflies: { price: '$0', period: '/mo', features: ['Limited transcription', '800 mins storage', 'Basic AI summaries'] },
   },
   {
     tier: 'Pro',
     replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
-    fireflies: { price: '$10', period: '/mo', features: ['Unlimited transcription', '8,000 mins storage', 'AI summaries', 'CRM integrations'] },
+    fireflies: { price: '$18', period: '/user/mo', features: ['Unlimited transcription', 'Smart Search', 'CRM integrations', 'AI summaries'] },
     highlighted: true,
   },
   {
     tier: 'Business / Team',
     replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
-    fireflies: { price: '$19', period: '/mo', features: ['Unlimited storage', 'Admin controls', 'Video recording', 'Priority support'] },
+    fireflies: { price: '$29', period: '/user/mo', features: ['Conversation Intelligence', 'Topic Tracker', 'Team insights', 'Admin controls'] },
   },
 ];
 
@@ -146,7 +147,7 @@ const keyDifferences = [
   {
     icon: Timer,
     title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Fireflies gives you transcripts; you still have to write the email yourself.',
+    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Fireflies gives you meeting notes; you still have to write the email yourself.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
@@ -159,16 +160,16 @@ const keyDifferences = [
   },
   {
     icon: Search,
-    title: 'Searchable Transcript Database',
-    description: 'Fireflies shines with its powerful search across all your meetings. Find any conversation, topic, or mention in seconds.',
-    stat: 'All Meetings',
+    title: 'Smart Search & Topic Tracker',
+    description: 'Fireflies excels with AI-powered search across all your meetings. Track topics, find specific discussions, and surface insights from your entire conversation history.',
+    stat: 'AI Search',
     advantage: 'fireflies' as const,
   },
   {
     icon: Users,
-    title: 'Team Collaboration',
-    description: 'Fireflies offers robust team features—shared channels, comments, and collaboration tools for distributed teams.',
-    stat: 'Team-First',
+    title: 'Auto-Join & Conversation Intelligence',
+    description: 'Fireflies can automatically join and record your meetings. Built-in conversation intelligence analyzes talk patterns and meeting dynamics.',
+    stat: 'Automatic',
     advantage: 'fireflies' as const,
   },
 ];
@@ -200,6 +201,7 @@ export default function FirefliesComparisonPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
+      <Header />
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
@@ -503,7 +505,7 @@ export default function FirefliesComparisonPage() {
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Pricing Comparison</h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Fireflies is cheaper, but ReplySequence delivers more email-focused value
+              Similar pricing, different superpowers—choose based on your workflow
             </p>
           </AnimatedSection>
 
@@ -739,15 +741,15 @@ export default function FirefliesComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Fireflies.ai?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while Fireflies.ai is a broader meeting intelligence platform with searchable transcripts, team collaboration, and extensive CRM integrations."
+                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while Fireflies.ai is a comprehensive AI meeting assistant with Smart Search, Topic Tracker, conversation intelligence, and extensive CRM integrations like Salesforce and HubSpot."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is ReplySequence more expensive than Fireflies.ai?",
+                "name": "How much does Fireflies.ai cost compared to ReplySequence?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Fireflies.ai is slightly cheaper ($10/mo Pro vs $19/mo), but ReplySequence is purpose-built for email follow-ups. If your goal is sending faster follow-up emails, ReplySequence provides more targeted value."
+                  "text": "Fireflies Pro is $18/user/month with unlimited transcription and Smart Search. ReplySequence Pro is $19/month with unlimited AI email drafts. Both offer free tiers with limited features."
                 }
               },
               {
@@ -755,7 +757,7 @@ export default function FirefliesComparisonPage() {
                 "name": "Can I use both ReplySequence and Fireflies together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Absolutely! Many teams use Fireflies for their searchable meeting archive and team collaboration, and ReplySequence specifically for sending follow-up emails faster. They solve different problems."
+                  "text": "Absolutely! Many teams use Fireflies for searchable transcripts, Topic Tracker, and conversation intelligence, and ReplySequence specifically for sending follow-up emails faster. They solve different problems and complement each other well."
                 }
               },
               {
@@ -763,7 +765,15 @@ export default function FirefliesComparisonPage() {
                 "name": "Does Fireflies.ai generate follow-up emails?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Fireflies focuses on transcription, AI summaries, and action items. It does not generate ready-to-send follow-up emails. ReplySequence generates complete, personalized email drafts in 8 seconds."
+                  "text": "Fireflies focuses on transcription, AI summaries, action items, and conversation intelligence. It does not generate ready-to-send follow-up emails. ReplySequence generates complete, personalized email drafts in 8 seconds."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can Fireflies.ai automatically join my meetings?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, Fireflies can automatically join and record your Zoom, Google Meet, and Microsoft Teams meetings without manual intervention. This is one of its key features for hands-free meeting capture."
                 }
               }
             ]
