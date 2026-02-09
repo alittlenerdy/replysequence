@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 
 const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: false });
 const MobileMenu = dynamic(() => import('@/components/MobileMenu'), { ssr: false });
+const CompareDropdown = dynamic(() => import('@/components/CompareDropdown'), { ssr: false });
 
 export function Header() {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -26,6 +27,7 @@ export function Header() {
           >
             How It Works
           </Link>
+          <CompareDropdown />
           <Link
             href="/pricing"
             className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"

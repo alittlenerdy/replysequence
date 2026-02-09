@@ -1,9 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ChevronDown } from 'lucide-react';
+
+const competitors = [
+  { name: 'vs Otter.ai', slug: 'otter' },
+  { name: 'vs Fireflies.ai', slug: 'fireflies' },
+  { name: 'vs Grain', slug: 'grain' },
+  { name: 'vs Fathom', slug: 'fathom' },
+  { name: 'vs tl;dv', slug: 'tldv' },
+];
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
 
   // Close menu on escape key
   useEffect(() => {
@@ -73,6 +83,30 @@ export default function MobileMenu() {
           >
             How It Works
           </a>
+
+          {/* Compare Accordion */}
+          <div className="flex flex-col items-center">
+            <button
+              onClick={() => setCompareOpen(!compareOpen)}
+              className="flex items-center gap-2 text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+            >
+              Compare
+              <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <div className={`flex flex-col items-center gap-3 mt-4 overflow-hidden transition-all duration-300 ${compareOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+              {competitors.map((competitor) => (
+                <a
+                  key={competitor.slug}
+                  href={`/compare/${competitor.slug}`}
+                  onClick={() => setIsOpen(false)}
+                  className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors"
+                >
+                  {competitor.name}
+                </a>
+              ))}
+            </div>
+          </div>
+
           <a
             href="/pricing"
             onClick={() => setIsOpen(false)}
