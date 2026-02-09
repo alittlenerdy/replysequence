@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./providers/posthog-provider";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import MouseTrail from "@/components/MouseTrail";
 import "./globals.css";
 
@@ -19,6 +21,14 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 const siteUrl = "https://replysequence.vercel.app";
+
+export const viewport: Viewport = {
+  themeColor: '#3B82F6',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -49,7 +59,14 @@ export const metadata: Metadata = {
       { url: '/icon.svg?v=2', type: 'image/svg+xml' },
       { url: '/favicon.ico?v=2', sizes: 'any' },
     ],
-    apple: '/icon.svg?v=2',
+    apple: [
+      { url: '/icons/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'ReplySequence',
   },
   openGraph: {
     type: "website",
@@ -101,8 +118,10 @@ export default function RootLayout({
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <body className="antialiased">
           <PostHogProvider>
+            <ServiceWorkerRegistration />
             <MouseTrail />
             {children}
+            <PWAInstallPrompt />
           </PostHogProvider>
         </body>
       </html>
