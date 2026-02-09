@@ -19,10 +19,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Security | ReplySequence',
     description: 'Enterprise-grade security for your meeting data. AES-256 encryption, SOC 2 infrastructure, GDPR compliant.',
-    url: 'https://replysequence.com/security',
+    url: 'https://www.replysequence.com/security',
   },
   alternates: {
-    canonical: 'https://replysequence.com/security',
+    canonical: 'https://www.replysequence.com/security',
   },
 };
 

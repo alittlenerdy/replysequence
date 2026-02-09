@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'ReplySequence vs Fathom - Which AI Meeting Tool is Right for You?',
     description: 'Compare ReplySequence and Fathom for AI meeting notes and follow-up emails. Discover which tool saves you more time with a detailed feature comparison.',
-    url: 'https://replysequence.com/compare/fathom',
+    url: 'https://www.replysequence.com/compare/fathom',
     type: 'article',
   },
   alternates: {
-    canonical: 'https://replysequence.com/compare/fathom',
+    canonical: 'https://www.replysequence.com/compare/fathom',
   },
 };
 

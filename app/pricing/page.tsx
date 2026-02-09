@@ -19,10 +19,10 @@ export const metadata = {
   openGraph: {
     title: 'Pricing | ReplySequence',
     description: 'Simple, transparent pricing for ReplySequence. Start free, upgrade when you need more power.',
-    url: 'https://replysequence.com/pricing',
+    url: 'https://www.replysequence.com/pricing',
   },
   alternates: {
-    canonical: 'https://replysequence.com/pricing',
+    canonical: 'https://www.replysequence.com/pricing',
   },
 };
 

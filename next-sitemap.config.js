@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://replysequence.com',
+  siteUrl: 'https://www.replysequence.com',
   generateRobotsTxt: false, // We have our own robots.txt
   generateIndexSitemap: false,
   outDir: 'public',

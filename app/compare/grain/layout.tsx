@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'ReplySequence vs Grain - Which is Right for You?',
     description: 'Compare ReplySequence and Grain for meeting recording and follow-up. Discover which tool saves you more time on post-meeting tasks.',
-    url: 'https://replysequence.com/compare/grain',
+    url: 'https://www.replysequence.com/compare/grain',
     type: 'article',
   },
   alternates: {
-    canonical: 'https://replysequence.com/compare/grain',
+    canonical: 'https://www.replysequence.com/compare/grain',
   },
 };
 

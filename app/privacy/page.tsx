@@ -7,10 +7,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Privacy Policy | ReplySequence',
     description: 'ReplySequence privacy policy - how we collect, use, and protect your meeting data.',
-    url: 'https://replysequence.com/privacy',
+    url: 'https://www.replysequence.com/privacy',
   },
   alternates: {
-    canonical: 'https://replysequence.com/privacy',
+    canonical: 'https://www.replysequence.com/privacy',
   },
 };
 

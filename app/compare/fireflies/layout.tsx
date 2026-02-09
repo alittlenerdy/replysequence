@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'ReplySequence vs Fireflies.ai - Which is Right for You?',
     description: 'Compare ReplySequence and Fireflies.ai for meeting transcription and follow-up emails. Discover which tool saves you more time on post-meeting tasks.',
-    url: 'https://replysequence.com/compare/fireflies',
+    url: 'https://www.replysequence.com/compare/fireflies',
     type: 'article',
   },
   alternates: {
-    canonical: 'https://replysequence.com/compare/fireflies',
+    canonical: 'https://www.replysequence.com/compare/fireflies',
   },
 };
 
