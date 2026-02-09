@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     description:
       'Connect your meeting platform, record with transcription, and get AI-drafted follow-up emails instantly. No more manual note-taking.',
     type: 'website',
-    url: 'https://replysequence.vercel.app/how-it-works',
+    url: 'https://replysequence.com/how-it-works',
   },
   twitter: {
     card: 'summary_large_image',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: 'From meeting to perfect follow-up email in 8 seconds. See how it works.',
   },
   alternates: {
-    canonical: 'https://replysequence.vercel.app/how-it-works',
+    canonical: 'https://replysequence.com/how-it-works',
   },
 };
 

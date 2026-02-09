@@ -22,7 +22,7 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
 });
 
-const siteUrl = "https://replysequence.vercel.app";
+const siteUrl = "https://replysequence.com";
 
 export const viewport: Viewport = {
   themeColor: '#3B82F6',

@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'ReplySequence vs tl;dv - Which Meeting Tool is Right for You?',
     description: 'Compare ReplySequence and tl;dv for meeting recordings and AI-powered follow-ups. Discover which tool saves you more time after sales calls.',
-    url: 'https://replysequence.vercel.app/compare/tldv',
+    url: 'https://replysequence.com/compare/tldv',
     type: 'article',
   },
   alternates: {
-    canonical: 'https://replysequence.vercel.app/compare/tldv',
+    canonical: 'https://replysequence.com/compare/tldv',
   },
 };
 

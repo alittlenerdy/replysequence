@@ -19,10 +19,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Security | ReplySequence',
     description: 'Enterprise-grade security for your meeting data. AES-256 encryption, SOC 2 infrastructure, GDPR compliant.',
-    url: 'https://replysequence.vercel.app/security',
+    url: 'https://replysequence.com/security',
   },
   alternates: {
-    canonical: 'https://replysequence.vercel.app/security',
+    canonical: 'https://replysequence.com/security',
   },
 };
 
