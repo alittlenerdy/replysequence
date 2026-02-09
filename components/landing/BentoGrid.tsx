@@ -70,6 +70,9 @@ function DashboardPreview() {
     { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
     { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
     { name: 'Alex Kim', subject: 'Budget Review Follow-up', status: 'sent' },
+    { name: 'Jordan Lee', subject: 'Re: Technical Integration', status: 'sent' },
+    { name: 'Maria Garcia', subject: 'Quarterly Planning Sync', status: 'draft' },
+    { name: 'David Park', subject: 'Follow-up: Contract Terms', status: 'pending' },
   ];
 
   return (
@@ -154,36 +157,73 @@ function DashboardPreview() {
 
 // Simulated Draft Editor Preview with typing animation
 function DraftEditorPreview() {
+  const draftLines = [
+    "Hi Sarah,",
+    "Thanks for the great call today!",
+    "Key points we discussed:",
+    "• Q4 budget allocation",
+    "• Timeline for launch",
+  ];
+
   return (
-    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
+      <div className="flex items-center gap-2 mb-3">
         <motion.div
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           <Mail className="w-4 h-4 text-blue-400" />
         </motion.div>
-        <div className="h-2 w-24 bg-gray-700 light:bg-gray-200 rounded" />
+        <motion.span
+          className="text-[10px] text-gray-400 light:text-gray-600"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          To: sarah.chen@company.com
+        </motion.span>
       </div>
-      <div className="space-y-1.5">
-        {[1, 0.83, 0.67].map((width, i) => (
+      <div className="space-y-1">
+        {draftLines.map((line, i) => (
           <motion.div
             key={i}
-            className="h-2 bg-gray-700/60 light:bg-gray-300/60 rounded"
-            style={{ width: `${width * 100}%` }}
-            initial={{ width: 0 }}
-            whileInView={{ width: `${width * 100}%` }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-          />
+            className="text-[9px] text-gray-300 light:text-gray-700 font-mono overflow-hidden whitespace-nowrap"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{
+              width: "100%",
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.8,
+              delay: 0.5 + i * 0.6,
+              ease: "easeOut"
+            }}
+          >
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1] }}
+              transition={{ duration: 0.3, delay: 0.5 + i * 0.6 }}
+            >
+              {line}
+            </motion.span>
+          </motion.div>
         ))}
+        {/* Typing cursor */}
+        <motion.span
+          className="inline-block w-1.5 h-3 bg-blue-400 ml-0.5"
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+        />
       </div>
-      {/* Animated progress bar */}
+      {/* Send button that appears after typing */}
       <motion.div
-        className="mt-3 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded"
-        animate={{ width: ['25%', '60%', '25%'] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-      />
+        className="mt-2 h-5 w-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded flex items-center justify-center"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 4, duration: 0.3 }}
+      >
+        <span className="text-[8px] text-white font-medium">Send Email</span>
+      </motion.div>
     </div>
   );
 }
