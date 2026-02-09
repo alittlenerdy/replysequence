@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://replysequence.vercel.app',
+  siteUrl: 'https://replysequence.com',
   generateRobotsTxt: false, // We have our own robots.txt
   generateIndexSitemap: false,
   outDir: 'public',
