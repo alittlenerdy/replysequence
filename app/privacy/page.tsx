@@ -131,7 +131,7 @@ export default function PrivacyPage() {
               <Link href="/dashboard/settings" className="text-purple-400 hover:text-purple-300">
                 account settings
               </Link>{' '}
-              or contact us at privacy@replysequence.com.
+              or contact us at jimmy@replysequence.com.
             </p>
           </section>
 
@@ -176,8 +176,8 @@ export default function PrivacyPage() {
               please contact us:
             </p>
             <ul className="list-none mt-4 text-gray-300 space-y-2">
-              <li>Email: privacy@replysequence.com</li>
-              <li>Data Protection Officer: dpo@replysequence.com</li>
+              <li>Email: jimmy@replysequence.com</li>
+              <li>Company: Playground Giants</li>
             </ul>
           </section>
         </div>

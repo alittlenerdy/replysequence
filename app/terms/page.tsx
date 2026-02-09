@@ -274,9 +274,8 @@ export default function TermsPage() {
               If you have questions about these Terms, please contact us:
             </p>
             <ul className="list-none mt-4 text-gray-300 space-y-2">
-              <li>Email: legal@replysequence.com</li>
+              <li>Email: jimmy@replysequence.com</li>
               <li>Company: Playground Giants</li>
-              <li>Contact: jimmy@playgroundgiants.com</li>
             </ul>
           </section>
         </div>
