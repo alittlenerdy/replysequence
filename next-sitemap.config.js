@@ -22,6 +22,10 @@ module.exports = {
   additionalPaths: async (config) => [
     await config.transform(config, '/pricing'),
     await config.transform(config, '/compare/otter'),
+    await config.transform(config, '/compare/fireflies'),
+    await config.transform(config, '/compare/grain'),
+    await config.transform(config, '/compare/fathom'),
+    await config.transform(config, '/compare/tldv'),
   ],
   transform: async (config, path) => {
     // Custom priority for specific pages
@@ -29,7 +33,11 @@ module.exports = {
       '/': 1.0,
       '/pricing': 0.9,
       '/how-it-works': 0.9,
-      '/compare/otter': 0.85, // SEO comparison page
+      '/compare/otter': 0.85,
+      '/compare/fireflies': 0.85,
+      '/compare/grain': 0.85,
+      '/compare/fathom': 0.85,
+      '/compare/tldv': 0.85,
       '/security': 0.7,
       '/privacy': 0.5,
       '/terms': 0.5,
