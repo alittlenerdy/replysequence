@@ -98,31 +98,25 @@ export default function LandingPage() {
         {/* Blueprint Grid Background */}
         <BlueprintGrid />
 
-        {/* Animated gradient orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
-            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity }}
+        {/* Animated gradient orbs - CSS animations for zero CLS */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ contain: 'layout style paint' }}>
+          <div
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform"
+            style={{ contain: 'layout' }}
           />
-          <motion.div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
-            animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, delay: 1 }}
+          <div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform"
+            style={{ animationDelay: '1s', contain: 'layout' }}
           />
-          <motion.div
-            className="absolute top-3/4 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"
-            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
-            transition={{ duration: 8, repeat: Infinity, delay: 2 }}
+          <div
+            className="absolute top-3/4 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform"
+            style={{ animationDelay: '2s', contain: 'layout' }}
           />
         </div>
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          {/* H1 and description visible immediately for fast LCP */}
+          <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               <GradientText className="font-extrabold">8 Seconds</GradientText> from Call to{' '}
               <span className="text-white light:text-gray-900">Follow-up.</span>
@@ -131,6 +125,7 @@ export default function LandingPage() {
             <p className="text-xl text-gray-400 light:text-gray-600 mb-4 leading-relaxed max-w-3xl mx-auto">
               AI drafts perfect follow-up emails the moment your Zoom, Teams, or Meet call ends. No notes. No typing. Just send.
             </p>
+          </div>
 
             {/* Countdown animation and speed comparison */}
             <motion.div
@@ -243,7 +238,6 @@ export default function LandingPage() {
                 <span className="text-xs font-medium text-purple-400">GDPR Compliant</span>
               </a>
             </motion.div>
-          </motion.div>
 
           {/* Hero Animation */}
           <motion.div
