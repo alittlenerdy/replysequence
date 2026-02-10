@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 // Security headers (CSP is handled in middleware with nonce)
 const securityHeaders = [
@@ -56,12 +61,14 @@ const nextConfig: NextConfig = {
   // Experimental performance optimizations
   experimental: {
     // Optimize package imports for smaller bundles
-    // Note: framer-motion removed - causes animation issues with this optimization
     optimizePackageImports: [
       'lucide-react',
       'recharts',
       '@tiptap/react',
       '@tiptap/starter-kit',
+      'framer-motion',  // Re-enabled - test for animation issues
+      'posthog-js',
+      '@sentry/nextjs',
     ],
   },
 
@@ -85,7 +92,8 @@ const nextConfig: NextConfig = {
 };
 
 // Wrap with Sentry for error tracking and source map uploads
-export default withSentryConfig(nextConfig, {
+// Also wrap with bundle analyzer (enabled with ANALYZE=true)
+export default withBundleAnalyzer(withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
@@ -126,4 +134,4 @@ export default withSentryConfig(nextConfig, {
       removeDebugLogging: true,
     },
   }
-});
+}));

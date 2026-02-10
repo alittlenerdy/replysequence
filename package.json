@@ -44,6 +44,7 @@
     "react": "19.2.3",
     "react-confetti": "^6.4.0",
     "react-dom": "19.2.3",
+    "react-is": "^19.2.4",
     "recharts": "^3.7.0",
     "resend": "^6.8.0",
     "stripe": "^20.3.0",
@@ -51,6 +52,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.6",
     "@types/node": "^20",
     "@types/pg": "^8.11.10",
     "@types/react": "^19",
