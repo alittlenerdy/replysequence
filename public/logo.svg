@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A90E2"/>
+      <stop offset="100%" stop-color="#2D6CDF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Circular Arrow Path -->
+  <path
+    fill="none"
+    stroke="url(#blueGrad)"
+    stroke-width="48"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="
+      M256 80
+      A176 176 0 0 1 420 220
+      L380 220
+      L450 300
+      L520 220
+      L480 220
+      A224 224 0 0 0 256 32
+
+      M432 256
+      A176 176 0 0 1 292 420
+      L292 380
+      L212 450
+      L292 520
+      L292 480
+      A224 224 0 0 0 480 256
+
+      M256 432
+      A176 176 0 0 1 92 292
+      L132 292
+      L62 212
+      L-8 292
+      L32 292
+      A224 224 0 0 0 256 480
+    "
+  />
+</svg>

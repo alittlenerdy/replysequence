@@ -3,6 +3,7 @@ import { db, meetConnections, meetings, rawEvents } from '@/lib/db';
 import { eq, and, gte, isNull } from 'drizzle-orm';
 import { decrypt } from '@/lib/encryption';
 import { processMeetEvent } from '@/lib/process-meet-event';
+import { searchMeetRecordingsFolder, DriveFile } from '@/lib/drive-api';
 import type { MeetWorkspaceEvent } from '@/lib/meet/types';
 
 export const dynamic = 'force-dynamic';
@@ -562,15 +563,51 @@ async function processCalendarEvent(
     }
   }
 
-  // If neither transcript nor smart notes are ready, skip
+  // If neither transcript nor smart notes are ready, try Drive fallback
+  let driveFile: DriveFile | null = null;
   if (!readyTranscript && !readySmartNote) {
-    return { processed: false, reason: 'No transcript or Smart Notes ready yet' };
+    log('info', 'No transcript or Smart Notes found, searching Google Drive', {
+      conferenceRecordName: conferenceRecord.name,
+    });
+
+    try {
+      // Search for files in Meet Recordings folder around the meeting end time
+      const driveFiles = await searchMeetRecordingsFolder(
+        accessToken,
+        endTime,
+        120 // 2 hour window
+      );
+
+      // Find Google Docs (potential meeting notes)
+      const docFiles = driveFiles.filter(
+        (f: DriveFile) => f.mimeType === 'application/vnd.google-apps.document'
+      );
+
+      if (docFiles.length > 0) {
+        driveFile = docFiles[0];
+        log('info', 'Found meeting notes in Google Drive', {
+          conferenceRecordName: conferenceRecord.name,
+          fileId: driveFile.id,
+          fileName: driveFile.name,
+        });
+      }
+    } catch (driveError) {
+      log('warn', 'Drive search failed', {
+        conferenceRecordName: conferenceRecord.name,
+        error: driveError instanceof Error ? driveError.message : String(driveError),
+      });
+    }
+
+    // If still no content, skip
+    if (!driveFile) {
+      return { processed: false, reason: 'No transcript, Smart Notes, or Drive files ready yet' };
+    }
   }
 
   // Determine which content source we're using
-  const contentSource = readyTranscript ? 'transcript' : 'smart_notes';
-  const contentName = readyTranscript?.name || readySmartNote?.name || 'unknown';
-  const contentDocId = readyTranscript?.docsDestination?.document || readySmartNote?.docsDestination?.document;
+  const contentSource = readyTranscript ? 'transcript' : (readySmartNote ? 'smart_notes' : 'drive_notes');
+  const contentName = readyTranscript?.name || readySmartNote?.name || driveFile?.name || 'unknown';
+  const contentDocId = readyTranscript?.docsDestination?.document || readySmartNote?.docsDestination?.document || driveFile?.id;
 
   log('info', 'Found ready content, processing', {
     conferenceRecordName: conferenceRecord.name,
@@ -581,10 +618,15 @@ async function processCalendarEvent(
 
   // Store raw event for audit
   const eventId = `poll-${conferenceRecord.name}-${Date.now()}`;
+  const eventTypeMap: Record<string, string> = {
+    transcript: 'meet.transcript.fileGenerated',
+    smart_notes: 'meet.smartNotes.fileGenerated',
+    drive_notes: 'meet.driveNotes.fileGenerated',
+  };
   const [rawEvent] = await db
     .insert(rawEvents)
     .values({
-      eventType: contentSource === 'smart_notes' ? 'meet.smartNotes.fileGenerated' : 'meet.transcript.fileGenerated',
+      eventType: eventTypeMap[contentSource] || 'meet.transcript.fileGenerated',
       zoomEventId: eventId,
       payload: {
         source: 'calendar_poll',

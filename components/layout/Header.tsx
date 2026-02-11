@@ -15,8 +15,11 @@ export function Header() {
     <header className="fixed top-0 w-full z-50 bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="text-xl sm:text-2xl font-display font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 light:from-blue-600 light:via-purple-600 light:to-pink-600 bg-clip-text text-transparent">
-          ReplySequence
+        <Link href="/" className="flex items-center gap-2">
+          <img src="/logo.svg" alt="" className="h-8 w-8" />
+          <span className="text-xl sm:text-2xl font-display font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 light:from-blue-600 light:via-purple-600 light:to-pink-600 bg-clip-text text-transparent">
+            ReplySequence
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

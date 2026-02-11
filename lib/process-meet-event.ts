@@ -20,6 +20,7 @@ import {
 } from '@/lib/meet-api';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
+import { searchMeetRecordingsFolder, downloadDocAsText, DriveFile } from '@/lib/drive-api';
 import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
 import type { MeetWorkspaceEvent, MeetTranscript } from '@/lib/meet/types';
 
@@ -445,28 +446,77 @@ async function fetchAndStoreMeetTranscript(
       }
     }
 
-    // If neither transcript nor smart notes available
+    // If neither transcript nor smart notes available, try Drive fallback
+    let driveFile: DriveFile | null = null;
     if (!readyTranscript && !smartNote) {
-      log('warn', '[MEET-5] No transcripts or Smart Notes found for conference', {
+      log('info', '[MEET-5] No transcripts or Smart Notes found, searching Google Drive', {
         meetingId,
         conferenceRecordName,
         transcriptCount: transcriptList.length,
       });
 
-      // Mark meeting as pending - transcript/notes may become ready later
-      await db
-        .update(meetings)
-        .set({ status: 'pending', updatedAt: new Date() })
-        .where(eq(meetings.id, meetingId));
+      // Get meeting end time for Drive search - fetch from meeting record
+      const [meetingRecord] = await db
+        .select({ endTime: meetings.endTime })
+        .from(meetings)
+        .where(eq(meetings.id, meetingId))
+        .limit(1);
 
-      return;
+      const meetingEndTime = meetingRecord?.endTime || new Date();
+
+      try {
+        const driveFiles = await searchMeetRecordingsFolder(
+          accessToken || '',
+          meetingEndTime,
+          120 // 2 hour window
+        );
+
+        // Find Google Docs (potential meeting notes)
+        const docFiles = driveFiles.filter(
+          (f: DriveFile) => f.mimeType === 'application/vnd.google-apps.document'
+        );
+
+        if (docFiles.length > 0) {
+          driveFile = docFiles[0];
+          log('info', '[MEET-5] Found meeting notes in Google Drive', {
+            meetingId,
+            fileId: driveFile.id,
+            fileName: driveFile.name,
+          });
+        } else {
+          log('info', '[MEET-5] No Google Docs found in Meet Recordings folder', {
+            meetingId,
+            filesFound: driveFiles.length,
+          });
+        }
+      } catch (driveError) {
+        log('warn', '[MEET-5] Drive search failed', {
+          meetingId,
+          error: driveError instanceof Error ? driveError.message : String(driveError),
+        });
+      }
+
+      // If still no content found, mark as pending
+      if (!driveFile) {
+        log('warn', '[MEET-5] No content sources found for conference', {
+          meetingId,
+          conferenceRecordName,
+        });
+
+        await db
+          .update(meetings)
+          .set({ status: 'pending', updatedAt: new Date() })
+          .where(eq(meetings.id, meetingId));
+
+        return;
+      }
     }
 
     let fullText: string;
     let vttContent: string;
     let segments: Array<{ speaker: string; text: string; start_time: number; end_time: number }>;
     let wordCount: number;
-    let contentSource: 'transcript' | 'smart_notes' | 'transcript_docs';
+    let contentSource: 'transcript' | 'smart_notes' | 'transcript_docs' | 'drive_notes';
 
     // If we have a native transcript, use it
     if (readyTranscript) {
@@ -596,6 +646,41 @@ async function fetchAndStoreMeetTranscript(
         });
         throw docsError;
       }
+    } else if (driveFile) {
+      // Use Drive file (meeting notes found in Meet Recordings folder)
+      log('info', '[MEET-5] Using Drive file as content source', {
+        meetingId,
+        fileId: driveFile.id,
+        fileName: driveFile.name,
+      });
+
+      try {
+        const docsContent = await downloadDocAsText(accessToken || '', driveFile.id);
+
+        log('info', '[MEET-6] Drive file downloaded', {
+          meetingId,
+          contentLength: docsContent.length,
+        });
+
+        // Drive notes are typically Gemini-generated notes saved to Meet Recordings folder
+        fullText = docsContent;
+        vttContent = ''; // No VTT for drive notes
+        segments = []; // No speaker segments
+        wordCount = docsContent.split(/\s+/).filter(Boolean).length;
+        contentSource = 'drive_notes';
+
+        log('info', '[MEET-7] Drive notes processed', {
+          meetingId,
+          wordCount,
+        });
+      } catch (driveError) {
+        log('error', '[MEET-6] Failed to download Drive file', {
+          meetingId,
+          fileId: driveFile.id,
+          error: driveError instanceof Error ? driveError.message : String(driveError),
+        });
+        throw driveError;
+      }
     } else {
       // This shouldn't happen as we check for this earlier, but handle it anyway
       log('error', '[MEET-6] No content source available', { meetingId });
@@ -614,7 +699,9 @@ async function fetchAndStoreMeetTranscript(
     });
 
     // Determine source label for database
-    const sourceLabel = contentSource === 'smart_notes' ? 'meet_gemini' : 'meet';
+    const sourceLabel = (contentSource === 'smart_notes' || contentSource === 'drive_notes')
+      ? 'meet_gemini'
+      : 'meet';
 
     // Check for existing transcript
     const [existingTranscript] = await db
