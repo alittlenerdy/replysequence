@@ -16,8 +16,9 @@ const MEET_API_BETA = 'https://meet.googleapis.com/v2beta';
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET?.trim();
 
-// Poll window: look back 15 minutes for recently ended meetings
-const POLL_WINDOW_MINUTES = 15;
+// Poll window: look back 60 minutes for recently ended meetings
+// (increased from 15 to handle transcript processing delays)
+const POLL_WINDOW_MINUTES = 60;
 
 interface CalendarEvent {
   id: string;
