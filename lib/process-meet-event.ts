@@ -10,6 +10,7 @@ import { eq } from 'drizzle-orm';
 import {
   getConferenceRecord,
   listTranscripts,
+  listSmartNotes,
   listTranscriptEntries,
   listParticipants,
   getParticipantDisplayName,
@@ -415,34 +416,44 @@ async function fetchAndStoreMeetTranscript(
     // List transcripts for this conference
     const transcriptList = await listTranscripts(conferenceRecordName, accessToken);
 
-    if (transcriptList.length === 0) {
-      log('warn', '[MEET-5] No transcripts found for conference', {
-        meetingId,
-        conferenceRecordName,
-      });
-
-      // Mark meeting as ready (no transcript available)
-      await db
-        .update(meetings)
-        .set({ status: 'ready', updatedAt: new Date() })
-        .where(eq(meetings.id, meetingId));
-
-      return;
-    }
-
     // Find transcript that is ready (FILE_GENERATED state)
     const readyTranscript = transcriptList.find(
       (t: MeetTranscript) => t.state === 'FILE_GENERATED'
     );
 
+    // If no native transcripts, check for Smart Notes (Gemini AI notes)
+    let smartNote: { name: string; docsDestination?: { document: string } } | null = null;
     if (!readyTranscript) {
-      log('warn', '[MEET-5] No ready transcript found', {
+      log('info', '[MEET-5] No native transcripts, checking for Smart Notes (Gemini)', {
         meetingId,
         conferenceRecordName,
-        transcriptStates: transcriptList.map((t: MeetTranscript) => t.state),
+        transcriptCount: transcriptList.length,
       });
 
-      // Mark meeting as pending - transcript may become ready later
+      const smartNotesList = await listSmartNotes(conferenceRecordName, accessToken);
+      const readySmartNote = smartNotesList.find(
+        (n) => n.state === 'FILE_GENERATED'
+      );
+
+      if (readySmartNote) {
+        log('info', '[MEET-5] Found ready Smart Notes (Gemini)', {
+          meetingId,
+          smartNoteName: readySmartNote.name,
+          hasDocsDestination: !!readySmartNote.docsDestination?.document,
+        });
+        smartNote = readySmartNote;
+      }
+    }
+
+    // If neither transcript nor smart notes available
+    if (!readyTranscript && !smartNote) {
+      log('warn', '[MEET-5] No transcripts or Smart Notes found for conference', {
+        meetingId,
+        conferenceRecordName,
+        transcriptCount: transcriptList.length,
+      });
+
+      // Mark meeting as pending - transcript/notes may become ready later
       await db
         .update(meetings)
         .set({ status: 'pending', updatedAt: new Date() })
@@ -451,105 +462,159 @@ async function fetchAndStoreMeetTranscript(
       return;
     }
 
-    log('info', '[MEET-5] Transcript located', {
-      meetingId,
-      transcriptName: readyTranscript.name,
-      state: readyTranscript.state,
-      hasDocsDestination: !!readyTranscript.docsDestination?.document,
-    });
-
-    // Fetch transcript entries
-    const entries = await listTranscriptEntries(readyTranscript.name, accessToken);
-
-    log('info', '[MEET-6] Transcript entries downloaded', {
-      meetingId,
-      entryCount: entries.length,
-    });
-
     let fullText: string;
     let vttContent: string;
     let segments: Array<{ speaker: string; text: string; start_time: number; end_time: number }>;
     let wordCount: number;
+    let contentSource: 'transcript' | 'smart_notes' | 'transcript_docs';
 
-    // If no entries but docsDestination is available, download from Google Docs
-    if (entries.length === 0 && readyTranscript.docsDestination?.document) {
-      const documentId = readyTranscript.docsDestination.document;
-      log('info', '[MEET-6] No entries from API, downloading from Google Docs', {
+    // If we have a native transcript, use it
+    if (readyTranscript) {
+      log('info', '[MEET-5] Transcript located', {
         meetingId,
+        transcriptName: readyTranscript.name,
+        state: readyTranscript.state,
+        hasDocsDestination: !!readyTranscript.docsDestination?.document,
+      });
+
+      // Fetch transcript entries
+      const entries = await listTranscriptEntries(readyTranscript.name, accessToken);
+
+      log('info', '[MEET-6] Transcript entries downloaded', {
+        meetingId,
+        entryCount: entries.length,
+      });
+
+      // If no entries but docsDestination is available, download from Google Docs
+      if (entries.length === 0 && readyTranscript.docsDestination?.document) {
+        const documentId = readyTranscript.docsDestination.document;
+        log('info', '[MEET-6] No entries from API, downloading from Google Docs', {
+          meetingId,
+          documentId,
+        });
+
+        try {
+          const docsContent = await downloadTranscriptFromDocs(documentId, accessToken);
+
+          log('info', '[MEET-6] Transcript downloaded from Google Docs', {
+            meetingId,
+            contentLength: docsContent.length,
+          });
+
+          fullText = docsContent;
+          vttContent = ''; // No VTT available from Docs export
+          segments = []; // Could parse Docs format later if needed
+          wordCount = docsContent.split(/\s+/).filter(Boolean).length;
+          contentSource = 'transcript_docs';
+
+          log('info', '[MEET-7] Transcript from Docs processed', {
+            meetingId,
+            wordCount,
+          });
+        } catch (docsError) {
+          log('error', '[MEET-6] Failed to download from Google Docs', {
+            meetingId,
+            documentId,
+            error: docsError instanceof Error ? docsError.message : String(docsError),
+          });
+          throw docsError;
+        }
+      } else if (entries.length > 0) {
+        // Fetch participants to map participant IDs to names
+        const participants = await listParticipants(conferenceRecordName, accessToken);
+        const participantNames = new Map<string, string>();
+
+        for (const participant of participants) {
+          participantNames.set(participant.name, getParticipantDisplayName(participant));
+        }
+
+        log('info', '[MEET-6] Participant names resolved', {
+          meetingId,
+          participantCount: participants.length,
+        });
+
+        // Convert entries to VTT format for consistent parsing
+        vttContent = entriesToVTT(entries, participantNames);
+
+        log('info', '[MEET-7] Transcript converted to VTT', {
+          meetingId,
+          vttLength: vttContent.length,
+        });
+
+        // Parse VTT content
+        const parsed = parseVTT(vttContent);
+        fullText = parsed.fullText;
+        segments = parsed.segments;
+        wordCount = parsed.wordCount;
+        contentSource = 'transcript';
+      } else {
+        // No entries and no docs destination - empty transcript
+        log('warn', '[MEET-6] No transcript content available', {
+          meetingId,
+          hasDocsDestination: !!readyTranscript.docsDestination,
+        });
+        fullText = '';
+        vttContent = '';
+        segments = [];
+        wordCount = 0;
+        contentSource = 'transcript';
+      }
+    } else if (smartNote && smartNote.docsDestination?.document) {
+      // Use Smart Notes (Gemini AI-generated notes) as fallback
+      const documentId = smartNote.docsDestination.document;
+      log('info', '[MEET-5] Using Smart Notes (Gemini) as content source', {
+        meetingId,
+        smartNoteName: smartNote.name,
         documentId,
       });
 
       try {
         const docsContent = await downloadTranscriptFromDocs(documentId, accessToken);
 
-        log('info', '[MEET-6] Transcript downloaded from Google Docs', {
+        log('info', '[MEET-6] Smart Notes downloaded from Google Docs', {
           meetingId,
           contentLength: docsContent.length,
         });
 
-        // Google Docs exports transcript as plain text with timestamps
-        // Format: "Speaker Name\nTimestamp\nText\n\nSpeaker Name\n..."
+        // Smart Notes are AI-generated summaries with key points, action items, etc.
+        // They're already well-structured for draft generation
         fullText = docsContent;
-        vttContent = ''; // No VTT available from Docs export
-        segments = []; // Could parse Docs format later if needed
+        vttContent = ''; // No VTT for smart notes
+        segments = []; // No speaker segments in smart notes
         wordCount = docsContent.split(/\s+/).filter(Boolean).length;
+        contentSource = 'smart_notes';
 
-        log('info', '[MEET-7] Transcript from Docs processed', {
+        log('info', '[MEET-7] Smart Notes processed', {
           meetingId,
           wordCount,
         });
       } catch (docsError) {
-        log('error', '[MEET-6] Failed to download from Google Docs', {
+        log('error', '[MEET-6] Failed to download Smart Notes from Google Docs', {
           meetingId,
           documentId,
           error: docsError instanceof Error ? docsError.message : String(docsError),
         });
         throw docsError;
       }
-    } else if (entries.length > 0) {
-      // Fetch participants to map participant IDs to names
-      const participants = await listParticipants(conferenceRecordName, accessToken);
-      const participantNames = new Map<string, string>();
-
-      for (const participant of participants) {
-        participantNames.set(participant.name, getParticipantDisplayName(participant));
-      }
-
-      log('info', '[MEET-6] Participant names resolved', {
-        meetingId,
-        participantCount: participants.length,
-      });
-
-      // Convert entries to VTT format for consistent parsing
-      vttContent = entriesToVTT(entries, participantNames);
-
-      log('info', '[MEET-7] Transcript converted to VTT', {
-        meetingId,
-        vttLength: vttContent.length,
-      });
-
-      // Parse VTT content
-      const parsed = parseVTT(vttContent);
-      fullText = parsed.fullText;
-      segments = parsed.segments;
-      wordCount = parsed.wordCount;
     } else {
-      // No entries and no docs destination - empty transcript
-      log('warn', '[MEET-6] No transcript content available', {
-        meetingId,
-        hasDocsDestination: !!readyTranscript.docsDestination,
-      });
+      // This shouldn't happen as we check for this earlier, but handle it anyway
+      log('error', '[MEET-6] No content source available', { meetingId });
       fullText = '';
       vttContent = '';
       segments = [];
       wordCount = 0;
+      contentSource = 'transcript';
     }
 
-    log('info', '[MEET-7] Transcript parsed', {
+    log('info', '[MEET-7] Content parsed', {
       meetingId,
       wordCount,
       segmentCount: segments.length,
+      contentSource,
     });
+
+    // Determine source label for database
+    const sourceLabel = contentSource === 'smart_notes' ? 'meet_gemini' : 'meet';
 
     // Check for existing transcript
     const [existingTranscript] = await db
@@ -568,6 +633,7 @@ async function fetchAndStoreMeetTranscript(
           content: fullText,
           vttContent,
           speakerSegments: segments,
+          source: sourceLabel,
           wordCount,
           status: 'ready',
           lastFetchError: null,
@@ -576,7 +642,10 @@ async function fetchAndStoreMeetTranscript(
         .where(eq(transcripts.id, existingTranscript.id));
 
       transcriptRecordId = existingTranscript.id;
-      log('info', '[MEET-8] Transcript stored in database (updated)', { transcriptId: transcriptRecordId });
+      log('info', '[MEET-8] Transcript stored in database (updated)', {
+        transcriptId: transcriptRecordId,
+        source: sourceLabel,
+      });
     } else {
       // Create new transcript
       const [newTranscript] = await db
@@ -587,14 +656,17 @@ async function fetchAndStoreMeetTranscript(
           vttContent,
           speakerSegments: segments,
           platform: MEET_PLATFORM,
-          source: 'meet',
+          source: sourceLabel,
           wordCount,
           status: 'ready',
         })
         .returning({ id: transcripts.id });
 
       transcriptRecordId = newTranscript.id;
-      log('info', '[MEET-8] Transcript stored in database (created)', { transcriptId: transcriptRecordId });
+      log('info', '[MEET-8] Transcript stored in database (created)', {
+        transcriptId: transcriptRecordId,
+        source: sourceLabel,
+      });
     }
 
     // Update meeting status

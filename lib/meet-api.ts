@@ -11,6 +11,7 @@ import type {
   GoogleApiError,
   ConferenceRecord,
   MeetTranscript,
+  MeetSmartNotes,
   TranscriptEntry,
   MeetParticipant,
   ListResponse,
@@ -36,6 +37,7 @@ const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN?.trim();
 
 // API endpoints
 const MEET_API_BASE = 'https://meet.googleapis.com/v2';
+const MEET_API_BETA = 'https://meet.googleapis.com/v2beta'; // For Smart Notes (Gemini)
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 
 // Token cache
@@ -297,6 +299,99 @@ export function getParticipantDisplayName(participant: MeetParticipant): string 
  */
 export function isMeetConfigured(): boolean {
   return !!(CLIENT_ID && CLIENT_SECRET && REFRESH_TOKEN);
+}
+
+/**
+ * Make an authenticated request to Meet API v2beta (for Smart Notes)
+ * @param endpoint - API endpoint
+ * @param options - Fetch options
+ * @param accessToken - Optional access token (uses global token if not provided)
+ */
+async function meetBetaRequest<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  accessToken?: string
+): Promise<T> {
+  const token = accessToken || await getAccessToken();
+  const url = endpoint.startsWith('http') ? endpoint : `${MEET_API_BETA}${endpoint}`;
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData: GoogleApiError = await response.json().catch(() => ({
+      error: { code: response.status, message: response.statusText, status: 'UNKNOWN' },
+    }));
+
+    log('error', '[MEET-BETA] Meet API v2beta request failed', {
+      endpoint,
+      status: response.status,
+      error: errorData.error?.message,
+      code: errorData.error?.code,
+    });
+
+    throw new Error(`Meet API v2beta error: ${errorData.error?.message || response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * List Smart Notes (Gemini AI-generated notes) for a conference record
+ * Uses v2beta endpoint as this feature is in Developer Preview
+ * @param conferenceRecordName - The conference record name
+ * @param accessToken - Optional access token (uses global token if not provided)
+ */
+export async function listSmartNotes(
+  conferenceRecordName: string,
+  accessToken?: string
+): Promise<MeetSmartNotes[]> {
+  log('info', '[MEET-SMART-NOTES] Listing smart notes', { conferenceRecordName });
+
+  const recordId = conferenceRecordName.replace('conferenceRecords/', '');
+
+  try {
+    const response = await meetBetaRequest<ListResponse<MeetSmartNotes>>(
+      `/conferenceRecords/${recordId}/smartNotes`,
+      {},
+      accessToken
+    );
+
+    const smartNotes = (response.smartNotes as MeetSmartNotes[]) || [];
+
+    log('info', '[MEET-SMART-NOTES] Found smart notes', {
+      conferenceRecordName,
+      count: smartNotes.length,
+      states: smartNotes.map(n => n.state),
+    });
+
+    return smartNotes;
+  } catch (error) {
+    // Smart Notes API may not be available for all accounts or may return 404
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    // Don't treat 404 as an error - just means no smart notes available
+    if (errorMessage.includes('404') || errorMessage.includes('NOT_FOUND')) {
+      log('info', '[MEET-SMART-NOTES] No smart notes found (feature may not be enabled)', {
+        conferenceRecordName,
+      });
+      return [];
+    }
+
+    log('warn', '[MEET-SMART-NOTES] Error listing smart notes', {
+      conferenceRecordName,
+      error: errorMessage,
+    });
+
+    // Return empty array instead of throwing - smart notes are optional
+    return [];
+  }
 }
 
 /**

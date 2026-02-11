@@ -11,6 +11,7 @@ export const maxDuration = 60;
 // Configuration
 const CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
 const MEET_API = 'https://meet.googleapis.com/v2';
+const MEET_API_BETA = 'https://meet.googleapis.com/v2beta';
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET?.trim();
 
@@ -45,6 +46,15 @@ interface ConferenceRecord {
 }
 
 interface MeetTranscript {
+  name: string;
+  state: string;
+  docsDestination?: {
+    document: string;
+    exportUri: string;
+  };
+}
+
+interface MeetSmartNotes {
   name: string;
   state: string;
   docsDestination?: {
@@ -412,6 +422,61 @@ async function getTranscripts(
 }
 
 /**
+ * Check for Smart Notes (Gemini AI notes) on a conference record
+ * Uses v2beta API endpoint
+ */
+async function getSmartNotes(
+  accessToken: string,
+  conferenceRecordName: string
+): Promise<MeetSmartNotes[]> {
+  log('debug', 'Fetching Smart Notes for conference record', {
+    conferenceRecordName,
+    apiUrl: `${MEET_API_BETA}/${conferenceRecordName}/smartNotes`,
+  });
+
+  try {
+    const response = await fetch(
+      `${MEET_API_BETA}/${conferenceRecordName}/smartNotes`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+
+    if (!response.ok) {
+      // Smart Notes API may return 404 if feature is not enabled
+      const error = await response.text();
+      log('debug', 'Smart Notes API response', {
+        conferenceRecordName,
+        status: response.status,
+        error,
+      });
+      return [];
+    }
+
+    const data = await response.json();
+    const smartNotes = data.smartNotes || [];
+
+    log('debug', 'Smart Notes API response', {
+      conferenceRecordName,
+      smartNotesCount: smartNotes.length,
+      smartNotes: smartNotes.map((n: MeetSmartNotes) => ({
+        name: n.name,
+        state: n.state,
+        docsDocument: n.docsDestination?.document,
+      })),
+    });
+
+    return smartNotes;
+  } catch (error) {
+    log('error', 'Error fetching Smart Notes', {
+      conferenceRecordName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return [];
+  }
+}
+
+/**
  * Check if we've already processed this meeting
  */
 async function isAlreadyProcessed(conferenceRecordName: string): Promise<boolean> {
@@ -475,17 +540,43 @@ async function processCalendarEvent(
     return { processed: false, reason: 'Already processed' };
   }
 
-  // Check for transcripts
+  // Check for transcripts first
   const transcripts = await getTranscripts(accessToken, conferenceRecord.name);
   const readyTranscript = transcripts.find((t) => t.state === 'FILE_GENERATED');
 
+  // If no native transcript, check for Smart Notes (Gemini AI notes)
+  let readySmartNote: MeetSmartNotes | undefined;
   if (!readyTranscript) {
-    return { processed: false, reason: 'No transcript ready yet' };
+    log('info', 'No native transcript found, checking for Smart Notes', {
+      conferenceRecordName: conferenceRecord.name,
+    });
+
+    const smartNotes = await getSmartNotes(accessToken, conferenceRecord.name);
+    readySmartNote = smartNotes.find((n) => n.state === 'FILE_GENERATED');
+
+    if (readySmartNote) {
+      log('info', 'Found ready Smart Notes (Gemini)', {
+        conferenceRecordName: conferenceRecord.name,
+        smartNoteName: readySmartNote.name,
+      });
+    }
   }
 
-  log('info', 'Found ready transcript, processing', {
+  // If neither transcript nor smart notes are ready, skip
+  if (!readyTranscript && !readySmartNote) {
+    return { processed: false, reason: 'No transcript or Smart Notes ready yet' };
+  }
+
+  // Determine which content source we're using
+  const contentSource = readyTranscript ? 'transcript' : 'smart_notes';
+  const contentName = readyTranscript?.name || readySmartNote?.name || 'unknown';
+  const contentDocId = readyTranscript?.docsDestination?.document || readySmartNote?.docsDestination?.document;
+
+  log('info', 'Found ready content, processing', {
     conferenceRecordName: conferenceRecord.name,
-    transcriptName: readyTranscript.name,
+    contentSource,
+    contentName,
+    hasDocsDocument: !!contentDocId,
   });
 
   // Store raw event for audit
@@ -493,15 +584,16 @@ async function processCalendarEvent(
   const [rawEvent] = await db
     .insert(rawEvents)
     .values({
-      eventType: 'meet.transcript.fileGenerated',
+      eventType: contentSource === 'smart_notes' ? 'meet.smartNotes.fileGenerated' : 'meet.transcript.fileGenerated',
       zoomEventId: eventId,
       payload: {
         source: 'calendar_poll',
         calendarEventId: event.id,
         calendarEventSummary: event.summary,
         conferenceRecordName: conferenceRecord.name,
-        transcriptName: readyTranscript.name,
-        docsDocument: readyTranscript.docsDestination?.document,
+        contentSource,
+        contentName,
+        docsDocument: contentDocId,
       },
       status: 'pending',
       meetingId: conferenceRecord.name,

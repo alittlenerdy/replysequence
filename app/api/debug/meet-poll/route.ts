@@ -13,6 +13,7 @@ import { decrypt } from '@/lib/encryption';
 
 const CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
 const MEET_API = 'https://meet.googleapis.com/v2';
+const MEET_API_BETA = 'https://meet.googleapis.com/v2beta';
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET?.trim();
 
@@ -171,6 +172,12 @@ export async function GET() {
         state?: string;
         name?: string;
       } | null;
+      smartNotes: {
+        found: boolean;
+        state?: string;
+        name?: string;
+        documentId?: string;
+      } | null;
       issues: string[];
     }
 
@@ -187,6 +194,7 @@ export async function GET() {
         hasEnded: false,
         conferenceRecord: null,
         transcript: null,
+        smartNotes: null,
         issues: [],
       };
 
@@ -265,7 +273,7 @@ export async function GET() {
                     }
                   } else {
                     analysis.transcript = { found: false };
-                    analysis.issues.push('No transcripts found for this conference record');
+                    // Don't add issue yet - check for Smart Notes first
                   }
                 } else {
                   const trError = await trResponse.text();
@@ -273,6 +281,55 @@ export async function GET() {
                 }
               } catch (trErr) {
                 analysis.issues.push(`Transcript fetch error: ${(trErr as Error).message}`);
+              }
+
+              // Check for Smart Notes (Gemini AI notes) via v2beta API
+              try {
+                log(`Checking Smart Notes (Gemini) for ${record.name}...`);
+                const snResponse = await fetch(
+                  `${MEET_API_BETA}/${record.name}/smartNotes`,
+                  { headers: { Authorization: `Bearer ${accessToken}` } }
+                );
+
+                if (snResponse.ok) {
+                  const snData = await snResponse.json();
+                  const smartNotes = snData.smartNotes || [];
+
+                  if (smartNotes.length > 0) {
+                    const note = smartNotes[0];
+                    analysis.smartNotes = {
+                      found: true,
+                      state: note.state,
+                      name: note.name,
+                      documentId: note.docsDestination?.document,
+                    };
+                    log(`Found Smart Notes: ${note.name} (state: ${note.state})`);
+
+                    if (note.state === 'FILE_GENERATED') {
+                      // Smart Notes ready - this can be used for draft generation
+                      log(`Smart Notes ready with doc: ${note.docsDestination?.document}`);
+                    }
+                  } else {
+                    analysis.smartNotes = { found: false };
+                  }
+                } else {
+                  // Smart Notes API may return 404 if not enabled
+                  analysis.smartNotes = { found: false };
+                  log(`Smart Notes API returned ${snResponse.status}`);
+                }
+              } catch (snErr) {
+                analysis.smartNotes = { found: false };
+                log(`Smart Notes check error: ${(snErr as Error).message}`);
+              }
+
+              // Add issue if neither transcript nor smart notes are ready
+              if (!analysis.transcript?.found && !analysis.smartNotes?.found) {
+                analysis.issues.push('No transcripts or Smart Notes found for this conference record');
+              } else if (
+                analysis.transcript?.state !== 'FILE_GENERATED' &&
+                analysis.smartNotes?.state !== 'FILE_GENERATED'
+              ) {
+                analysis.issues.push('Neither transcript nor Smart Notes are ready (FILE_GENERATED)');
               }
             } else {
               analysis.conferenceRecord = { found: false };
@@ -296,7 +353,10 @@ export async function GET() {
     const eventsWithMeetEnded = eventAnalysis.filter(e => e.hasMeetLink && e.hasEnded);
     const eventsWithConference = eventAnalysis.filter(e => e.conferenceRecord?.found);
     const eventsWithTranscript = eventAnalysis.filter(e => e.transcript?.found);
-    const eventsReady = eventAnalysis.filter(e => e.transcript?.state === 'FILE_GENERATED');
+    const eventsWithSmartNotes = eventAnalysis.filter(e => e.smartNotes?.found);
+    const eventsReady = eventAnalysis.filter(e =>
+      e.transcript?.state === 'FILE_GENERATED' || e.smartNotes?.state === 'FILE_GENERATED'
+    );
 
     return NextResponse.json({
       success: true,
@@ -307,6 +367,7 @@ export async function GET() {
         eventsWithMeetLinkAndEnded: eventsWithMeetEnded.length,
         eventsWithConferenceRecord: eventsWithConference.length,
         eventsWithTranscript: eventsWithTranscript.length,
+        eventsWithSmartNotes: eventsWithSmartNotes.length,
         eventsReadyForProcessing: eventsReady.length,
       },
       user: {

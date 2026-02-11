@@ -194,6 +194,21 @@ export interface TranscriptFileGeneratedEvent {
 }
 
 /**
+ * Smart Notes (Gemini AI-generated meeting notes) from Meet REST API v2beta
+ * These are AI-generated summaries created by "Take notes for me" feature
+ */
+export interface MeetSmartNotes {
+  name: string; // Format: conferenceRecords/{record}/smartNotes/{smartNote}
+  state: 'STATE_UNSPECIFIED' | 'STARTED' | 'ENDED' | 'FILE_GENERATED';
+  startTime?: string;
+  endTime?: string;
+  docsDestination?: {
+    document: string; // Google Docs document ID
+    exportUri: string; // URL to download/view
+  };
+}
+
+/**
  * Union type for all Workspace Events we handle
  */
 export type MeetWorkspaceEventUnion =
