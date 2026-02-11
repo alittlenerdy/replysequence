@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db, users, meetConnections } from '@/lib/db';
 import { decrypt } from '@/lib/encryption';
+import { searchMeetRecordingsFolder, DriveFile } from '@/lib/drive-api';
 
 const CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
 const MEET_API = 'https://meet.googleapis.com/v2';
@@ -178,6 +179,10 @@ export async function GET() {
         name?: string;
         documentId?: string;
       } | null;
+      driveFiles: {
+        found: boolean;
+        files?: Array<{ id: string; name: string; mimeType: string; modifiedTime: string }>;
+      } | null;
       issues: string[];
     }
 
@@ -195,6 +200,7 @@ export async function GET() {
         conferenceRecord: null,
         transcript: null,
         smartNotes: null,
+        driveFiles: null,
         issues: [],
       };
 
@@ -322,9 +328,54 @@ export async function GET() {
                 log(`Smart Notes check error: ${(snErr as Error).message}`);
               }
 
-              // Add issue if neither transcript nor smart notes are ready
+              // If neither transcript nor smart notes found, search Google Drive
               if (!analysis.transcript?.found && !analysis.smartNotes?.found) {
-                analysis.issues.push('No transcripts or Smart Notes found for this conference record');
+                log('No transcripts or Smart Notes found, searching Google Drive...');
+
+                try {
+                  // Get meeting end time for Drive search
+                  const meetingEndTime = record.endTime
+                    ? new Date(record.endTime)
+                    : new Date();
+
+                  const driveFiles = await searchMeetRecordingsFolder(
+                    accessToken,
+                    meetingEndTime,
+                    120 // 2 hour window
+                  );
+
+                  if (driveFiles.length > 0) {
+                    analysis.driveFiles = {
+                      found: true,
+                      files: driveFiles.map((f: DriveFile) => ({
+                        id: f.id,
+                        name: f.name,
+                        mimeType: f.mimeType,
+                        modifiedTime: f.modifiedTime,
+                      })),
+                    };
+                    log(`Found ${driveFiles.length} files in Meet Recordings folder`);
+
+                    // Check if any are Google Docs (potential transcripts)
+                    const docFiles = driveFiles.filter(
+                      (f: DriveFile) => f.mimeType === 'application/vnd.google-apps.document'
+                    );
+                    if (docFiles.length > 0) {
+                      analysis.issues.push(
+                        `Found ${docFiles.length} Google Doc(s) in Meet Recordings folder - may contain notes`
+                      );
+                    } else {
+                      analysis.issues.push('No transcripts/Smart Notes via API, but found files in Drive');
+                    }
+                  } else {
+                    analysis.driveFiles = { found: false };
+                    analysis.issues.push('No transcripts, Smart Notes, or Drive files found');
+                  }
+                } catch (driveErr) {
+                  analysis.driveFiles = { found: false };
+                  log(`Drive search error: ${(driveErr as Error).message}`);
+                  analysis.issues.push('No transcripts or Smart Notes found for this conference record');
+                }
               } else if (
                 analysis.transcript?.state !== 'FILE_GENERATED' &&
                 analysis.smartNotes?.state !== 'FILE_GENERATED'
@@ -354,8 +405,11 @@ export async function GET() {
     const eventsWithConference = eventAnalysis.filter(e => e.conferenceRecord?.found);
     const eventsWithTranscript = eventAnalysis.filter(e => e.transcript?.found);
     const eventsWithSmartNotes = eventAnalysis.filter(e => e.smartNotes?.found);
+    const eventsWithDriveFiles = eventAnalysis.filter(e => e.driveFiles?.found);
     const eventsReady = eventAnalysis.filter(e =>
-      e.transcript?.state === 'FILE_GENERATED' || e.smartNotes?.state === 'FILE_GENERATED'
+      e.transcript?.state === 'FILE_GENERATED' ||
+      e.smartNotes?.state === 'FILE_GENERATED' ||
+      (e.driveFiles?.files?.some(f => f.mimeType === 'application/vnd.google-apps.document'))
     );
 
     return NextResponse.json({
@@ -368,6 +422,7 @@ export async function GET() {
         eventsWithConferenceRecord: eventsWithConference.length,
         eventsWithTranscript: eventsWithTranscript.length,
         eventsWithSmartNotes: eventsWithSmartNotes.length,
+        eventsWithDriveFiles: eventsWithDriveFiles.length,
         eventsReadyForProcessing: eventsReady.length,
       },
       user: {
