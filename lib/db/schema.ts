@@ -745,3 +745,58 @@ export const calendarWatchChannels = pgTable(
 
 export type CalendarWatchChannel = typeof calendarWatchChannels.$inferSelect;
 export type NewCalendarWatchChannel = typeof calendarWatchChannels.$inferInsert;
+
+// Recall bot status enum values
+export type RecallBotStatus = 'pending' | 'scheduled' | 'joining' | 'in_call' | 'recording' | 'completed' | 'failed' | 'cancelled';
+
+// Recall bots table - tracks bots scheduled to join meetings
+export const recallBots = pgTable(
+  'recall_bots',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Recall.ai bot info
+    recallBotId: text('recall_bot_id').unique(), // Recall's bot ID
+    // Meeting info
+    meetingId: uuid('meeting_id').references(() => meetings.id, { onDelete: 'set null' }), // Link to our meeting record
+    calendarEventId: text('calendar_event_id'), // External calendar event ID
+    meetingUrl: text('meeting_url').notNull(),
+    meetingTitle: text('meeting_title'),
+    platform: meetingPlatformEnum('platform'),
+    // Scheduling
+    scheduledJoinAt: timestamp('scheduled_join_at', { withTimezone: true }).notNull(),
+    actualJoinAt: timestamp('actual_join_at', { withTimezone: true }),
+    endedAt: timestamp('ended_at', { withTimezone: true }),
+    // Status tracking
+    status: varchar('status', { length: 50 }).$type<RecallBotStatus>().notNull().default('pending'),
+    lastStatusCode: text('last_status_code'), // Recall's status code
+    lastStatusMessage: text('last_status_message'),
+    // Transcript info
+    transcriptId: text('transcript_id'), // Recall's transcript ID
+    transcriptStatus: varchar('transcript_status', { length: 50 }),
+    // Recording info
+    recordingId: text('recording_id'), // Recall's recording ID
+    recordingUrl: text('recording_url'),
+    // Metadata
+    metadata: jsonb('metadata').$type<Record<string, string>>(),
+    // Error tracking
+    errorMessage: text('error_message'),
+    retryCount: integer('retry_count').notNull().default(0),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('recall_bots_recall_bot_id_idx').on(table.recallBotId),
+    index('recall_bots_user_id_idx').on(table.userId),
+    index('recall_bots_meeting_id_idx').on(table.meetingId),
+    index('recall_bots_status_idx').on(table.status),
+    index('recall_bots_scheduled_join_at_idx').on(table.scheduledJoinAt),
+    index('recall_bots_calendar_event_id_idx').on(table.calendarEventId),
+  ]
+);
+
+export type RecallBot = typeof recallBots.$inferSelect;
+export type NewRecallBot = typeof recallBots.$inferInsert;

@@ -9,6 +9,9 @@
     "app/api/webhooks/meet/route.ts": {
       "maxDuration": 60
     },
+    "app/api/webhooks/recall/route.ts": {
+      "maxDuration": 60
+    },
     "app/api/jobs/process-transcript/route.ts": {
       "maxDuration": 60
     },
@@ -16,6 +19,9 @@
       "maxDuration": 60
     },
     "app/api/cron/poll-meet-recordings/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/schedule-recall-bots/route.ts": {
       "maxDuration": 60
     }
   },
@@ -26,6 +32,10 @@
     },
     {
       "path": "/api/cron/poll-meet-recordings",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/schedule-recall-bots",
       "schedule": "*/5 * * * *"
     }
   ]
