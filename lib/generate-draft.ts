@@ -26,6 +26,7 @@ import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
 import { createMeetingRecord, isAirtableConfigured, type MeetingData } from './airtable';
 import { trackEvent } from './analytics';
+import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
 
 // Draft generation configuration
 const MAX_RETRIES = 3;
@@ -320,6 +321,21 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         });
       });
 
+      // Grade the draft with Claude Haiku (Phase 1 - non-blocking)
+      gradeDraftAsync({
+        draftId: draft.id,
+        subject: parsed.subject,
+        body: finalBody,
+        transcript: context.transcript,
+        meetingTopic: context.meetingTopic,
+        meetingDate: context.meetingDate,
+      }).catch((err) => {
+        log('error', 'Draft grading failed (non-blocking)', {
+          draftId: draft.id,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      });
+
       return {
         success: true,
         draftId: draft.id,
@@ -520,5 +536,73 @@ async function syncDraftToAirtable(params: {
       error: error instanceof Error ? error.message : String(error),
     });
     // Don't rethrow - this is non-blocking
+  }
+}
+
+/**
+ * Grade a draft asynchronously using Claude Haiku
+ * Stores the grading scores in the database
+ * Non-blocking - runs after draft is saved
+ */
+async function gradeDraftAsync(params: {
+  draftId: string;
+  subject: string;
+  body: string;
+  transcript: string;
+  meetingTopic?: string;
+  meetingDate?: string;
+}): Promise<void> {
+  const { draftId, subject, body, transcript, meetingTopic, meetingDate } = params;
+
+  log('info', '[GRADING-1] Starting AI grading for draft', { draftId });
+
+  try {
+    // Call the Haiku grading agent
+    const gradingResult = await gradeWithHaiku({
+      draftId,
+      subject,
+      body,
+      transcript,
+      meetingTopic,
+      meetingDate,
+    });
+
+    if (!gradingResult.success) {
+      log('warn', '[GRADING-2] Grading returned unsuccessful', {
+        draftId,
+        error: gradingResult.error,
+      });
+      return;
+    }
+
+    // Update draft with grading scores
+    await db
+      .update(drafts)
+      .set({
+        toneScore: gradingResult.toneScore,
+        completenessScore: gradingResult.completenessScore,
+        personalizationScore: gradingResult.personalizationScore,
+        accuracyScore: gradingResult.accuracyScore,
+        gradingNotes: gradingResult.gradingNotes,
+        gradedAt: new Date(),
+      })
+      .where(eq(drafts.id, draftId));
+
+    log('info', '[GRADING-3] Draft grading scores saved', {
+      draftId,
+      toneScore: gradingResult.toneScore,
+      completenessScore: gradingResult.completenessScore,
+      personalizationScore: gradingResult.personalizationScore,
+      accuracyScore: gradingResult.accuracyScore,
+      overallScore: gradingResult.overallScore,
+      costUsd: gradingResult.costUsd?.toFixed(6),
+      gradingDurationMs: gradingResult.gradingDurationMs,
+    });
+  } catch (error) {
+    log('error', '[GRADING-ERROR] Draft grading failed', {
+      draftId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // Don't rethrow - grading is non-blocking
   }
 }

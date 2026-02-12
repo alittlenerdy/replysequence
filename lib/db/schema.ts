@@ -204,8 +204,15 @@ export const drafts = pgTable(
     generationStartedAt: timestamp('generation_started_at', { withTimezone: true }),
     generationCompletedAt: timestamp('generation_completed_at', { withTimezone: true }),
     generationDurationMs: integer('generation_duration_ms'),
-    // Quality scoring (0-100)
+    // Quality scoring (0-100) - heuristic-based
     qualityScore: integer('quality_score'),
+    // AI Grading scores (0-100 each) - Claude Haiku based
+    toneScore: integer('tone_score'),
+    completenessScore: integer('completeness_score'),
+    personalizationScore: integer('personalization_score'),
+    accuracyScore: integer('accuracy_score'),
+    gradingNotes: text('grading_notes'),
+    gradedAt: timestamp('graded_at', { withTimezone: true }),
     // Meeting context detection
     meetingType: text('meeting_type').$type<DetectedMeetingType>(),
     toneUsed: text('tone_used').$type<DraftTone>(),
