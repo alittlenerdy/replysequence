@@ -9,6 +9,9 @@ import { NextResponse } from 'next/server';
 import { eq, inArray, count, sql } from 'drizzle-orm';
 import { db, users, meetings, drafts, zoomConnections, teamsConnections, meetConnections } from '@/lib/db';
 
+// Allow longer timeout for cold starts
+export const maxDuration = 60;
+
 // Daily data point for charts
 export interface DailyDataPoint {
   date: string;
