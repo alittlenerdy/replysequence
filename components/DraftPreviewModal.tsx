@@ -25,6 +25,11 @@ interface DraftPreviewModalProps {
   onDraftUpdated: () => void;
 }
 
+interface SuggestedRecipient {
+  email: string;
+  name?: string;
+}
+
 export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPreviewModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -35,6 +40,8 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [sendSuccess, setSendSuccess] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState(draft.meetingHostEmail || '');
+  const [suggestedRecipients, setSuggestedRecipients] = useState<SuggestedRecipient[]>([]);
+  const [loadingRecipients, setLoadingRecipients] = useState(false);
 
   // Edit state
   const [editSubject, setEditSubject] = useState(draft.subject);
@@ -48,6 +55,28 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
       console.log('[EDIT-1] Opening draft editor, id:', draft.id);
     }
   }, [isEditing, draft.id, draft.subject, draft.body]);
+
+  // Fetch suggested recipients from meeting attendees
+  useEffect(() => {
+    async function fetchSuggestedRecipients() {
+      if (draft.status === 'sent' || !draft.meetingId) return;
+
+      setLoadingRecipients(true);
+      try {
+        const response = await fetch(`/api/meetings/${draft.meetingId}/recipients`);
+        if (response.ok) {
+          const data = await response.json();
+          setSuggestedRecipients(data.recipients || []);
+        }
+      } catch (err) {
+        console.error('[DRAFT-MODAL] Error fetching recipients:', err);
+      } finally {
+        setLoadingRecipients(false);
+      }
+    }
+
+    fetchSuggestedRecipients();
+  }, [draft.meetingId, draft.status]);
 
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
@@ -505,6 +534,52 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                           {error}
                         </div>
                       ) : null}
+
+                      {/* Suggested Recipients from Meeting Attendees */}
+                      {suggestedRecipients.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Meeting attendees
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {suggestedRecipients.map((recipient) => (
+                              <button
+                                key={recipient.email}
+                                onClick={() => setRecipientEmail(recipient.email)}
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full transition-colors ${
+                                  recipientEmail === recipient.email
+                                    ? 'bg-blue-500/30 text-blue-300 border border-blue-500/50'
+                                    : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:text-white'
+                                }`}
+                                title={recipient.name ? `${recipient.name} <${recipient.email}>` : recipient.email}
+                              >
+                                <span className="truncate max-w-[150px]">
+                                  {recipient.name || recipient.email.split('@')[0]}
+                                </span>
+                                {recipientEmail === recipient.email && (
+                                  <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {loadingRecipients && (
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Loading meeting attendees...
+                        </div>
+                      )}
+
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1">
                           <label htmlFor="recipient" className="sr-only">Recipient Email</label>
