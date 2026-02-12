@@ -136,14 +136,32 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
 
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await fetch('/api/calendar/events?days=7');
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch('/api/calendar/events?days=7', {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         setEvents(data.events || []);
         setCalendarConnected(data.calendarConnected ?? false);
+      } else {
+        console.error('[UPCOMING-MEETINGS] API returned error:', response.status);
+        // Still set calendarConnected to null so we show "connect calendar" message
+        setCalendarConnected(null);
       }
     } catch (error) {
-      console.error('[UPCOMING-MEETINGS] Failed to fetch events:', error);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.error('[UPCOMING-MEETINGS] Request timed out');
+      } else {
+        console.error('[UPCOMING-MEETINGS] Failed to fetch events:', error);
+      }
+      // On error, assume calendar might not be connected
+      setCalendarConnected(null);
     } finally {
       setLoading(false);
     }
