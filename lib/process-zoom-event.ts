@@ -1,5 +1,5 @@
-import { db, meetings, rawEvents, transcripts } from '@/lib/db';
-import { eq } from 'drizzle-orm';
+import { db, meetings, rawEvents, transcripts, zoomConnections } from '@/lib/db';
+import { eq, sql } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
@@ -89,6 +89,38 @@ function log(
       ...data,
     })
   );
+}
+
+/**
+ * Look up the user ID by matching host email to a zoom connection
+ * Uses case-insensitive email comparison
+ * Returns null if no matching connection found
+ */
+async function lookupUserIdByEmail(hostEmail: string): Promise<string | null> {
+  try {
+    const [connection] = await db
+      .select({ userId: zoomConnections.userId })
+      .from(zoomConnections)
+      .where(sql`LOWER(${zoomConnections.zoomEmail}) = LOWER(${hostEmail})`)
+      .limit(1);
+
+    if (connection) {
+      log('info', 'Found user ID from zoom connection', {
+        hostEmail,
+        userId: connection.userId,
+      });
+      return connection.userId;
+    }
+
+    log('info', 'No zoom connection found for host email', { hostEmail });
+    return null;
+  } catch (error) {
+    log('warn', 'Error looking up user by email (non-fatal)', {
+      hostEmail,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 }
 
 /**
@@ -211,11 +243,17 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
 
   const zoomMeetingId = meetingObject.uuid;
 
+  const hostEmail = meetingObject.host_email || 'unknown@unknown.com';
+
   log('info', 'Processing meeting.ended', {
     rawEventId: rawEvent.id,
     zoomMeetingId,
     topic: meetingObject.topic,
+    hostEmail,
   });
+
+  // Look up user ID from zoom connection
+  const userId = await lookupUserIdByEmail(hostEmail);
 
   // Check if meeting already exists
   const [existingMeeting] = await db
@@ -226,13 +264,18 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
 
   const meetingData: Partial<NewMeeting> = {
     zoomMeetingId,
-    hostEmail: meetingObject.host_email || 'unknown@unknown.com',
+    hostEmail,
     topic: meetingObject.topic || 'Untitled Meeting',
     startTime: meetingObject.start_time ? new Date(meetingObject.start_time) : null,
     endTime: meetingObject.end_time ? new Date(meetingObject.end_time) : null,
     duration: meetingObject.duration || null,
     updatedAt: new Date(),
   };
+
+  // Add userId if found (link meeting to user)
+  if (userId) {
+    meetingData.userId = userId;
+  }
 
   if (existingMeeting) {
     // Update existing meeting with end time data
@@ -245,6 +288,7 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
       rawEventId: rawEvent.id,
       meetingId: existingMeeting.id,
       zoomMeetingId,
+      userId: userId || 'not found',
     });
 
     return { success: true, meetingId: existingMeeting.id, action: 'updated' };
@@ -267,6 +311,7 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
       meetingId: newMeeting.id,
       zoomMeetingId,
       platform: ZOOM_PLATFORM,
+      userId: userId || 'not found',
     });
 
     return { success: true, meetingId: newMeeting.id, action: 'created' };
@@ -310,9 +355,12 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     (f) => f.file_type === 'MP4' && f.status === 'completed'
   );
 
+  const hostEmail = recordingObject.host_email || 'unknown@unknown.com';
+
   log('info', 'Processing recording.completed', {
     rawEventId: rawEvent.id,
     zoomMeetingId,
+    hostEmail,
     hasTranscript: !!transcriptFile,
     hasVideo: !!videoFile,
     recordingFilesCount: recordingFiles.length,
@@ -322,6 +370,9 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       recording_type: f.recording_type,
     })),
   });
+
+  // Look up user ID from zoom connection
+  const userId = await lookupUserIdByEmail(hostEmail);
 
   // Check if meeting exists
   startStage(pipelineId, STAGES.MEETING_FETCHED, { zoomMeetingId });
@@ -333,7 +384,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
   endStage(pipelineId, STAGES.MEETING_FETCHED, { found: !!existingMeeting });
 
   const meetingData: Partial<NewMeeting> = {
-    hostEmail: recordingObject.host_email || 'unknown@unknown.com',
+    hostEmail,
     topic: recordingObject.topic || 'Untitled Meeting',
     startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,
     duration: recordingObject.duration || null,
@@ -342,6 +393,11 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
     status: 'pending', // Will be updated when transcript job completes
     updatedAt: new Date(),
   };
+
+  // Add userId if found (link meeting to user)
+  if (userId) {
+    meetingData.userId = userId;
+  }
 
   let meetingId: string;
 
@@ -360,6 +416,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       meetingId,
       zoomMeetingId,
       hasTranscript: !!transcriptFile,
+      userId: userId || 'not found',
       latencyMs: Date.now() - startTime,
     });
   } else {
@@ -382,6 +439,7 @@ async function processRecordingCompleted(rawEvent: RawEvent): Promise<ProcessRes
       meetingId,
       zoomMeetingId,
       platform: ZOOM_PLATFORM,
+      userId: userId || 'not found',
       latencyMs: Date.now() - startTime,
     });
   }
@@ -518,10 +576,14 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     return { success: true, action: 'skipped' };
   }
 
+  // Look up user ID from zoom connection
+  const hostEmail = recordingObject.host_email || 'unknown@unknown.com';
+  const userId = await lookupUserIdByEmail(hostEmail);
+
   // [TRANSCRIPT-3] Track meeting fetch/create stage
   startStage(pipelineId, STAGES.MEETING_FETCHED, { zoomMeetingId });
 
-  log('info', '[TRANSCRIPT-3] Querying database for existing meeting', { zoomMeetingId });
+  log('info', '[TRANSCRIPT-3] Querying database for existing meeting', { zoomMeetingId, hostEmail });
 
   const [existingMeeting] = await db
     .select()
@@ -535,34 +597,36 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
     zoomMeetingId,
     meetingFound: !!existingMeeting,
     existingMeetingId: existingMeeting?.id || 'none',
+    userId: userId || 'not found',
   });
 
   let meetingId: string;
 
   if (!existingMeeting) {
     startStage(pipelineId, STAGES.MEETING_CREATED, { zoomMeetingId });
-    log('info', '[TRANSCRIPT-3] Creating new meeting in database', { zoomMeetingId });
+    log('info', '[TRANSCRIPT-3] Creating new meeting in database', { zoomMeetingId, userId: userId || 'not found' });
 
     const [newMeeting] = await db
       .insert(meetings)
       .values({
         zoomMeetingId,
         platformMeetingId: zoomMeetingId, // Generic platform ID for multi-platform support
-        hostEmail: recordingObject.host_email || 'unknown@unknown.com',
+        hostEmail,
         topic: recordingObject.topic || 'Untitled Meeting',
         startTime: recordingObject.start_time ? new Date(recordingObject.start_time) : null,
         duration: recordingObject.duration || null,
         transcriptDownloadUrl: transcriptFile.download_url,
         platform: ZOOM_PLATFORM,
         status: 'pending',
+        ...(userId ? { userId } : {}), // Link to user if found
       })
       .returning();
 
     meetingId = newMeeting.id;
     endStage(pipelineId, STAGES.MEETING_CREATED, { meetingId });
-    log('info', '[TRANSCRIPT-3] Meeting created', { meetingId });
+    log('info', '[TRANSCRIPT-3] Meeting created', { meetingId, userId: userId || 'not found' });
   } else {
-    log('info', '[TRANSCRIPT-3] Updating existing meeting', { meetingId: existingMeeting.id });
+    log('info', '[TRANSCRIPT-3] Updating existing meeting', { meetingId: existingMeeting.id, userId: userId || 'not found' });
 
     await db
       .update(meetings)
@@ -570,11 +634,12 @@ async function processTranscriptCompleted(rawEvent: RawEvent): Promise<ProcessRe
         transcriptDownloadUrl: transcriptFile.download_url,
         status: 'pending',
         updatedAt: new Date(),
+        ...(userId ? { userId } : {}), // Link to user if found
       })
       .where(eq(meetings.id, existingMeeting.id));
 
     meetingId = existingMeeting.id;
-    log('info', '[TRANSCRIPT-3] Meeting updated', { meetingId });
+    log('info', '[TRANSCRIPT-3] Meeting updated', { meetingId, userId: userId || 'not found' });
   }
 
   // [TRANSCRIPT-4] Starting transcript download

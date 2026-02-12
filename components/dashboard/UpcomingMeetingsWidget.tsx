@@ -131,6 +131,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
   const [events, setEvents] = useState<CalendarEvent[]>(initialEvents || []);
   const [loading, setLoading] = useState(!initialEvents);
   const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
+  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
   const hasFetched = useRef(false);
 
   const fetchEvents = useCallback(async () => {
@@ -139,6 +140,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
       if (response.ok) {
         const data = await response.json();
         setEvents(data.events || []);
+        setCalendarConnected(data.calendarConnected ?? false);
       }
     } catch (error) {
       console.error('[UPCOMING-MEETINGS] Failed to fetch events:', error);
@@ -181,7 +183,8 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
 
   // Filter to only show events with meeting URLs
   const meetingEvents = events.filter((e) => e.meetingUrl);
-  const hasCalendarConnected = events.length > 0 || meetingEvents.length > 0;
+  // Use the calendarConnected flag from API, fallback to checking if we have any events
+  const hasCalendarConnected = calendarConnected ?? (events.length > 0);
 
   // Loading skeleton
   if (loading) {
