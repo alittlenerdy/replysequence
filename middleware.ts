@@ -2,7 +2,17 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)'])
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/api/drafts(.*)',
+  '/api/analytics(.*)',
+  '/api/billing(.*)',
+  '/api/calendar(.*)',
+  '/api/meetings(.*)',
+  '/api/onboarding(.*)',
+  '/api/stripe/create-checkout(.*)',
+  '/api/stripe/create-portal(.*)',
+])
 
 // Generate a random nonce for CSP
 function generateNonce(): string {

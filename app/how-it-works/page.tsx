@@ -116,22 +116,25 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
 
 // Orbiting platform icons - planetary style like homepage
 function OrbitingPlatforms() {
-  const platforms = [
+  // Outer orbit: Zoom and Meet (opposite sides)
+  const outerPlatforms = [
     { Icon: ZoomIcon, color: '#2D8CFF', angle: 0, label: 'Zoom' },
-    { Icon: TeamsIcon, color: '#5B5FC7', angle: 120, label: 'Teams' },
-    { Icon: MeetIcon, color: '#00897B', angle: 240, label: 'Meet' },
+    { Icon: MeetIcon, color: '#00897B', angle: 180, label: 'Meet' },
   ];
+
+  // Middle orbit: Teams only
+  const middlePlatform = { Icon: TeamsIcon, color: '#5B5FC7', angle: 90, label: 'Teams' };
 
   return (
     <div className="relative w-64 h-64 md:w-80 md:h-80">
       {/* Outer glow effect */}
       <motion.div
-        className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 blur-2xl"
+        className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500/10 via-rose-500/5 to-fuchsia-500/10 blur-2xl"
         animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Orbital ring */}
+      {/* Outer orbital ring */}
       <div
         className="absolute rounded-full border-2 border-blue-500/20 animate-orbit-slow"
         style={{
@@ -145,8 +148,8 @@ function OrbitingPlatforms() {
         {/* Orbital ring glow */}
         <div className="absolute inset-0 rounded-full border border-purple-500/10" />
 
-        {/* Platform icons on orbit */}
-        {platforms.map((item, i) => {
+        {/* Zoom and Meet on outer orbit */}
+        {outerPlatforms.map((item, i) => {
           const IconComponent = item.Icon;
           return (
             <div
@@ -174,12 +177,46 @@ function OrbitingPlatforms() {
         })}
       </div>
 
-      {/* Inner decorative ring */}
+      {/* Middle orbit for Teams */}
       <div
         className="absolute rounded-full border border-purple-500/20 animate-orbit-reverse"
         style={{
-          width: '60%',
-          height: '60%',
+          width: '70%',
+          height: '70%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        {/* Teams on middle orbit */}
+        <div
+          className="absolute"
+          style={{
+            top: '50%',
+            left: '50%',
+            transform: `rotate(${middlePlatform.angle}deg) translateX(min(90px, 28vw)) translateY(-50%)`,
+          }}
+        >
+          <motion.div
+            className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-xl flex items-center justify-center animate-orbit-slow"
+            style={{
+              backgroundColor: middlePlatform.color,
+              boxShadow: `0 4px 20px ${middlePlatform.color}50`,
+            }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 3, repeat: Infinity, delay: 0.4 }}
+          >
+            <middlePlatform.Icon className="w-6 h-6 md:w-7 md:h-7" />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Inner decorative ring */}
+      <div
+        className="absolute rounded-full border border-pink-500/20"
+        style={{
+          width: '45%',
+          height: '45%',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
@@ -190,15 +227,15 @@ function OrbitingPlatforms() {
       <div className="absolute inset-0 flex items-center justify-center">
         {/* Outer glow */}
         <motion.div
-          className="absolute w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 blur-xl"
+          className="absolute w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-pink-500/30 to-rose-500/30 blur-xl"
           animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0.9, 0.6] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         />
 
         {/* Core */}
         <motion.div
-          className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl flex items-center justify-center"
-          style={{ boxShadow: '0 0 40px rgba(139, 92, 246, 0.5)' }}
+          className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-2xl flex items-center justify-center"
+          style={{ boxShadow: '0 0 40px rgba(244, 63, 94, 0.5)' }}
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
@@ -213,13 +250,13 @@ function OrbitingPlatforms() {
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
         <defs>
           <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(59, 130, 246, 0.3)" />
-            <stop offset="100%" stopColor="rgba(139, 92, 246, 0.3)" />
+            <stop offset="0%" stopColor="rgba(244, 63, 94, 0.3)" />
+            <stop offset="100%" stopColor="rgba(236, 72, 153, 0.3)" />
           </linearGradient>
         </defs>
-        {platforms.map((item, i) => {
+        {/* Lines to outer platforms */}
+        {outerPlatforms.map((item, i) => {
           const angle = (item.angle * Math.PI) / 180;
-          const radius = 128;
           const x2 = 50 + Math.cos(angle) * 40;
           const y2 = 50 + Math.sin(angle) * 40;
           return (
@@ -238,6 +275,26 @@ function OrbitingPlatforms() {
             />
           );
         })}
+        {/* Line to Teams on middle orbit */}
+        {(() => {
+          const angle = (middlePlatform.angle * Math.PI) / 180;
+          const x2 = 50 + Math.cos(angle) * 28;
+          const y2 = 50 + Math.sin(angle) * 28;
+          return (
+            <motion.line
+              x1="50%"
+              y1="50%"
+              x2={`${x2}%`}
+              y2={`${y2}%`}
+              stroke="url(#connectionGradient)"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.2, 0.5, 0.2] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+            />
+          );
+        })()}
       </svg>
     </div>
   );

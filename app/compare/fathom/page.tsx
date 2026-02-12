@@ -513,7 +513,7 @@ export default function FathomComparisonPage() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-6"
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {pricingComparison.map((tier, index) => (
               <motion.div

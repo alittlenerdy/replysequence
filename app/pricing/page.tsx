@@ -181,7 +181,7 @@ async function PricingContent() {
                 >
                   {/* Most Popular Badge */}
                   {tier.highlighted && !isCurrentPlan && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
                       <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-lg">
                         <Sparkles className="w-4 h-4" />
                         Most Popular
@@ -191,7 +191,7 @@ async function PricingContent() {
 
                   {/* Current Plan Badge */}
                   {isCurrentPlan && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
                       <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-semibold border border-emerald-500/30">
                         <Check className="w-4 h-4" />
                         Current Plan
@@ -200,7 +200,7 @@ async function PricingContent() {
                   )}
 
                   {/* Header */}
-                  <div className="mb-6 mt-2">
+                  <div className="mb-6 mt-4">
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                       tier.highlighted
                         ? 'bg-blue-500/20'
