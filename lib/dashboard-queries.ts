@@ -52,6 +52,13 @@ export interface DraftWithMeeting {
   clickedAt: Date | null;
   clickCount: number | null;
   repliedAt: Date | null;
+  // Quality grading scores (0-100)
+  qualityScore: number | null;
+  toneScore: number | null;
+  completenessScore: number | null;
+  personalizationScore: number | null;
+  accuracyScore: number | null;
+  gradingNotes: string | null;
 }
 
 export interface DraftsQueryParams {
@@ -160,6 +167,13 @@ export async function getDraftsWithMeetings(
       clickedAt: drafts.clickedAt,
       clickCount: drafts.clickCount,
       repliedAt: drafts.repliedAt,
+      // Quality grading scores
+      qualityScore: drafts.qualityScore,
+      toneScore: drafts.toneScore,
+      completenessScore: drafts.completenessScore,
+      personalizationScore: drafts.personalizationScore,
+      accuracyScore: drafts.accuracyScore,
+      gradingNotes: drafts.gradingNotes,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))
@@ -207,6 +221,13 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       clickedAt: drafts.clickedAt,
       clickCount: drafts.clickCount,
       repliedAt: drafts.repliedAt,
+      // Quality grading scores
+      qualityScore: drafts.qualityScore,
+      toneScore: drafts.toneScore,
+      completenessScore: drafts.completenessScore,
+      personalizationScore: drafts.personalizationScore,
+      accuracyScore: drafts.accuracyScore,
+      gradingNotes: drafts.gradingNotes,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))

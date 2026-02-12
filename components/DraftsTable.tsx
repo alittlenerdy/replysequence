@@ -5,6 +5,16 @@ import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftPreviewModal } from './DraftPreviewModal';
 
+// Convert 0-100 score to 1-5 stars for compact display
+function scoreToStars(score: number | null): number {
+  if (score === null) return 0;
+  if (score >= 90) return 5;
+  if (score >= 75) return 4;
+  if (score >= 60) return 3;
+  if (score >= 40) return 2;
+  return 1;
+}
+
 interface DraftsTableProps {
   drafts: DraftWithMeeting[];
   total: number;
@@ -187,6 +197,24 @@ export function DraftsTable({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <StatusBadge status={draft.status} size="sm" />
+                      {/* Quality score stars */}
+                      {draft.qualityScore !== null && (
+                        <span
+                          className="inline-flex items-center gap-0.5"
+                          title={`Quality: ${draft.qualityScore}/100`}
+                        >
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <svg
+                              key={star}
+                              className={`w-3 h-3 ${star <= scoreToStars(draft.qualityScore) ? 'text-yellow-400' : 'text-gray-600'}`}
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </span>
+                      )}
                       {/* Engagement indicators for sent emails */}
                       {draft.status === 'sent' && (
                         <div className="flex items-center gap-1">

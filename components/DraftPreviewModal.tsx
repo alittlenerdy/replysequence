@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
+import { DraftQualityBadge } from './ui/DraftQualityBadge';
 
 // Dynamic import TipTap editor to reduce initial bundle size
 const RichTextEditor = dynamic(
@@ -222,6 +223,16 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                   {isEditing ? 'Edit Draft' : 'Draft Preview'}
                 </h2>
                 <StatusBadge status={draft.status} />
+                {draft.qualityScore !== null && (
+                  <DraftQualityBadge
+                    qualityScore={draft.qualityScore}
+                    toneScore={draft.toneScore}
+                    completenessScore={draft.completenessScore}
+                    personalizationScore={draft.personalizationScore}
+                    accuracyScore={draft.accuracyScore}
+                    gradingNotes={draft.gradingNotes}
+                  />
+                )}
               </div>
               <div className="flex items-center gap-2">
                 {/* Delete button */}
@@ -418,6 +429,27 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </p>
                       </div>
                     </div>
+
+                    {/* Quality Scores Detail */}
+                    {draft.qualityScore !== null && (
+                      <div className="pt-4 border-t border-gray-700">
+                        <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          AI Quality Analysis
+                        </h3>
+                        <DraftQualityBadge
+                          qualityScore={draft.qualityScore}
+                          toneScore={draft.toneScore}
+                          completenessScore={draft.completenessScore}
+                          personalizationScore={draft.personalizationScore}
+                          accuracyScore={draft.accuracyScore}
+                          gradingNotes={draft.gradingNotes}
+                          showDetails={true}
+                        />
+                      </div>
+                    )}
 
                     {/* Sent Info with Engagement Tracking */}
                     {draft.status === 'sent' && draft.sentAt ? (
