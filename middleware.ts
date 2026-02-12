@@ -32,12 +32,12 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Build CSP header
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com https://va.vercel-scripts.com https://tally.so https://us-assets.i.posthog.com`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://challenges.cloudflare.com https://va.vercel-scripts.com https://tally.so https://us-assets.i.posthog.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com https://tally.so https://us.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com",
-    "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com https://tally.so",
+    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://*.clerk.services https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com https://tally.so https://us.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com",
+    "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://challenges.cloudflare.com https://tally.so",
     "worker-src 'self' blob:",
     "frame-ancestors 'self'",
     "form-action 'self' https://tally.so",
