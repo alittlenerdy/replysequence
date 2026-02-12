@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, users, userOnboarding } from '@/lib/db';
+import { db, users, userOnboarding, outlookCalendarConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 interface MicrosoftTokenResponse {
@@ -141,11 +141,50 @@ export async function GET(request: NextRequest) {
       console.log('[OUTLOOK-CALENDAR-CALLBACK-7] Using existing user', { userId: user.id });
     }
 
-    // Store encrypted tokens for calendar access
+    // Store encrypted tokens in outlookCalendarConnections table
     const accessTokenEncrypted = encrypt(tokens.access_token);
-    const refreshTokenEncrypted = tokens.refresh_token ? encrypt(tokens.refresh_token) : null;
+    const refreshTokenEncrypted = tokens.refresh_token
+      ? encrypt(tokens.refresh_token)
+      : encrypt(''); // Need a value for required field
 
-    console.log('[OUTLOOK-CALENDAR-CALLBACK-9] Stored calendar tokens');
+    console.log('[OUTLOOK-CALENDAR-CALLBACK-9] Storing calendar tokens in outlookCalendarConnections table');
+
+    // Check if outlook calendar connection already exists for this user
+    const existingConnection = await db.query.outlookCalendarConnections.findFirst({
+      where: eq(outlookCalendarConnections.userId, user.id),
+    });
+
+    if (existingConnection) {
+      // Update existing connection
+      await db
+        .update(outlookCalendarConnections)
+        .set({
+          msUserId: msUser.id,
+          msEmail: msUser.mail || msUser.userPrincipalName,
+          msDisplayName: msUser.displayName || null,
+          accessTokenEncrypted,
+          refreshTokenEncrypted,
+          accessTokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
+          scopes: tokens.scope,
+          lastRefreshedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(outlookCalendarConnections.userId, user.id));
+      console.log('[OUTLOOK-CALENDAR-CALLBACK-9.1] Updated existing outlook calendar connection');
+    } else {
+      // Create new connection
+      await db.insert(outlookCalendarConnections).values({
+        userId: user.id,
+        msUserId: msUser.id,
+        msEmail: msUser.mail || msUser.userPrincipalName,
+        msDisplayName: msUser.displayName || null,
+        accessTokenEncrypted,
+        refreshTokenEncrypted,
+        accessTokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
+        scopes: tokens.scope,
+      });
+      console.log('[OUTLOOK-CALENDAR-CALLBACK-9.1] Created new outlook calendar connection');
+    }
 
     // Update user_onboarding table to mark calendar as connected
     console.log('[OUTLOOK-CALENDAR-CALLBACK-10] Updating user_onboarding with calendarConnected=true');

@@ -549,6 +549,41 @@ export const calendarConnections = pgTable(
 
 export type CalendarConnection = typeof calendarConnections.$inferSelect;
 export type NewCalendarConnection = typeof calendarConnections.$inferInsert;
+
+// Outlook Calendar connections table - stores OAuth tokens for Outlook Calendar users
+export const outlookCalendarConnections = pgTable(
+  'outlook_calendar_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Microsoft account info
+    msUserId: varchar('ms_user_id', { length: 255 }).notNull(),
+    msEmail: varchar('ms_email', { length: 255 }).notNull(),
+    msDisplayName: varchar('ms_display_name', { length: 255 }),
+    // Encrypted tokens (AES-256-GCM)
+    accessTokenEncrypted: text('access_token_encrypted').notNull(),
+    refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+    // Token expiration
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
+    // Scopes granted
+    scopes: text('scopes').notNull(), // Space-separated list
+    // Timestamps
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+    lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('outlook_calendar_connections_user_id_idx').on(table.userId),
+    index('outlook_calendar_connections_ms_user_id_idx').on(table.msUserId),
+    index('outlook_calendar_connections_expires_at_idx').on(table.accessTokenExpiresAt),
+  ]
+);
+
+export type OutlookCalendarConnection = typeof outlookCalendarConnections.$inferSelect;
+export type NewOutlookCalendarConnection = typeof outlookCalendarConnections.$inferInsert;
 export type UsageLog = typeof usageLogs.$inferSelect;
 export type NewUsageLog = typeof usageLogs.$inferInsert;
 

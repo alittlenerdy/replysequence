@@ -1,7 +1,7 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { db, users, zoomConnections, teamsConnections, meetConnections } from '@/lib/db';
+import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 
 export interface PlatformConnectionDetails {
@@ -19,16 +19,22 @@ export interface PlatformConnectionsResult {
     zoom: boolean;
     teams: boolean;
     meet: boolean;
+    calendar: boolean;
+    outlookCalendar: boolean;
   };
   details: {
     zoom: PlatformConnectionDetails;
     teams: PlatformConnectionDetails;
     meet: PlatformConnectionDetails;
+    calendar: PlatformConnectionDetails;
+    outlookCalendar: PlatformConnectionDetails;
   };
   userId?: string;
   zoomEmail?: string;
   teamsEmail?: string;
   meetEmail?: string;
+  calendarEmail?: string;
+  outlookCalendarEmail?: string;
 }
 
 /**
@@ -47,11 +53,13 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] No userId from Clerk auth');
       return {
         connected: false,
-        platforms: { zoom: false, teams: false, meet: false },
+        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false },
         details: {
           zoom: { connected: false },
           teams: { connected: false },
           meet: { connected: false },
+          calendar: { connected: false },
+          outlookCalendar: { connected: false },
         },
       };
     }
@@ -194,22 +202,88 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Meet connection found', { meetEmail, hasRefreshToken: !!connection?.hasRefreshToken });
     }
 
+    // Get Google Calendar connection details
+    let calendarEmail: string | undefined;
+    let calendarDetails: PlatformConnectionDetails = { connected: false };
+    const [calendarConnection] = await db
+      .select({
+        googleEmail: calendarConnections.googleEmail,
+        connectedAt: calendarConnections.connectedAt,
+        expiresAt: calendarConnections.accessTokenExpiresAt,
+        hasRefreshToken: calendarConnections.refreshTokenEncrypted,
+      })
+      .from(calendarConnections)
+      .where(eq(calendarConnections.userId, existingUser.id))
+      .limit(1);
+
+    const calendarConnected = !!calendarConnection;
+    if (calendarConnection) {
+      calendarEmail = calendarConnection.googleEmail;
+      const hasRefreshToken = !!calendarConnection.hasRefreshToken;
+      calendarDetails = {
+        connected: true,
+        email: calendarConnection.googleEmail,
+        connectedAt: calendarConnection.connectedAt,
+        expiresAt: calendarConnection.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+      };
+      console.log('[CHECK-CONNECTION] Google Calendar connection found', { calendarEmail, hasRefreshToken });
+    }
+
+    // Get Outlook Calendar connection details
+    let outlookCalendarEmail: string | undefined;
+    let outlookCalendarDetails: PlatformConnectionDetails = { connected: false };
+    const [outlookConnection] = await db
+      .select({
+        msEmail: outlookCalendarConnections.msEmail,
+        connectedAt: outlookCalendarConnections.connectedAt,
+        expiresAt: outlookCalendarConnections.accessTokenExpiresAt,
+        hasRefreshToken: outlookCalendarConnections.refreshTokenEncrypted,
+      })
+      .from(outlookCalendarConnections)
+      .where(eq(outlookCalendarConnections.userId, existingUser.id))
+      .limit(1);
+
+    const outlookCalendarConnected = !!outlookConnection;
+    if (outlookConnection) {
+      outlookCalendarEmail = outlookConnection.msEmail;
+      const hasRefreshToken = !!outlookConnection.hasRefreshToken;
+      outlookCalendarDetails = {
+        connected: true,
+        email: outlookConnection.msEmail,
+        connectedAt: outlookConnection.connectedAt,
+        expiresAt: outlookConnection.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+      };
+      console.log('[CHECK-CONNECTION] Outlook Calendar connection found', { outlookCalendarEmail, hasRefreshToken });
+    }
+
+    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected;
+
     return {
-      connected: hasConnection,
+      connected: hasAnyConnection,
       platforms: {
         zoom: zoomConnected,
         teams: teamsConnected,
         meet: meetConnected,
+        calendar: calendarConnected,
+        outlookCalendar: outlookCalendarConnected,
       },
       details: {
         zoom: zoomDetails,
         teams: teamsDetails,
         meet: meetDetails,
+        calendar: calendarDetails,
+        outlookCalendar: outlookCalendarDetails,
       },
       userId: existingUser.id,
       zoomEmail,
       teamsEmail,
       meetEmail,
+      calendarEmail,
+      outlookCalendarEmail,
     };
   }
 
@@ -234,11 +308,13 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
 
   return {
     connected: false,
-    platforms: { zoom: false, teams: false, meet: false },
+    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false },
     details: {
       zoom: { connected: false },
       teams: { connected: false },
       meet: { connected: false },
+      calendar: { connected: false },
+      outlookCalendar: { connected: false },
     },
     userId: newUser.id,
   };
@@ -247,11 +323,13 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     // Return disconnected state on error to show integration cards
     return {
       connected: false,
-      platforms: { zoom: false, teams: false, meet: false },
+      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false },
       details: {
         zoom: { connected: false },
         teams: { connected: false },
         meet: { connected: false },
+        calendar: { connected: false },
+        outlookCalendar: { connected: false },
       },
     };
   }
