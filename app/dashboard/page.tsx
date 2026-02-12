@@ -7,6 +7,9 @@ import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 // Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic';
 
+// Allow longer timeout for cold starts
+export const maxDuration = 60;
+
 export const metadata = {
   title: 'Drafts | ReplySequence',
   description: 'View and manage your AI-generated email drafts',

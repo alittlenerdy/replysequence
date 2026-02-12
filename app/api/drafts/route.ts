@@ -3,6 +3,9 @@ import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
+// Allow longer timeout for cold starts
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest) {
   // Apply rate limiting
   const clientId = getClientIdentifier(request);
