@@ -83,13 +83,14 @@ export interface AirtableContact {
 export interface MeetingData {
   meetingTitle: string;
   meetingDate: Date;
-  platform: 'zoom' | 'microsoft_teams';
+  platform: 'zoom' | 'microsoft_teams' | 'google_meet';
   duration?: number;
   draftSubject: string;
   draftBody: string;
   emailSent: boolean;
   zoomMeetingId?: string;
   teamsMeetingId?: string;
+  googleMeetId?: string;
   contactId?: string;
 }
 
@@ -195,12 +196,19 @@ export async function createMeetingRecord(
     hasContact: !!data.contactId,
   });
 
+  // Map platform to display name
+  const platformDisplayName = {
+    zoom: 'Zoom',
+    microsoft_teams: 'Microsoft Teams',
+    google_meet: 'Google Meet',
+  }[data.platform] || data.platform;
+
   // Build fields object
   // Using Airtable.FieldSet type with explicit cast for flexibility
   const fields: Airtable.FieldSet = {
     'Meeting Title': data.meetingTitle,
     'Meeting Date': data.meetingDate.toISOString().split('T')[0], // YYYY-MM-DD format
-    'Platform': data.platform === 'zoom' ? 'Zoom' : 'Microsoft Teams',
+    'Platform': platformDisplayName,
     'Draft Subject': data.draftSubject.substring(0, 255), // Truncate if too long
     'Draft Body': data.draftBody,
     'Email Sent': data.emailSent,
@@ -217,6 +225,10 @@ export async function createMeetingRecord(
 
   if (data.teamsMeetingId) {
     fields['Teams Meeting ID'] = data.teamsMeetingId;
+  }
+
+  if (data.googleMeetId) {
+    fields['Google Meet ID'] = data.googleMeetId;
   }
 
   // Link to contact if found
@@ -318,7 +330,7 @@ export async function syncSentEmailToCrm(params: {
   recipientEmail: string;
   meetingTitle: string;
   meetingDate: Date;
-  platform: 'zoom' | 'microsoft_teams';
+  platform: 'zoom' | 'microsoft_teams' | 'google_meet';
   duration?: number;
   draftSubject: string;
   draftBody: string;
@@ -362,6 +374,7 @@ export async function syncSentEmailToCrm(params: {
       contactId: contact?.id,
       zoomMeetingId: platform === 'zoom' ? platformMeetingId : undefined,
       teamsMeetingId: platform === 'microsoft_teams' ? platformMeetingId : undefined,
+      googleMeetId: platform === 'google_meet' ? platformMeetingId : undefined,
     };
 
     const meetingRecordId = await createMeetingRecord(meetingData);

@@ -24,7 +24,7 @@ import { scoreDraft, type QualityScore } from './quality-scorer';
 import { db, drafts, meetings } from './db';
 import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
-import { createMeetingRecord, isAirtableConfigured, type MeetingData } from './airtable';
+// NOTE: Airtable sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
 
@@ -306,20 +306,8 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         );
       } catch { /* Analytics should never fail the operation */ }
 
-      // Sync to Airtable CRM (non-blocking)
-      syncDraftToAirtable({
-        meetingId,
-        draftId: draft.id,
-        meetingTopic: context.meetingTopic,
-        meetingDate: context.meetingDate,
-        draftSubject: parsed.subject,
-        draftBody: finalBody,
-      }).catch((err) => {
-        log('error', 'Airtable sync failed (non-blocking)', {
-          draftId: draft.id,
-          error: err instanceof Error ? err.message : String(err),
-        });
-      });
+      // NOTE: Airtable sync moved to drafts/send/route.ts to prevent duplicates
+      // CRM records are created only when email is actually sent, not on draft generation
 
       // Grade the draft with Claude Haiku (Phase 1 - non-blocking)
       gradeDraftAsync({
@@ -457,86 +445,6 @@ function isRetryableError(error: Error): boolean {
   if (message.includes('network') || message.includes('econnreset')) return true;
 
   return true; // Default to retryable
-}
-
-/**
- * Sync generated draft to Airtable CRM
- * Non-blocking - runs after draft is saved to DB
- */
-async function syncDraftToAirtable(params: {
-  meetingId: string;
-  draftId: string;
-  meetingTopic: string;
-  meetingDate: string;
-  draftSubject: string;
-  draftBody: string;
-}): Promise<void> {
-  if (!isAirtableConfigured()) {
-    log('info', 'Airtable not configured, skipping draft sync');
-    return;
-  }
-
-  const { meetingId, draftId, meetingTopic, meetingDate, draftSubject, draftBody } = params;
-
-  log('info', '[AIRTABLE-1] Starting draft sync to Airtable', {
-    meetingId,
-    draftId,
-  });
-
-  try {
-    // Fetch meeting details for platform info
-    const [meeting] = await db
-      .select()
-      .from(meetings)
-      .where(eq(meetings.id, meetingId))
-      .limit(1);
-
-    if (!meeting) {
-      log('warn', 'Meeting not found for Airtable sync', { meetingId });
-      return;
-    }
-
-    // Build meeting data for Airtable
-    const meetingData: MeetingData = {
-      meetingTitle: meetingTopic || meeting.topic || 'Meeting',
-      meetingDate: meeting.startTime || new Date(),
-      platform: meeting.platform === 'microsoft_teams' ? 'microsoft_teams' : 'zoom',
-      duration: meeting.duration || undefined,
-      draftSubject,
-      draftBody,
-      emailSent: false, // Not sent yet, just generated
-      zoomMeetingId: meeting.platform === 'zoom' ? meeting.zoomMeetingId || undefined : undefined,
-      teamsMeetingId: meeting.platform === 'microsoft_teams' ? meeting.platformMeetingId || undefined : undefined,
-    };
-
-    log('info', '[AIRTABLE-2] Creating meeting record in Airtable', {
-      meetingId,
-      platform: meetingData.platform,
-      meetingTitle: meetingData.meetingTitle,
-    });
-
-    const airtableRecordId = await createMeetingRecord(meetingData);
-
-    if (airtableRecordId) {
-      log('info', '[AIRTABLE-3] Draft synced to Airtable successfully', {
-        meetingId,
-        draftId,
-        airtableRecordId,
-      });
-    } else {
-      log('warn', '[AIRTABLE-3] Airtable record creation returned null', {
-        meetingId,
-        draftId,
-      });
-    }
-  } catch (error) {
-    log('error', 'Airtable sync error', {
-      meetingId,
-      draftId,
-      error: error instanceof Error ? error.message : String(error),
-    });
-    // Don't rethrow - this is non-blocking
-  }
 }
 
 /**

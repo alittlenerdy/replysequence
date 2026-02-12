@@ -15,6 +15,13 @@ function scoreToStars(score: number | null): number {
   return 1;
 }
 
+// Get quality badge styling based on star count
+function getQualityBadgeStyle(stars: number): { bg: string; text: string; label: string } {
+  if (stars >= 4) return { bg: 'bg-emerald-500/20 border-emerald-500/40', text: 'text-emerald-400', label: stars === 5 ? 'Excellent' : 'Good' };
+  if (stars === 3) return { bg: 'bg-amber-500/20 border-amber-500/40', text: 'text-amber-400', label: 'Review' };
+  return { bg: 'bg-red-500/20 border-red-500/40', text: 'text-red-400', label: 'Needs Work' };
+}
+
 interface DraftsTableProps {
   drafts: DraftWithMeeting[];
   total: number;
@@ -197,24 +204,31 @@ export function DraftsTable({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <StatusBadge status={draft.status} size="sm" />
-                      {/* Quality score stars */}
-                      {draft.qualityScore !== null && (
-                        <span
-                          className="inline-flex items-center gap-0.5"
-                          title={`Quality: ${draft.qualityScore}/100`}
-                        >
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <svg
-                              key={star}
-                              className={`w-3 h-3 ${star <= scoreToStars(draft.qualityScore) ? 'text-yellow-400' : 'text-gray-600'}`}
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
-                        </span>
-                      )}
+                      {/* Quality score badge - more prominent */}
+                      {draft.qualityScore !== null && (() => {
+                        const stars = scoreToStars(draft.qualityScore);
+                        const style = getQualityBadgeStyle(stars);
+                        return (
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border ${style.bg} ${style.text} text-xs font-medium`}
+                            title={`AI Quality Score: ${draft.qualityScore}/100`}
+                          >
+                            <span className="flex">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <svg
+                                  key={s}
+                                  className={`w-3.5 h-3.5 ${s <= stars ? 'text-yellow-400' : 'text-gray-600/50'}`}
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              ))}
+                            </span>
+                            <span className="hidden sm:inline">{style.label}</span>
+                          </span>
+                        );
+                      })()}
                       {/* Engagement indicators for sent emails */}
                       {draft.status === 'sent' && (
                         <div className="flex items-center gap-1">

@@ -134,13 +134,14 @@ export async function POST(request: NextRequest) {
 
     // Sync to Airtable CRM (non-blocking - don't await in critical path)
     // This runs after email is confirmed sent
-    // Map google_meet to zoom for Airtable (only Zoom and Teams supported)
-    const crmPlatform = draft.meetingPlatform === 'microsoft_teams' ? 'microsoft_teams' : 'zoom';
+    const crmPlatform = (draft.meetingPlatform === 'microsoft_teams' || draft.meetingPlatform === 'google_meet')
+      ? draft.meetingPlatform
+      : 'zoom';
     syncSentEmailToCrm({
       recipientEmail,
       meetingTitle: draft.meetingTopic || 'Meeting',
       meetingDate: draft.meetingStartTime || new Date(),
-      platform: crmPlatform,
+      platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
       draftSubject: draft.subject,
       draftBody: draft.body,
     }).then((crmResult) => {
