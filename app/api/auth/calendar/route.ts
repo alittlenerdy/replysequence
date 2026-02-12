@@ -6,6 +6,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Allow longer timeout for cold starts
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest) {
   console.log('[CALENDAR-OAUTH-START-1] Route handler called');
 

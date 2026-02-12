@@ -9,6 +9,9 @@ import { eq } from 'drizzle-orm';
 import { db, users, userOnboarding, calendarConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
+// Allow longer timeout for cold starts and token exchange
+export const maxDuration = 60;
+
 interface GoogleTokenResponse {
   access_token: string;
   token_type: string;

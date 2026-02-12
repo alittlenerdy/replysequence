@@ -9,6 +9,9 @@ import { eq } from 'drizzle-orm';
 import { db, users, userOnboarding, outlookCalendarConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
+// Allow longer timeout for cold starts and token exchange
+export const maxDuration = 60;
+
 interface MicrosoftTokenResponse {
   access_token: string;
   token_type: string;
