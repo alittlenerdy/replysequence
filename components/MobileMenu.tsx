@@ -64,9 +64,17 @@ export default function MobileMenu() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-gray-900/95 light:bg-white/95 backdrop-blur-lg z-40 md:hidden transition-all duration-300 ${
-          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        className={`fixed inset-0 backdrop-blur-lg md:hidden transition-all duration-300 ${
+          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-auto'
         }`}
+        style={{
+          backgroundColor: 'rgba(17, 24, 39, 0.97)',
+          zIndex: 9999,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
         onClick={() => setIsOpen(false)}
       >
         {/* Menu Content */}
