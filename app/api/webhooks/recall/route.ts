@@ -4,8 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
-import { db, recallBots, meetings, transcripts as transcriptsTable, users } from '@/lib/db';
+import { eq, and } from 'drizzle-orm';
+import { db, recallBots, meetings, transcripts as transcriptsTable, users, calendarEvents } from '@/lib/db';
 import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
 import type { BotStatus, TranscriptWord, TranscriptSpeaker } from '@/lib/recall/types';
@@ -414,6 +414,50 @@ async function processTranscriptAndGenerateDraft(
       updatedAt: new Date(),
     })
     .where(eq(meetings.id, meeting.id));
+
+  // Check auto-process preference before generating draft
+  if (botRecord.calendarEventId) {
+    const [calendarEvent] = await db
+      .select({ autoProcess: calendarEvents.autoProcess })
+      .from(calendarEvents)
+      .where(
+        and(
+          eq(calendarEvents.userId, botRecord.userId),
+          eq(calendarEvents.externalEventId, botRecord.calendarEventId)
+        )
+      )
+      .limit(1);
+
+    if (calendarEvent?.autoProcess === 'disabled') {
+      console.log('[RECALL-WEBHOOK] Auto-process disabled, skipping draft generation:', {
+        meetingId: meeting.id,
+        calendarEventId: botRecord.calendarEventId,
+      });
+
+      // Update meeting status to ready (transcript stored, but no draft)
+      await db
+        .update(meetings)
+        .set({
+          status: 'ready',
+          processingStep: 'completed',
+          processingProgress: 100,
+          processingCompletedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(meetings.id, meeting.id));
+
+      // Update bot record as complete
+      await db
+        .update(recallBots)
+        .set({
+          status: 'completed',
+          updatedAt: new Date(),
+        })
+        .where(eq(recallBots.id, botRecord.id));
+
+      return;
+    }
+  }
 
   // Generate email draft
   try {

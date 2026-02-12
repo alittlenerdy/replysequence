@@ -4,7 +4,7 @@
  */
 
 import { eq, and, gte, lte, isNull, inArray } from 'drizzle-orm';
-import { db, recallBots, calendarConnections, users, type MeetingPlatform } from '@/lib/db';
+import { db, recallBots, calendarConnections, calendarEvents, users, type MeetingPlatform } from '@/lib/db';
 import { getRecallClient } from './client';
 import { decrypt } from '@/lib/encryption';
 import type { RecallPlatform } from './types';
@@ -189,6 +189,26 @@ export async function scheduleBotForMeeting(
         botId: existingBot.recallBotId,
       });
       return { success: true, botId: existingBot.recallBotId || undefined };
+    }
+
+    // Check auto-process preference from calendarEvents table
+    const [calendarEvent] = await db
+      .select({ autoProcess: calendarEvents.autoProcess })
+      .from(calendarEvents)
+      .where(
+        and(
+          eq(calendarEvents.userId, userId),
+          eq(calendarEvents.externalEventId, calendarEventId)
+        )
+      )
+      .limit(1);
+
+    if (calendarEvent?.autoProcess === 'disabled') {
+      console.log('[RECALL-SCHEDULER] Auto-process disabled for event:', {
+        eventId: calendarEventId,
+        userId,
+      });
+      return { success: false, error: 'Auto-process disabled for this meeting' };
     }
 
     // Get webhook URL for this environment

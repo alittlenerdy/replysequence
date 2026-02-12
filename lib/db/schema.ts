@@ -591,6 +591,67 @@ export const outlookCalendarConnections = pgTable(
 
 export type OutlookCalendarConnection = typeof outlookCalendarConnections.$inferSelect;
 export type NewOutlookCalendarConnection = typeof outlookCalendarConnections.$inferInsert;
+
+// Calendar event source type
+export type CalendarEventSource = 'google_calendar' | 'outlook_calendar';
+
+// Auto-process preference type
+export type AutoProcessPreference = 'enabled' | 'disabled' | 'default';
+
+// Calendar event attendee type for JSONB storage
+export interface CalendarEventAttendee {
+  email: string;
+  name?: string;
+  responseStatus?: 'accepted' | 'declined' | 'tentative' | 'needsAction';
+  organizer?: boolean;
+}
+
+// Calendar events table - caches synced calendar events for upcoming meetings widget
+export const calendarEvents = pgTable(
+  'calendar_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // External identifiers
+    externalEventId: text('external_event_id').notNull(),
+    calendarId: text('calendar_id').notNull().default('primary'),
+    source: varchar('source', { length: 50 }).$type<CalendarEventSource>().notNull(),
+    // Event details
+    title: text('title').notNull(),
+    description: text('description'),
+    startTime: timestamp('start_time', { withTimezone: true }).notNull(),
+    endTime: timestamp('end_time', { withTimezone: true }).notNull(),
+    // Meeting info
+    meetingUrl: text('meeting_url'),
+    meetingPlatform: meetingPlatformEnum('meeting_platform'),
+    // Attendees (JSONB array)
+    attendees: jsonb('attendees').$type<CalendarEventAttendee[]>().default([]),
+    organizerEmail: text('organizer_email'),
+    // Auto-process preference (per-meeting toggle)
+    autoProcess: varchar('auto_process', { length: 20 }).$type<AutoProcessPreference>().default('default'),
+    // Sync tracking
+    syncedAt: timestamp('synced_at', { withTimezone: true }).notNull().defaultNow(),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('calendar_events_user_source_external_idx').on(
+      table.userId,
+      table.source,
+      table.externalEventId
+    ),
+    index('calendar_events_user_id_idx').on(table.userId),
+    index('calendar_events_start_time_idx').on(table.startTime),
+    index('calendar_events_meeting_platform_idx').on(table.meetingPlatform),
+  ]
+);
+
+export type CalendarEvent = typeof calendarEvents.$inferSelect;
+export type NewCalendarEvent = typeof calendarEvents.$inferInsert;
+
 export type UsageLog = typeof usageLogs.$inferSelect;
 export type NewUsageLog = typeof usageLogs.$inferInsert;
 

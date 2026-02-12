@@ -13,6 +13,7 @@ import { SkeletonTable } from '../ui/SkeletonTable';
 import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
 import { TimeSavingsWidget } from './TimeSavingsWidget';
+import { UpcomingMeetingsWidget } from './UpcomingMeetingsWidget';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -165,7 +166,7 @@ export function DraftsView({
       ) : (
         <div className="space-y-6">
           <DashboardStats stats={stats} />
-          {/* Time Savings Widget - positioned prominently */}
+          {/* Widgets Grid - Time Savings and Upcoming Meetings */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <TimeSavingsWidget
               initialData={{
@@ -176,6 +177,7 @@ export function DraftsView({
               }}
               autoFetch={false}
             />
+            <UpcomingMeetingsWidget />
           </div>
         </div>
       )}

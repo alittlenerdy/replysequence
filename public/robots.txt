@@ -11,4 +11,4 @@ Disallow: /onboarding
 Disallow: /sentry-example-page
 
 # Sitemap
-Sitemap: https://replysequence.vercel.app/sitemap.xml
+Sitemap: https://www.replysequence.com/sitemap.xml
