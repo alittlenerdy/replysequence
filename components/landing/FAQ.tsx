@@ -167,7 +167,7 @@ export function FAQ() {
           <p className="text-gray-500 light:text-gray-600 text-sm">
             Still have questions?{' '}
             <a
-              href="mailto:jimmy@playgroundgiants.com"
+              href="mailto:jimmy@replysequence.com"
               className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-700 underline underline-offset-2 transition-colors"
             >
               Contact us

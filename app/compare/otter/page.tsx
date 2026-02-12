@@ -709,7 +709,7 @@ export default function OtterComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 text-sm mt-8"
           >
-            No credit card required • 5 free AI drafts • Cancel anytime
+            Start with 5 free AI drafts • Cancel anytime
           </motion.p>
         </AnimatedSection>
       </section>

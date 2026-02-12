@@ -14,7 +14,7 @@ const navItems: NavItem[] = [
   { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
-  { name: 'Pricing', href: '/pricing', icon: Sparkles },
+  { name: 'Pricing', href: '/dashboard/pricing', icon: Sparkles },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 

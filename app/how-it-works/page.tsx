@@ -968,7 +968,7 @@ export default function HowItWorksPage() {
                 </GradientButton>
               </div>
               <p className="text-gray-500 light:text-gray-600 text-sm">
-                Free to try - No credit card required
+                Start with 5 free AI drafts • Cancel anytime
               </p>
             </motion.div>
           </motion.div>

@@ -29,7 +29,7 @@ function FloatingParticles() {
       {[...Array(15)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-amber-400/30 rounded-full"
+          className="absolute w-1 h-1 bg-teal-400/30 rounded-full"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
@@ -208,9 +208,9 @@ export default function GrainComparisonPage() {
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
-        <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-teal-500/5 via-transparent to-transparent" />
         <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-amber-500/10 rounded-full blur-[120px]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-teal-500/10 rounded-full blur-[120px]"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -224,7 +224,7 @@ export default function GrainComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 text-amber-300 text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal-500/20 to-cyan-500/20 border border-teal-500/30 text-teal-300 text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
             Honest Comparison
@@ -238,7 +238,7 @@ export default function GrainComparisonPage() {
           >
             <span className="text-white">ReplySequence</span>
             <span className="text-gray-500 mx-3">vs</span>
-            <span className="text-gray-400">Grain</span>
+            <span className="text-teal-400">Grain</span>
           </motion.h1>
 
           <motion.p
@@ -292,14 +292,14 @@ export default function GrainComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gray-900/50 border border-gray-700 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gradient-to-br from-teal-500/10 via-cyan-500/5 to-transparent border border-teal-500/30 overflow-hidden group"
             >
-              <h3 className="text-xl font-bold text-gray-200 mb-3">Choose Grain if...</h3>
+              <h3 className="text-xl font-bold text-teal-100 mb-3">Choose Grain if...</h3>
               <p className="text-gray-400 leading-relaxed">
-                You need to <span className="text-gray-200 font-semibold">capture and share video moments</span>
+                You need to <span className="text-teal-200 font-semibold">capture and share video moments</span>
                 with your team. Great for product feedback, user interviews, and internal alignment.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-teal-400 font-medium">
                 <Video className="w-4 h-4" />
                 Best for: Product teams, UX researchers, teams that share meeting clips
               </div>
@@ -309,9 +309,9 @@ export default function GrainComparisonPage() {
       </section>
 
       {/* Stats Banner */}
-      <AnimatedSection className="py-10 px-4 border-y border-amber-500/20 bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-amber-500/5 relative overflow-hidden">
+      <AnimatedSection className="py-10 px-4 border-y border-teal-500/20 bg-gradient-to-r from-teal-500/5 via-cyan-500/5 to-teal-500/5 relative overflow-hidden">
         {/* Background glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-transparent to-orange-500/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
         <div className="max-w-5xl mx-auto relative">
           <motion.div
             variants={staggerContainer}
@@ -323,7 +323,7 @@ export default function GrainComparisonPage() {
             {[
               { value: '8 sec', label: 'Email draft time', gradient: 'from-blue-400 to-cyan-400' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-purple-400 to-pink-400' },
-              { value: '3', label: 'Platforms supported', gradient: 'from-amber-400 to-orange-400' },
+              { value: '3', label: 'Platforms supported', gradient: 'from-teal-400 to-cyan-400' },
               { value: '$19', label: 'Pro plan / month', gradient: 'from-emerald-400 to-teal-400' },
             ].map((stat, i) => (
               <motion.div key={i} variants={staggerItem} className="relative">
@@ -361,7 +361,7 @@ export default function GrainComparisonPage() {
                 <span className="text-blue-400 font-bold text-lg">ReplySequence</span>
               </div>
               <div className="text-center">
-                <span className="text-gray-400 font-bold text-lg">Grain</span>
+                <span className="text-teal-400 font-bold text-lg">Grain</span>
               </div>
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function GrainComparisonPage() {
                         row.winner === 'replysequence'
                           ? 'bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-transparent hover:from-blue-500/15 hover:via-purple-500/10 border-l-2 border-l-blue-500 border border-blue-500/30 shadow-lg shadow-blue-500/5'
                           : row.winner === 'grain'
-                          ? 'bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent hover:from-amber-500/15 hover:via-orange-500/10 border-l-2 border-l-amber-500 border border-amber-500/30'
+                          ? 'bg-gradient-to-r from-teal-500/10 via-cyan-500/5 to-transparent hover:from-teal-500/15 hover:via-cyan-500/10 border-l-2 border-l-teal-500 border border-teal-500/30'
                           : 'bg-gray-900/30 hover:bg-gray-800/30 border border-gray-700/30'
                       }`}
                     >
@@ -412,7 +412,7 @@ export default function GrainComparisonPage() {
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold shadow-lg shadow-amber-500/30"
+                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-xs font-bold shadow-lg shadow-teal-500/30"
                           >
                             Winner
                           </motion.span>
@@ -457,11 +457,11 @@ export default function GrainComparisonPage() {
                 className={`relative p-6 rounded-2xl border-2 overflow-hidden group ${
                   diff.advantage === 'replysequence'
                     ? 'bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 border-blue-500/40 shadow-xl shadow-blue-500/10'
-                    : 'bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-yellow-500/10 border-amber-500/40 shadow-xl shadow-amber-500/10'
+                    : 'bg-gradient-to-br from-teal-500/10 via-cyan-500/5 to-emerald-500/10 border-teal-500/40 shadow-xl shadow-teal-500/10'
                 }`}
                 style={diff.advantage === 'replysequence'
                   ? { boxShadow: '0 0 30px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }
-                  : { boxShadow: '0 0 30px rgba(245, 158, 11, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
+                  : { boxShadow: '0 0 30px rgba(20, 184, 166, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
               >
                 {/* Stat badge */}
                 <motion.div
@@ -469,7 +469,7 @@ export default function GrainComparisonPage() {
                   className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${
                     diff.advantage === 'replysequence'
                       ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-amber-500/20 text-amber-400'
+                      : 'bg-teal-500/20 text-teal-400'
                   }`}
                 >
                   {diff.stat}
@@ -480,7 +480,7 @@ export default function GrainComparisonPage() {
                   className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                     diff.advantage === 'replysequence'
                       ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-amber-500/20 text-amber-400'
+                      : 'bg-teal-500/20 text-teal-400'
                   }`}
                 >
                   <diff.icon className="w-6 h-6" />
@@ -491,7 +491,7 @@ export default function GrainComparisonPage() {
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     diff.advantage === 'replysequence'
                       ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-amber-500/20 text-amber-400'
+                      : 'bg-teal-500/20 text-teal-400'
                   }`}>
                     {diff.advantage === 'replysequence' ? 'ReplySequence' : 'Grain'}
                   </span>
@@ -573,9 +573,9 @@ export default function GrainComparisonPage() {
                   </motion.div>
 
                   {/* Grain */}
-                  <div className="p-5 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/30">
+                  <div className="p-5 rounded-xl bg-gradient-to-br from-teal-500/10 to-cyan-500/5 border border-teal-500/30">
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-amber-400 font-semibold">Grain</span>
+                      <span className="text-teal-400 font-semibold">Grain</span>
                       <div className="flex items-baseline">
                         <span className="text-2xl font-bold text-gray-300">{tier.grain.price}</span>
                         <span className="text-gray-500 text-sm">{tier.grain.period}</span>
@@ -584,7 +584,7 @@ export default function GrainComparisonPage() {
                     <ul className="space-y-2">
                       {tier.grain.features.map((feature, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
-                          <Check className="w-4 h-4 text-amber-500/70 flex-shrink-0 mt-0.5" />
+                          <Check className="w-4 h-4 text-teal-500/70 flex-shrink-0 mt-0.5" />
                           {feature}
                         </li>
                       ))}
@@ -612,7 +612,7 @@ export default function GrainComparisonPage() {
               transition={{ duration: 6, repeat: Infinity }}
             />
             <motion.div
-              className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl"
+              className="absolute bottom-0 left-0 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl"
               animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
               transition={{ duration: 8, repeat: Infinity, delay: 1 }}
             />
@@ -635,7 +635,7 @@ export default function GrainComparisonPage() {
 
               <div className="space-y-4 text-gray-300 leading-relaxed mb-8">
                 <p>
-                  <strong className="text-amber-400">Grain</strong> is excellent for teams who want to capture and share
+                  <strong className="text-teal-400">Grain</strong> is excellent for teams who want to capture and share
                   video highlights from meetings. If you need to clip key moments for stakeholders, share user feedback
                   with product teams, or build a library of meeting insights, Grain is purpose-built for that.
                 </p>
@@ -649,7 +649,7 @@ export default function GrainComparisonPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="p-5 rounded-xl bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-amber-500/10 border border-purple-500/30 shadow-lg shadow-purple-500/5"
+                className="p-5 rounded-xl bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-teal-500/10 border border-purple-500/30 shadow-lg shadow-purple-500/5"
               >
                 <p className="text-gray-300 text-sm italic flex items-start gap-3">
                   <Sparkles className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
@@ -725,7 +725,7 @@ export default function GrainComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 text-sm mt-8"
           >
-            No credit card required | 5 free AI drafts | Cancel anytime
+            Start with 5 free AI drafts | Cancel anytime
           </motion.p>
         </AnimatedSection>
       </section>
