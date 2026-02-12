@@ -9,6 +9,7 @@ import { db, calendarEvents, users, calendarConnections, outlookCalendarConnecti
 import { eq, and, gte, lte, or } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30; // Allow 30 seconds for cold starts
 
 /**
  * GET /api/calendar/events
