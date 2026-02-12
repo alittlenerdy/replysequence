@@ -3,6 +3,9 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { onboardingEvents } from '@/lib/db/schema';
 
+// Allow longer timeout for cold starts
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();

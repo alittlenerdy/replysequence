@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 
+// Allow longer timeout for cold starts and AI generation
+export const maxDuration = 60;
+
 const SAMPLE_MEETING = {
   topic: 'Q1 Partnership Discussion',
   attendees: ['User', 'Sarah Chen (Acme Corp)'],

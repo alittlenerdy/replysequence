@@ -4,6 +4,9 @@ import { db } from '@/lib/db';
 import { userOnboarding, onboardingEvents } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
+// Allow longer timeout for cold starts
+export const maxDuration = 60;
+
 export async function POST() {
   try {
     const { userId } = await auth();
