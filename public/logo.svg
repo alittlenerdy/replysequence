@@ -1,42 +1,74 @@
-<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4A90E2"/>
-      <stop offset="100%" stop-color="#2D6CDF"/>
+    <!-- Neon gradient -->
+    <linearGradient id="neonBlue" x1="200" y1="900" x2="900" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="45%" stop-color="#2F7BFF"/>
+      <stop offset="100%" stop-color="#0B3DFF"/>
     </linearGradient>
+
+    <!-- Outer glow -->
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="blur1"/>
+      <feGaussianBlur stdDeviation="22" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Soft inner highlight -->
+    <filter id="innerGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feColorMatrix in="b" type="matrix"
+        values="1 0 0 0 0
+                0 1 0 0 0.8
+                0 0 1 0 1
+                0 0 0 0.9 0" result="c"/>
+      <feMerge>
+        <feMergeNode in="c"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
-  <!-- Circular Arrow Path -->
-  <path
-    fill="none"
-    stroke="url(#blueGrad)"
-    stroke-width="48"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    d="
-      M256 80
-      A176 176 0 0 1 420 220
-      L380 220
-      L450 300
-      L520 220
-      L480 220
-      A224 224 0 0 0 256 32
+  <!-- Black background -->
+  <rect width="1024" height="1024" fill="#000"/>
 
-      M432 256
-      A176 176 0 0 1 292 420
-      L292 380
-      L212 450
-      L292 520
-      L292 480
-      A224 224 0 0 0 480 256
+  <!-- Three curved arrows (stroke-built) -->
+  <g filter="url(#glow)">
+    <!-- Arc 1: top -> right -->
+    <path d="M 512 170 A 342 342 0 0 1 854 512"
+          fill="none"
+          stroke="url(#neonBlue)"
+          stroke-width="140"
+          stroke-linecap="round"
+          filter="url(#innerGlow)"/>
+    <!-- Arrowhead 1 (points toward bottom-right) -->
+    <path d="M 905 470 L 965 525 L 892 575 Z"
+          fill="url(#neonBlue)"/>
 
-      M256 432
-      A176 176 0 0 1 92 292
-      L132 292
-      L62 212
-      L-8 292
-      L32 292
-      A224 224 0 0 0 256 480
-    "
-  />
+    <!-- Arc 2: right -> bottom -->
+    <path d="M 854 512 A 342 342 0 0 1 512 854"
+          fill="none"
+          stroke="url(#neonBlue)"
+          stroke-width="140"
+          stroke-linecap="round"
+          filter="url(#innerGlow)"/>
+    <!-- Arrowhead 2 (points toward bottom-left) -->
+    <path d="M 555 905 L 498 965 L 450 892 Z"
+          fill="url(#neonBlue)"/>
+
+    <!-- Arc 3: bottom -> left -> top -->
+    <path d="M 512 854 A 342 342 0 0 1 170 512 A 342 342 0 0 1 512 170"
+          fill="none"
+          stroke="url(#neonBlue)"
+          stroke-width="140"
+          stroke-linecap="round"
+          filter="url(#innerGlow)"/>
+    <!-- Arrowhead 3 (points toward up-left) -->
+    <path d="M 120 500 L 60 455 L 132 405 Z"
+          fill="url(#neonBlue)"/>
+  </g>
 </svg>
