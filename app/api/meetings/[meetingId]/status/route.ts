@@ -6,17 +6,17 @@ import { meetings, users } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
 /**
- * GET /api/meetings/[id]/status
+ * GET /api/meetings/[meetingId]/status
  * Returns the current processing status of a meeting
  * Used for real-time progress updates in the UI
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ meetingId: string }> }
 ) {
   try {
     const { userId: clerkId } = await auth();
-    const { id: meetingId } = await params;
+    const { meetingId } = await params;
 
     if (!clerkId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

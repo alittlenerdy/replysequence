@@ -72,6 +72,9 @@ export default async function Image() {
         {/* Tagline */}
         <div
           style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             fontSize: 36,
             color: '#e2e8f0',
             textAlign: 'center',
@@ -80,9 +83,8 @@ export default async function Image() {
             marginBottom: 40,
           }}
         >
-          Turn Zoom, Teams & Meet calls into
-          <br />
-          perfect follow-up emails in 8 seconds
+          <span>Turn Zoom, Teams & Meet calls into</span>
+          <span>perfect follow-up emails in 8 seconds</span>
         </div>
 
         {/* Features */}

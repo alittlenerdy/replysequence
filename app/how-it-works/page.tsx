@@ -22,28 +22,52 @@ import { Header } from '@/components/layout/Header';
 import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
 
-// Floating particles component for hero
+// Static particle positions - deterministic to avoid hydration mismatch
+const STATIC_PARTICLES = [
+  { left: 5, top: 12, xMove: -8, duration: 3.2, delay: 0.1 },
+  { left: 15, top: 28, xMove: 6, duration: 4.5, delay: 0.8 },
+  { left: 25, top: 45, xMove: -3, duration: 5.1, delay: 1.2 },
+  { left: 35, top: 8, xMove: 9, duration: 3.8, delay: 0.4 },
+  { left: 45, top: 62, xMove: -7, duration: 6.2, delay: 1.6 },
+  { left: 55, top: 35, xMove: 4, duration: 4.1, delay: 0.3 },
+  { left: 65, top: 78, xMove: -5, duration: 5.5, delay: 1.9 },
+  { left: 75, top: 22, xMove: 8, duration: 3.5, delay: 0.6 },
+  { left: 85, top: 55, xMove: -9, duration: 4.8, delay: 1.1 },
+  { left: 95, top: 18, xMove: 2, duration: 6.0, delay: 0.9 },
+  { left: 10, top: 72, xMove: 7, duration: 5.3, delay: 1.4 },
+  { left: 20, top: 88, xMove: -4, duration: 3.9, delay: 0.2 },
+  { left: 30, top: 42, xMove: 6, duration: 4.4, delay: 1.7 },
+  { left: 40, top: 15, xMove: -8, duration: 5.8, delay: 0.5 },
+  { left: 50, top: 68, xMove: 3, duration: 3.3, delay: 1.3 },
+  { left: 60, top: 92, xMove: -6, duration: 4.7, delay: 0.7 },
+  { left: 70, top: 38, xMove: 9, duration: 5.2, delay: 1.8 },
+  { left: 80, top: 5, xMove: -2, duration: 6.5, delay: 1.0 },
+  { left: 90, top: 58, xMove: 5, duration: 4.0, delay: 0.0 },
+  { left: 98, top: 82, xMove: -7, duration: 5.6, delay: 1.5 },
+];
+
+// Floating particles component for hero - deterministic to avoid hydration mismatch
 function FloatingParticles() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(20)].map((_, i) => (
+      {STATIC_PARTICLES.map((particle, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
           }}
           animate={{
             y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
+            x: [0, particle.xMove, 0],
             opacity: [0.2, 0.6, 0.2],
             scale: [1, 1.5, 1],
           }}
           transition={{
-            duration: 3 + Math.random() * 4,
+            duration: particle.duration,
             repeat: Infinity,
-            delay: Math.random() * 2,
+            delay: particle.delay,
             ease: 'easeInOut',
           }}
         />

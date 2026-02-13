@@ -122,9 +122,11 @@ export default function RootLayout({
         <body className="antialiased">
           <PostHogProvider>
             <ServiceWorkerRegistration />
-            <MouseTrail />
+            {/* MouseTrail disabled - hydration issue */}
+            {/* <MouseTrail /> */}
             {children}
-            <PWAInstallPrompt />
+            {/* PWAInstallPrompt disabled - hydration issue */}
+            {/* <PWAInstallPrompt /> */}
           </PostHogProvider>
           <Analytics />
           <SpeedInsights />
