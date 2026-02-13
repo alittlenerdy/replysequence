@@ -17,7 +17,7 @@ interface Particle {
   color: 'mint' | 'black';
 }
 
-// Generate particles with target positions and edge origins
+// Generate particles with target positions and edge origins - deterministic to avoid hydration mismatch
 function generateParticles(): Particle[] {
   const particles: Particle[] = [];
   const cols = 8;
@@ -31,13 +31,17 @@ function generateParticles(): Particle[] {
     const targetY = (row / (rows - 1)) * 100;
     const angle = Math.atan2(targetY - 50, targetX - 50);
 
+    // Deterministic size and color based on index
+    const size = 4 + (i % 8); // Sizes from 4 to 11
+    const color: 'mint' | 'black' = i % 3 === 0 ? 'mint' : 'black'; // Every 3rd particle is mint
+
     particles.push({
       id: i,
       targetX,
       targetY,
       startAngle: angle,
-      size: Math.random() * 8 + 4,
-      color: Math.random() > 0.65 ? 'mint' : 'black',
+      size,
+      color,
     });
   }
   return particles;
