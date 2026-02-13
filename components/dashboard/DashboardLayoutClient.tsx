@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-// import { OnboardingBanner } from './OnboardingBanner';
+import { OnboardingBanner } from './OnboardingBanner';
 // import { ProcessingToast } from '@/components/processing/ProcessingToast';
 
-// Test #1: Re-enable DashboardMarginBubbles
+// Test #2: Re-enable OnboardingBanner
 const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardLayoutClientProps {
@@ -16,9 +16,7 @@ interface DashboardLayoutClientProps {
 
 export function DashboardLayoutClient({
   children,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onboardingIncomplete = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onboardingStep = 1,
 }: DashboardLayoutClientProps) {
   // Sync theme from localStorage on mount
@@ -39,7 +37,7 @@ export function DashboardLayoutClient({
   return (
     <>
       <DashboardMarginBubbles />
-      {/* {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />} */}
+      {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />}
       {children}
       {/* <ProcessingToast hideOnDashboard={true} /> */}
     </>
