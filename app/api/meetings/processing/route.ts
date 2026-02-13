@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
       .where(eq(users.clerkId, clerkId))
       .limit(1);
 
+    // New users without a database record won't have any processing meetings
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ meetings: [] });
     }
 
     // Get all meetings that are currently processing
