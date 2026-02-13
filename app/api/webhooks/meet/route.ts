@@ -3,6 +3,7 @@ import { db, rawEvents } from '@/lib/db';
 import { processMeetEvent } from '@/lib/process-meet-event';
 import { validatePubSubMessage } from '@/lib/meet-api';
 import { recordWebhookFailure } from '@/lib/webhook-retry';
+import { acquireEventLock } from '@/lib/idempotency';
 import type {
   PubSubPushMessage,
   MeetWorkspaceEvent,
@@ -194,6 +195,18 @@ async function handleConferenceEnded(
     );
   }
 
+  // Idempotency check - lock on conference record to prevent duplicate meetings
+  // from both conference.ended and transcript.fileGenerated events
+  const lockKey = `conference-${conferenceRecordName}`;
+  const acquired = await acquireEventLock(lockKey, 'meet');
+  if (!acquired) {
+    log('info', '[MEET-2] Conference already being processed (duplicate event)', {
+      conferenceRecordName,
+      messageId: pushMessage.message.messageId,
+    });
+    return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
+  }
+
   // Generate unique event ID
   const eventId = `meet.conference.ended-${conferenceRecordName}-${pushMessage.message.messageId}`;
 
@@ -299,6 +312,19 @@ async function handleTranscriptFileGenerated(
   // Format: conferenceRecords/{record}/transcripts/{transcript}
   const conferenceRecordMatch = transcriptName.match(/^(conferenceRecords\/[^/]+)/);
   const conferenceRecordName = conferenceRecordMatch?.[1] || transcriptName;
+
+  // Idempotency check - lock on conference record to prevent duplicate meetings
+  // from both conference.ended and transcript.fileGenerated events
+  const lockKey = `conference-${conferenceRecordName}`;
+  const acquired = await acquireEventLock(lockKey, 'meet');
+  if (!acquired) {
+    log('info', '[MEET-2] Conference already being processed (duplicate event)', {
+      conferenceRecordName,
+      transcriptName,
+      messageId: pushMessage.message.messageId,
+    });
+    return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
+  }
 
   // Generate unique event ID
   const eventId = `meet.transcript.fileGenerated-${transcriptName}-${pushMessage.message.messageId}`;

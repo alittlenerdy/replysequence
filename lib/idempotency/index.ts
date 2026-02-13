@@ -1,9 +1,17 @@
 import { getRedis } from '../redis';
 
 // Constants
-const IDEMPOTENCY_PREFIX = 'idempotency:zoom:';
+const IDEMPOTENCY_PREFIX_ZOOM = 'idempotency:zoom:';
+const IDEMPOTENCY_PREFIX_MEET = 'idempotency:meet:';
 const TTL_SECONDS = 24 * 60 * 60; // 24 hours in seconds
 const REDIS_TIMEOUT_MS = 5000; // 5 second timeout for Redis operations
+
+// Platform type for idempotency
+export type IdempotencyPlatform = 'zoom' | 'meet';
+
+function getPrefix(platform: IdempotencyPlatform = 'zoom'): string {
+  return platform === 'meet' ? IDEMPOTENCY_PREFIX_MEET : IDEMPOTENCY_PREFIX_ZOOM;
+}
 
 // Logger helper
 function log(level: 'info' | 'warn' | 'error', message: string, data: Record<string, unknown> = {}): void {
@@ -30,25 +38,28 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: strin
 
 /**
  * Check if an event has already been processed (idempotency check)
- * @param eventId - Unique event identifier from Zoom webhook
+ * @param eventId - Unique event identifier from webhook
+ * @param platform - Platform for the event (zoom or meet)
  * @returns true if event was already processed, false otherwise
  */
-export async function isEventProcessed(eventId: string): Promise<boolean> {
-  const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
+export async function isEventProcessed(eventId: string, platform: IdempotencyPlatform = 'zoom'): Promise<boolean> {
+  const key = `${getPrefix(platform)}${eventId}`;
   const exists = await getRedis().exists(key);
   return exists === 1;
 }
 
 /**
  * Mark an event as processed with 24-hour TTL
- * @param eventId - Unique event identifier from Zoom webhook
+ * @param eventId - Unique event identifier from webhook
  * @param metadata - Optional metadata to store with the event
+ * @param platform - Platform for the event (zoom or meet)
  */
 export async function markEventProcessed(
   eventId: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
+  platform: IdempotencyPlatform = 'zoom'
 ): Promise<void> {
-  const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
+  const key = `${getPrefix(platform)}${eventId}`;
   const value = JSON.stringify({
     processedAt: new Date().toISOString(),
     ...metadata,
@@ -67,12 +78,13 @@ export async function markEventProcessed(
 /**
  * Atomic check-and-set for idempotency
  * Uses Redis SETNX for atomic operation
- * @param eventId - Unique event identifier from Zoom webhook
+ * @param eventId - Unique event identifier from webhook
+ * @param platform - Platform for the event (zoom or meet)
  * @returns true if this is the first time processing (acquired lock), false if already processed
  */
-export async function acquireEventLock(eventId: string): Promise<boolean> {
+export async function acquireEventLock(eventId: string, platform: IdempotencyPlatform = 'zoom'): Promise<boolean> {
   const startTime = Date.now();
-  const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
+  const key = `${getPrefix(platform)}${eventId}`;
   const value = JSON.stringify({
     processedAt: new Date().toISOString(),
   });
@@ -156,13 +168,15 @@ export async function acquireEventLock(eventId: string): Promise<boolean> {
 
 /**
  * Get event processing metadata if available
- * @param eventId - Unique event identifier from Zoom webhook
+ * @param eventId - Unique event identifier from webhook
+ * @param platform - Platform for the event (zoom or meet)
  * @returns Metadata object or null if not found
  */
 export async function getEventMetadata(
-  eventId: string
+  eventId: string,
+  platform: IdempotencyPlatform = 'zoom'
 ): Promise<Record<string, unknown> | null> {
-  const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
+  const key = `${getPrefix(platform)}${eventId}`;
   const value = await getRedis().get(key);
 
   if (!value) {
@@ -179,10 +193,11 @@ export async function getEventMetadata(
 /**
  * Remove event from idempotency store (for reprocessing if needed)
  * Use with caution - mainly for testing or manual intervention
- * @param eventId - Unique event identifier from Zoom webhook
+ * @param eventId - Unique event identifier from webhook
+ * @param platform - Platform for the event (zoom or meet)
  */
-export async function removeEventLock(eventId: string): Promise<void> {
-  const key = `${IDEMPOTENCY_PREFIX}${eventId}`;
+export async function removeEventLock(eventId: string, platform: IdempotencyPlatform = 'zoom'): Promise<void> {
+  const key = `${getPrefix(platform)}${eventId}`;
   await getRedis().del(key);
 
   console.log(JSON.stringify({
