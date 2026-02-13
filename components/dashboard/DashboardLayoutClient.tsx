@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { OnboardingBanner } from './OnboardingBanner';
+import { ProcessingToast } from '@/components/processing/ProcessingToast';
 
 const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
@@ -37,6 +38,7 @@ export function DashboardLayoutClient({
       <DashboardMarginBubbles />
       {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />}
       {children}
+      <ProcessingToast hideOnDashboard={true} />
     </>
   );
 }
