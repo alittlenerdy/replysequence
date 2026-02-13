@@ -127,8 +127,21 @@ export default function RootLayout({
         <body className="antialiased" suppressHydrationWarning>
           {/* PostHog temporarily disabled to debug hydration issues */}
           {/* <PostHogProvider> */}
-            {/* ServiceWorker temporarily disabled - message handler violations */}
-            {/* <ServiceWorkerRegistration /> */}
+            {/* ServiceWorker disabled - unregister any existing SW */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                      for (let registration of registrations) {
+                        registration.unregister();
+                        console.log('SW unregistered');
+                      }
+                    });
+                  }
+                `,
+              }}
+            />
             {/* MouseTrail disabled - hydration issue */}
             {/* <MouseTrail /> */}
             {children}
