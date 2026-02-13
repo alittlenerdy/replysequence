@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ChevronUp, ChevronDown, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, ChevronUp, ChevronDown, CheckCircle } from 'lucide-react';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
 import Link from 'next/link';
 
@@ -16,10 +17,17 @@ interface ProcessingToastProps {
  * Minimizes to a small indicator, expands to show progress.
  */
 export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps) {
-  const { meetings, refresh } = useProcessingMeetings();
+  const pathname = usePathname();
+  const { meetings } = useProcessingMeetings();
   const [isExpanded, setIsExpanded] = useState(false);
   const [recentlyCompleted, setRecentlyCompleted] = useState<string[]>([]);
   const [prevMeetingIds, setPrevMeetingIds] = useState<string[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Wait for client-side mount to avoid hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Track completed meetings
   useEffect(() => {
@@ -37,13 +45,18 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
     setPrevMeetingIds(currentIds);
   }, [meetings, prevMeetingIds]);
 
+  // Don't render until mounted (prevents hydration mismatch)
+  if (!isMounted) {
+    return null;
+  }
+
   // Don't show if no processing meetings and no recently completed
   if (meetings.length === 0 && recentlyCompleted.length === 0) {
     return null;
   }
 
   // Check if on dashboard (hide there since we show full cards)
-  if (hideOnDashboard && typeof window !== 'undefined' && window.location.pathname === '/dashboard') {
+  if (hideOnDashboard && pathname === '/dashboard') {
     return null;
   }
 
