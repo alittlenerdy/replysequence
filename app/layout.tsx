@@ -127,7 +127,8 @@ export default function RootLayout({
         <body className="antialiased" suppressHydrationWarning>
           {/* PostHog temporarily disabled to debug hydration issues */}
           {/* <PostHogProvider> */}
-            <ServiceWorkerRegistration />
+            {/* ServiceWorker temporarily disabled - message handler violations */}
+            {/* <ServiceWorkerRegistration /> */}
             {/* MouseTrail disabled - hydration issue */}
             {/* <MouseTrail /> */}
             {children}
