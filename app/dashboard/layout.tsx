@@ -5,6 +5,9 @@ import { userOnboarding } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { DashboardLayoutClient } from '@/components/dashboard/DashboardLayoutClient';
 
+// Force dynamic rendering - don't cache this layout
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -17,28 +20,35 @@ export default async function DashboardLayout({
     redirect('/sign-in');
   }
 
-  // Check onboarding status server-side
-  const [onboarding] = await db
-    .select({
-      completedAt: userOnboarding.completedAt,
-      currentStep: userOnboarding.currentStep,
-    })
-    .from(userOnboarding)
-    .where(eq(userOnboarding.clerkId, userId))
-    .limit(1);
+  // Check onboarding status server-side with error handling
+  let onboardingIncomplete = true;
+  let currentStep = 1;
 
-  // Determine if onboarding is incomplete (show banner instead of redirecting)
-  const onboardingIncomplete = !onboarding || !onboarding.completedAt;
-  const currentStep = onboarding?.currentStep ?? 1;
+  try {
+    const [onboarding] = await db
+      .select({
+        completedAt: userOnboarding.completedAt,
+        currentStep: userOnboarding.currentStep,
+      })
+      .from(userOnboarding)
+      .where(eq(userOnboarding.clerkId, userId))
+      .limit(1);
 
-  if (onboardingIncomplete) {
-    console.log('[ONBOARDING-GATE] Onboarding incomplete, showing banner:', {
-      userId,
-      hasRecord: !!onboarding,
-      currentStep,
-    });
-  } else {
-    console.log('[ONBOARDING-GATE] User completed onboarding, showing dashboard:', userId);
+    onboardingIncomplete = !onboarding || !onboarding.completedAt;
+    currentStep = onboarding?.currentStep ?? 1;
+
+    if (onboardingIncomplete) {
+      console.log('[ONBOARDING-GATE] Onboarding incomplete, showing banner:', {
+        userId,
+        hasRecord: !!onboarding,
+        currentStep,
+      });
+    } else {
+      console.log('[ONBOARDING-GATE] User completed onboarding, showing dashboard:', userId);
+    }
+  } catch (error) {
+    console.error('[ONBOARDING-GATE] Database error, defaulting to incomplete:', error);
+    // Default to showing the dashboard with incomplete status on error
   }
 
   return (
