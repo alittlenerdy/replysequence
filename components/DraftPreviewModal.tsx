@@ -206,40 +206,42 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Backdrop with blur */}
+      {/* Backdrop with blur - hidden on mobile since modal is full screen */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity hidden md:block"
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-3xl bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl transform transition-all animate-modal-in">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-700 bg-gray-800/50 rounded-t-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-white">
+      {/* Modal - Full screen on mobile, centered dialog on desktop */}
+      <div className="min-h-full md:flex md:items-center md:justify-center md:p-4">
+        <div className="relative w-full min-h-screen md:min-h-0 md:max-w-3xl bg-gray-900 md:border md:border-gray-700 md:rounded-2xl shadow-2xl transform transition-all animate-modal-in">
+          {/* Header - sticky on mobile for easy close access */}
+          <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gray-800/95 backdrop-blur-sm md:rounded-t-2xl">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
                   {isEditing ? 'Edit Draft' : 'Draft Preview'}
                 </h2>
                 <StatusBadge status={draft.status} />
                 {draft.qualityScore !== null && (
-                  <DraftQualityBadge
-                    qualityScore={draft.qualityScore}
-                    toneScore={draft.toneScore}
-                    completenessScore={draft.completenessScore}
-                    personalizationScore={draft.personalizationScore}
-                    accuracyScore={draft.accuracyScore}
-                    gradingNotes={draft.gradingNotes}
-                  />
+                  <div className="hidden sm:block">
+                    <DraftQualityBadge
+                      qualityScore={draft.qualityScore}
+                      toneScore={draft.toneScore}
+                      completenessScore={draft.completenessScore}
+                      personalizationScore={draft.personalizationScore}
+                      accuracyScore={draft.accuracyScore}
+                      gradingNotes={draft.gradingNotes}
+                    />
+                  </div>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                 {/* Delete button */}
                 {draft.status !== 'sent' && !isEditing && (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors"
+                    className="p-2.5 sm:p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                     title="Delete draft"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -249,7 +251,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                 )}
                 <button
                   onClick={onClose}
-                  className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="p-2.5 sm:p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

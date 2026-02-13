@@ -130,19 +130,161 @@ export function DraftsTable({
     }
   };
 
+  // Format date for mobile (shorter)
+  const formatDateShort = (date: Date | null) => {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  // Render quality badge (reusable for both layouts)
+  const renderQualityBadge = (draft: DraftWithMeeting, compact = false) => {
+    if (draft.qualityScore === null) return null;
+    const stars = scoreToStars(draft.qualityScore);
+    const style = getQualityBadgeStyle(stars);
+    return (
+      <span
+        className={`inline-flex items-center gap-1 ${compact ? 'px-1.5 py-0.5' : 'px-2 py-0.5'} rounded-md border ${style.bg} ${style.text} text-xs font-medium`}
+        title={`AI Quality Score: ${draft.qualityScore}/100`}
+      >
+        <span className="flex">
+          {[1, 2, 3, 4, 5].map((s) => (
+            <svg
+              key={s}
+              className={`${compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} ${s <= stars ? 'text-yellow-400' : 'text-gray-600/50'}`}
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          ))}
+        </span>
+        {!compact && <span className="hidden sm:inline">{style.label}</span>}
+      </span>
+    );
+  };
+
+  // Render engagement indicators (reusable)
+  const renderEngagementIndicators = (draft: DraftWithMeeting) => {
+    if (draft.status !== 'sent') return null;
+    return (
+      <div className="flex items-center gap-1">
+        {(draft.openCount ?? 0) > 0 && (
+          <span
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500/20 text-purple-400"
+            title={`${draft.openCount} open${(draft.openCount ?? 0) > 1 ? 's' : ''}`}
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </span>
+        )}
+        {(draft.clickCount ?? 0) > 0 && (
+          <span
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/20 text-amber-400"
+            title={`${draft.clickCount} click${(draft.clickCount ?? 0) > 1 ? 's' : ''}`}
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+            </svg>
+          </span>
+        )}
+        {draft.repliedAt && (
+          <span
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400"
+            title="Replied"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden animate-card-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}>
         {/* Table Header */}
-        <div className="px-6 py-4 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white light:text-gray-900">Email Drafts</h2>
             <span className="text-sm text-gray-400 light:text-gray-500">{total} total</span>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Mobile Card Layout - shown on small screens */}
+        <div className="md:hidden divide-y divide-gray-700/50 light:divide-gray-200">
+          {drafts.map((draft, index) => (
+            <div
+              key={draft.id}
+              className={`
+                p-4 transition-all duration-300 ease-out
+                ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
+                hover:bg-gray-700/70 light:hover:bg-blue-50
+                active:bg-gray-700/90 light:active:bg-blue-100
+                cursor-pointer
+              `}
+              onClick={() => setSelectedDraft(draft)}
+            >
+              {/* Top row: Platform icon + Meeting name + Date */}
+              <div className="flex items-start gap-3 mb-2">
+                <div className="shrink-0">{getPlatformIcon(draft.meetingPlatform)}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-sm font-medium text-white light:text-gray-900 truncate">
+                      {draft.meetingTopic || 'Untitled Meeting'}
+                    </h3>
+                    <span className="text-xs text-gray-500 shrink-0">
+                      {formatDateShort(draft.createdAt)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400 light:text-gray-500 truncate">
+                    {draft.meetingHostEmail}
+                  </p>
+                </div>
+              </div>
+
+              {/* Subject line */}
+              <p className="text-sm text-gray-300 light:text-gray-700 mb-3 line-clamp-2">
+                {draft.subject}
+              </p>
+
+              {/* Bottom row: Status + Quality + Engagement + View button */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <StatusBadge status={draft.status} size="sm" />
+                  {renderQualityBadge(draft, true)}
+                  {renderEngagementIndicators(draft)}
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedDraft(draft);
+                  }}
+                  className="
+                    shrink-0 px-4 py-2 rounded-lg min-h-[44px]
+                    text-blue-400 light:text-blue-600
+                    bg-blue-500/10 light:bg-blue-50
+                    hover:bg-blue-500/20 light:hover:bg-blue-100
+                    active:scale-95
+                    transition-all duration-200
+                    text-sm font-medium
+                  "
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table Layout - hidden on small screens */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-700 light:divide-gray-200">
             <thead className="bg-gray-800/50 light:bg-gray-50/80">
               <tr>
@@ -155,10 +297,10 @@ export function DraftsTable({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Cost
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
@@ -204,73 +346,14 @@ export function DraftsTable({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <StatusBadge status={draft.status} size="sm" />
-                      {/* Quality score badge - more prominent */}
-                      {draft.qualityScore !== null && (() => {
-                        const stars = scoreToStars(draft.qualityScore);
-                        const style = getQualityBadgeStyle(stars);
-                        return (
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border ${style.bg} ${style.text} text-xs font-medium`}
-                            title={`AI Quality Score: ${draft.qualityScore}/100`}
-                          >
-                            <span className="flex">
-                              {[1, 2, 3, 4, 5].map((s) => (
-                                <svg
-                                  key={s}
-                                  className={`w-3.5 h-3.5 ${s <= stars ? 'text-yellow-400' : 'text-gray-600/50'}`}
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                              ))}
-                            </span>
-                            <span className="hidden sm:inline">{style.label}</span>
-                          </span>
-                        );
-                      })()}
-                      {/* Engagement indicators for sent emails */}
-                      {draft.status === 'sent' && (
-                        <div className="flex items-center gap-1">
-                          {(draft.openCount ?? 0) > 0 && (
-                            <span
-                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500/20 text-purple-400"
-                              title={`${draft.openCount} open${(draft.openCount ?? 0) > 1 ? 's' : ''}`}
-                            >
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                            </span>
-                          )}
-                          {(draft.clickCount ?? 0) > 0 && (
-                            <span
-                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/20 text-amber-400"
-                              title={`${draft.clickCount} click${(draft.clickCount ?? 0) > 1 ? 's' : ''}`}
-                            >
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                              </svg>
-                            </span>
-                          )}
-                          {draft.repliedAt && (
-                            <span
-                              className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400"
-                              title="Replied"
-                            >
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                              </svg>
-                            </span>
-                          )}
-                        </div>
-                      )}
+                      {renderQualityBadge(draft)}
+                      {renderEngagementIndicators(draft)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
+                  <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 light:text-gray-500">
+                  <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-300 light:text-gray-500">
                     {draft.costUsd ? `$${parseFloat(draft.costUsd).toFixed(4)}` : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -280,7 +363,7 @@ export function DraftsTable({
                         setSelectedDraft(draft);
                       }}
                       className="
-                        px-3 py-1.5 rounded-lg
+                        px-3 py-1.5 rounded-lg min-h-[44px]
                         text-blue-400 light:text-blue-600
                         bg-blue-500/10 light:bg-blue-50
                         hover:bg-blue-500/20 light:hover:bg-blue-100
@@ -300,9 +383,9 @@ export function DraftsTable({
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Pagination - with proper touch targets */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
+          <div className="px-4 sm:px-6 py-4 border-t border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400 light:text-gray-500">
                 Page {page} of {totalPages}
@@ -311,14 +394,14 @@ export function DraftsTable({
                 <button
                   onClick={() => onPageChange(page - 1)}
                   disabled={page <= 1}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-md hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => onPageChange(page + 1)}
                   disabled={page >= totalPages}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-md hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
                 >
                   Next
                 </button>

@@ -65,6 +65,7 @@ export const metadata: Metadata = {
       { url: '/icons/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
     ],
   },
+  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
