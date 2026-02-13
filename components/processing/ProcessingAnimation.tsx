@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { Loader2, CheckCircle, XCircle, Video, Clock } from 'lucide-react';
 import { ProcessingSteps } from './ProcessingSteps';
@@ -21,6 +22,25 @@ export function ProcessingAnimation({
   showLogs = true,
   className = '',
 }: ProcessingAnimationProps) {
+  // Track elapsed time in state to avoid hydration mismatch
+  const [elapsedMs, setElapsedMs] = useState(0);
+
+  // Update elapsed time on client only
+  useEffect(() => {
+    if (!status.processingStartedAt) {
+      setElapsedMs(0);
+      return;
+    }
+
+    const updateElapsed = () => {
+      setElapsedMs(Date.now() - new Date(status.processingStartedAt!).getTime());
+    };
+
+    updateElapsed();
+    const interval = setInterval(updateElapsed, 1000);
+    return () => clearInterval(interval);
+  }, [status.processingStartedAt]);
+
   // Smooth progress animation using spring physics
   const springProgress = useSpring(status.processingProgress, {
     stiffness: 100,
@@ -34,10 +54,6 @@ export function ProcessingAnimation({
   const isFailed = status.processingStep === 'failed' || status.status === 'failed';
   const isProcessing = !isComplete && !isFailed;
 
-  // Calculate elapsed time
-  const elapsedMs = status.processingStartedAt
-    ? Date.now() - new Date(status.processingStartedAt).getTime()
-    : 0;
   const elapsedTime = Math.floor(elapsedMs / 1000);
 
   // Calculate estimated time remaining
