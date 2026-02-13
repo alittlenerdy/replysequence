@@ -31,8 +31,13 @@ export async function GET(request: NextRequest) {
       .where(eq(users.clerkId, clerkId))
       .limit(1);
 
+    // New users without a database record - return empty events
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({
+        events: [],
+        calendarConnected: false,
+        syncedAt: null,
+      });
     }
 
     // Parse query params

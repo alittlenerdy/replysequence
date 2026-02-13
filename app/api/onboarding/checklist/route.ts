@@ -38,8 +38,40 @@ export async function GET() {
       .where(eq(users.clerkId, clerkId))
       .limit(1);
 
+    // New users without a database record - return default onboarding state
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      const defaultItems: ChecklistItem[] = [
+        {
+          id: 'connect_calendar',
+          label: 'Connect your calendar',
+          description: 'Link Google Calendar or Outlook to see upcoming meetings',
+          completed: false,
+          actionUrl: '/dashboard/settings',
+          actionLabel: 'Connect Calendar',
+        },
+        {
+          id: 'connect_meeting_platform',
+          label: 'Connect a meeting platform',
+          description: 'Link Zoom, Teams, or Meet to capture transcripts',
+          completed: false,
+          actionUrl: '/dashboard/settings',
+          actionLabel: 'Connect Platform',
+        },
+        {
+          id: 'first_draft',
+          label: 'Generate your first draft',
+          description: 'Complete a meeting to see AI-generated follow-up emails',
+          completed: false,
+          optional: true,
+        },
+      ];
+      return NextResponse.json({
+        items: defaultItems,
+        completedCount: 0,
+        totalCount: defaultItems.filter(i => !i.optional).length,
+        percentComplete: 0,
+        isComplete: false,
+      } as ChecklistResponse);
     }
 
     // Run all checks in parallel for performance
