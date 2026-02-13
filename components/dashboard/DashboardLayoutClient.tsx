@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
 // import { OnboardingBanner } from './OnboardingBanner';
 // import { ProcessingToast } from '@/components/processing/ProcessingToast';
 
-// Temporarily disable all extra components to isolate hydration issue
-// const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
+// Test #1: Re-enable DashboardMarginBubbles
+const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
@@ -36,10 +36,9 @@ export function DashboardLayoutClient({
     }
   }, []);
 
-  // Stripped down to bare minimum to debug hydration
   return (
     <>
-      {/* <DashboardMarginBubbles /> */}
+      <DashboardMarginBubbles />
       {/* {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />} */}
       {children}
       {/* <ProcessingToast hideOnDashboard={true} /> */}
