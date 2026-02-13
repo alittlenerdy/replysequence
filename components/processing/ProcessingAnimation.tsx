@@ -1,10 +1,12 @@
 'use client';
 
 import { motion, useSpring, useTransform } from 'framer-motion';
-import { Loader2, CheckCircle, XCircle, Video } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Video, Clock } from 'lucide-react';
 import { ProcessingSteps } from './ProcessingSteps';
 import { ProcessingLogs } from './ProcessingLogs';
 import { ProcessingStatus } from '@/hooks/useProcessingStatus';
+import { calculateEstimatedRemaining } from '@/lib/processing-progress';
+import type { ProcessingStep } from '@/lib/db/schema';
 
 interface ProcessingAnimationProps {
   status: ProcessingStatus;
@@ -33,11 +35,19 @@ export function ProcessingAnimation({
   const isProcessing = !isComplete && !isFailed;
 
   // Calculate elapsed time
-  const elapsedTime = status.processingStartedAt
-    ? Math.floor((Date.now() - new Date(status.processingStartedAt).getTime()) / 1000)
+  const elapsedMs = status.processingStartedAt
+    ? Date.now() - new Date(status.processingStartedAt).getTime()
     : 0;
+  const elapsedTime = Math.floor(elapsedMs / 1000);
 
-  const formatElapsed = (seconds: number) => {
+  // Calculate estimated time remaining
+  const { estimatedRemainingMs } = calculateEstimatedRemaining(
+    (status.processingStep || 'webhook_received') as ProcessingStep,
+    elapsedMs
+  );
+  const estimatedRemaining = Math.max(0, Math.ceil(estimatedRemainingMs / 1000));
+
+  const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
@@ -111,10 +121,18 @@ export function ProcessingAnimation({
           {/* Status indicator */}
           <div className="flex items-center gap-2">
             {isProcessing && (
-              <>
-                <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
-                <span className="text-sm text-gray-400 light:text-gray-500">{formatElapsed(elapsedTime)}</span>
-              </>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                  <span className="text-sm text-gray-400 light:text-gray-500">{formatTime(elapsedTime)}</span>
+                </div>
+                {estimatedRemaining > 0 && (
+                  <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>~{formatTime(estimatedRemaining)} left</span>
+                  </div>
+                )}
+              </div>
             )}
             {isComplete && (
               <span className="px-2 py-1 text-xs font-medium text-green-400 bg-green-500/10 rounded-full">
@@ -133,9 +151,16 @@ export function ProcessingAnimation({
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-400 light:text-gray-500">Progress</span>
-            <span className="text-sm font-mono text-gray-300 light:text-gray-600">
-              {status.processingProgress}%
-            </span>
+            <div className="flex items-center gap-3">
+              {isProcessing && estimatedRemaining > 0 && (
+                <span className="text-xs text-gray-500 hidden sm:inline">
+                  ~{formatTime(estimatedRemaining)} remaining
+                </span>
+              )}
+              <span className="text-sm font-mono text-gray-300 light:text-gray-600">
+                {status.processingProgress}%
+              </span>
+            </div>
           </div>
           <div className="h-2 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
             <motion.div

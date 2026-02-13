@@ -36,17 +36,19 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
   const isFailed = currentStep === 'failed';
 
   return (
-    <div className={`flex items-center justify-between ${className}`}>
-      {VISIBLE_STEPS.map((step, index) => {
-        const stepOrder = STEP_ORDER[step.step];
-        const isComplete = !isFailed && currentOrder >= stepOrder;
-        const isCurrent = !isFailed && currentStep && stepOrder === currentOrder;
-        const isPending = currentOrder < stepOrder || isFailed;
+    <>
+      {/* Desktop: Horizontal layout */}
+      <div className={`hidden sm:flex items-center justify-between ${className}`}>
+        {VISIBLE_STEPS.map((step, index) => {
+          const stepOrder = STEP_ORDER[step.step];
+          const isComplete = !isFailed && currentOrder >= stepOrder;
+          const isCurrent = !isFailed && currentStep && stepOrder === currentOrder;
+          const isPending = currentOrder < stepOrder || isFailed;
 
-        return (
-          <div key={step.step} className="flex items-center flex-1">
-            {/* Step Circle */}
-            <div className="flex flex-col items-center">
+          return (
+            <div key={step.step} className="flex items-center flex-1">
+              {/* Step Circle */}
+              <div className="flex flex-col items-center">
               <motion.div
                 className={`
                   relative flex items-center justify-center w-8 h-8 rounded-full
@@ -139,6 +141,87 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
           </div>
         );
       })}
-    </div>
+      </div>
+
+      {/* Mobile: Compact vertical layout */}
+      <div className={`sm:hidden ${className}`}>
+        <div className="flex items-center justify-between gap-1">
+          {VISIBLE_STEPS.map((step, index) => {
+            const stepOrder = STEP_ORDER[step.step];
+            const isComplete = !isFailed && currentOrder >= stepOrder;
+            const isCurrent = !isFailed && currentStep && stepOrder === currentOrder;
+
+            return (
+              <div key={step.step} className="flex items-center flex-1">
+                {/* Compact Step Indicator */}
+                <div className="flex flex-col items-center flex-1">
+                  <motion.div
+                    className={`
+                      relative flex items-center justify-center w-6 h-6 rounded-full
+                      transition-colors duration-300
+                      ${
+                        isComplete
+                          ? 'bg-green-500/20 border-2 border-green-500'
+                          : isCurrent
+                          ? 'bg-purple-500/20 border-2 border-purple-500'
+                          : isFailed && step.step === 'completed'
+                          ? 'bg-red-500/20 border-2 border-red-500'
+                          : 'bg-gray-800/50 border-2 border-gray-600'
+                      }
+                    `}
+                    animate={{
+                      scale: isCurrent ? [1, 1.1, 1] : 1,
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: isCurrent ? Infinity : 0,
+                    }}
+                  >
+                    {isComplete && step.step !== currentStep ? (
+                      <Check className="w-3 h-3 text-green-500" />
+                    ) : isCurrent ? (
+                      <Loader2 className="w-3 h-3 text-purple-400 animate-spin" />
+                    ) : isFailed && step.step === 'completed' ? (
+                      <AlertCircle className="w-3 h-3 text-red-500" />
+                    ) : (
+                      <Circle className="w-2 h-2 text-gray-500" />
+                    )}
+                  </motion.div>
+                  <span
+                    className={`
+                      mt-1 text-[10px] font-medium truncate w-full text-center
+                      ${
+                        isComplete
+                          ? 'text-green-400'
+                          : isCurrent
+                          ? 'text-purple-400'
+                          : 'text-gray-500'
+                      }
+                    `}
+                  >
+                    {isFailed && step.step === 'completed' ? 'Failed' : step.label}
+                  </span>
+                </div>
+
+                {/* Connector Line */}
+                {index < VISIBLE_STEPS.length - 1 && (
+                  <div className="w-4 h-0.5 -mt-4 bg-gray-700">
+                    <motion.div
+                      className="h-full rounded-full"
+                      initial={{ scaleX: 0, transformOrigin: 'left' }}
+                      animate={{
+                        scaleX: isComplete ? 1 : 0,
+                        backgroundColor: isComplete ? '#22c55e' : '#4b5563',
+                      }}
+                      style={{ backgroundColor: isComplete ? '#22c55e' : '#4b5563' }}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </>
   );
 }
