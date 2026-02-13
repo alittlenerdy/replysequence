@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftQualityBadge } from './ui/DraftQualityBadge';
+import { ConversationalRefine } from './ConversationalRefine';
 
 // Dynamic import TipTap editor to reduce initial bundle size
 const RichTextEditor = dynamic(
@@ -33,6 +34,7 @@ interface SuggestedRecipient {
 
 export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPreviewModalProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isRefining, setIsRefining] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,6 +49,18 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   // Edit state
   const [editSubject, setEditSubject] = useState(draft.subject);
   const [editBody, setEditBody] = useState(draft.body);
+
+  // Handle AI refinement completion
+  const handleRefineComplete = useCallback((newSubject: string, newBody: string) => {
+    setEditSubject(newSubject);
+    setEditBody(newBody);
+    setIsRefining(false);
+    setSaveSuccess(true);
+    setTimeout(() => {
+      setSaveSuccess(false);
+      onDraftUpdated();
+    }, 1500);
+  }, [onDraftUpdated]);
 
   // Reset edit state when entering edit mode
   useEffect(() => {
@@ -220,7 +234,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
-                  {isEditing ? 'Edit Draft' : 'Draft Preview'}
+                  {isRefining ? 'AI Refine' : isEditing ? 'Edit Draft' : 'Draft Preview'}
                 </h2>
                 <StatusBadge status={draft.status} />
                 {draft.qualityScore !== null && (
@@ -311,7 +325,15 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
             <>
               {/* Content */}
               <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
-                {isEditing ? (
+                {isRefining ? (
+                  <ConversationalRefine
+                    draftId={draft.id}
+                    currentSubject={draft.subject}
+                    currentBody={draft.body}
+                    onRefineComplete={handleRefineComplete}
+                    onCancel={() => setIsRefining(false)}
+                  />
+                ) : isEditing ? (
                   <div className="space-y-4">
                     {error ? (
                       <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-lg">
@@ -543,7 +565,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
               </div>
 
               {/* Footer */}
-              {!isEditing ? (
+              {!isEditing && !isRefining ? (
                 <div className="px-6 py-4 border-t border-gray-700 bg-gray-800/50 rounded-b-2xl">
                   {sendSuccess ? (
                     <div className="flex items-center justify-center gap-2 text-green-400 py-2">
@@ -627,6 +649,15 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                           />
                         </div>
                         <div className="flex gap-2">
+                          <button
+                            onClick={() => setIsRefining(true)}
+                            className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors flex items-center gap-2"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Refine
+                          </button>
                           <button
                             onClick={() => setIsEditing(true)}
                             className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors"

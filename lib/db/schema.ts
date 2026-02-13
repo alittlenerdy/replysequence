@@ -234,8 +234,13 @@ export const drafts = pgTable(
     clickedAt: timestamp('clicked_at', { withTimezone: true }), // First click time
     clickCount: integer('click_count').default(0), // Total link clicks
     repliedAt: timestamp('replied_at', { withTimezone: true }), // When recipient replied
+    // Conversational refinement tracking
+    refinementCount: integer('refinement_count').default(0),
+    lastRefinedAt: timestamp('last_refined_at', { withTimezone: true }),
+    lastRefinementInstruction: text('last_refinement_instruction'),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
   },
   (table) => [
     index('drafts_meeting_id_idx').on(table.meetingId),
