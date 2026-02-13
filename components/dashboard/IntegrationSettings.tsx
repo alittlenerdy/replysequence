@@ -113,11 +113,10 @@ const platforms: PlatformConfig[] = [
   },
 ];
 
-// Format relative time for "connected X ago"
-function formatRelativeTime(date: Date | undefined): string {
-  if (!date) return '';
-  const now = new Date();
-  const diffMs = now.getTime() - new Date(date).getTime();
+// Format relative time for "connected X ago" - requires nowMs to avoid hydration mismatch
+function formatRelativeTime(date: Date | undefined, nowMs: number): string {
+  if (!date || nowMs === 0) return '';
+  const diffMs = nowMs - new Date(date).getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
@@ -138,6 +137,15 @@ export function IntegrationSettings() {
     outlookCalendar: false,
     hubspot: false,
   });
+  // Track "now" in state to avoid hydration mismatch with relative times
+  const [nowMs, setNowMs] = useState(0);
+
+  // Initialize nowMs on client only
+  useEffect(() => {
+    setNowMs(Date.now());
+    const interval = setInterval(() => setNowMs(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
   const [connectionDetails, setConnectionDetails] = useState<Record<string, PlatformConnectionDetails>>({
     zoom: { connected: false },
     teams: { connected: false },
@@ -325,7 +333,7 @@ export function IntegrationSettings() {
                       <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
                       {details.connectedAt && (
                         <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt)}
+                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
                         </p>
                       )}
                     </div>
@@ -468,7 +476,7 @@ export function IntegrationSettings() {
                       <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
                       {details.connectedAt && (
                         <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt)}
+                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
                         </p>
                       )}
                     </div>
@@ -609,7 +617,7 @@ export function IntegrationSettings() {
                       <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
                       {details.connectedAt && (
                         <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt)}
+                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
                         </p>
                       )}
                     </div>

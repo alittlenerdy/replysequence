@@ -1,8 +1,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Video, Users, Calendar, Mail, Database, Sparkles, MessageSquare, FileText } from 'lucide-react';
+
+// Static connection lines - deterministic to avoid hydration mismatch
+const STATIC_CONNECTION_LINES = [
+  { x2: 25, y2: 35, delay: 0 },
+  { x2: 75, y2: 25, delay: 0.6 },
+  { x2: 85, y2: 65, delay: 1.2 },
+  { x2: 35, y2: 85, delay: 1.8 },
+  { x2: 15, y2: 55, delay: 2.4 },
+  { x2: 65, y2: 15, delay: 3.0 },
+  { x2: 55, y2: 75, delay: 3.6 },
+  { x2: 45, y2: 45, delay: 4.2 },
+];
 
 export function HeroAnimation() {
   const [mounted, setMounted] = useState(false);
@@ -11,36 +23,25 @@ export function HeroAnimation() {
     setMounted(true);
   }, []);
 
-  // Pre-calculate random positions for connection lines (prevents re-renders)
-  const connectionLines = useMemo(() =>
-    Array.from({ length: 8 }, (_, i) => ({
-      x2: 15 + Math.random() * 70,
-      y2: 15 + Math.random() * 70,
-      delay: i * 0.6,
-    })),
-  []);
-
   // Outer ring icons (largest orbit) - Video platforms
-  const outerRingIcons = useMemo(() => [
+  const outerRingIcons = [
     { Icon: Video, angle: 0, color: '#2D8CFF', label: 'Zoom' },           // Zoom blue
     { Icon: Users, angle: 120, color: '#5B5FC7', label: 'Teams' },        // Teams purple
     { Icon: MessageSquare, angle: 240, color: '#00897B', label: 'Meet' }, // Meet teal
-  ], []);
+  ];
 
   // Middle ring icons - Core features
-  const middleRingIcons = useMemo(() => [
+  const middleRingIcons = [
     { Icon: Mail, angle: 45, color: '#EA4335', label: 'Email' },          // Email red
     { Icon: Calendar, angle: 165, color: '#4285F4', label: 'Calendar' },  // Calendar blue
     { Icon: Database, angle: 285, color: '#FF7A59', label: 'CRM' },       // HubSpot orange
-  ], []);
+  ];
 
   // Inner ring icons - AI/Docs
-  const innerRingIcons = useMemo(() => [
+  const innerRingIcons = [
     { Icon: Sparkles, angle: 90, color: '#8B5CF6', label: 'AI' },         // AI purple
     { Icon: FileText, angle: 270, color: '#10B981', label: 'Docs' },      // Docs green
-  ], []);
-
-  if (!mounted) return null;
+  ];
 
   return (
     <div className="relative w-full h-[500px] md:h-[700px] overflow-hidden">
@@ -229,7 +230,7 @@ export function HeroAnimation() {
           </linearGradient>
         </defs>
         {/* Animated connection lines */}
-        {connectionLines.map((line, i) => (
+        {STATIC_CONNECTION_LINES.map((line, i) => (
           <motion.line
             key={i}
             x1="50%"

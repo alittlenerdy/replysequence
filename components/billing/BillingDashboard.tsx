@@ -99,6 +99,31 @@ const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string; l
 // Default status for unknown values
 const defaultStatus = { icon: Clock, color: 'text-gray-400', label: 'Unknown' };
 
+// Hydration-safe trial days component
+function TrialDaysRemaining({ trialEnd }: { trialEnd: string }) {
+  const [daysRemaining, setDaysRemaining] = useState<number | null>(null);
+
+  useEffect(() => {
+    const days = Math.ceil(
+      (new Date(trialEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    );
+    setDaysRemaining(days);
+  }, [trialEnd]);
+
+  if (daysRemaining === null) return null;
+
+  return (
+    <div className="flex items-center gap-2 text-sm text-blue-400">
+      <Clock className="w-4 h-4" />
+      <span>
+        {daysRemaining > 0
+          ? `${daysRemaining} day${daysRemaining === 1 ? '' : 's'} left in trial`
+          : 'Trial ends today'}
+      </span>
+    </div>
+  );
+}
+
 function CardBrandIcon({ brand }: { brand: string }) {
   // Simple card brand indicator
   const brandColors: Record<string, string> = {
@@ -237,19 +262,7 @@ export function BillingDashboard() {
                   )}
                 </div>
                 {billing.subscription.status === 'trialing' && billing.subscription.trialEnd && (
-                  <div className="flex items-center gap-2 text-sm text-blue-400">
-                    <Clock className="w-4 h-4" />
-                    <span>
-                      {(() => {
-                        const daysRemaining = Math.ceil(
-                          (new Date(billing.subscription.trialEnd!).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-                        );
-                        return daysRemaining > 0
-                          ? `${daysRemaining} day${daysRemaining === 1 ? '' : 's'} left in trial`
-                          : 'Trial ends today';
-                      })()}
-                    </span>
-                  </div>
+                  <TrialDaysRemaining trialEnd={billing.subscription.trialEnd} />
                 )}
                 <div className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-500">
                   <Calendar className="w-4 h-4" />
