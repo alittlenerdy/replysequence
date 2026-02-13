@@ -4,6 +4,9 @@ import { db } from '@/lib/db';
 import { meetings, users } from '@/lib/db/schema';
 import { eq, and, inArray, desc } from 'drizzle-orm';
 
+// Force dynamic to prevent stale deployment caching issues
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/meetings/processing
  * Returns all currently processing meetings for the authenticated user
