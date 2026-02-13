@@ -123,8 +123,8 @@ export default function RootLayout({
       signInFallbackRedirectUrl="/dashboard"
       signUpFallbackRedirectUrl="/dashboard"
     >
-      <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-        <body className="antialiased">
+      <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
+        <body className="antialiased" suppressHydrationWarning>
           <PostHogProvider>
             <ServiceWorkerRegistration />
             {/* MouseTrail disabled - hydration issue */}
