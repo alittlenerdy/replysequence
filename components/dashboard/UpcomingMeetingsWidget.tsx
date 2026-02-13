@@ -39,8 +39,9 @@ function formatRelativeTime(date: Date, nowMs: number): string {
   return `in ${diffDays} days`;
 }
 
-// Format time
-function formatTime(date: Date): string {
+// Format time - requires nowMs to be > 0 (client-side) to avoid hydration mismatch
+function formatTime(date: Date, isMounted: boolean): string {
+  if (!isMounted) return '...';
   return date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
@@ -87,7 +88,7 @@ function MeetingCard({
         <div className="flex items-center gap-3 text-sm text-gray-400 light:text-gray-500">
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
-            {formatTime(startTime)}
+            {formatTime(startTime, nowMs > 0)}
           </span>
           {attendeeCount > 0 && (
             <span className="flex items-center gap-1">
