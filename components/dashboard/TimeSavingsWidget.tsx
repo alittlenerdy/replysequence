@@ -193,9 +193,9 @@ export function TimeSavingsWidget({
   const hasData = totalDrafts > 0;
   const comparison = getFunComparison(hoursSaved);
 
-  // Generate mock sparkline data (in a real app, this would come from API)
+  // Generate deterministic sparkline data (no Math.random to avoid hydration mismatch)
   const sparklineData = hasData
-    ? Array.from({ length: 7 }, (_, i) => Math.min(totalDrafts, Math.floor((i + 1) * (totalDrafts / 7) + Math.random() * 2)))
+    ? Array.from({ length: 7 }, (_, i) => Math.min(totalDrafts, Math.floor((i + 1) * (totalDrafts / 7))))
     : [];
 
   // Loading skeleton

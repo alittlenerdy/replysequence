@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Calendar,
@@ -25,10 +25,9 @@ const platformConfig: Record<string, { icon: typeof Video; color: string; bgColo
   microsoft_teams: { icon: Video, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
 };
 
-// Format relative time
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = date.getTime() - now.getTime();
+// Format relative time - requires nowMs to be passed to avoid hydration mismatch
+function formatRelativeTime(date: Date, nowMs: number): string {
+  const diffMs = date.getTime() - nowMs;
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
@@ -54,10 +53,12 @@ function MeetingCard({
   event,
   onToggleAutoProcess,
   isUpdating,
+  nowMs,
 }: {
   event: CalendarEvent;
   onToggleAutoProcess: (eventId: string, newValue: 'enabled' | 'disabled') => void;
   isUpdating: boolean;
+  nowMs: number;
 }) {
   const startTime = new Date(event.startTime);
   const platform = event.meetingPlatform as MeetingPlatform | null;
@@ -97,10 +98,12 @@ function MeetingCard({
         </div>
       </div>
 
-      {/* Relative time badge */}
-      <div className="shrink-0 text-xs font-medium px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-400">
-        {formatRelativeTime(startTime)}
-      </div>
+      {/* Relative time badge - only show after client hydration */}
+      {nowMs > 0 && (
+        <div className="shrink-0 text-xs font-medium px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-400">
+          {formatRelativeTime(startTime, nowMs)}
+        </div>
+      )}
 
       {/* Auto-process toggle */}
       {event.meetingUrl && (
@@ -133,6 +136,16 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
   const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
   const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
   const hasFetched = useRef(false);
+  // Track "now" in state to avoid hydration mismatch
+  const [nowMs, setNowMs] = useState<number>(0);
+
+  // Initialize nowMs on client only to avoid hydration mismatch
+  useEffect(() => {
+    setNowMs(Date.now());
+    // Update every minute
+    const interval = setInterval(() => setNowMs(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -272,6 +285,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
                 event={event}
                 onToggleAutoProcess={handleToggleAutoProcess}
                 isUpdating={updatingEventId === event.id}
+                nowMs={nowMs}
               />
             ))}
             {meetingEvents.length > 5 && (
