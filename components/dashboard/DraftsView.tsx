@@ -14,6 +14,7 @@ import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
 import { TimeSavingsWidget } from './TimeSavingsWidget';
 import { UpcomingMeetingsWidget } from './UpcomingMeetingsWidget';
+import { OnboardingChecklist } from './OnboardingChecklist';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -159,6 +160,9 @@ export function DraftsView({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Onboarding Checklist - shows until completed */}
+      <OnboardingChecklist />
 
       {/* Stats and Time Savings */}
       {isLoading && drafts.length === 0 ? (
