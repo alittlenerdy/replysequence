@@ -1,9 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftPreviewModal } from './DraftPreviewModal';
+
+// Hydration-safe date formatting hook
+function useHydrationSafeDate() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  return isMounted;
+}
 
 // Convert 0-100 score to 1-5 stars for compact display
 function scoreToStars(score: number | null): number {
@@ -41,6 +52,7 @@ export function DraftsTable({
 }: DraftsTableProps) {
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
   const [visibleRows, setVisibleRows] = useState(0);
+  const isMounted = useHydrationSafeDate();
 
   // Stagger reveal rows one by one
   useEffect(() => {
@@ -59,8 +71,10 @@ export function DraftsTable({
     return () => clearInterval(timer);
   }, [drafts]);
 
+  // Format date only after mount to avoid hydration mismatch
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
+    if (!isMounted) return '...'; // Placeholder during SSR
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -130,9 +144,10 @@ export function DraftsTable({
     }
   };
 
-  // Format date for mobile (shorter)
+  // Format date for mobile (shorter) - hydration safe
   const formatDateShort = (date: Date | null) => {
     if (!date) return '-';
+    if (!isMounted) return '...';
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

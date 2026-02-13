@@ -7,6 +7,19 @@ import { StatusBadge } from './ui/StatusBadge';
 import { DraftQualityBadge } from './ui/DraftQualityBadge';
 import { ConversationalRefine } from './ConversationalRefine';
 
+// Hydration-safe date formatting
+function useHydrationSafe() {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+  return isMounted;
+}
+
+function formatDateSafe(date: Date | string | null, isMounted: boolean, options?: Intl.DateTimeFormatOptions): string {
+  if (!date) return '-';
+  if (!isMounted) return '...';
+  return new Date(date).toLocaleDateString('en-US', options || { month: 'short', day: 'numeric' });
+}
+
 // Dynamic import TipTap editor to reduce initial bundle size
 const RichTextEditor = dynamic(
   () => import('./RichTextEditor').then((mod) => mod.RichTextEditor),
@@ -33,6 +46,7 @@ interface SuggestedRecipient {
 }
 
 export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPreviewModalProps) {
+  const isMounted = useHydrationSafe();
   const [isEditing, setIsEditing] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -95,6 +109,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
+    if (!isMounted) return '...';
     return new Date(date).toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',
@@ -503,9 +518,9 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 {draft.openCount ?? 0}
                               </div>
                               <div className="text-xs text-gray-500">Opens</div>
-                              {draft.openedAt && (
+                              {draft.openedAt && isMounted && (
                                 <div className="text-xs text-gray-600 mt-1">
-                                  First: {new Date(draft.openedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                  First: {formatDateSafe(draft.openedAt, isMounted)}
                                 </div>
                               )}
                             </div>
@@ -515,9 +530,9 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 {draft.clickCount ?? 0}
                               </div>
                               <div className="text-xs text-gray-500">Clicks</div>
-                              {draft.clickedAt && (
+                              {draft.clickedAt && isMounted && (
                                 <div className="text-xs text-gray-600 mt-1">
-                                  First: {new Date(draft.clickedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                  First: {formatDateSafe(draft.clickedAt, isMounted)}
                                 </div>
                               )}
                             </div>
@@ -531,18 +546,18 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 ) : '-'}
                               </div>
                               <div className="text-xs text-gray-500">Replied</div>
-                              {draft.repliedAt && (
+                              {draft.repliedAt && isMounted && (
                                 <div className="text-xs text-gray-600 mt-1">
-                                  {new Date(draft.repliedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                  {formatDateSafe(draft.repliedAt, isMounted)}
                                 </div>
                               )}
                             </div>
                           </div>
 
                           {/* Last Activity */}
-                          {draft.lastOpenedAt && (
+                          {draft.lastOpenedAt && isMounted && (
                             <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500 text-center">
-                              Last opened: {new Date(draft.lastOpenedAt).toLocaleDateString('en-US', {
+                              Last opened: {formatDateSafe(draft.lastOpenedAt, isMounted, {
                                 month: 'short',
                                 day: 'numeric',
                                 hour: '2-digit',
