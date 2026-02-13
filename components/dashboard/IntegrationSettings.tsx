@@ -5,7 +5,7 @@ import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock }
 import { checkPlatformConnections, type PlatformConnectionDetails } from '@/app/actions/checkPlatformConnections';
 
 interface PlatformConfig {
-  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar';
+  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot';
   name: string;
   description: string;
   color: string;
@@ -13,7 +13,7 @@ interface PlatformConfig {
   icon: React.ReactNode;
   connectUrl: string;
   disconnectUrl: string;
-  category: 'meeting' | 'calendar';
+  category: 'meeting' | 'calendar' | 'crm';
 }
 
 const platforms: PlatformConfig[] = [
@@ -95,6 +95,22 @@ const platforms: PlatformConfig[] = [
     disconnectUrl: '/api/integrations/outlook-calendar/disconnect',
     category: 'calendar',
   },
+  // CRM platforms
+  {
+    id: 'hubspot',
+    name: 'HubSpot',
+    description: 'Sync sent emails and meeting notes to HubSpot CRM',
+    color: '#FF7A59',
+    bgColor: 'bg-[#FF7A59]/10',
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#FF7A59">
+        <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.984 2.21 2.21 0 00-2.212-2.212 2.21 2.21 0 00-2.212 2.212c0 .874.517 1.627 1.267 1.984v2.847a5.395 5.395 0 00-2.627 1.2L7.258 4.744a2.036 2.036 0 00.069-.493 2.035 2.035 0 00-2.035-2.035A2.035 2.035 0 003.257 4.25a2.035 2.035 0 002.035 2.035c.27 0 .527-.054.763-.15l6.324 4.324a5.418 5.418 0 00-.843 2.903c0 1.074.313 2.076.852 2.92l-2.038 2.04a1.95 1.95 0 00-.595-.094 1.97 1.97 0 00-1.968 1.968 1.97 1.97 0 001.968 1.968 1.97 1.97 0 001.968-1.968c0-.211-.034-.414-.095-.603l2.018-2.018a5.42 5.42 0 003.571 1.334 5.432 5.432 0 005.432-5.432 5.42 5.42 0 00-4.485-5.347zm-1.047 8.537a3.16 3.16 0 01-3.163-3.163 3.16 3.16 0 013.163-3.163 3.16 3.16 0 013.163 3.163 3.16 3.16 0 01-3.163 3.163z"/>
+      </svg>
+    ),
+    connectUrl: '/api/auth/hubspot',
+    disconnectUrl: '/api/integrations/hubspot/disconnect',
+    category: 'crm',
+  },
 ];
 
 // Format relative time for "connected X ago"
@@ -120,6 +136,7 @@ export function IntegrationSettings() {
     meet: false,
     calendar: false,
     outlookCalendar: false,
+    hubspot: false,
   });
   const [connectionDetails, setConnectionDetails] = useState<Record<string, PlatformConnectionDetails>>({
     zoom: { connected: false },
@@ -127,6 +144,7 @@ export function IntegrationSettings() {
     meet: { connected: false },
     calendar: { connected: false },
     outlookCalendar: { connected: false },
+    hubspot: { connected: false },
   });
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -463,6 +481,147 @@ export function IntegrationSettings() {
                     }`}>
                       {details.isExpired
                         ? 'Token expired. Reconnect to continue syncing your calendar.'
+                        : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
+                    </p>
+                  )}
+                </div>
+
+                {isConnected ? (
+                  <div className="flex flex-col gap-2">
+                    {(details?.isExpired || details?.isExpiringSoon) && (
+                      <button
+                        onClick={() => handleConnect(platform)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                        style={{ backgroundColor: platform.color }}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <ExternalLink className="w-4 h-4" />
+                        )}
+                        Reconnect
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDisconnect(platform)}
+                      disabled={isLoading}
+                      className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Unplug className="w-4 h-4" />
+                      )}
+                      Disconnect
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleConnect(platform)}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                    style={{ backgroundColor: platform.color }}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <ExternalLink className="w-4 h-4" />
+                    )}
+                    Connect
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* CRM Integrations */}
+      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-3">CRM Integrations</h3>
+      <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
+        Connect your CRM to automatically sync sent emails and meeting summaries.
+      </p>
+      <div className="space-y-4 mb-8">
+        {platforms.filter(p => p.category === 'crm').map((platform) => {
+          const isConnected = connectionStatus[platform.id];
+          const details = connectionDetails[platform.id];
+          const isLoading = actionLoading === platform.id;
+
+          const getStatusColor = () => {
+            if (!isConnected) return null;
+            if (details?.isExpired) return 'red';
+            if (details?.isExpiringSoon) return 'yellow';
+            return 'green';
+          };
+          const statusColor = getStatusColor();
+
+          return (
+            <div
+              key={platform.id}
+              className={`border rounded-xl p-6 transition-all ${
+                isConnected
+                  ? statusColor === 'red'
+                    ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
+                    : statusColor === 'yellow'
+                    ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
+                    : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
+                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center`}>
+                  {platform.icon}
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
+                    {isConnected && (
+                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusColor === 'red'
+                          ? 'bg-red-500/20 text-red-400'
+                          : statusColor === 'yellow'
+                          ? 'bg-yellow-500/20 text-yellow-400'
+                          : 'bg-emerald-500/20 text-emerald-400'
+                      }`}>
+                        {statusColor === 'red' ? (
+                          <>
+                            <AlertTriangle className="w-3 h-3" />
+                            Expired
+                          </>
+                        ) : statusColor === 'yellow' ? (
+                          <>
+                            <Clock className="w-3 h-3" />
+                            Expiring Soon
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-3 h-3" />
+                            Connected
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  {isConnected && details?.email ? (
+                    <div className="mt-1">
+                      <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
+                      {details.connectedAt && (
+                        <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
+                          Connected {formatRelativeTime(details.connectedAt)}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
+                  )}
+                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
+                    <p className={`text-xs mt-1 ${
+                      details.isExpired ? 'text-red-400' : 'text-yellow-400'
+                    }`}>
+                      {details.isExpired
+                        ? 'Token expired. Reconnect to continue syncing to your CRM.'
                         : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
                     </p>
                   )}
