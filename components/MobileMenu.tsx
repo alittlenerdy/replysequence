@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 
 const competitors = [
@@ -15,12 +14,6 @@ const competitors = [
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // Wait for client-side mount before rendering portal
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Close menu on escape key
   useEffect(() => {
@@ -69,18 +62,17 @@ export default function MobileMenu() {
         />
       </button>
 
-      {/* Mobile Menu Overlay */}
-      {mounted && createPortal(
-        <div
-          className={`fixed inset-0 backdrop-blur-lg md:hidden transition-all duration-300 ${
-            isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
-          }`}
-          style={{
-            backgroundColor: 'rgba(17, 24, 39, 0.98)',
-            zIndex: 9999,
-          }}
-          onClick={() => setIsOpen(false)}
-        >
+      {/* Mobile Menu Overlay - render inline to avoid hydration mismatch with portal */}
+      <div
+        className={`fixed inset-0 backdrop-blur-lg md:hidden transition-all duration-300 ${
+          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+        style={{
+          backgroundColor: 'rgba(17, 24, 39, 0.98)',
+          zIndex: 9999,
+        }}
+        onClick={() => setIsOpen(false)}
+      >
           {/* Menu Content - padded to avoid header */}
           <nav
             className={`flex flex-col items-center justify-center h-full gap-6 px-4 transition-all duration-300 ${
@@ -148,9 +140,7 @@ export default function MobileMenu() {
             Join Waitlist
           </a>
         </nav>
-        </div>,
-        document.body
-      )}
+      </div>
     </>
   );
 }
