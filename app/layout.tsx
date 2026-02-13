@@ -125,14 +125,15 @@ export default function RootLayout({
     >
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
         <body className="antialiased" suppressHydrationWarning>
-          <PostHogProvider>
+          {/* PostHog temporarily disabled to debug hydration issues */}
+          {/* <PostHogProvider> */}
             <ServiceWorkerRegistration />
             {/* MouseTrail disabled - hydration issue */}
             {/* <MouseTrail /> */}
             {children}
             {/* PWAInstallPrompt disabled - hydration issue */}
             {/* <PWAInstallPrompt /> */}
-          </PostHogProvider>
+          {/* </PostHogProvider> */}
           <Analytics />
           <SpeedInsights />
         </body>
