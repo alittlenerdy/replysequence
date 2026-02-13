@@ -13,6 +13,7 @@ export interface ChecklistItem {
   completed: boolean;
   actionUrl?: string;
   actionLabel?: string;
+  optional?: boolean;
 }
 
 export interface ChecklistResponse {
@@ -124,10 +125,21 @@ export async function GET() {
         actionUrl: hasPlatformConnected ? undefined : '/dashboard/settings',
         actionLabel: hasPlatformConnected ? 'Waiting for meeting' : 'Connect first',
       },
+      {
+        id: 'crm',
+        label: 'Connect Your CRM',
+        description: 'Auto-log meetings to Airtable, HubSpot, or Salesforce',
+        completed: false, // TODO: Track per-user CRM connection
+        actionUrl: '/dashboard/settings',
+        actionLabel: 'Setup CRM',
+        optional: true,
+      },
     ];
 
-    const completedCount = items.filter(item => item.completed).length;
-    const totalCount = items.length;
+    // Count only required items for progress (exclude optional)
+    const requiredItems = items.filter(item => !item.optional);
+    const completedCount = requiredItems.filter(item => item.completed).length;
+    const totalCount = requiredItems.length;
     const percentComplete = Math.round((completedCount / totalCount) * 100);
     const isComplete = completedCount === totalCount;
 

@@ -63,11 +63,22 @@ function ChecklistItemRow({
         </p>
       </div>
 
+      {/* Optional badge */}
+      {item.optional && !item.completed && (
+        <span className="shrink-0 px-2 py-0.5 text-[10px] font-medium rounded-full bg-gray-700/50 text-gray-400 light:bg-gray-200 light:text-gray-500">
+          Optional
+        </span>
+      )}
+
       {/* Action button */}
       {!item.completed && item.actionUrl && (
         <Link
           href={item.actionUrl}
-          className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors flex items-center gap-1"
+          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
+            item.optional
+              ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-700/70 light:bg-gray-200 light:text-gray-600 light:hover:bg-gray-300'
+              : 'bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30'
+          }`}
         >
           {item.actionLabel || 'Go'}
           <ExternalLink className="w-3 h-3" />
