@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { OnboardingBanner } from './OnboardingBanner';
-import { ProcessingToast } from '@/components/processing/ProcessingToast';
+// import dynamic from 'next/dynamic';
+// import { OnboardingBanner } from './OnboardingBanner';
+// import { ProcessingToast } from '@/components/processing/ProcessingToast';
 
-const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
+// Temporarily disable all extra components to isolate hydration issue
+// const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
@@ -15,7 +16,9 @@ interface DashboardLayoutClientProps {
 
 export function DashboardLayoutClient({
   children,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onboardingIncomplete = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onboardingStep = 1,
 }: DashboardLayoutClientProps) {
   // Sync theme from localStorage on mount
@@ -33,12 +36,13 @@ export function DashboardLayoutClient({
     }
   }, []);
 
+  // Stripped down to bare minimum to debug hydration
   return (
     <>
-      <DashboardMarginBubbles />
-      {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />}
+      {/* <DashboardMarginBubbles /> */}
+      {/* {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />} */}
       {children}
-      <ProcessingToast hideOnDashboard={true} />
+      {/* <ProcessingToast hideOnDashboard={true} /> */}
     </>
   );
 }
