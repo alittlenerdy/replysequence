@@ -14,6 +14,14 @@ const isProtectedRoute = createRouteMatcher([
   '/api/stripe/create-portal(.*)',
 ])
 
+// Beta mode: redirect signup attempts to waitlist
+const BETA_MODE = true
+const WAITLIST_URL = 'https://tally.so/r/D4pv0j'
+
+const isSignupRoute = createRouteMatcher([
+  '/sign-up(.*)',
+])
+
 // Generate a random nonce for CSP
 function generateNonce(): string {
   const array = new Uint8Array(16)
@@ -22,6 +30,11 @@ function generateNonce(): string {
 }
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // Beta mode: redirect signup attempts to waitlist
+  if (BETA_MODE && isSignupRoute(req)) {
+    return NextResponse.redirect(WAITLIST_URL)
+  }
+
   if (isProtectedRoute(req)) {
     await auth.protect()
   }
