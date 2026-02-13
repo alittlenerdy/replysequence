@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Check, Loader2, Circle, AlertCircle } from 'lucide-react';
 import { ProcessingStep } from '@/lib/db/schema';
-import { PROCESSING_STAGES } from '@/lib/processing-progress';
+import { PROCESSING_STAGES } from '@/lib/processing-stages';
 
 interface ProcessingStepsProps {
   currentStep: ProcessingStep | null;

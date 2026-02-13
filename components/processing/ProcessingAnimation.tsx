@@ -5,7 +5,7 @@ import { Loader2, CheckCircle, XCircle, Video, Clock } from 'lucide-react';
 import { ProcessingSteps } from './ProcessingSteps';
 import { ProcessingLogs } from './ProcessingLogs';
 import { ProcessingStatus } from '@/hooks/useProcessingStatus';
-import { calculateEstimatedRemaining } from '@/lib/processing-progress';
+import { calculateEstimatedRemaining } from '@/lib/processing-stages';
 import type { ProcessingStep } from '@/lib/db/schema';
 
 interface ProcessingAnimationProps {
