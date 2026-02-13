@@ -46,7 +46,7 @@ export default function DashboardMarginBubbles() {
     return () => observer.disconnect();
   }, []);
 
-  const renderBubble = (bubble: ReturnType<typeof generateBubbles>[0]) => {
+  const renderBubble = (bubble: typeof STATIC_BUBBLES[0]) => {
     // Dark mode (default): brighter colors at lower opacity
     // Light mode: dark colors at higher opacity
     const colors = isLight
