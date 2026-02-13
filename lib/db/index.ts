@@ -3,12 +3,13 @@ import { Pool } from 'pg';
 import * as schema from './schema';
 
 // Create a connection pool optimized for serverless
-// Use longer timeouts for cold starts
+// Use small pool size since each Vercel function instance creates its own pool
+// Use DATABASE_URL_POOLER for Supabase's PgBouncer (recommended for serverless)
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000, // 10 seconds for cold starts
+  connectionString: process.env.DATABASE_URL_POOLER || process.env.DATABASE_URL,
+  max: 1, // Single connection per serverless instance to avoid pool exhaustion
+  idleTimeoutMillis: 20000,
+  connectionTimeoutMillis: 10000,
   // SSL required for Supabase
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
