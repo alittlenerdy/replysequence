@@ -77,6 +77,7 @@ export async function GET(request: NextRequest) {
     scope: scopes,
     response_mode: 'query',
     state, // Encoded userId + returnTo
+    prompt: 'consent', // Always show permission screen (Teams and Outlook share the same Azure app)
   });
 
   const microsoftAuthUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize?${params.toString()}`;

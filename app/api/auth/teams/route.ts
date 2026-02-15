@@ -80,6 +80,7 @@ export async function GET(request: NextRequest) {
     response_mode: 'query',
     scope: scopes,
     state, // Encoded userId + returnTo
+    prompt: 'consent', // Always show permission screen (Teams and Outlook share the same Azure app)
   });
 
   // Use 'common' for multi-tenant or specific tenant ID for single-tenant
