@@ -20,7 +20,10 @@ export type EmailPreference = 'review' | 'auto_send';
 export interface OnboardingState {
   currentStep: OnboardingStep;
   platformConnected: ConnectedPlatform;
+  connectedPlatforms: string[];
   calendarConnected: boolean;
+  googleCalendarConnected: boolean;
+  outlookCalendarConnected: boolean;
   draftGenerated: boolean;
   emailPreference: EmailPreference;
   isLoading: boolean;
@@ -36,7 +39,10 @@ function OnboardingContent() {
   const [state, setState] = useState<OnboardingState>({
     currentStep: 1,
     platformConnected: null,
+    connectedPlatforms: [],
     calendarConnected: false,
+    googleCalendarConnected: false,
+    outlookCalendarConnected: false,
     draftGenerated: false,
     emailPreference: 'review',
     isLoading: true,
@@ -62,7 +68,10 @@ function OnboardingContent() {
           ...prev,
           currentStep: data.currentStep || 1,
           platformConnected: data.platformConnected || null,
+          connectedPlatforms: data.connectedPlatforms || [],
           calendarConnected: data.calendarConnected || false,
+          googleCalendarConnected: data.googleCalendarConnected || false,
+          outlookCalendarConnected: data.outlookCalendarConnected || false,
           draftGenerated: data.draftGenerated || false,
           emailPreference: data.emailPreference || 'review',
           isLoading: false,
@@ -169,7 +178,13 @@ function OnboardingContent() {
   };
 
   const handlePlatformConnected = (platform: ConnectedPlatform) => {
-    setState(prev => ({ ...prev, platformConnected: platform }));
+    setState(prev => ({
+      ...prev,
+      platformConnected: platform,
+      connectedPlatforms: platform && !prev.connectedPlatforms.includes(platform)
+        ? [...prev.connectedPlatforms, platform]
+        : prev.connectedPlatforms,
+    }));
     trackEvent('platform_connected', 2, { platform });
 
     // Show celebration
@@ -338,6 +353,7 @@ function OnboardingContent() {
             >
               <StepConnectPlatform
                 connectedPlatform={state.platformConnected}
+                connectedPlatforms={state.connectedPlatforms}
                 onPlatformConnected={handlePlatformConnected}
                 onSkip={handleSkipPlatform}
               />
@@ -354,6 +370,8 @@ function OnboardingContent() {
             >
               <StepConnectCalendar
                 calendarConnected={state.calendarConnected}
+                googleCalendarConnected={state.googleCalendarConnected}
+                outlookCalendarConnected={state.outlookCalendarConnected}
                 onCalendarConnected={handleCalendarConnected}
                 onSkip={handleCalendarSkipped}
               />

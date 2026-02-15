@@ -6,12 +6,16 @@ import { Check, ExternalLink, Loader2, AlertTriangle, Calendar } from 'lucide-re
 
 interface StepConnectCalendarProps {
   calendarConnected: boolean;
+  googleCalendarConnected?: boolean;
+  outlookCalendarConnected?: boolean;
   onCalendarConnected: () => void;
   onSkip: () => void;
 }
 
 export function StepConnectCalendar({
   calendarConnected,
+  googleCalendarConnected = false,
+  outlookCalendarConnected = false,
   onCalendarConnected,
   onSkip,
 }: StepConnectCalendarProps) {
@@ -95,6 +99,8 @@ export function StepConnectCalendar({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
         {calendars.map((calendar, index) => {
           const isConnecting = connecting === calendar.id;
+          const isThisConnected = calendar.id === 'google' ? googleCalendarConnected : outlookCalendarConnected;
+          const anyConnected = googleCalendarConnected || outlookCalendarConnected || calendarConnected;
 
           return (
             <motion.div
@@ -103,7 +109,7 @@ export function StepConnectCalendar({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
               className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
-                calendarConnected
+                isThisConnected
                   ? 'border-emerald-500/50 bg-emerald-500/5'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
@@ -116,7 +122,7 @@ export function StepConnectCalendar({
                   >
                     {calendar.icon}
                   </div>
-                  {calendarConnected && (
+                  {isThisConnected && (
                     <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
                       <Check className="w-3.5 h-3.5" />
                       Connected
@@ -127,16 +133,16 @@ export function StepConnectCalendar({
                 <p className="text-sm text-gray-400 mb-4">{calendar.description}</p>
                 <button
                   onClick={() => handleConnect(calendar.id)}
-                  disabled={calendarConnected || connecting !== null}
+                  disabled={isThisConnected || connecting !== null}
                   className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                    calendarConnected
+                    isThisConnected
                       ? 'bg-emerald-500/10 text-emerald-400 cursor-default'
                       : isConnecting
                       ? 'bg-gray-800 text-gray-400'
                       : 'text-white hover:opacity-90'
                   }`}
                   style={
-                    !calendarConnected && !isConnecting
+                    !isThisConnected && !isConnecting
                       ? { backgroundColor: calendar.color }
                       : undefined
                   }
@@ -146,7 +152,7 @@ export function StepConnectCalendar({
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Connecting...
                     </>
-                  ) : calendarConnected ? (
+                  ) : isThisConnected ? (
                     'Connected'
                   ) : (
                     <>
@@ -161,8 +167,8 @@ export function StepConnectCalendar({
         })}
       </div>
 
-      {/* Continue button when calendar is connected */}
-      {calendarConnected && (
+      {/* Continue button when any calendar is connected */}
+      {(googleCalendarConnected || outlookCalendarConnected || calendarConnected) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

@@ -8,12 +8,14 @@ type ConnectedPlatform = 'zoom' | 'teams' | 'meet' | null;
 
 interface StepConnectPlatformProps {
   connectedPlatform: ConnectedPlatform;
+  connectedPlatforms?: string[];
   onPlatformConnected: (platform: ConnectedPlatform) => void;
   onSkip: () => void;
 }
 
 export function StepConnectPlatform({
   connectedPlatform,
+  connectedPlatforms = [],
   onPlatformConnected,
   onSkip,
 }: StepConnectPlatformProps) {
@@ -88,7 +90,7 @@ export function StepConnectPlatform({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {platforms.map((platform, index) => {
-          const isConnected = connectedPlatform === platform.id;
+          const isConnected = connectedPlatforms.includes(platform.id) || connectedPlatform === platform.id;
           const isConnecting = connecting === platform.id;
 
           return (
@@ -156,8 +158,8 @@ export function StepConnectPlatform({
         })}
       </div>
 
-      {/* Continue button when platform is connected */}
-      {connectedPlatform && (
+      {/* Continue button when at least one platform is connected */}
+      {(connectedPlatforms.length > 0 || connectedPlatform) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
