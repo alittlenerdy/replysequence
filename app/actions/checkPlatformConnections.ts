@@ -147,6 +147,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     }
 
     // Get Teams connection details
+    // Note: Microsoft access tokens expire in 1 hour, but we have refresh tokens
+    // So we don't show "expiring soon" - only show warning if refresh token is missing
     let teamsEmail: string | undefined;
     let teamsDetails: PlatformConnectionDetails = { connected: false };
     if (teamsConnected) {
@@ -155,22 +157,24 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
           msEmail: teamsConnections.msEmail,
           connectedAt: teamsConnections.connectedAt,
           expiresAt: teamsConnections.accessTokenExpiresAt,
+          hasRefreshToken: teamsConnections.refreshTokenEncrypted,
         })
         .from(teamsConnections)
         .where(eq(teamsConnections.userId, existingUser.id))
         .limit(1);
       if (connection) {
         teamsEmail = connection.msEmail;
-        const expStatus = getExpirationStatus(connection.expiresAt);
+        const hasRefreshToken = !!connection.hasRefreshToken;
         teamsDetails = {
           connected: true,
           email: connection.msEmail,
           connectedAt: connection.connectedAt,
           expiresAt: connection.expiresAt,
-          ...expStatus,
+          isExpired: !hasRefreshToken, // Only "expired" if no refresh token
+          isExpiringSoon: false, // Never "expiring soon" for Teams (we auto-refresh)
         };
       }
-      console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail });
+      console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail, hasRefreshToken: !!connection?.hasRefreshToken });
     }
 
     // Get Meet connection details
