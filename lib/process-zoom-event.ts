@@ -1,5 +1,5 @@
 import { db, meetings, rawEvents, transcripts, zoomConnections } from '@/lib/db';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, desc } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
@@ -102,6 +102,7 @@ async function lookupUserIdByEmail(hostEmail: string): Promise<string | null> {
       .select({ userId: zoomConnections.userId })
       .from(zoomConnections)
       .where(sql`LOWER(${zoomConnections.zoomEmail}) = LOWER(${hostEmail})`)
+      .orderBy(desc(zoomConnections.createdAt))
       .limit(1);
 
     if (connection) {
