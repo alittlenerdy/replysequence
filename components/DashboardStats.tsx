@@ -97,15 +97,9 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             rounded-2xl p-5
             border border-white/10 light:border-gray-200
             cursor-pointer
-            transition-all duration-500 ease-out
-            hover:-translate-y-3 hover:scale-[1.02]
+            transition-colors
             ${stat.borderHover}
-            animate-card-fade-in
           `}
-          style={{
-            animationDelay: `${stat.delay}ms`,
-            animationFillMode: 'backwards',
-          }}
         >
           {/* Animated glow on hover */}
           <div

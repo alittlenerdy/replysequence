@@ -54,21 +54,9 @@ export function DraftsTable({
   const [visibleRows, setVisibleRows] = useState(0);
   const isMounted = useHydrationSafeDate();
 
-  // Stagger reveal rows one by one
+  // Show all rows immediately (no stagger animation)
   useEffect(() => {
-    setVisibleRows(0); // Reset on drafts change
-
-    const timer = setInterval(() => {
-      setVisibleRows((prev) => {
-        if (prev >= drafts.length) {
-          clearInterval(timer);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 50); // 50ms between each row
-
-    return () => clearInterval(timer);
+    setVisibleRows(drafts.length);
   }, [drafts]);
 
   // Format date only after mount to avoid hydration mismatch
@@ -223,7 +211,7 @@ export function DraftsTable({
 
   return (
     <>
-      <div className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden animate-card-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}>
+      <div className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden">
         {/* Table Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
           <div className="flex items-center justify-between">
@@ -299,85 +287,82 @@ export function DraftsTable({
         </div>
 
         {/* Desktop Table Layout - hidden on small screens */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-700 light:divide-gray-200">
+        <div className="hidden md:block">
+          <table className="w-full table-fixed divide-y divide-gray-700 light:divide-gray-200">
             <thead className="bg-gray-800/50 light:bg-gray-50/80">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Meeting
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[12%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                  Quality
+                </th>
+                <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="px-4 py-3 text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[60px] px-2 py-3">
                 </th>
               </tr>
             </thead>
             <tbody className="bg-gray-900/40 light:bg-white/60 divide-y divide-gray-700/50 light:divide-gray-200">
-              {drafts.map((draft, index) => (
+              {drafts.map((draft) => (
                 <tr
                   key={draft.id}
-                  className={`
-                    transition-all duration-300 ease-out
-                    ${index < visibleRows
-                      ? 'opacity-100 translate-x-0'
-                      : 'opacity-0 -translate-x-4'}
-                    hover:bg-gray-700/70 light:hover:bg-blue-50
-                    hover:shadow-lg hover:shadow-purple-500/5
-                    cursor-pointer
-                    border-b border-gray-700/50 light:border-gray-200
-                    hover:border-purple-500/30
-                  `}
+                  className="hover:bg-gray-700/70 light:hover:bg-blue-50 cursor-pointer"
                   onClick={() => setSelectedDraft(draft)}
                 >
-                  <td className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2 min-w-0">
                       {getPlatformIcon(draft.meetingPlatform)}
-                      <div>
-                        <div className="text-sm font-medium text-white light:text-gray-900">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-white light:text-gray-900 truncate">
                           {draft.meetingTopic || 'Untitled Meeting'}
                         </div>
-                        <div className="text-xs text-gray-400 light:text-gray-500">
+                        <div className="text-xs text-gray-400 light:text-gray-500 truncate">
                           {draft.meetingHostEmail}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-3 max-w-xs">
+                  <td className="px-4 py-3">
                     <div className="text-sm text-gray-200 light:text-gray-900 truncate">
-                      {truncateSubject(draft.subject)}
+                      {draft.subject}
                     </div>
                   </td>
-                  <td className="px-6 py-3 whitespace-nowrap">
+                  <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <StatusBadge status={draft.status} size="sm" />
                       {renderEngagementIndicators(draft)}
                     </div>
                   </td>
-                  <td className="hidden lg:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {draft.qualityScore !== null ? (
+                      <span className={`text-xs font-medium ${
+                        draft.qualityScore >= 80 ? 'text-emerald-400' :
+                        draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
+                      }`}>
+                        {draft.qualityScore}/100
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-500">-</span>
+                    )}
+                  </td>
+                  <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm font-medium">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedDraft(draft);
                       }}
-                      className="
-                        px-3 py-1.5 rounded-lg
-                        text-blue-400 light:text-blue-600
-                        bg-blue-500/10 light:bg-blue-50
-                        hover:bg-blue-500/20 light:hover:bg-blue-100
-                        hover:text-blue-300 light:hover:text-blue-700
-                        active:scale-95
-                        transition-all duration-200
-                      "
+                      className="px-3 py-1.5 rounded-lg text-blue-400 light:text-blue-600 bg-blue-500/10 light:bg-blue-50 hover:bg-blue-500/20 light:hover:bg-blue-100 transition-colors"
                     >
                       View
                     </button>

@@ -70,9 +70,7 @@ function MeetingCard({
   const autoProcessEnabled = event.autoProcess !== 'disabled';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
+    <div
       className="flex items-center gap-3 p-3 rounded-xl bg-gray-800/50 light:bg-gray-100 hover:bg-gray-800/70 light:hover:bg-gray-200 transition-colors group"
     >
       {/* Platform icon */}
@@ -127,7 +125,7 @@ function MeetingCard({
           )}
         </button>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -238,105 +236,80 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
     );
   }
 
+  // Empty state: render a minimal card without the big gradient
+  if (meetingEvents.length === 0) {
+    return (
+      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4">
+        <div className="flex items-center gap-3">
+          <Calendar className="w-5 h-5 text-purple-400 shrink-0" />
+          <h3 className="text-sm font-semibold text-white light:text-gray-900">Upcoming Meetings</h3>
+        </div>
+        <p className="text-gray-400 light:text-gray-500 text-sm mt-2 ml-8">
+          {hasCalendarConnected ? (
+            'No video meetings in the next 7 days'
+          ) : (
+            <>
+              <a href="/dashboard/settings" className="text-purple-400 hover:text-purple-300 underline">
+                Connect your calendar
+              </a>
+              {' '}to see upcoming meetings
+            </>
+          )}
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
-      className="relative overflow-hidden rounded-2xl"
-    >
+    <div className="relative overflow-hidden rounded-2xl">
       {/* Gradient border effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-2xl" />
 
       {/* Inner content */}
       <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
-        {/* Background glow effects */}
-        <div className="absolute -right-20 -top-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl" />
-
         {/* Header */}
-        <div className="relative flex items-center justify-between mb-6">
+        <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-purple-400" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white light:text-gray-900">
-                Upcoming Meetings
-              </h3>
-              <p className="text-sm text-gray-400 light:text-gray-500">
-                Next 7 days
-              </p>
-            </div>
+            <Calendar className="w-5 h-5 text-purple-400" />
+            <h3 className="text-lg font-bold text-white light:text-gray-900">
+              Upcoming Meetings
+            </h3>
           </div>
-
-          {meetingEvents.length > 0 && (
-            <div className="text-sm text-gray-400 light:text-gray-500">
-              {meetingEvents.length} meeting{meetingEvents.length !== 1 ? 's' : ''}
-            </div>
-          )}
+          <div className="text-sm text-gray-400 light:text-gray-500">
+            {meetingEvents.length} meeting{meetingEvents.length !== 1 ? 's' : ''}
+          </div>
         </div>
 
         {/* Content */}
-        {meetingEvents.length > 0 ? (
-          <div className="relative space-y-3 max-h-[280px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-            {meetingEvents.slice(0, 5).map((event, index) => (
-              <MeetingCard
-                key={event.id}
-                event={event}
-                onToggleAutoProcess={handleToggleAutoProcess}
-                isUpdating={updatingEventId === event.id}
-                nowMs={nowMs}
-              />
-            ))}
-            {meetingEvents.length > 5 && (
-              <p className="text-sm text-gray-500 text-center pt-2">
-                +{meetingEvents.length - 5} more meetings
-              </p>
-            )}
-          </div>
-        ) : hasCalendarConnected ? (
-          /* No meetings with URLs - compact */
-          <div className="relative text-center py-4">
-            <div className="flex items-center justify-center gap-3">
-              <Video className="w-5 h-5 text-gray-500" />
-              <p className="text-gray-400 light:text-gray-500 text-sm">
-                No video meetings in the next 7 days
-              </p>
-            </div>
-          </div>
-        ) : (
-          /* Calendar not connected - compact */
-          <div className="relative text-center py-4">
-            <div className="flex items-center justify-center gap-3">
-              <CalendarPlus className="w-5 h-5 text-purple-400" />
-              <p className="text-gray-400 light:text-gray-500 text-sm">
-                <a
-                  href="/dashboard/settings"
-                  className="text-purple-400 hover:text-purple-300 underline"
-                >
-                  Connect your calendar
-                </a>
-                {' '}to see upcoming meetings
-              </p>
-            </div>
-          </div>
-        )}
+        <div className="relative space-y-3 max-h-[280px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+          {meetingEvents.slice(0, 5).map((event) => (
+            <MeetingCard
+              key={event.id}
+              event={event}
+              onToggleAutoProcess={handleToggleAutoProcess}
+              isUpdating={updatingEventId === event.id}
+              nowMs={nowMs}
+            />
+          ))}
+          {meetingEvents.length > 5 && (
+            <p className="text-sm text-gray-500 text-center pt-2">
+              +{meetingEvents.length - 5} more meetings
+            </p>
+          )}
+        </div>
 
         {/* Auto-process legend */}
-        {meetingEvents.length > 0 && (
-          <div className="relative flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200 text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <ToggleRight className="w-4 h-4 text-emerald-400" />
-              Auto-process on
-            </span>
-            <span className="flex items-center gap-1">
-              <ToggleLeft className="w-4 h-4 text-gray-500" />
-              Auto-process off
-            </span>
-          </div>
-        )}
+        <div className="relative flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200 text-xs text-gray-500">
+          <span className="flex items-center gap-1">
+            <ToggleRight className="w-4 h-4 text-emerald-400" />
+            Auto-process on
+          </span>
+          <span className="flex items-center gap-1">
+            <ToggleLeft className="w-4 h-4 text-gray-500" />
+            Auto-process off
+          </span>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

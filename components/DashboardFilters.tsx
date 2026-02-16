@@ -40,11 +40,7 @@ export function DashboardFilters({
 
   return (
     <div
-      className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-700/50 light:border-gray-200 p-4 mb-6 animate-card-fade-in"
-      style={{
-        animationDelay: '0.4s',
-        animationFillMode: 'backwards',
-      }}
+      className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-700/50 light:border-gray-200 p-4 mb-6"
     >
       <div className="flex flex-col md:flex-row gap-4">
         {/* Search */}
