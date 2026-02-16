@@ -13,7 +13,7 @@ export const metadata = {
 
 function SettingsLoading() {
   return (
-    <div className="max-w-2xl space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       {[1, 2, 3].map((i) => (
         <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
           <div className="flex items-center gap-4">
@@ -40,7 +40,7 @@ async function SettingsContent() {
 
   return (
     <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
-      <div className="mb-6">
+      <div className="max-w-2xl mx-auto mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">Settings</h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">Manage your platform integrations</p>
       </div>
