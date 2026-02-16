@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
+import { ForceDarkMode } from '@/components/ForceDarkMode';
 import {
   Check,
   X,
@@ -218,8 +219,9 @@ export default function OtterComparisonPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <Header />
+      <ForceDarkMode />
       {/* Hero Section */}
-      <section className="relative pt-24 pb-20 px-4 overflow-hidden">
+      <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-transparent" />
         <motion.div
@@ -551,7 +553,7 @@ export default function OtterComparisonPage() {
                     whileHover={{ scale: 1.02 }}
                     className="p-5 rounded-xl bg-gradient-to-br from-blue-500/15 to-purple-500/10 border border-blue-500/40 mb-4 shadow-lg shadow-blue-500/5"
                   >
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-1 mb-4">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">ReplySequence</span>
                       <div className="flex items-baseline">
                         <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
@@ -576,7 +578,7 @@ export default function OtterComparisonPage() {
 
                   {/* Otter */}
                   <div className="p-5 rounded-xl bg-gray-800/50 border border-gray-700">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-1 mb-4">
                       <span className="text-gray-400 font-semibold">Otter.ai</span>
                       <div className="flex items-baseline">
                         <span className={`font-bold text-gray-300 ${tier.otter.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.otter.price}</span>

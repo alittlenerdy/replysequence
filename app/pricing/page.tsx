@@ -134,7 +134,7 @@ async function PricingContent() {
   const pricingContent = (
     <>
       {/* Hero Section */}
-      <section className={isLoggedIn ? 'pb-8' : 'pt-32 pb-16 px-4'}>
+      <section className={isLoggedIn ? 'pt-36 pb-8 px-4' : 'pt-32 pb-16 px-4'}>
         <div className="max-w-5xl mx-auto text-center">
           <h1 className={`font-display font-bold mb-6 text-white light:text-gray-900 ${isLoggedIn ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl lg:text-6xl'}`}>
             {isLoggedIn ? 'Manage Your Plan' : (
@@ -162,7 +162,7 @@ async function PricingContent() {
       </section>
 
       {/* Pricing Cards */}
-      <section className={isLoggedIn ? 'pb-12' : 'pb-20 px-4'}>
+      <section className={isLoggedIn ? 'pb-12 px-4' : 'pb-20 px-4'}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {pricingTiers.map((tier) => {
