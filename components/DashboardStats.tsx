@@ -25,7 +25,8 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         </svg>
       ),
       gradient: 'from-blue-500 via-blue-400 to-cyan-400',
-      textGradient: 'from-blue-400 via-cyan-300 to-blue-400 light:from-blue-700 light:via-blue-600 light:to-cyan-700',
+      textGradient: 'from-blue-400 via-cyan-300 to-blue-400',
+      lightColor: 'light:text-blue-600',
       shadowColor: 'shadow-blue-500/50',
       glowColor: 'rgba(59, 130, 246, 0.6)',
       borderHover: 'group-hover:border-blue-400/50',
@@ -42,7 +43,8 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         </svg>
       ),
       gradient: 'from-amber-400 via-yellow-400 to-orange-400',
-      textGradient: 'from-amber-300 via-yellow-200 to-orange-300 light:from-amber-700 light:via-yellow-600 light:to-orange-700',
+      textGradient: 'from-amber-300 via-yellow-200 to-orange-300',
+      lightColor: 'light:text-amber-600',
       shadowColor: 'shadow-amber-500/50',
       glowColor: 'rgba(251, 191, 36, 0.6)',
       borderHover: 'group-hover:border-amber-400/50',
@@ -59,7 +61,8 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         </svg>
       ),
       gradient: 'from-green-400 via-emerald-400 to-teal-400',
-      textGradient: 'from-green-300 via-emerald-200 to-teal-300 light:from-green-700 light:via-emerald-600 light:to-teal-700',
+      textGradient: 'from-green-300 via-emerald-200 to-teal-300',
+      lightColor: 'light:text-emerald-600',
       shadowColor: 'shadow-green-500/50',
       glowColor: 'rgba(34, 197, 94, 0.6)',
       borderHover: 'group-hover:border-green-400/50',
@@ -77,7 +80,8 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         </svg>
       ),
       gradient: 'from-purple-400 via-violet-400 to-fuchsia-400',
-      textGradient: 'from-purple-300 via-violet-200 to-fuchsia-300 light:from-purple-700 light:via-violet-600 light:to-fuchsia-700',
+      textGradient: 'from-purple-300 via-violet-200 to-fuchsia-300',
+      lightColor: 'light:text-purple-600',
       shadowColor: 'shadow-purple-500/50',
       glowColor: 'rgba(168, 85, 247, 0.6)',
       borderHover: 'group-hover:border-purple-400/50',
@@ -128,7 +132,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
 
           {/* Number with count-up - large gradient text with glow */}
           <div
-            className={`text-4xl md:text-5xl font-black mb-1 tabular-nums bg-gradient-to-r ${stat.textGradient} bg-clip-text text-transparent drop-shadow-lg`}
+            className={`text-4xl md:text-5xl font-black mb-1 tabular-nums bg-gradient-to-r ${stat.textGradient} bg-clip-text text-transparent drop-shadow-lg light-solid-text ${stat.lightColor}`}
             style={{
               textShadow: `0 0 30px ${stat.glowColor}, 0 0 60px ${stat.glowColor}`,
               filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',

@@ -490,6 +490,16 @@ body {
   background: var(--background-pure);
 }
 
+/* Light mode: override gradient text to solid readable colors */
+html.light .light-solid-text {
+  -webkit-text-fill-color: currentColor !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  background-image: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
 /* ===================================
    DASHBOARD PREMIUM ANIMATIONS
    =================================== */

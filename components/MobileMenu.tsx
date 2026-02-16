@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 
 const competitors = [
@@ -14,6 +15,12 @@ const competitors = [
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+
+  // Set portal target after mount (client-side only)
+  useEffect(() => {
+    setPortalTarget(document.body);
+  }, []);
 
   // Close menu on escape key
   useEffect(() => {
@@ -62,17 +69,18 @@ export default function MobileMenu() {
         />
       </button>
 
-      {/* Mobile Menu Overlay - render inline to avoid hydration mismatch with portal */}
-      <div
-        className={`fixed inset-0 backdrop-blur-lg md:hidden transition-all duration-300 ${
-          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
-        }`}
-        style={{
-          backgroundColor: 'rgba(17, 24, 39, 0.98)',
-          zIndex: 9999,
-        }}
-        onClick={() => setIsOpen(false)}
-      >
+      {/* Mobile Menu Overlay - rendered via portal to escape header stacking context */}
+      {portalTarget && createPortal(
+        <div
+          className={`fixed inset-0 backdrop-blur-lg md:hidden transition-all duration-300 ${
+            isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+          }`}
+          style={{
+            backgroundColor: 'rgba(17, 24, 39, 0.98)',
+            zIndex: 9999,
+          }}
+          onClick={() => setIsOpen(false)}
+        >
           {/* Menu Content - padded to avoid header */}
           <nav
             className={`flex flex-col items-center justify-center h-full gap-6 px-4 transition-all duration-300 ${
@@ -81,66 +89,68 @@ export default function MobileMenu() {
             style={{ paddingTop: '80px', paddingBottom: '40px' }}
             onClick={(e) => e.stopPropagation()}
           >
-          <a
-            href="/how-it-works"
-            onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
-          >
-            How It Works
-          </a>
-
-          {/* Compare Accordion */}
-          <div className="flex flex-col items-center">
-            <button
-              onClick={() => setCompareOpen(!compareOpen)}
-              className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+            <a
+              href="/how-it-works"
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
             >
-              Compare
-              <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
-            </button>
-            <div className={`flex flex-col items-center gap-3 mt-4 overflow-hidden transition-all duration-300 ${compareOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
-              {competitors.map((competitor) => (
-                <a
-                  key={competitor.slug}
-                  href={`/compare/${competitor.slug}`}
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors"
-                >
-                  {competitor.name}
-                </a>
-              ))}
-            </div>
-          </div>
+              How It Works
+            </a>
 
-          <a
-            href="/pricing"
-            onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
-          >
-            Pricing
-          </a>
-          <a
-            href="/dashboard"
-            onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
-          >
-            Dashboard
-          </a>
-          <a
-            href="https://tally.so/r/D4pv0j"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => setIsOpen(false)}
-            className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-all duration-300"
-            style={{
-              background: 'linear-gradient(135deg, #2563eb 0%, #9333ea 100%)',
-              boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',
-            }}
-          >
-            Join Waitlist
-          </a>
-        </nav>
-      </div>
+            {/* Compare Accordion */}
+            <div className="flex flex-col items-center">
+              <button
+                onClick={() => setCompareOpen(!compareOpen)}
+                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+              >
+                Compare
+                <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
+              </button>
+              <div className={`flex flex-col items-center gap-3 mt-4 overflow-hidden transition-all duration-300 ${compareOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+                {competitors.map((competitor) => (
+                  <a
+                    key={competitor.slug}
+                    href={`/compare/${competitor.slug}`}
+                    onClick={() => setIsOpen(false)}
+                    className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    {competitor.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <a
+              href="/pricing"
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Pricing
+            </a>
+            <a
+              href="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Dashboard
+            </a>
+            <a
+              href="https://tally.so/r/D4pv0j"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsOpen(false)}
+              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-all duration-300"
+              style={{
+                background: 'linear-gradient(135deg, #2563eb 0%, #9333ea 100%)',
+                boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',
+              }}
+            >
+              Join Waitlist
+            </a>
+          </nav>
+        </div>,
+        portalTarget
+      )}
     </>
   );
 }

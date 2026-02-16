@@ -51,9 +51,9 @@ export default function DashboardMarginBubbles() {
     // Light mode: dark colors at higher opacity
     const colors = isLight
       ? [
-          `rgba(37, 99, 235, ${bubble.opacity})`,   // blue-600
-          `rgba(0, 0, 0, ${bubble.opacity})`,       // black
-          `rgba(147, 51, 234, ${bubble.opacity * 0.6})`, // purple-600
+          `rgba(59, 130, 246, ${bubble.opacity * 0.08})`,   // blue-500 very subtle
+          `rgba(147, 51, 234, ${bubble.opacity * 0.06})`,   // purple-600 very subtle
+          `rgba(236, 72, 153, ${bubble.opacity * 0.06})`,   // pink-500 very subtle
         ]
       : [
           `rgba(59, 130, 246, ${bubble.opacity * 0.4})`,  // blue-500
