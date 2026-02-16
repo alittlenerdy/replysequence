@@ -318,13 +318,13 @@ export function IntegrationSettings() {
             >
               <div className="flex items-center gap-4">
                 {/* Platform Icon */}
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
                 {/* Platform Info */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -355,7 +355,7 @@ export function IntegrationSettings() {
                   </div>
                   {isConnected && details?.email ? (
                     <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
+                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
                       {details.connectedAt && (
                         <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
                           Connected {formatRelativeTime(details.connectedAt, nowMs)}
@@ -376,15 +376,17 @@ export function IntegrationSettings() {
                     </p>
                   )}
                 </div>
+              </div>
 
-                {/* Action Button */}
+              {/* Action Buttons - separate row on mobile */}
+              <div className="mt-3 flex justify-end">
                 {isConnected ? (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
                     {(details?.isExpired || details?.isExpiringSoon) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
                         style={{ backgroundColor: platform.color }}
                       >
                         {isLoading ? (
@@ -398,7 +400,7 @@ export function IntegrationSettings() {
                     <button
                       onClick={() => handleDisconnect(platform)}
                       disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
                     >
                       {isLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -412,7 +414,7 @@ export function IntegrationSettings() {
                   <button
                     onClick={() => handleConnect(platform)}
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
                     style={{ backgroundColor: platform.color }}
                   >
                     {isLoading ? (
@@ -462,12 +464,12 @@ export function IntegrationSettings() {
               }`}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -498,7 +500,7 @@ export function IntegrationSettings() {
                   </div>
                   {isConnected && details?.email ? (
                     <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
+                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
                       {details.connectedAt && (
                         <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
                           Connected {formatRelativeTime(details.connectedAt, nowMs)}
@@ -518,14 +520,17 @@ export function IntegrationSettings() {
                     </p>
                   )}
                 </div>
+              </div>
 
+              {/* Action Buttons - separate row on mobile */}
+              <div className="mt-3 flex justify-end">
                 {isConnected ? (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
                     {(details?.isExpired || details?.isExpiringSoon) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
                         style={{ backgroundColor: platform.color }}
                       >
                         {isLoading ? (
@@ -539,7 +544,7 @@ export function IntegrationSettings() {
                     <button
                       onClick={() => handleDisconnect(platform)}
                       disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
                     >
                       {isLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -553,7 +558,7 @@ export function IntegrationSettings() {
                   <button
                     onClick={() => handleConnect(platform)}
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
                     style={{ backgroundColor: platform.color }}
                   >
                     {isLoading ? (
@@ -603,12 +608,12 @@ export function IntegrationSettings() {
               }`}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -639,7 +644,7 @@ export function IntegrationSettings() {
                   </div>
                   {isConnected && details?.email ? (
                     <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700">{details.email}</p>
+                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
                       {details.connectedAt && (
                         <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
                           Connected {formatRelativeTime(details.connectedAt, nowMs)}
@@ -659,14 +664,17 @@ export function IntegrationSettings() {
                     </p>
                   )}
                 </div>
+              </div>
 
+              {/* Action Buttons - separate row on mobile */}
+              <div className="mt-3 flex justify-end">
                 {isConnected ? (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
                     {(details?.isExpired || details?.isExpiringSoon) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
                         style={{ backgroundColor: platform.color }}
                       >
                         {isLoading ? (
@@ -680,7 +688,7 @@ export function IntegrationSettings() {
                     <button
                       onClick={() => handleDisconnect(platform)}
                       disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
                     >
                       {isLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -694,7 +702,7 @@ export function IntegrationSettings() {
                   <button
                     onClick={() => handleConnect(platform)}
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
                     style={{ backgroundColor: platform.color }}
                   >
                     {isLoading ? (

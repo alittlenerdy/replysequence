@@ -250,7 +250,7 @@ export function TimeSavingsWidget({
             <div className="text-center py-2">
               <div className="text-5xl md:text-6xl font-black mb-2">
                 <span
-                  className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent"
+                  className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 light:from-cyan-600 light:via-blue-600 light:to-purple-600 bg-clip-text text-transparent"
                   style={{
                     textShadow: '0 0 60px rgba(34, 211, 238, 0.3)',
                   }}

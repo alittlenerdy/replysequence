@@ -581,12 +581,12 @@ export default function LandingPage() {
       <FAQ />
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
+      <footer className="py-8 md:py-12 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
         <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
           <div className="mb-4">
             <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
           </div>
-          <div className="flex flex-wrap justify-center gap-6 mb-4">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-4">
             <a href="/terms" className="hover:text-purple-400 transition-colors">
               Terms of Service
             </a>

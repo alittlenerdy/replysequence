@@ -306,7 +306,7 @@ function MeetingListPreview() {
   );
 }
 
-// CRM Preview with animated connections
+// CRM Preview with animated connections and flow arrows
 function CRMPreview() {
   const platforms = [
     { name: 'Airtable', color: '#18BFFF' },
@@ -318,42 +318,79 @@ function CRMPreview() {
     <div className="w-full h-28 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3">
       <div className="flex items-center justify-between">
         {platforms.map((platform, i) => (
-          <motion.div
-            key={platform.name}
-            className="flex flex-col items-center gap-1"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
-          >
+          <div key={platform.name} className="flex items-center">
             <motion.div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: `${platform.color}20` }}
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+              className="flex flex-col items-center gap-1"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
             >
-              <div
-                className="w-4 h-4 rounded"
-                style={{ backgroundColor: platform.color }}
-              />
+              <motion.div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: `${platform.color}20` }}
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+              >
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: platform.color }}
+                />
+              </motion.div>
+              <span className="text-[9px] text-gray-500 light:text-gray-600">{platform.name}</span>
             </motion.div>
-            <span className="text-[9px] text-gray-500 light:text-gray-600">{platform.name}</span>
-          </motion.div>
+
+            {/* Flow arrow between platforms */}
+            {i < platforms.length - 1 && (
+              <div className="flex items-center mx-1.5 -mt-3">
+                <motion.div
+                  className="flex items-center"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + i * 0.2 }}
+                >
+                  {/* Animated dots trail */}
+                  {[0, 1, 2].map((dot) => (
+                    <motion.div
+                      key={dot}
+                      className="w-1 h-1 rounded-full mx-0.5"
+                      style={{ backgroundColor: platforms[i + 1].color }}
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{
+                        duration: 1.2,
+                        repeat: Infinity,
+                        delay: dot * 0.25 + i * 0.5,
+                      }}
+                    />
+                  ))}
+                  <motion.div
+                    animate={{ x: [0, 3, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.5 }}
+                  >
+                    <ArrowRight
+                      className="w-3 h-3"
+                      style={{ color: platforms[i + 1].color }}
+                    />
+                  </motion.div>
+                </motion.div>
+              </div>
+            )}
+          </div>
         ))}
       </div>
-      {/* Animated sync indicator */}
+      {/* Animated sync status */}
       <motion.div
         className="flex items-center justify-center gap-2 mt-3"
-        animate={{ opacity: [0.3, 1, 0.3] }}
+        animate={{ opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-        >
-          <ArrowRight className="w-3 h-3 text-gray-500 light:text-gray-600" />
-        </motion.div>
-        <span className="text-[10px] text-gray-500 light:text-gray-600">Syncing...</span>
+          className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+          animate={{ scale: [1, 1.4, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        <span className="text-[10px] text-emerald-400 light:text-emerald-600 font-medium">Auto-syncing</span>
       </motion.div>
     </div>
   );

@@ -41,7 +41,7 @@ export default function MobileMenu() {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-50"
+        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={isOpen}
       >
@@ -84,7 +84,7 @@ export default function MobileMenu() {
           <a
             href="/how-it-works"
             onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+            className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
           >
             How It Works
           </a>
@@ -93,7 +93,7 @@ export default function MobileMenu() {
           <div className="flex flex-col items-center">
             <button
               onClick={() => setCompareOpen(!compareOpen)}
-              className="flex items-center gap-2 text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors"
             >
               Compare
               <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
@@ -115,14 +115,14 @@ export default function MobileMenu() {
           <a
             href="/pricing"
             onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+            className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
           >
             Pricing
           </a>
           <a
             href="/dashboard"
             onClick={() => setIsOpen(false)}
-            className="text-2xl font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+            className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
           >
             Dashboard
           </a>

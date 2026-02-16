@@ -99,7 +99,7 @@ function MeetingCard({
 
       {/* Relative time badge - only show after client hydration */}
       {nowMs > 0 && (
-        <div className="shrink-0 text-xs font-medium px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-400">
+        <div className="shrink-0 text-xs font-medium px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-400 light:bg-cyan-100 light:text-cyan-700">
           {formatRelativeTime(startTime, nowMs)}
         </div>
       )}

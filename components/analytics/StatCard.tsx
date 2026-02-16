@@ -123,7 +123,7 @@ export function StatCard({
           <div
             className="text-4xl md:text-5xl font-black mb-1 tabular-nums"
             style={{
-              background: `linear-gradient(135deg, ${accentColor}, ${accentColor}99)`,
+              background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
