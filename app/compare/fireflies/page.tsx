@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
-import { ForceDarkMode } from '@/components/ForceDarkMode';
 import {
   Check,
   X,
@@ -198,19 +197,19 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
   if (typeof value === 'boolean') {
     return value ? (
       <motion.div
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50'}`}
+        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
         whileHover={{ scale: 1.1 }}
       >
-        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400'}`} />
+        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400 light:text-gray-500'}`} />
       </motion.div>
     ) : (
-      <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50">
-        <X className="w-5 h-5 text-gray-600" />
+      <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50 light:bg-gray-100">
+        <X className="w-5 h-5 text-gray-600 light:text-gray-400" />
       </div>
     );
   }
   return (
-    <span className={`text-sm font-medium ${isWinner ? 'text-white' : 'text-gray-400'}`}>
+    <span className={`text-sm font-medium ${isWinner ? 'text-white light:text-gray-900' : 'text-gray-400 light:text-gray-500'}`}>
       {value}
     </span>
   );
@@ -220,9 +219,8 @@ export default function FirefliesComparisonPage() {
   const categories = [...new Set(comparisonData.map(row => row.category))];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-[#0a0a0f] light:bg-white">
       <Header />
-      <ForceDarkMode />
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
@@ -254,19 +252,19 @@ export default function FirefliesComparisonPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
           >
-            <span className="text-white">ReplySequence</span>
+            <span className="text-white light:text-gray-900">ReplySequence</span>
             <span className="text-gray-500 mx-3">vs</span>
-            <span className="text-gray-400">Fireflies.ai</span>
+            <span className="text-gray-400 light:text-gray-500">Fireflies.ai</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-12"
           >
             Two approaches to meeting productivity.{' '}
-            <span className="text-white">Here&apos;s which one fits your workflow.</span>
+            <span className="text-white light:text-gray-900">Here&apos;s which one fits your workflow.</span>
           </motion.p>
 
           {/* Quick verdict cards */}
@@ -296,8 +294,8 @@ export default function FirefliesComparisonPage() {
               >
                 <Trophy className="w-6 h-6 text-blue-400 drop-shadow-lg" />
               </motion.div>
-              <h3 className="text-xl font-bold text-white mb-3">Choose ReplySequence if...</h3>
-              <p className="text-gray-300 leading-relaxed">
+              <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
+              <p className="text-gray-300 light:text-gray-600 leading-relaxed">
                 Your #1 goal is <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-semibold">sending follow-up emails instantly</span>.
                 You want AI-drafted emails in 8 seconds, not transcripts you have to turn into emails yourself.
               </p>
@@ -310,14 +308,14 @@ export default function FirefliesComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gray-900/50 border border-gray-700 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 overflow-hidden group"
             >
-              <h3 className="text-xl font-bold text-gray-200 mb-3">Choose Fireflies if...</h3>
-              <p className="text-gray-400 leading-relaxed">
-                You need <span className="text-gray-200 font-semibold">searchable meeting archives</span>,
+              <h3 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fireflies if...</h3>
+              <p className="text-gray-400 light:text-gray-500 leading-relaxed">
+                You need <span className="text-gray-200 light:text-gray-800 font-semibold">searchable meeting archives</span>,
                 extensive CRM integrations, and team collaboration features.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-gray-500 font-medium">
                 <Globe className="w-4 h-4" />
                 Best for: Revenue teams, customer success, product research
               </div>
@@ -354,7 +352,7 @@ export default function FirefliesComparisonPage() {
                 >
                   {stat.value}
                 </motion.div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
+                <div className="text-sm text-gray-400 light:text-gray-500">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -365,14 +363,14 @@ export default function FirefliesComparisonPage() {
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Feature Comparison</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Feature Comparison</h2>
+            <p className="text-gray-400 light:text-gray-500 text-lg max-w-2xl mx-auto">
               Side-by-side breakdown of what each platform offers
             </p>
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-sm border-b border-gray-800 mb-4">
+          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-white/95 backdrop-blur-sm border-b border-gray-800 light:border-gray-200 mb-4">
             <div className="grid grid-cols-3 py-4">
               <div className="text-gray-500 font-medium pl-4">Feature</div>
               <div className="text-center">
@@ -388,9 +386,9 @@ export default function FirefliesComparisonPage() {
           {categories.map((category, catIndex) => (
             <AnimatedSection key={category} delay={catIndex * 0.1} className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-gray-300 to-transparent" />
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{category}</span>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-gray-300 to-transparent" />
               </div>
 
               <motion.div
@@ -412,11 +410,11 @@ export default function FirefliesComparisonPage() {
                           ? 'bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-transparent hover:from-blue-500/15 hover:via-purple-500/10 border-l-2 border-l-blue-500 border border-blue-500/30 shadow-lg shadow-blue-500/5'
                           : row.winner === 'fireflies'
                           ? 'bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent hover:from-orange-500/15 hover:via-amber-500/10 border-l-2 border-l-orange-500 border border-orange-500/30'
-                          : 'bg-gray-900/30 hover:bg-gray-800/30 border border-gray-700/30'
+                          : 'bg-gray-900/30 light:bg-gray-50 hover:bg-gray-800/30 light:hover:bg-gray-100 border border-gray-700/30 light:border-gray-200'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-200 font-medium">{row.feature}</span>
+                        <span className="text-gray-200 light:text-gray-800 font-medium">{row.feature}</span>
                         {row.winner === 'replysequence' && (
                           <motion.span
                             initial={{ scale: 0 }}
@@ -451,11 +449,11 @@ export default function FirefliesComparisonPage() {
       </section>
 
       {/* Key Differences */}
-      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 to-transparent">
+      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-gray-100 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Key Differences</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Key Differences</h2>
+            <p className="text-gray-400 light:text-gray-500 text-lg max-w-2xl mx-auto">
               Understanding where each tool shines
             </p>
           </AnimatedSection>
@@ -503,7 +501,7 @@ export default function FirefliesComparisonPage() {
                 </motion.div>
 
                 <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-lg font-bold text-white">{diff.title}</h3>
+                  <h3 className="text-lg font-bold text-white light:text-gray-900">{diff.title}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     diff.advantage === 'replysequence'
                       ? 'bg-blue-500/20 text-blue-400'
@@ -513,7 +511,7 @@ export default function FirefliesComparisonPage() {
                   </span>
                 </div>
 
-                <p className="text-gray-400 leading-relaxed">{diff.description}</p>
+                <p className="text-gray-400 light:text-gray-500 leading-relaxed">{diff.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -524,8 +522,8 @@ export default function FirefliesComparisonPage() {
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Pricing Comparison</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Pricing Comparison</h2>
+            <p className="text-gray-400 light:text-gray-500 text-lg max-w-2xl mx-auto">
               Similar pricing, different superpowers—choose based on your workflow
             </p>
           </AnimatedSection>
@@ -545,7 +543,7 @@ export default function FirefliesComparisonPage() {
                 className={`relative rounded-2xl overflow-hidden group ${
                   tier.highlighted
                     ? 'border-2 border-purple-500/50 bg-gradient-to-b from-purple-500/10 via-blue-500/5 to-transparent shadow-xl shadow-purple-500/10'
-                    : 'border border-gray-700 bg-gray-900/30 hover:border-gray-600'
+                    : 'border border-gray-700 light:border-gray-200 bg-gray-900/30 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-400'
                 }`}
                 style={tier.highlighted ? { boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)' } : {}}
               >
@@ -558,7 +556,7 @@ export default function FirefliesComparisonPage() {
                 )}
 
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-white text-center mb-6">{tier.tier}</h3>
+                  <h3 className="text-lg font-bold text-white light:text-gray-900 text-center mb-6">{tier.tier}</h3>
 
                   {/* ReplySequence */}
                   <motion.div
@@ -568,8 +566,8 @@ export default function FirefliesComparisonPage() {
                     <div className="mb-4">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold text-sm">ReplySequence</span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
-                        <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
+                        <span className={`font-bold text-white light:text-gray-900 ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
+                        <span className="text-gray-400 light:text-gray-500 text-sm">{tier.replysequence.period}</span>
                       </div>
                     </div>
                     <ul className="space-y-2">
@@ -579,7 +577,7 @@ export default function FirefliesComparisonPage() {
                           initial={{ opacity: 0, x: -10 }}
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.1 }}
-                          className="flex items-start gap-2 text-sm text-gray-300"
+                          className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-600"
                         >
                           <Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
                           {feature}
@@ -593,7 +591,7 @@ export default function FirefliesComparisonPage() {
                     <div className="mb-4">
                       <span className="text-orange-400 font-semibold text-sm">Fireflies.ai</span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className={`font-bold text-gray-300 ${tier.fireflies.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.fireflies.price}</span>
+                        <span className={`font-bold text-gray-300 light:text-gray-600 ${tier.fireflies.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.fireflies.price}</span>
                         <span className="text-gray-500 text-sm">{tier.fireflies.period}</span>
                       </div>
                       {tier.fireflies.note && (
@@ -602,7 +600,7 @@ export default function FirefliesComparisonPage() {
                     </div>
                     <ul className="space-y-2">
                       {tier.fireflies.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-400 light:text-gray-500">
                           <Check className="w-4 h-4 text-orange-500/70 flex-shrink-0 mt-0.5" />
                           {feature}
                         </li>
@@ -649,10 +647,10 @@ export default function FirefliesComparisonPage() {
                 >
                   <Shield className="w-6 h-6 text-blue-400" />
                 </motion.div>
-                <h2 className="text-2xl md:text-3xl font-bold text-white">The Bottom Line</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900">The Bottom Line</h2>
               </div>
 
-              <div className="space-y-4 text-gray-300 leading-relaxed mb-8">
+              <div className="space-y-4 text-gray-300 light:text-gray-600 leading-relaxed mb-8">
                 <p>
                   <strong className="text-orange-400">Fireflies.ai</strong> is a powerful meeting intelligence platform
                   with excellent search capabilities and extensive CRM integrations. If you need to search across
@@ -671,7 +669,7 @@ export default function FirefliesComparisonPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 className="p-5 rounded-xl bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-orange-500/10 border border-purple-500/30 shadow-lg shadow-purple-500/5"
               >
-                <p className="text-gray-300 text-sm italic flex items-start gap-3">
+                <p className="text-gray-300 light:text-gray-600 text-sm italic flex items-start gap-3">
                   <Sparkles className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Pro tip:</strong> They&apos;re not mutually exclusive.
@@ -696,7 +694,7 @@ export default function FirefliesComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-white mb-6"
+            className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
             Ready to Send Follow-ups in{' '}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -708,7 +706,7 @@ export default function FirefliesComparisonPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto"
+            className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
             Try ReplySequence free. Connect your Zoom, Teams, or Meet
             and see the difference for yourself.
@@ -733,7 +731,7 @@ export default function FirefliesComparisonPage() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 bg-gray-800/80 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 light:text-gray-600 bg-gray-800/80 light:bg-gray-200 hover:bg-gray-700 light:hover:bg-gray-200 border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-400 transition-all duration-300"
               >
                 View Pricing
               </Link>
@@ -745,7 +743,7 @@ export default function FirefliesComparisonPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="text-gray-500 text-sm mt-8"
+            className="text-gray-500 light:text-gray-400 text-sm mt-8"
           >
             Start with 5 free AI drafts. Cancel anytime.
           </motion.p>

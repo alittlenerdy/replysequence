@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
-import { ForceDarkMode } from '@/components/ForceDarkMode';
 import {
   Check,
   X,
@@ -206,19 +205,19 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
   if (typeof value === 'boolean') {
     return value ? (
       <motion.div
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50'}`}
+        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
         whileHover={{ scale: 1.1 }}
       >
-        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400'}`} />
+        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400 light:text-gray-500'}`} />
       </motion.div>
     ) : (
-      <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50">
-        <X className="w-5 h-5 text-gray-600" />
+      <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50 light:bg-gray-100">
+        <X className="w-5 h-5 text-gray-600 light:text-gray-400" />
       </div>
     );
   }
   return (
-    <span className={`text-sm font-medium ${isWinner ? 'text-white' : 'text-gray-400'}`}>
+    <span className={`text-sm font-medium ${isWinner ? 'text-white light:text-gray-900' : 'text-gray-400 light:text-gray-500'}`}>
       {value}
     </span>
   );
@@ -228,9 +227,8 @@ export default function FathomComparisonPage() {
   const categories = [...new Set(comparisonData.map(row => row.category))];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-[#0a0a0f] light:bg-white">
       <Header />
-      <ForceDarkMode />
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
@@ -262,19 +260,19 @@ export default function FathomComparisonPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
           >
-            <span className="text-white">ReplySequence</span>
+            <span className="text-white light:text-gray-900">ReplySequence</span>
             <span className="text-gray-500 mx-3">vs</span>
-            <span className="text-gray-400">Fathom</span>
+            <span className="text-gray-400 light:text-gray-500">Fathom</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-12"
           >
             Fathom: best free AI notetaker.{' '}
-            <span className="text-white">ReplySequence: 8-second email drafts.</span>
+            <span className="text-white light:text-gray-900">ReplySequence: 8-second email drafts.</span>
           </motion.p>
 
           {/* Quick verdict cards */}
@@ -304,8 +302,8 @@ export default function FathomComparisonPage() {
               >
                 <Trophy className="w-6 h-6 text-emerald-400 drop-shadow-lg" />
               </motion.div>
-              <h3 className="text-xl font-bold text-white mb-3">Choose ReplySequence if...</h3>
-              <p className="text-gray-300 leading-relaxed">
+              <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
+              <p className="text-gray-300 light:text-gray-600 leading-relaxed">
                 Your #1 priority is <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 font-semibold">sending follow-up emails faster</span>.
                 You need AI-drafted emails in 8 seconds, ready to send or edit, not just meeting notes.
               </p>
@@ -318,14 +316,14 @@ export default function FathomComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gray-900/50 border border-gray-700 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 overflow-hidden group"
             >
-              <h3 className="text-xl font-bold text-gray-200 mb-3">Choose Fathom if...</h3>
-              <p className="text-gray-400 leading-relaxed">
-                You want a <span className="text-gray-200 font-semibold">generous free tier</span> for meeting notes
+              <h3 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fathom if...</h3>
+              <p className="text-gray-400 light:text-gray-500 leading-relaxed">
+                You want a <span className="text-gray-200 light:text-gray-800 font-semibold">generous free tier</span> for meeting notes
                 and summaries, with solid CRM integration for deal tracking.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-gray-500 font-medium">
                 <Users className="w-4 h-4" />
                 Best for: Teams needing free note-taking, CRM-focused workflows
               </div>
@@ -362,7 +360,7 @@ export default function FathomComparisonPage() {
                 >
                   {stat.value}
                 </motion.div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
+                <div className="text-sm text-gray-400 light:text-gray-500">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -373,21 +371,21 @@ export default function FathomComparisonPage() {
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Feature Comparison</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Feature Comparison</h2>
+            <p className="text-gray-400 light:text-gray-500 text-lg max-w-2xl mx-auto">
               Side-by-side breakdown of what each platform offers
             </p>
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-sm border-b border-gray-800 mb-4">
+          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-white/95 backdrop-blur-sm border-b border-gray-800 light:border-gray-200 mb-4">
             <div className="grid grid-cols-3 py-4">
               <div className="text-gray-500 font-medium pl-4">Feature</div>
               <div className="text-center">
                 <span className="text-emerald-400 font-bold text-lg">ReplySequence</span>
               </div>
               <div className="text-center">
-                <span className="text-gray-400 font-bold text-lg">Fathom</span>
+                <span className="text-gray-400 light:text-gray-500 font-bold text-lg">Fathom</span>
               </div>
             </div>
           </div>
@@ -396,9 +394,9 @@ export default function FathomComparisonPage() {
           {categories.map((category, catIndex) => (
             <AnimatedSection key={category} delay={catIndex * 0.1} className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-gray-300 to-transparent" />
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{category}</span>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-gray-300 to-transparent" />
               </div>
 
               <motion.div
@@ -419,12 +417,12 @@ export default function FathomComparisonPage() {
                         row.winner === 'replysequence'
                           ? 'bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent hover:from-emerald-500/15 hover:via-teal-500/10 border-l-2 border-l-emerald-500 border border-emerald-500/30 shadow-lg shadow-emerald-500/5'
                           : row.winner === 'fathom'
-                          ? 'bg-gray-800/30 hover:bg-gray-800/50 border border-gray-700/50'
-                          : 'bg-gray-900/30 hover:bg-gray-800/30 border border-gray-700/30'
+                          ? 'bg-gray-800/30 light:bg-gray-50 hover:bg-gray-800/50 light:hover:bg-gray-100 border border-gray-700/50 light:border-gray-200'
+                          : 'bg-gray-900/30 light:bg-gray-50 hover:bg-gray-800/30 light:hover:bg-gray-100 border border-gray-700/30 light:border-gray-200'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-200 font-medium">{row.feature}</span>
+                        <span className="text-gray-200 light:text-gray-800 font-medium">{row.feature}</span>
                         {row.winner === 'replysequence' && (
                           <motion.span
                             initial={{ scale: 0 }}
@@ -450,11 +448,11 @@ export default function FathomComparisonPage() {
       </section>
 
       {/* Key Differences */}
-      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 to-transparent">
+      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-gray-100 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Key Differences</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Key Differences</h2>
+            <p className="text-gray-400 light:text-gray-500 text-lg max-w-2xl mx-auto">
               Understanding where each tool excels
             </p>
           </AnimatedSection>
@@ -474,7 +472,7 @@ export default function FathomComparisonPage() {
                 className={`relative p-6 rounded-2xl border-2 overflow-hidden group ${
                   diff.advantage === 'replysequence'
                     ? 'bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-cyan-500/10 border-emerald-500/40 shadow-xl shadow-emerald-500/10'
-                    : 'bg-gray-900/50 border-gray-600 hover:border-gray-500'
+                    : 'bg-gray-900/50 light:bg-gray-100 border-gray-600 light:border-gray-300 hover:border-gray-500 light:hover:border-gray-400'
                 }`}
                 style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(16, 185, 129, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
               >
@@ -484,7 +482,7 @@ export default function FathomComparisonPage() {
                   className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${
                     diff.advantage === 'replysequence'
                       ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-gray-700 text-gray-400'
+                      : 'bg-gray-700 light:bg-gray-200 text-gray-400 light:text-gray-500'
                   }`}
                 >
                   {diff.stat}
@@ -495,24 +493,24 @@ export default function FathomComparisonPage() {
                   className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                     diff.advantage === 'replysequence'
                       ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-gray-700 text-gray-400'
+                      : 'bg-gray-700 light:bg-gray-200 text-gray-400 light:text-gray-500'
                   }`}
                 >
                   <diff.icon className="w-6 h-6" />
                 </motion.div>
 
                 <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-lg font-bold text-white">{diff.title}</h3>
+                  <h3 className="text-lg font-bold text-white light:text-gray-900">{diff.title}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     diff.advantage === 'replysequence'
                       ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-gray-700 text-gray-400'
+                      : 'bg-gray-700 light:bg-gray-200 text-gray-400 light:text-gray-500'
                   }`}>
                     {diff.advantage === 'replysequence' ? 'ReplySequence' : 'Fathom'}
                   </span>
                 </div>
 
-                <p className="text-gray-400 leading-relaxed">{diff.description}</p>
+                <p className="text-gray-400 light:text-gray-500 leading-relaxed">{diff.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -523,8 +521,8 @@ export default function FathomComparisonPage() {
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Pricing Comparison</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Pricing Comparison</h2>
+            <p className="text-gray-400 light:text-gray-500 text-lg max-w-2xl mx-auto">
               Similar pricing, different strengths at each tier
             </p>
           </AnimatedSection>
@@ -544,7 +542,7 @@ export default function FathomComparisonPage() {
                 className={`relative rounded-2xl overflow-hidden group ${
                   tier.highlighted
                     ? 'border-2 border-teal-500/50 bg-gradient-to-b from-teal-500/10 via-emerald-500/5 to-transparent shadow-xl shadow-teal-500/10'
-                    : 'border border-gray-700 bg-gray-900/30 hover:border-gray-600'
+                    : 'border border-gray-700 light:border-gray-200 bg-gray-900/30 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-400'
                 }`}
                 style={tier.highlighted ? { boxShadow: '0 0 40px rgba(20, 184, 166, 0.1)' } : {}}
               >
@@ -557,7 +555,7 @@ export default function FathomComparisonPage() {
                 )}
 
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-white text-center mb-6">{tier.tier}</h3>
+                  <h3 className="text-lg font-bold text-white light:text-gray-900 text-center mb-6">{tier.tier}</h3>
 
                   {/* ReplySequence */}
                   <motion.div
@@ -567,8 +565,8 @@ export default function FathomComparisonPage() {
                     <div className="mb-4">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-bold text-sm">ReplySequence</span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
-                        <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
+                        <span className={`font-bold text-white light:text-gray-900 ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
+                        <span className="text-gray-400 light:text-gray-500 text-sm">{tier.replysequence.period}</span>
                       </div>
                     </div>
                     <ul className="space-y-2">
@@ -578,7 +576,7 @@ export default function FathomComparisonPage() {
                           initial={{ opacity: 0, x: -10 }}
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.1 }}
-                          className="flex items-start gap-2 text-sm text-gray-300"
+                          className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-600"
                         >
                           <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                           {feature}
@@ -588,17 +586,17 @@ export default function FathomComparisonPage() {
                   </motion.div>
 
                   {/* Fathom */}
-                  <div className="p-5 rounded-xl bg-gray-800/50 border border-gray-700">
+                  <div className="p-5 rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
                     <div className="mb-4">
-                      <span className="text-gray-400 font-semibold text-sm">Fathom</span>
+                      <span className="text-gray-400 light:text-gray-500 font-semibold text-sm">Fathom</span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className={`font-bold text-gray-300 ${tier.fathom.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.fathom.price}</span>
+                        <span className={`font-bold text-gray-300 light:text-gray-600 ${tier.fathom.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.fathom.price}</span>
                         <span className="text-gray-500 text-sm">{tier.fathom.period}</span>
                       </div>
                     </div>
                     <ul className="space-y-2">
                       {tier.fathom.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-400 light:text-gray-500">
                           <Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" />
                           {feature}
                         </li>
@@ -645,12 +643,12 @@ export default function FathomComparisonPage() {
                 >
                   <Shield className="w-6 h-6 text-emerald-400" />
                 </motion.div>
-                <h2 className="text-2xl md:text-3xl font-bold text-white">The Bottom Line</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900">The Bottom Line</h2>
               </div>
 
-              <div className="space-y-4 text-gray-300 leading-relaxed mb-8">
+              <div className="space-y-4 text-gray-300 light:text-gray-600 leading-relaxed mb-8">
                 <p>
-                  <strong className="text-white">Fathom</strong> is an excellent free AI meeting assistant with
+                  <strong className="text-white light:text-gray-900">Fathom</strong> is an excellent free AI meeting assistant with
                   generous unlimited recording, solid CRM integrations, and a clean interface. If you need meeting
                   notes and action items without paying, Fathom is a great choice.
                 </p>
@@ -666,7 +664,7 @@ export default function FathomComparisonPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 className="p-5 rounded-xl bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-cyan-500/10 border border-teal-500/30 shadow-lg shadow-teal-500/5"
               >
-                <p className="text-gray-300 text-sm italic flex items-start gap-3">
+                <p className="text-gray-300 light:text-gray-600 text-sm italic flex items-start gap-3">
                   <Sparkles className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Pro tip:</strong> Start with Fathom&apos;s
@@ -690,7 +688,7 @@ export default function FathomComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-white mb-6"
+            className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
             Ready to Send Follow-ups in{' '}
             <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
@@ -702,7 +700,7 @@ export default function FathomComparisonPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto"
+            className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
             Try ReplySequence free. Connect your Zoom, Teams, or Meet
             and see the difference for yourself.
@@ -727,7 +725,7 @@ export default function FathomComparisonPage() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 bg-gray-800/80 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 light:text-gray-600 bg-gray-800/80 light:bg-gray-200 hover:bg-gray-700 light:hover:bg-gray-200 border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-400 transition-all duration-300"
               >
                 View Pricing
               </Link>
