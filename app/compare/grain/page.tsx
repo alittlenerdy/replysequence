@@ -570,9 +570,9 @@ export default function GrainComparisonPage() {
                     whileHover={{ scale: 1.02 }}
                     className="p-5 rounded-xl bg-gradient-to-br from-blue-500/15 to-purple-500/10 border border-blue-500/40 mb-4 shadow-lg shadow-blue-500/5"
                   >
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 mb-4">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">ReplySequence</span>
-                      <div className="flex items-baseline">
+                    <div className="mb-4">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold text-sm">ReplySequence</span>
+                      <div className="flex items-baseline gap-1 mt-1">
                         <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
                       </div>
@@ -595,9 +595,9 @@ export default function GrainComparisonPage() {
 
                   {/* Grain */}
                   <div className="p-5 rounded-xl bg-gradient-to-br from-teal-500/10 to-cyan-500/5 border border-teal-500/30">
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 mb-4">
-                      <span className="text-teal-400 font-semibold">Grain</span>
-                      <div className="flex items-baseline">
+                    <div className="mb-4">
+                      <span className="text-teal-400 font-semibold text-sm">Grain</span>
+                      <div className="flex items-baseline gap-1 mt-1">
                         <span className={`font-bold text-gray-300 ${tier.grain.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.grain.price}</span>
                         <span className="text-gray-500 text-sm">{tier.grain.period}</span>
                       </div>

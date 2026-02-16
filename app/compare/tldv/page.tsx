@@ -565,9 +565,9 @@ export default function TldvComparisonPage() {
                     whileHover={{ scale: 1.02 }}
                     className="p-5 rounded-xl bg-gradient-to-br from-purple-500/15 to-pink-500/10 border border-purple-500/40 mb-4 shadow-lg shadow-purple-500/5"
                   >
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 mb-4">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 font-bold">ReplySequence</span>
-                      <div className="flex items-baseline">
+                    <div className="mb-4">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 font-bold text-sm">ReplySequence</span>
+                      <div className="flex items-baseline gap-1 mt-1">
                         <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
                       </div>
@@ -590,9 +590,9 @@ export default function TldvComparisonPage() {
 
                   {/* tl;dv */}
                   <div className="p-5 rounded-xl bg-gray-800/50 border border-gray-700">
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 mb-4">
-                      <span className="text-gray-400 font-semibold">tl;dv</span>
-                      <div className="flex items-baseline">
+                    <div className="mb-4">
+                      <span className="text-gray-400 font-semibold text-sm">tl;dv</span>
+                      <div className="flex items-baseline gap-1 mt-1">
                         <span className={`font-bold text-gray-300 ${tier.tldv.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.tldv.price}</span>
                         <span className="text-gray-500 text-sm">{tier.tldv.period}</span>
                       </div>
