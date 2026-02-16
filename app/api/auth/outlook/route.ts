@@ -7,12 +7,12 @@ export async function GET(request: NextRequest) {
   try {
     const redirect = request.nextUrl.searchParams.get('redirect') || '/dashboard/settings?outlook_connected=true';
 
-    const clientId = process.env.MICROSOFT_CLIENT_ID;
+    const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
     if (!clientId) {
       console.log(JSON.stringify({
         level: 'error',
         tag: '[OUTLOOK-OAUTH-START-1]',
-        message: 'MICROSOFT_CLIENT_ID not configured',
+        message: 'MICROSOFT_TEAMS_CLIENT_ID not configured',
       }));
       return NextResponse.json({ error: 'Outlook OAuth not configured' }, { status: 500 });
     }

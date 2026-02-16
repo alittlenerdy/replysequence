@@ -215,8 +215,8 @@ export async function GET(request: NextRequest) {
 }
 
 async function exchangeCodeForTokens(code: string, baseUrl: string): Promise<MicrosoftTokenResponse> {
-  const clientId = process.env.MICROSOFT_CLIENT_ID?.trim();
-  const clientSecret = process.env.MICROSOFT_CLIENT_SECRET?.trim();
+  const clientId = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
+  const clientSecret = process.env.MICROSOFT_TEAMS_CLIENT_SECRET?.trim();
   const redirectUri = `${baseUrl}/api/auth/outlook/callback`;
 
   if (!clientId || !clientSecret) {
