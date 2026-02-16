@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X } from 'lucide-react';
 import { checkPlatformConnections, type PlatformConnectionDetails } from '@/app/actions/checkPlatformConnections';
 
 interface PlatformConfig {
@@ -129,6 +130,8 @@ function formatRelativeTime(date: Date | undefined, nowMs: number): string {
 }
 
 export function IntegrationSettings() {
+  const searchParams = useSearchParams();
+  const [errorBanner, setErrorBanner] = useState<string | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<Record<string, boolean>>({
     zoom: false,
     teams: false,
@@ -139,6 +142,15 @@ export function IntegrationSettings() {
   });
   // Track "now" in state to avoid hydration mismatch with relative times
   const [nowMs, setNowMs] = useState(0);
+
+  // Show error from URL params (e.g., email conflict on OAuth callback)
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const message = searchParams.get('message');
+    if (error && message) {
+      setErrorBanner(message);
+    }
+  }, [searchParams]);
 
   // Initialize nowMs on client only
   useEffect(() => {
@@ -228,6 +240,19 @@ export function IntegrationSettings() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Error Banner */}
+      {errorBanner && (
+        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm text-red-300 light:text-red-600">{errorBanner}</p>
+          </div>
+          <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Getting Started Banner - only show when no platforms connected */}
       {hasNoConnections && (
         <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden">
