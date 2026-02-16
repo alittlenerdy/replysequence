@@ -281,7 +281,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-all ${
+              className={`border rounded-xl p-6 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -426,7 +426,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-all ${
+              className={`border rounded-xl p-6 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -567,7 +567,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-all ${
+              className={`border rounded-xl p-6 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
