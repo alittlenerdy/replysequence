@@ -6,7 +6,7 @@ import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, 
 import { checkPlatformConnections, type PlatformConnectionDetails } from '@/app/actions/checkPlatformConnections';
 
 interface PlatformConfig {
-  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot';
+  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'gmail' | 'outlook';
   name: string;
   description: string;
   color: string;
@@ -14,7 +14,7 @@ interface PlatformConfig {
   icon: React.ReactNode;
   connectUrl: string;
   disconnectUrl: string;
-  category: 'meeting' | 'calendar' | 'crm';
+  category: 'meeting' | 'calendar' | 'crm' | 'email';
 }
 
 const platforms: PlatformConfig[] = [
@@ -96,6 +96,37 @@ const platforms: PlatformConfig[] = [
     disconnectUrl: '/api/integrations/outlook-calendar/disconnect',
     category: 'calendar',
   },
+  // Email accounts
+  {
+    id: 'gmail',
+    name: 'Gmail',
+    description: 'Send follow-up emails from your Gmail address',
+    color: '#EA4335',
+    bgColor: 'bg-[#EA4335]/10',
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#EA4335">
+        <path d="M20 18h-2V9.25L12 13 6 9.25V18H4V6h1.2l6.8 4.25L18.8 6H20m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
+      </svg>
+    ),
+    connectUrl: '/api/auth/gmail',
+    disconnectUrl: '/api/integrations/gmail/disconnect',
+    category: 'email',
+  },
+  {
+    id: 'outlook',
+    name: 'Outlook / Microsoft 365',
+    description: 'Send follow-up emails from your Outlook address',
+    color: '#0078D4',
+    bgColor: 'bg-[#0078D4]/10',
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#0078D4">
+        <path d="M7 12l5 3 5-3v7H7v-7zm0-2l5 3 5-3V5H7v5zm-2 9V3h14v16H5z"/>
+      </svg>
+    ),
+    connectUrl: '/api/auth/outlook',
+    disconnectUrl: '/api/integrations/outlook/disconnect',
+    category: 'email',
+  },
   // CRM platforms
   {
     id: 'hubspot',
@@ -139,6 +170,8 @@ export function IntegrationSettings() {
     calendar: false,
     outlookCalendar: false,
     hubspot: false,
+    gmail: false,
+    outlook: false,
   });
   // Track "now" in state to avoid hydration mismatch with relative times
   const [nowMs, setNowMs] = useState(0);
@@ -165,6 +198,8 @@ export function IntegrationSettings() {
     calendar: { connected: false },
     outlookCalendar: { connected: false },
     hubspot: { connected: false },
+    gmail: { connected: false },
+    outlook: { connected: false },
   });
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -516,6 +551,150 @@ export function IntegrationSettings() {
                     }`}>
                       {details.isExpired
                         ? 'Token expired. Reconnect to continue syncing your calendar.'
+                        : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons - separate row on mobile */}
+              <div className="mt-3 flex justify-end">
+                {isConnected ? (
+                  <div className="flex items-center gap-2">
+                    {(details?.isExpired || details?.isExpiringSoon) && (
+                      <button
+                        onClick={() => handleConnect(platform)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
+                        style={{ backgroundColor: platform.color }}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <ExternalLink className="w-4 h-4" />
+                        )}
+                        Reconnect
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDisconnect(platform)}
+                      disabled={isLoading}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Unplug className="w-4 h-4" />
+                      )}
+                      Disconnect
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleConnect(platform)}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
+                    style={{ backgroundColor: platform.color }}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <ExternalLink className="w-4 h-4" />
+                    )}
+                    Connect
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Email Accounts */}
+      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-3">Email Accounts</h3>
+      <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
+        Connect your email to send follow-ups from your real address instead of noreply@resend.dev.
+      </p>
+      <div className="space-y-4 mb-8">
+        {platforms.filter(p => p.category === 'email').map((platform) => {
+          const isConnected = connectionStatus[platform.id];
+          const details = connectionDetails[platform.id];
+          const isLoading = actionLoading === platform.id;
+
+          const getStatusColor = () => {
+            if (!isConnected) return null;
+            if (details?.isExpired) return 'red';
+            if (details?.isExpiringSoon) return 'yellow';
+            return 'green';
+          };
+          const statusColor = getStatusColor();
+
+          return (
+            <div
+              key={platform.id}
+              className={`border rounded-xl p-6 transition-colors ${
+                isConnected
+                  ? statusColor === 'red'
+                    ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
+                    : statusColor === 'yellow'
+                    ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
+                    : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
+                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
+                  {platform.icon}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
+                    {isConnected && (
+                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusColor === 'red'
+                          ? 'bg-red-500/20 text-red-400'
+                          : statusColor === 'yellow'
+                          ? 'bg-yellow-500/20 text-yellow-400'
+                          : 'bg-emerald-500/20 text-emerald-400'
+                      }`}>
+                        {statusColor === 'red' ? (
+                          <>
+                            <AlertTriangle className="w-3 h-3" />
+                            Expired
+                          </>
+                        ) : statusColor === 'yellow' ? (
+                          <>
+                            <Clock className="w-3 h-3" />
+                            Expiring Soon
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-3 h-3" />
+                            Connected
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  {isConnected && details?.email ? (
+                    <div className="mt-1">
+                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
+                      {details.connectedAt && (
+                        <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
+                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
+                  )}
+                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
+                    <p className={`text-xs mt-1 ${
+                      details.isExpired ? 'text-red-400' : 'text-yellow-400'
+                    }`}>
+                      {details.isExpired
+                        ? 'Token expired. Reconnect to continue sending from your email.'
                         : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
                     </p>
                   )}

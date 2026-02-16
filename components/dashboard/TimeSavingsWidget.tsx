@@ -223,7 +223,7 @@ export function TimeSavingsWidget({
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-2xl" />
 
       {/* Inner content with slight inset for border effect */}
-      <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
+      <div className="relative m-[2px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
         {/* Background glow effects */}
         <div className="absolute -right-20 -top-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
         <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />

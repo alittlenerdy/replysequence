@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
+import { sendViaConnectedAccount } from '@/lib/email-sender';
 import { syncSentEmailToCrm } from '@/lib/airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { trackEvent } from '@/lib/analytics';
 import { injectTracking } from '@/lib/email-tracking';
 import { db, emailEvents } from '@/lib/db';
-import { meetings, hubspotConnections } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { meetings, hubspotConnections, emailConnections } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
@@ -72,15 +73,74 @@ export async function POST(request: NextRequest) {
       console.log('[SEND-1b] Tracking injected for:', draft.trackingId);
     }
 
-    // Send email via Resend with viral signature footer
-    const result = await sendEmail({
-      to: recipientEmail,
-      subject: draft.subject,
-      body: emailBody,
-      replyTo: draft.meetingHostEmail,
-      utmContent: draftId,
-      includeSignature: true, // Future: check user settings for paid users
-    });
+    // Try sending via connected email account (Gmail/Outlook), fall back to Resend
+    let result: { success: boolean; messageId?: string; error?: string } | null = null;
+
+    if (draft.meetingId) {
+      try {
+        // Get userId from the meeting to look up email connection
+        const [meetingForEmail] = await db
+          .select({ userId: meetings.userId })
+          .from(meetings)
+          .where(eq(meetings.id, draft.meetingId))
+          .limit(1);
+
+        if (meetingForEmail?.userId) {
+          // Look for a default email connection
+          const [emailConnection] = await db
+            .select()
+            .from(emailConnections)
+            .where(and(
+              eq(emailConnections.userId, meetingForEmail.userId),
+              eq(emailConnections.isDefault, true),
+            ))
+            .limit(1);
+
+          if (emailConnection) {
+            console.log('[SEND-1c] Found connected email account, sending via', emailConnection.provider, emailConnection.email);
+
+            const connectedResult = await sendViaConnectedAccount({
+              connection: {
+                provider: emailConnection.provider as 'gmail' | 'outlook',
+                email: emailConnection.email,
+                accessTokenEncrypted: emailConnection.accessTokenEncrypted,
+                refreshTokenEncrypted: emailConnection.refreshTokenEncrypted,
+                accessTokenExpiresAt: emailConnection.accessTokenExpiresAt,
+                id: emailConnection.id,
+              },
+              to: recipientEmail,
+              subject: draft.subject,
+              htmlBody: emailBody,
+              textBody: emailBody,
+              replyTo: draft.meetingHostEmail,
+            });
+
+            if (connectedResult.success) {
+              result = {
+                success: true,
+                messageId: connectedResult.messageId,
+              };
+            } else {
+              console.log('[SEND-1d] Connected account send failed, falling back to Resend:', connectedResult.error);
+            }
+          }
+        }
+      } catch (connError) {
+        console.error('[SEND-1d] Connected account lookup/send failed, falling back to Resend:', connError);
+      }
+    }
+
+    // Fall back to Resend if no connected account or if connected account send failed
+    if (!result) {
+      result = await sendEmail({
+        to: recipientEmail,
+        subject: draft.subject,
+        body: emailBody,
+        replyTo: draft.meetingHostEmail,
+        utmContent: draftId,
+        includeSignature: true,
+      });
+    }
 
     if (!result.success) {
       console.error(JSON.stringify({

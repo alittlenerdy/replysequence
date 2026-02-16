@@ -237,7 +237,7 @@ export default function OtterComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-blue-300 text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-blue-300 light:text-blue-600 text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
             Honest Comparison
@@ -367,7 +367,7 @@ export default function OtterComparisonPage() {
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-white/95 backdrop-blur-sm border-b border-gray-800 light:border-gray-200 mb-4">
+          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-blue-50/95 backdrop-blur-sm border-b border-gray-800 light:border-gray-200 mb-4">
             <div className="grid grid-cols-3 py-4">
               <div className="text-gray-500 font-medium pl-4">Feature</div>
               <div className="text-center">
@@ -383,9 +383,9 @@ export default function OtterComparisonPage() {
           {categories.map((category, catIndex) => (
             <AnimatedSection key={category} delay={catIndex * 0.1} className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{category}</span>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-blue-200 to-transparent" />
+                <span className="text-xs font-semibold text-gray-500 light:text-blue-500 uppercase tracking-wider">{category}</span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-blue-200 to-transparent" />
               </div>
 
               <motion.div
@@ -437,7 +437,7 @@ export default function OtterComparisonPage() {
       </section>
 
       {/* Key Differences */}
-      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-gray-100 to-transparent">
+      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-blue-50/50 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Key Differences</h2>
@@ -530,8 +530,8 @@ export default function OtterComparisonPage() {
                 whileHover={{ scale: 1.03, y: -8 }}
                 className={`relative rounded-2xl overflow-hidden group ${
                   tier.highlighted
-                    ? 'border-2 border-purple-500/50 bg-gradient-to-b from-purple-500/10 via-blue-500/5 to-transparent shadow-xl shadow-purple-500/10'
-                    : 'border border-gray-700 light:border-gray-200 bg-gray-900/30 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-400'
+                    ? 'border-2 border-purple-500/50 bg-gradient-to-b from-purple-500/10 via-blue-500/5 to-transparent light:from-purple-50 light:via-blue-50 light:to-indigo-50 shadow-xl shadow-purple-500/10'
+                    : 'border border-gray-700 light:border-gray-200 bg-gray-900/30 light:bg-blue-50/30 hover:border-gray-600 light:hover:border-gray-400 light:hover:bg-blue-50/50'
                 }`}
                 style={tier.highlighted ? { boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)' } : {}}
               >
@@ -604,7 +604,7 @@ export default function OtterComparisonPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900/50 border-2 border-blue-500/30 overflow-hidden shadow-2xl"
+            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900/50 light:from-white light:via-blue-50 light:to-indigo-50 border-2 border-blue-500/30 light:border-blue-200 overflow-hidden shadow-2xl light:shadow-blue-100/50"
             style={{ boxShadow: '0 0 60px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
           >
             {/* Decorative elements */}
@@ -668,7 +668,7 @@ export default function OtterComparisonPage() {
       </AnimatedSection>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-t from-blue-500/10 via-purple-500/5 to-transparent relative overflow-hidden">
+      <section className="py-20 px-4 bg-gradient-to-t from-blue-500/10 via-purple-500/5 light:from-blue-50 light:via-indigo-50 to-transparent relative overflow-hidden">
         {/* Background glows */}
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />

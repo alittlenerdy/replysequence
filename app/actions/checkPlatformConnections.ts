@@ -1,8 +1,8 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, hubspotConnections } from '@/lib/db';
-import { eq } from 'drizzle-orm';
+import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, hubspotConnections, emailConnections } from '@/lib/db';
+import { eq, and } from 'drizzle-orm';
 
 export interface PlatformConnectionDetails {
   connected: boolean;
@@ -22,6 +22,8 @@ export interface PlatformConnectionsResult {
     calendar: boolean;
     outlookCalendar: boolean;
     hubspot: boolean;
+    gmail: boolean;
+    outlook: boolean;
   };
   details: {
     zoom: PlatformConnectionDetails;
@@ -30,6 +32,8 @@ export interface PlatformConnectionsResult {
     calendar: PlatformConnectionDetails;
     outlookCalendar: PlatformConnectionDetails;
     hubspot: PlatformConnectionDetails;
+    gmail: PlatformConnectionDetails;
+    outlook: PlatformConnectionDetails;
   };
   userId?: string;
   zoomEmail?: string;
@@ -38,6 +42,8 @@ export interface PlatformConnectionsResult {
   calendarEmail?: string;
   outlookCalendarEmail?: string;
   hubspotPortalId?: string;
+  gmailEmail?: string;
+  outlookEmail?: string;
 }
 
 /**
@@ -56,7 +62,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] No userId from Clerk auth');
       return {
         connected: false,
-        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false },
+        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false },
         details: {
           zoom: { connected: false },
           teams: { connected: false },
@@ -64,6 +70,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
           calendar: { connected: false },
           outlookCalendar: { connected: false },
           hubspot: { connected: false },
+          gmail: { connected: false },
+          outlook: { connected: false },
         },
       };
     }
@@ -297,7 +305,71 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] HubSpot connection found', { hubspotPortalId, hasRefreshToken });
     }
 
-    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected;
+    // Get Gmail email connection details
+    let gmailEmail: string | undefined;
+    let gmailDetails: PlatformConnectionDetails = { connected: false };
+    const [gmailConnection] = await db
+      .select({
+        email: emailConnections.email,
+        connectedAt: emailConnections.connectedAt,
+        expiresAt: emailConnections.accessTokenExpiresAt,
+        hasRefreshToken: emailConnections.refreshTokenEncrypted,
+      })
+      .from(emailConnections)
+      .where(and(
+        eq(emailConnections.userId, existingUser.id),
+        eq(emailConnections.provider, 'gmail'),
+      ))
+      .limit(1);
+
+    const gmailConnected = !!gmailConnection;
+    if (gmailConnection) {
+      gmailEmail = gmailConnection.email;
+      const hasRefreshToken = !!gmailConnection.hasRefreshToken;
+      gmailDetails = {
+        connected: true,
+        email: gmailConnection.email,
+        connectedAt: gmailConnection.connectedAt,
+        expiresAt: gmailConnection.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+      };
+      console.log('[CHECK-CONNECTION] Gmail connection found', { gmailEmail, hasRefreshToken });
+    }
+
+    // Get Outlook email connection details
+    let outlookEmail: string | undefined;
+    let outlookDetails: PlatformConnectionDetails = { connected: false };
+    const [outlookEmailConnection] = await db
+      .select({
+        email: emailConnections.email,
+        connectedAt: emailConnections.connectedAt,
+        expiresAt: emailConnections.accessTokenExpiresAt,
+        hasRefreshToken: emailConnections.refreshTokenEncrypted,
+      })
+      .from(emailConnections)
+      .where(and(
+        eq(emailConnections.userId, existingUser.id),
+        eq(emailConnections.provider, 'outlook'),
+      ))
+      .limit(1);
+
+    const outlookEmailConnected = !!outlookEmailConnection;
+    if (outlookEmailConnection) {
+      outlookEmail = outlookEmailConnection.email;
+      const hasRefreshToken = !!outlookEmailConnection.hasRefreshToken;
+      outlookDetails = {
+        connected: true,
+        email: outlookEmailConnection.email,
+        connectedAt: outlookEmailConnection.connectedAt,
+        expiresAt: outlookEmailConnection.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+      };
+      console.log('[CHECK-CONNECTION] Outlook email connection found', { outlookEmail, hasRefreshToken });
+    }
+
+    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected || gmailConnected || outlookEmailConnected;
 
     return {
       connected: hasAnyConnection,
@@ -308,6 +380,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         calendar: calendarConnected,
         outlookCalendar: outlookCalendarConnected,
         hubspot: hubspotConnected,
+        gmail: gmailConnected,
+        outlook: outlookEmailConnected,
       },
       details: {
         zoom: zoomDetails,
@@ -316,6 +390,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         calendar: calendarDetails,
         outlookCalendar: outlookCalendarDetails,
         hubspot: hubspotDetails,
+        gmail: gmailDetails,
+        outlook: outlookDetails,
       },
       userId: existingUser.id,
       zoomEmail,
@@ -324,6 +400,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       calendarEmail,
       outlookCalendarEmail,
       hubspotPortalId,
+      gmailEmail,
+      outlookEmail,
     };
   }
 
@@ -348,7 +426,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
 
   return {
     connected: false,
-    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false },
+    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false },
     details: {
       zoom: { connected: false },
       teams: { connected: false },
@@ -356,6 +434,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       calendar: { connected: false },
       outlookCalendar: { connected: false },
       hubspot: { connected: false },
+      gmail: { connected: false },
+      outlook: { connected: false },
     },
     userId: newUser.id,
   };
@@ -364,7 +444,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     // Return disconnected state on error to show integration cards
     return {
       connected: false,
-      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false },
+      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false },
       details: {
         zoom: { connected: false },
         teams: { connected: false },
@@ -372,6 +452,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         calendar: { connected: false },
         outlookCalendar: { connected: false },
         hubspot: { connected: false },
+        gmail: { connected: false },
+        outlook: { connected: false },
       },
     };
   }

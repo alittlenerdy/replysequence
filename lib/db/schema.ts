@@ -910,3 +910,45 @@ export const recallBots = pgTable(
 
 export type RecallBot = typeof recallBots.$inferSelect;
 export type NewRecallBot = typeof recallBots.$inferInsert;
+
+// Email provider type
+export type EmailProvider = 'gmail' | 'outlook';
+
+// Email connections table - stores OAuth tokens for sending emails via user's own account
+export const emailConnections = pgTable(
+  'email_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Email provider
+    provider: varchar('provider', { length: 20 }).$type<EmailProvider>().notNull(),
+    // Account info
+    email: varchar('email', { length: 255 }).notNull(),
+    displayName: varchar('display_name', { length: 255 }),
+    // Encrypted tokens (AES-256-GCM)
+    accessTokenEncrypted: text('access_token_encrypted').notNull(),
+    refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+    // Token expiration
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
+    // Scopes granted
+    scopes: text('scopes').notNull(), // Space-separated list
+    // Default email account for this user
+    isDefault: boolean('is_default').notNull().default(true),
+    // Timestamps
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+    lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('email_connections_user_provider_idx').on(table.userId, table.provider),
+    index('email_connections_user_id_idx').on(table.userId),
+    index('email_connections_provider_idx').on(table.provider),
+    index('email_connections_expires_at_idx').on(table.accessTokenExpiresAt),
+  ]
+);
+
+export type EmailConnection = typeof emailConnections.$inferSelect;
+export type NewEmailConnection = typeof emailConnections.$inferInsert;
