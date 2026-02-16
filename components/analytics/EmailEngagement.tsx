@@ -31,10 +31,7 @@ interface MetricCardProps {
 
 function MetricCard({ icon, label, value, rate, rateLabel, color, bgColor, delay }: MetricCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
+    <div
       className={`relative p-4 rounded-xl border ${bgColor} overflow-hidden`}
     >
       {/* Background glow */}
@@ -64,7 +61,7 @@ function MetricCard({ icon, label, value, rate, rateLabel, color, bgColor, delay
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -72,10 +69,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
   const hasData = engagement.sent > 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
       className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
@@ -179,28 +173,22 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           </div>
         </>
       ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <div
           className="text-center py-6"
         >
           {/* Animated mail illustration */}
           <div className="relative mx-auto w-16 h-16 mb-4">
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
+            <div
               className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center border border-blue-500/20"
             >
               <Mail className="w-8 h-8 text-blue-400/70" />
-            </motion.div>
-            {/* Floating notification dots */}
-            <motion.div
-              animate={{ y: [-2, 2, -2] }}
-              transition={{ duration: 2, repeat: Infinity }}
+            </div>
+            {/* Floating notification dot */}
+            <div
               className="absolute -right-1 -top-1 w-4 h-4 bg-purple-500/50 rounded-full flex items-center justify-center"
             >
               <Eye className="w-2 h-2 text-white" />
-            </motion.div>
+            </div>
           </div>
 
           <h4 className="text-white light:text-gray-900 font-medium mb-2">
@@ -232,8 +220,8 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
               <div className="text-xs text-gray-500">Replied</div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }

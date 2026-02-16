@@ -56,10 +56,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
   const hasData = emailsGenerated > 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
+    <div
       className="bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 rounded-2xl p-6 relative overflow-hidden"
     >
       {/* Background glow */}
@@ -167,6 +164,6 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

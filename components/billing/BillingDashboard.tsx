@@ -197,9 +197,7 @@ export function BillingDashboard() {
 
   if (error) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 text-center"
       >
         <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
@@ -211,7 +209,7 @@ export function BillingDashboard() {
           <RefreshCw className="w-4 h-4" />
           Try Again
         </button>
-      </motion.div>
+      </div>
     );
   }
 
@@ -223,10 +221,7 @@ export function BillingDashboard() {
   return (
     <div className="space-y-6">
       {/* Current Plan Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+      <div
         className={`relative bg-gray-900/50 light:bg-white border ${tierInfo.borderColor} rounded-2xl p-6 overflow-hidden`}
       >
         {/* Background decoration */}
@@ -316,14 +311,11 @@ export function BillingDashboard() {
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Method Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
+        <div
           className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
@@ -348,9 +340,7 @@ export function BillingDashboard() {
               </div>
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+            <div
               className="p-6 bg-gray-800/30 light:bg-gray-50 rounded-xl border border-dashed border-gray-600 light:border-gray-300"
             >
               <div className="flex flex-col items-center text-center">
@@ -373,15 +363,12 @@ export function BillingDashboard() {
                   </Link>
                 )}
               </div>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
 
         {/* Billing Summary Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
+        <div
           className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
@@ -407,14 +394,11 @@ export function BillingDashboard() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Invoices Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.3 }}
+      <div
         className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6"
       >
         <div className="flex items-center justify-between mb-4">
@@ -441,11 +425,8 @@ export function BillingDashboard() {
                   const StatusIcon = status?.icon || Clock;
 
                   return (
-                    <motion.tr
+                    <tr
                       key={invoice.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
                       className="border-b border-gray-800 light:border-gray-100 last:border-0 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors"
                     >
                       <td className="py-4 px-4">
@@ -481,41 +462,29 @@ export function BillingDashboard() {
                           </a>
                         )}
                       </td>
-                    </motion.tr>
+                    </tr>
                   );
                 })}
               </tbody>
             </table>
           </div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
             className="text-center py-10 px-4"
           >
             {/* Animated receipt illustration */}
             <div className="relative mx-auto w-20 h-20 mb-4">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4 }}
+              <div
                 className="w-20 h-20 bg-gradient-to-br from-gray-700/50 to-gray-800/50 light:from-gray-100 light:to-gray-200 rounded-2xl flex items-center justify-center border border-gray-600/30 light:border-gray-300"
               >
                 <Receipt className="w-10 h-10 text-gray-500 light:text-gray-400" />
-              </motion.div>
+              </div>
               {/* Decorative dots */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -right-1 -top-1 w-3 h-3 bg-blue-500/50 rounded-full"
+              <div
+                className="absolute -right-1 -top-1 w-3 h-3 bg-blue-500/30 rounded-full"
               />
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                className="absolute -left-1 -bottom-1 w-2 h-2 bg-purple-500/50 rounded-full"
+              <div
+                className="absolute -left-1 -bottom-1 w-2 h-2 bg-purple-500/30 rounded-full"
               />
             </div>
 
@@ -537,9 +506,9 @@ export function BillingDashboard() {
                 <ExternalLink className="w-3 h-3" />
               </Link>
             )}
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }

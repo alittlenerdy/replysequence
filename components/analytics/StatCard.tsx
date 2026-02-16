@@ -85,11 +85,7 @@ export function StatCard({
   sparklineData,
 }: StatCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.4, delay }}
-      whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+    <div
       className="relative group"
     >
       {/* Glow effect on hover */}
@@ -98,7 +94,7 @@ export function StatCard({
       />
 
       {/* Card */}
-      <div className="relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-all duration-300 overflow-hidden light:shadow-sm">
+      <div className="relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-colors duration-300 overflow-hidden light:shadow-sm">
         {/* Background decoration */}
         <div
           className="absolute -right-8 -top-8 w-24 h-24 rounded-full opacity-10 blur-2xl"
@@ -166,6 +162,6 @@ export function StatCard({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -22,10 +22,7 @@ interface FunnelStageProps {
 
 function FunnelStage({ icon, label, value, percentage, color, gradient, delay }: FunnelStageProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay }}
+    <div
       className="flex-1"
     >
       <div className="flex items-center gap-3 mb-2">
@@ -48,7 +45,7 @@ function FunnelStage({ icon, label, value, percentage, color, gradient, delay }:
           className={`h-full rounded-full bg-gradient-to-r ${gradient}`}
         />
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -56,10 +53,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
   const hasData = total > 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+    <div
       className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
@@ -136,6 +130,6 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
