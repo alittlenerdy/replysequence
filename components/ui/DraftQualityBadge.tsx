@@ -71,12 +71,13 @@ export function DraftQualityBadge({
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
+        <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">AI Quality</span>
         {/* Star rating */}
         <div className="flex">
           {[1, 2, 3, 4, 5].map((star) => (
             <svg
               key={star}
-              className={`w-4 h-4 ${star <= stars ? 'text-yellow-400' : 'text-gray-600'}`}
+              className={`w-5 h-5 ${star <= stars ? 'text-yellow-400' : 'text-gray-600'}`}
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -84,6 +85,7 @@ export function DraftQualityBadge({
             </svg>
           ))}
         </div>
+        <span className={`text-sm font-bold ${color}`}>{qualityScore}/100</span>
         <span className={`text-sm font-medium ${color}`}>
           {label}
         </span>

@@ -253,16 +253,14 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                 </h2>
                 <StatusBadge status={draft.status} />
                 {draft.qualityScore !== null && (
-                  <div className="hidden sm:block">
-                    <DraftQualityBadge
-                      qualityScore={draft.qualityScore}
-                      toneScore={draft.toneScore}
-                      completenessScore={draft.completenessScore}
-                      personalizationScore={draft.personalizationScore}
-                      accuracyScore={draft.accuracyScore}
-                      gradingNotes={draft.gradingNotes}
-                    />
-                  </div>
+                  <DraftQualityBadge
+                    qualityScore={draft.qualityScore}
+                    toneScore={draft.toneScore}
+                    completenessScore={draft.completenessScore}
+                    personalizationScore={draft.personalizationScore}
+                    accuracyScore={draft.accuracyScore}
+                    gradingNotes={draft.gradingNotes}
+                  />
                 )}
               </div>
               <div className="flex items-center gap-1 sm:gap-2 shrink-0">

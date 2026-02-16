@@ -15,7 +15,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0 }: DashboardShellProps) {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 relative z-10">
+    <div className="min-h-screen bg-transparent light:bg-transparent">
       {/* Header */}
       <header className="bg-gray-900/70 light:bg-white/80 backdrop-blur-xl border-b border-white/10 light:border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

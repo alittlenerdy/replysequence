@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
 import { syncSentEmailToCrm } from '@/lib/airtable';
+import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
+import { decrypt, encrypt } from '@/lib/encryption';
 import { trackEvent } from '@/lib/analytics';
 import { injectTracking } from '@/lib/email-tracking';
 import { db, emailEvents } from '@/lib/db';
+import { meetings, hubspotConnections } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
@@ -164,6 +168,94 @@ export async function POST(request: NextRequest) {
         error: crmError instanceof Error ? crmError.message : String(crmError),
       }));
     });
+
+    // Sync to HubSpot CRM (non-blocking - same pattern as Airtable)
+    if (draft.meetingId) {
+      (async () => {
+        try {
+          // Get userId from the meeting
+          const [meeting] = await db
+            .select({ userId: meetings.userId })
+            .from(meetings)
+            .where(eq(meetings.id, draft.meetingId!))
+            .limit(1);
+
+          if (!meeting?.userId) return;
+
+          // Look up HubSpot connection for this user
+          const [connection] = await db
+            .select()
+            .from(hubspotConnections)
+            .where(eq(hubspotConnections.userId, meeting.userId))
+            .limit(1);
+
+          if (!connection) return;
+
+          // Decrypt access token
+          let accessToken = decrypt(connection.accessTokenEncrypted);
+
+          // Check if token is expired; refresh if needed
+          if (connection.accessTokenExpiresAt < new Date()) {
+            console.log(JSON.stringify({
+              level: 'info',
+              message: 'HubSpot token expired, refreshing',
+              draftId,
+            }));
+
+            const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
+            const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
+
+            // Update stored tokens
+            accessToken = refreshed.accessToken;
+            await db
+              .update(hubspotConnections)
+              .set({
+                accessTokenEncrypted: encrypt(refreshed.accessToken),
+                refreshTokenEncrypted: encrypt(refreshed.refreshToken),
+                accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
+                lastRefreshedAt: new Date(),
+                updatedAt: new Date(),
+              })
+              .where(eq(hubspotConnections.id, connection.id));
+          }
+
+          // Sync to HubSpot
+          const hubspotResult = await syncSentEmailToHubSpot(accessToken, {
+            recipientEmail,
+            meetingTitle: draft.meetingTopic || 'Meeting',
+            meetingDate: draft.meetingStartTime || new Date(),
+            platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+            draftSubject: draft.subject,
+            draftBody: draft.body,
+          });
+
+          // Update lastSyncAt
+          await db
+            .update(hubspotConnections)
+            .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+            .where(eq(hubspotConnections.id, connection.id));
+
+          console.log(JSON.stringify({
+            level: 'info',
+            message: 'HubSpot CRM sync completed',
+            draftId,
+            recipientEmail,
+            success: hubspotResult.success,
+            contactFound: hubspotResult.contactFound,
+            engagementId: hubspotResult.engagementId,
+          }));
+        } catch (hubspotError) {
+          // Log but don't fail - email was already sent successfully
+          console.error(JSON.stringify({
+            level: 'error',
+            message: 'HubSpot CRM sync failed (non-blocking)',
+            draftId,
+            recipientEmail,
+            error: hubspotError instanceof Error ? hubspotError.message : String(hubspotError),
+          }));
+        }
+      })();
+    }
 
     return NextResponse.json({
       success: true,

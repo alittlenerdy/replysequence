@@ -124,7 +124,7 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/dashboard"
     >
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
-        <body className="antialiased" suppressHydrationWarning>
+        <body className="antialiased bg-[#0a0a0f] light:bg-gray-50" suppressHydrationWarning>
           {/* PostHog temporarily disabled to debug hydration issues */}
           {/* <PostHogProvider> */}
             {/* ServiceWorker disabled - unregister any existing SW */}
