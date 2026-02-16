@@ -5,7 +5,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db, users, teamsConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 import { createTeamsSubscription } from '@/lib/teams-api';
@@ -142,6 +142,22 @@ export async function GET(request: NextRequest) {
 
     // Calculate expiration time
     const accessTokenExpiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+
+    // Check if this Teams email is already connected to a different user
+    const emailConflict = await db.query.teamsConnections.findFirst({
+      where: sql`LOWER(${teamsConnections.msEmail}) = LOWER(${userEmail})`,
+    });
+
+    if (emailConflict && emailConflict.userId !== user.id) {
+      console.error('[TEAMS-CALLBACK] Email already connected to another user', {
+        email: userEmail,
+        existingUserId: emailConflict.userId,
+        currentUserId: user.id,
+      });
+      return NextResponse.redirect(
+        new URL(`/dashboard/settings?error=email_conflict&message=${encodeURIComponent('This Teams account is already connected to another user. Please disconnect it from the other account first.')}`, baseUrl)
+      );
+    }
 
     // Upsert teams connection
     const existingConnection = await db.query.teamsConnections.findFirst({

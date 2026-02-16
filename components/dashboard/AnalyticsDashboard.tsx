@@ -256,11 +256,13 @@ export function AnalyticsDashboard() {
 
       {hasData ? (
         <>
-          {/* ROI Calculator + Email Engagement */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
-            <EmailEngagement engagement={analytics.engagement} />
-          </div>
+          {/* ROI Calculator + Email Engagement - only show when emails exist */}
+          {analytics.emailsGenerated > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+              <EmailEngagement engagement={analytics.engagement} />
+            </div>
+          )}
 
           {/* Activity Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

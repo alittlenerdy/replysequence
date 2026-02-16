@@ -5,7 +5,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db, users, zoomConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
@@ -131,6 +131,22 @@ export async function GET(request: NextRequest) {
 
     // Calculate expiration time
     const accessTokenExpiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+
+    // Check if this Zoom email is already connected to a different user
+    const emailConflict = await db.query.zoomConnections.findFirst({
+      where: sql`LOWER(${zoomConnections.zoomEmail}) = LOWER(${zoomUser.email})`,
+    });
+
+    if (emailConflict && emailConflict.userId !== user.id) {
+      console.error('[ZOOM-CALLBACK] Email already connected to another user', {
+        email: zoomUser.email,
+        existingUserId: emailConflict.userId,
+        currentUserId: user.id,
+      });
+      return NextResponse.redirect(
+        new URL(`/dashboard/settings?error=email_conflict&message=${encodeURIComponent('This Zoom account is already connected to another user. Please disconnect it from the other account first.')}`, baseUrl)
+      );
+    }
 
     // Upsert zoom connection
     const existingConnection = await db.query.zoomConnections.findFirst({

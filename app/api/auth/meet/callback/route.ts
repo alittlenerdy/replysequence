@@ -5,7 +5,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db, users, meetConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
@@ -161,6 +161,22 @@ export async function GET(request: NextRequest) {
 
     // Calculate expiration time
     const accessTokenExpiresAt = new Date(Date.now() + tokens.expires_in * 1000);
+
+    // Check if this Meet email is already connected to a different user
+    const emailConflict = await db.query.meetConnections.findFirst({
+      where: sql`LOWER(${meetConnections.googleEmail}) = LOWER(${userEmail})`,
+    });
+
+    if (emailConflict && emailConflict.userId !== user.id) {
+      console.error('[MEET-CALLBACK] Email already connected to another user', {
+        email: userEmail,
+        existingUserId: emailConflict.userId,
+        currentUserId: user.id,
+      });
+      return NextResponse.redirect(
+        new URL(`/dashboard/settings?error=email_conflict&message=${encodeURIComponent('This Google account is already connected to another user. Please disconnect it from the other account first.')}`, baseUrl)
+      );
+    }
 
     // Upsert meet connection
     const existingConnection = await db.query.meetConnections.findFirst({

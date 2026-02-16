@@ -98,19 +98,26 @@ function log(
  */
 async function lookupUserIdByEmail(hostEmail: string): Promise<string | null> {
   try {
-    const [connection] = await db
+    const connections = await db
       .select({ userId: zoomConnections.userId })
       .from(zoomConnections)
       .where(sql`LOWER(${zoomConnections.zoomEmail}) = LOWER(${hostEmail})`)
-      .orderBy(desc(zoomConnections.createdAt))
-      .limit(1);
+      .orderBy(desc(zoomConnections.createdAt));
 
-    if (connection) {
+    if (connections.length > 1) {
+      log('warn', 'DUPLICATE: Multiple zoom connections found for same email', {
+        hostEmail,
+        count: connections.length,
+        userIds: connections.map(c => c.userId),
+      });
+    }
+
+    if (connections.length > 0) {
       log('info', 'Found user ID from zoom connection', {
         hostEmail,
-        userId: connection.userId,
+        userId: connections[0].userId,
       });
-      return connection.userId;
+      return connections[0].userId;
     }
 
     log('info', 'No zoom connection found for host email', { hostEmail });

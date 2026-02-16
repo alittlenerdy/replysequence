@@ -1,12 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { OnboardingBanner } from './OnboardingBanner';
 // import { ProcessingToast } from '@/components/processing/ProcessingToast';
-
-// Test #2: Re-enable OnboardingBanner
-const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
@@ -36,7 +32,6 @@ export function DashboardLayoutClient({
 
   return (
     <>
-      <DashboardMarginBubbles />
       {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />}
       {children}
       {/* <ProcessingToast hideOnDashboard={true} /> */}

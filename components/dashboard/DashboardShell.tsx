@@ -1,11 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { UserButton } from '@clerk/nextjs';
 import { Video } from 'lucide-react';
 import { DashboardNav } from './DashboardNav';
 import { MobileBottomNav } from './MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
+
+const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -16,6 +19,7 @@ interface DashboardShellProps {
 export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0 }: DashboardShellProps) {
   return (
     <div className="min-h-screen bg-transparent light:bg-transparent">
+      <DashboardMarginBubbles />
       {/* Header */}
       <header className="bg-gray-900/70 light:bg-white/80 backdrop-blur-xl border-b border-white/10 light:border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
