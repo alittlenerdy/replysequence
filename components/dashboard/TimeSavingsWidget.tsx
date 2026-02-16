@@ -216,10 +216,7 @@ export function TimeSavingsWidget({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
       className="relative overflow-hidden rounded-2xl"
     >
       {/* Gradient border effect */}
@@ -266,15 +263,12 @@ export function TimeSavingsWidget({
             </div>
 
             {/* Fun comparison */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
+            <div
               className="flex items-center justify-center gap-2 text-cyan-400 light:text-cyan-600 bg-cyan-500/10 rounded-lg py-2 px-4 mx-auto w-fit"
             >
               {comparison.icon}
               <span className="text-sm font-medium">{comparison.text}</span>
-            </motion.div>
+            </div>
 
             {/* Breakdown stats */}
             <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-700/50 light:border-gray-200">
@@ -308,10 +302,7 @@ export function TimeSavingsWidget({
         ) : (
           /* Empty state - show potential savings */
           <div className="relative text-center py-6">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+            <div
               className="space-y-4"
             >
               <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto">
@@ -348,10 +339,10 @@ export function TimeSavingsWidget({
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

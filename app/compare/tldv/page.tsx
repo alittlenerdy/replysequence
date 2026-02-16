@@ -566,7 +566,7 @@ export default function TldvComparisonPage() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 font-bold">ReplySequence</span>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-white">{tier.replysequence.price}</span>
+                        <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
                       </div>
                     </div>
@@ -591,7 +591,7 @@ export default function TldvComparisonPage() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-gray-400 font-semibold">tl;dv</span>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-gray-300">{tier.tldv.price}</span>
+                        <span className={`font-bold text-gray-300 ${tier.tldv.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.tldv.price}</span>
                         <span className="text-gray-500 text-sm">{tier.tldv.period}</span>
                       </div>
                     </div>

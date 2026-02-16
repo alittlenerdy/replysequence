@@ -4,7 +4,6 @@ import { Check, Sparkles, Building2, Zap } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { CheckoutButton } from '@/components/CheckoutButton';
 import { ManageSubscriptionButton } from '@/components/ManageSubscriptionButton';
-import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -339,15 +338,6 @@ async function PricingContent() {
       )}
     </>
   );
-
-  // Wrap in appropriate shell based on auth state
-  if (isLoggedIn) {
-    return (
-      <DashboardShell firstName={firstName} pendingDrafts={0}>
-        {pricingContent}
-      </DashboardShell>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-950 light:bg-gray-50">

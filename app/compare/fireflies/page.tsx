@@ -566,7 +566,7 @@ export default function FirefliesComparisonPage() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">ReplySequence</span>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-white">{tier.replysequence.price}</span>
+                        <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
                       </div>
                     </div>
@@ -592,7 +592,7 @@ export default function FirefliesComparisonPage() {
                       <span className="text-orange-400 font-semibold">Fireflies.ai</span>
                       <div className="flex flex-col items-end">
                         <div className="flex items-baseline">
-                          <span className="text-2xl font-bold text-gray-300">{tier.fireflies.price}</span>
+                          <span className={`font-bold text-gray-300 ${tier.fireflies.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.fireflies.price}</span>
                           <span className="text-gray-500 text-sm">{tier.fireflies.period}</span>
                         </div>
                         {tier.fireflies.note && (

@@ -194,9 +194,7 @@ export function AnalyticsDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="flex items-center justify-between"
       >
         <div>
@@ -211,7 +209,7 @@ export function AnalyticsDashboard() {
         >
           <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
         </button>
-      </motion.div>
+      </div>
 
       {/* Hero Stats - Enhanced with trends and sparklines */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -293,10 +291,7 @@ export function AnalyticsDashboard() {
         </>
       ) : (
         /* Empty State - Enhanced with illustration and CTAs */
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+        <div
           className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
         >
           {/* Background decorative elements */}
@@ -369,14 +364,14 @@ export function AnalyticsDashboard() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <a
                 href="/dashboard/settings"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-colors"
               >
                 <Calendar className="w-4 h-4" />
                 Connect a Platform
               </a>
               <a
                 href="/how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-300 light:text-gray-700 bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200 rounded-xl hover:bg-gray-700 light:hover:bg-gray-200 transition-all duration-300 hover:scale-105"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-300 light:text-gray-700 bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200 rounded-xl hover:bg-gray-700 light:hover:bg-gray-200 transition-colors"
               >
                 Learn How It Works
               </a>
@@ -392,21 +387,18 @@ export function AnalyticsDashboard() {
                   { icon: <Clock className="w-5 h-5" />, label: 'Time Saved', color: 'text-amber-400' },
                   { icon: <BarChart3 className="w-5 h-5" />, label: 'Activity Charts', color: 'text-blue-400' },
                 ].map((item, index) => (
-                  <motion.div
+                  <div
                     key={item.label}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
                     className="p-3 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-gray-700/50 light:border-gray-200"
                   >
                     <div className={`${item.color} mb-2`}>{item.icon}</div>
                     <p className="text-xs text-gray-400 light:text-gray-600">{item.label}</p>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

@@ -571,7 +571,7 @@ export default function GrainComparisonPage() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-bold">ReplySequence</span>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-white">{tier.replysequence.price}</span>
+                        <span className={`font-bold text-white ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 text-sm">{tier.replysequence.period}</span>
                       </div>
                     </div>
@@ -596,7 +596,7 @@ export default function GrainComparisonPage() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-teal-400 font-semibold">Grain</span>
                       <div className="flex items-baseline">
-                        <span className="text-2xl font-bold text-gray-300">{tier.grain.price}</span>
+                        <span className={`font-bold text-gray-300 ${tier.grain.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.grain.price}</span>
                         <span className="text-gray-500 text-sm">{tier.grain.period}</span>
                       </div>
                     </div>

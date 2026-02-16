@@ -296,55 +296,30 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
             )}
           </div>
         ) : hasCalendarConnected ? (
-          /* No meetings with URLs */
-          <div className="relative text-center py-8">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-4"
-            >
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto">
-                <Video className="w-8 h-8 text-purple-400" />
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-white light:text-gray-900 mb-1">
-                  No Video Meetings
-                </h4>
-                <p className="text-gray-400 light:text-gray-500 text-sm max-w-xs mx-auto">
-                  No Zoom, Meet, or Teams meetings scheduled in the next 7 days
-                </p>
-              </div>
-            </motion.div>
+          /* No meetings with URLs - compact */
+          <div className="relative text-center py-4">
+            <div className="flex items-center justify-center gap-3">
+              <Video className="w-5 h-5 text-gray-500" />
+              <p className="text-gray-400 light:text-gray-500 text-sm">
+                No video meetings in the next 7 days
+              </p>
+            </div>
           </div>
         ) : (
-          /* Calendar not connected */
-          <div className="relative text-center py-8">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-4"
-            >
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto">
-                <CalendarPlus className="w-8 h-8 text-purple-400" />
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-white light:text-gray-900 mb-1">
-                  Connect Your Calendar
-                </h4>
-                <p className="text-gray-400 light:text-gray-500 text-sm max-w-xs mx-auto">
-                  Connect Google or Outlook calendar to see upcoming meetings and auto-generate drafts
-                </p>
-              </div>
-              <a
-                href="/dashboard/settings"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-lg transition-colors text-sm font-medium"
-              >
-                <Calendar className="w-4 h-4" />
-                Connect Calendar
-              </a>
-            </motion.div>
+          /* Calendar not connected - compact */
+          <div className="relative text-center py-4">
+            <div className="flex items-center justify-center gap-3">
+              <CalendarPlus className="w-5 h-5 text-purple-400" />
+              <p className="text-gray-400 light:text-gray-500 text-sm">
+                <a
+                  href="/dashboard/settings"
+                  className="text-purple-400 hover:text-purple-300 underline"
+                >
+                  Connect your calendar
+                </a>
+                {' '}to see upcoming meetings
+              </p>
+            </div>
           </div>
         )}
 

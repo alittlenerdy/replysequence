@@ -315,11 +315,7 @@ export function DraftsTable({
                 <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
-                  Cost
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
-                  Actions
+                <th className="px-4 py-3 text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                 </th>
               </tr>
             </thead>
@@ -361,17 +357,13 @@ export function DraftsTable({
                   <td className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <StatusBadge status={draft.status} size="sm" />
-                      {renderQualityBadge(draft)}
                       {renderEngagementIndicators(draft)}
                     </div>
                   </td>
                   <td className="hidden lg:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
-                  <td className="hidden xl:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-300 light:text-gray-500">
-                    {draft.costUsd ? `$${parseFloat(draft.costUsd).toFixed(4)}` : '-'}
-                  </td>
-                  <td className="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -383,8 +375,6 @@ export function DraftsTable({
                         bg-blue-500/10 light:bg-blue-50
                         hover:bg-blue-500/20 light:hover:bg-blue-100
                         hover:text-blue-300 light:hover:text-blue-700
-                        hover:shadow-md hover:shadow-blue-500/20
-                        hover:scale-105
                         active:scale-95
                         transition-all duration-200
                       "

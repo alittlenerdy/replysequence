@@ -252,8 +252,8 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
 
   if (!data) return null;
 
-  // Hide if fully complete and celebration is done
-  if (data.isComplete && !showCelebration) {
+  // Hide if fully complete - no need for celebration overlay
+  if (data.isComplete) {
     return null;
   }
 

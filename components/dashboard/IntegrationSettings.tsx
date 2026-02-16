@@ -227,7 +227,7 @@ export function IntegrationSettings() {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl mx-auto">
       {/* Getting Started Banner - only show when no platforms connected */}
       {hasNoConnections && (
         <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden">
