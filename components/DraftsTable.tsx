@@ -265,7 +265,7 @@ export function DraftsTable({
               </div>
 
               {/* Subject line */}
-              <p className="text-sm text-gray-300 light:text-gray-700 mb-3 line-clamp-2">
+              <p className="text-sm text-gray-300 light:text-gray-700 mb-3 truncate">
                 {draft.subject}
               </p>
 
@@ -340,7 +340,7 @@ export function DraftsTable({
                   `}
                   onClick={() => setSelectedDraft(draft)}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       {getPlatformIcon(draft.meetingPlatform)}
                       <div>
@@ -353,32 +353,32 @@ export function DraftsTable({
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-200 light:text-gray-900">
+                  <td className="px-6 py-3 max-w-xs">
+                    <div className="text-sm text-gray-200 light:text-gray-900 truncate">
                       {truncateSubject(draft.subject)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <StatusBadge status={draft.status} size="sm" />
                       {renderQualityBadge(draft)}
                       {renderEngagementIndicators(draft)}
                     </div>
                   </td>
-                  <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
+                  <td className="hidden lg:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
-                  <td className="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-300 light:text-gray-500">
+                  <td className="hidden xl:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-300 light:text-gray-500">
                     {draft.costUsd ? `$${parseFloat(draft.costUsd).toFixed(4)}` : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedDraft(draft);
                       }}
                       className="
-                        px-3 py-1.5 rounded-lg min-h-[44px]
+                        px-3 py-1.5 rounded-lg
                         text-blue-400 light:text-blue-600
                         bg-blue-500/10 light:bg-blue-50
                         hover:bg-blue-500/20 light:hover:bg-blue-100

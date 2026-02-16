@@ -265,7 +265,6 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
 
   const meetingData: Partial<NewMeeting> = {
     zoomMeetingId,
-    hostEmail,
     topic: meetingObject.topic || 'Untitled Meeting',
     startTime: meetingObject.start_time ? new Date(meetingObject.start_time) : null,
     endTime: meetingObject.end_time ? new Date(meetingObject.end_time) : null,
@@ -273,12 +272,27 @@ async function processMeetingEnded(rawEvent: RawEvent): Promise<ProcessResult> {
     updatedAt: new Date(),
   };
 
+  // Only set hostEmail if we have a real value (meeting.ended often lacks host_email)
+  if (hostEmail !== 'unknown@unknown.com') {
+    meetingData.hostEmail = hostEmail;
+  }
+
   // Add userId if found (link meeting to user)
   if (userId) {
     meetingData.userId = userId;
   }
 
   if (existingMeeting) {
+    // If existing meeting already has a real host_email, don't overwrite with unknown
+    if (existingMeeting.hostEmail && existingMeeting.hostEmail !== 'unknown@unknown.com' && !meetingData.hostEmail) {
+      // Keep existing good email
+    } else if (meetingData.hostEmail) {
+      // We have a real email, use it
+    } else if (!existingMeeting.hostEmail || existingMeeting.hostEmail === 'unknown@unknown.com') {
+      // Both are unknown - set it so the field exists
+      meetingData.hostEmail = hostEmail;
+    }
+
     // Update existing meeting with end time data
     await db
       .update(meetings)

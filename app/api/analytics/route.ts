@@ -6,8 +6,8 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { eq, inArray, count, sql } from 'drizzle-orm';
-import { db, users, meetings, drafts, zoomConnections, teamsConnections, meetConnections } from '@/lib/db';
+import { eq, inArray } from 'drizzle-orm';
+import { db, users, meetings, drafts } from '@/lib/db';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
@@ -169,76 +169,12 @@ export async function GET() {
     }
     console.log('[ANALYTICS-4] User found:', user.id);
 
-    // Collect all emails associated with this user
-    const userEmails: string[] = [user.email];
+    // Get all user meetings filtered by userId (consistent with dashboard)
+    console.log('[ANALYTICS-5] Querying meetings for userId:', user.id);
 
-    // Get connected platform emails (with individual error handling)
-    // Zoom connection
-    try {
-      const [zoomConn] = await db
-        .select({ zoomEmail: zoomConnections.zoomEmail })
-        .from(zoomConnections)
-        .where(eq(zoomConnections.userId, user.id))
-        .limit(1);
-      if (zoomConn?.zoomEmail) {
-        userEmails.push(zoomConn.zoomEmail);
-        console.log('[ANALYTICS-ZOOM] Found Zoom email:', zoomConn.zoomEmail);
-      }
-    } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : String(e);
-      console.log('[ANALYTICS-WARN] Zoom connection error (non-fatal):', errorMessage);
-    }
-
-    // Teams connection
-    try {
-      const [teamsConn] = await db
-        .select({ msEmail: teamsConnections.msEmail })
-        .from(teamsConnections)
-        .where(eq(teamsConnections.userId, user.id))
-        .limit(1);
-      if (teamsConn?.msEmail) {
-        userEmails.push(teamsConn.msEmail);
-        console.log('[ANALYTICS-TEAMS] Found Teams email:', teamsConn.msEmail);
-      }
-    } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : String(e);
-      console.log('[ANALYTICS-WARN] Teams connection error (non-fatal):', errorMessage);
-    }
-
-    // Meet connection - table may not exist yet, completely optional
-    try {
-      const [meetConn] = await db
-        .select({ googleEmail: meetConnections.googleEmail })
-        .from(meetConnections)
-        .where(eq(meetConnections.userId, user.id))
-        .limit(1);
-      if (meetConn?.googleEmail) {
-        userEmails.push(meetConn.googleEmail);
-        console.log('[ANALYTICS-MEET] Found Meet email:', meetConn.googleEmail);
-      }
-    } catch (e: unknown) {
-      // This is expected if meet_connections table doesn't exist yet
-      const errorMessage = e instanceof Error ? e.message : String(e);
-      if (errorMessage.includes('does not exist')) {
-        console.log('[ANALYTICS-MEET] Table not yet created (this is OK)');
-      } else {
-        console.log('[ANALYTICS-WARN] Meet connection error (non-fatal):', errorMessage);
-      }
-    }
-
-    const uniqueEmails = [...new Set(userEmails.map(e => e.toLowerCase()))];
-    console.log('[ANALYTICS-5] User emails:', uniqueEmails);
-
-    // Get all user meetings with platform info
-    // Use a safer query approach
     let userMeetings: { id: string; platform: string | null; createdAt: Date | null }[] = [];
 
     try {
-      // Build WHERE clause for multiple emails
-      const emailConditions = uniqueEmails.map(email =>
-        sql`LOWER(${meetings.hostEmail}) = ${email}`
-      );
-
       userMeetings = await db
         .select({
           id: meetings.id,
@@ -246,12 +182,11 @@ export async function GET() {
           createdAt: meetings.createdAt,
         })
         .from(meetings)
-        .where(sql`(${sql.join(emailConditions, sql` OR `)})`);
+        .where(eq(meetings.userId, user.id));
 
       console.log('[ANALYTICS-6] Meetings found:', userMeetings.length);
     } catch (e) {
       console.log('[ANALYTICS-WARN] Error fetching meetings:', e);
-      // Return empty response if meetings query fails
       return NextResponse.json<AnalyticsData>(emptyResponse);
     }
 
