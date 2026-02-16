@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db, users, teamsConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
+import { createTeamsSubscription } from '@/lib/teams-api';
 
 // Allow longer timeout for cold starts and token exchange
 export const maxDuration = 60;
@@ -227,6 +228,33 @@ export async function GET(request: NextRequest) {
           currentStep: 2, // Stay on platform step to show connected status
         });
       }
+    }
+
+    // Create Graph API subscription for transcript notifications
+    // This is what makes Microsoft actually send webhooks when meetings end
+    try {
+      const subscription = await createTeamsSubscription(tokens.access_token, msUser.id);
+      if (subscription) {
+        console.log('[TEAMS-CALLBACK] Graph subscription created', {
+          subscriptionId: subscription.subscriptionId,
+          expirationDateTime: subscription.expirationDateTime,
+        });
+
+        // Store subscription ID on the connection for renewal
+        await db
+          .update(teamsConnections)
+          .set({
+            graphSubscriptionId: subscription.subscriptionId,
+            graphSubscriptionExpiresAt: new Date(subscription.expirationDateTime),
+            updatedAt: new Date(),
+          })
+          .where(eq(teamsConnections.userId, user.id));
+      } else {
+        console.warn('[TEAMS-CALLBACK] Graph subscription creation failed - webhooks will not fire');
+      }
+    } catch (subError) {
+      // Non-blocking - OAuth still succeeded, user can retry subscription later
+      console.error('[TEAMS-CALLBACK] Graph subscription error (non-blocking):', subError);
     }
 
     console.log('[TEAMS-CALLBACK] OAuth flow completed successfully', {

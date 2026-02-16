@@ -338,3 +338,122 @@ export function validateClientState(
 export function isTeamsConfigured(): boolean {
   return !!(TENANT_ID && CLIENT_ID && CLIENT_SECRET);
 }
+
+/**
+ * Create a Graph API subscription for transcript notifications.
+ * This must be called after OAuth so Microsoft sends webhooks when
+ * transcripts are created for meetings organized by this user.
+ *
+ * Uses the user's delegated token (not client credentials) because
+ * the resource is user-scoped.
+ */
+export async function createTeamsSubscription(
+  userAccessToken: string,
+  msUserId: string
+): Promise<{ subscriptionId: string; expirationDateTime: string } | null> {
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/+$/, '');
+  const notificationUrl = `${appUrl}/api/webhooks/teams`;
+  const clientState = process.env.MICROSOFT_TEAMS_WEBHOOK_SECRET || '';
+
+  // Subscription expires in 2 days (max for online meeting resources is ~3 days)
+  const expirationDateTime = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+
+  const body = {
+    changeType: 'created',
+    notificationUrl,
+    resource: `users/${msUserId}/onlineMeetings/getAllTranscripts`,
+    expirationDateTime,
+    clientState,
+  };
+
+  log('info', '[TEAMS-SUB] Creating Graph subscription', {
+    msUserId,
+    resource: body.resource,
+    notificationUrl,
+    expirationDateTime,
+  });
+
+  try {
+    const response = await fetch(`${GRAPH_BASE_URL}/subscriptions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${userAccessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
+      log('error', '[TEAMS-SUB] Subscription creation failed', {
+        status: response.status,
+        error: errorData.error?.message || response.statusText,
+        code: errorData.error?.code,
+      });
+      return null;
+    }
+
+    const subscription = await response.json();
+    log('info', '[TEAMS-SUB] Subscription created successfully', {
+      subscriptionId: subscription.id,
+      expirationDateTime: subscription.expirationDateTime,
+      resource: subscription.resource,
+    });
+
+    return {
+      subscriptionId: subscription.id,
+      expirationDateTime: subscription.expirationDateTime,
+    };
+  } catch (error) {
+    log('error', '[TEAMS-SUB] Subscription creation error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}
+
+/**
+ * Renew an existing Graph API subscription before it expires.
+ * Must be called with a valid access token.
+ */
+export async function renewTeamsSubscription(
+  accessToken: string,
+  subscriptionId: string
+): Promise<{ expirationDateTime: string } | null> {
+  const expirationDateTime = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+
+  try {
+    const response = await fetch(`${GRAPH_BASE_URL}/subscriptions/${subscriptionId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ expirationDateTime }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
+      log('error', '[TEAMS-SUB] Subscription renewal failed', {
+        subscriptionId,
+        status: response.status,
+        error: errorData.error?.message,
+      });
+      return null;
+    }
+
+    const result = await response.json();
+    log('info', '[TEAMS-SUB] Subscription renewed', {
+      subscriptionId,
+      expirationDateTime: result.expirationDateTime,
+    });
+
+    return { expirationDateTime: result.expirationDateTime };
+  } catch (error) {
+    log('error', '[TEAMS-SUB] Subscription renewal error', {
+      subscriptionId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}

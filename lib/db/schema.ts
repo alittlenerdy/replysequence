@@ -396,6 +396,9 @@ export const teamsConnections = pgTable(
     accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
     // Scopes granted
     scopes: text('scopes').notNull(), // Space-separated list
+    // Graph API subscription for webhook notifications
+    graphSubscriptionId: varchar('graph_subscription_id', { length: 255 }),
+    graphSubscriptionExpiresAt: timestamp('graph_subscription_expires_at', { withTimezone: true }),
     // Timestamps
     connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
     lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),

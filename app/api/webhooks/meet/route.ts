@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, rawEvents } from '@/lib/db';
+import { db, rawEvents, meetConnections } from '@/lib/db';
 import { processMeetEvent } from '@/lib/process-meet-event';
 import { validatePubSubMessage } from '@/lib/meet-api';
 import { recordWebhookFailure } from '@/lib/webhook-retry';
 import { acquireEventLock } from '@/lib/idempotency';
+import { decrypt } from '@/lib/encryption';
 import type {
   PubSubPushMessage,
   MeetWorkspaceEvent,
@@ -173,6 +174,75 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Resolve user context for Meet webhook events.
+ * Since Pub/Sub notifications don't include user info, we look up the first
+ * active Meet connection and use their credentials. For single-user beta
+ * this is correct; for multi-user we'll need subscription-based routing.
+ */
+async function resolveUserContext(): Promise<{
+  accessToken: string;
+  userId: string;
+  hostEmail: string;
+} | null> {
+  try {
+    const connections = await db
+      .select({
+        userId: meetConnections.userId,
+        googleEmail: meetConnections.googleEmail,
+        refreshTokenEncrypted: meetConnections.refreshTokenEncrypted,
+      })
+      .from(meetConnections)
+      .limit(5);
+
+    if (connections.length === 0) {
+      log('warn', 'No Meet connections found for webhook processing');
+      return null;
+    }
+
+    // Try each connection until one works
+    for (const connection of connections) {
+      try {
+        const refreshToken = decrypt(connection.refreshTokenEncrypted);
+        const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
+        const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+
+        if (!clientId || !clientSecret) continue;
+
+        const response = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            client_id: clientId,
+            client_secret: clientSecret,
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          return {
+            accessToken: data.access_token,
+            userId: connection.userId,
+            hostEmail: connection.googleEmail,
+          };
+        }
+      } catch {
+        // Try next connection
+      }
+    }
+
+    log('warn', 'Could not resolve user context from any Meet connection');
+    return null;
+  } catch (error) {
+    log('error', 'Error resolving user context', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}
+
+/**
  * Handle conference.ended event
  */
 async function handleConferenceEnded(
@@ -236,14 +306,24 @@ async function handleConferenceEnded(
     duration: Date.now() - startTime,
   });
 
+  // Resolve user context for API calls and multi-tenant data isolation
+  const userContext = await resolveUserContext();
+
   // Process event synchronously (fetch transcript, create meeting, generate draft)
   try {
-    const result = await processMeetEvent(rawEvent, meetEvent);
+    const result = await processMeetEvent(
+      rawEvent,
+      meetEvent,
+      userContext?.accessToken,
+      userContext?.userId,
+      userContext?.hostEmail
+    );
 
     log('info', '[MEET-10] Processing complete', {
       rawEventId: rawEvent.id,
       action: result.action,
       meetingId: result.meetingId,
+      hasUserContext: !!userContext,
       duration: Date.now() - startTime,
     });
   } catch (error) {
@@ -355,6 +435,9 @@ async function handleTranscriptFileGenerated(
     duration: Date.now() - startTime,
   });
 
+  // Resolve user context for API calls and multi-tenant data isolation
+  const userContext = await resolveUserContext();
+
   // Process event - fetch transcript and generate draft
   try {
     // Create a MeetWorkspaceEvent-compatible object for the processor
@@ -367,12 +450,19 @@ async function handleTranscriptFileGenerated(
       },
     };
 
-    const result = await processMeetEvent(rawEvent, meetEvent);
+    const result = await processMeetEvent(
+      rawEvent,
+      meetEvent,
+      userContext?.accessToken,
+      userContext?.userId,
+      userContext?.hostEmail
+    );
 
     log('info', '[MEET-10] Transcript processing complete', {
       rawEventId: rawEvent.id,
       action: result.action,
       meetingId: result.meetingId,
+      hasUserContext: !!userContext,
       duration: Date.now() - startTime,
     });
   } catch (error) {

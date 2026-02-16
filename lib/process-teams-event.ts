@@ -177,21 +177,29 @@ async function processTranscriptCreated(
     return { success: false, action: 'failed', error: 'Invalid resource path' };
   }
 
-  // Try to get user OAuth token for the meeting organizer
   // Look up user by MS User ID in teams_connections table
+  // We need the userId and email to properly link the meeting record
   let userToken: string | null = null;
+  let dbUserId: string | null = null;
+  let userEmail: string | null = null;
   try {
     const [connection] = await db
-      .select({ userId: teamsConnections.userId })
+      .select({
+        userId: teamsConnections.userId,
+        msEmail: teamsConnections.msEmail,
+      })
       .from(teamsConnections)
       .where(eq(teamsConnections.msUserId, parsed.userId))
       .limit(1);
 
     if (connection) {
+      dbUserId = connection.userId;
+      userEmail = connection.msEmail;
       userToken = await getValidTeamsToken(connection.userId);
       if (userToken) {
         log('info', '[TEAMS-WEBHOOK-3] Using user OAuth token for Graph API calls', {
           msUserId: parsed.userId,
+          dbUserId,
           hasToken: true,
         });
         setUserToken(userToken);
@@ -239,35 +247,41 @@ async function processTranscriptCreated(
     });
   }
 
+  // Use actual user email if found, otherwise use a placeholder
+  const hostEmail = userEmail || `user-${parsed.userId}@teams.microsoft.com`;
+
   if (existingMeeting) {
-    // Update existing meeting
+    // Update existing meeting - also set userId if we found the connection
     await db
       .update(meetings)
       .set({
         status: 'processing',
         topic: meetingTopic,
+        hostEmail,
+        ...(dbUserId && !existingMeeting.userId ? { userId: dbUserId } : {}),
         updatedAt: new Date(),
       })
       .where(eq(meetings.id, existingMeeting.id));
 
     meetingId = existingMeeting.id;
-    log('info', 'Updated existing meeting', { meetingId, teamsMeetingId });
+    log('info', 'Updated existing meeting', { meetingId, teamsMeetingId, hostEmail, dbUserId });
   } else {
-    // Create new meeting
+    // Create new meeting with proper user linkage
     const [newMeeting] = await db
       .insert(meetings)
       .values({
+        userId: dbUserId, // Link to our user for multi-tenant filtering
         zoomMeetingId: teamsMeetingId, // Using zoomMeetingId for backwards compat
         platformMeetingId: teamsMeetingId,
         platform: TEAMS_PLATFORM,
-        hostEmail: `user-${parsed.userId}@teams.microsoft.com`, // Placeholder
+        hostEmail,
         topic: meetingTopic,
         status: 'processing',
       })
       .returning();
 
     meetingId = newMeeting.id;
-    log('info', 'Created new meeting', { meetingId, teamsMeetingId, platform: TEAMS_PLATFORM });
+    log('info', 'Created new meeting', { meetingId, teamsMeetingId, platform: TEAMS_PLATFORM, hostEmail, dbUserId });
   }
 
   // Fetch and store transcript
