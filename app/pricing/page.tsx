@@ -1,13 +1,12 @@
 import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
-import { Check, Sparkles, Building2, Zap } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
-import { CheckoutButton } from '@/components/CheckoutButton';
+import { PricingCards } from '@/components/PricingCards';
 import { ManageSubscriptionButton } from '@/components/ManageSubscriptionButton';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { STRIPE_PRICES } from '@/lib/stripe';
+import { STRIPE_PRICES, STRIPE_ANNUAL_PRICES } from '@/lib/stripe';
 import type { SubscriptionTier } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
@@ -25,38 +24,14 @@ export const metadata = {
   },
 };
 
-interface PricingTier {
-  name: string;
-  tier: 'free' | 'pro' | 'team';
-  price: string;
-  priceNote?: string;
-  description: string;
-  features: string[];
-  priceId?: string;
-  highlighted?: boolean;
-  icon: typeof Zap;
-}
-
-// Tier hierarchy for comparison (higher number = higher tier)
-const tierRank: Record<string, number> = {
-  free: 0,
-  pro: 1,
-  team: 2,
-};
-
-function getButtonText(targetTier: string, currentTier: string): string {
-  if (targetTier === currentTier) return 'Current Plan';
-  if (tierRank[targetTier] < tierRank[currentTier]) return 'Downgrade';
-  return 'Upgrade';
-}
-
-const pricingTiers: PricingTier[] = [
+const pricingTiers = [
   {
     name: 'Free',
-    tier: 'free',
-    price: '$0',
+    tier: 'free' as const,
+    monthlyPrice: 0,
+    annualPrice: 0,
     description: 'Perfect for trying out ReplySequence',
-    icon: Zap,
+    icon: 'zap' as const,
     features: [
       'Unlimited meetings',
       'Basic email templates',
@@ -67,13 +42,14 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: 'Pro',
-    tier: 'pro',
-    price: '$19',
-    priceNote: '/month',
+    tier: 'pro' as const,
+    monthlyPrice: 19,
+    annualPrice: 15, // ~21% discount
     description: 'For individuals who want more power',
-    icon: Sparkles,
+    icon: 'sparkles' as const,
     highlighted: true,
-    priceId: STRIPE_PRICES.pro,
+    monthlyPriceId: STRIPE_PRICES.pro,
+    annualPriceId: STRIPE_ANNUAL_PRICES.pro,
     features: [
       'Everything in Free',
       'Unlimited AI drafts',
@@ -86,12 +62,13 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: 'Team',
-    tier: 'team',
-    price: '$29',
-    priceNote: '/month',
+    tier: 'team' as const,
+    monthlyPrice: 29,
+    annualPrice: 24, // ~17% discount
     description: 'For growing teams and agencies',
-    icon: Building2,
-    priceId: STRIPE_PRICES.team,
+    icon: 'building' as const,
+    monthlyPriceId: STRIPE_PRICES.team,
+    annualPriceId: STRIPE_ANNUAL_PRICES.team,
     features: [
       'Everything in Pro',
       'Unlimited team members',
@@ -106,14 +83,11 @@ const pricingTiers: PricingTier[] = [
 ];
 
 async function PricingContent() {
-  // Get current user and their subscription
   const user = await currentUser();
   let currentTier: SubscriptionTier = 'free';
   let hasStripeCustomer = false;
-  let firstName = 'there';
 
   if (user) {
-    firstName = user.firstName || 'there';
     const [dbUser] = await db
       .select()
       .from(users)
@@ -131,10 +105,12 @@ async function PricingContent() {
   const isPaidUser = currentTier !== 'free' && hasStripeCustomer;
   const isLoggedIn = !!user;
 
-  const pricingContent = (
-    <>
+  return (
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+      <Header />
+
       {/* Hero Section */}
-      <section className={isLoggedIn ? 'pt-36 pb-8 px-4' : 'pt-32 pb-16 px-4'}>
+      <section className={isLoggedIn ? 'pt-36 pb-4 px-4' : 'pt-32 pb-4 px-4'}>
         <div className="max-w-5xl mx-auto text-center">
           <h1 className={`font-display font-bold mb-6 text-white light:text-gray-900 ${isLoggedIn ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl lg:text-6xl'}`}>
             {isLoggedIn ? 'Manage Your Plan' : (
@@ -152,7 +128,6 @@ async function PricingContent() {
               : 'Choose the plan that works for you. All plans include our core features. Upgrade or downgrade anytime.'}
           </p>
 
-          {/* Manage Subscription Button for paid users */}
           {isPaidUser && (
             <div className="mt-6">
               <ManageSubscriptionButton />
@@ -161,109 +136,12 @@ async function PricingContent() {
         </div>
       </section>
 
-      {/* Pricing Cards */}
-      <section className={isLoggedIn ? 'pb-12 px-4' : 'pb-20 px-4'}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {pricingTiers.map((tier) => {
-              const Icon = tier.icon;
-              const isCurrentPlan = currentTier === tier.tier;
-
-              return (
-                <div
-                  key={tier.name}
-                  className={`relative rounded-2xl p-6 lg:p-8 transition-all duration-300 ${
-                    tier.highlighted
-                      ? 'bg-gradient-to-b from-blue-500/10 to-indigo-500/10 border-2 border-blue-500/50 shadow-xl shadow-blue-500/10 scale-105 z-10'
-                      : 'bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300'
-                  }`}
-                >
-                  {/* Most Popular Badge */}
-                  {tier.highlighted && !isCurrentPlan && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-lg">
-                        <Sparkles className="w-4 h-4" />
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Current Plan Badge */}
-                  {isCurrentPlan && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-semibold border border-emerald-500/30">
-                        <Check className="w-4 h-4" />
-                        Current Plan
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Header */}
-                  <div className="mb-6 mt-4">
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
-                      tier.highlighted
-                        ? 'bg-blue-500/20'
-                        : 'bg-gray-800 light:bg-gray-100'
-                    }`}>
-                      <Icon className={`w-6 h-6 ${
-                        tier.highlighted
-                          ? 'text-blue-400'
-                          : 'text-gray-400 light:text-gray-600'
-                      }`} />
-                    </div>
-                    <h3 className="text-xl font-bold text-white light:text-gray-900 mb-2">
-                      {tier.name}
-                    </h3>
-                    <p className="text-gray-400 light:text-gray-600 text-sm">
-                      {tier.description}
-                    </p>
-                  </div>
-
-                  {/* Price */}
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-white light:text-gray-900">
-                      {tier.price}
-                    </span>
-                    {tier.priceNote && (
-                      <span className="text-gray-400 light:text-gray-600">
-                        {tier.priceNote}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* CTA Button */}
-                  <div className="mb-8">
-                    <CheckoutButton
-                      tier={tier.tier}
-                      priceId={tier.priceId}
-                      currentTier={currentTier}
-                      className="w-full"
-                    >
-                      {getButtonText(tier.tier, currentTier)}
-                    </CheckoutButton>
-                  </div>
-
-                  {/* Features */}
-                  <ul className="space-y-3">
-                    {tier.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                          tier.highlighted
-                            ? 'text-blue-400'
-                            : 'text-emerald-400'
-                        }`} />
-                        <span className="text-gray-300 light:text-gray-700 text-sm">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {/* Pricing Cards with Billing Toggle */}
+      <PricingCards
+        tiers={pricingTiers}
+        currentTier={currentTier}
+        isLoggedIn={isLoggedIn}
+      />
 
       {/* FAQ Section - only for non-logged in users */}
       {!isLoggedIn && (
@@ -289,6 +167,10 @@ async function PricingContent() {
                 {
                   q: 'What happens if I cancel?',
                   a: 'You\'ll keep access until the end of your billing period. Your data is retained for 30 days in case you want to reactivate.',
+                },
+                {
+                  q: 'Do you offer annual billing?',
+                  a: 'Yes! Switch to annual billing to save up to 20%. Toggle between monthly and annual at the top of the pricing cards.',
                 },
               ].map((faq, index) => (
                 <div
@@ -336,13 +218,6 @@ async function PricingContent() {
           </div>
         </footer>
       )}
-    </>
-  );
-
-  return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
-      <Header />
-      {pricingContent}
 
       {/* JSON-LD Pricing Structured Data */}
       <script
@@ -364,7 +239,7 @@ async function PricingContent() {
               },
               {
                 "@type": "Offer",
-                "name": "Pro",
+                "name": "Pro Monthly",
                 "price": "19",
                 "priceCurrency": "USD",
                 "billingIncrement": "P1M",
@@ -372,11 +247,27 @@ async function PricingContent() {
               },
               {
                 "@type": "Offer",
-                "name": "Team",
+                "name": "Pro Annual",
+                "price": "180",
+                "priceCurrency": "USD",
+                "billingIncrement": "P1Y",
+                "description": "Unlimited AI drafts, custom templates, priority processing - save 20%",
+              },
+              {
+                "@type": "Offer",
+                "name": "Team Monthly",
                 "price": "29",
                 "priceCurrency": "USD",
                 "billingIncrement": "P1M",
                 "description": "Everything in Pro plus CRM sync, team collaboration, API access",
+              },
+              {
+                "@type": "Offer",
+                "name": "Team Annual",
+                "price": "288",
+                "priceCurrency": "USD",
+                "billingIncrement": "P1Y",
+                "description": "Everything in Pro plus CRM sync, team collaboration, API access - save 17%",
               },
             ],
           }),
