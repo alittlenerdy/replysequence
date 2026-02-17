@@ -257,19 +257,17 @@ export async function POST(request: NextRequest) {
       }));
     });
 
-    // Sync to HubSpot CRM (non-blocking - same pattern as Airtable)
+    // Sync to HubSpot CRM (awaited to prevent Vercel from killing the function)
     if (draft.meetingId) {
-      (async () => {
-        try {
-          // Get userId from the meeting
-          const [meeting] = await db
-            .select({ userId: meetings.userId })
-            .from(meetings)
-            .where(eq(meetings.id, draft.meetingId!))
-            .limit(1);
+      try {
+        // Get userId from the meeting
+        const [meeting] = await db
+          .select({ userId: meetings.userId })
+          .from(meetings)
+          .where(eq(meetings.id, draft.meetingId!))
+          .limit(1);
 
-          if (!meeting?.userId) return;
-
+        if (meeting?.userId) {
           // Look up HubSpot connection for this user
           const [connection] = await db
             .select()
@@ -277,72 +275,87 @@ export async function POST(request: NextRequest) {
             .where(eq(hubspotConnections.userId, meeting.userId))
             .limit(1);
 
-          if (!connection) return;
+          if (connection) {
+            // Decrypt access token
+            let accessToken = decrypt(connection.accessTokenEncrypted);
 
-          // Decrypt access token
-          let accessToken = decrypt(connection.accessTokenEncrypted);
+            // Check if token is expired; refresh if needed
+            if (connection.accessTokenExpiresAt < new Date()) {
+              console.log(JSON.stringify({
+                level: 'info',
+                message: 'HubSpot token expired, refreshing',
+                draftId,
+              }));
 
-          // Check if token is expired; refresh if needed
-          if (connection.accessTokenExpiresAt < new Date()) {
-            console.log(JSON.stringify({
-              level: 'info',
-              message: 'HubSpot token expired, refreshing',
-              draftId,
-            }));
+              try {
+                const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
+                const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
 
-            const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
-            const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
+                // Update stored tokens
+                accessToken = refreshed.accessToken;
+                await db
+                  .update(hubspotConnections)
+                  .set({
+                    accessTokenEncrypted: encrypt(refreshed.accessToken),
+                    refreshTokenEncrypted: encrypt(refreshed.refreshToken),
+                    accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
+                    lastRefreshedAt: new Date(),
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(hubspotConnections.id, connection.id));
+              } catch (refreshError) {
+                console.error(JSON.stringify({
+                  level: 'error',
+                  message: 'HubSpot token refresh failed',
+                  draftId,
+                  error: refreshError instanceof Error ? refreshError.message : String(refreshError),
+                }));
+                // Skip sync if token refresh fails — don't throw
+                accessToken = '';
+              }
+            }
 
-            // Update stored tokens
-            accessToken = refreshed.accessToken;
-            await db
-              .update(hubspotConnections)
-              .set({
-                accessTokenEncrypted: encrypt(refreshed.accessToken),
-                refreshTokenEncrypted: encrypt(refreshed.refreshToken),
-                accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
-                lastRefreshedAt: new Date(),
-                updatedAt: new Date(),
-              })
-              .where(eq(hubspotConnections.id, connection.id));
+            if (accessToken) {
+              // Sync to HubSpot
+              const hubspotResult = await syncSentEmailToHubSpot(accessToken, {
+                recipientEmail,
+                meetingTitle: draft.meetingTopic || 'Meeting',
+                meetingDate: draft.meetingStartTime || new Date(),
+                platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+                draftSubject: draft.subject,
+                draftBody: draft.body,
+              });
+
+              // Update lastSyncAt only on success
+              if (hubspotResult.success) {
+                await db
+                  .update(hubspotConnections)
+                  .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+                  .where(eq(hubspotConnections.id, connection.id));
+              }
+
+              console.log(JSON.stringify({
+                level: 'info',
+                message: 'HubSpot CRM sync completed',
+                draftId,
+                recipientEmail,
+                success: hubspotResult.success,
+                contactFound: hubspotResult.contactFound,
+                engagementId: hubspotResult.engagementId,
+              }));
+            }
           }
-
-          // Sync to HubSpot
-          const hubspotResult = await syncSentEmailToHubSpot(accessToken, {
-            recipientEmail,
-            meetingTitle: draft.meetingTopic || 'Meeting',
-            meetingDate: draft.meetingStartTime || new Date(),
-            platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
-            draftSubject: draft.subject,
-            draftBody: draft.body,
-          });
-
-          // Update lastSyncAt
-          await db
-            .update(hubspotConnections)
-            .set({ lastSyncAt: new Date(), updatedAt: new Date() })
-            .where(eq(hubspotConnections.id, connection.id));
-
-          console.log(JSON.stringify({
-            level: 'info',
-            message: 'HubSpot CRM sync completed',
-            draftId,
-            recipientEmail,
-            success: hubspotResult.success,
-            contactFound: hubspotResult.contactFound,
-            engagementId: hubspotResult.engagementId,
-          }));
-        } catch (hubspotError) {
-          // Log but don't fail - email was already sent successfully
-          console.error(JSON.stringify({
-            level: 'error',
-            message: 'HubSpot CRM sync failed (non-blocking)',
-            draftId,
-            recipientEmail,
-            error: hubspotError instanceof Error ? hubspotError.message : String(hubspotError),
-          }));
         }
-      })();
+      } catch (hubspotError) {
+        // Log but don't fail - email was already sent successfully
+        console.error(JSON.stringify({
+          level: 'error',
+          message: 'HubSpot CRM sync failed (non-blocking)',
+          draftId,
+          recipientEmail,
+          error: hubspotError instanceof Error ? hubspotError.message : String(hubspotError),
+        }));
+      }
     }
 
     return NextResponse.json({

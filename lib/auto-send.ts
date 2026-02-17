@@ -282,8 +282,16 @@ export async function attemptAutoSend(params: {
       }));
     });
 
-    // HubSpot sync (non-blocking)
-    syncAutoSendToHubSpot(userId, draftId, recipientEmail, meeting, draft).catch(() => {});
+    // HubSpot sync (awaited to prevent Vercel from killing the function)
+    await syncAutoSendToHubSpot(userId, draftId, recipientEmail, meeting, draft).catch((err) => {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[AUTO-SEND]',
+        message: 'HubSpot sync failed (non-blocking)',
+        draftId,
+        error: err instanceof Error ? err.message : String(err),
+      }));
+    });
 
     return {
       autoSent: true,
@@ -323,23 +331,34 @@ async function syncAutoSendToHubSpot(
   let accessToken = decrypt(connection.accessTokenEncrypted);
 
   if (connection.accessTokenExpiresAt < new Date()) {
-    const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
-    const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
-    accessToken = refreshed.accessToken;
-    await db
-      .update(hubspotConnections)
-      .set({
-        accessTokenEncrypted: encrypt(refreshed.accessToken),
-        refreshTokenEncrypted: encrypt(refreshed.refreshToken),
-        accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
-        lastRefreshedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(eq(hubspotConnections.id, connection.id));
+    try {
+      const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
+      const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
+      accessToken = refreshed.accessToken;
+      await db
+        .update(hubspotConnections)
+        .set({
+          accessTokenEncrypted: encrypt(refreshed.accessToken),
+          refreshTokenEncrypted: encrypt(refreshed.refreshToken),
+          accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
+          lastRefreshedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(hubspotConnections.id, connection.id));
+    } catch (refreshError) {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[AUTO-SEND]',
+        message: 'HubSpot token refresh failed',
+        userId,
+        error: refreshError instanceof Error ? refreshError.message : String(refreshError),
+      }));
+      return; // Skip sync if token refresh fails
+    }
   }
 
   const crmPlatform = meeting.platform || 'zoom';
-  await syncSentEmailToHubSpot(accessToken, {
+  const hubspotResult = await syncSentEmailToHubSpot(accessToken, {
     recipientEmail,
     meetingTitle: meeting.topic || 'Meeting',
     meetingDate: meeting.startTime || new Date(),
@@ -348,8 +367,11 @@ async function syncAutoSendToHubSpot(
     draftBody: draft.body,
   });
 
-  await db
-    .update(hubspotConnections)
-    .set({ lastSyncAt: new Date(), updatedAt: new Date() })
-    .where(eq(hubspotConnections.id, connection.id));
+  // Only update lastSyncAt on success
+  if (hubspotResult.success) {
+    await db
+      .update(hubspotConnections)
+      .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+      .where(eq(hubspotConnections.id, connection.id));
+  }
 }
