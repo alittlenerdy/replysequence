@@ -165,9 +165,66 @@ export async function POST() {
 
     log('info', '[MEET-SUBSCRIBE-3] Token obtained successfully');
 
-    // Step 4: Create subscription via Workspace Events API
+    // Step 4: Check for existing subscription on Google's side first
     const targetResource = `//cloudidentity.googleapis.com/users/${meetConnection.googleUserId}`;
+    const eventTypeFilter = EVENT_TYPES.map(e => `event_types:"${e}"`).join(' OR ');
+    const listFilter = `${eventTypeFilter} AND target_resource="${targetResource}"`;
 
+    log('info', '[MEET-SUBSCRIBE-4] Checking for existing Google subscription', { listFilter });
+
+    const listResponse = await fetch(
+      `${EVENTS_API_BASE}/subscriptions?filter=${encodeURIComponent(listFilter)}&pageSize=10`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+    if (listResponse.ok) {
+      const listData = await listResponse.json();
+      const existingGoogleSub = (listData.subscriptions || [])[0];
+      if (existingGoogleSub) {
+        // Store it in our DB and return
+        log('info', '[MEET-SUBSCRIBE-4] Found existing subscription on Google', {
+          name: existingGoogleSub.name,
+          state: existingGoogleSub.state,
+        });
+        const expireTime = new Date(existingGoogleSub.expireTime);
+        if (existingSubscription) {
+          await db
+            .update(meetEventSubscriptions)
+            .set({
+              subscriptionName: existingGoogleSub.name,
+              targetResource: existingGoogleSub.targetResource,
+              eventTypes: existingGoogleSub.eventTypes,
+              status: 'active',
+              expireTime,
+              lastRenewedAt: new Date(),
+              renewalFailures: 0,
+              lastError: null,
+              updatedAt: new Date(),
+            })
+            .where(eq(meetEventSubscriptions.userId, user.id));
+        } else {
+          await db.insert(meetEventSubscriptions).values({
+            userId: user.id,
+            subscriptionName: existingGoogleSub.name,
+            targetResource: existingGoogleSub.targetResource,
+            eventTypes: existingGoogleSub.eventTypes,
+            status: 'active',
+            expireTime,
+          });
+        }
+        return NextResponse.json({
+          success: true,
+          existing: true,
+          subscription: {
+            name: existingGoogleSub.name,
+            expireTime: existingGoogleSub.expireTime,
+            state: existingGoogleSub.state,
+          },
+        });
+      }
+    }
+
+    // Step 5: Create new subscription via Workspace Events API
     const subscriptionRequest = {
       targetResource,
       eventTypes: EVENT_TYPES,
@@ -180,7 +237,7 @@ export async function POST() {
       },
     };
 
-    log('info', '[MEET-SUBSCRIBE-4] Calling Workspace Events API', {
+    log('info', '[MEET-SUBSCRIBE-5] Creating new subscription', {
       targetResource,
       eventTypes: EVENT_TYPES,
       pubsubTopic: PUBSUB_TOPIC,
@@ -196,94 +253,11 @@ export async function POST() {
     });
 
     if (!response.ok) {
-      const errorData: WorkspaceEventsError = await response.json().catch(() => ({
-        error: { code: response.status, message: response.statusText, status: 'UNKNOWN' },
-      }));
-
-      log('error', '[MEET-SUBSCRIBE-4] Workspace Events API error', {
+      const errorText = await response.text();
+      log('error', '[MEET-SUBSCRIBE-5] Workspace Events API error', {
         status: response.status,
-        error: errorData.error?.message,
-        code: errorData.error?.code,
+        body: errorText.substring(0, 500),
       });
-
-      // Handle specific error cases
-      if (response.status === 409) {
-        // Subscription exists on Google's side but not in our DB — list and store it
-        log('info', '[MEET-SUBSCRIBE-4] 409 conflict — listing existing subscriptions');
-        try {
-          const listResponse = await fetch(
-            `${EVENTS_API_BASE}/subscriptions`,
-            {
-              headers: { Authorization: `Bearer ${accessToken}` },
-            }
-          );
-          const listText = await listResponse.text();
-          if (listResponse.ok) {
-            const listData = JSON.parse(listText);
-            // Find subscription matching our target resource
-            const allSubs = listData.subscriptions || [];
-            const existing = allSubs.find(
-              (s: WorkspaceEventsSubscription) => s.targetResource === targetResource
-            ) || allSubs[0];
-            if (!existing) {
-              return NextResponse.json(
-                { error: 'Subscription exists on Google but list returned empty', listStatus: listResponse.status, listBody: listText.substring(0, 500), targetResource },
-                { status: 409 }
-              );
-            }
-            if (existing) {
-              const expireTime = new Date(existing.expireTime);
-              if (existingSubscription) {
-                await db
-                  .update(meetEventSubscriptions)
-                  .set({
-                    subscriptionName: existing.name,
-                    targetResource: existing.targetResource,
-                    eventTypes: existing.eventTypes,
-                    status: 'active',
-                    expireTime,
-                    lastRenewedAt: new Date(),
-                    renewalFailures: 0,
-                    lastError: null,
-                    updatedAt: new Date(),
-                  })
-                  .where(eq(meetEventSubscriptions.userId, user.id));
-              } else {
-                await db.insert(meetEventSubscriptions).values({
-                  userId: user.id,
-                  subscriptionName: existing.name,
-                  targetResource: existing.targetResource,
-                  eventTypes: existing.eventTypes,
-                  status: 'active',
-                  expireTime,
-                });
-              }
-              log('info', '[MEET-SUBSCRIBE-4] Stored existing subscription from Google', {
-                subscriptionName: existing.name,
-                expireTime: existing.expireTime,
-              });
-              return NextResponse.json({
-                success: true,
-                existing: true,
-                subscription: {
-                  name: existing.name,
-                  expireTime: existing.expireTime,
-                  state: existing.state,
-                },
-              });
-            }
-          }
-        } catch (listError) {
-          return NextResponse.json(
-            { error: 'Subscription already exists - list call threw', debug: listError instanceof Error ? listError.message : String(listError) },
-            { status: 409 }
-          );
-        }
-        return NextResponse.json(
-          { error: 'Subscription already exists - list response not ok', debug: 'fell through' },
-          { status: 409 }
-        );
-      }
 
       if (response.status === 403) {
         return NextResponse.json(
@@ -293,14 +267,14 @@ export async function POST() {
       }
 
       return NextResponse.json(
-        { error: `Failed to create subscription: ${errorData.error?.message}` },
+        { error: `Failed to create subscription (${response.status})`, detail: errorText.substring(0, 300) },
         { status: response.status }
       );
     }
 
     const subscriptionData: WorkspaceEventsSubscription = await response.json();
 
-    log('info', '[MEET-SUBSCRIBE-5] Subscription created', {
+    log('info', '[MEET-SUBSCRIBE-6] Subscription created', {
       subscriptionName: subscriptionData.name,
       expireTime: subscriptionData.expireTime,
       state: subscriptionData.state,
