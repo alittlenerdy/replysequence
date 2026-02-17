@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp } from 'lucide-react';
+import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp, Zap, Timer } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
@@ -24,6 +24,11 @@ const ActivityChart = dynamic(
 
 const PlatformChart = dynamic(
   () => import('@/components/analytics/PlatformChart').then(mod => mod.PlatformChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
+
+const MeetingTypeChart = dynamic(
+  () => import('@/components/analytics/MeetingTypeChart').then(mod => mod.MeetingTypeChart),
   { ssr: false, loading: () => <ChartSkeleton /> }
 );
 
@@ -70,6 +75,18 @@ interface EmailEngagementData {
   avgTimeToOpen: number | null;
 }
 
+interface MeetingTypeStat {
+  type: string;
+  count: number;
+  color: string;
+}
+
+interface AIUsageMetrics {
+  totalCost: number;
+  avgLatency: number;
+  totalMeetingMinutes: number;
+}
+
 interface AnalyticsData {
   totalMeetings: number;
   emailsGenerated: number;
@@ -84,6 +101,8 @@ interface AnalyticsData {
   platformBreakdown: PlatformStat[];
   emailFunnel: EmailFunnelData;
   engagement: EmailEngagementData;
+  meetingTypeBreakdown: MeetingTypeStat[];
+  aiUsage: AIUsageMetrics;
 }
 
 export function AnalyticsDashboard() {
@@ -254,6 +273,64 @@ export function AnalyticsDashboard() {
         />
       </div>
 
+      {/* AI Usage Stats Row */}
+      {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
+        <div className="grid grid-cols-3 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4 light:shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-lg bg-rose-500/20">
+                <DollarSign className="w-4 h-4 text-rose-400" />
+              </div>
+              <span className="text-xs text-gray-400 light:text-gray-500">Total AI Cost</span>
+            </div>
+            <p className="text-xl font-bold text-white light:text-gray-900">
+              ${analytics.aiUsage.totalCost.toFixed(4)}
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4 light:shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-lg bg-cyan-500/20">
+                <Zap className="w-4 h-4 text-cyan-400" />
+              </div>
+              <span className="text-xs text-gray-400 light:text-gray-500">Avg Generation Time</span>
+            </div>
+            <p className="text-xl font-bold text-white light:text-gray-900">
+              {analytics.aiUsage.avgLatency > 0
+                ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
+                : '-'}
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4 light:shadow-sm"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-lg bg-indigo-500/20">
+                <Timer className="w-4 h-4 text-indigo-400" />
+              </div>
+              <span className="text-xs text-gray-400 light:text-gray-500">Meeting Hours Processed</span>
+            </div>
+            <p className="text-xl font-bold text-white light:text-gray-900">
+              {analytics.aiUsage.totalMeetingMinutes > 0
+                ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
+                : '-'}
+            </p>
+          </motion.div>
+        </div>
+      )}
+
       {hasData ? (
         <>
           {/* ROI Calculator + Email Engagement */}
@@ -282,16 +359,32 @@ export function AnalyticsDashboard() {
             />
           </div>
 
-          {/* Platform & Funnel */}
+          {/* Platform, Meeting Type & Funnel */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <PlatformChart data={analytics.platformBreakdown} />
-            <EmailFunnel
-              total={analytics.emailFunnel.total}
-              ready={analytics.emailFunnel.ready}
-              sent={analytics.emailFunnel.sent}
-              conversionRate={analytics.emailFunnel.conversionRate}
-            />
+            {analytics.meetingTypeBreakdown.length > 0 ? (
+              <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
+            ) : (
+              <EmailFunnel
+                total={analytics.emailFunnel.total}
+                ready={analytics.emailFunnel.ready}
+                sent={analytics.emailFunnel.sent}
+                conversionRate={analytics.emailFunnel.conversionRate}
+              />
+            )}
           </div>
+
+          {/* Email Funnel (shown separately when meeting type chart is present) */}
+          {analytics.meetingTypeBreakdown.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <EmailFunnel
+                total={analytics.emailFunnel.total}
+                ready={analytics.emailFunnel.ready}
+                sent={analytics.emailFunnel.sent}
+                conversionRate={analytics.emailFunnel.conversionRate}
+              />
+            </div>
+          )}
         </>
       ) : (
         /* Empty State - Enhanced with illustration and CTAs */

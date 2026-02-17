@@ -45,6 +45,20 @@ export interface EmailEngagement {
   avgTimeToOpen: number | null; // hours
 }
 
+// Meeting type breakdown
+export interface MeetingTypeStat {
+  type: string;
+  count: number;
+  color: string;
+}
+
+// AI usage metrics
+export interface AIUsageMetrics {
+  totalCost: number; // total USD spent on AI generation
+  avgLatency: number; // average generation time in ms
+  totalMeetingMinutes: number; // total meeting duration processed
+}
+
 // Period comparison for trends
 export interface PeriodComparison {
   current: number;
@@ -83,6 +97,10 @@ export interface AnalyticsData {
   emailFunnel: EmailFunnel;
   // Email engagement
   engagement: EmailEngagement;
+  // Meeting type breakdown
+  meetingTypeBreakdown: MeetingTypeStat[];
+  // AI usage metrics
+  aiUsage: AIUsageMetrics;
 }
 
 // Average time to write a follow-up email manually (in minutes)
@@ -109,6 +127,15 @@ const PLATFORM_COLORS: Record<string, string> = {
   zoom: '#3B82F6',   // Blue
   teams: '#A855F7',  // Purple
   meet: '#10B981',   // Green
+};
+
+// Meeting type colors
+const MEETING_TYPE_COLORS: Record<string, string> = {
+  sales_call: '#F59E0B',        // Amber
+  internal_sync: '#3B82F6',     // Blue
+  client_review: '#A855F7',     // Purple
+  technical_discussion: '#10B981', // Green
+  general: '#6B7280',           // Gray
 };
 
 // Generate array of last N days for chart data
@@ -152,6 +179,8 @@ export async function GET() {
     platformBreakdown: [],
     emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
     engagement: { sent: 0, opened: 0, clicked: 0, replied: 0, openRate: 0, clickRate: 0, replyRate: 0, avgTimeToOpen: null },
+    meetingTypeBreakdown: [],
+    aiUsage: { totalCost: 0, avgLatency: 0, totalMeetingMinutes: 0 },
   };
 
   try {
@@ -172,7 +201,7 @@ export async function GET() {
     // Get all user meetings filtered by userId (consistent with dashboard)
     console.log('[ANALYTICS-5] Querying meetings for userId:', user.id);
 
-    let userMeetings: { id: string; platform: string | null; createdAt: Date | null }[] = [];
+    let userMeetings: { id: string; platform: string | null; createdAt: Date | null; duration: number | null }[] = [];
 
     try {
       userMeetings = await db
@@ -180,6 +209,7 @@ export async function GET() {
           id: meetings.id,
           platform: meetings.platform,
           createdAt: meetings.createdAt,
+          duration: meetings.duration,
         })
         .from(meetings)
         .where(eq(meetings.userId, user.id));
@@ -204,6 +234,9 @@ export async function GET() {
       count,
       color: PLATFORM_COLORS[platform] || '#6B7280',
     }));
+
+    // Total meeting minutes
+    const totalMeetingMinutes = userMeetings.reduce((sum, m) => sum + (m.duration || 0), 0);
 
     // Daily meetings (last 14 days)
     const dateRange = generateDateRange(14);
@@ -236,6 +269,14 @@ export async function GET() {
     let totalTimeToOpen = 0;
     let openedWithTime = 0;
 
+    // AI usage tracking
+    let totalCostUsd = 0;
+    let totalLatencyMs = 0;
+    let latencyCount = 0;
+    const meetingTypeCounts: Record<string, number> = {};
+    const dailySentCounts: Record<string, number> = {};
+    dateRange.forEach(d => { dailySentCounts[d] = 0; });
+
     if (meetingIds.length > 0) {
       try {
         // Get all drafts for user's meetings with engagement data
@@ -247,6 +288,9 @@ export async function GET() {
             openedAt: drafts.openedAt,
             clickedAt: drafts.clickedAt,
             repliedAt: drafts.repliedAt,
+            meetingType: drafts.meetingType,
+            costUsd: drafts.costUsd,
+            generationDurationMs: drafts.generationDurationMs,
           })
           .from(drafts)
           .where(inArray(drafts.meetingId, meetingIds));
@@ -272,13 +316,31 @@ export async function GET() {
           if (d.repliedAt) emailsReplied++;
         });
 
-        // Daily email counts
         userDrafts.forEach(d => {
           if (d.createdAt) {
             const dateStr = new Date(d.createdAt).toISOString().split('T')[0];
             if (dailyEmailCounts[dateStr] !== undefined) {
               dailyEmailCounts[dateStr]++;
             }
+          }
+          // Track actual sent dates for accurate comparison
+          if (d.sentAt) {
+            const sentDate = new Date(d.sentAt).toISOString().split('T')[0];
+            if (dailySentCounts[sentDate] !== undefined) {
+              dailySentCounts[sentDate]++;
+            }
+          }
+          // Meeting type breakdown
+          const mt = d.meetingType || 'general';
+          meetingTypeCounts[mt] = (meetingTypeCounts[mt] || 0) + 1;
+          // AI cost aggregation
+          if (d.costUsd) {
+            totalCostUsd += parseFloat(d.costUsd);
+          }
+          // Latency aggregation
+          if (d.generationDurationMs) {
+            totalLatencyMs += d.generationDurationMs;
+            latencyCount++;
           }
         });
       } catch (e) {
@@ -320,10 +382,24 @@ export async function GET() {
     const thisWeekEmails = dailyEmails.slice(-7).reduce((sum, d) => sum + d.count, 0);
     const lastWeekEmails = dailyEmails.slice(0, 7).reduce((sum, d) => sum + d.count, 0);
 
-    // For sent emails, we need to track by week - approximate from total ratio
-    const sentRatio = emailsGenerated > 0 ? emailsSent / emailsGenerated : 0;
-    const thisWeekSent = Math.round(thisWeekEmails * sentRatio);
-    const lastWeekSent = Math.round(lastWeekEmails * sentRatio);
+    // Use actual sent dates for accurate comparison
+    const dailySentData = dateRange.map(date => dailySentCounts[date] || 0);
+    const thisWeekSent = dailySentData.slice(-7).reduce((sum, c) => sum + c, 0);
+    const lastWeekSent = dailySentData.slice(0, 7).reduce((sum, c) => sum + c, 0);
+
+    // Meeting type breakdown
+    const MEETING_TYPE_LABELS: Record<string, string> = {
+      sales_call: 'Sales',
+      internal_sync: 'Internal',
+      client_review: 'Client',
+      technical_discussion: 'Technical',
+      general: 'General',
+    };
+    const meetingTypeBreakdown: MeetingTypeStat[] = Object.entries(meetingTypeCounts).map(([type, count]) => ({
+      type: MEETING_TYPE_LABELS[type] || type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      count,
+      color: MEETING_TYPE_COLORS[type] || '#6B7280',
+    }));
 
     // ROI calculation
     const hoursSaved = timeSavedMinutes / 60;
@@ -350,6 +426,12 @@ export async function GET() {
       platformBreakdown,
       emailFunnel,
       engagement,
+      meetingTypeBreakdown,
+      aiUsage: {
+        totalCost: Math.round(totalCostUsd * 10000) / 10000, // 4 decimal places
+        avgLatency: latencyCount > 0 ? Math.round(totalLatencyMs / latencyCount) : 0,
+        totalMeetingMinutes,
+      },
     });
   } catch (error) {
     console.error('[ANALYTICS-ERROR] Unexpected error:', error);
