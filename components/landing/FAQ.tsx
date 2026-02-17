@@ -78,7 +78,7 @@ const faqData = [
   {
     question: 'Is my meeting data secure?',
     answer:
-      'Absolutely. Security is our top priority. We use 256-bit AES encryption for all data at rest and in transit. Our infrastructure is SOC 2 compliant, and we are fully GDPR compliant. Meeting transcripts are processed securely and are never shared with third parties or used for training purposes.',
+      'Absolutely. Security is our top priority. We use AES-256 encryption for sensitive data and TLS for all data in transit. Our infrastructure runs on SOC 2 Type II certified providers (Vercel and Supabase). Meeting transcripts are processed securely and are never shared with third parties or used for AI training.',
   },
   {
     question: 'Can I edit the AI-generated drafts?',
