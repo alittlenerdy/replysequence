@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { IntegrationSettings } from '@/components/dashboard/IntegrationSettings';
+import { EmailPreferencesSettings } from '@/components/dashboard/EmailPreferencesSettings';
 import { getDraftStats } from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
@@ -45,6 +46,9 @@ async function SettingsContent() {
         <p className="text-gray-400 light:text-gray-500 mt-1">Manage your platform integrations</p>
       </div>
       <IntegrationSettings />
+      <div className="max-w-2xl mx-auto mt-8">
+        <EmailPreferencesSettings />
+      </div>
     </DashboardShell>
   );
 }

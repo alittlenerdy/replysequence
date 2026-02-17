@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { users, calendarConnections, drafts, meetings, userOnboarding } from '@/lib/db/schema';
+import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections } from '@/lib/db/schema';
 import { eq, count } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -80,6 +80,7 @@ export async function GET() {
       draftsResult,
       meetingsResult,
       onboardingResult,
+      hubspotResult,
     ] = await Promise.all([
       // Check calendar connection
       db
@@ -106,6 +107,12 @@ export async function GET() {
         .from(userOnboarding)
         .where(eq(userOnboarding.clerkId, clerkId))
         .limit(1),
+
+      // Check HubSpot CRM connection
+      db
+        .select({ count: count() })
+        .from(hubspotConnections)
+        .where(eq(hubspotConnections.userId, user.id)),
     ]);
 
     // Check platform connection status
@@ -114,6 +121,7 @@ export async function GET() {
     const hasDraftGenerated = draftsResult[0].count > 0;
     const hasMeetingCaptured = meetingsResult[0].count > 0;
     const hasEmailPreference = onboardingResult[0]?.emailPreference != null;
+    const hasCrmConnected = hubspotResult[0].count > 0;
 
     // Build checklist items
     const items: ChecklistItem[] = [
@@ -161,7 +169,7 @@ export async function GET() {
         id: 'crm',
         label: 'Connect Your CRM',
         description: 'Auto-log meetings to Airtable, HubSpot, or Salesforce',
-        completed: false, // TODO: Track per-user CRM connection
+        completed: hasCrmConnected,
         actionUrl: '/dashboard/settings',
         actionLabel: 'Setup CRM',
         optional: true,

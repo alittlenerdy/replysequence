@@ -78,13 +78,11 @@ export function DraftsView({
     }
   }, [page, status, search, dateRange]);
 
-  // Debounce search
+  // Debounce search (fires on clear too so results restore)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (search !== '') {
-        setPage(1);
-        fetchDrafts();
-      }
+      setPage(1);
+      fetchDrafts();
     }, 300);
 
     return () => clearTimeout(timer);
