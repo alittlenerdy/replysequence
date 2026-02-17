@@ -212,14 +212,19 @@ export async function POST() {
         log('info', '[MEET-SUBSCRIBE-4] 409 conflict — listing existing subscriptions');
         try {
           const listResponse = await fetch(
-            `${EVENTS_API_BASE}/subscriptions?filter=target_resource="${targetResource}"`,
+            `${EVENTS_API_BASE}/subscriptions`,
             {
               headers: { Authorization: `Bearer ${accessToken}` },
             }
           );
+          const listText = await listResponse.text();
+          console.log('[MEET-SUBSCRIBE-4] List response:', listResponse.status, listText.substring(0, 500));
           if (listResponse.ok) {
-            const listData = await listResponse.json();
-            const existing = listData.subscriptions?.[0];
+            const listData = JSON.parse(listText);
+            // Find subscription matching our target resource
+            const existing = (listData.subscriptions || []).find(
+              (s: WorkspaceEventsSubscription) => s.targetResource === targetResource
+            ) || listData.subscriptions?.[0];
             if (existing) {
               const expireTime = new Date(existing.expireTime);
               if (existingSubscription) {
