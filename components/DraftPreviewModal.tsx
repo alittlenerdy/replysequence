@@ -90,7 +90,24 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
     }
   }, [isEditing, draft.id, draft.subject, draft.body]);
 
-  // Keyboard shortcuts: Escape to close
+  // Sender info - which email account will be used
+  const [senderEmail, setSenderEmail] = useState<string | null>(null);
+  const [senderProvider, setSenderProvider] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (draft.status === 'sent' || !draft.meetingId) return;
+    fetch('/api/email/sender-info')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.email) {
+          setSenderEmail(data.email);
+          setSenderProvider(data.provider);
+        }
+      })
+      .catch(() => {});
+  }, [draft.meetingId, draft.status]);
+
+  // Keyboard shortcuts
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -108,10 +125,27 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
           onClose();
         }
       }
+
+      // Cmd/Ctrl+Enter to send (when not editing, refining, or in confirmation)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        if (showSendConfirm) {
+          e.preventDefault();
+          confirmSend();
+        } else if (!isEditing && !isRefining && !showTemplatePicker && !showDeleteConfirm && draft.status !== 'sent' && recipientEmail) {
+          e.preventDefault();
+          handleSend();
+        }
+      }
+
+      // Cmd/Ctrl+S to save (when editing)
+      if ((e.metaKey || e.ctrlKey) && e.key === 's' && isEditing) {
+        e.preventDefault();
+        handleSave();
+      }
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showSendConfirm, showDeleteConfirm, isEditing, isRefining, showTemplatePicker, onClose]);
+  }, [showSendConfirm, showDeleteConfirm, isEditing, isRefining, showTemplatePicker, onClose, recipientEmail, draft.status]);
 
   // Fetch suggested recipients from meeting attendees
   useEffect(() => {
@@ -402,9 +436,22 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Send this email?</h3>
-                <p className="text-gray-400 mb-2">This will send the email to:</p>
-                <p className="text-white font-medium mb-1">{recipientEmail}</p>
-                <p className="text-sm text-gray-500 mb-6">Subject: {editSubject || draft.subject}</p>
+                <div className="space-y-2 mb-6">
+                  <p className="text-gray-400">This will send the email to:</p>
+                  <p className="text-white font-medium">{recipientEmail}</p>
+                  <p className="text-sm text-gray-500">Subject: {editSubject || draft.subject}</p>
+                  {senderEmail ? (
+                    <p className="text-xs text-gray-500">
+                      From: <span className="text-gray-300">{senderEmail}</span>
+                      <span className="ml-1 text-gray-600">via {senderProvider === 'gmail' ? 'Gmail' : senderProvider === 'outlook' ? 'Outlook' : senderProvider}</span>
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-500">
+                      From: <span className="text-gray-300">noreply@replysequence.com</span>
+                      <span className="ml-1 text-gray-600">via ReplySequence</span>
+                    </p>
+                  )}
+                </div>
 
                 <div className="flex justify-center gap-3">
                   <button
@@ -517,7 +564,12 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                             Saving...
                           </>
                         ) : (
-                          'Save Changes'
+                          <>
+                            Save
+                            <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
+                              {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+S
+                            </kbd>
+                          </>
                         )}
                       </button>
                     </div>
@@ -756,6 +808,18 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </div>
                       )}
 
+                      {/* Sender account indicator */}
+                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        {senderEmail ? (
+                          <span>Sending from <span className="text-gray-300">{senderEmail}</span></span>
+                        ) : (
+                          <span>Sending from <span className="text-gray-300">noreply@replysequence.com</span></span>
+                        )}
+                      </div>
+
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1">
                           <label htmlFor="recipient" className="sr-only">Recipient Email</label>
@@ -798,6 +862,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                             onClick={handleSend}
                             disabled={isSending || !recipientEmail}
                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                            title="Send email (Cmd+Enter)"
                           >
                             {isSending ? (
                               <>
@@ -812,7 +877,10 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
-                                Send Email
+                                Send
+                                <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
+                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+\u21B5
+                                </kbd>
                               </>
                             )}
                           </button>
