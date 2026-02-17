@@ -42,7 +42,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Email */}
             <a
-              href="mailto:support@replysequence.com"
+              href="mailto:jimmy@replysequence.com"
               className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-blue-500/50 transition-all"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/20 mb-4">
@@ -55,13 +55,13 @@ export default function ContactPage() {
                 For support, sales questions, or partnership inquiries.
               </p>
               <span className="text-blue-400 group-hover:text-blue-300 text-sm font-medium transition-colors">
-                support@replysequence.com
+                jimmy@replysequence.com
               </span>
             </a>
 
             {/* Feature Requests */}
             <a
-              href="mailto:feedback@replysequence.com"
+              href="mailto:jimmy@replysequence.com"
               className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-purple-500/50 transition-all"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-purple-500/20 mb-4">
@@ -74,7 +74,7 @@ export default function ContactPage() {
                 Tell us what you&apos;d like to see next in ReplySequence.
               </p>
               <span className="text-purple-400 group-hover:text-purple-300 text-sm font-medium transition-colors">
-                feedback@replysequence.com
+                jimmy@replysequence.com
               </span>
             </a>
           </div>
@@ -101,19 +101,19 @@ export default function ContactPage() {
             {[
               {
                 q: 'I need help setting up my integrations',
-                a: 'Check our integrations page for setup guides, or email us at support@replysequence.com and we\'ll walk you through it.',
+                a: 'Check our integrations page for setup guides, or email us at jimmy@replysequence.com and we\'ll walk you through it.',
               },
               {
                 q: 'I found a bug',
-                a: 'Please email support@replysequence.com with a description of what happened and any screenshots. We take bugs seriously and fix them fast.',
+                a: 'Please email jimmy@replysequence.com with a description of what happened and any screenshots. We take bugs seriously and fix them fast.',
               },
               {
                 q: 'Can I request a feature?',
-                a: 'Absolutely. Email feedback@replysequence.com with your idea. We read every request and it directly shapes our roadmap.',
+                a: 'Absolutely. Email jimmy@replysequence.com with your idea. We read every request and it directly shapes our roadmap.',
               },
               {
                 q: 'Do you offer enterprise plans?',
-                a: 'Yes. For teams of 10+ or organizations that need custom integrations, SSO, or dedicated support, email support@replysequence.com.',
+                a: 'Yes. For teams of 10+ or organizations that need custom integrations, SSO, or dedicated support, email jimmy@replysequence.com.',
               },
             ].map((faq, index) => (
               <div
