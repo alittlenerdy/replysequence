@@ -57,6 +57,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showSendConfirm, setShowSendConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -88,6 +89,29 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
       console.log('[EDIT-1] Opening draft editor, id:', draft.id);
     }
   }, [isEditing, draft.id, draft.subject, draft.body]);
+
+  // Keyboard shortcuts: Escape to close
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        if (showSendConfirm) {
+          setShowSendConfirm(false);
+        } else if (showDeleteConfirm) {
+          setShowDeleteConfirm(false);
+        } else if (isEditing) {
+          setIsEditing(false);
+        } else if (isRefining) {
+          setIsRefining(false);
+        } else if (showTemplatePicker) {
+          setShowTemplatePicker(false);
+        } else {
+          onClose();
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showSendConfirm, showDeleteConfirm, isEditing, isRefining, showTemplatePicker, onClose]);
 
   // Fetch suggested recipients from meeting attendees
   useEffect(() => {
@@ -174,12 +198,16 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
     }
   };
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!recipientEmail) {
       setError('Please enter a recipient email');
       return;
     }
+    setShowSendConfirm(true);
+  };
 
+  const confirmSend = async () => {
+    setShowSendConfirm(false);
     setIsSending(true);
     setError(null);
     console.log('[SEND-1] Sending email, to:', recipientEmail);
@@ -361,6 +389,38 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                     ) : (
                       'Delete Draft'
                     )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : showSendConfirm ? (
+            <div className="px-6 py-8">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Send this email?</h3>
+                <p className="text-gray-400 mb-2">This will send the email to:</p>
+                <p className="text-white font-medium mb-1">{recipientEmail}</p>
+                <p className="text-sm text-gray-500 mb-6">Subject: {editSubject || draft.subject}</p>
+
+                <div className="flex justify-center gap-3">
+                  <button
+                    onClick={() => setShowSendConfirm(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmSend}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Send Email
                   </button>
                 </div>
               </div>
