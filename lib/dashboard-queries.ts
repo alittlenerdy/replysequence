@@ -6,7 +6,7 @@
 import { db } from './db';
 import { drafts, meetings, transcripts, users } from './db/schema';
 import { eq, desc, sql, and, ilike, or, isNull } from 'drizzle-orm';
-import type { DraftStatus } from './db/schema';
+import type { DraftStatus, MeetingStatus } from './db/schema';
 import { currentUser } from '@clerk/nextjs/server';
 
 /**
@@ -394,6 +394,145 @@ export async function markDraftAsSent(
  */
 export async function deleteDraft(id: string): Promise<void> {
   await db.delete(drafts).where(eq(drafts.id, id));
+}
+
+/**
+ * Meeting list item (lighter than MeetingDetail)
+ */
+export interface MeetingListItem {
+  id: string;
+  platform: string;
+  topic: string | null;
+  hostEmail: string;
+  startTime: Date | null;
+  duration: number | null;
+  status: string;
+  hasSummary: boolean;
+  draftCount: number;
+  sentCount: number;
+  createdAt: Date;
+}
+
+export interface MeetingsQueryParams {
+  page?: number;
+  limit?: number;
+  platform?: string;
+  status?: string;
+  search?: string;
+}
+
+export interface MeetingsQueryResult {
+  meetings: MeetingListItem[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+/**
+ * Fetch meetings list with pagination and filters
+ * IMPORTANT: Filters by the current logged-in user for multi-tenant isolation
+ */
+export async function getMeetingsList(
+  params: MeetingsQueryParams = {}
+): Promise<MeetingsQueryResult> {
+  const { page = 1, limit = 20, platform, status, search } = params;
+  const offset = (page - 1) * limit;
+
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return { meetings: [], total: 0, page, totalPages: 0 };
+  }
+
+  const conditions = [eq(meetings.userId, userId)];
+
+  if (platform && platform !== 'all') {
+    conditions.push(eq(meetings.platform, platform as 'zoom' | 'google_meet' | 'microsoft_teams'));
+  }
+  if (status && status !== 'all') {
+    conditions.push(eq(meetings.status, status as MeetingStatus));
+  }
+  if (search) {
+    conditions.push(
+      or(
+        ilike(meetings.topic, `%${search}%`),
+        ilike(meetings.hostEmail, `%${search}%`)
+      )!
+    );
+  }
+
+  const whereClause = and(...conditions);
+
+  const [countResult, meetingRows] = await Promise.all([
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(meetings)
+      .where(whereClause),
+    db
+      .select({
+        id: meetings.id,
+        platform: meetings.platform,
+        topic: meetings.topic,
+        hostEmail: meetings.hostEmail,
+        startTime: meetings.startTime,
+        duration: meetings.duration,
+        status: meetings.status,
+        summary: meetings.summary,
+        createdAt: meetings.createdAt,
+      })
+      .from(meetings)
+      .where(whereClause)
+      .orderBy(desc(meetings.createdAt))
+      .limit(limit)
+      .offset(offset),
+  ]);
+
+  const total = Number(countResult[0]?.count || 0);
+
+  // Get draft counts for each meeting in one query
+  const meetingIds = meetingRows.map(m => m.id);
+  let draftCounts: Record<string, { total: number; sent: number }> = {};
+
+  if (meetingIds.length > 0) {
+    const draftRows = await db
+      .select({
+        meetingId: drafts.meetingId,
+        total: sql<number>`count(*)`,
+        sent: sql<number>`count(*) filter (where ${drafts.status} = 'sent')`,
+      })
+      .from(drafts)
+      .where(sql`${drafts.meetingId} = ANY(ARRAY[${sql.join(meetingIds.map(id => sql`${id}::uuid`), sql`, `)}])`)
+      .groupBy(drafts.meetingId);
+
+    for (const row of draftRows) {
+      if (row.meetingId) {
+        draftCounts[row.meetingId] = {
+          total: Number(row.total),
+          sent: Number(row.sent),
+        };
+      }
+    }
+  }
+
+  const meetingsResult: MeetingListItem[] = meetingRows.map(m => ({
+    id: m.id,
+    platform: m.platform,
+    topic: m.topic,
+    hostEmail: m.hostEmail,
+    startTime: m.startTime,
+    duration: m.duration,
+    status: m.status,
+    hasSummary: !!m.summary,
+    draftCount: draftCounts[m.id]?.total || 0,
+    sentCount: draftCounts[m.id]?.sent || 0,
+    createdAt: m.createdAt,
+  }));
+
+  return {
+    meetings: meetingsResult,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 /**
