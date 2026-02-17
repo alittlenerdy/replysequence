@@ -46,7 +46,7 @@ function FloatingParticles() {
       {STATIC_PARTICLES.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+          className="absolute w-1 h-1 light:w-2 light:h-2 bg-blue-400/30 light:bg-blue-500/40 rounded-full"
           style={{
             left: `${particle.left}%`,
             top: `${particle.top}%`,
@@ -222,9 +222,9 @@ export default function OtterComparisonPage() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 light:from-blue-400/10 via-transparent to-transparent" />
         <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-500/10 rounded-full blur-[120px]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-500/10 light:bg-blue-400/20 rounded-full blur-[120px]"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -306,14 +306,14 @@ export default function OtterComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-blue-50 border border-gray-700 light:border-blue-200 overflow-hidden group"
             >
               <h3 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Otter if...</h3>
-              <p className="text-gray-400 light:text-gray-500 leading-relaxed">
-                You need <span className="text-gray-200 light:text-gray-800 font-semibold">deep transcription features</span>,
+              <p className="text-gray-400 light:text-gray-600 leading-relaxed">
+                You need <span className="text-gray-200 light:text-blue-700 font-semibold">deep transcription features</span>,
                 real-time collaboration during meetings, and a polished mobile app.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-gray-500 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-blue-600 font-medium">
                 <Globe className="w-4 h-4" />
                 Best for: Journalists, researchers, teams who need live transcription
               </div>
@@ -323,7 +323,7 @@ export default function OtterComparisonPage() {
       </section>
 
       {/* Stats Banner */}
-      <AnimatedSection className="py-10 px-4 border-y border-blue-500/20 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 relative overflow-hidden">
+      <AnimatedSection className="py-10 px-4 border-y border-blue-500/20 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 relative">
         {/* Background glow */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none" />
         <div className="max-w-5xl mx-auto relative">
@@ -368,14 +368,14 @@ export default function OtterComparisonPage() {
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-blue-50/95 backdrop-blur-sm border-b border-gray-800 light:border-gray-200 mb-4">
+          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-blue-50/95 light:to-indigo-50/95 backdrop-blur-sm border-b border-gray-800 light:border-blue-200 mb-4">
             <div className="grid grid-cols-3 py-4">
-              <div className="text-gray-500 font-medium pl-4">Feature</div>
+              <div className="text-gray-500 light:text-blue-600 font-medium pl-4">Feature</div>
               <div className="text-center">
-                <span className="text-blue-400 font-bold text-lg">ReplySequence</span>
+                <span className="text-blue-400 light:text-blue-600 font-bold text-lg">ReplySequence</span>
               </div>
               <div className="text-center">
-                <span className="text-gray-400 light:text-gray-500 font-bold text-lg">Otter.ai</span>
+                <span className="text-gray-400 light:text-slate-600 font-bold text-lg">Otter.ai</span>
               </div>
             </div>
           </div>
@@ -405,10 +405,10 @@ export default function OtterComparisonPage() {
                       whileHover={{ scale: 1.01, x: 4 }}
                       className={`grid grid-cols-3 items-center py-4 px-4 rounded-xl transition-all duration-200 ${
                         row.winner === 'replysequence'
-                          ? 'bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-transparent hover:from-blue-500/15 hover:via-purple-500/10 border-l-2 border-l-blue-500 border border-blue-500/30 shadow-lg shadow-blue-500/5'
+                          ? 'bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-transparent hover:from-blue-500/15 hover:via-purple-500/10 light:from-blue-100/80 light:via-purple-50/60 light:to-transparent light:hover:from-blue-100 light:hover:via-purple-50/80 border-l-2 border-l-blue-500 border border-blue-500/30 light:border-blue-300 shadow-lg shadow-blue-500/5 light:shadow-blue-200/30'
                           : row.winner === 'otter'
-                          ? 'bg-gray-800/30 light:bg-gray-50 hover:bg-gray-800/50 light:hover:bg-gray-100 border border-gray-700/50 light:border-gray-200'
-                          : 'bg-gray-900/30 light:bg-gray-50 hover:bg-gray-800/30 light:hover:bg-gray-100 border border-gray-700/30 light:border-gray-200'
+                          ? 'bg-gray-800/30 light:bg-slate-50 hover:bg-gray-800/50 light:hover:bg-slate-100 border border-gray-700/50 light:border-slate-200'
+                          : 'bg-gray-900/30 light:bg-blue-50/30 hover:bg-gray-800/30 light:hover:bg-blue-50/60 border border-gray-700/30 light:border-blue-100'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -461,8 +461,8 @@ export default function OtterComparisonPage() {
                 whileHover={{ scale: 1.02, y: -4 }}
                 className={`relative p-6 rounded-2xl border-2 overflow-hidden group ${
                   diff.advantage === 'replysequence'
-                    ? 'bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 border-blue-500/40 shadow-xl shadow-blue-500/10'
-                    : 'bg-gray-900/50 light:bg-gray-100 border-gray-600 light:border-gray-300 hover:border-gray-500 light:hover:border-gray-400'
+                    ? 'bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 light:from-blue-50 light:via-purple-50/50 light:to-pink-50 border-blue-500/40 light:border-blue-300 shadow-xl shadow-blue-500/10 light:shadow-blue-200/40'
+                    : 'bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-blue-50 border-gray-600 light:border-slate-300 hover:border-gray-500 light:hover:border-blue-300'
                 }`}
                 style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
               >
@@ -471,8 +471,8 @@ export default function OtterComparisonPage() {
                   whileHover={{ scale: 1.1 }}
                   className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${
                     diff.advantage === 'replysequence'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-gray-700 light:bg-gray-200 text-gray-400 light:text-gray-500'
+                      ? 'bg-blue-500/20 light:bg-blue-100 text-blue-400 light:text-blue-600'
+                      : 'bg-gray-700 light:bg-slate-200 text-gray-400 light:text-slate-600'
                   }`}
                 >
                   {diff.stat}
@@ -482,8 +482,8 @@ export default function OtterComparisonPage() {
                   whileHover={{ rotate: 5 }}
                   className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                     diff.advantage === 'replysequence'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-gray-700 light:bg-gray-200 text-gray-400 light:text-gray-500'
+                      ? 'bg-blue-500/20 light:bg-blue-100 text-blue-400 light:text-blue-600'
+                      : 'bg-gray-700 light:bg-slate-200 text-gray-400 light:text-slate-600'
                   }`}
                 >
                   <diff.icon className="w-6 h-6" />
@@ -493,8 +493,8 @@ export default function OtterComparisonPage() {
                   <h3 className="text-lg font-bold text-white light:text-gray-900">{diff.title}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     diff.advantage === 'replysequence'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-gray-700 light:bg-gray-200 text-gray-400 light:text-gray-500'
+                      ? 'bg-blue-500/20 light:bg-blue-100 text-blue-400 light:text-blue-600'
+                      : 'bg-gray-700 light:bg-slate-200 text-gray-400 light:text-slate-600'
                   }`}>
                     {diff.advantage === 'replysequence' ? 'ReplySequence' : 'Otter'}
                   </span>
@@ -531,8 +531,8 @@ export default function OtterComparisonPage() {
                 whileHover={{ scale: 1.03, y: -8 }}
                 className={`relative rounded-2xl overflow-hidden group ${
                   tier.highlighted
-                    ? 'border-2 border-purple-500/50 bg-gradient-to-b from-purple-500/10 via-blue-500/5 to-transparent light:from-purple-50 light:via-blue-50 light:to-indigo-50 shadow-xl shadow-purple-500/10'
-                    : 'border border-gray-700 light:border-gray-200 bg-gray-900/30 light:bg-blue-50/30 hover:border-gray-600 light:hover:border-gray-400 light:hover:bg-blue-50/50'
+                    ? 'border-2 border-purple-500/50 light:border-purple-300 bg-gradient-to-b from-purple-500/10 via-blue-500/5 to-transparent light:from-purple-50 light:via-blue-50 light:to-indigo-50 shadow-xl shadow-purple-500/10 light:shadow-purple-200/40'
+                    : 'border border-gray-700 light:border-blue-200 bg-gray-900/30 light:bg-gradient-to-b light:from-blue-50/50 light:to-indigo-50/30 hover:border-gray-600 light:hover:border-blue-300 light:hover:from-blue-50/80 light:hover:to-indigo-50/60'
                 }`}
                 style={tier.highlighted ? { boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)' } : {}}
               >
@@ -576,7 +576,7 @@ export default function OtterComparisonPage() {
                   </motion.div>
 
                   {/* Otter */}
-                  <div className="p-5 rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200">
+                  <div className="p-5 rounded-xl bg-gray-800/50 light:bg-slate-50 border border-gray-700 light:border-slate-200">
                     <div className="mb-4">
                       <span className="text-gray-400 light:text-gray-500 font-semibold text-sm">Otter.ai</span>
                       <div className="flex items-baseline gap-1 mt-1">
@@ -610,17 +610,17 @@ export default function OtterComparisonPage() {
           >
             {/* Decorative elements */}
             <motion.div
-              className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"
+              className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 light:bg-blue-400/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
             <motion.div
-              className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl"
+              className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 light:bg-purple-400/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
               transition={{ duration: 8, repeat: Infinity, delay: 1 }}
             />
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/5 light:bg-pink-400/15 rounded-full blur-3xl"
               animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
               transition={{ duration: 10, repeat: Infinity, delay: 2 }}
             />
@@ -629,7 +629,7 @@ export default function OtterComparisonPage() {
               <div className="flex items-center gap-3 mb-6">
                 <motion.div
                   whileHover={{ rotate: 10 }}
-                  className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+                  className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 light:from-blue-100 light:to-purple-100"
                 >
                   <Shield className="w-6 h-6 text-blue-400" />
                 </motion.div>
@@ -671,8 +671,8 @@ export default function OtterComparisonPage() {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-t from-blue-500/10 via-purple-500/5 light:from-blue-50 light:via-indigo-50 to-transparent relative overflow-hidden">
         {/* Background glows */}
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/10 light:bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 light:bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
         <AnimatedSection className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -715,7 +715,7 @@ export default function OtterComparisonPage() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 light:text-gray-600 bg-gray-800/80 light:bg-gray-200 hover:bg-gray-700 light:hover:bg-gray-200 border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-400 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 light:text-blue-700 bg-gray-800/80 light:bg-blue-50 hover:bg-gray-700 light:hover:bg-blue-100 border border-gray-700 light:border-blue-300 hover:border-gray-600 light:hover:border-blue-400 transition-all duration-300"
               >
                 View Pricing
               </Link>
