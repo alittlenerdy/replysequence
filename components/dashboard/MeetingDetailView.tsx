@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { MeetingDetail } from '@/lib/dashboard-queries';
 import { DraftQualityBadge } from '@/components/ui/DraftQualityBadge';
@@ -90,7 +91,9 @@ interface MeetingDetailViewProps {
 }
 
 export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
+  const router = useRouter();
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -290,6 +293,45 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
         </div>
       )}
 
+      {/* Failed State */}
+      {meeting.status === 'failed' && (
+        <div className="bg-gray-900/50 light:bg-white border border-red-500/30 rounded-2xl p-6 light:shadow-sm">
+          <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2 flex items-center gap-2">
+            <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            Processing Failed
+          </h2>
+          <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
+            Something went wrong while processing this meeting. This can happen if the transcript was unavailable or the recording hasn&apos;t finished uploading.
+          </p>
+          <button
+            onClick={async () => {
+              setIsRegenerating(true);
+              try {
+                const res = await fetch('/api/drafts/regenerate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ meetingId: meeting.id }),
+                });
+                if (res.ok) {
+                  router.refresh();
+                }
+              } catch { /* ignore */ } finally {
+                setIsRegenerating(false);
+              }
+            }}
+            disabled={isRegenerating}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 transition-colors disabled:opacity-50"
+          >
+            <svg className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {isRegenerating ? 'Regenerating...' : 'Retry Draft Generation'}
+          </button>
+        </div>
+      )}
+
       {/* Drafts Section */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
         <div className="flex items-center justify-between mb-4">
@@ -299,6 +341,32 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             </svg>
             Email Drafts ({meeting.drafts.length})
           </h2>
+          {meeting.status === 'completed' && (
+            <button
+              onClick={async () => {
+                setIsRegenerating(true);
+                try {
+                  const res = await fetch('/api/drafts/regenerate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ meetingId: meeting.id }),
+                  });
+                  if (res.ok) {
+                    router.refresh();
+                  }
+                } catch { /* ignore */ } finally {
+                  setIsRegenerating(false);
+                }
+              }}
+              disabled={isRegenerating}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500/15 text-blue-400 border border-blue-500/20 hover:bg-blue-500/25 transition-colors disabled:opacity-50"
+            >
+              <svg className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              {isRegenerating ? 'Generating...' : 'Regenerate'}
+            </button>
+          )}
         </div>
 
         {meeting.drafts.length === 0 ? (

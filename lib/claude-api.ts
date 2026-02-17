@@ -21,24 +21,33 @@ export const CLAUDE_PRICING = {
 };
 
 // Singleton Anthropic client
-let anthropicClient: Anthropic | null = null;
+let claudeClient: Anthropic | null = null;
 
 /**
- * Get or create Anthropic client with timeout and retry settings
+ * Get or create Claude client with timeout and retry settings.
+ * Uses ANTHROPIC_API_KEY from environment.
  */
-function getAnthropicClient(): Anthropic {
-  if (!anthropicClient) {
-    anthropicClient = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-      timeout: 20 * 1000,
+export function getClaudeClient(): Anthropic {
+  if (!claudeClient) {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+
+    if (!apiKey) {
+      log('error', 'ANTHROPIC_API_KEY environment variable is not set');
+      throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+    }
+
+    claudeClient = new Anthropic({
+      apiKey,
+      timeout: CLAUDE_API_TIMEOUT_MS,
       maxRetries: 2,
     });
-    log('info', 'Step 15A: Anthropic client initialized', {
-      timeout: 20 * 1000,
+
+    log('info', 'Claude client initialized', {
+      timeout: CLAUDE_API_TIMEOUT_MS,
       maxRetries: 2,
     });
   }
-  return anthropicClient;
+  return claudeClient;
 }
 
 /**
@@ -91,20 +100,16 @@ export async function callClaudeAPI({
 }> {
   const startTime = Date.now();
 
-  log('info', 'Step 15A: callClaudeAPI entry (streaming)', {
+  log('info', 'Claude API streaming request', {
     model: CLAUDE_MODEL,
     systemPromptLength: systemPrompt?.length || 0,
     userPromptLength: userPrompt?.length || 0,
     maxTokens,
-    timeout: 20 * 1000,
-    maxRetries: 2,
   });
 
   try {
-    log('info', 'Step 15B: Getting Anthropic client');
-    const client = getAnthropicClient();
+    const client = getClaudeClient();
 
-    log('info', 'Step 15C: Creating streaming request');
     const stream = client.messages.stream({
       model: CLAUDE_MODEL,
       max_tokens: maxTokens,
@@ -112,43 +117,20 @@ export async function callClaudeAPI({
       messages: [{ role: 'user', content: userPrompt }],
     });
 
-    log('info', 'Step 15D: Setting up stream event handlers');
-    let chunkCount = 0;
-    let totalChars = 0;
-
-    stream.on('text', (text) => {
-      chunkCount++;
-      totalChars += text.length;
-      if (chunkCount === 1 || chunkCount % 10 === 0) {
-        log('info', 'Step 15E: Stream text chunk received', {
-          chunkNumber: chunkCount,
-          chunkLength: text.length,
-          totalChars,
-        });
-      }
-    });
-
-    log('info', 'Step 15F: Awaiting final message');
     const finalMessage = await stream.finalMessage();
 
     const elapsed = Date.now() - startTime;
-    log('info', 'Step 15G: Stream completed', {
-      elapsed,
-      totalChunks: chunkCount,
-      totalChars,
-      stopReason: finalMessage.stop_reason,
-    });
 
     // Extract text content
     const textBlock = finalMessage.content.find((b) => b.type === 'text');
     if (!textBlock || textBlock.type !== 'text') {
-      log('error', 'Step 15G-ERROR: No text content in response', {
+      log('error', 'No text content in Claude response', {
         contentBlocks: finalMessage.content.length,
       });
       throw new Error('No text content in response');
     }
 
-    log('info', 'Step 15H: Claude API streaming success', {
+    log('info', 'Claude API streaming success', {
       latency: elapsed,
       inputTokens: finalMessage.usage.input_tokens,
       outputTokens: finalMessage.usage.output_tokens,
@@ -166,11 +148,10 @@ export async function callClaudeAPI({
     const elapsed = Date.now() - startTime;
     const err = error as Error;
 
-    log('error', 'Step 15-CRASH: Claude API streaming failed', {
+    log('error', 'Claude API streaming failed', {
       error: err.message,
       errorName: err.name,
       elapsed,
-      stack: err.stack?.substring(0, 300),
     });
     throw error;
   }

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db, drafts, users, meetings } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
-import { getClaudeClient, CLAUDE_MODEL } from '@/lib/claude-client';
-import { calculateCost, log } from '@/lib/claude-api';
+import { getClaudeClient, CLAUDE_MODEL, calculateCost, log } from '@/lib/claude-api';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;

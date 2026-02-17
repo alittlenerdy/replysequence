@@ -37,8 +37,7 @@ lib/process-zoom-event.ts            # Zoom event processing
 lib/process-teams-event.ts           # Teams event processing
 lib/process-meet-event.ts            # Meet event processing
 lib/generate-draft.ts                # AI draft generation
-lib/claude-client.ts                 # Claude SDK singleton
-lib/claude-api.ts                    # Claude API wrapper
+lib/claude-api.ts                    # Claude SDK client + streaming API
 lib/transcript/vtt-parser.ts         # VTT transcript parsing
 lib/transcript/downloader.ts         # Transcript download
 lib/email.ts                         # Email sending via Resend
@@ -107,7 +106,7 @@ export async function POST(request: NextRequest) {
 The project uses the Anthropic SDK with a singleton pattern:
 
 ```typescript
-// lib/claude-client.ts
+// lib/claude-api.ts
 import Anthropic from '@anthropic-ai/sdk';
 
 let claudeClient: Anthropic | null = null;
