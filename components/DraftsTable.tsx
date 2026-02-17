@@ -56,6 +56,8 @@ export function DraftsTable({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkSending, setBulkSending] = useState(false);
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+  const [showBulkSendConfirm, setShowBulkSendConfirm] = useState(false);
   const [bulkError, setBulkError] = useState<string | null>(null);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const isMounted = useHydrationSafeDate();
@@ -338,40 +340,84 @@ export function DraftsTable({
 
         {/* Bulk Action Toolbar */}
         {selectedIds.size > 0 && (
-          <div className="px-4 sm:px-6 py-3 border-b border-blue-500/30 bg-blue-500/10 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-blue-300 font-medium">{selectedIds.size} selected</span>
-              <button
-                onClick={() => setSelectedIds(new Set())}
-                className="text-xs text-gray-400 hover:text-white transition-colors"
-              >
-                Clear
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              {bulkProgress && (
-                <span className="text-xs text-blue-300">
-                  {bulkProgress.done}/{bulkProgress.total}
-                </span>
-              )}
-              {bulkError && (
-                <span className="text-xs text-amber-400">{bulkError}</span>
-              )}
-              <button
-                onClick={handleBulkDelete}
-                disabled={bulkDeleting || bulkSending}
-                className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors"
-              >
-                {bulkDeleting ? 'Deleting...' : 'Delete'}
-              </button>
-              <button
-                onClick={handleBulkSend}
-                disabled={bulkSending || bulkDeleting || selectedDrafts.every((d) => d.status === 'sent')}
-                className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-              >
-                {bulkSending ? 'Sending...' : `Send ${selectedDrafts.filter((d) => d.status !== 'sent').length}`}
-              </button>
-            </div>
+          <div className="px-4 sm:px-6 py-3 border-b border-blue-500/30 bg-blue-500/10">
+            {showBulkDeleteConfirm ? (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className="text-sm text-red-300">Delete {selectedIds.size} draft{selectedIds.size > 1 ? 's' : ''}? This cannot be undone.</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowBulkDeleteConfirm(false)}
+                    disabled={bulkDeleting}
+                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { setShowBulkDeleteConfirm(false); handleBulkDelete(); }}
+                    disabled={bulkDeleting}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+                  >
+                    {bulkDeleting ? 'Deleting...' : 'Confirm Delete'}
+                  </button>
+                </div>
+              </div>
+            ) : showBulkSendConfirm ? (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className="text-sm text-blue-300">Send {selectedDrafts.filter((d) => d.status !== 'sent').length} email{selectedDrafts.filter((d) => d.status !== 'sent').length > 1 ? 's' : ''} to their meeting hosts?</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowBulkSendConfirm(false)}
+                    disabled={bulkSending}
+                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { setShowBulkSendConfirm(false); handleBulkSend(); }}
+                    disabled={bulkSending}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  >
+                    {bulkSending ? 'Sending...' : 'Confirm Send'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-blue-300 font-medium">{selectedIds.size} selected</span>
+                  <button
+                    onClick={() => setSelectedIds(new Set())}
+                    className="text-xs text-gray-400 hover:text-white transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  {bulkProgress && (
+                    <span className="text-xs text-blue-300">
+                      {bulkProgress.done}/{bulkProgress.total}
+                    </span>
+                  )}
+                  {bulkError && (
+                    <span className="text-xs text-amber-400">{bulkError}</span>
+                  )}
+                  <button
+                    onClick={() => setShowBulkDeleteConfirm(true)}
+                    disabled={bulkDeleting || bulkSending}
+                    className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setShowBulkSendConfirm(true)}
+                    disabled={bulkSending || bulkDeleting || selectedDrafts.every((d) => d.status === 'sent')}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  >
+                    {bulkSending ? 'Sending...' : `Send ${selectedDrafts.filter((d) => d.status !== 'sent').length}`}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
