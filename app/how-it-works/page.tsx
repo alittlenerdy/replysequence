@@ -1033,12 +1033,11 @@ export default function HowItWorksPage() {
             >
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                 <GradientButton
-                  href="https://tally.so/r/D4pv0j"
-                  external
+                  href="/sign-up"
                   showArrow
                   size="lg"
                 >
-                  Join Beta Waitlist
+                  Get Started Free
                 </GradientButton>
                 <GradientButton
                   href="/pricing"

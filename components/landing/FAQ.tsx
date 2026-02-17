@@ -88,12 +88,12 @@ const faqData = [
   {
     question: 'What CRMs does ReplySequence integrate with?',
     answer:
-      'We currently integrate with Airtable for CRM logging. HubSpot and Salesforce integrations are in active development and coming soon. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry.',
+      'We integrate with HubSpot and Airtable for CRM logging. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry. Salesforce integration is coming soon.',
   },
   {
     question: 'How much does ReplySequence cost?',
     answer:
-      'We are currently in beta and offering early access to select users. Pricing will be announced when we launch publicly. Join our beta waitlist to be among the first to access ReplySequence and receive special early adopter pricing.',
+      'ReplySequence offers a free plan with 5 AI drafts per month. Our Pro plan is $19/month (or $15/month billed annually) for unlimited AI drafts and custom templates. For teams, the Team plan is $29/month with CRM sync, collaboration features, and API access. You can upgrade or downgrade at any time.',
   },
   {
     question: 'Do I need to install anything?',

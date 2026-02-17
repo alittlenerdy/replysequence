@@ -191,12 +191,10 @@ export default function LandingPage() {
                 Get Started Free
               </GradientButton>
               <a
-                href="https://tally.so/r/D4pv0j"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/how-it-works"
                 className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-300 light:text-gray-600 bg-gray-800/50 light:bg-gray-100 hover:bg-gray-700/50 light:hover:bg-gray-200 border border-gray-700 light:border-gray-300 rounded-xl transition-colors"
               >
-                Request a Demo
+                See How It Works
               </a>
             </motion.div>
 

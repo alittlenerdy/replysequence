@@ -14,14 +14,6 @@ const isProtectedRoute = createRouteMatcher([
   '/api/stripe/create-portal(.*)',
 ])
 
-// Beta mode: redirect signup attempts to waitlist
-const BETA_MODE = true
-const WAITLIST_URL = 'https://tally.so/r/D4pv0j'
-
-const isSignupRoute = createRouteMatcher([
-  '/sign-up(.*)',
-])
-
 // Generate a random nonce for CSP
 function generateNonce(): string {
   const array = new Uint8Array(16)
@@ -30,11 +22,6 @@ function generateNonce(): string {
 }
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
-  // Beta mode: redirect signup attempts to waitlist
-  if (BETA_MODE && isSignupRoute(req)) {
-    return NextResponse.redirect(WAITLIST_URL)
-  }
-
   if (isProtectedRoute(req)) {
     await auth.protect()
   }
@@ -45,15 +32,15 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Build CSP header
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://challenges.cloudflare.com https://va.vercel-scripts.com https://tally.so https://us-assets.i.posthog.com`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://challenges.cloudflare.com https://va.vercel-scripts.com https://us-assets.i.posthog.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://api.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://*.clerk.services https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com https://tally.so https://us.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com",
-    "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://challenges.cloudflare.com https://tally.so",
+    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://api.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://*.clerk.services https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com https://us.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com",
+    "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://challenges.cloudflare.com",
     "worker-src 'self' blob:",
     "frame-ancestors 'self'",
-    "form-action 'self' https://tally.so",
+    "form-action 'self'",
     "base-uri 'self'",
     "object-src 'none'",
     "upgrade-insecure-requests"
