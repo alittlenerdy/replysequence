@@ -343,6 +343,45 @@ async function PricingContent() {
     <div className="min-h-screen bg-gray-950 light:bg-gray-50">
       <Header />
       {pricingContent}
+
+      {/* JSON-LD Pricing Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "ReplySequence",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Free",
+                "price": "0",
+                "priceCurrency": "USD",
+                "description": "5 AI drafts per month, unlimited meetings",
+              },
+              {
+                "@type": "Offer",
+                "name": "Pro",
+                "price": "19",
+                "priceCurrency": "USD",
+                "billingIncrement": "P1M",
+                "description": "Unlimited AI drafts, custom templates, priority processing",
+              },
+              {
+                "@type": "Offer",
+                "name": "Team",
+                "price": "29",
+                "priceCurrency": "USD",
+                "billingIncrement": "P1M",
+                "description": "Everything in Pro plus CRM sync, team collaboration, API access",
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }

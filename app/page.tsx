@@ -603,6 +603,56 @@ export default function LandingPage() {
           <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
         </div>
       </footer>
+
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "ReplySequence",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "description": "Turn Zoom, Teams, and Meet calls into perfect follow-up emails in seconds. AI-powered drafts with CRM integration.",
+            "url": "https://www.replysequence.com",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "description": "Free tier with 5 drafts per month",
+            },
+            "creator": {
+              "@type": "Organization",
+              "name": "Playground Giants",
+              "url": "https://playgroundgiants.com",
+            },
+            "featureList": [
+              "AI-powered follow-up email generation",
+              "Zoom, Microsoft Teams, and Google Meet integration",
+              "CRM automation with HubSpot and Airtable",
+              "Email tracking and analytics",
+              "Connected email account sending",
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "ReplySequence",
+            "url": "https://www.replysequence.com",
+            "description": "AI-powered meeting follow-up emails",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Playground Giants",
+            },
+          }),
+        }}
+      />
     </div>
   );
 }
