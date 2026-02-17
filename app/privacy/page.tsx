@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
@@ -20,15 +21,9 @@ export default function PrivacyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        {/* Header */}
+      <Header />
+      <div className="max-w-4xl mx-auto px-4 pt-28 pb-16">
         <div className="mb-12">
-          <Link
-            href="/"
-            className="text-purple-400 hover:text-purple-300 transition-colors mb-4 inline-block"
-          >
-            &larr; Back to Home
-          </Link>
           <h1 className="text-4xl font-bold text-white mb-2">Privacy Policy</h1>
           <p className="text-gray-400">Last updated: {lastUpdated}</p>
         </div>

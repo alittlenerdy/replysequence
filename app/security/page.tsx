@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import {
   Shield,
@@ -98,15 +98,9 @@ const securityHeaders = [
 export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        {/* Header */}
+      <Header />
+      <div className="max-w-6xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-16">
-          <Link
-            href="/"
-            className="text-purple-400 hover:text-purple-300 transition-colors mb-4 inline-block"
-          >
-            &larr; Back to Home
-          </Link>
           <div className="flex justify-center mb-6">
             <div className="p-4 bg-purple-500/10 rounded-2xl">
               <Shield className="w-12 h-12 text-purple-400" />
