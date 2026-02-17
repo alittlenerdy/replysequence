@@ -1070,11 +1070,17 @@ export default function HowItWorksPage() {
               <Link href="/" className="hover:text-white light:hover:text-gray-900 transition-colors">
                 Home
               </Link>
+              <Link href="/integrations" className="hover:text-white light:hover:text-gray-900 transition-colors">
+                Integrations
+              </Link>
               <Link href="/pricing" className="hover:text-white light:hover:text-gray-900 transition-colors">
                 Pricing
               </Link>
-              <Link href="/security" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                Security
+              <Link href="/about" className="hover:text-white light:hover:text-gray-900 transition-colors">
+                About
+              </Link>
+              <Link href="/contact" className="hover:text-white light:hover:text-gray-900 transition-colors">
+                Contact
               </Link>
               <Link href="/privacy" className="hover:text-white light:hover:text-gray-900 transition-colors">
                 Privacy

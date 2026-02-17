@@ -590,11 +590,20 @@ export default function LandingPage() {
             <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
           </div>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-4">
+            <a href="/about" className="hover:text-purple-400 transition-colors">
+              About
+            </a>
+            <a href="/integrations" className="hover:text-purple-400 transition-colors">
+              Integrations
+            </a>
+            <a href="/contact" className="hover:text-purple-400 transition-colors">
+              Contact
+            </a>
             <a href="/terms" className="hover:text-purple-400 transition-colors">
-              Terms of Service
+              Terms
             </a>
             <a href="/privacy" className="hover:text-purple-400 transition-colors">
-              Privacy Policy
+              Privacy
             </a>
             <a href="/security" className="hover:text-purple-400 transition-colors">
               Security
