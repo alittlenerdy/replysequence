@@ -208,6 +208,65 @@ export async function POST() {
 
       // Handle specific error cases
       if (response.status === 409) {
+        // Subscription exists on Google's side but not in our DB — list and store it
+        log('info', '[MEET-SUBSCRIBE-4] 409 conflict — listing existing subscriptions');
+        try {
+          const listResponse = await fetch(
+            `${EVENTS_API_BASE}/subscriptions?filter=target_resource="${targetResource}"`,
+            {
+              headers: { Authorization: `Bearer ${accessToken}` },
+            }
+          );
+          if (listResponse.ok) {
+            const listData = await listResponse.json();
+            const existing = listData.subscriptions?.[0];
+            if (existing) {
+              const expireTime = new Date(existing.expireTime);
+              if (existingSubscription) {
+                await db
+                  .update(meetEventSubscriptions)
+                  .set({
+                    subscriptionName: existing.name,
+                    targetResource: existing.targetResource,
+                    eventTypes: existing.eventTypes,
+                    status: 'active',
+                    expireTime,
+                    lastRenewedAt: new Date(),
+                    renewalFailures: 0,
+                    lastError: null,
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(meetEventSubscriptions.userId, user.id));
+              } else {
+                await db.insert(meetEventSubscriptions).values({
+                  userId: user.id,
+                  subscriptionName: existing.name,
+                  targetResource: existing.targetResource,
+                  eventTypes: existing.eventTypes,
+                  status: 'active',
+                  expireTime,
+                });
+              }
+              log('info', '[MEET-SUBSCRIBE-4] Stored existing subscription from Google', {
+                subscriptionName: existing.name,
+                expireTime: existing.expireTime,
+              });
+              return NextResponse.json({
+                success: true,
+                existing: true,
+                subscription: {
+                  name: existing.name,
+                  expireTime: existing.expireTime,
+                  state: existing.state,
+                },
+              });
+            }
+          }
+        } catch (listError) {
+          log('error', '[MEET-SUBSCRIBE-4] Failed to list existing subscriptions', {
+            error: listError instanceof Error ? listError.message : String(listError),
+          });
+        }
         return NextResponse.json(
           { error: 'Subscription already exists for this user' },
           { status: 409 }
