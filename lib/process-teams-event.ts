@@ -109,7 +109,7 @@ export async function processTeamsEvent(
       result = { success: true, action: 'skipped' };
     }
 
-    // Mark as processed on success
+    // Update raw event status based on result
     if (result.success) {
       await db
         .update(rawEvents)
@@ -119,14 +119,24 @@ export async function processTeamsEvent(
           updatedAt: new Date(),
         })
         .where(eq(rawEvents.id, rawEvent.id));
-
-      log('info', 'Teams event processing completed', {
-        rawEventId: rawEvent.id,
-        action: result.action,
-        meetingId: result.meetingId,
-        duration: Date.now() - startTime,
-      });
+    } else {
+      await db
+        .update(rawEvents)
+        .set({
+          status: 'failed',
+          errorMessage: result.error || 'Processing returned failure',
+          updatedAt: new Date(),
+        })
+        .where(eq(rawEvents.id, rawEvent.id));
     }
+
+    log(result.success ? 'info' : 'error', 'Teams event processing completed', {
+      rawEventId: rawEvent.id,
+      action: result.action,
+      meetingId: result.meetingId,
+      error: result.error,
+      duration: Date.now() - startTime,
+    });
 
     return result;
   } catch (error) {

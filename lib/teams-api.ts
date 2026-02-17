@@ -294,10 +294,10 @@ export function parseResourcePath(resource: string): {
     callId?: string;
   } = {};
 
-  // Match users/{userId}
-  const userMatch = resource.match(/users\/([^/]+)/);
+  // Match users('{userId}') or users/{userId}
+  const userMatch = resource.match(/users(?:\('([^']+)'\)|\/([^/]+))/);
   if (userMatch) {
-    result.userId = userMatch[1];
+    result.userId = userMatch[1] || userMatch[2];
   }
 
   // Match onlineMeetings('{meetingId}') or onlineMeetings/{meetingId}
