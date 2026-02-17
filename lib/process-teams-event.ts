@@ -7,6 +7,7 @@
 
 import { db, meetings, rawEvents, transcripts, teamsConnections } from '@/lib/db';
 import { sendDraftReadyNotification } from '@/lib/draft-notification';
+import { attemptAutoSend } from '@/lib/auto-send';
 import { eq } from 'drizzle-orm';
 import {
   getTranscriptContentByUrl,
@@ -522,20 +523,46 @@ async function generateDraftForMeeting(
         qualityScore: draftResult.qualityScore,
       });
 
-      // Send notification email to user (non-blocking)
+      // Try auto-send if user has opted in, otherwise send notification
       if (meeting.userId && draftResult.draftId && draftResult.subject) {
-        sendDraftReadyNotification({
-          userId: meeting.userId,
-          meetingTopic: meeting.topic,
-          draftSubject: draftResult.subject,
+        attemptAutoSend({
           draftId: draftResult.draftId,
-          meetingPlatform: meeting.platform,
-          qualityScore: draftResult.qualityScore,
+          meetingId,
+          userId: meeting.userId,
+        }).then((autoResult) => {
+          if (autoResult.autoSent) {
+            log('info', 'Draft auto-sent (Teams)', {
+              draftId: draftResult.draftId,
+              recipientEmail: autoResult.recipientEmail,
+            });
+          } else {
+            sendDraftReadyNotification({
+              userId: meeting.userId!,
+              meetingTopic: meeting.topic,
+              draftSubject: draftResult.subject!,
+              draftId: draftResult.draftId!,
+              meetingPlatform: meeting.platform,
+              qualityScore: draftResult.qualityScore,
+            }).catch((err) => {
+              log('error', 'Draft notification failed (non-blocking)', {
+                draftId: draftResult.draftId,
+                error: err instanceof Error ? err.message : String(err),
+              });
+            });
+          }
         }).catch((err) => {
-          log('error', 'Draft notification failed (non-blocking)', {
+          log('error', 'Auto-send check failed, sending notification', {
             draftId: draftResult.draftId,
             error: err instanceof Error ? err.message : String(err),
           });
+          sendDraftReadyNotification({
+            userId: meeting.userId!,
+            meetingTopic: meeting.topic,
+            draftSubject: draftResult.subject!,
+            draftId: draftResult.draftId!,
+            meetingPlatform: meeting.platform,
+            qualityScore: draftResult.qualityScore,
+          }).catch(() => {});
         });
       }
     } else {

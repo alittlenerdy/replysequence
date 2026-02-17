@@ -15,6 +15,7 @@ import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
 import { TimeSavingsWidget } from './TimeSavingsWidget';
 import { UpcomingMeetingsWidget } from './UpcomingMeetingsWidget';
 import { OnboardingChecklist } from './OnboardingChecklist';
+import { UsageLimitBanner } from './UsageLimitBanner';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -161,6 +162,9 @@ export function DraftsView({
 
       {/* Onboarding Checklist - shows until completed */}
       <OnboardingChecklist />
+
+      {/* Free tier usage limit indicator */}
+      <UsageLimitBanner />
 
       {/* Stats and Time Savings */}
       {isLoading && drafts.length === 0 ? (

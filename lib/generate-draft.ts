@@ -28,6 +28,7 @@ import type { ActionItem } from './db/schema';
 import { trackEvent } from './analytics';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
 import { getTemplateById } from './meeting-templates';
+import { checkDraftLimit, logUsage, getUserIdFromMeeting } from './usage-limits';
 
 // Draft generation configuration
 const MAX_RETRIES = 3;
@@ -124,6 +125,26 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
       error: 'No transcript content provided',
       generationDurationMs: Date.now() - startTime,
     };
+  }
+
+  // Check free tier usage limit
+  const userId = await getUserIdFromMeeting(meetingId);
+  if (userId) {
+    const usageCheck = await checkDraftLimit(userId);
+    if (!usageCheck.allowed) {
+      log('warn', 'Free tier draft limit reached', {
+        meetingId,
+        userId,
+        tier: usageCheck.tier,
+        used: usageCheck.used,
+        limit: usageCheck.limit,
+      });
+      return {
+        success: false,
+        error: `Free tier limit reached (${usageCheck.used}/${usageCheck.limit} drafts this month). Upgrade to Pro for unlimited drafts.`,
+        generationDurationMs: Date.now() - startTime,
+      };
+    }
   }
 
   // Detect meeting type and tone
@@ -313,6 +334,15 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         hasMeetingSummary: !!parsed.meetingSummary,
         subject: parsed.subject.substring(0, 60),
       });
+
+      // Log usage for free tier tracking
+      if (userId) {
+        await logUsage(userId, 'draft_generated', {
+          draftId: draft.id,
+          meetingId,
+          costUsd,
+        });
+      }
 
       // Track analytics event (must await for serverless flush)
       try {

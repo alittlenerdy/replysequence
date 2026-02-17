@@ -4,6 +4,7 @@ import { stripe } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { checkDraftLimit } from '@/lib/usage-limits';
 
 export async function GET() {
   try {
@@ -106,11 +107,19 @@ export async function GET() {
       }
     }
 
+    // Get usage data for free tier display
+    const usage = await checkDraftLimit(dbUser.id);
+
     return NextResponse.json({
       subscription,
       paymentMethod,
       invoices,
       tier,
+      usage: {
+        draftsUsed: usage.used,
+        draftsLimit: usage.limit,
+        draftsRemaining: usage.remaining,
+      },
     });
   } catch (error) {
     console.error('[BILLING] Error:', error);
