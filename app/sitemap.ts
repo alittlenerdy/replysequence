@@ -24,22 +24,40 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/terms`,
+      url: `${baseUrl}/integrations`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/privacy`,
       lastModified,
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/security`,
       lastModified,
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.4,
     },
     // Comparison pages
     {
