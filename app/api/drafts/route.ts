@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { currentUser } from '@clerk/nextjs/server';
 import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
@@ -7,6 +8,12 @@ import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from
 export const maxDuration = 60;
 
 export async function GET(request: NextRequest) {
+  // Auth check (query layer also checks, but fail fast here)
+  const user = await currentUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   // Apply rate limiting
   const clientId = getClientIdentifier(request);
   const rateLimitResult = rateLimit(clientId, RATE_LIMITS.API);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { currentUser } from '@clerk/nextjs/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
 import { sendViaConnectedAccount } from '@/lib/email-sender';
@@ -7,13 +8,18 @@ import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { trackEvent } from '@/lib/analytics';
 import { injectTracking } from '@/lib/email-tracking';
-import { db, emailEvents } from '@/lib/db';
-import { meetings, hubspotConnections, emailConnections } from '@/lib/db/schema';
+import { db, emailEvents, users } from '@/lib/db';
+import { meetings, drafts, hubspotConnections, emailConnections } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { draftId, recipientEmail } = body;
 
@@ -40,7 +46,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch the draft
+    // Verify draft ownership via meeting
+    const [dbUser] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.clerkId, user.id))
+      .limit(1);
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const [ownedDraft] = await db
+      .select({ id: drafts.id })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(eq(drafts.id, draftId), eq(meetings.userId, dbUser.id)))
+      .limit(1);
+
+    if (!ownedDraft) {
+      return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
+    }
+
+    // Fetch the draft with full details
     const draft = await getDraftById(draftId);
     if (!draft) {
       return NextResponse.json(
