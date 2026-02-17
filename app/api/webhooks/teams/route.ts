@@ -109,6 +109,18 @@ export async function POST(request: NextRequest) {
     const results: { eventId?: string; error?: string }[] = [];
 
     for (const notification of payload.value || []) {
+      // Handle lifecycle notifications (reauthorization, missed, removed)
+      if (notification.lifecycleEvent) {
+        log('info', '[TEAMS-LIFECYCLE] Lifecycle notification received', {
+          lifecycleEvent: notification.lifecycleEvent,
+          subscriptionId: notification.subscriptionId,
+          resource: notification.resource,
+        });
+        // Acknowledge lifecycle events - renewal handled by cron
+        results.push({ eventId: `lifecycle-${notification.lifecycleEvent}` });
+        continue;
+      }
+
       try {
         const result = await processNotification(notification, rawBody, startTime);
         results.push(result);

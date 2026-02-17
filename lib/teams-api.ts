@@ -361,6 +361,7 @@ export async function createTeamsSubscription(
   const body = {
     changeType: 'created',
     notificationUrl,
+    lifecycleNotificationUrl: notificationUrl,
     resource: `users/${msUserId}/onlineMeetings/getAllTranscripts`,
     expirationDateTime,
     clientState,
@@ -384,11 +385,13 @@ export async function createTeamsSubscription(
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
-      log('error', '[TEAMS-SUB] Subscription creation failed', {
+      const errorText = await response.text();
+      console.error('[TEAMS-SUB] Subscription creation failed', {
         status: response.status,
-        error: errorData.error?.message || response.statusText,
-        code: errorData.error?.code,
+        statusText: response.statusText,
+        notificationUrl,
+        resource: body.resource,
+        responseBody: errorText,
       });
       return null;
     }

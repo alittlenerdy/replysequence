@@ -25,6 +25,7 @@ export interface ChangeNotificationItem {
   clientState?: string;
   tenantId: string;
   encryptedContent?: EncryptedContent;
+  lifecycleEvent?: 'reauthorizationRequired' | 'subscriptionRemoved' | 'missed';
 }
 
 /**
