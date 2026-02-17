@@ -3,6 +3,7 @@ import { eq, sql, desc } from 'drizzle-orm';
 import { downloadTranscript } from '@/lib/transcript/downloader';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
+import { sendDraftReadyNotification } from '@/lib/draft-notification';
 import {
   startPipeline,
   startStage,
@@ -964,6 +965,23 @@ async function fetchAndStoreTranscript(
           costUsd: draftResult.costUsd?.toFixed(6),
           generationDurationMs: draftResult.generationDurationMs,
         });
+
+        // Send notification email to user (non-blocking)
+        if (meeting.userId && draftResult.draftId && draftResult.subject) {
+          sendDraftReadyNotification({
+            userId: meeting.userId,
+            meetingTopic: meeting.topic,
+            draftSubject: draftResult.subject,
+            draftId: draftResult.draftId,
+            meetingPlatform: meeting.platform,
+            qualityScore: draftResult.qualityScore,
+          }).catch((err) => {
+            log('error', 'Draft notification failed (non-blocking)', {
+              draftId: draftResult.draftId,
+              error: err instanceof Error ? err.message : String(err),
+            });
+          });
+        }
 
         // Mark processing as complete
         await completeProcessing(meetingId, { durationMs: Date.now() - startTime });

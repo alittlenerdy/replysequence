@@ -6,6 +6,7 @@
  */
 
 import { db, meetings, rawEvents, transcripts, teamsConnections } from '@/lib/db';
+import { sendDraftReadyNotification } from '@/lib/draft-notification';
 import { eq } from 'drizzle-orm';
 import {
   getTranscriptContentByUrl,
@@ -520,6 +521,23 @@ async function generateDraftForMeeting(
         draftId: draftResult.draftId,
         qualityScore: draftResult.qualityScore,
       });
+
+      // Send notification email to user (non-blocking)
+      if (meeting.userId && draftResult.draftId && draftResult.subject) {
+        sendDraftReadyNotification({
+          userId: meeting.userId,
+          meetingTopic: meeting.topic,
+          draftSubject: draftResult.subject,
+          draftId: draftResult.draftId,
+          meetingPlatform: meeting.platform,
+          qualityScore: draftResult.qualityScore,
+        }).catch((err) => {
+          log('error', 'Draft notification failed (non-blocking)', {
+            draftId: draftResult.draftId,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        });
+      }
     } else {
       log('warn', 'Draft generation failed for Teams meeting', {
         meetingId,

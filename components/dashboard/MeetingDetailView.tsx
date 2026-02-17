@@ -96,13 +96,13 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
     <div className="space-y-6">
       {/* Back link */}
       <Link
-        href="/dashboard"
+        href="/dashboard/meetings"
         className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 transition-colors"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back to Dashboard
+        Back to Meetings
       </Link>
 
       {/* Meeting Header */}
