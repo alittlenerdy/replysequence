@@ -121,6 +121,13 @@ export default function MobileMenu() {
             </div>
 
             <a
+              href="/integrations"
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Integrations
+            </a>
+            <a
               href="/pricing"
               onClick={() => setIsOpen(false)}
               className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
@@ -135,9 +142,7 @@ export default function MobileMenu() {
               Dashboard
             </a>
             <a
-              href="https://tally.so/r/D4pv0j"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/sign-up"
               onClick={() => setIsOpen(false)}
               className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-all duration-300"
               style={{
@@ -145,7 +150,7 @@ export default function MobileMenu() {
                 boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',
               }}
             >
-              Join Waitlist
+              Get Started Free
             </a>
           </nav>
         </div>,

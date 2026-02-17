@@ -29,6 +29,12 @@ export function Header() {
           </Link>
           <CompareDropdown />
           <Link
+            href="/integrations"
+            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            Integrations
+          </Link>
+          <Link
             href="/pricing"
             className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
           >
