@@ -4,6 +4,7 @@ import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { IntegrationSettings } from '@/components/dashboard/IntegrationSettings';
 import { EmailPreferencesSettings } from '@/components/dashboard/EmailPreferencesSettings';
 import { AccountManagement } from '@/components/dashboard/AccountManagement';
+import { AICustomization } from '@/components/dashboard/AICustomization';
 import { getDraftStats } from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
@@ -50,6 +51,7 @@ async function SettingsContent() {
       <div className="max-w-2xl mx-auto mt-8">
         <EmailPreferencesSettings />
       </div>
+      <AICustomization />
       <AccountManagement />
     </DashboardShell>
   );

@@ -21,7 +21,7 @@ import {
 } from './prompts/optimized-followup';
 import { detectMeetingType, extractParticipants } from './meeting-type-detector';
 import { scoreDraft, type QualityScore } from './quality-scorer';
-import { db, drafts, meetings } from './db';
+import { db, drafts, meetings, users } from './db';
 import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
 // NOTE: Airtable sync moved to drafts/send/route.ts - only log to CRM when email is sent
@@ -163,6 +163,56 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
   // Look up template if provided
   const template = input.templateId ? getTemplateById(input.templateId) : undefined;
 
+  // Look up user's AI preferences
+  let userAiTone: string | null = null;
+  let userCustomInstructions: string | null = null;
+  let userSignature: string | null = null;
+  if (userId) {
+    try {
+      const [userPrefs] = await db
+        .select({
+          aiTone: users.aiTone,
+          aiCustomInstructions: users.aiCustomInstructions,
+          aiSignature: users.aiSignature,
+        })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      if (userPrefs) {
+        userAiTone = userPrefs.aiTone;
+        userCustomInstructions = userPrefs.aiCustomInstructions;
+        userSignature = userPrefs.aiSignature;
+      }
+    } catch {
+      // Non-blocking — use defaults if lookup fails
+    }
+  }
+
+  // Build additional context with user preferences
+  const aiInstructions: string[] = [];
+  if (userAiTone && userAiTone !== 'professional') {
+    aiInstructions.push(`Write in a ${userAiTone} tone.`);
+  }
+  if (userCustomInstructions) {
+    aiInstructions.push(userCustomInstructions);
+  }
+  if (userSignature) {
+    aiInstructions.push(`End the email with this signature:\n${userSignature}`);
+  }
+  const combinedAdditionalContext = [
+    context.additionalContext,
+    ...aiInstructions,
+  ].filter(Boolean).join('\n\n');
+
+  // Map user tone to prompt tone type
+  const toneMap: Record<string, 'formal' | 'casual' | 'neutral'> = {
+    professional: 'formal',
+    casual: 'casual',
+    friendly: 'neutral',
+    concise: 'formal',
+  };
+  const mappedTone = userAiTone ? toneMap[userAiTone] : undefined;
+
   // Build optimized context
   const optimizedContext: FollowUpContext = {
     meetingTopic: context.meetingTopic,
@@ -171,12 +221,12 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     hostEmail: context.hostEmail || '',
     transcript: context.transcript,
     meetingType: detectionResult.meetingType,
-    detectedTone: detectionResult.tone,
+    detectedTone: mappedTone || detectionResult.tone,
     keyParticipants: participants,
     senderName: context.senderName,
     companyName: context.companyName,
     recipientName: context.recipientName || participants[0], // Default to first participant
-    additionalContext: context.additionalContext,
+    additionalContext: combinedAdditionalContext || undefined,
     templateId: template?.id,
     templateInstructions: template?.focusInstructions,
   };

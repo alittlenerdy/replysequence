@@ -334,6 +334,10 @@ export const users = pgTable(
     stripeSubscriptionId: text('stripe_subscription_id'),
     subscriptionStatus: text('subscription_status').$type<SubscriptionStatus>(),
     subscriptionEndDate: timestamp('subscription_end_date', { withTimezone: true }),
+    // AI draft preferences
+    aiTone: text('ai_tone').$type<'professional' | 'casual' | 'friendly' | 'concise'>().default('professional'),
+    aiCustomInstructions: text('ai_custom_instructions'), // User's custom prompt additions
+    aiSignature: text('ai_signature'), // Email signature to append
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
