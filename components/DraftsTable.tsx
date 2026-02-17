@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
@@ -53,7 +53,122 @@ export function DraftsTable({
 }: DraftsTableProps) {
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
   const [visibleRows, setVisibleRows] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkSending, setBulkSending] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const isMounted = useHydrationSafeDate();
+
+  // Sendable drafts = not yet sent
+  const sendableDrafts = useMemo(
+    () => drafts.filter((d) => d.status !== 'sent'),
+    [drafts]
+  );
+
+  // Clear selection when drafts change (page change, filter, refresh)
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [drafts]);
+
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    if (selectedIds.size === sendableDrafts.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(sendableDrafts.map((d) => d.id)));
+    }
+  }, [selectedIds.size, sendableDrafts]);
+
+  const selectedDrafts = useMemo(
+    () => drafts.filter((d) => selectedIds.has(d.id)),
+    [drafts, selectedIds]
+  );
+
+  const handleBulkSend = async () => {
+    const toSend = selectedDrafts.filter((d) => d.status !== 'sent' && d.meetingHostEmail);
+    if (toSend.length === 0) return;
+
+    setBulkSending(true);
+    setBulkError(null);
+    setBulkProgress({ done: 0, total: toSend.length });
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const draft of toSend) {
+      try {
+        const res = await fetch('/api/drafts/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ draftId: draft.id, recipientEmail: draft.meetingHostEmail }),
+        });
+        if (res.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch {
+        failCount++;
+      }
+      setBulkProgress({ done: successCount + failCount, total: toSend.length });
+    }
+
+    setBulkSending(false);
+    setBulkProgress(null);
+    setSelectedIds(new Set());
+
+    if (failCount > 0) {
+      setBulkError(`Sent ${successCount} of ${toSend.length} emails (${failCount} failed)`);
+      setTimeout(() => setBulkError(null), 5000);
+    }
+
+    onDraftUpdated();
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedDrafts.length === 0) return;
+
+    setBulkDeleting(true);
+    setBulkError(null);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const draft of selectedDrafts) {
+      try {
+        const res = await fetch(`/api/drafts/${draft.id}`, { method: 'DELETE' });
+        if (res.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch {
+        failCount++;
+      }
+    }
+
+    setBulkDeleting(false);
+    setSelectedIds(new Set());
+
+    if (failCount > 0) {
+      setBulkError(`Deleted ${successCount} of ${selectedDrafts.length} drafts (${failCount} failed)`);
+      setTimeout(() => setBulkError(null), 5000);
+    }
+
+    onDraftUpdated();
+  };
 
   // Show all rows immediately (no stagger animation)
   useEffect(() => {
@@ -221,6 +336,45 @@ export function DraftsTable({
           </div>
         </div>
 
+        {/* Bulk Action Toolbar */}
+        {selectedIds.size > 0 && (
+          <div className="px-4 sm:px-6 py-3 border-b border-blue-500/30 bg-blue-500/10 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-blue-300 font-medium">{selectedIds.size} selected</span>
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="text-xs text-gray-400 hover:text-white transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              {bulkProgress && (
+                <span className="text-xs text-blue-300">
+                  {bulkProgress.done}/{bulkProgress.total}
+                </span>
+              )}
+              {bulkError && (
+                <span className="text-xs text-amber-400">{bulkError}</span>
+              )}
+              <button
+                onClick={handleBulkDelete}
+                disabled={bulkDeleting || bulkSending}
+                className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+              >
+                {bulkDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+              <button
+                onClick={handleBulkSend}
+                disabled={bulkSending || bulkDeleting || selectedDrafts.every((d) => d.status === 'sent')}
+                className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              >
+                {bulkSending ? 'Sending...' : `Send ${selectedDrafts.filter((d) => d.status !== 'sent').length}`}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Card Layout - shown on small screens */}
         <div className="md:hidden divide-y divide-gray-700/50 light:divide-gray-200">
           {drafts.map((draft, index) => (
@@ -229,14 +383,27 @@ export function DraftsTable({
               className={`
                 p-4 transition-all duration-300 ease-out
                 ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
-                hover:bg-gray-700/70 light:hover:bg-blue-50
+                ${selectedIds.has(draft.id) ? 'bg-blue-500/10' : 'hover:bg-gray-700/70 light:hover:bg-blue-50'}
                 active:bg-gray-700/90 light:active:bg-blue-100
                 cursor-pointer
               `}
               onClick={() => setSelectedDraft(draft)}
             >
-              {/* Top row: Platform icon + Meeting name + Date */}
+              {/* Top row: Checkbox + Platform icon + Meeting name + Date */}
               <div className="flex items-start gap-3 mb-2">
+                {draft.status !== 'sent' && (
+                  <label
+                    className="shrink-0 flex items-center pt-0.5"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(draft.id)}
+                      onChange={() => toggleSelect(draft.id)}
+                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                    />
+                  </label>
+                )}
                 <div className="shrink-0">{getPlatformIcon(draft.meetingPlatform)}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
@@ -302,7 +469,17 @@ export function DraftsTable({
           <table className="w-full table-fixed divide-y divide-gray-700 light:divide-gray-200">
             <thead className="bg-gray-800/50 light:bg-gray-50/80">
               <tr>
-                <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[40px] px-3 py-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={sendableDrafts.length > 0 && selectedIds.size === sendableDrafts.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                    />
+                  </label>
+                </th>
+                <th className="w-[28%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Meeting
                 </th>
                 <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
@@ -325,9 +502,23 @@ export function DraftsTable({
               {drafts.map((draft) => (
                 <tr
                   key={draft.id}
-                  className="hover:bg-gray-700/70 light:hover:bg-blue-50 cursor-pointer"
+                  className={`${selectedIds.has(draft.id) ? 'bg-blue-500/10' : 'hover:bg-gray-700/70 light:hover:bg-blue-50'} cursor-pointer`}
                   onClick={() => setSelectedDraft(draft)}
                 >
+                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                    {draft.status !== 'sent' ? (
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(draft.id)}
+                          onChange={() => toggleSelect(draft.id)}
+                          className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                        />
+                      </label>
+                    ) : (
+                      <div className="w-4" />
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2 min-w-0">
                       {getPlatformIcon(draft.meetingPlatform)}
