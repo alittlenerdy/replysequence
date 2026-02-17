@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { db, teamsConnections } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import { renewTeamsSubscription, createTeamsSubscription } from '@/lib/teams-api';
+import { getValidTeamsToken } from '@/lib/teams-token';
 
+export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 /**
@@ -95,7 +100,53 @@ export async function POST(request: NextRequest) {
           subscriptionId: notification.subscriptionId,
           expirationDateTime: notification.subscriptionExpirationDateTime,
         });
-        // TODO: Trigger subscription renewal
+
+        // Find the connection and attempt renewal
+        try {
+          const [connection] = await db
+            .select({ id: teamsConnections.id, userId: teamsConnections.userId })
+            .from(teamsConnections)
+            .where(eq(teamsConnections.graphSubscriptionId, notification.subscriptionId))
+            .limit(1);
+
+          if (connection) {
+            const token = await getValidTeamsToken(connection.userId);
+            if (token) {
+              const result = await renewTeamsSubscription(token, notification.subscriptionId);
+              if (result) {
+                await db
+                  .update(teamsConnections)
+                  .set({
+                    graphSubscriptionExpiresAt: new Date(result.expirationDateTime),
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(teamsConnections.id, connection.id));
+                log('info', 'Teams subscription renewed via lifecycle webhook', {
+                  subscriptionId: notification.subscriptionId,
+                  newExpiration: result.expirationDateTime,
+                });
+              } else {
+                log('error', 'Teams subscription renewal failed', {
+                  subscriptionId: notification.subscriptionId,
+                });
+              }
+            } else {
+              log('error', 'No valid token for Teams subscription renewal', {
+                subscriptionId: notification.subscriptionId,
+                userId: connection.userId,
+              });
+            }
+          } else {
+            log('warn', 'No connection found for Teams subscription', {
+              subscriptionId: notification.subscriptionId,
+            });
+          }
+        } catch (renewError) {
+          log('error', 'Teams lifecycle renewal error', {
+            subscriptionId: notification.subscriptionId,
+            error: renewError instanceof Error ? renewError.message : String(renewError),
+          });
+        }
       } else if (lifecycleEvent === 'subscriptionRemoved') {
         log('warn', 'Teams subscription was removed', {
           subscriptionId: notification.subscriptionId,

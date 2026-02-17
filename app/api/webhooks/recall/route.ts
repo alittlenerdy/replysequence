@@ -9,9 +9,29 @@ import { db, recallBots, meetings, transcripts as transcriptsTable, users, calen
 import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
 import type { BotStatus, TranscriptWord, TranscriptSpeaker } from '@/lib/recall/types';
+import crypto from 'crypto';
 
 // Verify webhook signature (if Recall provides one)
 const RECALL_WEBHOOK_SECRET = process.env.RECALL_WEBHOOK_SECRET;
+
+/**
+ * Verify Recall webhook signature using HMAC-SHA256.
+ */
+function verifyRecallSignature(rawBody: string, signature: string): boolean {
+  if (!RECALL_WEBHOOK_SECRET) return true;
+  try {
+    const expectedSignature = crypto
+      .createHmac('sha256', RECALL_WEBHOOK_SECRET)
+      .update(rawBody)
+      .digest('hex');
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+  } catch {
+    return false;
+  }
+}
 
 export const maxDuration = 60; // Allow up to 60 seconds for processing
 
@@ -64,9 +84,9 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature if configured
     if (RECALL_WEBHOOK_SECRET) {
       const signature = request.headers.get('x-recall-signature');
-      // TODO: Implement signature verification when Recall provides documentation
-      if (!signature) {
-        console.warn('[RECALL-WEBHOOK] No signature provided, skipping verification');
+      if (!signature || !verifyRecallSignature(rawBody, signature)) {
+        console.error('[RECALL-WEBHOOK] Invalid or missing webhook signature');
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
       }
     }
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { users, meetings, transcripts, drafts, usageLogs, zoomConnections } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 /**
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
             // Note: Excluding full content for size, available on request
           })
           .from(transcripts)
-          .where(eq(transcripts.meetingId, meetingIds[0]))
+          .where(inArray(transcripts.meetingId, meetingIds))
       : [];
 
     // Get drafts for user's meetings
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
             createdAt: drafts.createdAt,
           })
           .from(drafts)
-          .where(eq(drafts.meetingId, meetingIds[0]))
+          .where(inArray(drafts.meetingId, meetingIds))
       : [];
 
     // Get usage logs
