@@ -559,21 +559,31 @@ export default function LandingPage() {
       {/* Social Proof */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-500 light:text-gray-600 text-sm mb-8 font-medium">Trusted by sales teams at</p>
-          <div className="flex flex-wrap justify-center items-center gap-12">
-            {['TechCorp', 'SalesHub', 'GrowthCo', 'ScaleUp', 'CloudBase'].map((company, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="text-2xl font-bold text-gray-700 light:text-gray-400"
-              >
-                {company}
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex flex-col items-center"
+          >
+            <div className="flex items-center gap-6 mb-6">
+              {[
+                { label: 'Meetings Processed', value: '10K+' },
+                { label: 'Hours Saved Weekly', value: '500+' },
+                { label: 'Platforms Supported', value: '3' },
+              ].map((stat, i) => (
+                <div key={i} className="text-center px-6">
+                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs text-gray-500 light:text-gray-600 mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-gray-500 light:text-gray-600 text-sm">
+              Built for sales teams, account managers, and anyone who follows up after meetings
+            </p>
+          </motion.div>
         </div>
       </section>
 

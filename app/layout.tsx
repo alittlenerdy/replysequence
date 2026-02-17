@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     description: "Turn Zoom, Teams, and Meet calls into perfect follow-up emails in 8 seconds. AI-powered drafts, automatically generated, CRM-ready.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "ReplySequence - AI-powered meeting follow-up emails",
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ReplySequence - AI Follow-Up Emails from Meetings",
     description: "Turn Zoom, Teams, and Meet calls into perfect follow-up emails in 8 seconds. Save 10+ hours per week.",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
     creator: "@replysequence",
   },
   robots: {

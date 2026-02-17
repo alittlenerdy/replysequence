@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { OnboardingBanner } from './OnboardingBanner';
-// import { ProcessingToast } from '@/components/processing/ProcessingToast';
+import { ProcessingToast } from '@/components/processing/ProcessingToast';
 
 interface DashboardLayoutClientProps {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ export function DashboardLayoutClient({
     <>
       {onboardingIncomplete && <OnboardingBanner currentStep={onboardingStep} />}
       {children}
-      {/* <ProcessingToast hideOnDashboard={true} /> */}
+      <ProcessingToast hideOnDashboard={true} />
     </>
   );
 }
