@@ -218,13 +218,19 @@ export async function POST() {
             }
           );
           const listText = await listResponse.text();
-          console.log('[MEET-SUBSCRIBE-4] List response:', listResponse.status, listText.substring(0, 500));
           if (listResponse.ok) {
             const listData = JSON.parse(listText);
             // Find subscription matching our target resource
-            const existing = (listData.subscriptions || []).find(
+            const allSubs = listData.subscriptions || [];
+            const existing = allSubs.find(
               (s: WorkspaceEventsSubscription) => s.targetResource === targetResource
-            ) || listData.subscriptions?.[0];
+            ) || allSubs[0];
+            if (!existing) {
+              return NextResponse.json(
+                { error: 'Subscription exists on Google but list returned empty', listStatus: listResponse.status, listBody: listText.substring(0, 500), targetResource },
+                { status: 409 }
+              );
+            }
             if (existing) {
               const expireTime = new Date(existing.expireTime);
               if (existingSubscription) {
@@ -268,12 +274,13 @@ export async function POST() {
             }
           }
         } catch (listError) {
-          log('error', '[MEET-SUBSCRIBE-4] Failed to list existing subscriptions', {
-            error: listError instanceof Error ? listError.message : String(listError),
-          });
+          return NextResponse.json(
+            { error: 'Subscription already exists - list call threw', debug: listError instanceof Error ? listError.message : String(listError) },
+            { status: 409 }
+          );
         }
         return NextResponse.json(
-          { error: 'Subscription already exists for this user' },
+          { error: 'Subscription already exists - list response not ok', debug: 'fell through' },
           { status: 409 }
         );
       }
