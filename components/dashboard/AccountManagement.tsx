@@ -1,16 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
+import { Download, Trash2, AlertTriangle, Loader2, X, Check } from 'lucide-react';
 
 export function AccountManagement() {
   const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   async function handleExport() {
     setIsExporting(true);
+    setError(null);
     try {
       const response = await fetch('/api/user/export');
       if (!response.ok) throw new Error('Export failed');
@@ -24,8 +27,10 @@ export function AccountManagement() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (error) {
-      alert('Failed to export data. Please try again.');
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 3000);
+    } catch {
+      setError('Failed to export data. Please try again.');
     } finally {
       setIsExporting(false);
     }
@@ -34,12 +39,13 @@ export function AccountManagement() {
   async function handleDelete() {
     if (deleteConfirmText !== 'DELETE') return;
     setIsDeleting(true);
+    setError(null);
     try {
       const response = await fetch('/api/user/delete', { method: 'DELETE' });
       if (!response.ok) throw new Error('Delete failed');
       window.location.href = '/';
-    } catch (error) {
-      alert('Failed to delete account. Please try again.');
+    } catch {
+      setError('Failed to delete account. Please try again.');
       setIsDeleting(false);
     }
   }
@@ -47,6 +53,18 @@ export function AccountManagement() {
   return (
     <div className="max-w-2xl mx-auto mt-8 space-y-6">
       <h3 className="text-lg font-semibold text-white light:text-gray-900">Account & Privacy</h3>
+
+      {error && (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
+          <div className="flex items-center gap-2 text-sm text-red-400">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            {error}
+          </div>
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Export Data */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
@@ -69,6 +87,11 @@ export function AccountManagement() {
               <span className="flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Exporting...
+              </span>
+            ) : exportSuccess ? (
+              <span className="flex items-center gap-2 text-emerald-400">
+                <Check className="w-4 h-4" />
+                Downloaded
               </span>
             ) : (
               'Export Data'

@@ -24,6 +24,7 @@ export function AICustomization() {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export function AICustomization() {
   async function handleSave() {
     setIsSaving(true);
     setSaved(false);
+    setSaveError(null);
     try {
       const response = await fetch('/api/user/preferences', {
         method: 'PUT',
@@ -59,9 +61,11 @@ export function AICustomization() {
       if (response.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
+      } else {
+        setSaveError('Failed to save preferences. Please try again.');
       }
     } catch {
-      alert('Failed to save preferences.');
+      setSaveError('Failed to save preferences. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -146,6 +150,16 @@ export function AICustomization() {
           className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 font-mono"
         />
       </div>
+
+      {/* Error Message */}
+      {saveError && (
+        <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          {saveError}
+        </div>
+      )}
 
       {/* Save Button */}
       <div className="flex justify-end">

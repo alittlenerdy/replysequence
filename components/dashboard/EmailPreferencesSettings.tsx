@@ -9,6 +9,7 @@ export function EmailPreferencesSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const fetchPreference = useCallback(async () => {
     try {
@@ -30,6 +31,7 @@ export function EmailPreferencesSettings() {
 
   const handleSave = async (newPreference: EmailPreference) => {
     setSaving(true);
+    setSaveError(false);
     try {
       const response = await fetch('/api/onboarding/progress', {
         method: 'POST',
@@ -41,9 +43,14 @@ export function EmailPreferencesSettings() {
         setPreference(newPreference);
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 2000);
+      } else {
+        setSaveError(true);
+        setTimeout(() => setSaveError(false), 3000);
       }
     } catch (err) {
       console.error('[EMAIL-PREFS] Error saving:', err);
+      setSaveError(true);
+      setTimeout(() => setSaveError(false), 3000);
     } finally {
       setSaving(false);
     }
@@ -76,6 +83,14 @@ export function EmailPreferencesSettings() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             Saved
+          </span>
+        )}
+        {saveError && (
+          <span className="flex items-center gap-1.5 text-sm text-red-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Failed to save
           </span>
         )}
       </div>

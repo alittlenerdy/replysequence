@@ -227,12 +227,19 @@ export function IntegrationSettings() {
     window.location.href = `${platform.connectUrl}?redirect=${encodeURIComponent(returnUrl)}`;
   };
 
+  const [disconnectConfirm, setDisconnectConfirm] = useState<string | null>(null);
+  const [successBanner, setSuccessBanner] = useState<string | null>(null);
+
   const handleDisconnect = async (platform: PlatformConfig) => {
-    if (!confirm(`Are you sure you want to disconnect ${platform.name}? You'll stop receiving follow-up emails from ${platform.name} meetings.`)) {
+    // If not confirming yet, show confirmation
+    if (disconnectConfirm !== platform.id) {
+      setDisconnectConfirm(platform.id);
       return;
     }
 
+    setDisconnectConfirm(null);
     setActionLoading(platform.id);
+    setErrorBanner(null);
     try {
       const response = await fetch(platform.disconnectUrl, {
         method: 'DELETE',
@@ -240,12 +247,14 @@ export function IntegrationSettings() {
 
       if (response.ok) {
         setConnectionStatus(prev => ({ ...prev, [platform.id]: false }));
+        setSuccessBanner(`${platform.name} disconnected successfully`);
+        setTimeout(() => setSuccessBanner(null), 3000);
       } else {
-        alert('Failed to disconnect. Please try again.');
+        setErrorBanner(`Failed to disconnect ${platform.name}. Please try again.`);
       }
     } catch (error) {
       console.error('Disconnect error:', error);
-      alert('Failed to disconnect. Please try again.');
+      setErrorBanner(`Failed to disconnect ${platform.name}. Please try again.`);
     } finally {
       setActionLoading(null);
     }
@@ -283,6 +292,17 @@ export function IntegrationSettings() {
             <p className="text-sm text-red-300 light:text-red-600">{errorBanner}</p>
           </div>
           <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Success Banner */}
+      {successBanner && (
+        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
+          <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+          <p className="text-sm text-emerald-300 light:text-emerald-600 flex-1">{successBanner}</p>
+          <button onClick={() => setSuccessBanner(null)} className="text-emerald-400 hover:text-emerald-300">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -432,18 +452,37 @@ export function IntegrationSettings() {
                         Reconnect
                       </button>
                     )}
-                    <button
-                      onClick={() => handleDisconnect(platform)}
-                      disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Unplug className="w-4 h-4" />
-                      )}
-                      Disconnect
-                    </button>
+                    {disconnectConfirm === platform.id ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">Are you sure?</span>
+                        <button
+                          onClick={() => handleDisconnect(platform)}
+                          disabled={isLoading}
+                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                        </button>
+                        <button
+                          onClick={() => setDisconnectConfirm(null)}
+                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleDisconnect(platform)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Unplug className="w-4 h-4" />
+                        )}
+                        Disconnect
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <button
@@ -576,18 +615,37 @@ export function IntegrationSettings() {
                         Reconnect
                       </button>
                     )}
-                    <button
-                      onClick={() => handleDisconnect(platform)}
-                      disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Unplug className="w-4 h-4" />
-                      )}
-                      Disconnect
-                    </button>
+                    {disconnectConfirm === platform.id ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">Are you sure?</span>
+                        <button
+                          onClick={() => handleDisconnect(platform)}
+                          disabled={isLoading}
+                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                        </button>
+                        <button
+                          onClick={() => setDisconnectConfirm(null)}
+                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleDisconnect(platform)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Unplug className="w-4 h-4" />
+                        )}
+                        Disconnect
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <button
@@ -720,18 +778,37 @@ export function IntegrationSettings() {
                         Reconnect
                       </button>
                     )}
-                    <button
-                      onClick={() => handleDisconnect(platform)}
-                      disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Unplug className="w-4 h-4" />
-                      )}
-                      Disconnect
-                    </button>
+                    {disconnectConfirm === platform.id ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">Are you sure?</span>
+                        <button
+                          onClick={() => handleDisconnect(platform)}
+                          disabled={isLoading}
+                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                        </button>
+                        <button
+                          onClick={() => setDisconnectConfirm(null)}
+                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleDisconnect(platform)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Unplug className="w-4 h-4" />
+                        )}
+                        Disconnect
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <button
@@ -864,18 +941,37 @@ export function IntegrationSettings() {
                         Reconnect
                       </button>
                     )}
-                    <button
-                      onClick={() => handleDisconnect(platform)}
-                      disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Unplug className="w-4 h-4" />
-                      )}
-                      Disconnect
-                    </button>
+                    {disconnectConfirm === platform.id ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">Are you sure?</span>
+                        <button
+                          onClick={() => handleDisconnect(platform)}
+                          disabled={isLoading}
+                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                        </button>
+                        <button
+                          onClick={() => setDisconnectConfirm(null)}
+                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleDisconnect(platform)}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Unplug className="w-4 h-4" />
+                        )}
+                        Disconnect
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <button

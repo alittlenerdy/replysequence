@@ -94,6 +94,35 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
   const router = useRouter();
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [regenerateError, setRegenerateError] = useState<string | null>(null);
+  const [regenerateSuccess, setRegenerateSuccess] = useState(false);
+
+  const handleRegenerate = async () => {
+    setIsRegenerating(true);
+    setRegenerateError(null);
+    setRegenerateSuccess(false);
+    try {
+      const res = await fetch('/api/drafts/regenerate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meetingId: meeting.id }),
+      });
+      if (res.ok) {
+        setRegenerateSuccess(true);
+        setTimeout(() => {
+          setRegenerateSuccess(false);
+          router.refresh();
+        }, 1500);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setRegenerateError(data.error || 'Failed to regenerate draft. Please try again.');
+      }
+    } catch {
+      setRegenerateError('Unable to connect. Check your internet and try again.');
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -306,21 +335,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             Something went wrong while processing this meeting. This can happen if the transcript was unavailable or the recording hasn&apos;t finished uploading.
           </p>
           <button
-            onClick={async () => {
-              setIsRegenerating(true);
-              try {
-                const res = await fetch('/api/drafts/regenerate', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ meetingId: meeting.id }),
-                });
-                if (res.ok) {
-                  router.refresh();
-                }
-              } catch { /* ignore */ } finally {
-                setIsRegenerating(false);
-              }
-            }}
+            onClick={handleRegenerate}
             disabled={isRegenerating}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 transition-colors disabled:opacity-50"
           >
@@ -329,6 +344,24 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             </svg>
             {isRegenerating ? 'Regenerating...' : 'Retry Draft Generation'}
           </button>
+        </div>
+      )}
+
+      {/* Regenerate Feedback */}
+      {regenerateError && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          {regenerateError}
+        </div>
+      )}
+      {regenerateSuccess && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-400">
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          New draft generated successfully
         </div>
       )}
 
@@ -343,21 +376,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           </h2>
           {meeting.status === 'completed' && (
             <button
-              onClick={async () => {
-                setIsRegenerating(true);
-                try {
-                  const res = await fetch('/api/drafts/regenerate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ meetingId: meeting.id }),
-                  });
-                  if (res.ok) {
-                    router.refresh();
-                  }
-                } catch { /* ignore */ } finally {
-                  setIsRegenerating(false);
-                }
-              }}
+              onClick={handleRegenerate}
               disabled={isRegenerating}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500/15 text-blue-400 border border-blue-500/20 hover:bg-blue-500/25 transition-colors disabled:opacity-50"
             >
