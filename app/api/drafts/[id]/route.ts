@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { currentUser } from '@clerk/nextjs/server';
+import { db, users, meetings, drafts } from '@/lib/db';
+import { eq, and } from 'drizzle-orm';
 import { getDraftById, deleteDraft } from '@/lib/dashboard-queries';
 
 interface RouteParams {
@@ -6,10 +9,37 @@ interface RouteParams {
 }
 
 /**
+ * Verify the current user owns the draft via meeting ownership
+ */
+async function verifyDraftOwnership(draftId: string, clerkId: string): Promise<boolean> {
+  const [dbUser] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.clerkId, clerkId))
+    .limit(1);
+
+  if (!dbUser) return false;
+
+  const [draft] = await db
+    .select({ id: drafts.id })
+    .from(drafts)
+    .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+    .where(and(eq(drafts.id, draftId), eq(meetings.userId, dbUser.id)))
+    .limit(1);
+
+  return !!draft;
+}
+
+/**
  * GET /api/drafts/[id] - Get a specific draft
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
 
     if (!id) {
@@ -19,18 +49,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    console.log('[DRAFT-GET-1] Fetching draft, id:', id);
-    const draft = await getDraftById(id);
-
-    if (!draft) {
-      console.log('[DRAFT-GET-2] Draft not found, id:', id);
-      return NextResponse.json(
-        { error: 'Draft not found' },
-        { status: 404 }
-      );
+    const isOwner = await verifyDraftOwnership(id, user.id);
+    if (!isOwner) {
+      return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
     }
 
-    console.log('[DRAFT-GET-3] Draft fetched successfully, id:', id);
+    const draft = await getDraftById(id);
+    if (!draft) {
+      return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
+    }
+
     return NextResponse.json(draft);
   } catch (error) {
     console.error('[DRAFT-GET-ERROR] Failed to fetch draft:', error);
@@ -46,6 +74,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
 
     if (!id) {
@@ -55,31 +88,31 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    console.log('[DELETE-1] Deleting draft, id:', id);
-
-    // Verify draft exists
-    const draft = await getDraftById(id);
-    if (!draft) {
-      console.log('[DELETE-2] Draft not found, id:', id);
-      return NextResponse.json(
-        { error: 'Draft not found' },
-        { status: 404 }
-      );
+    const isOwner = await verifyDraftOwnership(id, user.id);
+    if (!isOwner) {
+      return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
     }
 
-    // Prevent deletion of sent drafts
+    const draft = await getDraftById(id);
+    if (!draft) {
+      return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
+    }
+
     if (draft.status === 'sent') {
-      console.log('[DELETE-3] Cannot delete sent draft, id:', id);
       return NextResponse.json(
         { error: 'Cannot delete a sent draft' },
         { status: 400 }
       );
     }
 
-    // Delete the draft
     await deleteDraft(id);
 
-    console.log('[DELETE-4] Draft deleted successfully, id:', id);
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Draft deleted',
+      draftId: id,
+    }));
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[DELETE-ERROR] Failed to delete draft:', error);
