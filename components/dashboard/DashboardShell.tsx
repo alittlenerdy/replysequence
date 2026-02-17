@@ -7,6 +7,7 @@ import { Video } from 'lucide-react';
 import { DashboardNav } from './DashboardNav';
 import { MobileBottomNav } from './MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
+import { CommandPalette } from './CommandPalette';
 
 const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
@@ -53,6 +54,9 @@ export function DashboardShell({ children, firstName = 'there', pendingDrafts = 
 
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav pendingDrafts={pendingDrafts} />
+
+      {/* Command Palette (Cmd+K) */}
+      <CommandPalette />
     </div>
   );
 }
