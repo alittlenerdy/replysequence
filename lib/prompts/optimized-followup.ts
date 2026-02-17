@@ -32,6 +32,10 @@ export interface FollowUpContext {
   companyName?: string;
   recipientName?: string;
   additionalContext?: string;
+
+  // Template customization
+  templateId?: string;
+  templateInstructions?: string;
 }
 
 /**
@@ -181,12 +185,15 @@ export function buildOptimizedPrompt(context: FollowUpContext): string {
     companyName,
     recipientName,
     additionalContext,
+    templateInstructions,
   } = context;
 
-  // Get meeting-type specific instructions
-  const typeInstructions = meetingType
-    ? MEETING_TYPE_INSTRUCTIONS[meetingType]
-    : MEETING_TYPE_INSTRUCTIONS.general;
+  // Use template instructions if provided, otherwise fall back to meeting-type defaults
+  const typeInstructions = templateInstructions
+    ? templateInstructions
+    : meetingType
+      ? MEETING_TYPE_INSTRUCTIONS[meetingType]
+      : MEETING_TYPE_INSTRUCTIONS.general;
 
   let prompt = `Generate a follow-up email based on this meeting.
 

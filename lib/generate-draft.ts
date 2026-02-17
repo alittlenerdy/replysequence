@@ -27,6 +27,7 @@ import type { ActionItem } from './db/schema';
 // NOTE: Airtable sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
+import { getTemplateById } from './meeting-templates';
 
 // Draft generation configuration
 const MAX_RETRIES = 3;
@@ -58,6 +59,7 @@ export interface GenerateDraftResult {
 export interface GenerateDraftInput {
   meetingId: string;
   transcriptId: string;
+  templateId?: string;
   context: {
     meetingTopic: string;
     meetingDate: string;
@@ -137,6 +139,9 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     signals: detectionResult.signals,
   });
 
+  // Look up template if provided
+  const template = input.templateId ? getTemplateById(input.templateId) : undefined;
+
   // Build optimized context
   const optimizedContext: FollowUpContext = {
     meetingTopic: context.meetingTopic,
@@ -151,6 +156,8 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     companyName: context.companyName,
     recipientName: context.recipientName || participants[0], // Default to first participant
     additionalContext: context.additionalContext,
+    templateId: template?.id,
+    templateInstructions: template?.focusInstructions,
   };
 
   // Build the prompt
