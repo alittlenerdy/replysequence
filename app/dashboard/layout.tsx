@@ -8,9 +8,6 @@ import { DashboardLayoutClient } from '@/components/dashboard/DashboardLayoutCli
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { getDraftStats } from '@/lib/dashboard-queries';
 
-// Force dynamic rendering - don't cache this layout
-export const dynamic = 'force-dynamic';
-
 export default async function DashboardLayout({
   children,
 }: {

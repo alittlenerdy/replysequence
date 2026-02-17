@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, ChevronUp, ChevronDown, CheckCircle } from 'lucide-react';
@@ -21,7 +21,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
   const { meetings } = useProcessingMeetings();
   const [isExpanded, setIsExpanded] = useState(false);
   const [recentlyCompleted, setRecentlyCompleted] = useState<string[]>([]);
-  const [prevMeetingIds, setPrevMeetingIds] = useState<string[]>([]);
+  const prevMeetingIdsRef = useRef<string[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
   // Wait for client-side mount to avoid hydration mismatch
@@ -29,10 +29,10 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
     setIsMounted(true);
   }, []);
 
-  // Track completed meetings
+  // Track completed meetings (use ref to avoid infinite re-render loop)
   useEffect(() => {
     const currentIds = meetings.map(m => m.id);
-    const completed = prevMeetingIds.filter(id => !currentIds.includes(id));
+    const completed = prevMeetingIdsRef.current.filter(id => !currentIds.includes(id));
 
     if (completed.length > 0) {
       setRecentlyCompleted(prev => [...prev, ...completed]);
@@ -42,8 +42,8 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
       }, 5000);
     }
 
-    setPrevMeetingIds(currentIds);
-  }, [meetings, prevMeetingIds]);
+    prevMeetingIdsRef.current = currentIds;
+  }, [meetings]);
 
   // Don't render until mounted (prevents hydration mismatch)
   if (!isMounted) {
