@@ -117,6 +117,19 @@ export const OPTIMIZED_SYSTEM_PROMPT = `You are an expert at writing follow-up e
 You must respond in this exact JSON format:
 
 {
+  "meetingSummary": "A concise 2-4 sentence summary of the meeting covering what was discussed, key outcomes, and overall purpose. Written in third person past tense.",
+  "keyTopics": [
+    {
+      "topic": "Topic name or theme",
+      "duration": "main focus | discussed at length | discussed briefly | mentioned"
+    }
+  ],
+  "keyDecisions": [
+    {
+      "decision": "What was decided",
+      "context": "Brief context for why this decision was made"
+    }
+  ],
   "subject": "Subject line here (max 60 characters, specific and hook-driven)",
   "body": "Full email body here with proper formatting",
   "actionItems": [
@@ -132,13 +145,16 @@ You must respond in this exact JSON format:
 }
 
 ## RULES:
-1. Subject line MUST be under 60 characters and reference something specific from the meeting
-2. Body MUST be under 200 words, warm but professional
-3. Action items MUST have an owner and deadline - if unclear from transcript, suggest reasonable defaults
-4. Maximum 5 action items - prioritize the most important ones
-5. Reference 2-3 SPECIFIC things the other person said (not generic summaries)
-6. One clear CTA at the end - make it easy to say yes
-7. Match the tone of the meeting - if they were casual, be casual
+1. Meeting summary MUST be 2-4 sentences, factual, third person past tense - no fluff
+2. Key topics MUST list 2-5 topics actually discussed, with relative duration
+3. Key decisions: include only if actual decisions were made (can be empty array)
+4. Subject line MUST be under 60 characters and reference something specific from the meeting
+5. Body MUST be under 200 words, warm but professional
+6. Action items MUST have an owner and deadline - if unclear from transcript, suggest reasonable defaults
+7. Maximum 5 action items - prioritize the most important ones
+8. Reference 2-3 SPECIFIC things the other person said (not generic summaries)
+9. One clear CTA at the end - make it easy to say yes
+10. Match the tone of the meeting - if they were casual, be casual
 
 ${QUALITY_EXAMPLES}
 
@@ -216,6 +232,15 @@ Now generate the follow-up email in the exact JSON format specified. Make it spe
  * Parse the JSON response from Claude
  */
 export interface ParsedDraftResponse {
+  meetingSummary: string;
+  keyTopics: Array<{
+    topic: string;
+    duration?: string;
+  }>;
+  keyDecisions: Array<{
+    decision: string;
+    context?: string;
+  }>;
   subject: string;
   body: string;
   actionItems: Array<{
@@ -252,6 +277,9 @@ export function parseOptimizedResponse(content: string): ParsedDraftResponse {
     }
 
     return {
+      meetingSummary: parsed.meetingSummary || '',
+      keyTopics: parsed.keyTopics || [],
+      keyDecisions: parsed.keyDecisions || [],
       subject: parsed.subject,
       body: parsed.body,
       actionItems: parsed.actionItems || [],
@@ -283,6 +311,9 @@ export function parseOptimizedResponse(content: string): ParsedDraftResponse {
     const body = lines.slice(bodyStartIndex).join('\n').trim();
 
     return {
+      meetingSummary: '',
+      keyTopics: [],
+      keyDecisions: [],
       subject: subject || 'Follow-up from our meeting',
       body: body || content,
       actionItems: [],

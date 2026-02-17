@@ -58,6 +58,17 @@ export interface SpeakerSegment {
   text: string;
 }
 
+// Meeting summary types
+export interface MeetingDecision {
+  decision: string;
+  context?: string;
+}
+
+export interface MeetingTopic {
+  topic: string;
+  duration?: string; // e.g., "discussed briefly", "main focus"
+}
+
 // Meetings table
 export const meetings = pgTable(
   'meetings',
@@ -77,6 +88,12 @@ export const meetings = pgTable(
     zoomEventId: varchar('zoom_event_id', { length: 255 }), // For idempotency tracking
     recordingDownloadUrl: text('recording_download_url'),
     transcriptDownloadUrl: text('transcript_download_url'),
+    // Meeting summary fields (generated alongside draft)
+    summary: text('summary'),
+    keyDecisions: jsonb('key_decisions').$type<MeetingDecision[]>(),
+    keyTopics: jsonb('key_topics').$type<MeetingTopic[]>(),
+    actionItems: jsonb('action_items').$type<ActionItem[]>(),
+    summaryGeneratedAt: timestamp('summary_generated_at', { withTimezone: true }),
     // Processing progress tracking fields
     processingStep: text('processing_step').$type<ProcessingStep>(),
     processingProgress: integer('processing_progress').default(0),

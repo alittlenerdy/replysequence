@@ -6,6 +6,7 @@ import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftQualityBadge } from './ui/DraftQualityBadge';
 import { ConversationalRefine } from './ConversationalRefine';
+import { MeetingSummaryPanel } from './MeetingSummaryPanel';
 
 // Hydration-safe date formatting
 function useHydrationSafe() {
@@ -426,6 +427,9 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                       <p className="text-white font-medium">{draft.meetingTopic || 'Untitled Meeting'}</p>
                       <p className="text-sm text-gray-400 mt-1">{formatDate(draft.meetingStartTime)}</p>
                     </div>
+
+                    {/* Meeting Summary */}
+                    <MeetingSummaryPanel meetingId={draft.meetingId} />
 
                     {/* Subject */}
                     <div>

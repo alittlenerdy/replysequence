@@ -265,6 +265,9 @@ Best regards`,
       meetingTypeDetected: detection.meetingType,
       toneUsed: detection.tone,
       keyPointsReferenced: ['key point 1', 'key point 2'],
+      meetingSummary: `The team discussed ${sample.topic.toLowerCase()} and outlined next steps.`,
+      keyTopics: [{ topic: sample.topic, duration: 'main focus' }],
+      keyDecisions: [],
     };
 
     // Score the mock draft

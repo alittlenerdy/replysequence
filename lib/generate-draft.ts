@@ -221,9 +221,12 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
       log('info', 'Response parsed successfully', {
         meetingId,
         hasSubject: !!parsed.subject,
+        hasSummary: !!parsed.meetingSummary,
         subjectLength: parsed.subject.length,
         bodyLength: parsed.body.length,
         actionItemCount: parsed.actionItems.length,
+        topicCount: parsed.keyTopics.length,
+        decisionCount: parsed.keyDecisions.length,
         meetingTypeDetected: parsed.meetingTypeDetected,
         toneUsed: parsed.toneUsed,
       });
@@ -274,6 +277,20 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         })
         .returning();
 
+      // Store meeting summary on the meeting record
+      if (parsed.meetingSummary) {
+        await db
+          .update(meetings)
+          .set({
+            summary: parsed.meetingSummary,
+            keyDecisions: parsed.keyDecisions.length > 0 ? parsed.keyDecisions : null,
+            keyTopics: parsed.keyTopics.length > 0 ? parsed.keyTopics : null,
+            actionItems: parsed.actionItems.length > 0 ? parsed.actionItems : null,
+            summaryGeneratedAt: new Date(),
+          })
+          .where(eq(meetings.id, meetingId));
+      }
+
       log('info', 'Draft generated and saved with quality scoring', {
         draftId: draft.id,
         meetingId,
@@ -286,6 +303,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         meetingType: parsed.meetingTypeDetected,
         toneUsed: parsed.toneUsed,
         actionItemCount: parsed.actionItems.length,
+        hasMeetingSummary: !!parsed.meetingSummary,
         subject: parsed.subject.substring(0, 60),
       });
 
