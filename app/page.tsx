@@ -193,20 +193,14 @@ export default function LandingPage() {
               </GradientButton>
             </motion.div>
 
-            {/* Trust signal with avatars */}
+            {/* Value proposition */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               className="flex items-center justify-center gap-3 text-gray-500 light:text-gray-600"
             >
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 border-2 border-[#0a0a0f] light:border-white shadow-sm" />
-              </div>
-              <span className="text-sm font-medium">Join 1,200+ sales teams on the waitlist</span>
+              <span className="text-sm font-medium">Works with Zoom, Google Meet, and Microsoft Teams</span>
             </motion.div>
 
             {/* Security Trust Badges */}
@@ -218,24 +212,17 @@ export default function LandingPage() {
             >
               <a
                 href="/security"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full hover:bg-green-500/20 transition-colors"
-              >
-                <Shield className="w-3.5 h-3.5 text-green-400" />
-                <span className="text-xs font-medium text-green-400">SOC 2 Infrastructure</span>
-              </a>
-              <a
-                href="/security"
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full hover:bg-blue-500/20 transition-colors"
               >
                 <Lock className="w-3.5 h-3.5 text-blue-400" />
-                <span className="text-xs font-medium text-blue-400">256-bit Encryption</span>
+                <span className="text-xs font-medium text-blue-400">AES-256 Encryption</span>
               </a>
               <a
                 href="/privacy"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full hover:bg-purple-500/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full hover:bg-green-500/20 transition-colors"
               >
-                <Shield className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-xs font-medium text-purple-400">GDPR Compliant</span>
+                <Shield className="w-3.5 h-3.5 text-green-400" />
+                <span className="text-xs font-medium text-green-400">Privacy First</span>
               </a>
             </motion.div>
 
@@ -556,7 +543,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof */}
+      {/* Product Capabilities */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
@@ -568,9 +555,9 @@ export default function LandingPage() {
           >
             <div className="flex items-center gap-6 mb-6">
               {[
-                { label: 'Meetings Processed', value: '10K+' },
-                { label: 'Hours Saved Weekly', value: '500+' },
                 { label: 'Platforms Supported', value: '3' },
+                { label: 'Avg. Draft Time', value: '<30s' },
+                { label: 'CRM Integrations', value: '2+' },
               ].map((stat, i) => (
                 <div key={i} className="text-center px-6">
                   <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
