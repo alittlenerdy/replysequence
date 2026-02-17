@@ -105,11 +105,19 @@ interface AnalyticsData {
   aiUsage: AIUsageMetrics;
 }
 
+const DATE_RANGES = [
+  { label: '7 days', value: 7 },
+  { label: '14 days', value: 14 },
+  { label: '30 days', value: 30 },
+  { label: '90 days', value: 90 },
+] as const;
+
 export function AnalyticsDashboard() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dateRange, setDateRange] = useState(14);
   const hasFetched = useRef(false);
 
   const fetchAnalytics = useCallback(async (showRefreshState = false) => {
@@ -117,7 +125,7 @@ export function AnalyticsDashboard() {
       if (showRefreshState) setIsRefreshing(true);
       else setLoading(true);
 
-      const response = await fetch('/api/analytics');
+      const response = await fetch(`/api/analytics?days=${dateRange}`);
       if (!response.ok) {
         throw new Error('Failed to fetch analytics');
       }
@@ -131,7 +139,7 @@ export function AnalyticsDashboard() {
       setLoading(false);
       setIsRefreshing(false);
     }
-  }, []);
+  }, [dateRange]);
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -139,6 +147,13 @@ export function AnalyticsDashboard() {
       fetchAnalytics();
     }
   }, [fetchAnalytics]);
+
+  // Re-fetch when date range changes (after initial load)
+  useEffect(() => {
+    if (hasFetched.current) {
+      fetchAnalytics(true);
+    }
+  }, [dateRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
@@ -213,21 +228,37 @@ export function AnalyticsDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div
-        className="flex items-center justify-between"
-      >
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics Dashboard</h2>
           <p className="text-sm text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>
         </div>
-        <button
-          onClick={() => fetchAnalytics(true)}
-          disabled={isRefreshing}
-          className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-          title="Refresh analytics"
-        >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Date range selector */}
+          <div className="flex items-center bg-gray-800/80 light:bg-gray-100 rounded-lg border border-gray-700 light:border-gray-200 p-0.5">
+            {DATE_RANGES.map((range) => (
+              <button
+                key={range.value}
+                onClick={() => setDateRange(range.value)}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  dateRange === range.value
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
+                }`}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => fetchAnalytics(true)}
+            disabled={isRefreshing}
+            className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+            title="Refresh analytics"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Hero Stats - Enhanced with trends and sparklines */}

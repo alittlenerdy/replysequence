@@ -150,8 +150,13 @@ function generateDateRange(days: number): string[] {
   return dates;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   console.log('[ANALYTICS-1] Starting analytics request');
+
+  // Parse date range from query params (default 14 days)
+  const { searchParams } = new URL(request.url);
+  const daysParam = parseInt(searchParams.get('days') || '14', 10);
+  const chartDays = Math.min(Math.max(daysParam, 7), 90); // Clamp between 7-90
 
   const { userId: clerkUserId } = await auth();
 
@@ -174,8 +179,8 @@ export async function GET() {
     emailsComparison: emptyComparison,
     sentComparison: emptyComparison,
     roi: { hoursSaved: 0, dollarValue: 0, hourlyRate: DEFAULT_HOURLY_RATE, emailsPerHour: 4 },
-    dailyMeetings: generateDateRange(14).map(date => ({ date, count: 0 })),
-    dailyEmails: generateDateRange(14).map(date => ({ date, count: 0 })),
+    dailyMeetings: generateDateRange(chartDays).map(date => ({ date, count: 0 })),
+    dailyEmails: generateDateRange(chartDays).map(date => ({ date, count: 0 })),
     platformBreakdown: [],
     emailFunnel: { total: 0, ready: 0, sent: 0, conversionRate: 0 },
     engagement: { sent: 0, opened: 0, clicked: 0, replied: 0, openRate: 0, clickRate: 0, replyRate: 0, avgTimeToOpen: null },
@@ -239,7 +244,7 @@ export async function GET() {
     const totalMeetingMinutes = userMeetings.reduce((sum, m) => sum + (m.duration || 0), 0);
 
     // Daily meetings (last 14 days)
-    const dateRange = generateDateRange(14);
+    const dateRange = generateDateRange(chartDays);
     const dailyMeetingCounts: Record<string, number> = {};
     dateRange.forEach(d => { dailyMeetingCounts[d] = 0; });
     userMeetings.forEach(m => {
