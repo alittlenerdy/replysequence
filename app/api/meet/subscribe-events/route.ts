@@ -69,10 +69,12 @@ interface WorkspaceEventsError {
  */
 export async function POST() {
   const startTime = Date.now();
+  console.log('[MEET-SUBSCRIBE] POST handler invoked');
 
   try {
     // Step 1: Authenticate user via Clerk
     const { userId: clerkId } = await auth();
+    console.log('[MEET-SUBSCRIBE] Auth result:', { clerkId: clerkId || 'null' });
 
     if (!clerkId) {
       log('warn', '[MEET-SUBSCRIBE-1] No authenticated user');
