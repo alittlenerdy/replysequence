@@ -76,6 +76,7 @@ import {
   Lock,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { FeatureCard } from '@/components/ui/FeatureCard';
@@ -582,34 +583,7 @@ export default function LandingPage() {
       <FAQ />
 
       {/* Footer */}
-      <footer className="py-8 md:py-12 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
-        <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
-          <div className="mb-4">
-            <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
-          </div>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-4">
-            <a href="/about" className="hover:text-purple-400 transition-colors">
-              About
-            </a>
-            <a href="/integrations" className="hover:text-purple-400 transition-colors">
-              Integrations
-            </a>
-            <a href="/contact" className="hover:text-purple-400 transition-colors">
-              Contact
-            </a>
-            <a href="/terms" className="hover:text-purple-400 transition-colors">
-              Terms
-            </a>
-            <a href="/privacy" className="hover:text-purple-400 transition-colors">
-              Privacy
-            </a>
-            <a href="/security" className="hover:text-purple-400 transition-colors">
-              Security
-            </a>
-          </div>
-          <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
-        </div>
-      </footer>
+      <Footer />
 
       {/* JSON-LD Structured Data */}
       <script

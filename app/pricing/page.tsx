@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { currentUser } from '@clerk/nextjs/server';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { PricingCards } from '@/components/PricingCards';
 import { ManageSubscriptionButton } from '@/components/ManageSubscriptionButton';
 import { db } from '@/lib/db';
@@ -212,11 +213,7 @@ async function PricingContent() {
 
       {/* Footer - only for non-logged in users */}
       {!isLoggedIn && (
-        <footer className="py-8 px-4 border-t border-gray-800 light:border-gray-200 bg-gray-950 light:bg-gray-50">
-          <div className="max-w-7xl mx-auto text-center text-gray-500 light:text-gray-600 text-sm">
-            <p>&copy; 2026 ReplySequence. Built by Playground Giants.</p>
-          </div>
-        </footer>
+        <Footer />
       )}
 
       {/* JSON-LD Pricing Structured Data */}

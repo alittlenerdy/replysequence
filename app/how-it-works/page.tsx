@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
 import {
   ChevronDown,
   Video,
@@ -19,6 +18,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
 
@@ -1056,38 +1056,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-center md:text-left">
-              <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
-              <p className="text-gray-500 light:text-gray-600 text-sm mt-2">
-                &copy; 2026 ReplySequence. Built by Playground Giants.
-              </p>
-            </div>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400 light:text-gray-600">
-              <Link href="/" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                Home
-              </Link>
-              <Link href="/integrations" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                Integrations
-              </Link>
-              <Link href="/pricing" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                Pricing
-              </Link>
-              <Link href="/about" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                About
-              </Link>
-              <Link href="/contact" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                Contact
-              </Link>
-              <Link href="/privacy" className="hover:text-white light:hover:text-gray-900 transition-colors">
-                Privacy
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

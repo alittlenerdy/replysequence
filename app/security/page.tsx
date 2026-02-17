@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Footer } from '@/components/layout/Footer';
 import {
   Shield,
   Lock,
@@ -254,21 +255,8 @@ export default function SecurityPage() {
           </div>
         </div>
 
-        {/* Footer Links */}
-        <div className="mt-16 pt-8 border-t border-gray-800">
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
-            <Link href="/privacy" className="hover:text-purple-400 transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-purple-400 transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/" className="hover:text-purple-400 transition-colors">
-              Home
-            </Link>
-          </div>
-        </div>
       </div>
+      <Footer />
     </div>
   );
 }

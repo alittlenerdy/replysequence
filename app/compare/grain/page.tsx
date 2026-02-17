@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 import {
   Check,
@@ -749,6 +750,8 @@ export default function GrainComparisonPage() {
           </motion.p>
         </AnimatedSection>
       </section>
+
+      <Footer />
 
       {/* FAQ Schema for SEO */}
       <script

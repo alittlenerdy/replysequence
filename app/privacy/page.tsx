@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -182,21 +183,8 @@ export default function PrivacyPage() {
           </section>
         </div>
 
-        {/* Footer Links */}
-        <div className="mt-16 pt-8 border-t border-gray-800">
-          <div className="flex flex-wrap gap-6 text-sm text-gray-400">
-            <Link href="/security" className="hover:text-purple-400 transition-colors">
-              Security
-            </Link>
-            <Link href="/terms" className="hover:text-purple-400 transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/" className="hover:text-purple-400 transition-colors">
-              Home
-            </Link>
-          </div>
-        </div>
       </div>
+      <Footer />
     </div>
   );
 }
