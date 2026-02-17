@@ -59,12 +59,10 @@ export function Header() {
                 </button>
               </SignInButton>
               <a
-                href="https://tally.so/r/D4pv0j"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/sign-up"
                 className="btn-cta !px-6 !py-2 !text-base"
               >
-                Join Waitlist
+                Get Started Free
               </a>
             </>
           )}
