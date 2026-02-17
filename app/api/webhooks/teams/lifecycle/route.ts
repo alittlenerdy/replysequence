@@ -148,12 +148,61 @@ export async function POST(request: NextRequest) {
           });
         }
       } else if (lifecycleEvent === 'subscriptionRemoved') {
-        log('warn', 'Teams subscription was removed', {
+        log('warn', 'Teams subscription was removed — attempting recreation', {
           subscriptionId: notification.subscriptionId,
         });
+
+        // Attempt to recreate the subscription
+        try {
+          const [connection] = await db
+            .select({
+              id: teamsConnections.id,
+              userId: teamsConnections.userId,
+              msUserId: teamsConnections.msUserId,
+            })
+            .from(teamsConnections)
+            .where(eq(teamsConnections.graphSubscriptionId, notification.subscriptionId))
+            .limit(1);
+
+          if (connection) {
+            const token = await getValidTeamsToken(connection.userId);
+            if (token) {
+              const newSub = await createTeamsSubscription(token, connection.msUserId);
+              if (newSub) {
+                await db
+                  .update(teamsConnections)
+                  .set({
+                    graphSubscriptionId: newSub.subscriptionId,
+                    graphSubscriptionExpiresAt: new Date(newSub.expirationDateTime),
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(teamsConnections.id, connection.id));
+                log('info', 'Teams subscription recreated after removal', {
+                  oldSubscriptionId: notification.subscriptionId,
+                  newSubscriptionId: newSub.subscriptionId,
+                });
+              } else {
+                log('error', 'Failed to recreate Teams subscription', {
+                  subscriptionId: notification.subscriptionId,
+                });
+              }
+            } else {
+              log('error', 'No valid token for subscription recreation', {
+                subscriptionId: notification.subscriptionId,
+                userId: connection.userId,
+              });
+            }
+          }
+        } catch (recreateError) {
+          log('error', 'Teams subscription recreation error', {
+            subscriptionId: notification.subscriptionId,
+            error: recreateError instanceof Error ? recreateError.message : String(recreateError),
+          });
+        }
       } else if (lifecycleEvent === 'missed') {
-        log('warn', 'Teams notifications were missed', {
+        log('warn', 'Teams notifications were missed — some meeting transcripts may not have been processed', {
           subscriptionId: notification.subscriptionId,
+          resourceData: notification.resourceData,
         });
       } else {
         log('info', 'Teams lifecycle event', {

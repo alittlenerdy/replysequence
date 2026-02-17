@@ -23,6 +23,12 @@
     },
     "app/api/cron/schedule-recall-bots/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/webhooks/teams/lifecycle/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/cron/renew-teams-subscriptions/route.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [

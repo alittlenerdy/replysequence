@@ -11,23 +11,54 @@ import { generateDraft } from '@/lib/generate-draft';
 import type { BotStatus, TranscriptWord, TranscriptSpeaker } from '@/lib/recall/types';
 import crypto from 'crypto';
 
-// Verify webhook signature (if Recall provides one)
+// Verify webhook signature (Recall uses Svix-style webhook signing)
 const RECALL_WEBHOOK_SECRET = process.env.RECALL_WEBHOOK_SECRET;
 
 /**
  * Verify Recall webhook signature using HMAC-SHA256.
+ * Recall signs: "{webhook-id}.{webhook-timestamp}.{payload}"
+ * Secret has whsec_ prefix that must be stripped, then base64-decoded.
+ * Signature header format: "v1,{base64-signature}"
  */
-function verifyRecallSignature(rawBody: string, signature: string): boolean {
+function verifyRecallSignature(
+  rawBody: string,
+  msgId: string,
+  msgTimestamp: string,
+  signatureHeader: string
+): boolean {
   if (!RECALL_WEBHOOK_SECRET) return true;
   try {
+    // Strip whsec_ prefix and decode the secret
+    const secretStr = RECALL_WEBHOOK_SECRET.startsWith('whsec_')
+      ? RECALL_WEBHOOK_SECRET.slice(6)
+      : RECALL_WEBHOOK_SECRET;
+    const key = Buffer.from(secretStr, 'base64');
+
+    // Construct the signed content
+    const toSign = `${msgId}.${msgTimestamp}.${rawBody}`;
     const expectedSignature = crypto
-      .createHmac('sha256', RECALL_WEBHOOK_SECRET)
-      .update(rawBody)
-      .digest('hex');
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+      .createHmac('sha256', key)
+      .update(toSign)
+      .digest('base64');
+
+    // Check against all signature versions in the header (comma-separated)
+    const signatures = signatureHeader.split(' ');
+    for (const sig of signatures) {
+      const [version, value] = sig.split(',');
+      if (version === 'v1' && value) {
+        try {
+          if (crypto.timingSafeEqual(
+            Buffer.from(value, 'base64'),
+            Buffer.from(expectedSignature, 'base64')
+          )) {
+            return true;
+          }
+        } catch {
+          // Length mismatch, try next
+        }
+      }
+    }
+    return false;
   } catch {
     return false;
   }
@@ -83,9 +114,25 @@ export async function POST(request: NextRequest) {
 
     // Verify webhook signature if configured
     if (RECALL_WEBHOOK_SECRET) {
-      const signature = request.headers.get('x-recall-signature');
-      if (!signature || !verifyRecallSignature(rawBody, signature)) {
-        console.error('[RECALL-WEBHOOK] Invalid or missing webhook signature');
+      const msgId = request.headers.get('webhook-id') || request.headers.get('svix-id');
+      const msgTimestamp = request.headers.get('webhook-timestamp') || request.headers.get('svix-timestamp');
+      const msgSignature = request.headers.get('webhook-signature') || request.headers.get('svix-signature');
+
+      if (!msgId || !msgTimestamp || !msgSignature) {
+        console.error('[RECALL-WEBHOOK] Missing webhook verification headers');
+        return NextResponse.json({ error: 'Missing signature headers' }, { status: 401 });
+      }
+
+      // Reject stale webhooks (older than 5 minutes)
+      const timestampSeconds = parseInt(msgTimestamp, 10);
+      const now = Math.floor(Date.now() / 1000);
+      if (Math.abs(now - timestampSeconds) > 300) {
+        console.error('[RECALL-WEBHOOK] Webhook timestamp too old', { timestampSeconds, now });
+        return NextResponse.json({ error: 'Stale webhook' }, { status: 401 });
+      }
+
+      if (!verifyRecallSignature(rawBody, msgId, msgTimestamp, msgSignature)) {
+        console.error('[RECALL-WEBHOOK] Invalid webhook signature');
         return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
       }
     }
