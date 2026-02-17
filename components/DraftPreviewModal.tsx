@@ -52,6 +52,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [isEditing, setIsEditing] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -594,7 +595,34 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
                     {/* Body */}
                     <div>
-                      <h3 className="text-sm font-medium text-gray-400 mb-2">Email Body</h3>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-sm font-medium text-gray-400">Email Body</h3>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`Subject: ${draft.subject}\n\n${draft.body}`);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                          }}
+                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors"
+                          title="Copy email to clipboard"
+                        >
+                          {copied ? (
+                            <>
+                              <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-green-400">Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              Copy
+                            </>
+                          )}
+                        </button>
+                      </div>
                       <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 whitespace-pre-wrap text-gray-200 font-mono text-sm leading-relaxed">
                         {draft.body}
                       </div>
