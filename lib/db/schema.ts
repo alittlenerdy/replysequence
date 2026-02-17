@@ -251,6 +251,10 @@ export const drafts = pgTable(
     clickedAt: timestamp('clicked_at', { withTimezone: true }), // First click time
     clickCount: integer('click_count').default(0), // Total link clicks
     repliedAt: timestamp('replied_at', { withTimezone: true }), // When recipient replied
+    // User feedback on draft quality
+    userRating: varchar('user_rating', { length: 10 }).$type<'up' | 'down'>(), // thumbs up/down
+    userFeedback: text('user_feedback'), // optional text feedback
+    feedbackAt: timestamp('feedback_at', { withTimezone: true }),
     // Conversational refinement tracking
     refinementCount: integer('refinement_count').default(0),
     lastRefinedAt: timestamp('last_refined_at', { withTimezone: true }),

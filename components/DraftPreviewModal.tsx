@@ -8,6 +8,7 @@ import { DraftQualityBadge } from './ui/DraftQualityBadge';
 import { ConversationalRefine } from './ConversationalRefine';
 import { MeetingSummaryPanel } from './MeetingSummaryPanel';
 import { TemplatePicker } from './TemplatePicker';
+import { DraftFeedback } from './DraftFeedback';
 
 // Hydration-safe date formatting
 function useHydrationSafe() {
@@ -674,6 +675,14 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         />
                       </div>
                     )}
+
+                    {/* User Feedback */}
+                    <DraftFeedback
+                      draftId={draft.id}
+                      initialRating={draft.userRating}
+                      initialFeedback={draft.userFeedback}
+                      onFeedbackSubmitted={onDraftUpdated}
+                    />
 
                     {/* Sent Info with Engagement Tracking */}
                     {draft.status === 'sent' && draft.sentAt ? (

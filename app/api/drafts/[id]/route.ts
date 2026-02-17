@@ -4,6 +4,8 @@ import { db, users, meetings, drafts } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 import { getDraftById, deleteDraft } from '@/lib/dashboard-queries';
 
+type UserRating = 'up' | 'down';
+
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
@@ -66,6 +68,59 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       { error: 'Failed to fetch draft' },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * PATCH /api/drafts/[id] - Submit feedback on a draft (thumbs up/down)
+ */
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: 'Draft ID is required' }, { status: 400 });
+    }
+
+    const isOwner = await verifyDraftOwnership(id, user.id);
+    if (!isOwner) {
+      return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
+    }
+
+    const body = await request.json();
+    const { rating, feedback } = body as { rating?: UserRating | null; feedback?: string };
+
+    // Validate rating
+    if (rating !== undefined && rating !== null && rating !== 'up' && rating !== 'down') {
+      return NextResponse.json({ error: 'Rating must be "up", "down", or null' }, { status: 400 });
+    }
+
+    await db
+      .update(drafts)
+      .set({
+        userRating: rating ?? null,
+        userFeedback: feedback || null,
+        feedbackAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(drafts.id, id));
+
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Draft feedback submitted',
+      draftId: id,
+      rating,
+      hasFeedbackText: !!feedback,
+    }));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('[FEEDBACK-ERROR] Failed to submit feedback:', error);
+    return NextResponse.json({ error: 'Failed to submit feedback' }, { status: 500 });
   }
 }
 
