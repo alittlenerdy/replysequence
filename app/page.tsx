@@ -184,13 +184,20 @@ export default function LandingPage() {
               className="flex flex-wrap gap-4 mb-6 justify-center px-4 sm:px-0"
             >
               <GradientButton
-                href="https://tally.so/r/D4pv0j"
-                external
+                href="/sign-up"
                 showArrow
                 size="lg"
               >
-                Join Beta Waitlist
+                Get Started Free
               </GradientButton>
+              <a
+                href="https://tally.so/r/D4pv0j"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-300 light:text-gray-600 bg-gray-800/50 light:bg-gray-100 hover:bg-gray-700/50 light:hover:bg-gray-200 border border-gray-700 light:border-gray-300 rounded-xl transition-colors"
+              >
+                Request a Demo
+              </a>
             </motion.div>
 
             {/* Value proposition */}
@@ -520,23 +527,22 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
-              Join the <GradientText>Beta Waitlist</GradientText>
+              Ready to <GradientText>Save 10+ Hours</GradientText> Per Week?
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
-              Be among the first to automate your follow-ups. Limited spots available for pilot program.
+              Start generating AI-powered follow-up emails from your meetings today. Free plan includes 5 drafts per month.
             </p>
 
             <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-6 sm:p-12 mx-4 sm:mx-0">
               <GradientButton
-                href="https://tally.so/r/D4pv0j"
-                external
+                href="/sign-up"
                 showArrow
                 size="lg"
               >
-                Join Beta Waitlist
+                Get Started Free
               </GradientButton>
               <p className="text-gray-500 light:text-gray-600 text-xs sm:text-sm mt-6">
-                Takes 30 seconds - Limited to 100 pilot users
+                No credit card required. 5 free drafts per month.
               </p>
             </div>
           </motion.div>
