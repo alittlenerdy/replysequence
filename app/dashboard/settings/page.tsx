@@ -1,11 +1,7 @@
-import { Suspense } from 'react';
-import { currentUser } from '@clerk/nextjs/server';
-import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { IntegrationSettings } from '@/components/dashboard/IntegrationSettings';
 import { EmailPreferencesSettings } from '@/components/dashboard/EmailPreferencesSettings';
 import { AccountManagement } from '@/components/dashboard/AccountManagement';
 import { AICustomization } from '@/components/dashboard/AICustomization';
-import { getDraftStats } from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,35 +10,9 @@ export const metadata = {
   description: 'Manage your integrations, preferences, and account',
 };
 
-function SettingsLoading() {
+export default function SettingsPage() {
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
-            <div className="flex-1">
-              <div className="h-5 w-32 bg-gray-700 light:bg-gray-200 rounded mb-2" />
-              <div className="h-4 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-            </div>
-            <div className="h-9 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-async function SettingsContent() {
-  const [user, stats] = await Promise.all([
-    currentUser(),
-    getDraftStats(),
-  ]);
-  const firstName = user?.firstName || 'there';
-  const pendingDrafts = stats.generated;
-
-  return (
-    <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
+    <>
       <div className="max-w-2xl mx-auto mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">Settings</h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">Manage your integrations, preferences, and account</p>
@@ -53,14 +23,6 @@ async function SettingsContent() {
       </div>
       <AICustomization />
       <AccountManagement />
-    </DashboardShell>
-  );
-}
-
-export default function SettingsPage() {
-  return (
-    <Suspense fallback={<SettingsLoading />}>
-      <SettingsContent />
-    </Suspense>
+    </>
   );
 }

@@ -1,9 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
+import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { userOnboarding } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { DashboardLayoutClient } from '@/components/dashboard/DashboardLayoutClient';
+import { DashboardShell } from '@/components/dashboard/DashboardShell';
+import { getDraftStats } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering - don't cache this layout
 export const dynamic = 'force-dynamic';
@@ -20,43 +23,39 @@ export default async function DashboardLayout({
     redirect('/sign-in');
   }
 
-  // Check onboarding status server-side with error handling
-  let onboardingIncomplete = true;
-  let currentStep = 1;
-
-  try {
-    const [onboarding] = await db
+  // Fetch user info, onboarding status, and draft stats in parallel
+  const [user, onboardingResult, stats] = await Promise.all([
+    currentUser(),
+    db
       .select({
         completedAt: userOnboarding.completedAt,
         currentStep: userOnboarding.currentStep,
       })
       .from(userOnboarding)
       .where(eq(userOnboarding.clerkId, userId))
-      .limit(1);
+      .limit(1)
+      .catch((error) => {
+        console.error('[ONBOARDING-GATE] Database error:', error);
+        return [] as { completedAt: Date | null; currentStep: number }[];
+      }),
+    getDraftStats().catch(() => ({ total: 0, generated: 0, sent: 0, failed: 0, avgCost: 0, avgLatency: 0 })),
+  ]);
 
-    onboardingIncomplete = !onboarding || !onboarding.completedAt;
-    currentStep = onboarding?.currentStep ?? 1;
+  const firstName = user?.firstName || 'there';
+  const pendingDrafts = stats.generated;
 
-    if (onboardingIncomplete) {
-      console.log('[ONBOARDING-GATE] Onboarding incomplete, showing banner:', {
-        userId,
-        hasRecord: !!onboarding,
-        currentStep,
-      });
-    } else {
-      console.log('[ONBOARDING-GATE] User completed onboarding, showing dashboard:', userId);
-    }
-  } catch (error) {
-    console.error('[ONBOARDING-GATE] Database error, defaulting to incomplete:', error);
-    // Default to showing the dashboard with incomplete status on error
-  }
+  const onboarding = onboardingResult[0];
+  const onboardingIncomplete = !onboarding || !onboarding.completedAt;
+  const currentStep = onboarding?.currentStep ?? 1;
 
   return (
     <DashboardLayoutClient
       onboardingIncomplete={onboardingIncomplete}
       onboardingStep={currentStep}
     >
-      {children}
+      <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
+        {children}
+      </DashboardShell>
     </DashboardLayoutClient>
   );
 }

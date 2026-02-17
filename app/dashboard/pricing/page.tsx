@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
 import { ManageSubscriptionButton } from '@/components/ManageSubscriptionButton';
 import { PricingCards } from '@/components/PricingCards';
-import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -81,7 +80,6 @@ export default async function DashboardPricingPage() {
     redirect('/pricing');
   }
 
-  const firstName = user.firstName || 'there';
   let currentTier: SubscriptionTier = 'free';
   let hasStripeCustomer = false;
 
@@ -101,7 +99,7 @@ export default async function DashboardPricingPage() {
   const isPaidUser = currentTier !== 'free' && hasStripeCustomer;
 
   return (
-    <DashboardShell firstName={firstName} pendingDrafts={0}>
+    <>
       {/* Hero Section */}
       <section className="pb-4">
         <div className="max-w-5xl mx-auto text-center">
@@ -126,6 +124,6 @@ export default async function DashboardPricingPage() {
         currentTier={currentTier}
         isLoggedIn={true}
       />
-    </DashboardShell>
+    </>
   );
 }
