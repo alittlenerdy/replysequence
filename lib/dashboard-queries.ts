@@ -238,6 +238,131 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
 }
 
 /**
+ * Meeting detail with all related data
+ */
+export interface MeetingDetail {
+  id: string;
+  platform: string;
+  topic: string | null;
+  hostEmail: string;
+  startTime: Date | null;
+  endTime: Date | null;
+  duration: number | null;
+  participants: Array<{ user_id?: string; user_name: string; email?: string }>;
+  status: string;
+  summary: string | null;
+  keyDecisions: Array<{ decision: string; context?: string }> | null;
+  keyTopics: Array<{ topic: string; duration?: string }> | null;
+  actionItems: Array<{ owner: string; task: string; deadline: string }> | null;
+  summaryGeneratedAt: Date | null;
+  processingStep: string | null;
+  processingProgress: number | null;
+  processingLogs: Array<{ timestamp: string; step: string; message: string; duration_ms?: number }> | null;
+  createdAt: Date;
+  transcript: {
+    id: string;
+    wordCount: number | null;
+    source: string;
+    status: string;
+    createdAt: Date;
+  } | null;
+  drafts: DraftWithMeeting[];
+}
+
+/**
+ * Fetch a single meeting with all related data (drafts, transcript)
+ * IMPORTANT: Filters by current user for multi-tenant isolation
+ */
+export async function getMeetingDetail(meetingId: string): Promise<MeetingDetail | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  // Fetch meeting with ownership check
+  const [meeting] = await db
+    .select()
+    .from(meetings)
+    .where(and(eq(meetings.id, meetingId), eq(meetings.userId, userId)))
+    .limit(1);
+
+  if (!meeting) return null;
+
+  // Fetch transcript and drafts in parallel
+  const [transcriptResult, draftsResult] = await Promise.all([
+    db
+      .select({
+        id: transcripts.id,
+        wordCount: transcripts.wordCount,
+        source: transcripts.source,
+        status: transcripts.status,
+        createdAt: transcripts.createdAt,
+      })
+      .from(transcripts)
+      .where(eq(transcripts.meetingId, meetingId))
+      .limit(1),
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        body: drafts.body,
+        status: drafts.status,
+        model: drafts.model,
+        inputTokens: drafts.inputTokens,
+        outputTokens: drafts.outputTokens,
+        costUsd: drafts.costUsd,
+        generationDurationMs: drafts.generationDurationMs,
+        sentAt: drafts.sentAt,
+        sentTo: drafts.sentTo,
+        createdAt: drafts.createdAt,
+        meetingId: drafts.meetingId,
+        meetingTopic: meetings.topic,
+        meetingHostEmail: meetings.hostEmail,
+        meetingStartTime: meetings.startTime,
+        meetingPlatform: meetings.platform,
+        trackingId: drafts.trackingId,
+        openedAt: drafts.openedAt,
+        openCount: drafts.openCount,
+        lastOpenedAt: drafts.lastOpenedAt,
+        clickedAt: drafts.clickedAt,
+        clickCount: drafts.clickCount,
+        repliedAt: drafts.repliedAt,
+        qualityScore: drafts.qualityScore,
+        toneScore: drafts.toneScore,
+        completenessScore: drafts.completenessScore,
+        personalizationScore: drafts.personalizationScore,
+        accuracyScore: drafts.accuracyScore,
+        gradingNotes: drafts.gradingNotes,
+      })
+      .from(drafts)
+      .leftJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(eq(drafts.meetingId, meetingId))
+      .orderBy(desc(drafts.createdAt)),
+  ]);
+
+  return {
+    id: meeting.id,
+    platform: meeting.platform,
+    topic: meeting.topic,
+    hostEmail: meeting.hostEmail,
+    startTime: meeting.startTime,
+    endTime: meeting.endTime,
+    duration: meeting.duration,
+    participants: (meeting.participants as MeetingDetail['participants']) || [],
+    status: meeting.status,
+    summary: meeting.summary,
+    keyDecisions: meeting.keyDecisions as MeetingDetail['keyDecisions'],
+    keyTopics: meeting.keyTopics as MeetingDetail['keyTopics'],
+    actionItems: meeting.actionItems as MeetingDetail['actionItems'],
+    summaryGeneratedAt: meeting.summaryGeneratedAt,
+    processingStep: meeting.processingStep,
+    processingProgress: meeting.processingProgress,
+    processingLogs: meeting.processingLogs as MeetingDetail['processingLogs'],
+    createdAt: meeting.createdAt,
+    transcript: transcriptResult[0] || null,
+    drafts: draftsResult as DraftWithMeeting[],
+  };
+}
+
+/**
  * Update a draft's content
  */
 export async function updateDraft(
