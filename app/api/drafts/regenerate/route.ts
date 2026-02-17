@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { meetingId } = body;
+    const { meetingId, templateId } = body;
 
     if (!meetingId) {
       return NextResponse.json({ error: 'meetingId is required' }, { status: 400 });
@@ -62,10 +62,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No transcript found for this meeting' }, { status: 404 });
     }
 
-    // Generate draft
+    // Generate draft (with optional template)
     const result = await generateDraft({
       meetingId,
       transcriptId: transcript.id,
+      templateId: templateId || undefined,
       context: {
         meetingTopic: meeting.topic || 'Meeting',
         meetingDate: meeting.startTime

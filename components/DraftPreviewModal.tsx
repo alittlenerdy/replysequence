@@ -7,6 +7,7 @@ import { StatusBadge } from './ui/StatusBadge';
 import { DraftQualityBadge } from './ui/DraftQualityBadge';
 import { ConversationalRefine } from './ConversationalRefine';
 import { MeetingSummaryPanel } from './MeetingSummaryPanel';
+import { TemplatePicker } from './TemplatePicker';
 
 // Hydration-safe date formatting
 function useHydrationSafe() {
@@ -53,6 +54,8 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [isSending, setIsSending] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
@@ -234,6 +237,33 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
     }
   };
 
+  const handleRegenerate = async (templateId: string) => {
+    setIsRegenerating(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/drafts/regenerate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meetingId: draft.meetingId, templateId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to regenerate draft');
+      }
+
+      setShowTemplatePicker(false);
+      onDraftUpdated();
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to regenerate draft');
+    } finally {
+      setIsRegenerating(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop with blur - hidden on mobile since modal is full screen */}
@@ -250,7 +280,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
-                  {isRefining ? 'AI Refine' : isEditing ? 'Edit Draft' : 'Draft Preview'}
+                  {showTemplatePicker ? 'Regenerate Draft' : isRefining ? 'AI Refine' : isEditing ? 'Edit Draft' : 'Draft Preview'}
                 </h2>
                 <StatusBadge status={draft.status} />
                 {draft.qualityScore !== null && (
@@ -339,7 +369,20 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
             <>
               {/* Content */}
               <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
-                {isRefining ? (
+                {showTemplatePicker ? (
+                  <div className="space-y-4">
+                    {error && (
+                      <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-lg">
+                        {error}
+                      </div>
+                    )}
+                    <TemplatePicker
+                      onSelect={handleRegenerate}
+                      onCancel={() => { setShowTemplatePicker(false); setError(null); }}
+                      isRegenerating={isRegenerating}
+                    />
+                  </div>
+                ) : isRefining ? (
                   <ConversationalRefine
                     draftId={draft.id}
                     currentSubject={draft.subject}
@@ -582,7 +625,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
               </div>
 
               {/* Footer */}
-              {!isEditing && !isRefining ? (
+              {!isEditing && !isRefining && !showTemplatePicker ? (
                 <div className="px-6 py-4 border-t border-gray-700 bg-gray-800/50 rounded-b-2xl">
                   {sendSuccess ? (
                     <div className="flex items-center justify-center gap-2 text-green-400 py-2">
@@ -665,7 +708,17 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                             className="w-full px-3 py-2 text-sm text-white bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-500"
                           />
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            onClick={() => setShowTemplatePicker(true)}
+                            className="px-4 py-2 text-sm font-medium text-orange-400 bg-orange-500/10 border border-orange-500/30 rounded-lg hover:bg-orange-500/20 transition-colors flex items-center gap-2"
+                            title="Regenerate with a different template"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span className="hidden sm:inline">Regenerate</span>
+                          </button>
                           <button
                             onClick={() => setIsRefining(true)}
                             className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors flex items-center gap-2"
