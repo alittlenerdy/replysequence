@@ -1,12 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Loader2, Check } from 'lucide-react';
+import { Sparkles, Loader2, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface AIPreferences {
   aiTone: string;
   aiCustomInstructions: string;
   aiSignature: string;
+}
+
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  meetingType: string | null;
+  promptInstructions: string;
+  icon: string;
+  isSystem: boolean;
+  isDefault: boolean;
 }
 
 const TONE_OPTIONS = [
@@ -183,6 +194,273 @@ export function AICustomization() {
           )}
         </button>
       </div>
+
+      {/* Email Templates Section */}
+      <TemplateManager />
     </div>
+  );
+}
+
+const MEETING_TYPE_LABELS: Record<string, string> = {
+  sales_call: 'Sales',
+  internal_sync: 'Internal',
+  client_review: 'Client',
+  technical_discussion: 'Technical',
+  general: 'General',
+};
+
+function TemplateManager() {
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadTemplates() {
+      try {
+        const res = await fetch('/api/templates');
+        if (res.ok) {
+          const data = await res.json();
+          setTemplates(data.templates);
+        }
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadTemplates();
+  }, []);
+
+  async function handleDelete(id: string) {
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/templates?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setTemplates((prev) => prev.filter((t) => t.id !== id));
+      }
+    } catch {
+      // silent
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  async function handleCreate(data: { name: string; meetingType: string; promptInstructions: string }) {
+    try {
+      const res = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        const { template } = await res.json();
+        setTemplates((prev) => [...prev, { ...template, isSystem: false, isDefault: false }]);
+        setShowCreateForm(false);
+      }
+    } catch {
+      // silent
+    }
+  }
+
+  const systemTemplates = templates.filter((t) => t.isSystem);
+  const customTemplates = templates.filter((t) => !t.isSystem);
+
+  return (
+    <div className="mt-8 pt-8 border-t border-gray-700/50 light:border-gray-200">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between group"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+            <FileText className="w-4 h-4 text-blue-400" />
+          </div>
+          <div className="text-left">
+            <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Templates</h3>
+            <p className="text-xs text-gray-500">
+              {systemTemplates.length} built-in, {customTemplates.length} custom
+            </p>
+          </div>
+        </div>
+        {expanded ? (
+          <ChevronUp className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+        )}
+      </button>
+
+      {expanded && (
+        <div className="mt-4 space-y-3">
+          {loading ? (
+            <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
+              <div className="h-4 w-32 bg-gray-700 light:bg-gray-200 rounded" />
+            </div>
+          ) : (
+            <>
+              {/* System Templates */}
+              <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-4 light:shadow-sm">
+                <h4 className="text-sm font-medium text-gray-400 light:text-gray-500 mb-3">Built-in Templates</h4>
+                <div className="space-y-2">
+                  {systemTemplates.map((t) => (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-800/50 light:bg-gray-50"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-white light:text-gray-900 truncate">{t.name}</div>
+                        <div className="text-xs text-gray-500 truncate">{t.description}</div>
+                      </div>
+                      {t.meetingType && (
+                        <span className="shrink-0 ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-700/50 light:bg-gray-200 text-gray-400 light:text-gray-500">
+                          {MEETING_TYPE_LABELS[t.meetingType] || t.meetingType}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Templates */}
+              {customTemplates.length > 0 && (
+                <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-4 light:shadow-sm">
+                  <h4 className="text-sm font-medium text-gray-400 light:text-gray-500 mb-3">Your Templates</h4>
+                  <div className="space-y-2">
+                    {customTemplates.map((t) => (
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-800/50 light:bg-gray-50"
+                      >
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-white light:text-gray-900 truncate">{t.name}</div>
+                          <div className="text-xs text-gray-500 truncate line-clamp-1">
+                            {t.promptInstructions.substring(0, 80)}...
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDelete(t.id)}
+                          disabled={deleting === t.id}
+                          className="shrink-0 ml-2 p-1.5 text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                          title="Delete template"
+                        >
+                          {deleting === t.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Create Template */}
+              {showCreateForm ? (
+                <CreateTemplateForm
+                  onSubmit={handleCreate}
+                  onCancel={() => setShowCreateForm(false)}
+                />
+              ) : (
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-blue-400 border border-dashed border-gray-600 light:border-gray-300 rounded-xl hover:border-blue-500/50 hover:bg-blue-500/5 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Create Custom Template
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CreateTemplateForm({
+  onSubmit,
+  onCancel,
+}: {
+  onSubmit: (data: { name: string; meetingType: string; promptInstructions: string }) => void;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [meetingType, setMeetingType] = useState('');
+  const [promptInstructions, setPromptInstructions] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name || !promptInstructions) return;
+    setSaving(true);
+    await onSubmit({ name, meetingType, promptInstructions });
+    setSaving(false);
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gray-900/50 light:bg-white border border-blue-500/30 rounded-xl p-4 space-y-3 light:shadow-sm"
+    >
+      <h4 className="text-sm font-medium text-white light:text-gray-900">New Template</h4>
+
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Template name"
+        maxLength={100}
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
+
+      <select
+        value={meetingType}
+        onChange={(e) => setMeetingType(e.target.value)}
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      >
+        <option value="">All meeting types</option>
+        <option value="sales_call">Sales Calls</option>
+        <option value="internal_sync">Internal Syncs</option>
+        <option value="client_review">Client Reviews</option>
+        <option value="technical_discussion">Technical Discussions</option>
+        <option value="general">General</option>
+      </select>
+
+      <textarea
+        value={promptInstructions}
+        onChange={(e) => setPromptInstructions(e.target.value)}
+        placeholder="Instructions for the AI. E.g., 'Focus on budget discussions and decision timelines. Include a pricing summary section.'"
+        rows={4}
+        maxLength={2000}
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
+      <div className="text-xs text-gray-600 text-right">{promptInstructions.length}/2000</div>
+
+      <div className="flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={saving || !name || !promptInstructions}
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+        >
+          {saving ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            'Create Template'
+          )}
+        </button>
+      </div>
+    </form>
   );
 }

@@ -977,3 +977,38 @@ export const emailConnections = pgTable(
 
 export type EmailConnection = typeof emailConnections.$inferSelect;
 export type NewEmailConnection = typeof emailConnections.$inferInsert;
+
+// Template section type for custom template sections
+export interface TemplateSectionDef {
+  name: string;
+  description: string;
+  required: boolean;
+}
+
+// Email templates table - stores user-created custom templates
+export const emailTemplates = pgTable(
+  'email_templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 255 }).notNull(),
+    description: text('description'),
+    meetingType: varchar('meeting_type', { length: 50 }), // null = all types
+    promptInstructions: text('prompt_instructions').notNull(),
+    sections: jsonb('sections').$type<TemplateSectionDef[]>(),
+    icon: varchar('icon', { length: 50 }).default('general'),
+    isDefault: boolean('is_default').notNull().default(false),
+    isSystem: boolean('is_system').notNull().default(false), // true = built-in, false = user-created
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('email_templates_user_id_idx').on(table.userId),
+    index('email_templates_meeting_type_idx').on(table.meetingType),
+    index('email_templates_is_default_idx').on(table.userId, table.isDefault),
+  ]
+);
+
+export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type NewEmailTemplate = typeof emailTemplates.$inferInsert;

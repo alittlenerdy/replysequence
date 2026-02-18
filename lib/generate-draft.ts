@@ -27,8 +27,9 @@ import type { ActionItem } from './db/schema';
 // NOTE: Airtable sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
-import { getTemplateById } from './meeting-templates';
+import { getTemplateById, getDefaultTemplate, type MeetingTemplate } from './meeting-templates';
 import { checkDraftLimit, logUsage, getUserIdFromMeeting } from './usage-limits';
+import { emailTemplates } from './db';
 
 // Draft generation configuration
 const MAX_RETRIES = 3;
@@ -160,8 +161,36 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     signals: detectionResult.signals,
   });
 
-  // Look up template if provided
-  const template = input.templateId ? getTemplateById(input.templateId) : undefined;
+  // Look up template - use provided templateId or auto-select based on meeting type
+  let template: MeetingTemplate | undefined;
+  if (input.templateId) {
+    // First check built-in templates, then check database for custom templates
+    template = getTemplateById(input.templateId);
+    if (!template) {
+      try {
+        const [customTemplate] = await db
+          .select()
+          .from(emailTemplates)
+          .where(eq(emailTemplates.id, input.templateId))
+          .limit(1);
+        if (customTemplate) {
+          template = {
+            id: customTemplate.id,
+            name: customTemplate.name,
+            description: customTemplate.description || '',
+            meetingTypes: customTemplate.meetingType ? [customTemplate.meetingType as typeof detectionResult.meetingType] : [],
+            focusInstructions: customTemplate.promptInstructions,
+            icon: (customTemplate.icon as MeetingTemplate['icon']) || 'general',
+          };
+        }
+      } catch {
+        // Fall through to auto-select
+      }
+    }
+  }
+  if (!template) {
+    template = getDefaultTemplate(detectionResult.meetingType);
+  }
 
   // Look up user's AI preferences
   let userAiTone: string | null = null;
