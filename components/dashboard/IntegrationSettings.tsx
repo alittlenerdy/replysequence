@@ -403,22 +403,11 @@ export function IntegrationSettings() {
   return (
     <div className="max-w-2xl mx-auto">
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
-                <div className="flex-1">
-                  <div className="h-5 w-32 bg-gray-700 light:bg-gray-200 rounded mb-2" />
-                  <div className="h-4 w-48 bg-gray-700 light:bg-gray-200 rounded" />
-                </div>
-                <div className="h-9 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-              </div>
-            </div>
-          ))}
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
         </div>
       ) : (
-        <div className="animate-card-fade-in">
+        <div>
       {/* Error Banner */}
       {errorBanner && (
         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
@@ -523,7 +512,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-colors ${
+              className={`border rounded-xl p-4 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -535,14 +524,14 @@ export function IntegrationSettings() {
             >
               <div className="flex items-center gap-4">
                 {/* Platform Icon */}
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
+                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
                 {/* Platform Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
+                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                         statusColor === 'red'
@@ -824,7 +813,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-colors ${
+              className={`border rounded-xl p-4 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -835,13 +824,13 @@ export function IntegrationSettings() {
               }`}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
+                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
+                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                         statusColor === 'red'
@@ -1017,7 +1006,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-colors ${
+              className={`border rounded-xl p-4 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -1028,13 +1017,13 @@ export function IntegrationSettings() {
               }`}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
+                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
+                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                         statusColor === 'red'
@@ -1210,7 +1199,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-6 transition-colors ${
+              className={`border rounded-xl p-4 transition-colors ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -1221,13 +1210,13 @@ export function IntegrationSettings() {
               }`}
             >
               <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
+                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
                   {platform.icon}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-lg font-semibold text-white light:text-gray-900">{platform.name}</h3>
+                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
                     {isConnected && (
                       <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                         statusColor === 'red'

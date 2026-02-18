@@ -22,7 +22,7 @@ interface MeetingSummaryPanelProps {
 export function MeetingSummaryPanel({ meetingId }: MeetingSummaryPanelProps) {
   const [data, setData] = useState<MeetingSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     async function fetchSummary() {

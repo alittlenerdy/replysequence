@@ -575,10 +575,10 @@ export function DraftsTable({
                 <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Quality
                 </th>
-                <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[160px] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="w-[60px] px-2 py-3">
+                <th className="w-[70px] px-2 py-3">
                 </th>
               </tr>
             </thead>
@@ -652,7 +652,7 @@ export function DraftsTable({
                       {renderUserRating(draft)}
                     </div>
                   </td>
-                  <td className="hidden lg:table-cell px-4 py-3 pr-6 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
+                  <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
                   <td className="px-3 py-3 whitespace-nowrap text-sm font-medium">

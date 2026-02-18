@@ -304,6 +304,18 @@ export function AnalyticsDashboard() {
         />
       </div>
 
+      {/* Scroll hint - visible when there's chart content below */}
+      {hasData && (
+        <div className="flex justify-center -mt-2 -mb-2">
+          <div className="flex flex-col items-center gap-0.5 text-gray-500 animate-bounce" style={{ animationDuration: '2s' }}>
+            <span className="text-[10px] uppercase tracking-wider">Charts below</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* AI Usage Stats Row */}
       {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
         <div className="grid grid-cols-3 gap-4">

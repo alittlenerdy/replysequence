@@ -602,7 +602,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                           <>
                             Save
                             <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
-                              {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+S
+                              {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'}+S
                             </kbd>
                           </>
                         )}
@@ -611,16 +611,6 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {/* Meeting Info */}
-                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                      <h3 className="text-sm font-medium text-gray-400 mb-2">Meeting</h3>
-                      <p className="text-white font-medium">{draft.meetingTopic || 'Untitled Meeting'}</p>
-                      <p className="text-sm text-gray-400 mt-1">{formatDate(draft.meetingStartTime)}</p>
-                    </div>
-
-                    {/* Meeting Summary */}
-                    <MeetingSummaryPanel meetingId={draft.meetingId} />
-
                     {/* Subject */}
                     <div>
                       <h3 className="text-sm font-medium text-gray-400 mb-2">Subject</h3>
@@ -658,10 +648,20 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </button>
                       </div>
                       <div
-                        className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 text-gray-200 text-sm leading-relaxed prose prose-invert max-w-none prose-p:my-2 prose-ul:list-disc prose-ul:pl-5 prose-ol:list-decimal prose-ol:pl-5 prose-blockquote:border-l-4 prose-blockquote:border-gray-500 prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-700 prose-code:px-1 prose-code:rounded prose-code:font-mono prose-code:text-sm"
+                        className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 text-gray-200 prose prose-invert max-w-none prose-p:my-2 prose-ul:list-disc prose-ul:pl-5 prose-ol:list-decimal prose-ol:pl-5 prose-blockquote:border-l-4 prose-blockquote:border-gray-500 prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-700 prose-code:px-1 prose-code:rounded prose-code:font-mono prose-code:text-sm"
                         dangerouslySetInnerHTML={{ __html: ensureHtml(draft.body) }}
                       />
                     </div>
+
+                    {/* Meeting Info */}
+                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <h3 className="text-sm font-medium text-gray-400 mb-2">Meeting</h3>
+                      <p className="text-white font-medium">{draft.meetingTopic || 'Untitled Meeting'}</p>
+                      <p className="text-sm text-gray-400 mt-1">{formatDate(draft.meetingStartTime)}</p>
+                    </div>
+
+                    {/* Meeting Summary (collapsed by default) */}
+                    <MeetingSummaryPanel meetingId={draft.meetingId} />
 
                     {/* Metadata */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-700">
@@ -906,15 +906,17 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </div>
                       )}
 
-                      {/* Sender account indicator - only show when user has connected email */}
-                      {senderEmail && (
-                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
+                      {/* Sender account indicator */}
+                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        {senderEmail ? (
                           <span>Sending from <span className="text-gray-300">{senderEmail}</span></span>
-                        </div>
-                      )}
+                        ) : (
+                          <span>Sending via <span className="text-gray-400">noreply@replysequence.com</span> &middot; <a href="/dashboard/settings" className="text-blue-400 hover:text-blue-300">Connect email</a></span>
+                        )}
+                      </div>
 
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1">
@@ -931,7 +933,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-4 py-2 text-sm font-medium text-orange-300 bg-orange-500/20 border border-orange-500/40 rounded-lg hover:bg-orange-500/30 transition-colors flex items-center gap-2"
+                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
                             title="Regenerate with a different template"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -975,7 +977,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 </svg>
                                 Send
                                 <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
-                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+\u21B5
+                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'}+Enter
                                 </kbd>
                               </>
                             )}
