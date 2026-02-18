@@ -407,7 +407,7 @@ export function IntegrationSettings() {
           <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
         </div>
       ) : (
-        <div>
+        <div className="animate-card-fade-in">
       {/* Error Banner */}
       {errorBanner && (
         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
@@ -1468,7 +1468,8 @@ export function IntegrationSettings() {
         </div>
       )}
 
-      {/* Pro Tip */}
+      {/* Pro Tip - only show when no connections yet */}
+      {hasNoConnections && (
       <div className="mt-8 p-5 bg-blue-500/10 light:bg-blue-50 border border-blue-500/20 light:border-blue-200 rounded-xl">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-lg bg-blue-500/20 light:bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -1482,12 +1483,6 @@ export function IntegrationSettings() {
           </div>
         </div>
       </div>
-
-      {/* Connection Summary */}
-      {connectedCount > 0 && (
-        <div className="mt-6 text-center text-sm text-gray-400 light:text-gray-500">
-          {connectedCount} platform{connectedCount !== 1 ? 's' : ''} connected
-        </div>
       )}
         </div>
       )}
