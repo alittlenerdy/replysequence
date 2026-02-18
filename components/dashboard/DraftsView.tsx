@@ -12,8 +12,6 @@ import { SkeletonStats } from '../ui/SkeletonCard';
 import { SkeletonTable } from '../ui/SkeletonTable';
 import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
-import { TimeSavingsWidget } from './TimeSavingsWidget';
-import { UpcomingMeetingsWidget } from './UpcomingMeetingsWidget';
 import { OnboardingChecklist } from './OnboardingChecklist';
 import { UsageLimitBanner } from './UsageLimitBanner';
 
@@ -141,9 +139,9 @@ export function DraftsView({
       <AnimatePresence mode="popLayout">
         {processingMeetings.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="space-y-4"
           >
             <h2 className="text-lg font-semibold text-white light:text-gray-900 flex items-center gap-2">
@@ -171,26 +169,11 @@ export function DraftsView({
       {/* Free tier usage limit indicator */}
       <UsageLimitBanner />
 
-      {/* Stats and Time Savings */}
+      {/* Stats */}
       {isLoading && drafts.length === 0 ? (
         <SkeletonStats />
       ) : (
-        <div className="space-y-6">
-          <DashboardStats stats={stats} />
-          {/* Widgets Grid - Time Savings and Upcoming Meetings */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <TimeSavingsWidget
-              initialData={{
-                totalDrafts: stats.total,
-                sentDrafts: stats.sent,
-                minutesPerDraft: 15,
-                hourlyRate: 100,
-              }}
-              autoFetch={false}
-            />
-            <UpcomingMeetingsWidget />
-          </div>
-        </div>
+        <DashboardStats stats={stats} />
       )}
 
       {/* Error State */}

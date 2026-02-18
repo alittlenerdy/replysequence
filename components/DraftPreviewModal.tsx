@@ -63,7 +63,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [recipientEmail, setRecipientEmail] = useState(draft.meetingHostEmail || '');
+  const [recipientEmail, setRecipientEmail] = useState('');
   const [suggestedRecipients, setSuggestedRecipients] = useState<SuggestedRecipient[]>([]);
   const [loadingRecipients, setLoadingRecipients] = useState(false);
 
@@ -170,6 +170,13 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
     fetchSuggestedRecipients();
   }, [draft.meetingId, draft.status]);
+
+  // Auto-fill recipient from suggested recipients (first non-host attendee)
+  useEffect(() => {
+    if (!recipientEmail && suggestedRecipients.length > 0) {
+      setRecipientEmail(suggestedRecipients[0].email);
+    }
+  }, [suggestedRecipients, recipientEmail]);
 
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
@@ -338,7 +345,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
       {/* Modal - Full screen on mobile, centered dialog on desktop */}
       <div className="min-h-full md:flex md:items-center md:justify-center md:p-4">
-        <div className="relative w-full min-h-screen md:min-h-0 md:max-w-3xl bg-gray-900 md:border md:border-gray-700 md:rounded-2xl shadow-2xl transform transition-all animate-modal-in">
+        <div className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-gray-900 md:border md:border-gray-700 md:rounded-2xl shadow-2xl transform transition-all animate-modal-in">
           {/* Header - sticky on mobile for easy close access */}
           <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gray-800/95 backdrop-blur-sm md:rounded-t-2xl">
             <div className="flex items-center justify-between gap-2">
@@ -916,7 +923,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 </svg>
                                 Send
                                 <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
-                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+\u21B5
+                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+\u23CE
                                 </kbd>
                               </>
                             )}

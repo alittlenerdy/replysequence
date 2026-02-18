@@ -19,6 +19,8 @@ export interface SendEmailParams {
   to: string;
   subject: string;
   body: string;
+  /** Pre-composed HTML body - bypasses plain-text-to-HTML conversion */
+  html?: string;
   from?: string;
   replyTo?: string;
   /** Optional identifier for UTM tracking (e.g., meetingId or draftId) */
@@ -41,6 +43,7 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
     to,
     subject,
     body,
+    html,
     from = DEFAULT_FROM_EMAIL,
     replyTo,
     utmContent,
@@ -70,7 +73,8 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
 
     // Add signature footer if enabled
     const bodyWithFooter = includeSignature ? appendPlainTextFooter(body, utmContent) : body;
-    const htmlBody = formatBodyAsHtml(body, includeSignature, utmContent);
+    // Use pre-composed HTML if provided, otherwise convert plain text to HTML
+    const htmlBody = html || formatBodyAsHtml(body, includeSignature, utmContent);
 
     const { data, error } = await resend.emails.send({
       from,

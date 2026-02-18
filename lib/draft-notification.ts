@@ -87,7 +87,8 @@ export async function sendDraftReadyNotification(params: DraftNotificationParams
     await sendEmail({
       to: user.email,
       subject: `Draft ready: ${draftSubject.slice(0, 60)}`,
-      body,
+      body: `New draft ready for review: ${meetingTopic || 'Untitled Meeting'} - ${draftSubject}`,
+      html: body,
       includeSignature: false,
     });
 

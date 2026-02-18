@@ -199,7 +199,7 @@ export function DraftsTable({
     switch (platform) {
       case 'zoom':
         return (
-          <div className="relative group/icon">
+          <div className="w-8 h-8 relative group/icon">
             <div className="absolute inset-0 bg-blue-500/30 rounded-lg blur-md group-hover/icon:bg-blue-400/50 transition-all duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
@@ -211,7 +211,7 @@ export function DraftsTable({
         );
       case 'google_meet':
         return (
-          <div className="relative group/icon">
+          <div className="w-8 h-8 relative group/icon">
             <div className="absolute inset-0 bg-green-500/30 rounded-lg blur-md group-hover/icon:bg-green-400/50 transition-all duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
@@ -224,7 +224,7 @@ export function DraftsTable({
         );
       case 'microsoft_teams':
         return (
-          <div className="relative group/icon">
+          <div className="w-8 h-8 relative group/icon">
             <div className="absolute inset-0 bg-purple-500/30 rounded-lg blur-md group-hover/icon:bg-purple-400/50 transition-all duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
@@ -237,7 +237,7 @@ export function DraftsTable({
         );
       default:
         return (
-          <div className="relative group/icon">
+          <div className="w-8 h-8 relative group/icon">
             <div className="absolute inset-0 bg-gray-500/30 rounded-lg blur-md group-hover/icon:bg-gray-400/50 transition-all duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 shadow-lg shadow-gray-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">

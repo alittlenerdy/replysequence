@@ -84,7 +84,7 @@ function AnimatedNumber({ value, decimals = 1 }: { value: number; decimals?: num
     spring.set(value);
   }, [spring, value]);
 
-  return <motion.span>{display}</motion.span>;
+  return <motion.span className="tabular-nums">{display}</motion.span>;
 }
 
 function AnimatedDollar({ value }: { value: number }) {
@@ -102,7 +102,7 @@ function AnimatedDollar({ value }: { value: number }) {
     spring.set(value);
   }, [spring, value]);
 
-  return <motion.span>{display}</motion.span>;
+  return <motion.span className="tabular-nums">{display}</motion.span>;
 }
 
 // Sparkline visualization of savings over time
