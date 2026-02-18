@@ -125,7 +125,14 @@ export function MeetingsListView() {
         <div>
           <h2 className="text-2xl font-bold text-white light:text-gray-900">Meetings</h2>
           <p className="text-gray-400 light:text-gray-500 text-sm mt-1">
-            {total > 0 ? `${total} meeting${total !== 1 ? 's' : ''} captured` : 'No meetings captured yet'}
+            {total > 0
+              ? `${total} meeting${total !== 1 ? 's' : ''} recorded`
+              : 'No meetings recorded yet'}
+            {total > 0 && (
+              <span className="text-gray-500 light:text-gray-400">
+                {' '}&middot; each meeting may generate multiple drafts
+              </span>
+            )}
           </p>
         </div>
 

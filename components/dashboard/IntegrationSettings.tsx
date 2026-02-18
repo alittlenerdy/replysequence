@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X } from 'lucide-react';
+import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, ChevronDown } from 'lucide-react';
 import { checkPlatformConnections, type PlatformConnectionDetails } from '@/app/actions/checkPlatformConnections';
 
 interface PlatformConfig {
@@ -229,6 +229,25 @@ export function IntegrationSettings() {
 
   const [disconnectConfirm, setDisconnectConfirm] = useState<string | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['meeting']));
+
+  const toggleSection = (sectionKey: string) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(sectionKey)) {
+        next.delete(sectionKey);
+      } else {
+        next.add(sectionKey);
+      }
+      return next;
+    });
+  };
+
+  const getSectionCounts = (category: PlatformConfig['category']) => {
+    const sectionPlatforms = platforms.filter(p => p.category === category);
+    const connected = sectionPlatforms.filter(p => connectionStatus[p.id]).length;
+    return { connected, total: sectionPlatforms.length };
+  };
 
   const handleDisconnect = async (platform: PlatformConfig) => {
     // If not confirming yet, show confirmation
@@ -340,8 +359,35 @@ export function IntegrationSettings() {
       )}
 
       {/* Meeting Platforms */}
-      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-3">Meeting Platforms</h3>
-      <div className="space-y-4 mb-8">
+      <div className="mb-4">
+        <button
+          onClick={() => toggleSection('meeting')}
+          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-white light:text-gray-900">Meeting Platforms</h3>
+            {(() => {
+              const { connected, total } = getSectionCounts('meeting');
+              return (
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  connected > 0
+                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
+                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
+                }`}>
+                  {connected}/{total} connected
+                </span>
+              );
+            })()}
+          </div>
+          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+            expandedSections.has('meeting') ? 'rotate-180' : ''
+          }`} />
+        </button>
+        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          expandedSections.has('meeting') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}>
+          <div className="overflow-hidden">
+      <div className="space-y-4 pb-4">
         {platforms.filter(p => p.category === 'meeting').map((platform) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
@@ -502,13 +548,43 @@ export function IntegrationSettings() {
           );
         })}
       </div>
+          </div>
+        </div>
+      </div>
 
       {/* Calendar Integrations */}
-      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-3">Calendar Integrations</h3>
+      <div className="mb-4">
+        <button
+          onClick={() => toggleSection('calendar')}
+          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-white light:text-gray-900">Calendar Integrations</h3>
+            {(() => {
+              const { connected, total } = getSectionCounts('calendar');
+              return (
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  connected > 0
+                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
+                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
+                }`}>
+                  {connected}/{total} connected
+                </span>
+              );
+            })()}
+          </div>
+          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+            expandedSections.has('calendar') ? 'rotate-180' : ''
+          }`} />
+        </button>
+        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          expandedSections.has('calendar') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}>
+          <div className="overflow-hidden">
       <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
         Connect your calendar to sync upcoming meetings and enable proactive follow-up preparation.
       </p>
-      <div className="space-y-4 mb-8">
+      <div className="space-y-4 pb-4">
         {platforms.filter(p => p.category === 'calendar').map((platform) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
@@ -665,13 +741,43 @@ export function IntegrationSettings() {
           );
         })}
       </div>
+          </div>
+        </div>
+      </div>
 
       {/* Email Accounts */}
-      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-3">Email Accounts</h3>
+      <div className="mb-4">
+        <button
+          onClick={() => toggleSection('email')}
+          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Accounts</h3>
+            {(() => {
+              const { connected, total } = getSectionCounts('email');
+              return (
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  connected > 0
+                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
+                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
+                }`}>
+                  {connected}/{total} connected
+                </span>
+              );
+            })()}
+          </div>
+          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+            expandedSections.has('email') ? 'rotate-180' : ''
+          }`} />
+        </button>
+        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          expandedSections.has('email') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}>
+          <div className="overflow-hidden">
       <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
         Connect your email to send follow-ups from your real address instead of noreply@resend.dev.
       </p>
-      <div className="space-y-4 mb-8">
+      <div className="space-y-4 pb-4">
         {platforms.filter(p => p.category === 'email').map((platform) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
@@ -828,13 +934,43 @@ export function IntegrationSettings() {
           );
         })}
       </div>
+          </div>
+        </div>
+      </div>
 
       {/* CRM Integrations */}
-      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-3">CRM Integrations</h3>
+      <div className="mb-4">
+        <button
+          onClick={() => toggleSection('crm')}
+          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-white light:text-gray-900">CRM Integrations</h3>
+            {(() => {
+              const { connected, total } = getSectionCounts('crm');
+              return (
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  connected > 0
+                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
+                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
+                }`}>
+                  {connected}/{total} connected
+                </span>
+              );
+            })()}
+          </div>
+          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+            expandedSections.has('crm') ? 'rotate-180' : ''
+          }`} />
+        </button>
+        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          expandedSections.has('crm') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}>
+          <div className="overflow-hidden">
       <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
         Connect your CRM to automatically sync sent emails and meeting summaries.
       </p>
-      <div className="space-y-4 mb-8">
+      <div className="space-y-4 pb-4">
         {platforms.filter(p => p.category === 'crm').map((platform) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
@@ -1000,6 +1136,9 @@ export function IntegrationSettings() {
             </div>
           );
         })}
+      </div>
+          </div>
+        </div>
       </div>
 
       {/* Pro Tip */}
