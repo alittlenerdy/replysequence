@@ -5,7 +5,7 @@
  */
 
 import { db, webhookFailures, deadLetterQueue } from '@/lib/db';
-import { eq, and, lte, isNotNull } from 'drizzle-orm';
+import { eq, and, or, lte, gt, isNotNull, count, sql } from 'drizzle-orm';
 import type {
   MeetingPlatform,
   WebhookFailure,
@@ -399,35 +399,69 @@ export async function retryDeadLetter(deadLetterId: string): Promise<WebhookFail
  * Get webhook metrics for monitoring
  */
 export async function getWebhookMetrics(): Promise<WebhookMetrics> {
-  const [failures, deadLetters] = await Promise.all([
-    db.select().from(webhookFailures),
-    db.select().from(deadLetterQueue),
+  // Use SQL aggregation instead of loading all rows into memory
+  const [
+    failuresByPlatform,
+    deadLettersByPlatform,
+    globalStats,
+  ] = await Promise.all([
+    // Per-platform failure counts
+    db.select({
+      platform: webhookFailures.platform,
+      total: count(),
+      failed: count(sql`CASE WHEN ${webhookFailures.status} IN ('pending', 'retrying') THEN 1 END`),
+    })
+    .from(webhookFailures)
+    .groupBy(webhookFailures.platform),
+
+    // Per-platform unresolved dead letters
+    db.select({
+      platform: deadLetterQueue.platform,
+      deadLetter: count(),
+    })
+    .from(deadLetterQueue)
+    .where(eq(deadLetterQueue.resolved, 'false'))
+    .groupBy(deadLetterQueue.platform),
+
+    // Global aggregates
+    db.select({
+      total: count(),
+      successful: count(sql`CASE WHEN ${webhookFailures.status} = 'completed' THEN 1 END`),
+      failed: count(sql`CASE WHEN ${webhookFailures.status} IN ('pending', 'retrying') THEN 1 END`),
+      retried: count(sql`CASE WHEN ${webhookFailures.attempts} > 1 THEN 1 END`),
+    })
+    .from(webhookFailures),
   ]);
 
+  // Total unresolved dead letters
+  const [deadLetterTotal] = await db
+    .select({ count: count() })
+    .from(deadLetterQueue)
+    .where(eq(deadLetterQueue.resolved, 'false'));
+
+  // Build per-platform map
   const platforms: MeetingPlatform[] = ['zoom', 'google_meet', 'microsoft_teams'];
+  const failureMap = new Map(failuresByPlatform.map(r => [r.platform, r]));
+  const deadLetterMap = new Map(deadLettersByPlatform.map(r => [r.platform, r]));
+
   const byPlatform = {} as WebhookMetrics['byPlatform'];
-
   for (const platform of platforms) {
-    const platformFailures = failures.filter((f) => f.platform === platform);
-    const platformDeadLetters = deadLetters.filter((d) => d.platform === platform);
-
+    const f = failureMap.get(platform);
+    const d = deadLetterMap.get(platform);
     byPlatform[platform] = {
-      total: platformFailures.length,
-      failed: platformFailures.filter((f) => f.status === 'pending' || f.status === 'retrying').length,
-      deadLetter: platformDeadLetters.filter((d) => d.resolved === 'false').length,
+      total: f?.total ?? 0,
+      failed: f?.failed ?? 0,
+      deadLetter: d?.deadLetter ?? 0,
     };
   }
 
-  const retried = failures.filter((f) => f.attempts > 1).length;
-  const successful = failures.filter((f) => f.status === 'completed').length;
-  const failed = failures.filter((f) => f.status === 'pending' || f.status === 'retrying').length;
-
+  const stats = globalStats[0];
   return {
-    total: failures.length,
-    successful,
-    failed,
-    retried,
-    deadLetter: deadLetters.filter((d) => d.resolved === 'false').length,
+    total: stats?.total ?? 0,
+    successful: stats?.successful ?? 0,
+    failed: stats?.failed ?? 0,
+    retried: stats?.retried ?? 0,
+    deadLetter: deadLetterTotal?.count ?? 0,
     byPlatform,
   };
 }
