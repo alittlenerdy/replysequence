@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections } from '@/lib/db/schema';
+import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections, airtableConnections } from '@/lib/db/schema';
 import { eq, count } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -81,6 +81,7 @@ export async function GET() {
       meetingsResult,
       onboardingResult,
       hubspotResult,
+      airtableResult,
     ] = await Promise.all([
       // Check calendar connection
       db
@@ -113,6 +114,12 @@ export async function GET() {
         .select({ count: count() })
         .from(hubspotConnections)
         .where(eq(hubspotConnections.userId, user.id)),
+
+      // Check Airtable CRM connection
+      db
+        .select({ count: count() })
+        .from(airtableConnections)
+        .where(eq(airtableConnections.userId, user.id)),
     ]);
 
     // Check platform connection status
@@ -121,7 +128,7 @@ export async function GET() {
     const hasDraftGenerated = draftsResult[0].count > 0;
     const hasMeetingCaptured = meetingsResult[0].count > 0;
     const hasEmailPreference = onboardingResult[0]?.emailPreference != null;
-    const hasCrmConnected = hubspotResult[0].count > 0;
+    const hasCrmConnected = hubspotResult[0].count > 0 || airtableResult[0].count > 0;
 
     // Build checklist items
     const items: ChecklistItem[] = [

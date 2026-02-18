@@ -236,6 +236,7 @@ export async function POST(request: NextRequest) {
       platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
       draftSubject: draft.subject,
       draftBody: draft.body,
+      userId: dbUser.id,
     }).then((crmResult) => {
       console.log(JSON.stringify({
         level: 'info',

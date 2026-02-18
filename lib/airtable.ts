@@ -2,35 +2,72 @@
  * Airtable CRM Integration
  *
  * Handles contact matching and meeting logging to Airtable.
+ * Supports per-user credentials (from DB) with fallback to env vars.
  * Non-blocking - email delivery takes priority over CRM logging.
  */
 
 import Airtable from 'airtable';
+import { eq } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { airtableConnections } from '@/lib/db/schema';
+import { decrypt } from '@/lib/encryption';
 
-// Configuration from environment
+// Environment fallback configuration
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-
-// Table names
-const CONTACTS_TABLE = 'Contacts';
-const MEETINGS_TABLE = 'Meetings';
 
 // Retry configuration
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 1000;
 
-// Initialize Airtable base (lazy)
-let base: Airtable.Base | null = null;
+/**
+ * Airtable credentials (per-user or from env)
+ */
+interface AirtableCredentials {
+  apiKey: string;
+  baseId: string;
+  contactsTable: string;
+  meetingsTable: string;
+}
 
-function getBase(): Airtable.Base {
-  if (!base) {
-    if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-      throw new Error('Airtable credentials not configured');
+/**
+ * Create an Airtable base instance from credentials
+ */
+function createBase(creds: AirtableCredentials): Airtable.Base {
+  Airtable.configure({ apiKey: creds.apiKey });
+  return Airtable.base(creds.baseId);
+}
+
+/**
+ * Get per-user Airtable credentials, falling back to env vars
+ */
+async function getCredentials(userId?: string): Promise<AirtableCredentials | null> {
+  // Try per-user credentials first
+  if (userId) {
+    const connection = await db.query.airtableConnections.findFirst({
+      where: eq(airtableConnections.userId, userId),
+    });
+    if (connection) {
+      return {
+        apiKey: decrypt(connection.apiKeyEncrypted),
+        baseId: connection.baseId,
+        contactsTable: connection.contactsTable,
+        meetingsTable: connection.meetingsTable,
+      };
     }
-    Airtable.configure({ apiKey: AIRTABLE_API_KEY });
-    base = Airtable.base(AIRTABLE_BASE_ID);
   }
-  return base;
+
+  // Fall back to environment variables
+  if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+    return {
+      apiKey: AIRTABLE_API_KEY,
+      baseId: AIRTABLE_BASE_ID,
+      contactsTable: 'Contacts',
+      meetingsTable: 'Meetings',
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -60,7 +97,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Check if Airtable is configured
+ * Check if Airtable is configured (env vars only - for backward compat)
  */
 export function isAirtableConfigured(): boolean {
   return !!(AIRTABLE_API_KEY && AIRTABLE_BASE_ID);
@@ -107,25 +144,19 @@ export interface CrmSyncResult {
 
 /**
  * Search for a contact by email address
- *
- * @param email - Email address to search for
- * @returns Contact record or null if not found
  */
-export async function searchContactByEmail(
+async function searchContactByEmail(
+  creds: AirtableCredentials,
   email: string
 ): Promise<AirtableContact | null> {
-  if (!isAirtableConfigured()) {
-    log('warn', 'Airtable not configured, skipping contact search');
-    return null;
-  }
-
   const normalizedEmail = email.toLowerCase().trim();
+  const base = createBase(creds);
 
   log('info', 'Searching for contact by email', { email: normalizedEmail });
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const records = await getBase()(CONTACTS_TABLE)
+      const records = await base(creds.contactsTable)
         .select({
           filterByFormula: `LOWER({Email}) = '${normalizedEmail}'`,
           maxRecords: 1,
@@ -178,17 +209,12 @@ export async function searchContactByEmail(
 
 /**
  * Create a meeting record in Airtable
- *
- * @param data - Meeting data to create
- * @returns Record ID or null on failure
  */
-export async function createMeetingRecord(
+async function createMeetingRecord(
+  creds: AirtableCredentials,
   data: MeetingData
 ): Promise<string | null> {
-  if (!isAirtableConfigured()) {
-    log('warn', 'Airtable not configured, skipping meeting record creation');
-    return null;
-  }
+  const base = createBase(creds);
 
   log('info', 'Creating meeting record', {
     meetingTitle: data.meetingTitle,
@@ -196,49 +222,30 @@ export async function createMeetingRecord(
     hasContact: !!data.contactId,
   });
 
-  // Map platform to display name
   const platformDisplayName = {
     zoom: 'Zoom',
     microsoft_teams: 'Microsoft Teams',
     google_meet: 'Google Meet',
   }[data.platform] || data.platform;
 
-  // Build fields object
-  // Using Airtable.FieldSet type with explicit cast for flexibility
   const fields: Airtable.FieldSet = {
     'Meeting Title': data.meetingTitle,
-    'Meeting Date': data.meetingDate.toISOString().split('T')[0], // YYYY-MM-DD format
+    'Meeting Date': data.meetingDate.toISOString().split('T')[0],
     'Platform': platformDisplayName,
-    'Draft Subject': data.draftSubject.substring(0, 255), // Truncate if too long
+    'Draft Subject': data.draftSubject.substring(0, 255),
     'Draft Body': data.draftBody,
     'Email Sent': data.emailSent,
   };
 
-  // Add optional fields
-  if (data.duration) {
-    fields['Duration'] = data.duration;
-  }
-
-  if (data.zoomMeetingId) {
-    fields['Zoom Meeting ID'] = data.zoomMeetingId;
-  }
-
-  if (data.teamsMeetingId) {
-    fields['Teams Meeting ID'] = data.teamsMeetingId;
-  }
-
-  if (data.googleMeetId) {
-    fields['Google Meet ID'] = data.googleMeetId;
-  }
-
-  // Link to contact if found
-  if (data.contactId) {
-    fields['Contact'] = [data.contactId];
-  }
+  if (data.duration) fields['Duration'] = data.duration;
+  if (data.zoomMeetingId) fields['Zoom Meeting ID'] = data.zoomMeetingId;
+  if (data.teamsMeetingId) fields['Teams Meeting ID'] = data.teamsMeetingId;
+  if (data.googleMeetId) fields['Google Meet ID'] = data.googleMeetId;
+  if (data.contactId) fields['Contact'] = [data.contactId];
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const record = await getBase()(MEETINGS_TABLE).create(fields);
+      const record = await base(creds.meetingsTable).create(fields);
 
       log('info', 'Meeting record created', {
         meetingRecordId: record.getId(),
@@ -272,23 +279,19 @@ export async function createMeetingRecord(
 
 /**
  * Update a contact's last meeting date
- *
- * @param contactId - Airtable contact record ID
- * @param date - Date of the meeting
  */
-export async function updateContactLastMeeting(
+async function updateContactLastMeeting(
+  creds: AirtableCredentials,
   contactId: string,
   date: Date
 ): Promise<boolean> {
-  if (!isAirtableConfigured()) {
-    return false;
-  }
+  const base = createBase(creds);
 
   log('info', 'Updating contact last meeting date', { contactId });
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      await getBase()(CONTACTS_TABLE).update(contactId, {
+      await base(creds.contactsTable).update(contactId, {
         'Last Meeting Date': date.toISOString().split('T')[0],
       });
 
@@ -321,10 +324,8 @@ export async function updateContactLastMeeting(
 /**
  * Sync a sent email to Airtable CRM
  * This is the main entry point called after email is sent.
+ * Looks up per-user Airtable credentials, falls back to env vars.
  * Non-blocking - failures are logged but don't throw.
- *
- * @param params - Sync parameters
- * @returns Sync result (success/failure status)
  */
 export async function syncSentEmailToCrm(params: {
   recipientEmail: string;
@@ -335,6 +336,7 @@ export async function syncSentEmailToCrm(params: {
   draftSubject: string;
   draftBody: string;
   platformMeetingId?: string;
+  userId?: string;
 }): Promise<CrmSyncResult> {
   const {
     recipientEmail,
@@ -345,9 +347,11 @@ export async function syncSentEmailToCrm(params: {
     draftSubject,
     draftBody,
     platformMeetingId,
+    userId,
   } = params;
 
-  if (!isAirtableConfigured()) {
+  const creds = await getCredentials(userId);
+  if (!creds) {
     log('info', 'Airtable not configured, skipping CRM sync');
     return { success: true, contactFound: false };
   }
@@ -356,11 +360,12 @@ export async function syncSentEmailToCrm(params: {
     recipientEmail,
     meetingTitle,
     platform,
+    source: userId ? 'per-user' : 'env',
   });
 
   try {
     // Step 1: Search for contact by email
-    const contact = await searchContactByEmail(recipientEmail);
+    const contact = await searchContactByEmail(creds, recipientEmail);
 
     // Step 2: Create meeting record (with or without contact link)
     const meetingData: MeetingData = {
@@ -377,11 +382,19 @@ export async function syncSentEmailToCrm(params: {
       googleMeetId: platform === 'google_meet' ? platformMeetingId : undefined,
     };
 
-    const meetingRecordId = await createMeetingRecord(meetingData);
+    const meetingRecordId = await createMeetingRecord(creds, meetingData);
 
     // Step 3: Update contact's last meeting date if contact was found
     if (contact && meetingRecordId) {
-      await updateContactLastMeeting(contact.id, meetingDate);
+      await updateContactLastMeeting(creds, contact.id, meetingDate);
+    }
+
+    // Update lastSyncAt for per-user connections
+    if (userId && meetingRecordId) {
+      await db
+        .update(airtableConnections)
+        .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+        .where(eq(airtableConnections.userId, userId));
     }
 
     const result: CrmSyncResult = {
