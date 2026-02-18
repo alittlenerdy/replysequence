@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 // Generate positions across entire viewport
@@ -24,9 +25,15 @@ const mintGradients = [
 ];
 
 export default function FloatingGradients() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div
-      className="pointer-events-none"
+      className={`pointer-events-none transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}
       style={{
         position: 'fixed',
         top: 0,

@@ -1,8 +1,16 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 export default function AnimatedBackground() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="animated-gradient-bg" aria-hidden="true">
+    <div className={`animated-gradient-bg transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true">
       {/* Additional gradient orbs for depth */}
       <div
         className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-30"

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 
 // Particle configuration
-const PARTICLE_COUNT = 48;
+const PARTICLE_COUNT = 24;
 
 interface Particle {
   id: number;
@@ -20,8 +20,8 @@ interface Particle {
 // Generate particles with target positions and edge origins - deterministic to avoid hydration mismatch
 function generateParticles(): Particle[] {
   const particles: Particle[] = [];
-  const cols = 8;
-  const rows = 6;
+  const cols = 6;
+  const rows = 4;
 
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     const col = i % cols;
@@ -291,6 +291,12 @@ export default function HeroAnimation() {
   const [particles] = useState(generateParticles);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerRect, setContainerRect] = useState({ left: 0, top: 0, width: 0, height: 0 });
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 150);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Get container position for calculating viewport-relative particle origins
   useEffect(() => {
@@ -397,7 +403,7 @@ export default function HeroAnimation() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-[400px] lg:h-[500px] overflow-visible">
+    <div ref={containerRef} className={`relative w-full h-[400px] lg:h-[500px] overflow-visible transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
       {/* Glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-mint/5 via-transparent to-neon/5 rounded-3xl" />
 

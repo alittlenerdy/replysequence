@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
@@ -27,26 +27,25 @@ import {
 // Static particle positions - deterministic to avoid hydration mismatch
 const STATIC_PARTICLES = [
   { left: 8, top: 15, xMove: -6, duration: 3.4, delay: 0.2 },
-  { left: 18, top: 35, xMove: 7, duration: 4.8, delay: 0.9 },
   { left: 28, top: 55, xMove: -4, duration: 5.2, delay: 1.3 },
-  { left: 38, top: 12, xMove: 8, duration: 3.9, delay: 0.5 },
   { left: 48, top: 72, xMove: -8, duration: 6.1, delay: 1.7 },
-  { left: 58, top: 42, xMove: 5, duration: 4.3, delay: 0.4 },
   { left: 68, top: 85, xMove: -3, duration: 5.7, delay: 1.1 },
-  { left: 78, top: 25, xMove: 9, duration: 3.6, delay: 0.7 },
   { left: 88, top: 62, xMove: -7, duration: 4.9, delay: 1.5 },
-  { left: 95, top: 8, xMove: 4, duration: 5.4, delay: 0.1 },
   { left: 12, top: 78, xMove: 6, duration: 4.1, delay: 1.8 },
-  { left: 32, top: 48, xMove: -5, duration: 5.9, delay: 0.6 },
   { left: 52, top: 92, xMove: 3, duration: 3.7, delay: 1.2 },
-  { left: 72, top: 38, xMove: -9, duration: 4.6, delay: 0.3 },
   { left: 92, top: 68, xMove: 2, duration: 6.3, delay: 1.4 },
 ];
 
 // Floating particles for hero - deterministic to avoid hydration mismatch
 function FloatingParticles() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className={`absolute inset-0 overflow-hidden pointer-events-none transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
       {STATIC_PARTICLES.map((particle, i) => (
         <motion.div
           key={i}

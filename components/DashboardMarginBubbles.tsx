@@ -30,6 +30,12 @@ const STATIC_BUBBLES = [
 export default function DashboardMarginBubbles() {
   const bubbles = STATIC_BUBBLES;
   const [isLight, setIsLight] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Check for light mode (dark is now default)
   useEffect(() => {
@@ -98,7 +104,7 @@ export default function DashboardMarginBubbles() {
 
   return (
     <div
-      className="pointer-events-none"
+      className={`pointer-events-none transition-opacity duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}
       style={{
         position: 'fixed',
         top: 0,
