@@ -23,6 +23,9 @@ function formatDateSafe(date: Date | string | null, isMounted: boolean, options?
   return new Date(date).toLocaleDateString('en-US', options || { month: 'short', day: 'numeric' });
 }
 
+// Import ensureHtml to normalize plain text to HTML for the editor and preview
+import { ensureHtml } from './RichTextEditor';
+
 // Dynamic import TipTap editor to reduce initial bundle size
 const RichTextEditor = dynamic(
   () => import('./RichTextEditor').then((mod) => mod.RichTextEditor),
@@ -73,14 +76,14 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [suggestedRecipients, setSuggestedRecipients] = useState<SuggestedRecipient[]>([]);
   const [loadingRecipients, setLoadingRecipients] = useState(false);
 
-  // Edit state
+  // Edit state - normalize body to HTML for the rich text editor
   const [editSubject, setEditSubject] = useState(draft.subject);
-  const [editBody, setEditBody] = useState(draft.body);
+  const [editBody, setEditBody] = useState(() => ensureHtml(draft.body));
 
-  // Handle AI refinement completion
+  // Handle AI refinement completion - normalize body to HTML
   const handleRefineComplete = useCallback((newSubject: string, newBody: string) => {
     setEditSubject(newSubject);
-    setEditBody(newBody);
+    setEditBody(ensureHtml(newBody));
     setIsRefining(false);
     setSaveSuccess(true);
     setTimeout(() => {
@@ -89,11 +92,11 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
     }, 1500);
   }, [onDraftUpdated]);
 
-  // Reset edit state when entering edit mode
+  // Reset edit state when entering edit mode - normalize body to HTML
   useEffect(() => {
     if (isEditing) {
       setEditSubject(draft.subject);
-      setEditBody(draft.body);
+      setEditBody(ensureHtml(draft.body));
       console.log('[EDIT-1] Opening draft editor, id:', draft.id);
     }
   }, [isEditing, draft.id, draft.subject, draft.body]);
@@ -347,14 +350,33 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop with blur - hidden on mobile since modal is full screen */}
+      {/* Uses onMouseDown instead of onClick to prevent stealing focus from inputs */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity hidden md:block"
-        onClick={onClose}
+        onMouseDown={(e) => {
+          // Only close if the backdrop itself was clicked (not a child element)
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+        aria-hidden="true"
       />
 
       {/* Modal - Full screen on mobile, centered dialog on desktop */}
-      <div className="min-h-full md:flex md:items-center md:justify-center md:p-4">
-        <div className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-gray-900 md:border md:border-gray-700 md:rounded-2xl shadow-2xl transform transition-all animate-modal-in">
+      <div
+        className="min-h-full md:flex md:items-center md:justify-center md:p-4"
+        onMouseDown={(e) => {
+          // Close only when clicking the wrapper area itself (outside the modal dialog),
+          // not when clicking inside the modal dialog.
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+      >
+        <div
+          className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-gray-900 md:border md:border-gray-700 md:rounded-2xl shadow-2xl transform transition-all animate-modal-in"
+          onMouseDown={(e) => e.stopPropagation()}
+        >
           {/* Header - sticky on mobile for easy close access */}
           <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gray-800/95 backdrop-blur-sm md:rounded-t-2xl">
             <div className="flex items-center justify-between gap-2">
@@ -635,9 +657,10 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                           )}
                         </button>
                       </div>
-                      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 whitespace-pre-wrap text-gray-200 font-mono text-sm leading-relaxed">
-                        {draft.body}
-                      </div>
+                      <div
+                        className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 text-gray-200 text-sm leading-relaxed prose prose-invert max-w-none prose-p:my-2 prose-ul:list-disc prose-ul:pl-5 prose-ol:list-decimal prose-ol:pl-5 prose-blockquote:border-l-4 prose-blockquote:border-gray-500 prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-700 prose-code:px-1 prose-code:rounded prose-code:font-mono prose-code:text-sm"
+                        dangerouslySetInnerHTML={{ __html: ensureHtml(draft.body) }}
+                      />
                     </div>
 
                     {/* Metadata */}

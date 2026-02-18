@@ -154,6 +154,15 @@ const categoryDescriptions = {
   crm: 'Log every follow-up email to your CRM automatically. No manual data entry.',
 };
 
+// Stagger class lookup for card animations
+const staggerClasses = [
+  'animate-fade-in-up-stagger',
+  'animate-fade-in-up-stagger-1',
+  'animate-fade-in-up-stagger-2',
+  'animate-fade-in-up-stagger-3',
+  'animate-fade-in-up-stagger-4',
+];
+
 export default function IntegrationsPage() {
   const categories = ['meeting', 'email', 'crm'] as const;
 
@@ -163,7 +172,7 @@ export default function IntegrationsPage() {
 
       {/* Hero */}
       <section className="pt-32 pb-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
             Connect Your{' '}
             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -185,13 +194,14 @@ export default function IntegrationsPage() {
       </section>
 
       {/* Integration Categories */}
-      {categories.map((category) => {
+      {categories.map((category, categoryIndex) => {
         const categoryIntegrations = integrations.filter((i) => i.category === category);
+        const isFewCards = categoryIntegrations.length < 3;
 
         return (
           <section key={category} className="py-12 px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="mb-8">
+              <div className="mb-8 animate-fade-in-up">
                 <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900 mb-2">
                   {categoryLabels[category]}
                 </h2>
@@ -200,13 +210,20 @@ export default function IntegrationsPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categoryIntegrations.map((integration) => (
+              <div className={`grid grid-cols-1 gap-6 ${
+                isFewCards
+                  ? 'md:grid-cols-2 max-w-4xl mx-auto'
+                  : 'md:grid-cols-2 lg:grid-cols-3'
+              }`}>
+                {categoryIntegrations.map((integration, i) => (
                   <div
                     key={integration.name}
-                    className={`relative rounded-2xl p-6 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300 transition-all ${
+                    className={`relative rounded-2xl p-6 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
+                      staggerClasses[i] || staggerClasses[staggerClasses.length - 1]
+                    } ${
                       integration.status === 'coming_soon' ? 'opacity-70' : ''
                     }`}
+                    style={{ animationDelay: `${categoryIndex * 0.15 + i * 0.1}s` }}
                   >
                     {integration.status === 'coming_soon' && (
                       <div className="absolute top-4 right-4">
@@ -233,8 +250,8 @@ export default function IntegrationsPage() {
 
                     {/* Features */}
                     <ul className="space-y-2">
-                      {integration.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm">
+                      {integration.features.map((feature, fi) => (
+                        <li key={fi} className="flex items-start gap-2 text-sm">
                           <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
                           <span className="text-gray-300 light:text-gray-700">{feature}</span>
                         </li>
@@ -251,7 +268,7 @@ export default function IntegrationsPage() {
       {/* How It Works */}
       <section className="py-16 px-4 border-t border-gray-800 light:border-gray-200">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900 text-center mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900 text-center mb-12 animate-fade-in-up">
             How Integration Works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -271,8 +288,12 @@ export default function IntegrationsPage() {
                 title: 'Drafts Appear Instantly',
                 description: 'AI-generated follow-up emails appear in your dashboard. Review, edit, and send — or let auto-send handle it.',
               },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
+            ].map((item, i) => (
+              <div
+                key={item.step}
+                className={`text-center ${staggerClasses[i] || staggerClasses[staggerClasses.length - 1]}`}
+                style={{ animationDelay: `${i * 0.15}s` }}
+              >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-lg mb-4">
                   {item.step}
                 </div>
@@ -290,7 +311,7 @@ export default function IntegrationsPage() {
 
       {/* CTA */}
       <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
           <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
             Ready to connect your tools?
           </h2>

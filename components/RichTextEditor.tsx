@@ -238,6 +238,37 @@ export function RichTextEditor({
 }
 
 /**
+ * Check if a string contains HTML tags
+ */
+export function isHtml(text: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(text);
+}
+
+/**
+ * Convert plain text to HTML paragraphs for TipTap editor.
+ * If the content is already HTML, return it as-is.
+ * Splits on double newlines into <p> blocks, converts single newlines to <br>.
+ */
+export function ensureHtml(content: string): string {
+  if (!content || isHtml(content)) {
+    return content;
+  }
+
+  // Plain text: split into paragraphs on double newlines
+  const paragraphs = content.split(/\n{2,}/);
+  return paragraphs
+    .map((p) => {
+      const escaped = p
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      // Convert single newlines within a paragraph to <br>
+      return `<p>${escaped.replace(/\n/g, '<br>')}</p>`;
+    })
+    .join('');
+}
+
+/**
  * Convert HTML to plain text for email sending
  */
 export function htmlToPlainText(html: string): string {

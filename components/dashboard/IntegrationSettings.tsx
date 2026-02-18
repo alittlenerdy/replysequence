@@ -263,27 +263,25 @@ export function IntegrationSettings() {
   const connectedCount = Object.values(connectionStatus).filter(Boolean).length;
   const hasNoConnections = connectedCount === 0;
 
-  if (loading) {
-    return (
-      <div className="max-w-2xl space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
-              <div className="flex-1">
-                <div className="h-5 w-32 bg-gray-700 light:bg-gray-200 rounded mb-2" />
-                <div className="h-4 w-48 bg-gray-700 light:bg-gray-200 rounded" />
-              </div>
-              <div className="h-9 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-2xl mx-auto">
+      {loading ? (
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
+                <div className="flex-1">
+                  <div className="h-5 w-32 bg-gray-700 light:bg-gray-200 rounded mb-2" />
+                  <div className="h-4 w-48 bg-gray-700 light:bg-gray-200 rounded" />
+                </div>
+                <div className="h-9 w-24 bg-gray-700 light:bg-gray-200 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="animate-card-fade-in">
       {/* Error Banner */}
       {errorBanner && (
         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
@@ -1023,6 +1021,8 @@ export function IntegrationSettings() {
       {connectedCount > 0 && (
         <div className="mt-6 text-center text-sm text-gray-400 light:text-gray-500">
           {connectedCount} platform{connectedCount !== 1 ? 's' : ''} connected
+        </div>
+      )}
         </div>
       )}
     </div>

@@ -226,7 +226,7 @@ export function AnalyticsDashboard() {
   const emailsSparkline = analytics.dailyEmails.map(d => d.count);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -366,7 +366,7 @@ export function AnalyticsDashboard() {
         <>
           {/* ROI Calculator + Email Engagement */}
           {analytics.emailsGenerated > 0 && (
-            <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-6`}>
+            <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
               <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
               {analytics.emailsSent > 0 && (
                 <EmailEngagement engagement={analytics.engagement} />
@@ -375,7 +375,7 @@ export function AnalyticsDashboard() {
           )}
 
           {/* Activity Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <ActivityChart
               data={analytics.dailyMeetings}
               title="Meetings"
@@ -391,7 +391,7 @@ export function AnalyticsDashboard() {
           </div>
 
           {/* Platform, Meeting Type & Funnel */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <PlatformChart data={analytics.platformBreakdown} />
             {analytics.meetingTypeBreakdown.length > 0 ? (
               <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
@@ -407,7 +407,7 @@ export function AnalyticsDashboard() {
 
           {/* Email Funnel (shown separately when meeting type chart is present) */}
           {analytics.meetingTypeBreakdown.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <EmailFunnel
                 total={analytics.emailFunnel.total}
                 ready={analytics.emailFunnel.ready}
