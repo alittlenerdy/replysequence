@@ -175,15 +175,24 @@ async function hubspotFetch(
     ...options.headers,
   };
 
+  let rateLimitRetries = 0;
+  const MAX_RATE_LIMIT_RETRIES = 3;
+
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(url, { ...options, headers });
 
-      // Handle rate limiting
+      // Handle rate limiting with separate counter to prevent infinite loops
       if (response.status === 429) {
+        rateLimitRetries++;
+        if (rateLimitRetries > MAX_RATE_LIMIT_RETRIES) {
+          log('error', 'HubSpot rate limit retries exhausted', { endpoint, rateLimitRetries });
+          return response;
+        }
         const retryAfter = parseInt(response.headers.get('Retry-After') || '1', 10);
-        log('warn', 'HubSpot rate limited, waiting', { retryAfter, attempt });
+        log('warn', 'HubSpot rate limited, waiting', { retryAfter, attempt, rateLimitRetries });
         await sleep(retryAfter * 1000);
+        attempt--; // Don't consume an attempt for rate limits
         continue;
       }
 
@@ -306,6 +315,65 @@ export async function searchHubSpotContactByEmail(
     return result;
   } catch (error) {
     log('error', 'HubSpot contact search error', {
+      email: normalizedEmail,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}
+
+/**
+ * Create a contact in HubSpot when one doesn't exist
+ */
+export async function createHubSpotContact(
+  accessToken: string,
+  email: string,
+  firstName?: string,
+  lastName?: string
+): Promise<HubSpotContact | null> {
+  const normalizedEmail = email.toLowerCase().trim();
+
+  log('info', 'Creating HubSpot contact', { email: normalizedEmail });
+
+  try {
+    const properties: Record<string, string> = { email: normalizedEmail };
+    if (firstName) properties.firstname = firstName;
+    if (lastName) properties.lastname = lastName;
+
+    const response = await hubspotFetch(
+      accessToken,
+      '/crm/v3/objects/contacts',
+      {
+        method: 'POST',
+        body: JSON.stringify({ properties }),
+      }
+    );
+
+    if (response.status === 409) {
+      // Contact already exists (race condition) — search again
+      log('info', 'HubSpot contact already exists, searching again', { email: normalizedEmail });
+      return searchHubSpotContactByEmail(accessToken, normalizedEmail);
+    }
+
+    if (!response.ok) {
+      const error = await response.text();
+      log('error', 'HubSpot contact creation failed', { error, email: normalizedEmail });
+      return null;
+    }
+
+    const data = await response.json();
+    const contact: HubSpotContact = {
+      id: data.id,
+      email: data.properties.email,
+      firstName: data.properties.firstname,
+      lastName: data.properties.lastname,
+      company: data.properties.company,
+    };
+
+    log('info', 'HubSpot contact created', { contactId: contact.id, email: contact.email });
+    return contact;
+  } catch (error) {
+    log('error', 'HubSpot contact creation error', {
       email: normalizedEmail,
       error: error instanceof Error ? error.message : String(error),
     });
@@ -438,8 +506,13 @@ export async function syncSentEmailToHubSpot(
   });
 
   try {
-    // Step 1: Search for contact by email
-    const contact = await searchHubSpotContactByEmail(accessToken, recipientEmail);
+    // Step 1: Search for contact by email, create if not found
+    let contact = await searchHubSpotContactByEmail(accessToken, recipientEmail);
+
+    if (!contact) {
+      log('info', 'Contact not found, creating in HubSpot', { recipientEmail });
+      contact = await createHubSpotContact(accessToken, recipientEmail);
+    }
 
     // Step 2: Create meeting engagement
     const meetingData: HubSpotMeetingData = {

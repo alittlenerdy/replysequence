@@ -317,8 +317,13 @@ export async function POST(request: NextRequest) {
                   draftId,
                   error: refreshError instanceof Error ? refreshError.message : String(refreshError),
                 }));
-                // Skip sync if token refresh fails — don't throw
+                // Skip sync if token refresh fails — surface error to user
                 accessToken = '';
+                hubspotDetails = {
+                  synced: false,
+                  contactFound: false,
+                  error: 'HubSpot token expired. Please reconnect in Settings.',
+                };
               }
             }
 

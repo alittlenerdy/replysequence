@@ -194,12 +194,25 @@ export function IntegrationSettings() {
   // Track "now" in state to avoid hydration mismatch with relative times
   const [nowMs, setNowMs] = useState(0);
 
-  // Show error from URL params (e.g., email conflict on OAuth callback)
+  // Show success/error from URL params (e.g., OAuth callback results)
   useEffect(() => {
     const error = searchParams.get('error');
     const message = searchParams.get('message');
-    if (error && message) {
-      setErrorBanner(message);
+    const success = searchParams.get('success');
+
+    if (error) {
+      const errorMessages: Record<string, string> = {
+        hubspot_connection_failed: 'HubSpot connection failed. Please try again.',
+        hubspot_missing_code: 'HubSpot authorization was cancelled.',
+        hubspot_missing_scope_meetings_write: 'HubSpot connected but missing meetings permission. Please reconnect.',
+        hubspot_invalid_state: 'HubSpot connection expired. Please try again.',
+      };
+      setErrorBanner(message || errorMessages[error] || `Connection error: ${error}`);
+    }
+
+    if (success === 'hubspot_connected') {
+      setSuccessBanner('HubSpot connected successfully.');
+      setTimeout(() => setSuccessBanner(null), 3000);
     }
   }, [searchParams]);
 
