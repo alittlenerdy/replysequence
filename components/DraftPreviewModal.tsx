@@ -458,15 +458,10 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                   <p className="text-gray-400">This will send the email to:</p>
                   <p className="text-white font-medium">{recipientEmail}</p>
                   <p className="text-sm text-gray-500">Subject: {editSubject || draft.subject}</p>
-                  {senderEmail ? (
+                  {senderEmail && (
                     <p className="text-xs text-gray-500">
                       From: <span className="text-gray-300">{senderEmail}</span>
                       <span className="ml-1 text-gray-600">via {senderProvider === 'gmail' ? 'Gmail' : senderProvider === 'outlook' ? 'Outlook' : senderProvider}</span>
-                    </p>
-                  ) : (
-                    <p className="text-xs text-gray-500">
-                      From: <span className="text-gray-300">noreply@replysequence.com</span>
-                      <span className="ml-1 text-gray-600">via ReplySequence</span>
                     </p>
                   )}
                 </div>
@@ -888,17 +883,15 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </div>
                       )}
 
-                      {/* Sender account indicator */}
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        {senderEmail ? (
+                      {/* Sender account indicator - only show when user has connected email */}
+                      {senderEmail && (
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
                           <span>Sending from <span className="text-gray-300">{senderEmail}</span></span>
-                        ) : (
-                          <span>Sending from <span className="text-gray-300">noreply@replysequence.com</span></span>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1">
@@ -915,13 +908,13 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-4 py-2 text-sm font-medium text-orange-400 bg-orange-500/10 border border-orange-500/30 rounded-lg hover:bg-orange-500/20 transition-colors flex items-center gap-2"
+                            className="px-4 py-2 text-sm font-medium text-orange-300 bg-orange-500/20 border border-orange-500/40 rounded-lg hover:bg-orange-500/30 transition-colors flex items-center gap-2"
                             title="Regenerate with a different template"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            <span className="hidden sm:inline">Regenerate</span>
+                            Regenerate
                           </button>
                           <button
                             onClick={() => setIsRefining(true)}
@@ -959,7 +952,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                                 </svg>
                                 Send
                                 <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
-                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+\u23CE
+                                  {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? '\u2318' : 'Ctrl'}+S
                                 </kbd>
                               </>
                             )}

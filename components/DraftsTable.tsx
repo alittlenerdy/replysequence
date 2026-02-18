@@ -626,10 +626,10 @@ export function DraftsTable({
                       <span className="text-xs text-gray-500">-</span>
                     )}
                   </td>
-                  <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
+                  <td className="hidden lg:table-cell px-4 py-3 pr-6 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
                   </td>
-                  <td className="px-2 py-3 whitespace-nowrap text-sm font-medium">
+                  <td className="px-3 py-3 whitespace-nowrap text-sm font-medium">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
