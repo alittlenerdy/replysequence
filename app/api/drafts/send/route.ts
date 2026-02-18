@@ -258,6 +258,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Sync to HubSpot CRM (awaited to prevent Vercel from killing the function)
+    let hubspotSynced = false;
     if (draft.meetingId) {
       try {
         // Get userId from the meeting
@@ -326,6 +327,8 @@ export async function POST(request: NextRequest) {
                 draftBody: draft.body,
               });
 
+              hubspotSynced = hubspotResult.success;
+
               // Update lastSyncAt only on success
               if (hubspotResult.success) {
                 await db
@@ -335,13 +338,14 @@ export async function POST(request: NextRequest) {
               }
 
               console.log(JSON.stringify({
-                level: 'info',
-                message: 'HubSpot CRM sync completed',
+                level: hubspotResult.success ? 'info' : 'error',
+                message: hubspotResult.success ? 'HubSpot CRM sync completed' : 'HubSpot CRM sync failed',
                 draftId,
                 recipientEmail,
                 success: hubspotResult.success,
                 contactFound: hubspotResult.contactFound,
                 engagementId: hubspotResult.engagementId,
+                error: hubspotResult.error,
               }));
             }
           }
@@ -362,6 +366,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Email sent successfully',
       messageId: result.messageId,
+      hubspotSynced,
     });
   } catch (error) {
     console.error('Failed to send draft:', error);
