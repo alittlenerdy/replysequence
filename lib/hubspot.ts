@@ -236,6 +236,7 @@ export interface HubSpotSyncResult {
   success: boolean;
   contactFound: boolean;
   contactId?: string;
+  contactName?: string;
   engagementId?: string;
   error?: string;
 }
@@ -457,6 +458,7 @@ export async function syncSentEmailToHubSpot(
       success: !!engagementId,
       contactFound: !!contact,
       contactId: contact?.id,
+      contactName: contact ? [contact.firstName, contact.lastName].filter(Boolean).join(' ') || undefined : undefined,
       engagementId: engagementId || undefined,
     };
 

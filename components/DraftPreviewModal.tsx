@@ -62,6 +62,12 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [showSendConfirm, setShowSendConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
+  const [hubspotDetails, setHubspotDetails] = useState<{
+    synced: boolean;
+    contactFound: boolean;
+    contactName?: string;
+    error?: string;
+  } | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState('');
   const [suggestedRecipients, setSuggestedRecipients] = useState<SuggestedRecipient[]>([]);
@@ -269,6 +275,9 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
       }
 
       console.log('[SEND-2] Email sent successfully, messageId:', data.messageId);
+      if (data.hubspotDetails) {
+        setHubspotDetails(data.hubspotDetails);
+      }
       setSendSuccess(true);
       setTimeout(() => {
         onDraftUpdated();
@@ -784,11 +793,38 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
               {!isEditing && !isRefining && !showTemplatePicker ? (
                 <div className="px-6 py-4 border-t border-gray-700 bg-gray-800/50 rounded-b-2xl">
                   {sendSuccess ? (
-                    <div className="flex items-center justify-center gap-2 text-green-400 py-2">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="font-medium">Email sent successfully!</span>
+                    <div className="space-y-1 py-2">
+                      <div className="flex items-center justify-center gap-2 text-green-400">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="font-medium">Email sent successfully!</span>
+                      </div>
+                      {hubspotDetails && (
+                        <div className={`flex items-center justify-center gap-1.5 text-xs ${
+                          hubspotDetails.synced ? 'text-gray-400' : 'text-yellow-400'
+                        }`}>
+                          {hubspotDetails.synced ? (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>
+                                {hubspotDetails.contactFound
+                                  ? `Synced to HubSpot${hubspotDetails.contactName ? ` (${hubspotDetails.contactName})` : ''}`
+                                  : 'Logged to HubSpot (contact not found)'}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                              </svg>
+                              <span>HubSpot sync failed</span>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ) : draft.status === 'sent' ? (
                     <div className="flex justify-end">

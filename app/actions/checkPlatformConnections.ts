@@ -11,6 +11,8 @@ export interface PlatformConnectionDetails {
   expiresAt?: Date;
   isExpiringSoon?: boolean; // Token expires within 24 hours
   isExpired?: boolean;
+  needsReconnect?: boolean;
+  lastSyncAt?: Date;
 }
 
 export interface PlatformConnectionsResult {
@@ -285,6 +287,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         connectedAt: hubspotConnections.connectedAt,
         expiresAt: hubspotConnections.accessTokenExpiresAt,
         hasRefreshToken: hubspotConnections.refreshTokenEncrypted,
+        scopes: hubspotConnections.scopes,
+        lastSyncAt: hubspotConnections.lastSyncAt,
       })
       .from(hubspotConnections)
       .where(eq(hubspotConnections.userId, existingUser.id))
@@ -294,6 +298,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     if (hubspotConnection) {
       hubspotPortalId = hubspotConnection.hubspotPortalId;
       const hasRefreshToken = !!hubspotConnection.hasRefreshToken;
+      const needsReconnect = !hubspotConnection.scopes.includes('crm.objects.meetings.write');
       hubspotDetails = {
         connected: true,
         email: `Portal ${hubspotConnection.hubspotPortalId}`,
@@ -301,6 +306,8 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         expiresAt: hubspotConnection.expiresAt,
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
+        needsReconnect,
+        lastSyncAt: hubspotConnection.lastSyncAt ?? undefined,
       };
       console.log('[CHECK-CONNECTION] HubSpot connection found', { hubspotPortalId, hasRefreshToken });
     }

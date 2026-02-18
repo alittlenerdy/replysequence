@@ -437,7 +437,7 @@ export function IntegrationSettings() {
               <div className="mt-3 flex justify-end">
                 {isConnected ? (
                   <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon) && (
+                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
@@ -600,7 +600,7 @@ export function IntegrationSettings() {
               <div className="mt-3 flex justify-end">
                 {isConnected ? (
                   <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon) && (
+                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
@@ -763,7 +763,7 @@ export function IntegrationSettings() {
               <div className="mt-3 flex justify-end">
                 {isConnected ? (
                   <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon) && (
+                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
@@ -910,7 +910,17 @@ export function IntegrationSettings() {
                   ) : (
                     <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
                   )}
-                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
+                  {isConnected && details?.needsReconnect && (
+                    <p className="text-xs mt-1 text-yellow-400">
+                      Your HubSpot connection needs to be updated to sync meeting data. Please disconnect and reconnect.
+                    </p>
+                  )}
+                  {isConnected && !details?.needsReconnect && !details?.isExpired && details?.lastSyncAt && (
+                    <p className="text-xs mt-1 text-gray-500">
+                      Last synced {formatRelativeTime(details.lastSyncAt, nowMs)}
+                    </p>
+                  )}
+                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && !details?.needsReconnect && (
                     <p className={`text-xs mt-1 ${
                       details.isExpired ? 'text-red-400' : 'text-yellow-400'
                     }`}>
@@ -926,7 +936,7 @@ export function IntegrationSettings() {
               <div className="mt-3 flex justify-end">
                 {isConnected ? (
                   <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon) && (
+                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
                       <button
                         onClick={() => handleConnect(platform)}
                         disabled={isLoading}
