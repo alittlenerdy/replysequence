@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
+import { ShareButtons } from './ShareButtons';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -231,6 +232,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <Clock className="w-4 h-4" />
               {post.readingTime} min read
             </span>
+          </div>
+
+          {/* Share Buttons */}
+          <div className="flex items-center justify-between mb-10">
+            <ShareButtons
+              title={post.title}
+              url={`https://www.replysequence.com/blog/${post.slug}`}
+            />
           </div>
 
           {/* Content */}

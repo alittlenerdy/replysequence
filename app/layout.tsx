@@ -107,6 +107,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: siteUrl,
+    types: {
+      'application/rss+xml': `${siteUrl}/blog/rss.xml`,
+    },
   },
   category: "technology",
 };
