@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, ChevronDown } from 'lucide-react';
-import { checkPlatformConnections, type PlatformConnectionDetails } from '@/app/actions/checkPlatformConnections';
+import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, ChevronDown, Star, Plus } from 'lucide-react';
+import { checkPlatformConnections, type PlatformConnectionDetails, type MeetConnectionInfo } from '@/app/actions/checkPlatformConnections';
 
 interface PlatformConfig {
   id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'gmail' | 'outlook';
@@ -228,8 +228,49 @@ export function IntegrationSettings() {
   };
 
   const [disconnectConfirm, setDisconnectConfirm] = useState<string | null>(null);
+  const [meetDisconnectConfirm, setMeetDisconnectConfirm] = useState<string | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['meeting']));
+
+  // Meet multi-connection handlers
+  const handleSetPrimary = async (connectionId: string) => {
+    try {
+      const response = await fetch('/api/integrations/meet/set-primary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ connectionId }),
+      });
+      if (response.ok) {
+        setSuccessBanner('Primary Google account updated');
+        setTimeout(() => setSuccessBanner(null), 3000);
+        fetchConnectionStatus();
+      }
+    } catch (error) {
+      console.error('Set primary error:', error);
+      setErrorBanner('Failed to update primary account');
+    }
+  };
+
+  const handleDisconnectMeetConnection = async (connectionId: string) => {
+    if (meetDisconnectConfirm !== connectionId) {
+      setMeetDisconnectConfirm(connectionId);
+      return;
+    }
+    setMeetDisconnectConfirm(null);
+    try {
+      const response = await fetch(`/api/integrations/meet/disconnect?connectionId=${connectionId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setSuccessBanner('Google account disconnected');
+        setTimeout(() => setSuccessBanner(null), 3000);
+        fetchConnectionStatus();
+      }
+    } catch (error) {
+      console.error('Disconnect Meet connection error:', error);
+      setErrorBanner('Failed to disconnect Google account');
+    }
+  };
 
   const toggleSection = (sectionKey: string) => {
     setExpandedSections(prev => {
@@ -496,36 +537,79 @@ export function IntegrationSettings() {
                         Reconnect
                       </button>
                     )}
-                    {disconnectConfirm === platform.id ? (
+                    {/* Meet: show Add Account + Disconnect All */}
+                    {platform.id === 'meet' ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400">Are you sure?</span>
                         <button
-                          onClick={() => handleDisconnect(platform)}
+                          onClick={() => handleConnect(platform)}
                           disabled={isLoading}
-                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
                         >
-                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                          <Plus className="w-4 h-4" />
+                          Add Account
                         </button>
-                        <button
-                          onClick={() => setDisconnectConfirm(null)}
-                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
-                        >
-                          Cancel
-                        </button>
+                        {disconnectConfirm === platform.id ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-400">Disconnect all?</span>
+                            <button
+                              onClick={() => handleDisconnect(platform)}
+                              disabled={isLoading}
+                              className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes'}
+                            </button>
+                            <button
+                              onClick={() => setDisconnectConfirm(null)}
+                              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleDisconnect(platform)}
+                            disabled={isLoading}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            <Unplug className="w-4 h-4" />
+                            Disconnect
+                          </button>
+                        )}
                       </div>
                     ) : (
-                      <button
-                        onClick={() => handleDisconnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                      <>
+                        {disconnectConfirm === platform.id ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-400">Are you sure?</span>
+                            <button
+                              onClick={() => handleDisconnect(platform)}
+                              disabled={isLoading}
+                              className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                            </button>
+                            <button
+                              onClick={() => setDisconnectConfirm(null)}
+                              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         ) : (
-                          <Unplug className="w-4 h-4" />
+                          <button
+                            onClick={() => handleDisconnect(platform)}
+                            disabled={isLoading}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            {isLoading ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Unplug className="w-4 h-4" />
+                            )}
+                            Disconnect
+                          </button>
                         )}
-                        Disconnect
-                      </button>
+                      </>
                     )}
                   </div>
                 ) : (
@@ -544,6 +628,68 @@ export function IntegrationSettings() {
                   </button>
                 )}
               </div>
+
+              {/* Meet Multi-Connection List */}
+              {platform.id === 'meet' && isConnected && details?.connections && details.connections.length > 1 && (
+                <div className="mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200">
+                  <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-3">Connected Google Accounts</p>
+                  <div className="space-y-2">
+                    {details.connections.map((conn: MeetConnectionInfo) => (
+                      <div
+                        key={conn.id}
+                        className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-800/50 light:bg-gray-50"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          {conn.isPrimary && (
+                            <Star className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" />
+                          )}
+                          <span className="text-sm text-gray-200 light:text-gray-700 truncate">{conn.email}</span>
+                          {conn.isPrimary && (
+                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 flex-shrink-0">
+                              Primary
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                          {!conn.isPrimary && (
+                            <button
+                              onClick={() => handleSetPrimary(conn.id)}
+                              className="px-2 py-1 text-[11px] text-gray-400 hover:text-yellow-400 transition-colors rounded"
+                              title="Set as primary"
+                            >
+                              Set Primary
+                            </button>
+                          )}
+                          {meetDisconnectConfirm === conn.id ? (
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleDisconnectMeetConnection(conn.id)}
+                                className="px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/15 rounded transition-colors"
+                              >
+                                Confirm
+                              </button>
+                              <button
+                                onClick={() => setMeetDisconnectConfirm(null)}
+                                className="px-2 py-1 text-[11px] text-gray-500 hover:text-gray-300 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => handleDisconnectMeetConnection(conn.id)}
+                              className="px-2 py-1 text-[11px] text-gray-500 hover:text-red-400 transition-colors rounded"
+                              title="Disconnect this account"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

@@ -5,7 +5,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { eq, sql } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { db, users, meetConnections, userOnboarding } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
@@ -178,15 +178,24 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Upsert meet connection
+    // Check if this specific Google account is already connected for this user
     const existingConnection = await db.query.meetConnections.findFirst({
-      where: eq(meetConnections.userId, user.id),
+      where: and(
+        eq(meetConnections.userId, user.id),
+        eq(meetConnections.googleUserId, googleUser.id),
+      ),
     });
 
+    // Check if user has any existing connections (to determine isPrimary for new ones)
+    const existingConnections = await db
+      .select({ id: meetConnections.id })
+      .from(meetConnections)
+      .where(eq(meetConnections.userId, user.id));
+    const hasExistingConnections = existingConnections.length > 0;
+
     if (existingConnection) {
-      // Update existing connection
+      // Update existing connection for this Google account (re-auth / token refresh)
       const updateData: Record<string, unknown> = {
-        googleUserId: googleUser.id,
         googleEmail: userEmail,
         googleDisplayName: userName,
         accessTokenEncrypted,
@@ -204,10 +213,13 @@ export async function GET(request: NextRequest) {
       await db
         .update(meetConnections)
         .set(updateData)
-        .where(eq(meetConnections.userId, user.id));
-      console.log('[MEET-OAUTH-CALLBACK-9] Updated existing Meet connection');
+        .where(eq(meetConnections.id, existingConnection.id));
+      console.log('[MEET-OAUTH-CALLBACK-9] Updated existing Meet connection', {
+        connectionId: existingConnection.id,
+        googleEmail: userEmail,
+      });
     } else {
-      // Create new connection
+      // Create new connection for a different Google account
       if (!refreshTokenEncrypted) {
         console.error('[MEET-OAUTH-CALLBACK-ERROR] No refresh token received for new connection');
         return NextResponse.redirect(
@@ -224,8 +236,12 @@ export async function GET(request: NextRequest) {
         refreshTokenEncrypted,
         accessTokenExpiresAt,
         scopes: tokens.scope,
+        isPrimary: !hasExistingConnections, // First connection is primary
       });
-      console.log('[MEET-OAUTH-CALLBACK-9] Created new Meet connection');
+      console.log('[MEET-OAUTH-CALLBACK-9] Created new Meet connection', {
+        googleEmail: userEmail,
+        isPrimary: !hasExistingConnections,
+      });
     }
 
     // Update user's meet_connected flag (boolean)

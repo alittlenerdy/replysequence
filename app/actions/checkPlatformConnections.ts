@@ -4,6 +4,14 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, hubspotConnections, emailConnections } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 
+export interface MeetConnectionInfo {
+  id: string;
+  email: string;
+  displayName?: string | null;
+  isPrimary: boolean;
+  connectedAt: Date;
+}
+
 export interface PlatformConnectionDetails {
   connected: boolean;
   email?: string;
@@ -13,6 +21,8 @@ export interface PlatformConnectionDetails {
   isExpired?: boolean;
   needsReconnect?: boolean;
   lastSyncAt?: Date;
+  // Multi-connection support for Meet
+  connections?: MeetConnectionInfo[];
 }
 
 export interface PlatformConnectionsResult {
@@ -187,37 +197,50 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail, hasRefreshToken: !!connection?.hasRefreshToken });
     }
 
-    // Get Meet connection details
+    // Get Meet connection details (supports multiple connections)
     // Note: Google access tokens expire in 1 hour, but we have refresh tokens
     // So we don't show "expiring soon" - only show warning if refresh token is missing
     let meetEmail: string | undefined;
     let meetDetails: PlatformConnectionDetails = { connected: false };
     if (meetConnected) {
-      const [connection] = await db
+      const allMeetConnections = await db
         .select({
+          id: meetConnections.id,
           googleEmail: meetConnections.googleEmail,
+          googleDisplayName: meetConnections.googleDisplayName,
+          isPrimary: meetConnections.isPrimary,
           connectedAt: meetConnections.connectedAt,
           expiresAt: meetConnections.accessTokenExpiresAt,
           hasRefreshToken: meetConnections.refreshTokenEncrypted,
         })
         .from(meetConnections)
-        .where(eq(meetConnections.userId, existingUser.id))
-        .limit(1);
-      if (connection) {
-        meetEmail = connection.googleEmail;
-        // For Google Meet: only show warning if we don't have a refresh token
-        // Access tokens auto-refresh, so short expiry is normal
-        const hasRefreshToken = !!connection.hasRefreshToken;
+        .where(eq(meetConnections.userId, existingUser.id));
+
+      if (allMeetConnections.length > 0) {
+        // Primary connection shown as the "main" email
+        const primary = allMeetConnections.find(c => c.isPrimary) || allMeetConnections[0];
+        meetEmail = primary.googleEmail;
+        const hasRefreshToken = !!primary.hasRefreshToken;
         meetDetails = {
           connected: true,
-          email: connection.googleEmail,
-          connectedAt: connection.connectedAt,
-          expiresAt: connection.expiresAt,
-          isExpired: !hasRefreshToken, // Only "expired" if no refresh token
-          isExpiringSoon: false, // Never "expiring soon" for Google (we auto-refresh)
+          email: primary.googleEmail,
+          connectedAt: primary.connectedAt,
+          expiresAt: primary.expiresAt,
+          isExpired: !hasRefreshToken,
+          isExpiringSoon: false,
+          connections: allMeetConnections.map(c => ({
+            id: c.id,
+            email: c.googleEmail,
+            displayName: c.googleDisplayName,
+            isPrimary: c.isPrimary,
+            connectedAt: c.connectedAt,
+          })),
         };
       }
-      console.log('[CHECK-CONNECTION] Meet connection found', { meetEmail, hasRefreshToken: !!connection?.hasRefreshToken });
+      console.log('[CHECK-CONNECTION] Meet connections found', {
+        count: allMeetConnections.length,
+        primaryEmail: meetEmail,
+      });
     }
 
     // Get Google Calendar connection details

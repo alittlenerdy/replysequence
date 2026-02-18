@@ -456,6 +456,8 @@ export const meetConnections = pgTable(
     accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
     // Scopes granted
     scopes: text('scopes').notNull(), // Space-separated list
+    // Multi-connection support
+    isPrimary: boolean('is_primary').notNull().default(true),
     // Timestamps
     connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
     lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
@@ -463,9 +465,10 @@ export const meetConnections = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex('meet_connections_user_id_idx').on(table.userId),
+    index('meet_connections_user_id_idx').on(table.userId),
     index('meet_connections_google_user_id_idx').on(table.googleUserId),
     index('meet_connections_expires_at_idx').on(table.accessTokenExpiresAt),
+    uniqueIndex('meet_connections_user_google_idx').on(table.userId, table.googleUserId),
   ]
 );
 
@@ -841,7 +844,7 @@ export const meetEventSubscriptions = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex('meet_event_subscriptions_user_id_idx').on(table.userId),
+    index('meet_event_subscriptions_user_id_idx').on(table.userId),
     index('meet_event_subscriptions_status_idx').on(table.status),
     index('meet_event_subscriptions_expire_time_idx').on(table.expireTime),
     index('meet_event_subscriptions_subscription_name_idx').on(table.subscriptionName),
@@ -859,6 +862,8 @@ export const calendarWatchChannels = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
+    meetConnectionId: uuid('meet_connection_id')
+      .references(() => meetConnections.id, { onDelete: 'cascade' }),
     // Channel identifiers
     channelId: text('channel_id').notNull().unique(), // Our UUID for the channel
     resourceId: text('resource_id').notNull(), // Google's resource ID
@@ -872,9 +877,10 @@ export const calendarWatchChannels = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex('calendar_watch_channels_user_id_idx').on(table.userId),
+    index('calendar_watch_channels_user_id_idx').on(table.userId),
     index('calendar_watch_channels_channel_id_idx').on(table.channelId),
     index('calendar_watch_channels_expiration_idx').on(table.expiration),
+    index('calendar_watch_channels_meet_connection_id_idx').on(table.meetConnectionId),
   ]
 );
 

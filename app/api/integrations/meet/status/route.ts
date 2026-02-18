@@ -35,20 +35,21 @@ export async function GET() {
       return NextResponse.json({ connected: false });
     }
 
-    // Get Meet connection details
-    const [connection] = await db
+    // Get all Meet connection details
+    const connections = await db
       .select({
+        id: meetConnections.id,
         googleUserId: meetConnections.googleUserId,
         googleEmail: meetConnections.googleEmail,
         googleDisplayName: meetConnections.googleDisplayName,
+        isPrimary: meetConnections.isPrimary,
         connectedAt: meetConnections.connectedAt,
         scopes: meetConnections.scopes,
       })
       .from(meetConnections)
-      .where(eq(meetConnections.userId, user.id))
-      .limit(1);
+      .where(eq(meetConnections.userId, user.id));
 
-    if (!connection) {
+    if (connections.length === 0) {
       // User is marked connected but no connection record - inconsistent state
       return NextResponse.json({
         connected: true,
@@ -57,13 +58,22 @@ export async function GET() {
       });
     }
 
+    const primary = connections.find(c => c.isPrimary) || connections[0];
+
     return NextResponse.json({
       connected: true,
-      email: connection.googleEmail,
-      displayName: connection.googleDisplayName,
-      googleUserId: connection.googleUserId,
-      connectedAt: connection.connectedAt,
-      scopes: connection.scopes?.split(' ') || [],
+      email: primary.googleEmail,
+      displayName: primary.googleDisplayName,
+      googleUserId: primary.googleUserId,
+      connectedAt: primary.connectedAt,
+      scopes: primary.scopes?.split(' ') || [],
+      connections: connections.map(c => ({
+        id: c.id,
+        email: c.googleEmail,
+        displayName: c.googleDisplayName,
+        isPrimary: c.isPrimary,
+        connectedAt: c.connectedAt,
+      })),
     });
   } catch (error) {
     console.error('[MEET-STATUS] Error checking status:', error);
