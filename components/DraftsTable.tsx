@@ -260,6 +260,28 @@ export function DraftsTable({
     });
   };
 
+  // Render user rating indicator (thumbs up/down)
+  const renderUserRating = (draft: DraftWithMeeting) => {
+    if (!draft.userRating) return null;
+    const isUp = draft.userRating === 'up';
+    return (
+      <span
+        className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
+          isUp ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+        }`}
+        title={isUp ? 'Rated: Thumbs up' : 'Rated: Thumbs down'}
+      >
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {isUp ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+          )}
+        </svg>
+      </span>
+    );
+  };
+
   // Render quality badge (reusable for both layouts)
   const renderQualityBadge = (draft: DraftWithMeeting, compact = false) => {
     if (draft.qualityScore === null) return null;
@@ -501,6 +523,7 @@ export function DraftsTable({
                 <div className="flex items-center gap-2 flex-wrap">
                   <StatusBadge status={draft.status} size="sm" />
                   {renderQualityBadge(draft, true)}
+                  {renderUserRating(draft)}
                   {renderEngagementIndicators(draft)}
                 </div>
                 <button
@@ -615,16 +638,19 @@ export function DraftsTable({
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    {draft.qualityScore !== null ? (
-                      <span className={`text-xs font-medium ${
-                        draft.qualityScore >= 80 ? 'text-emerald-400' :
-                        draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
-                      }`}>
-                        {draft.qualityScore}/100
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-500">-</span>
-                    )}
+                    <div className="flex items-center gap-1.5">
+                      {draft.qualityScore !== null ? (
+                        <span className={`text-xs font-medium ${
+                          draft.qualityScore >= 80 ? 'text-emerald-400' :
+                          draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
+                        }`}>
+                          {draft.qualityScore}/100
+                        </span>
+                      ) : (
+                        <span className="text-xs text-gray-500">-</span>
+                      )}
+                      {renderUserRating(draft)}
+                    </div>
                   </td>
                   <td className="hidden lg:table-cell px-4 py-3 pr-6 whitespace-nowrap text-sm text-gray-400 light:text-gray-500">
                     {formatDate(draft.createdAt)}
