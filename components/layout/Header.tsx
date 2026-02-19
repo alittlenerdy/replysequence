@@ -40,6 +40,12 @@ export function Header() {
           >
             Pricing
           </Link>
+          <Link
+            href="/blog"
+            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+          >
+            Blog
+          </Link>
 
           {isLoaded && isSignedIn && (
             <Link

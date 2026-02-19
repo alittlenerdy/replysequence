@@ -135,6 +135,13 @@ export default function MobileMenu() {
               Pricing
             </a>
             <a
+              href="/blog"
+              onClick={() => setIsOpen(false)}
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Blog
+            </a>
+            <a
               href="/dashboard"
               onClick={() => setIsOpen(false)}
               className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
