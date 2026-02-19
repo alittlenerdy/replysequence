@@ -21,7 +21,7 @@ export function SettingsTabs() {
   return (
     <div>
       {/* Tab bar */}
-      <div className="max-w-2xl mx-auto mb-6">
+      <div className="max-w-4xl mx-auto mb-6">
         <div className="flex gap-1 p-1 rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-200 overflow-x-auto">
           {tabs.map((tab) => (
             <button
@@ -42,7 +42,7 @@ export function SettingsTabs() {
       {/* Tab content */}
       {activeTab === 'integrations' && <IntegrationSettings />}
       {activeTab === 'email' && (
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <EmailPreferencesSettings />
         </div>
       )}

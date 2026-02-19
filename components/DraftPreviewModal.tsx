@@ -933,10 +933,10 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
-                            title="Regenerate with a different template"
+                            className="px-4 py-2 text-sm font-medium text-pink-300 bg-pink-500/15 border border-pink-500/30 rounded-lg hover:bg-pink-500/25 hover:border-pink-500/50 hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-all duration-300 flex items-center gap-2 group"
+                            title="Choose a template and regenerate this draft"
                           >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                             Regenerate

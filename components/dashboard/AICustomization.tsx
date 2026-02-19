@@ -84,7 +84,7 @@ export function AICustomization() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto mt-8">
+      <div className="max-w-4xl mx-auto mt-8">
         <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
           <div className="h-6 w-40 bg-gray-700 light:bg-gray-200 rounded mb-4" />
           <div className="h-4 w-64 bg-gray-700 light:bg-gray-200 rounded" />
@@ -94,7 +94,7 @@ export function AICustomization() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 space-y-6">
+    <div className="max-w-4xl mx-auto mt-8 space-y-6">
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
           <Sparkles className="w-4 h-4 text-purple-400" />
@@ -126,6 +126,9 @@ export function AICustomization() {
           ))}
         </div>
       </div>
+
+      {/* Email Templates Section - prominent placement */}
+      <TemplateManager />
 
       {/* Custom Instructions */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
@@ -194,9 +197,6 @@ export function AICustomization() {
           )}
         </button>
       </div>
-
-      {/* Email Templates Section */}
-      <TemplateManager />
     </div>
   );
 }

@@ -51,7 +51,7 @@ export function AccountManagement() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 space-y-6">
+    <div className="max-w-4xl mx-auto mt-8 space-y-6">
       <h3 className="text-lg font-semibold text-white light:text-gray-900">Account & Privacy</h3>
 
       {error && (

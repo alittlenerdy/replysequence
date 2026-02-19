@@ -401,7 +401,7 @@ export function IntegrationSettings() {
   const hasNoConnections = connectedCount === 0;
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
@@ -494,8 +494,8 @@ export function IntegrationSettings() {
           expandedSections.has('meeting') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         }`}>
           <div className="overflow-hidden">
-      <div className="space-y-4 pb-4">
-        {platforms.filter(p => p.category === 'meeting').map((platform) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+        {platforms.filter(p => p.category === 'meeting').map((platform, index) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
           const isLoading = actionLoading === platform.id;
@@ -512,7 +512,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-colors ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -521,6 +521,7 @@ export function IntegrationSettings() {
                     : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
                   : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
               }`}
+              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
             >
               <div className="flex items-center gap-4">
                 {/* Platform Icon */}
@@ -796,8 +797,8 @@ export function IntegrationSettings() {
       <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
         Connect your calendar to sync upcoming meetings and enable proactive follow-up preparation.
       </p>
-      <div className="space-y-4 pb-4">
-        {platforms.filter(p => p.category === 'calendar').map((platform) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+        {platforms.filter(p => p.category === 'calendar').map((platform, index) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
           const isLoading = actionLoading === platform.id;
@@ -813,7 +814,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-colors ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -822,6 +823,7 @@ export function IntegrationSettings() {
                     : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
                   : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
               }`}
+              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
             >
               <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
@@ -989,8 +991,8 @@ export function IntegrationSettings() {
       <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
         Connect your email to send follow-ups from your real address instead of noreply@resend.dev.
       </p>
-      <div className="space-y-4 pb-4">
-        {platforms.filter(p => p.category === 'email').map((platform) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+        {platforms.filter(p => p.category === 'email').map((platform, index) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
           const isLoading = actionLoading === platform.id;
@@ -1006,7 +1008,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-colors ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -1015,6 +1017,7 @@ export function IntegrationSettings() {
                     : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
                   : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
               }`}
+              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
             >
               <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
@@ -1182,8 +1185,8 @@ export function IntegrationSettings() {
       <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
         Connect your CRM to automatically sync sent emails and meeting summaries.
       </p>
-      <div className="space-y-4 pb-4">
-        {platforms.filter(p => p.category === 'crm').map((platform) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+        {platforms.filter(p => p.category === 'crm').map((platform, index) => {
           const isConnected = connectionStatus[platform.id];
           const details = connectionDetails[platform.id];
           const isLoading = actionLoading === platform.id;
@@ -1199,7 +1202,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-colors ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -1208,6 +1211,7 @@ export function IntegrationSettings() {
                     : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
                   : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
               }`}
+              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
             >
               <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
