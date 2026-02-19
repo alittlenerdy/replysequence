@@ -72,6 +72,9 @@ import {
   Shield,
   Lock,
   ArrowDown,
+  CheckCircle2,
+  Eye,
+  Palette,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -101,9 +104,22 @@ export default function LandingPage() {
               From Scratch Again
             </h1>
 
-            <p className="text-xl text-gray-400 light:text-gray-600 mb-4 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               Turn every Zoom, Teams, or Meet call into a deal-moving email and CRM update — in 8 seconds, not 30 minutes.
             </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-6">
+              {[
+                'Free up 10+ hours/week per rep',
+                'Never lose an action item from a call',
+                'Clean, consistent CRM notes — automatically',
+              ].map((bullet, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="text-sm text-gray-300 light:text-gray-600 font-medium">{bullet}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
             {/* Countdown animation and speed comparison */}
@@ -218,6 +234,61 @@ export default function LandingPage() {
 
       {/* Bento Grid Features */}
       <BentoGrid />
+
+      {/* Trust & Control Section */}
+      <section className="py-16 px-4 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-10"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+              AI Speed, <GradientText variant="amber">Your Control</GradientText>
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+              Worried about AI sending the wrong thing? So were we. That is why you stay in the loop at every step.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Eye,
+                title: 'You approve every email',
+                description: 'Drafts never send automatically. Review, edit, and approve before anything leaves your inbox.',
+              },
+              {
+                icon: Palette,
+                title: 'Keeps your tone',
+                description: 'Uses your templates and writing style — not a generic AI voice. Your prospects will not know the difference.',
+              },
+              {
+                icon: Shield,
+                title: 'Auditable and transparent',
+                description: 'Every draft is tied to a transcript. Your team can see exactly what the AI pulled from the conversation.',
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-6 text-center"
+              >
+                <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-6 h-6 text-amber-400 light:text-amber-600" />
+                </div>
+                <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Pain-to-Results Section */}
       <section className="py-20 px-4 relative z-10">
@@ -394,21 +465,21 @@ export default function LandingPage() {
                   step: '01',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
                   title: 'Connect Your Platform',
-                  description: 'Link Zoom, Teams, or Google Meet in one click. We securely access transcripts with your permission.',
+                  description: 'No more jumping between Zoom, email, and CRM. Link your platform once — we handle the rest.',
                   color: 'blue',
                 },
                 {
                   step: '02',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
                   title: 'AI Drafts in 8 Seconds',
-                  description: 'Our AI extracts action items, commitments, and key points—then drafts a perfect follow-up instantly.',
+                  description: 'Skip the 30 minutes of note-reviewing and email-writing. AI captures what was said, who said it, and what to do next.',
                   color: 'purple',
                 },
                 {
                   step: '03',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
                   title: 'Review & Send',
-                  description: 'Get polished drafts in your inbox. Customize if needed, then send with one click. CRM updates automatically.',
+                  description: 'You approve every email before it sends. Add your own touch, then hit send — CRM updates itself.',
                   color: 'pink',
                 },
               ].map((item, index) => (

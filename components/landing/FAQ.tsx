@@ -110,6 +110,26 @@ const faqData = [
     answer:
       'ReplySequence only processes meetings where transcripts are available. If your meeting platform did not generate a transcript (for example, if transcription was disabled), we cannot generate a follow-up draft. We recommend ensuring transcription is enabled in your meeting platform settings for all meetings you want ReplySequence to process.',
   },
+  {
+    question: 'What if the AI gets something wrong in a draft?',
+    answer:
+      'Every draft is a suggestion, not a sent email. You always review and approve before anything goes out. The AI pulls directly from your meeting transcript, so the content is grounded in what was actually said. If something needs adjusting, you can edit inline or regenerate with different parameters. Nothing sends without your explicit approval.',
+  },
+  {
+    question: 'Can I customize the emails to match my team\'s tone and templates?',
+    answer:
+      'Yes. ReplySequence supports custom email templates that reflect your brand voice, formatting preferences, and standard follow-up structure. The AI uses these templates as a foundation while adding call-specific details from the transcript. Your prospects will not be able to tell the difference between an AI-assisted draft and one your best rep wrote manually.',
+  },
+  {
+    question: 'Will this mess up our CRM data?',
+    answer:
+      'ReplySequence only writes to agreed-upon fields in your CRM. All activity logs are visible and auditable. We log the follow-up email, key action items, and meeting outcome — nothing more. If you use HubSpot, the integration maps to your existing properties. You can review exactly what gets synced before enabling CRM logging.',
+  },
+  {
+    question: 'How accurate is the AI at capturing what happened in a meeting?',
+    answer:
+      'The AI works directly from your meeting transcript, not from summaries or notes. It identifies speakers, extracts commitments and action items, and references specific discussion points. Accuracy depends on transcript quality (clear audio helps), but most users find the drafts capture 90%+ of what they would have written manually — in a fraction of the time.',
+  },
 ];
 
 export function FAQ() {
