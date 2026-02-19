@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Sparkles, Loader2, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TONE_OPTIONS, INSTRUCTION_CHIPS } from '@/lib/constants/ai-settings';
 
 interface AIPreferences {
   aiTone: string;
@@ -21,33 +22,6 @@ interface Template {
   isSystem: boolean;
   isDefault: boolean;
 }
-
-const TONE_OPTIONS = [
-  {
-    value: 'professional',
-    label: 'Professional',
-    description: 'Polished and business-appropriate',
-    preview: 'Thank you for taking the time to meet today. I wanted to follow up on the key points we discussed and outline the next steps we agreed upon.',
-  },
-  {
-    value: 'casual',
-    label: 'Casual',
-    description: 'Relaxed and conversational',
-    preview: 'Great chatting with you today! Here\'s a quick recap of what we talked about and what we\'re each tackling next.',
-  },
-  {
-    value: 'friendly',
-    label: 'Friendly',
-    description: 'Warm and personable',
-    preview: 'It was really wonderful connecting with you today! I\'m excited about what we discussed and wanted to make sure we\'re aligned on next steps.',
-  },
-  {
-    value: 'concise',
-    label: 'Concise',
-    description: 'Brief and to the point',
-    preview: 'Following up on today\'s meeting. Key decisions: [items]. Next steps: [actions]. Let me know if anything needs adjusting.',
-  },
-];
 
 export function AICustomization() {
   const [preferences, setPreferences] = useState<AIPreferences>({
@@ -221,12 +195,7 @@ export function AICustomization() {
         </div>
         {/* Suggestion Chips */}
         <div className="flex flex-wrap gap-2 mt-2">
-          {[
-            'Always mention our free trial',
-            'Keep emails under 150 words',
-            'Include a specific next step',
-            'Use bullet points for action items',
-          ].map((chip) => (
+          {INSTRUCTION_CHIPS.map((chip) => (
             <button
               key={chip}
               type="button"

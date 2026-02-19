@@ -3,48 +3,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Check, ArrowRight, Loader2 } from 'lucide-react';
+import { TONE_OPTIONS, INSTRUCTION_CHIPS } from '@/lib/constants/ai-settings';
 
 interface StepAIVoiceProps {
   onSaved: () => void;
 }
-
-const TONE_OPTIONS = [
-  {
-    value: 'professional',
-    label: 'Professional',
-    description: 'Polished and business-appropriate',
-    preview: 'Thank you for taking the time to meet today. I wanted to follow up on the key points we discussed and outline the next steps we agreed upon.',
-    recommended: true,
-  },
-  {
-    value: 'casual',
-    label: 'Casual',
-    description: 'Relaxed and conversational',
-    preview: 'Great chatting with you today! Here\'s a quick recap of what we talked about and what we\'re each tackling next.',
-    recommended: false,
-  },
-  {
-    value: 'friendly',
-    label: 'Friendly',
-    description: 'Warm and personable',
-    preview: 'It was really wonderful connecting with you today! I\'m excited about what we discussed and wanted to make sure we\'re aligned on next steps.',
-    recommended: false,
-  },
-  {
-    value: 'concise',
-    label: 'Concise',
-    description: 'Brief and to the point',
-    preview: 'Following up on today\'s meeting. Key decisions: [items]. Next steps: [actions]. Let me know if anything needs adjusting.',
-    recommended: false,
-  },
-];
-
-const INSTRUCTION_CHIPS = [
-  'Always mention our free trial',
-  'Keep under 150 words',
-  'Include a next step',
-  'Use bullet points',
-];
 
 export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
   const [tone, setTone] = useState('professional');

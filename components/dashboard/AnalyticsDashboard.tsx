@@ -8,6 +8,7 @@ import { StatCard } from '@/components/analytics/StatCard';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
 import { EmailEngagement } from '@/components/analytics/EmailEngagement';
+import type { AnalyticsData } from '@/lib/types/analytics';
 
 // Chart loading placeholder
 const ChartSkeleton = () => (
@@ -31,79 +32,6 @@ const MeetingTypeChart = dynamic(
   () => import('@/components/analytics/MeetingTypeChart').then(mod => mod.MeetingTypeChart),
   { ssr: false, loading: () => <ChartSkeleton /> }
 );
-
-interface DailyDataPoint {
-  date: string;
-  count: number;
-}
-
-interface PlatformStat {
-  platform: string;
-  count: number;
-  color: string;
-}
-
-interface EmailFunnelData {
-  total: number;
-  ready: number;
-  sent: number;
-  conversionRate: number;
-}
-
-interface PeriodComparison {
-  current: number;
-  previous: number;
-  change: number;
-  trend: 'up' | 'down' | 'neutral';
-}
-
-interface ROIMetrics {
-  hoursSaved: number;
-  dollarValue: number;
-  hourlyRate: number;
-  emailsPerHour: number;
-}
-
-interface EmailEngagementData {
-  sent: number;
-  opened: number;
-  clicked: number;
-  replied: number;
-  openRate: number;
-  clickRate: number;
-  replyRate: number;
-  avgTimeToOpen: number | null;
-}
-
-interface MeetingTypeStat {
-  type: string;
-  count: number;
-  color: string;
-}
-
-interface AIUsageMetrics {
-  totalCost: number;
-  avgLatency: number;
-  totalMeetingMinutes: number;
-}
-
-interface AnalyticsData {
-  totalMeetings: number;
-  emailsGenerated: number;
-  emailsSent: number;
-  timeSavedMinutes: number;
-  meetingsComparison: PeriodComparison;
-  emailsComparison: PeriodComparison;
-  sentComparison: PeriodComparison;
-  roi: ROIMetrics;
-  dailyMeetings: DailyDataPoint[];
-  dailyEmails: DailyDataPoint[];
-  platformBreakdown: PlatformStat[];
-  emailFunnel: EmailFunnelData;
-  engagement: EmailEngagementData;
-  meetingTypeBreakdown: MeetingTypeStat[];
-  aiUsage: AIUsageMetrics;
-}
 
 const DATE_RANGES = [
   { label: '7 days', value: 7 },

@@ -8,100 +8,20 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq, inArray } from 'drizzle-orm';
 import { db, users, meetings, drafts } from '@/lib/db';
+import type {
+  AnalyticsData,
+  DailyDataPoint,
+  PlatformStat,
+  EmailFunnelData,
+  EmailEngagementData,
+  MeetingTypeStat,
+  PeriodComparison,
+  AtRiskMeeting,
+  DailyCoverage,
+} from '@/lib/types/analytics';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
-
-// Daily data point for charts
-export interface DailyDataPoint {
-  date: string;
-  count: number;
-}
-
-// Platform breakdown
-export interface PlatformStat {
-  platform: string;
-  count: number;
-  color: string;
-}
-
-// Email funnel metrics
-export interface EmailFunnel {
-  total: number;
-  ready: number;
-  sent: number;
-  conversionRate: number;
-}
-
-// Email engagement metrics
-export interface EmailEngagement {
-  sent: number;
-  opened: number;
-  clicked: number;
-  replied: number;
-  openRate: number; // percentage
-  clickRate: number; // percentage (of opened)
-  replyRate: number; // percentage (of sent)
-  avgTimeToOpen: number | null; // hours
-}
-
-// Meeting type breakdown
-export interface MeetingTypeStat {
-  type: string;
-  count: number;
-  color: string;
-}
-
-// AI usage metrics
-export interface AIUsageMetrics {
-  totalCost: number; // total USD spent on AI generation
-  avgLatency: number; // average generation time in ms
-  totalMeetingMinutes: number; // total meeting duration processed
-}
-
-// Period comparison for trends
-export interface PeriodComparison {
-  current: number;
-  previous: number;
-  change: number; // percentage change
-  trend: 'up' | 'down' | 'neutral';
-}
-
-// ROI metrics
-export interface ROIMetrics {
-  hoursSaved: number;
-  dollarValue: number;
-  hourlyRate: number; // configurable, default $100/hr
-  emailsPerHour: number; // how many manual emails per hour (default 4)
-}
-
-// Enhanced analytics response
-export interface AnalyticsData {
-  // Core stats with comparisons
-  totalMeetings: number;
-  emailsGenerated: number;
-  emailsSent: number;
-  timeSavedMinutes: number;
-  // Period comparisons (this week vs last week)
-  meetingsComparison: PeriodComparison;
-  emailsComparison: PeriodComparison;
-  sentComparison: PeriodComparison;
-  // ROI metrics
-  roi: ROIMetrics;
-  // Trends
-  dailyMeetings: DailyDataPoint[];
-  dailyEmails: DailyDataPoint[];
-  // Platform breakdown
-  platformBreakdown: PlatformStat[];
-  // Funnel
-  emailFunnel: EmailFunnel;
-  // Email engagement
-  engagement: EmailEngagement;
-  // Meeting type breakdown
-  meetingTypeBreakdown: MeetingTypeStat[];
-  // AI usage metrics
-  aiUsage: AIUsageMetrics;
-}
 
 // Average time to write a follow-up email manually (in minutes)
 const MINUTES_PER_EMAIL = 15;
@@ -186,13 +106,18 @@ export async function GET(request: Request) {
     engagement: { sent: 0, opened: 0, clicked: 0, replied: 0, openRate: 0, clickRate: 0, replyRate: 0, avgTimeToOpen: null },
     meetingTypeBreakdown: [],
     aiUsage: { totalCost: 0, avgLatency: 0, totalMeetingMinutes: 0 },
+    medianFollowUpTimeHours: null,
+    atRiskMeetings: [],
+    dailyCoverage: [],
+    aiOnboardingComplete: false,
+    hourlyRate: DEFAULT_HOURLY_RATE,
   };
 
   try {
     // Find user by Clerk ID
     console.log('[ANALYTICS-2] Finding user by clerkId:', clerkUserId);
     const [user] = await db
-      .select({ id: users.id, email: users.email, hourlyRate: users.hourlyRate })
+      .select({ id: users.id, email: users.email, hourlyRate: users.hourlyRate, aiOnboardingComplete: users.aiOnboardingComplete })
       .from(users)
       .where(eq(users.clerkId, clerkUserId))
       .limit(1);
@@ -359,7 +284,7 @@ export async function GET(request: Request) {
     }));
 
     // Email funnel
-    const emailFunnel: EmailFunnel = {
+    const emailFunnel: EmailFunnelData = {
       total: emailsGenerated,
       ready: emailsReady,
       sent: emailsSent,
@@ -367,7 +292,7 @@ export async function GET(request: Request) {
     };
 
     // Email engagement metrics
-    const engagement: EmailEngagement = {
+    const engagement: EmailEngagementData = {
       sent: emailsSent,
       opened: emailsOpened,
       clicked: emailsClicked,
@@ -413,6 +338,8 @@ export async function GET(request: Request) {
 
     console.log('[ANALYTICS-8] Returning analytics data');
 
+    // These new metrics will be populated in Phase 1 (steps 1.1+)
+    // For now, return empty placeholders so the type is satisfied
     return NextResponse.json<AnalyticsData>({
       totalMeetings,
       emailsGenerated,
@@ -422,7 +349,7 @@ export async function GET(request: Request) {
       emailsComparison: calculateComparison(thisWeekEmails, lastWeekEmails),
       sentComparison: calculateComparison(thisWeekSent, lastWeekSent),
       roi: {
-        hoursSaved: Math.round(hoursSaved * 10) / 10, // 1 decimal place
+        hoursSaved: Math.round(hoursSaved * 10) / 10,
         dollarValue: Math.round(dollarValue),
         hourlyRate: userHourlyRate,
         emailsPerHour: 4,
@@ -434,10 +361,15 @@ export async function GET(request: Request) {
       engagement,
       meetingTypeBreakdown,
       aiUsage: {
-        totalCost: Math.round(totalCostUsd * 10000) / 10000, // 4 decimal places
+        totalCost: Math.round(totalCostUsd * 10000) / 10000,
         avgLatency: latencyCount > 0 ? Math.round(totalLatencyMs / latencyCount) : 0,
         totalMeetingMinutes,
       },
+      medianFollowUpTimeHours: null,
+      atRiskMeetings: [],
+      dailyCoverage: [],
+      aiOnboardingComplete: user.aiOnboardingComplete,
+      hourlyRate: userHourlyRate,
     });
   } catch (error) {
     console.error('[ANALYTICS-ERROR] Unexpected error:', error);

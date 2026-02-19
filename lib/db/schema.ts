@@ -340,6 +340,10 @@ export const users = pgTable(
     aiSignature: text('ai_signature'), // Email signature to append
     // ROI calculation preferences
     hourlyRate: integer('hourly_rate').default(100), // User's hourly rate for ROI calcs (default $100/hr)
+    // User role for AI personalization
+    userRole: text('user_role').$type<'founder' | 'ae' | 'csm' | 'consultant' | 'other'>(),
+    // AI onboarding completion tracking
+    aiOnboardingComplete: boolean('ai_onboarding_complete').notNull().default(false),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
