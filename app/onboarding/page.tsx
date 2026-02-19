@@ -294,12 +294,6 @@ function OnboardingContent() {
         variant={state.celebrationType === 'email' ? 'full' : 'sparkle'}
       />
 
-      {/* Animated background - CSS animations for zero CLS */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ contain: 'layout style paint' }}>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform" style={{ contain: 'layout' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform" style={{ animationDelay: '1s', contain: 'layout' }} />
-      </div>
-
       {/* Header with progress and exit */}
       {state.currentStep !== 'complete' && (
         <header className="relative z-10 max-w-4xl mx-auto pt-8 px-4">

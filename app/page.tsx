@@ -83,7 +83,6 @@ import { FeatureCard } from '@/components/ui/FeatureCard';
 
 // Lazy load heavy animation components
 const BlueprintGrid = dynamic(() => import('@/components/landing/BlueprintGrid').then(m => ({ default: m.BlueprintGrid })), { ssr: false });
-const HeroAnimation = dynamic(() => import('@/components/landing/HeroAnimation').then(m => ({ default: m.HeroAnimation })), { ssr: false });
 const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
 const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
 const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
@@ -98,22 +97,6 @@ export default function LandingPage() {
       <section className="relative min-h-screen pt-32 pb-20 px-4 z-10">
         {/* Blueprint Grid Background */}
         <BlueprintGrid />
-
-        {/* Animated gradient orbs - CSS animations for zero CLS */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ contain: 'layout style paint' }}>
-          <div
-            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform"
-            style={{ contain: 'layout' }}
-          />
-          <div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform"
-            style={{ animationDelay: '1s', contain: 'layout' }}
-          />
-          <div
-            className="absolute top-3/4 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse-slow will-change-transform"
-            style={{ animationDelay: '2s', contain: 'layout' }}
-          />
-        </div>
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
@@ -232,15 +215,6 @@ export default function LandingPage() {
               </a>
             </motion.div>
 
-          {/* Hero Animation */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="relative mt-8"
-          >
-            <HeroAnimation />
-          </motion.div>
         </div>
       </section>
 
