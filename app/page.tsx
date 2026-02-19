@@ -91,7 +91,7 @@ export default function LandingPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen pt-32 pb-20 px-4 z-10">
+      <section className="relative pt-32 pb-20 px-4 z-10">
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">

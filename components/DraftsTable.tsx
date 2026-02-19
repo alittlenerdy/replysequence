@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import Link from 'next/link';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftPreviewModal } from './DraftPreviewModal';
@@ -490,18 +489,8 @@ export function DraftsTable({
                 <div className="shrink-0">{getPlatformIcon(draft.meetingPlatform)}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-sm font-medium text-white light:text-gray-900 truncate flex items-center gap-1.5">
+                    <h3 className="text-sm font-medium text-white light:text-gray-900 truncate">
                       {draft.meetingTopic || 'Untitled Meeting'}
-                      <Link
-                        href={`/dashboard/meetings/${draft.meetingId}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-gray-500 hover:text-indigo-400 transition-colors shrink-0"
-                        title="View meeting details"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </Link>
                     </h3>
                     <span className="text-xs text-gray-500 shrink-0">
                       {formatDateShort(draft.createdAt)}
@@ -607,18 +596,8 @@ export function DraftsTable({
                     <div className="flex items-center gap-2 min-w-0">
                       {getPlatformIcon(draft.meetingPlatform)}
                       <div className="min-w-0">
-                        <div className="text-sm font-medium text-white light:text-gray-900 truncate flex items-center gap-1.5">
+                        <div className="text-sm font-medium text-white light:text-gray-900 truncate">
                           {draft.meetingTopic || 'Untitled Meeting'}
-                          <Link
-                            href={`/dashboard/meetings/${draft.meetingId}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-gray-500 hover:text-indigo-400 transition-colors shrink-0"
-                            title="View meeting details"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                          </Link>
                         </div>
                         <div className="text-xs text-gray-400 light:text-gray-500 truncate">
                           {draft.meetingHostEmail}
