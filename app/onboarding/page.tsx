@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { StepWelcome } from '@/components/onboarding/StepWelcome';
 import { StepConnectPlatform } from '@/components/onboarding/StepConnectPlatform';
 import { StepEmailConnect } from '@/components/onboarding/StepEmailConnect';
-import { StepAIVoice } from '@/components/onboarding/StepAIVoice';
+import { AIWizard } from '@/components/onboarding/ai-wizard/AIWizard';
 import { StepCRM } from '@/components/onboarding/StepCRM';
 import { StepEmailPreferences } from '@/components/onboarding/StepEmailPreferences';
 import { OnboardingComplete } from '@/components/onboarding/OnboardingComplete';
@@ -388,7 +388,7 @@ function OnboardingContent() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <StepAIVoice onSaved={handleAIVoiceSaved} />
+              <AIWizard onSaved={handleAIVoiceSaved} />
             </motion.div>
           )}
 

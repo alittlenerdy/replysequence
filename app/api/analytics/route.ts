@@ -8,100 +8,20 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq, inArray } from 'drizzle-orm';
 import { db, users, meetings, drafts } from '@/lib/db';
+import type {
+  AnalyticsData,
+  DailyDataPoint,
+  PlatformStat,
+  EmailFunnelData,
+  EmailEngagementData,
+  MeetingTypeStat,
+  PeriodComparison,
+  AtRiskMeeting,
+  DailyCoverage,
+} from '@/lib/types/analytics';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
-
-// Daily data point for charts
-export interface DailyDataPoint {
-  date: string;
-  count: number;
-}
-
-// Platform breakdown
-export interface PlatformStat {
-  platform: string;
-  count: number;
-  color: string;
-}
-
-// Email funnel metrics
-export interface EmailFunnel {
-  total: number;
-  ready: number;
-  sent: number;
-  conversionRate: number;
-}
-
-// Email engagement metrics
-export interface EmailEngagement {
-  sent: number;
-  opened: number;
-  clicked: number;
-  replied: number;
-  openRate: number; // percentage
-  clickRate: number; // percentage (of opened)
-  replyRate: number; // percentage (of sent)
-  avgTimeToOpen: number | null; // hours
-}
-
-// Meeting type breakdown
-export interface MeetingTypeStat {
-  type: string;
-  count: number;
-  color: string;
-}
-
-// AI usage metrics
-export interface AIUsageMetrics {
-  totalCost: number; // total USD spent on AI generation
-  avgLatency: number; // average generation time in ms
-  totalMeetingMinutes: number; // total meeting duration processed
-}
-
-// Period comparison for trends
-export interface PeriodComparison {
-  current: number;
-  previous: number;
-  change: number; // percentage change
-  trend: 'up' | 'down' | 'neutral';
-}
-
-// ROI metrics
-export interface ROIMetrics {
-  hoursSaved: number;
-  dollarValue: number;
-  hourlyRate: number; // configurable, default $100/hr
-  emailsPerHour: number; // how many manual emails per hour (default 4)
-}
-
-// Enhanced analytics response
-export interface AnalyticsData {
-  // Core stats with comparisons
-  totalMeetings: number;
-  emailsGenerated: number;
-  emailsSent: number;
-  timeSavedMinutes: number;
-  // Period comparisons (this week vs last week)
-  meetingsComparison: PeriodComparison;
-  emailsComparison: PeriodComparison;
-  sentComparison: PeriodComparison;
-  // ROI metrics
-  roi: ROIMetrics;
-  // Trends
-  dailyMeetings: DailyDataPoint[];
-  dailyEmails: DailyDataPoint[];
-  // Platform breakdown
-  platformBreakdown: PlatformStat[];
-  // Funnel
-  emailFunnel: EmailFunnel;
-  // Email engagement
-  engagement: EmailEngagement;
-  // Meeting type breakdown
-  meetingTypeBreakdown: MeetingTypeStat[];
-  // AI usage metrics
-  aiUsage: AIUsageMetrics;
-}
 
 // Average time to write a follow-up email manually (in minutes)
 const MINUTES_PER_EMAIL = 15;
@@ -186,13 +106,18 @@ export async function GET(request: Request) {
     engagement: { sent: 0, opened: 0, clicked: 0, replied: 0, openRate: 0, clickRate: 0, replyRate: 0, avgTimeToOpen: null },
     meetingTypeBreakdown: [],
     aiUsage: { totalCost: 0, avgLatency: 0, totalMeetingMinutes: 0 },
+    medianFollowUpTimeHours: null,
+    atRiskMeetings: [],
+    dailyCoverage: [],
+    aiOnboardingComplete: false,
+    hourlyRate: DEFAULT_HOURLY_RATE,
   };
 
   try {
     // Find user by Clerk ID
     console.log('[ANALYTICS-2] Finding user by clerkId:', clerkUserId);
     const [user] = await db
-      .select({ id: users.id, email: users.email, hourlyRate: users.hourlyRate })
+      .select({ id: users.id, email: users.email, hourlyRate: users.hourlyRate, aiOnboardingComplete: users.aiOnboardingComplete })
       .from(users)
       .where(eq(users.clerkId, clerkUserId))
       .limit(1);
@@ -206,7 +131,7 @@ export async function GET(request: Request) {
     // Get all user meetings filtered by userId (consistent with dashboard)
     console.log('[ANALYTICS-5] Querying meetings for userId:', user.id);
 
-    let userMeetings: { id: string; platform: string | null; createdAt: Date | null; duration: number | null }[] = [];
+    let userMeetings: { id: string; platform: string | null; createdAt: Date | null; duration: number | null; topic: string | null; hostEmail: string; endTime: Date | null; participants: unknown }[] = [];
 
     try {
       userMeetings = await db
@@ -215,6 +140,10 @@ export async function GET(request: Request) {
           platform: meetings.platform,
           createdAt: meetings.createdAt,
           duration: meetings.duration,
+          topic: meetings.topic,
+          hostEmail: meetings.hostEmail,
+          endTime: meetings.endTime,
+          participants: meetings.participants,
         })
         .from(meetings)
         .where(eq(meetings.userId, user.id));
@@ -287,6 +216,8 @@ export async function GET(request: Request) {
         // Get all drafts for user's meetings with engagement data
         const userDrafts = await db
           .select({
+            id: drafts.id,
+            meetingId: drafts.meetingId,
             status: drafts.status,
             createdAt: drafts.createdAt,
             sentAt: drafts.sentAt,
@@ -359,7 +290,7 @@ export async function GET(request: Request) {
     }));
 
     // Email funnel
-    const emailFunnel: EmailFunnel = {
+    const emailFunnel: EmailFunnelData = {
       total: emailsGenerated,
       ready: emailsReady,
       sent: emailsSent,
@@ -367,7 +298,7 @@ export async function GET(request: Request) {
     };
 
     // Email engagement metrics
-    const engagement: EmailEngagement = {
+    const engagement: EmailEngagementData = {
       sent: emailsSent,
       opened: emailsOpened,
       clicked: emailsClicked,
@@ -413,6 +344,103 @@ export async function GET(request: Request) {
 
     console.log('[ANALYTICS-8] Returning analytics data');
 
+    // --- New metrics: median follow-up time, at-risk meetings, daily coverage ---
+
+    // Build a map of meetingId → best draft for at-risk + median computation
+    const draftsByMeeting = new Map<string, { id: string; status: string | null; sentAt: Date | null }>();
+    if (meetingIds.length > 0) {
+      try {
+        const allDrafts = await db
+          .select({ id: drafts.id, meetingId: drafts.meetingId, status: drafts.status, sentAt: drafts.sentAt })
+          .from(drafts)
+          .where(inArray(drafts.meetingId, meetingIds));
+
+        for (const d of allDrafts) {
+          const existing = draftsByMeeting.get(d.meetingId);
+          // Keep the "best" draft: prefer sent > generated > failed > none
+          if (!existing || (d.status === 'sent' && existing.status !== 'sent')) {
+            draftsByMeeting.set(d.meetingId, { id: d.id, status: d.status, sentAt: d.sentAt });
+          }
+        }
+      } catch (e) {
+        console.log('[ANALYTICS-WARN] Error building draft map:', e);
+      }
+    }
+
+    // Median follow-up time: median of (draft.sentAt - meeting.endTime) for sent drafts
+    const followUpTimesHours: number[] = [];
+    for (const m of userMeetings) {
+      if (!m.endTime) continue;
+      const draft = draftsByMeeting.get(m.id);
+      if (draft?.sentAt) {
+        const hours = (new Date(draft.sentAt).getTime() - new Date(m.endTime).getTime()) / (1000 * 60 * 60);
+        if (hours >= 0) followUpTimesHours.push(hours);
+      }
+    }
+    let medianFollowUpTimeHours: number | null = null;
+    if (followUpTimesHours.length > 0) {
+      followUpTimesHours.sort((a, b) => a - b);
+      const mid = Math.floor(followUpTimesHours.length / 2);
+      medianFollowUpTimeHours = followUpTimesHours.length % 2 === 0
+        ? Math.round(((followUpTimesHours[mid - 1] + followUpTimesHours[mid]) / 2) * 10) / 10
+        : Math.round(followUpTimesHours[mid] * 10) / 10;
+    }
+
+    // At-risk meetings: meetings without a sent draft
+    const atRiskMeetings: AtRiskMeeting[] = [];
+    for (const m of userMeetings) {
+      const draft = draftsByMeeting.get(m.id);
+      if (draft?.status === 'sent') continue; // followed up — not at risk
+
+      // Extract contact name from first participant that isn't the host
+      let contactName: string | null = null;
+      if (Array.isArray(m.participants)) {
+        const contact = (m.participants as { user_name?: string; email?: string }[]).find(
+          p => p.email && p.email !== m.hostEmail
+        );
+        contactName = contact?.user_name || null;
+      }
+
+      atRiskMeetings.push({
+        meetingId: m.id,
+        topic: m.topic,
+        hostEmail: m.hostEmail,
+        endTime: m.endTime ? new Date(m.endTime).toISOString() : null,
+        draftStatus: !draft ? 'none' : draft.status === 'failed' ? 'failed' : 'generated',
+        draftId: draft?.id || null,
+        contactName,
+      });
+    }
+    // Sort by endTime descending (most recent first)
+    atRiskMeetings.sort((a, b) => {
+      if (!a.endTime) return 1;
+      if (!b.endTime) return -1;
+      return new Date(b.endTime).getTime() - new Date(a.endTime).getTime();
+    });
+
+    // Daily coverage: per-day meetings count, followed-up count, coverage %
+    const dailyCoverageMap: Record<string, { meetings: number; followedUp: number }> = {};
+    dateRange.forEach(d => { dailyCoverageMap[d] = { meetings: 0, followedUp: 0 }; });
+    for (const m of userMeetings) {
+      if (!m.createdAt) continue;
+      const dateStr = new Date(m.createdAt).toISOString().split('T')[0];
+      if (dailyCoverageMap[dateStr] === undefined) continue;
+      dailyCoverageMap[dateStr].meetings++;
+      const draft = draftsByMeeting.get(m.id);
+      if (draft?.status === 'sent') {
+        dailyCoverageMap[dateStr].followedUp++;
+      }
+    }
+    const dailyCoverage: DailyCoverage[] = dateRange.map(date => {
+      const d = dailyCoverageMap[date];
+      return {
+        date,
+        meetingsCount: d.meetings,
+        followedUpCount: d.followedUp,
+        coveragePercent: d.meetings > 0 ? Math.round((d.followedUp / d.meetings) * 100) : 100,
+      };
+    });
+
     return NextResponse.json<AnalyticsData>({
       totalMeetings,
       emailsGenerated,
@@ -422,7 +450,7 @@ export async function GET(request: Request) {
       emailsComparison: calculateComparison(thisWeekEmails, lastWeekEmails),
       sentComparison: calculateComparison(thisWeekSent, lastWeekSent),
       roi: {
-        hoursSaved: Math.round(hoursSaved * 10) / 10, // 1 decimal place
+        hoursSaved: Math.round(hoursSaved * 10) / 10,
         dollarValue: Math.round(dollarValue),
         hourlyRate: userHourlyRate,
         emailsPerHour: 4,
@@ -434,10 +462,15 @@ export async function GET(request: Request) {
       engagement,
       meetingTypeBreakdown,
       aiUsage: {
-        totalCost: Math.round(totalCostUsd * 10000) / 10000, // 4 decimal places
+        totalCost: Math.round(totalCostUsd * 10000) / 10000,
         avgLatency: latencyCount > 0 ? Math.round(totalLatencyMs / latencyCount) : 0,
         totalMeetingMinutes,
       },
+      medianFollowUpTimeHours,
+      atRiskMeetings,
+      dailyCoverage,
+      aiOnboardingComplete: user.aiOnboardingComplete,
+      hourlyRate: userHourlyRate,
     });
   } catch (error) {
     console.error('[ANALYTICS-ERROR] Unexpected error:', error);

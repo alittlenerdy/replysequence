@@ -19,6 +19,8 @@ export async function GET() {
         aiCustomInstructions: users.aiCustomInstructions,
         aiSignature: users.aiSignature,
         hourlyRate: users.hourlyRate,
+        userRole: users.userRole,
+        aiOnboardingComplete: users.aiOnboardingComplete,
       })
       .from(users)
       .where(eq(users.clerkId, user.id))
@@ -46,7 +48,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate } = body;
+    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate, userRole, aiOnboardingComplete } = body;
 
     // Validate tone
     const validTones = ['professional', 'casual', 'friendly', 'concise'];
@@ -67,6 +69,17 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Hourly rate must be between 1 and 9999' }, { status: 400 });
     }
 
+    // Validate user role
+    const validRoles = ['founder', 'ae', 'csm', 'consultant', 'other'];
+    if (userRole !== undefined && userRole !== null && !validRoles.includes(userRole)) {
+      return NextResponse.json({ error: 'Invalid user role' }, { status: 400 });
+    }
+
+    // Validate aiOnboardingComplete
+    if (aiOnboardingComplete !== undefined && typeof aiOnboardingComplete !== 'boolean') {
+      return NextResponse.json({ error: 'aiOnboardingComplete must be a boolean' }, { status: 400 });
+    }
+
     const updateData: Record<string, unknown> = {
       aiTone: aiTone || 'professional',
       aiCustomInstructions: aiCustomInstructions || null,
@@ -75,6 +88,12 @@ export async function PUT(request: NextRequest) {
     };
     if (hourlyRate !== undefined) {
       updateData.hourlyRate = hourlyRate;
+    }
+    if (userRole !== undefined) {
+      updateData.userRole = userRole || null;
+    }
+    if (aiOnboardingComplete !== undefined) {
+      updateData.aiOnboardingComplete = aiOnboardingComplete;
     }
 
     await db
