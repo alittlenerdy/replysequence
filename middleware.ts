@@ -36,7 +36,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://api.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://*.clerk.services https://*.sentry.io wss://*.supabase.co https://vitals.vercel-insights.com https://us.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com",
+    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://api.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://*.clerk.services wss://*.supabase.co https://vitals.vercel-insights.com https://us.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com",
     "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev https://*.clerk.com https://clerk.replysequence.com https://accounts.replysequence.com https://challenges.cloudflare.com",
     "worker-src 'self' blob:",
     "frame-ancestors 'self'",

@@ -20,7 +20,6 @@
     "@anthropic-ai/sdk": "^0.71.2",
     "@clerk/nextjs": "^6.36.10",
     "@floating-ui/dom": "^1.7.5",
-    "@sentry/nextjs": "^10.38.0",
     "@tiptap/extension-placeholder": "^3.18.0",
     "@tiptap/pm": "^3.18.0",
     "@tiptap/react": "^3.18.0",

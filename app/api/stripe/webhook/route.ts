@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import * as Sentry from '@sentry/nextjs';
 import { stripe, STRIPE_PRICES } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
@@ -54,10 +53,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('[STRIPE WEBHOOK] Signature verification failed:', message);
-    Sentry.captureException(err, {
-      tags: { component: 'stripe-webhook' },
-      extra: { reason: 'signature_verification_failed' },
-    });
     return NextResponse.json(
       { error: `Webhook signature verification failed: ${message}` },
       { status: 400 }
@@ -72,10 +67,6 @@ export async function POST(request: NextRequest) {
   // Warn if receiving test mode events in production
   if (!event.livemode && process.env.NODE_ENV === 'production') {
     console.warn('[STRIPE WEBHOOK] Received TEST MODE event in production - this may indicate misconfiguration');
-    Sentry.captureMessage('Received test mode Stripe event in production', {
-      level: 'warning',
-      extra: { eventType: event.type, eventId: event.id },
-    });
   }
 
   try {
@@ -108,9 +99,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error(`[STRIPE WEBHOOK] Error handling ${event.type}:`, message);
-    Sentry.captureException(err, {
-      tags: { component: 'stripe-webhook', eventType: event.type },
-    });
     return NextResponse.json(
       { error: `Webhook handler failed: ${message}` },
       { status: 500 }
@@ -153,10 +141,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     tier = 'team';
   } else {
     console.error(`[STRIPE WEBHOOK] Unknown price ID: ${priceId}`);
-    Sentry.captureMessage(`Unknown Stripe price ID: ${priceId}`, {
-      level: 'warning',
-      extra: { customerId, subscriptionId },
-    });
     return;
   }
 
@@ -178,18 +162,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   if (result.length === 0) {
     console.error(`[STRIPE WEBHOOK] No user found with stripeCustomerId: ${customerId}`);
-    Sentry.captureMessage('Checkout completed but no user found', {
-      level: 'error',
-      extra: { customerId, subscriptionId, tier },
-    });
     return;
   }
 
   console.log(`[STRIPE WEBHOOK] checkout.session.completed: User ${result[0].email} upgraded to ${tier}`);
-  Sentry.captureMessage(`Stripe webhook: checkout.session.completed`, {
-    level: 'info',
-    extra: { customerId, subscriptionId, tier, email: result[0].email },
-  });
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
@@ -236,10 +212,6 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
   if (result.length > 0) {
     console.log(`[STRIPE WEBHOOK] customer.subscription.updated: User ${result[0].email} status=${mappedStatus}`);
-    Sentry.captureMessage(`Stripe webhook: customer.subscription.updated`, {
-      level: 'info',
-      extra: { customerId, subscriptionId, status: mappedStatus, tier },
-    });
   }
 }
 
@@ -261,10 +233,6 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
   if (result.length > 0) {
     console.log(`[STRIPE WEBHOOK] customer.subscription.deleted: User ${result[0].email} canceled (access until ${endDate.toISOString()})`);
-    Sentry.captureMessage(`Stripe webhook: customer.subscription.deleted`, {
-      level: 'info',
-      extra: { customerId, subscriptionId, endDate: endDate.toISOString() },
-    });
   }
 }
 
@@ -294,10 +262,6 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
 
   if (result.length > 0) {
     console.log(`[STRIPE WEBHOOK] invoice.payment_succeeded: User ${result[0].email} renewed until ${endDate.toISOString()}`);
-    Sentry.captureMessage(`Stripe webhook: invoice.payment_succeeded`, {
-      level: 'info',
-      extra: { customerId, subscriptionId, endDate: endDate.toISOString() },
-    });
   }
 }
 
@@ -318,10 +282,6 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
     .returning({ id: users.id, email: users.email });
 
   if (result.length > 0) {
-    console.log(`[STRIPE WEBHOOK] invoice.payment_failed: User ${result[0].email} payment failed`);
-    Sentry.captureMessage(`Stripe webhook: invoice.payment_failed`, {
-      level: 'warning',
-      extra: { customerId, subscriptionId, email: result[0].email },
-    });
+    console.warn(`[STRIPE WEBHOOK] invoice.payment_failed: User ${result[0].email} payment failed`);
   }
 }

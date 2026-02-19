@@ -13,7 +13,6 @@ module.exports = {
     '/sign-up',
     '/sign-up/*',
     '/onboarding',
-    '/sentry-example-page',
     '/icon.svg', // Exclude SVG icon from sitemap
   ],
   changefreq: 'weekly',
