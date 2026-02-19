@@ -46,3 +46,6 @@ next-env.d.ts
 .env.sentry-build-plugin
 tsconfig.tsbuildinfo
 .mcp.json
+
+# worktrees
+.worktrees/
