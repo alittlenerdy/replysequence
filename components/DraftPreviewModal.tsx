@@ -9,6 +9,8 @@ import { ConversationalRefine } from './ConversationalRefine';
 import { MeetingSummaryPanel } from './MeetingSummaryPanel';
 import { TemplatePicker } from './TemplatePicker';
 import { DraftFeedback } from './DraftFeedback';
+import { getTemplatesForMeetingType, MEETING_TEMPLATES } from '@/lib/meeting-templates';
+import type { MeetingType } from '@/lib/meeting-type-detector';
 
 // Hydration-safe date formatting
 function useHydrationSafe() {
@@ -657,6 +659,44 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         dangerouslySetInnerHTML={{ __html: ensureHtml(draft.body) }}
                       />
                     </div>
+
+                    {/* Template Strip - inline template recommendations */}
+                    {draft.status !== 'sent' && !isRegenerating && (() => {
+                      const meetingType = (draft.meetingType as MeetingType) || 'general';
+                      const relevantTemplates = getTemplatesForMeetingType(meetingType);
+                      // Show up to 4 most relevant templates
+                      const displayTemplates = relevantTemplates.slice(0, 4);
+
+                      if (displayTemplates.length === 0) return null;
+
+                      const iconColors: Record<string, string> = {
+                        sales: 'text-amber-400',
+                        team: 'text-blue-400',
+                        client: 'text-emerald-400',
+                        technical: 'text-purple-400',
+                        general: 'text-gray-400',
+                        onboarding: 'text-cyan-400',
+                        strategy: 'text-indigo-400',
+                      };
+
+                      return (
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                          <span className="text-xs text-slate-500 whitespace-nowrap shrink-0">Try as:</span>
+                          {displayTemplates.map((template) => (
+                            <button
+                              key={template.id}
+                              onClick={() => handleRegenerate(template.id)}
+                              disabled={isRegenerating}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] rounded-full hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-white transition-all duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed group"
+                              title={template.description}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${iconColors[template.icon] || 'text-gray-400'} bg-current shrink-0 group-hover:scale-125 transition-transform`} />
+                              {template.name}
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
 
                     {/* Meeting Info */}
                     <div className="bg-[#16162A]/60 rounded-lg p-4 border border-white/[0.06]">
