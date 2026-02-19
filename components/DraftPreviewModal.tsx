@@ -53,8 +53,28 @@ interface SuggestedRecipient {
   name?: string;
 }
 
-export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPreviewModalProps) {
+export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated }: DraftPreviewModalProps) {
   const isMounted = useHydrationSafe();
+
+  // Local draft state — allows in-place updates after regeneration
+  const [draft, setDraft] = useState<DraftWithMeeting>(initialDraft);
+  const [wasRegenerated, setWasRegenerated] = useState(false);
+
+  // Sync when parent provides a genuinely different draft
+  useEffect(() => {
+    setDraft(initialDraft);
+    setWasRegenerated(false);
+  }, [initialDraft.id]);
+
+  // Close handler — refreshes parent data if a regeneration occurred
+  const handleModalClose = useCallback(() => {
+    if (wasRegenerated) {
+      onDraftUpdated(); // Refresh parent list + close
+    } else {
+      onClose();
+    }
+  }, [wasRegenerated, onDraftUpdated, onClose]);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -67,6 +87,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const [showSendConfirm, setShowSendConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
+  const [regenerateSuccess, setRegenerateSuccess] = useState(false);
   const [hubspotDetails, setHubspotDetails] = useState<{
     synced: boolean;
     contactFound: boolean;
@@ -135,7 +156,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
         } else if (showTemplatePicker) {
           setShowTemplatePicker(false);
         } else {
-          onClose();
+          handleModalClose();
         }
       }
 
@@ -158,7 +179,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showSendConfirm, showDeleteConfirm, isEditing, isRefining, showTemplatePicker, onClose, recipientEmail, draft.status]);
+  }, [showSendConfirm, showDeleteConfirm, isEditing, isRefining, showTemplatePicker, handleModalClose, recipientEmail, draft.status]);
 
   // Fetch suggested recipients from meeting attendees
   useEffect(() => {
@@ -325,6 +346,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
   const handleRegenerate = async (templateId: string) => {
     setIsRegenerating(true);
     setError(null);
+    setRegenerateSuccess(false);
 
     try {
       const response = await fetch('/api/drafts/regenerate', {
@@ -339,9 +361,21 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
         throw new Error(data.error || 'Failed to regenerate draft');
       }
 
+      // Fetch the full new draft to display in-place
+      const draftRes = await fetch(`/api/drafts/${data.draftId}`);
+      if (!draftRes.ok) {
+        throw new Error('Failed to load regenerated draft');
+      }
+      const newDraft: DraftWithMeeting = await draftRes.json();
+
+      // Update local state to show the new draft without closing the modal
+      setDraft(newDraft);
+      setEditSubject(newDraft.subject);
+      setEditBody(ensureHtml(newDraft.body));
       setShowTemplatePicker(false);
-      onDraftUpdated();
-      onClose();
+      setWasRegenerated(true);
+      setRegenerateSuccess(true);
+      setTimeout(() => setRegenerateSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to regenerate draft');
     } finally {
@@ -358,7 +392,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
         onMouseDown={(e) => {
           // Only close if the backdrop itself was clicked (not a child element)
           if (e.target === e.currentTarget) {
-            onClose();
+            handleModalClose();
           }
         }}
         aria-hidden="true"
@@ -371,7 +405,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
           // Close only when clicking the wrapper area itself (outside the modal dialog),
           // not when clicking inside the modal dialog.
           if (e.target === e.currentTarget) {
-            onClose();
+            handleModalClose();
           }
         }}
       >
@@ -417,7 +451,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                   </button>
                 )}
                 <button
-                  onClick={onClose}
+                  onClick={handleModalClose}
                   className="p-2.5 sm:p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -618,6 +652,16 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                   </div>
                 ) : (
                   <div className="space-y-6">
+                    {/* Regeneration success banner */}
+                    {regenerateSuccess && (
+                      <div className="flex items-center gap-2 text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-lg animate-fade-in">
+                        <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="font-medium">Draft regenerated with new template!</span>
+                      </div>
+                    )}
+
                     {/* Subject */}
                     <div>
                       <h3 className="text-sm font-medium text-gray-400 mb-2">Subject</h3>
