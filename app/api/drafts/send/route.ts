@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
               to: recipientEmail,
               subject: draft.subject,
               htmlBody: emailBody,
-              textBody: emailBody,
+              textBody: draft.body,
               replyTo: draft.meetingHostEmail,
             });
 
