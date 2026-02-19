@@ -352,7 +352,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
       {/* Backdrop with blur - hidden on mobile since modal is full screen */}
       {/* Uses onMouseDown instead of onClick to prevent stealing focus from inputs */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity hidden md:block"
+        className="fixed inset-0 bg-black/70 backdrop-blur-md backdrop-saturate-150 transition-opacity hidden md:block"
         onMouseDown={(e) => {
           // Only close if the backdrop itself was clicked (not a child element)
           if (e.target === e.currentTarget) {
@@ -374,11 +374,16 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
         }}
       >
         <div
-          className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-gray-900 md:border md:border-gray-700 md:rounded-2xl shadow-2xl transform transition-all animate-modal-in"
+          className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-[#0C0C18] md:border md:border-white/[0.06] md:rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),0_0_80px_rgba(59,130,246,0.05)] transform transition-all animate-modal-in overflow-hidden"
           onMouseDown={(e) => e.stopPropagation()}
         >
+          {/* Ambient gradient orbs for depth */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-2xl">
+            <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-blue-500/[0.04] blur-[100px]" />
+            <div className="absolute -bottom-[150px] -left-[150px] w-[400px] h-[400px] rounded-full bg-purple-500/[0.03] blur-[80px]" />
+          </div>
           {/* Header - sticky on mobile for easy close access */}
-          <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gray-800/95 backdrop-blur-sm md:rounded-t-2xl">
+          <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/[0.06] bg-[#16162A]/95 backdrop-blur-sm md:rounded-t-2xl">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
@@ -559,7 +564,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         type="text"
                         value={editSubject}
                         onChange={(e) => setEditSubject(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder:text-gray-500"
+                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder:text-slate-500"
                         placeholder="Email subject"
                       />
                     </div>
@@ -577,7 +582,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                     </div>
 
                     {/* Edit Actions */}
-                    <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.06]">
                       <button
                         onClick={() => setIsEditing(false)}
                         disabled={isSaving}
@@ -648,14 +653,14 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </button>
                       </div>
                       <div
-                        className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 text-gray-200 prose prose-invert max-w-none prose-p:my-2 prose-ul:list-disc prose-ul:pl-5 prose-ol:list-decimal prose-ol:pl-5 prose-blockquote:border-l-4 prose-blockquote:border-gray-500 prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-gray-700 prose-code:px-1 prose-code:rounded prose-code:font-mono prose-code:text-sm"
+                        className="bg-[#16162A]/60 rounded-lg p-4 border border-white/[0.06] text-gray-100 prose prose-invert max-w-none prose-p:my-2 prose-ul:list-disc prose-ul:pl-5 prose-ol:list-decimal prose-ol:pl-5 prose-blockquote:border-l-4 prose-blockquote:border-slate-500 prose-blockquote:pl-4 prose-blockquote:italic prose-code:bg-slate-700 prose-code:px-1 prose-code:rounded prose-code:font-mono prose-code:text-sm"
                         dangerouslySetInnerHTML={{ __html: ensureHtml(draft.body) }}
                       />
                     </div>
 
                     {/* Meeting Info */}
-                    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                      <h3 className="text-sm font-medium text-gray-400 mb-2">Meeting</h3>
+                    <div className="bg-[#16162A]/60 rounded-lg p-4 border border-white/[0.06]">
+                      <h3 className="text-sm font-medium text-slate-400 mb-2">Meeting</h3>
                       <p className="text-white font-medium">{draft.meetingTopic || 'Untitled Meeting'}</p>
                       <p className="text-sm text-gray-400 mt-1">{formatDate(draft.meetingStartTime)}</p>
                     </div>
@@ -664,26 +669,26 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                     <MeetingSummaryPanel meetingId={draft.meetingId} />
 
                     {/* Metadata */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-700">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/[0.06]">
                       <div>
-                        <p className="text-xs text-gray-500">Model</p>
-                        <p className="text-sm font-medium text-gray-300">{draft.model}</p>
+                        <p className="text-xs text-slate-500">Model</p>
+                        <p className="text-sm font-medium text-slate-300">{draft.model}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Tokens</p>
-                        <p className="text-sm font-medium text-gray-300">
+                        <p className="text-xs text-slate-500">Tokens</p>
+                        <p className="text-sm font-medium text-slate-300">
                           {draft.inputTokens ?? 0} in / {draft.outputTokens ?? 0} out
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Cost</p>
-                        <p className="text-sm font-medium text-gray-300">
+                        <p className="text-xs text-slate-500">Cost</p>
+                        <p className="text-sm font-medium text-slate-300">
                           {draft.costUsd ? `$${parseFloat(draft.costUsd).toFixed(4)}` : '-'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Latency</p>
-                        <p className="text-sm font-medium text-gray-300">
+                        <p className="text-xs text-slate-500">Latency</p>
+                        <p className="text-sm font-medium text-slate-300">
                           {formatDuration(draft.generationDurationMs)}
                         </p>
                       </div>
@@ -691,8 +696,8 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
                     {/* Quality Scores Detail */}
                     {draft.qualityScore !== null && (
-                      <div className="pt-4 border-t border-gray-700">
-                        <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                      <div className="pt-4 border-t border-white/[0.06]">
+                        <h3 className="text-sm font-medium text-slate-400 mb-3 flex items-center gap-2">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -732,8 +737,8 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </div>
 
                         {/* Email Engagement Stats */}
-                        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                          <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                        <div className="bg-[#16162A]/60 rounded-lg p-4 border border-white/[0.06]">
+                          <h4 className="text-sm font-medium text-slate-400 mb-3 flex items-center gap-2">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
@@ -784,7 +789,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
                           {/* Last Activity */}
                           {draft.lastOpenedAt && isMounted && (
-                            <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500 text-center">
+                            <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-slate-500 text-center">
                               Last opened: {formatDateSafe(draft.lastOpenedAt, isMounted, {
                                 month: 'short',
                                 day: 'numeric',
@@ -796,7 +801,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
                           {/* No activity message */}
                           {!draft.openedAt && !draft.clickedAt && (
-                            <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500 text-center">
+                            <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-slate-500 text-center">
                               No engagement tracked yet. Opens are recorded when recipients view the email.
                             </div>
                           )}
@@ -809,7 +814,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
 
               {/* Footer */}
               {!isEditing && !isRefining && !showTemplatePicker ? (
-                <div className="px-6 py-4 border-t border-gray-700 bg-gray-800/50 rounded-b-2xl">
+                <div className="px-6 py-4 border-t border-white/[0.06] bg-[#16162A]/60 rounded-b-2xl">
                   {sendSuccess ? (
                     <div className="space-y-1 py-2">
                       <div className="flex items-center justify-center gap-2 text-green-400">
@@ -927,7 +932,7 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                             placeholder="Recipient email address"
                             value={recipientEmail}
                             onChange={(e) => setRecipientEmail(e.target.value)}
-                            className="w-full px-3 py-2 text-sm text-white bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-500"
+                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-500"
                           />
                         </div>
                         <div className="flex gap-2 flex-wrap">
