@@ -77,7 +77,7 @@ function ChecklistItemRow({
           className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
             item.optional
               ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-700/70 light:bg-gray-200 light:text-gray-600 light:hover:bg-gray-300'
-              : 'bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30'
+              : 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30'
           }`}
         >
           {item.actionLabel || 'Go'}
@@ -113,7 +113,7 @@ function CelebrationParticle({ delay, x }: { delay: number; x: number }) {
       }}
       className="absolute"
     >
-      <Star className="w-4 h-4 text-cyan-400" fill="currentColor" />
+      <Star className="w-4 h-4 text-indigo-400" fill="currentColor" />
     </motion.div>
   );
 }
@@ -152,7 +152,7 @@ function CelebrationOverlay({ onClose }: { onClose: () => void }) {
           initial={{ scale: 0 }}
           animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
           transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-          className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-full flex items-center justify-center"
+          className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-500 to-indigo-500 rounded-full flex items-center justify-center"
         >
           <Sparkles className="w-10 h-10 text-white" />
         </motion.div>
@@ -264,14 +264,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="relative overflow-hidden rounded-2xl"
     >
-      {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-indigo-500 to-indigo-700 rounded-2xl" />
-
-      {/* Inner content */}
-      <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
-        {/* Background glow effects */}
-        <div className="absolute -right-20 -top-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
+      <div className="relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
 
         {/* Celebration overlay */}
         <AnimatePresence>
@@ -283,8 +276,8 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
         {/* Header */}
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 flex items-center justify-center">
-              <Rocket className="w-6 h-6 text-cyan-400" />
+            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+              <Rocket className="w-6 h-6 text-indigo-400" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white light:text-gray-900">
@@ -317,7 +310,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
               initial={{ width: 0 }}
               animate={{ width: `${data.percentComplete}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full"
+              className="h-full bg-indigo-600 rounded-full"
             />
           </div>
           <span className="absolute right-0 -top-1 text-xs font-medium text-gray-400">

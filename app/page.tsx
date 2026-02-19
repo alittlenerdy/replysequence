@@ -64,13 +64,10 @@ function CountdownAnimation() {
 }
 import {
   Clock,
-  FileText,
   Zap,
-  Link2,
   Link2Off,
   BarChart3,
   Users,
-  ArrowDown,
   FileX,
   Shield,
   Lock,
@@ -81,8 +78,7 @@ import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { FeatureCard } from '@/components/ui/FeatureCard';
 
-// Lazy load heavy animation components
-const BlueprintGrid = dynamic(() => import('@/components/landing/BlueprintGrid').then(m => ({ default: m.BlueprintGrid })), { ssr: false });
+// Lazy load heavy components
 const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
 const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
 const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
@@ -93,11 +89,8 @@ export default function LandingPage() {
       {/* Header */}
       <Header />
 
-      {/* Hero Section with Blueprint Grid Background */}
+      {/* Hero Section */}
       <section className="relative min-h-screen pt-32 pb-20 px-4 z-10">
-        {/* Blueprint Grid Background */}
-        <BlueprintGrid />
-
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
@@ -380,112 +373,6 @@ export default function LandingPage() {
                 </motion.div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pain to Result Mapping */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
-              From <span className="text-red-400">Pain</span> to{' '}
-              <span className="text-emerald-400">Results</span>
-            </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              See exactly how ReplySequence transforms your workflow
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Clock,
-                pain: 'Follow-ups eat 10-15 hours/week',
-                feature: 'Auto-drafted emails in 8 seconds',
-                result: 'Give reps 10 hours/week back',
-              },
-              {
-                icon: FileText,
-                pain: 'Notes scattered & incomplete',
-                feature: 'Transcript parsing + extraction',
-                result: 'Complete context, every time',
-              },
-              {
-                icon: Zap,
-                pain: 'Slow follow-up kills momentum',
-                feature: '8-second generation',
-                result: 'Strike while iron is hot',
-              },
-              {
-                icon: Link2,
-                pain: 'Siloed tools = double entry',
-                feature: 'Email + CRM logging in one',
-                result: 'One action, two updates',
-              },
-              {
-                icon: BarChart3,
-                pain: 'CRM data wrong = vibes forecasts',
-                feature: 'Accurate auto-logging',
-                result: 'Forecasts you can trust',
-              },
-              {
-                icon: Users,
-                pain: 'Scaling multiplies chaos',
-                feature: 'Same process, any team size',
-                result: '10 reps or 100, same quality',
-              },
-            ].map((mapping, index) => {
-              const IconComponent = mapping.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05, duration: 0.5 }}
-                  className="group relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-indigo-500/30"
-                >
-                  <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center border border-gray-700 light:border-gray-200">
-                      <IconComponent className="w-6 h-6 text-indigo-400" />
-                    </div>
-                  </div>
-
-                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-3">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-red-400">Pain</span>
-                    <p className="text-sm text-red-300 light:text-red-600 font-medium mt-1">{mapping.pain}</p>
-                  </div>
-
-                  <div className="flex flex-col items-center my-3">
-                    <motion.div
-                      animate={{ y: [0, 4, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <ArrowDown className="w-5 h-5 text-indigo-400 mb-1" />
-                    </motion.div>
-                    <span className="text-xs text-indigo-400 font-medium text-center px-2">{mapping.feature}</span>
-                    <motion.div
-                      animate={{ y: [0, 4, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
-                    >
-                      <ArrowDown className="w-5 h-5 text-indigo-400 mt-1" />
-                    </motion.div>
-                  </div>
-
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Result</span>
-                    <p className="text-sm text-emerald-300 light:text-emerald-600 font-medium mt-1">{mapping.result}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
           </div>
         </div>
       </section>

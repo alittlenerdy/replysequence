@@ -361,12 +361,12 @@ export function AnalyticsDashboard() {
             <div className="relative">
               <div className="h-3 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700"
+                  className="h-full bg-emerald-600 rounded-full transition-all duration-700"
                   style={{ width: `${Math.min(100, Math.round((analytics.emailsSent / analytics.totalMeetings) * 100))}%` }}
                 />
               </div>
               <div className="flex justify-between mt-2">
-                <span className="text-2xl font-bold text-emerald-400">
+                <span className="text-2xl font-bold text-emerald-500">
                   {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}%
                 </span>
                 <span className="text-xs text-gray-500 self-end">
@@ -523,33 +523,15 @@ export function AnalyticsDashboard() {
         <div
           className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
         >
-          {/* Background decorative elements */}
-          <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 rounded-full blur-3xl" />
-          <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-gradient-to-tr from-indigo-500/10 to-emerald-500/10 rounded-full blur-3xl" />
-
           <div className="relative">
             {/* Animated chart illustration */}
             <div className="relative mx-auto w-32 h-32 mb-6">
-              {/* Pulse rings */}
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0.5 }}
-                animate={{ scale: 1.2, opacity: 0 }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-500/20"
-              />
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0.5 }}
-                animate={{ scale: 1.2, opacity: 0 }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.5 }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-500/20"
-              />
-
               {/* Main icon container */}
               <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative w-32 h-32 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-2xl shadow-indigo-500/30"
+                className="relative w-32 h-32 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-lg"
               >
                 {/* Chart bars animation */}
                 <div className="flex items-end gap-1.5">

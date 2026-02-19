@@ -27,8 +27,6 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       gradient: 'from-indigo-500 via-indigo-400 to-indigo-300',
       textGradient: 'from-indigo-400 via-indigo-300 to-indigo-400',
       lightColor: 'light:text-indigo-600',
-      shadowColor: 'shadow-indigo-500/50',
-      glowColor: 'rgba(99, 102, 241, 0.6)',
       borderHover: 'group-hover:border-indigo-400/50',
       delay: 0,
     },
@@ -45,8 +43,6 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       gradient: 'from-amber-400 via-yellow-400 to-orange-400',
       textGradient: 'from-amber-300 via-yellow-200 to-orange-300',
       lightColor: 'light:text-amber-600',
-      shadowColor: 'shadow-amber-500/50',
-      glowColor: 'rgba(251, 191, 36, 0.6)',
       borderHover: 'group-hover:border-amber-400/50',
       delay: 100,
     },
@@ -63,8 +59,6 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       gradient: 'from-green-400 via-emerald-400 to-teal-400',
       textGradient: 'from-green-300 via-emerald-200 to-teal-300',
       lightColor: 'light:text-emerald-600',
-      shadowColor: 'shadow-green-500/50',
-      glowColor: 'rgba(34, 197, 94, 0.6)',
       borderHover: 'group-hover:border-green-400/50',
       delay: 200,
     },
@@ -82,8 +76,6 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       gradient: 'from-indigo-400 via-indigo-300 to-indigo-400',
       textGradient: 'from-indigo-300 via-indigo-200 to-indigo-300',
       lightColor: 'light:text-indigo-600',
-      shadowColor: 'shadow-indigo-500/50',
-      glowColor: 'rgba(99, 102, 241, 0.6)',
       borderHover: 'group-hover:border-indigo-400/50',
       delay: 300,
     },
@@ -105,38 +97,24 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             ${stat.borderHover}
           `}
         >
-          {/* Animated glow on hover */}
-          <div
-            className="absolute -inset-1 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
-            style={{ background: `radial-gradient(circle at center, ${stat.glowColor}, transparent 70%)` }}
-          />
 
-          {/* Icon container with gradient glow */}
+          {/* Icon container */}
           <div className={`
             relative mb-4 inline-flex rounded-xl p-3
             bg-gradient-to-br ${stat.gradient}
-            ${stat.shadowColor} shadow-lg
+            shadow-sm
             transition-all duration-300
-            group-hover:scale-110 group-hover:shadow-xl
-            group-hover:rotate-3
+            group-hover:scale-105
           `}>
-            {/* Animated shine effect */}
-            <div className="absolute inset-0 rounded-xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            </div>
             {/* Icon with pulse */}
             <div className="relative text-white animate-pulse-slow">
               {stat.icon}
             </div>
           </div>
 
-          {/* Number with count-up - large gradient text with glow */}
+          {/* Number with count-up - large gradient text */}
           <div
-            className={`text-4xl md:text-5xl font-black mb-1 tabular-nums bg-gradient-to-r ${stat.textGradient} bg-clip-text text-transparent drop-shadow-lg light-solid-text ${stat.lightColor}`}
-            style={{
-              textShadow: `0 0 30px ${stat.glowColor}, 0 0 60px ${stat.glowColor}`,
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
-            }}
+            className={`text-4xl md:text-5xl font-black mb-1 tabular-nums bg-gradient-to-r ${stat.textGradient} bg-clip-text text-transparent light-solid-text ${stat.lightColor}`}
           >
             {stat.isCost ? (
               <CountUp

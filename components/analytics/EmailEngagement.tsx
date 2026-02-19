@@ -96,22 +96,22 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Funnel visualization */}
           <div className="flex items-center justify-between mb-6 px-2">
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-indigo-400">{engagement.sent}</div>
+              <div className="text-3xl font-black text-indigo-500">{engagement.sent}</div>
               <div className="text-xs text-gray-500 mt-1">Sent</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-indigo-400">{engagement.opened}</div>
+              <div className="text-3xl font-black text-indigo-500">{engagement.opened}</div>
               <div className="text-xs text-gray-500 mt-1">Opened</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-amber-400">{engagement.clicked}</div>
+              <div className="text-3xl font-black text-amber-500">{engagement.clicked}</div>
               <div className="text-xs text-gray-500 mt-1">Clicked</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
             <div className="text-center flex-1 opacity-50">
-              <div className="text-3xl font-black text-emerald-400">--</div>
+              <div className="text-3xl font-black text-emerald-500">--</div>
               <div className="text-xs text-gray-500 mt-1">Replied</div>
               <div className="text-[10px] text-emerald-400/60 mt-0.5">Coming soon</div>
             </div>
@@ -122,28 +122,28 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Open Rate</span>
-                <span className="text-indigo-400 font-semibold">{engagement.openRate}%</span>
+                <span className="text-indigo-500 font-semibold">{engagement.openRate}%</span>
               </div>
               <div className="h-2 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.openRate}%` }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-400"
+                  className="h-full rounded-full bg-indigo-600"
                 />
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Click Rate (of opened)</span>
-                <span className="text-amber-400 font-semibold">{engagement.clickRate}%</span>
+                <span className="text-amber-500 font-semibold">{engagement.clickRate}%</span>
               </div>
               <div className="h-2 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.clickRate}%` }}
                   transition={{ duration: 0.8, delay: 0.3 }}
-                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400"
+                  className="h-full rounded-full bg-amber-500"
                 />
               </div>
             </div>

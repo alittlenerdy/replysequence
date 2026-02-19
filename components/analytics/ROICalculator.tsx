@@ -59,10 +59,6 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
     <div
       className="bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 rounded-2xl p-6 relative overflow-hidden"
     >
-      {/* Background glow */}
-      <div className="absolute -right-20 -top-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
-      <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
-
       {/* Header */}
       <div className="relative flex items-center gap-3 mb-6">
         <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">

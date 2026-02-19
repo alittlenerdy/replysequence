@@ -126,8 +126,8 @@ function SavingsSparkline({ data }: { data: number[] }) {
     <svg width={width} height={height} className="opacity-60">
       <defs>
         <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
+          <stop offset="0%" stopColor="#818CF8" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#818CF8" stopOpacity="0" />
         </linearGradient>
       </defs>
       <polygon
@@ -136,7 +136,7 @@ function SavingsSparkline({ data }: { data: number[] }) {
       />
       <polyline
         fill="none"
-        stroke="#22D3EE"
+        stroke="#818CF8"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -216,23 +216,13 @@ export function TimeSavingsWidget({
   }
 
   return (
-    <div
-      className="relative overflow-hidden rounded-2xl"
-    >
-      {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-indigo-500 to-indigo-700 rounded-2xl" />
-
-      {/* Inner content with slight inset for border effect */}
-      <div className="relative m-[2px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
-        {/* Background glow effects */}
-        <div className="absolute -right-20 -top-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
+    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
 
         {/* Header */}
         <div className="relative flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-cyan-400" />
+            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-indigo-400" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white light:text-gray-900">Time Saved</h3>
@@ -250,10 +240,7 @@ export function TimeSavingsWidget({
             <div className="text-center py-2">
               <div className="text-5xl md:text-6xl font-black mb-2">
                 <span
-                  className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-indigo-500 bg-clip-text text-transparent light-solid-text light:text-cyan-600"
-                  style={{
-                    textShadow: '0 0 60px rgba(34, 211, 238, 0.3)',
-                  }}
+                  className="text-indigo-400 light:text-indigo-600"
                 >
                   <AnimatedNumber value={hoursSaved} decimals={1} />
                 </span>
@@ -264,7 +251,7 @@ export function TimeSavingsWidget({
 
             {/* Fun comparison */}
             <div
-              className="flex items-center justify-center gap-2 text-cyan-400 light:text-cyan-600 bg-cyan-500/10 rounded-lg py-2 px-4 mx-auto w-fit"
+              className="flex items-center justify-center gap-2 text-indigo-400 light:text-indigo-600 bg-indigo-500/10 rounded-lg py-2 px-4 mx-auto w-fit"
             >
               {comparison.icon}
               <span className="text-sm font-medium">{comparison.text}</span>
@@ -305,8 +292,8 @@ export function TimeSavingsWidget({
             <div
               className="space-y-4"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 rounded-full flex items-center justify-center mx-auto">
-                <Sparkles className="w-8 h-8 text-cyan-400" />
+              <div className="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto">
+                <Sparkles className="w-8 h-8 text-indigo-400" />
               </div>
 
               <div>
@@ -342,7 +329,6 @@ export function TimeSavingsWidget({
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 }

@@ -88,18 +88,8 @@ export function StatCard({
 }: StatCardProps) {
   const card = (
     <div className="relative group">
-      {/* Glow effect on hover */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-100 rounded-2xl blur-xl transition-opacity duration-500`}
-      />
-
       {/* Card */}
       <div className={`relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-colors duration-300 overflow-hidden light:shadow-sm ${hero ? 'h-full' : ''}`}>
-        {/* Background decoration */}
-        <div
-          className={`absolute -right-8 -top-8 rounded-full opacity-10 blur-2xl ${hero ? 'w-40 h-40' : 'w-24 h-24'}`}
-          style={{ backgroundColor: accentColor }}
-        />
 
         {/* Content */}
         <div className="relative">

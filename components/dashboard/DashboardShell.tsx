@@ -1,15 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { UserButton } from '@clerk/nextjs';
-import { Video } from 'lucide-react';
 import { DashboardNav } from './DashboardNav';
 import { MobileBottomNav } from './MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 import { CommandPalette } from './CommandPalette';
-
-const DashboardMarginBubbles = dynamic(() => import('@/components/DashboardMarginBubbles'), { ssr: false });
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -20,15 +16,13 @@ interface DashboardShellProps {
 export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0 }: DashboardShellProps) {
   return (
     <div className="min-h-screen bg-transparent light:bg-transparent">
-      <DashboardMarginBubbles />
       {/* Header */}
       <header className="bg-gray-900/70 light:bg-white/80 backdrop-blur-xl border-b border-white/10 light:border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <Video className="w-6 h-6 text-blue-500" />
-              <span className="text-xl font-bold text-white light:text-gray-900">ReplySequence</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:via-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">ReplySequence</span>
             </Link>
 
             {/* User Menu */}
