@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('[HUBSPOT-CALLBACK] OAuth error:', error, errorDescription);
       return NextResponse.redirect(
-        new URL(`/dashboard/settings?error=hubspot_${error}`, request.url)
+        new URL(`/dashboard/settings?tab=integrations&error=hubspot_${error}`, request.url)
       );
     }
 
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     if (!code) {
       console.error('[HUBSPOT-CALLBACK] Missing code');
       return NextResponse.redirect(
-        new URL('/dashboard/settings?error=hubspot_missing_code', request.url)
+        new URL('/dashboard/settings?tab=integrations&error=hubspot_missing_code', request.url)
       );
     }
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     if (!state || state !== storedState) {
       console.error('[HUBSPOT-CALLBACK] State mismatch');
       return NextResponse.redirect(
-        new URL('/dashboard/settings?error=hubspot_invalid_state', request.url)
+        new URL('/dashboard/settings?tab=integrations&error=hubspot_invalid_state', request.url)
       );
     }
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       if (stateData.userId !== clerkId) {
         console.error('[HUBSPOT-CALLBACK] User mismatch in state');
         return NextResponse.redirect(
-          new URL('/dashboard/settings?error=hubspot_invalid_state', request.url)
+          new URL('/dashboard/settings?tab=integrations&error=hubspot_invalid_state', request.url)
         );
       }
 
@@ -64,13 +64,13 @@ export async function GET(request: NextRequest) {
       if (Date.now() - stateData.timestamp > 10 * 60 * 1000) {
         console.error('[HUBSPOT-CALLBACK] State expired');
         return NextResponse.redirect(
-          new URL('/dashboard/settings?error=hubspot_state_expired', request.url)
+          new URL('/dashboard/settings?tab=integrations&error=hubspot_state_expired', request.url)
         );
       }
     } catch {
       console.error('[HUBSPOT-CALLBACK] Invalid state format');
       return NextResponse.redirect(
-        new URL('/dashboard/settings?error=hubspot_invalid_state', request.url)
+        new URL('/dashboard/settings?tab=integrations&error=hubspot_invalid_state', request.url)
       );
     }
 
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       console.error('[HUBSPOT-CALLBACK] User not found');
       return NextResponse.redirect(
-        new URL('/dashboard/settings?error=user_not_found', request.url)
+        new URL('/dashboard/settings?tab=integrations&error=user_not_found', request.url)
       );
     }
 
@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
 
     // Clear state cookie and redirect to settings
     const response = NextResponse.redirect(
-      new URL('/dashboard/settings?success=hubspot_connected', request.url)
+      new URL('/dashboard/settings?tab=integrations&success=hubspot_connected', request.url)
     );
     response.cookies.delete('hubspot_oauth_state');
 
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('[HUBSPOT-CALLBACK-ERROR]', error);
     return NextResponse.redirect(
-      new URL('/dashboard/settings?error=hubspot_connection_failed', request.url)
+      new URL('/dashboard/settings?tab=integrations&error=hubspot_connection_failed', request.url)
     );
   }
 }
