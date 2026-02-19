@@ -71,6 +71,7 @@ import {
   FileX,
   Shield,
   Lock,
+  ArrowDown,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -95,12 +96,13 @@ export default function LandingPage() {
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              <GradientText className="font-extrabold">8 Seconds</GradientText> from Call to{' '}
-              <span className="text-white light:text-gray-900">Follow-up.</span>
+              Never Write Another{' '}
+              <GradientText variant="amber" className="font-extrabold">Follow-Up</GradientText>{' '}
+              From Scratch Again
             </h1>
 
             <p className="text-xl text-gray-400 light:text-gray-600 mb-4 leading-relaxed max-w-3xl mx-auto">
-              AI drafts perfect follow-up emails the moment your Zoom, Teams, or Meet call ends. No notes. No typing. Just send.
+              Turn every Zoom, Teams, or Meet call into a deal-moving email and CRM update — in 8 seconds, not 30 minutes.
             </p>
           </div>
 
@@ -201,10 +203,10 @@ export default function LandingPage() {
               </a>
               <a
                 href="/privacy"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full hover:bg-green-500/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full hover:bg-amber-500/20 transition-colors"
               >
-                <Shield className="w-3.5 h-3.5 text-green-400" />
-                <span className="text-xs font-medium text-green-400">Privacy First</span>
+                <Shield className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-xs font-medium text-amber-400">Privacy First</span>
               </a>
             </motion.div>
 
@@ -217,6 +219,90 @@ export default function LandingPage() {
       {/* Bento Grid Features */}
       <BentoGrid />
 
+      {/* Pain-to-Results Section */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+              From <GradientText variant="amber">Before</GradientText> to <GradientText>After</GradientText>
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+              See exactly how ReplySequence transforms your post-meeting workflow
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Clock,
+                before: 'Reps follow up late or not at all',
+                process: 'Auto-drafted in 8 seconds',
+                after: 'Every call gets same-day follow-up',
+              },
+              {
+                icon: FileX,
+                before: 'Generic templates that ignore the call',
+                process: 'AI reads your transcript',
+                after: 'Emails reference what was actually said',
+              },
+              {
+                icon: Zap,
+                before: 'No playbook for no-shows',
+                process: 'Triggered recovery sequences',
+                after: 'Winnable deals stop falling through',
+              },
+              {
+                icon: Link2Off,
+                before: 'Manager has zero visibility',
+                process: 'Automatic activity logging',
+                after: 'See every follow-up without asking',
+              },
+              {
+                icon: BarChart3,
+                before: 'Every rep reinvents follow-up',
+                process: 'Standardized templates',
+                after: 'Top-rep quality across the whole team',
+              },
+              {
+                icon: Users,
+                before: 'CRM tasks scattered everywhere',
+                process: 'One unified system',
+                after: 'Same process, any team size',
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 flex flex-col items-center text-center"
+              >
+                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" />
+                </div>
+
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Before</span>
+                <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
+
+                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" />
+                <p className="text-xs text-gray-500 light:text-gray-500 mb-1">{item.process}</p>
+                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" />
+
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 light:text-amber-600 mb-2">After</span>
+                <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Pain Points Section */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
@@ -228,10 +314,10 @@ export default function LandingPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
-              The Real Cost of <GradientText variant="secondary">Manual Follow-ups</GradientText>
+              Your Real Leak Is Between <GradientText variant="amber">&apos;Great Call&apos;</GradientText> and <GradientText>&apos;Next Step&apos;</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Every VP Sales knows these problems. Most accept them as &quot;the cost of doing business.&quot;
+              You&apos;re booking meetings — but losing deals after them.
             </p>
           </motion.div>
 
@@ -239,33 +325,33 @@ export default function LandingPage() {
             {[
               {
                 icon: Clock,
-                title: 'Follow-ups eat 10-15 hours/week',
-                description: 'Sales reps only spend 28% of their time actually selling',
+                title: 'Follow-ups are a 30-minute time suck',
+                description: 'Reps spend 30-60 min/day turning messy notes into emails. That\'s selling time lost to admin.',
               },
               {
                 icon: FileX,
-                title: 'Notes scattered & incomplete',
-                description: 'Paper notes, Google Docs, half-filled CRM fields',
+                title: 'Rushed emails miss the nuance',
+                description: 'Generic, low-quality follow-ups that feel templated. No mention of what was actually discussed.',
               },
               {
                 icon: Zap,
-                title: 'Slow follow-up kills momentum',
-                description: 'Competitor demos while your rep is still writing notes',
+                title: 'Great calls die in the inbox',
+                description: 'Some meetings never get a recap or clear next steps. Deals stall and pipeline evaporates.',
               },
               {
                 icon: Link2Off,
-                title: 'Siloed tools = double entry',
-                description: 'Zoom + email + CRM all disconnected',
+                title: 'Context switching kills momentum',
+                description: 'Zoom to notes to Gmail to CRM. By the time you\'re drafting, the conversation is cold.',
               },
               {
                 icon: BarChart3,
-                title: 'CRM data wrong = vibes forecasts',
-                description: 'Missing fields, stale stages, deals falling through cracks',
+                title: 'Info scattered across 4 tools',
+                description: 'Notes in Docs, tasks in Notion, CRM not updated. Hard to remember what was agreed.',
               },
               {
                 icon: Users,
-                title: 'Scaling multiplies chaos',
-                description: 'Going from 5→20 reps means 4x the admin work',
+                title: 'Managers can\'t see what happened',
+                description: 'Leaders have no way to know if next steps were clearly set or logged after each call.',
               },
             ].map((pain, index) => (
               <FeatureCard
@@ -387,7 +473,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
-              Ready to <GradientText>Save 10+ Hours</GradientText> Per Week?
+              Ready to <GradientText variant="amber">Close the Gap</GradientText> After Every Meeting?
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
               Start generating AI-powered follow-up emails from your meetings today. Free plan includes 5 drafts per month.
@@ -421,12 +507,12 @@ export default function LandingPage() {
           >
             <div className="flex items-center gap-6 mb-6">
               {[
-                { label: 'Platforms Supported', value: '3' },
-                { label: 'Avg. Draft Time', value: '<30s' },
-                { label: 'CRM Integrations', value: '2+' },
+                { label: 'Platforms Supported', value: '3', amber: false },
+                { label: 'Avg. Draft Time', value: '<30s', amber: true },
+                { label: 'CRM Integrations', value: '2+', amber: false },
               ].map((stat, i) => (
                 <div key={i} className="text-center px-6">
-                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600">
+                  <div className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r ${stat.amber ? 'from-amber-400 via-amber-500 to-orange-500' : 'from-indigo-300 via-indigo-400 to-indigo-600'}`}>
                     {stat.value}
                   </div>
                   <div className="text-xs text-gray-500 light:text-gray-600 mt-1">{stat.label}</div>
