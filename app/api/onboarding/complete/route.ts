@@ -29,7 +29,7 @@ export async function POST() {
     await db.insert(onboardingEvents).values({
       clerkId: userId,
       eventType: 'onboarding_completed',
-      stepNumber: 5,
+      stepNumber: 6,
       metadata: { completedAt: completedAt.toISOString() },
     });
 

@@ -11,9 +11,10 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   const steps = [
     { number: 1, label: 'Welcome' },
     { number: 2, label: 'Platform' },
-    { number: 3, label: 'Calendar' },
-    { number: 4, label: 'Test Draft' },
-    { number: 5, label: 'Preferences' },
+    { number: 3, label: 'Email' },
+    { number: 4, label: 'AI Voice' },
+    { number: 5, label: 'CRM' },
+    { number: 6, label: 'Finish' },
   ];
 
   return (

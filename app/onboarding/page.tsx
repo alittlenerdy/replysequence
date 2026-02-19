@@ -5,15 +5,16 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StepWelcome } from '@/components/onboarding/StepWelcome';
 import { StepConnectPlatform } from '@/components/onboarding/StepConnectPlatform';
-import { StepConnectCalendar } from '@/components/onboarding/StepConnectCalendar';
-import { StepTestDraft } from '@/components/onboarding/StepTestDraft';
+import { StepEmailConnect } from '@/components/onboarding/StepEmailConnect';
+import { StepAIVoice } from '@/components/onboarding/StepAIVoice';
+import { StepCRM } from '@/components/onboarding/StepCRM';
 import { StepEmailPreferences } from '@/components/onboarding/StepEmailPreferences';
 import { OnboardingComplete } from '@/components/onboarding/OnboardingComplete';
 import { ProgressBar } from '@/components/onboarding/ProgressBar';
 import { Celebration } from '@/components/onboarding/Celebration';
 import { X, Loader2 } from 'lucide-react';
 
-export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 'complete';
+export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6 | 'complete';
 export type ConnectedPlatform = 'zoom' | 'teams' | 'meet' | null;
 export type EmailPreference = 'review' | 'auto_send';
 
@@ -21,15 +22,14 @@ export interface OnboardingState {
   currentStep: OnboardingStep;
   platformConnected: ConnectedPlatform;
   connectedPlatforms: string[];
-  calendarConnected: boolean;
-  googleCalendarConnected: boolean;
-  outlookCalendarConnected: boolean;
-  draftGenerated: boolean;
+  emailConnected: boolean;
+  connectedEmail: string | null;
+  crmConnected: boolean;
   emailPreference: EmailPreference;
   isLoading: boolean;
   isReturningUser: boolean;
   showCelebration: boolean;
-  celebrationType: 'platform' | 'calendar' | 'draft' | null;
+  celebrationType: 'platform' | 'email' | 'crm' | null;
 }
 
 function OnboardingContent() {
@@ -40,10 +40,9 @@ function OnboardingContent() {
     currentStep: 1,
     platformConnected: null,
     connectedPlatforms: [],
-    calendarConnected: false,
-    googleCalendarConnected: false,
-    outlookCalendarConnected: false,
-    draftGenerated: false,
+    emailConnected: false,
+    connectedEmail: null,
+    crmConnected: false,
     emailPreference: 'review',
     isLoading: true,
     isReturningUser: false,
@@ -69,10 +68,9 @@ function OnboardingContent() {
           currentStep: data.currentStep || 1,
           platformConnected: data.platformConnected || null,
           connectedPlatforms: data.connectedPlatforms || [],
-          calendarConnected: data.calendarConnected || false,
-          googleCalendarConnected: data.googleCalendarConnected || false,
-          outlookCalendarConnected: data.outlookCalendarConnected || false,
-          draftGenerated: data.draftGenerated || false,
+          emailConnected: data.emailConnected || false,
+          connectedEmail: data.connectedEmail || null,
+          crmConnected: data.crmConnected || false,
           emailPreference: data.emailPreference || 'review',
           isLoading: false,
           isReturningUser: data.currentStep > 1,
@@ -93,7 +91,8 @@ function OnboardingContent() {
   // Handle OAuth callback params
   useEffect(() => {
     const platform = searchParams.get('platform_connected');
-    const calendarConnected = searchParams.get('calendar_connected');
+    const emailConnectedParam = searchParams.get('email_connected');
+    const crmConnectedParam = searchParams.get('crm_connected');
     const step = searchParams.get('step');
     const success = searchParams.get('success');
 
@@ -109,22 +108,32 @@ function OnboardingContent() {
       window.history.replaceState({}, '', '/onboarding');
     }
 
-    // Handle calendar OAuth callback
-    if (calendarConnected === 'true') {
+    // Handle email OAuth callback
+    if (emailConnectedParam === 'true') {
       setState(prev => ({
         ...prev,
-        calendarConnected: true,
-        currentStep: 3, // Stay on calendar step to show connected status
+        emailConnected: true,
+        currentStep: 3, // Stay on email step to show connected status
       }));
-      saveProgress({ calendarConnected: true, currentStep: 3 });
-      // Clean URL
+      saveProgress({ emailConnected: true, currentStep: 3 });
+      window.history.replaceState({}, '', '/onboarding');
+    }
+
+    // Handle CRM OAuth callback
+    if (crmConnectedParam === 'true') {
+      setState(prev => ({
+        ...prev,
+        crmConnected: true,
+        currentStep: 5, // Stay on CRM step to show connected status
+      }));
+      saveProgress({ crmConnected: true, currentStep: 5 });
       window.history.replaceState({}, '', '/onboarding');
     }
 
     if (step) {
       const stepNum = parseInt(step, 10);
-      if (stepNum >= 1 && stepNum <= 5) {
-        setState(prev => ({ ...prev, currentStep: stepNum as 1 | 2 | 3 | 4 | 5 }));
+      if (stepNum >= 1 && stepNum <= 6) {
+        setState(prev => ({ ...prev, currentStep: stepNum as 1 | 2 | 3 | 4 | 5 | 6 }));
       }
     }
   }, [searchParams]);
@@ -136,6 +145,8 @@ function OnboardingContent() {
     calendarConnected?: boolean;
     draftGenerated?: boolean;
     emailPreference?: EmailPreference;
+    emailConnected?: boolean;
+    crmConnected?: boolean;
   }) => {
     try {
       await fetch('/api/onboarding/progress', {
@@ -170,7 +181,7 @@ function OnboardingContent() {
 
   const nextStep = () => {
     const current = state.currentStep as number;
-    if (current < 5) {
+    if (current < 6) {
       goToStep((current + 1) as OnboardingStep);
     } else {
       goToStep('complete');
@@ -190,54 +201,52 @@ function OnboardingContent() {
     // Show celebration
     setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'platform' }));
 
-    // Meet OAuth already includes calendar.readonly scope, so skip calendar step
-    if (platform === 'meet') {
-      setState(prev => ({ ...prev, calendarConnected: true }));
-      saveProgress({ platformConnected: platform, calendarConnected: true, currentStep: 4 });
-      // Delay transition to allow celebration to play
-      setTimeout(() => goToStep(4), 1200);
-    } else {
-      saveProgress({ platformConnected: platform, currentStep: 3 });
-      // Delay transition to allow celebration to play
-      setTimeout(() => goToStep(3), 1200);
-    }
+    saveProgress({ platformConnected: platform, currentStep: 3 });
+    // Delay transition to allow celebration to play
+    setTimeout(() => goToStep(3), 1200);
   };
 
-  const handleCalendarConnected = () => {
-    setState(prev => ({ ...prev, calendarConnected: true }));
-    saveProgress({ calendarConnected: true, currentStep: 4 });
-    trackEvent('calendar_connected', 3);
+  const handleEmailConnected = () => {
+    setState(prev => ({ ...prev, emailConnected: true }));
+    saveProgress({ emailConnected: true, currentStep: 4 });
+    trackEvent('email_connected', 3);
 
-    // Show celebration
-    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'calendar' }));
-    // Delay transition to allow celebration to play
+    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'email' }));
     setTimeout(() => goToStep(4), 1200);
   };
 
-  const handleCalendarSkipped = () => {
-    trackEvent('calendar_skipped', 3);
+  const handleEmailSkipped = () => {
+    trackEvent('email_skipped', 3);
     goToStep(4);
   };
 
-  const handleDraftGenerated = () => {
-    setState(prev => ({ ...prev, draftGenerated: true }));
-    saveProgress({ draftGenerated: true, currentStep: 5 });
-    trackEvent('draft_generated', 4);
+  const handleAIVoiceSaved = () => {
+    trackEvent('ai_voice_saved', 4);
+    goToStep(5);
+  };
 
-    // Show celebration
-    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'draft' }));
-    // Delay transition to allow celebration to play
-    setTimeout(() => goToStep(5), 1200);
+  const handleCRMConnected = () => {
+    setState(prev => ({ ...prev, crmConnected: true }));
+    saveProgress({ crmConnected: true, currentStep: 6 });
+    trackEvent('crm_connected', 5);
+
+    setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'crm' }));
+    setTimeout(() => goToStep(6), 1200);
+  };
+
+  const handleCRMSkipped = () => {
+    trackEvent('crm_skipped', 5);
+    goToStep(6);
   };
 
   const handlePreferenceSaved = async (preference: EmailPreference) => {
     setState(prev => ({ ...prev, emailPreference: preference }));
     await saveProgress({ emailPreference: preference });
-    trackEvent('preferences_saved', 5, { preference });
+    trackEvent('preferences_saved', 6, { preference });
 
     // Complete onboarding
     await fetch('/api/onboarding/complete', { method: 'POST' });
-    trackEvent('onboarding_completed', 5);
+    trackEvent('onboarding_completed', 6);
     goToStep('complete');
   };
 
@@ -247,7 +256,7 @@ function OnboardingContent() {
   };
 
   const handleExit = () => {
-    if (state.currentStep === 'complete' || state.currentStep >= 4) {
+    if (state.currentStep === 'complete' || state.currentStep >= 5) {
       router.push('/dashboard');
     } else {
       setShowExitModal(true);
@@ -282,7 +291,7 @@ function OnboardingContent() {
         show={state.showCelebration}
         onComplete={handleCelebrationComplete}
         duration={1200}
-        variant={state.celebrationType === 'draft' ? 'full' : 'sparkle'}
+        variant={state.celebrationType === 'email' ? 'full' : 'sparkle'}
       />
 
       {/* Animated background - CSS animations for zero CLS */}
@@ -311,7 +320,7 @@ function OnboardingContent() {
 
           <ProgressBar
             currentStep={state.currentStep as number}
-            totalSteps={5}
+            totalSteps={6}
           />
         </header>
       )}
@@ -368,12 +377,11 @@ function OnboardingContent() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <StepConnectCalendar
-                calendarConnected={state.calendarConnected}
-                googleCalendarConnected={state.googleCalendarConnected}
-                outlookCalendarConnected={state.outlookCalendarConnected}
-                onCalendarConnected={handleCalendarConnected}
-                onSkip={handleCalendarSkipped}
+              <StepEmailConnect
+                emailConnected={state.emailConnected}
+                connectedEmail={state.connectedEmail}
+                onEmailConnected={handleEmailConnected}
+                onSkip={handleEmailSkipped}
               />
             </motion.div>
           )}
@@ -386,16 +394,29 @@ function OnboardingContent() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <StepTestDraft
-                draftGenerated={state.draftGenerated}
-                onDraftGenerated={handleDraftGenerated}
-              />
+              <StepAIVoice onSaved={handleAIVoiceSaved} />
             </motion.div>
           )}
 
           {state.currentStep === 5 && (
             <motion.div
               key="step5"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <StepCRM
+                crmConnected={state.crmConnected}
+                onCRMConnected={handleCRMConnected}
+                onSkip={handleCRMSkipped}
+              />
+            </motion.div>
+          )}
+
+          {state.currentStep === 6 && (
+            <motion.div
+              key="step6"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
@@ -417,7 +438,7 @@ function OnboardingContent() {
             >
               <OnboardingComplete
                 platformConnected={state.platformConnected}
-                calendarConnected={state.calendarConnected}
+                calendarConnected={false}
                 onGoToDashboard={() => router.push('/dashboard')}
               />
             </motion.div>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections } from '@/lib/db/schema';
+import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 // Allow longer timeout for cold starts
@@ -64,11 +64,40 @@ export async function GET() {
       outlookCalendarConnected = !!outlookCal;
     }
 
+    // Check email connections
+    let emailConnected = false;
+    let connectedEmail: string | null = null;
+    if (user) {
+      const [emailConn] = await db.select({ id: emailConnections.id, email: emailConnections.email })
+        .from(emailConnections)
+        .where(eq(emailConnections.userId, user.id))
+        .limit(1);
+      emailConnected = !!emailConn;
+      connectedEmail = emailConn?.email || null;
+    }
+
+    // Check CRM connections
+    let crmConnected = false;
+    if (user) {
+      const [hubspotConn] = await db.select({ id: hubspotConnections.id })
+        .from(hubspotConnections)
+        .where(eq(hubspotConnections.userId, user.id))
+        .limit(1);
+      const [airtableConn] = await db.select({ id: airtableConnections.id })
+        .from(airtableConnections)
+        .where(eq(airtableConnections.userId, user.id))
+        .limit(1);
+      crmConnected = !!hubspotConn || !!airtableConn;
+    }
+
     return NextResponse.json({
       ...onboarding,
       connectedPlatforms,
       googleCalendarConnected,
       outlookCalendarConnected,
+      emailConnected,
+      connectedEmail,
+      crmConnected,
     });
   } catch (error) {
     console.error('[ONBOARDING] Error fetching progress:', error);
@@ -84,7 +113,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { currentStep, platformConnected, calendarConnected, draftGenerated, emailPreference } = body;
+    const { currentStep, platformConnected, calendarConnected, draftGenerated, emailPreference, emailConnected: emailConnectedVal, crmConnected: crmConnectedVal } = body;
 
     // Build update object with only defined values
     const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -93,6 +122,8 @@ export async function POST(request: NextRequest) {
     if (calendarConnected !== undefined) updates.calendarConnected = calendarConnected;
     if (draftGenerated !== undefined) updates.draftGenerated = draftGenerated;
     if (emailPreference !== undefined) updates.emailPreference = emailPreference;
+    if (emailConnectedVal !== undefined) updates.emailConnected = emailConnectedVal;
+    if (crmConnectedVal !== undefined) updates.crmConnected = crmConnectedVal;
 
     // Check if record exists
     const [existing] = await db
@@ -114,6 +145,8 @@ export async function POST(request: NextRequest) {
         calendarConnected: calendarConnected || false,
         draftGenerated: draftGenerated || false,
         emailPreference: emailPreference || 'review',
+        emailConnected: emailConnectedVal || false,
+        crmConnected: crmConnectedVal || false,
       });
     }
 

@@ -807,6 +807,8 @@ export const userOnboarding = pgTable(
     currentStep: integer('current_step').$type<OnboardingStep>().notNull().default(1),
     platformConnected: varchar('platform_connected', { length: 50 }).$type<ConnectedPlatform>(),
     calendarConnected: boolean('calendar_connected').notNull().default(false),
+    emailConnected: boolean('email_connected').notNull().default(false),
+    crmConnected: boolean('crm_connected').notNull().default(false),
     draftGenerated: boolean('draft_generated').notNull().default(false),
     emailPreference: varchar('email_preference', { length: 20 }).$type<EmailPreference>().default('review'),
     completedAt: timestamp('completed_at', { withTimezone: true }),
