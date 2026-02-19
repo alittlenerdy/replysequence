@@ -44,6 +44,7 @@ export interface DraftWithMeeting {
   meetingHostEmail: string;
   meetingStartTime: Date | null;
   meetingPlatform: string;
+  meetingDuration: number | null;
   trackingId: string | null;
   // Email engagement tracking fields
   openedAt: Date | null;
@@ -223,6 +224,7 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       meetingHostEmail: meetings.hostEmail,
       meetingStartTime: meetings.startTime,
       meetingPlatform: meetings.platform,
+      meetingDuration: meetings.duration,
       trackingId: drafts.trackingId,
       // Email engagement tracking
       openedAt: drafts.openedAt,

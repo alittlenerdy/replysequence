@@ -334,6 +334,7 @@ export async function POST(request: NextRequest) {
                 meetingTitle: draft.meetingTopic || 'Meeting',
                 meetingDate: draft.meetingStartTime || new Date(),
                 platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+                duration: draft.meetingDuration ? draft.meetingDuration * 60 * 1000 : undefined,
                 draftSubject: draft.subject,
                 draftBody: draft.body,
               });

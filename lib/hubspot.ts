@@ -410,58 +410,62 @@ Follow-up Email:
 ${data.draftBody}`;
 
   try {
-    // Create the engagement
+    const endTime = data.duration
+      ? new Date(data.meetingDate.getTime() + data.duration).toISOString()
+      : new Date(data.meetingDate.getTime() + 30 * 60 * 1000).toISOString(); // Default 30 min
+
+    // Build request body with inline associations when contact is available
+    const requestBody: Record<string, unknown> = {
+      properties: {
+        hs_timestamp: data.meetingDate.toISOString(),
+        hs_meeting_title: data.meetingTitle,
+        hs_meeting_body: meetingBody,
+        hs_meeting_start_time: data.meetingDate.toISOString(),
+        hs_meeting_end_time: endTime,
+        hs_meeting_outcome: 'COMPLETED',
+      },
+    };
+
+    // Use inline associations (created atomically with the meeting)
+    if (data.contactId) {
+      requestBody.associations = [
+        {
+          to: { id: data.contactId },
+          types: [
+            {
+              associationCategory: 'HUBSPOT_DEFINED',
+              associationTypeId: 200, // meeting_to_contact
+            },
+          ],
+        },
+      ];
+    }
+
     const response = await hubspotFetch(
       accessToken,
       '/crm/v3/objects/meetings',
       {
         method: 'POST',
-        body: JSON.stringify({
-          properties: {
-            hs_meeting_title: data.meetingTitle,
-            hs_meeting_body: meetingBody,
-            hs_meeting_start_time: data.meetingDate.toISOString(),
-            hs_meeting_end_time: data.duration
-              ? new Date(data.meetingDate.getTime() + data.duration).toISOString()
-              : new Date(data.meetingDate.getTime() + 30 * 60 * 1000).toISOString(), // Default 30 min
-            hs_meeting_outcome: 'COMPLETED',
-            hs_meeting_external_url: '', // Could add recording link
-          },
-        }),
+        body: JSON.stringify(requestBody),
       }
     );
 
     if (!response.ok) {
       const error = await response.text();
-      log('error', 'HubSpot meeting creation failed', { error });
+      log('error', 'HubSpot meeting creation failed', {
+        error,
+        status: response.status,
+      });
       return null;
     }
 
     const engagement = await response.json();
     const engagementId = engagement.id;
 
-    log('info', 'HubSpot meeting created', { engagementId });
-
-    // Associate with contact if provided
-    if (data.contactId) {
-      const assocResponse = await hubspotFetch(
-        accessToken,
-        `/crm/v3/objects/meetings/${engagementId}/associations/contacts/${data.contactId}/meeting_to_contact`,
-        { method: 'PUT' }
-      );
-
-      if (!assocResponse.ok) {
-        log('warn', 'Failed to associate meeting with contact', {
-          engagementId,
-          contactId: data.contactId,
-        });
-      } else {
-        log('info', 'Meeting associated with contact', {
-          engagementId,
-          contactId: data.contactId,
-        });
-      }
-    }
+    log('info', 'HubSpot meeting created', {
+      engagementId,
+      associatedContact: data.contactId || null,
+    });
 
     return engagementId;
   } catch (error) {
