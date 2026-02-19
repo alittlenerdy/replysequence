@@ -66,24 +66,24 @@ const tierConfig = {
   pro: {
     name: 'Pro',
     icon: Sparkles,
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-500/10',
-    borderColor: 'border-blue-500/20',
+    color: 'text-indigo-400',
+    bgColor: 'bg-indigo-500/10',
+    borderColor: 'border-indigo-500/20',
     price: '$19',
   },
   team: {
     name: 'Team',
     icon: Building2,
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-500/10',
-    borderColor: 'border-purple-500/20',
+    color: 'text-indigo-400',
+    bgColor: 'bg-indigo-500/10',
+    borderColor: 'border-indigo-500/20',
     price: '$29',
   },
 };
 
 const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string; label: string }> = {
   active: { icon: CheckCircle2, color: 'text-emerald-400', label: 'Active' },
-  trialing: { icon: Clock, color: 'text-blue-400', label: 'Trial' },
+  trialing: { icon: Clock, color: 'text-indigo-400', label: 'Trial' },
   past_due: { icon: AlertCircle, color: 'text-amber-400', label: 'Past Due' },
   canceled: { icon: AlertCircle, color: 'text-red-400', label: 'Canceled' },
   unpaid: { icon: AlertCircle, color: 'text-red-400', label: 'Unpaid' },
@@ -113,7 +113,7 @@ function TrialDaysRemaining({ trialEnd }: { trialEnd: string }) {
   if (daysRemaining === null) return null;
 
   return (
-    <div className="flex items-center gap-2 text-sm text-blue-400">
+    <div className="flex items-center gap-2 text-sm text-indigo-400">
       <Clock className="w-4 h-4" />
       <span>
         {daysRemaining > 0
@@ -127,9 +127,9 @@ function TrialDaysRemaining({ trialEnd }: { trialEnd: string }) {
 function CardBrandIcon({ brand }: { brand: string }) {
   // Simple card brand indicator
   const brandColors: Record<string, string> = {
-    visa: 'text-blue-400',
+    visa: 'text-indigo-400',
     mastercard: 'text-orange-400',
-    amex: 'text-blue-500',
+    amex: 'text-indigo-500',
     discover: 'text-orange-500',
     default: 'text-gray-400',
   };
@@ -292,8 +292,8 @@ export function BillingDashboard() {
               <Link
                 href="/pricing"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all
-                  bg-gradient-to-r from-blue-500 to-indigo-600 text-white
-                  hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
+                  bg-gradient-to-r from-indigo-500 to-indigo-700 text-white
+                  hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
               >
                 <Sparkles className="w-4 h-4" />
                 Upgrade Plan
@@ -356,7 +356,7 @@ export function BillingDashboard() {
                 {billing.tier === 'free' && (
                   <Link
                     href="/pricing"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300 hover:scale-105"
                   >
                     <Sparkles className="w-4 h-4" />
                     Upgrade to Pro
@@ -455,7 +455,7 @@ export function BillingDashboard() {
                             href={invoice.invoiceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                            className="inline-flex items-center gap-1.5 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
                           >
                             <Download className="w-4 h-4" />
                             Download
@@ -481,10 +481,10 @@ export function BillingDashboard() {
               </div>
               {/* Decorative dots */}
               <div
-                className="absolute -right-1 -top-1 w-3 h-3 bg-blue-500/30 rounded-full"
+                className="absolute -right-1 -top-1 w-3 h-3 bg-indigo-500/30 rounded-full"
               />
               <div
-                className="absolute -left-1 -bottom-1 w-2 h-2 bg-purple-500/30 rounded-full"
+                className="absolute -left-1 -bottom-1 w-2 h-2 bg-indigo-500/30 rounded-full"
               />
             </div>
 
@@ -499,7 +499,7 @@ export function BillingDashboard() {
             {billing.tier === 'free' && (
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                className="inline-flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
               >
                 <Sparkles className="w-4 h-4" />
                 View available plans

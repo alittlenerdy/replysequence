@@ -769,17 +769,17 @@ export function IntegrationSettings() {
 
           {/* Getting Started Banner - only show when no platforms connected */}
           {hasNoConnections && (
-            <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden">
+            <div className="mb-6 p-6 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-500/20 rounded-2xl relative overflow-hidden">
               {/* Background decoration */}
-              <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl" />
-              <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
+              <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl" />
 
               <div className="relative flex flex-col md:flex-row md:items-center gap-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 flex items-center gap-2">
                     <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
                     </span>
                     Get Started in 2 Minutes
                   </h3>
@@ -791,7 +791,7 @@ export function IntegrationSettings() {
                 <div className="flex gap-2">
                   <a
                     href="/how-it-works"
-                    className="text-sm text-blue-400 hover:text-blue-300 whitespace-nowrap"
+                    className="text-sm text-indigo-400 hover:text-indigo-300 whitespace-nowrap"
                   >
                     See how it works
                   </a>
@@ -813,7 +813,7 @@ export function IntegrationSettings() {
                 initial={{ width: 0 }}
                 animate={{ width: `${(connectedCount / platforms.length) * 100}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 rounded-full"
+                className="h-full bg-gradient-to-r from-indigo-500 via-indigo-700 to-emerald-500 rounded-full"
               />
             </div>
           </div>
@@ -894,7 +894,7 @@ export function IntegrationSettings() {
 
                 <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
                   Enter your Airtable Personal Access Token and Base ID. You can find these in your{' '}
-                  <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                  <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">
                     Airtable account settings
                   </a>.
                 </p>
@@ -909,7 +909,7 @@ export function IntegrationSettings() {
                       value={airtableApiKey}
                       onChange={(e) => setAirtableApiKey(e.target.value)}
                       placeholder="pat..."
-                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
 
@@ -922,7 +922,7 @@ export function IntegrationSettings() {
                       value={airtableBaseId}
                       onChange={(e) => setAirtableBaseId(e.target.value)}
                       placeholder="appXXXXXXXXXXXXXX"
-                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Find this in your base URL: airtable.com/<strong>appXXX</strong>/...
@@ -938,7 +938,7 @@ export function IntegrationSettings() {
                         type="text"
                         value={airtableContactsTable}
                         onChange={(e) => setAirtableContactsTable(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                     <div>
@@ -949,7 +949,7 @@ export function IntegrationSettings() {
                         type="text"
                         value={airtableMeetingsTable}
                         onChange={(e) => setAirtableMeetingsTable(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                   </div>
@@ -987,10 +987,10 @@ export function IntegrationSettings() {
 
           {/* Pro Tip - only show when no connections yet */}
           {hasNoConnections && (
-            <div className="mt-8 p-5 bg-blue-500/10 light:bg-blue-50 border border-blue-500/20 light:border-blue-200 rounded-xl">
+            <div className="mt-8 p-5 bg-indigo-500/10 light:bg-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-xl">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 light:bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <Lightbulb className="w-4 h-4 text-blue-400 light:text-blue-600" />
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 light:bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                  <Lightbulb className="w-4 h-4 text-indigo-400 light:text-indigo-600" />
                 </div>
                 <div>
                   <h4 className="text-white light:text-gray-900 font-semibold mb-1">Pro Tip</h4>

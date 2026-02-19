@@ -49,9 +49,9 @@ export function StepEmailPreferences({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-emerald-500/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Mail className="w-8 h-8 text-blue-400" />
+          <Mail className="w-8 h-8 text-indigo-400" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -84,7 +84,7 @@ export function StepEmailPreferences({
               onClick={() => setSelected(option.id)}
               className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-200 ${
                 isSelected
-                  ? 'border-blue-500 bg-blue-500/10'
+                  ? 'border-indigo-500 bg-indigo-500/10'
                   : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
               }`}
             >
@@ -93,8 +93,8 @@ export function StepEmailPreferences({
                   className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                     isSelected
                       ? option.color === 'blue'
-                        ? 'bg-blue-500/20'
-                        : 'bg-purple-500/20'
+                        ? 'bg-indigo-500/20'
+                        : 'bg-indigo-500/20'
                       : 'bg-gray-800'
                   }`}
                 >
@@ -102,8 +102,8 @@ export function StepEmailPreferences({
                     className={`w-6 h-6 ${
                       isSelected
                         ? option.color === 'blue'
-                          ? 'text-blue-400'
-                          : 'text-purple-400'
+                          ? 'text-indigo-400'
+                          : 'text-indigo-400'
                         : 'text-gray-500'
                     }`}
                   />
@@ -127,7 +127,7 @@ export function StepEmailPreferences({
                 </div>
                 <div
                   className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                    isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-600'
+                    isSelected ? 'border-indigo-500 bg-indigo-500' : 'border-gray-600'
                   }`}
                 >
                   {isSelected && <Check className="w-4 h-4 text-white" />}
@@ -147,7 +147,7 @@ export function StepEmailPreferences({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-blue-500/25 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50"
         >
           {isSaving ? (
             <>

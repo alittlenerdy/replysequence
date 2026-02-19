@@ -256,7 +256,7 @@ export function AnalyticsDashboard() {
                 onClick={() => setDateRange(range.value)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                   dateRange === range.value
-                    ? 'bg-blue-600 text-white shadow-sm'
+                    ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
                 }`}
               >
@@ -287,7 +287,7 @@ export function AnalyticsDashboard() {
             icon={<Calendar className="w-5 h-5" />}
             label="Meetings"
             value={analytics.totalMeetings}
-            gradient="from-blue-500/20 to-blue-600/20"
+            gradient="from-indigo-500/20 to-indigo-600/20"
             accentColor="#3B82F6"
             comparison={analytics.meetingsComparison}
             sparklineData={meetingsSparkline}
@@ -304,7 +304,7 @@ export function AnalyticsDashboard() {
             icon={<Mail className="w-5 h-5" />}
             label="Emails Generated"
             value={analytics.emailsGenerated}
-            gradient="from-blue-500/20 to-blue-600/20"
+            gradient="from-indigo-500/20 to-indigo-600/20"
             accentColor="#3B82F6"
             comparison={analytics.emailsComparison}
             sparklineData={emailsSparkline}
@@ -524,8 +524,8 @@ export function AnalyticsDashboard() {
           className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
         >
           {/* Background decorative elements */}
-          <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
-          <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-gradient-to-tr from-purple-500/10 to-emerald-500/10 rounded-full blur-3xl" />
+          <div className="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 rounded-full blur-3xl" />
+          <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-gradient-to-tr from-indigo-500/10 to-emerald-500/10 rounded-full blur-3xl" />
 
           <div className="relative">
             {/* Animated chart illustration */}
@@ -535,13 +535,13 @@ export function AnalyticsDashboard() {
                 initial={{ scale: 0.8, opacity: 0.5 }}
                 animate={{ scale: 1.2, opacity: 0 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-500/20"
               />
               <motion.div
                 initial={{ scale: 0.8, opacity: 0.5 }}
                 animate={{ scale: 1.2, opacity: 0 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.5 }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-500/20"
               />
 
               {/* Main icon container */}
@@ -549,7 +549,7 @@ export function AnalyticsDashboard() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-500/30"
+                className="relative w-32 h-32 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-2xl shadow-indigo-500/30"
               >
                 {/* Chart bars animation */}
                 <div className="flex items-end gap-1.5">
@@ -593,7 +593,7 @@ export function AnalyticsDashboard() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <a
                 href="/dashboard/settings"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl hover:from-indigo-700 hover:to-indigo-900 transition-colors"
               >
                 <Calendar className="w-4 h-4" />
                 Connect a Platform
@@ -612,9 +612,9 @@ export function AnalyticsDashboard() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-emerald-400' },
-                  { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-purple-400' },
+                  { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-indigo-400' },
                   { icon: <Clock className="w-5 h-5" />, label: 'Time Saved', color: 'text-amber-400' },
-                  { icon: <BarChart3 className="w-5 h-5" />, label: 'Activity Charts', color: 'text-blue-400' },
+                  { icon: <BarChart3 className="w-5 h-5" />, label: 'Activity Charts', color: 'text-indigo-400' },
                 ].map((item, index) => (
                   <div
                     key={item.label}

@@ -45,7 +45,7 @@ export function OnboardingBanner({ currentStep }: OnboardingBannerProps) {
   };
 
   return (
-    <div className="relative bg-gradient-to-r from-blue-600/90 to-purple-600/90 dark:from-blue-600/80 dark:to-purple-600/80">
+    <div className="relative bg-gradient-to-r from-indigo-600/90 to-indigo-800/90 dark:from-indigo-600/80 dark:to-indigo-800/80">
       <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center flex-1 min-w-0">

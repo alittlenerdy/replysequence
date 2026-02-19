@@ -8,14 +8,14 @@
   --background-alt: #F5F5F5;
   --background-pure: #FFFFFF;
 
-  /* Primary Blue (Brand) */
-  --mint: #2563EB;
-  --mint-hover: #1D4ED8;
-  --mint-tint: #EFF6FF;
+  /* Primary Indigo (Brand) */
+  --mint: #4F46E5;
+  --mint-hover: #4338CA;
+  --mint-tint: #EEF2FF;
 
-  /* Blue (CTAs) */
-  --neon: #3B82F6;
-  --neon-hover: #2563EB;
+  /* Indigo (CTAs) */
+  --neon: #6366F1;
+  --neon-hover: #4F46E5;
 
   /* Text */
   --text-primary: #000000;
@@ -53,16 +53,16 @@ body {
   /* CTA Button with Gradient */
   .btn-cta {
     @apply px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg text-white transition-all duration-300;
-    background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+    background: #4F46E5;
     border: none;
-    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 8px 30px rgba(79, 70, 229, 0.4);
     max-width: 100%;
   }
 
   .btn-cta:hover {
-    background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+    background: #4338CA;
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 12px 40px rgba(37, 99, 235, 0.5);
+    box-shadow: 0 12px 40px rgba(79, 70, 229, 0.5);
   }
 
   .btn-cta-pulse {
@@ -70,8 +70,8 @@ body {
   }
 
   @keyframes ctaPulse {
-    0%, 100% { box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4); }
-    50% { box-shadow: 0 8px 40px rgba(37, 99, 235, 0.6), 0 0 0 8px rgba(37, 99, 235, 0.1); }
+    0%, 100% { box-shadow: 0 8px 30px rgba(79, 70, 229, 0.4); }
+    50% { box-shadow: 0 8px 40px rgba(79, 70, 229, 0.6), 0 0 0 8px rgba(79, 70, 229, 0.1); }
   }
 
   .btn-secondary {
@@ -95,11 +95,11 @@ body {
   .gradient-glow {
     background: linear-gradient(
       90deg,
-      #2563eb 0%,
-      #9333ea 25%,
-      #db2777 50%,
-      #9333ea 75%,
-      #2563eb 100%
+      #818CF8 0%,
+      #4F46E5 25%,
+      #312E81 50%,
+      #4F46E5 75%,
+      #818CF8 100%
     );
     background-size: 200% auto;
     -webkit-background-clip: text;
@@ -298,11 +298,11 @@ body {
   pointer-events: none;
   background: linear-gradient(
     125deg,
-    rgba(37, 99, 235, 0.03) 0%,
-    rgba(147, 51, 234, 0.03) 25%,
-    rgba(219, 39, 119, 0.03) 50%,
-    rgba(59, 130, 246, 0.03) 75%,
-    rgba(37, 99, 235, 0.03) 100%
+    rgba(79, 70, 229, 0.03) 0%,
+    rgba(99, 102, 241, 0.03) 25%,
+    rgba(129, 140, 248, 0.03) 50%,
+    rgba(99, 102, 241, 0.03) 75%,
+    rgba(79, 70, 229, 0.03) 100%
   );
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
@@ -349,12 +349,12 @@ body {
 .video-play-btn {
   @apply w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300;
   background: linear-gradient(135deg, var(--mint) 0%, var(--neon) 100%);
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.4);
 }
 
 .video-play-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.6);
+  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.6);
 }
 
 /* Bento Grid */
@@ -373,15 +373,15 @@ body {
 
 .bento-card-featured {
   @apply rounded-2xl p-8 transition-all duration-300;
-  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);
   color: white;
   border: none;
-  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
 }
 
 .bento-card-featured:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 20px 50px rgba(79, 70, 229, 0.4);
 }
 
 .bento-card-featured .text-text-primary {
@@ -404,19 +404,19 @@ body {
   --text-primary: #FFFFFF;
   --text-secondary: #A0A0B0;
   --text-caption: #6B6B80;
-  --mint: #3B82F6;
-  --mint-hover: #60A5FA;
-  --mint-tint: rgba(59, 130, 246, 0.1);
+  --mint: #818CF8;
+  --mint-hover: #A5B4FC;
+  --mint-tint: rgba(99, 102, 241, 0.1);
 }
 
 .dark .animated-gradient-bg {
   background: linear-gradient(
     125deg,
-    rgba(37, 99, 235, 0.08) 0%,
-    rgba(147, 51, 234, 0.08) 25%,
-    rgba(219, 39, 119, 0.08) 50%,
-    rgba(59, 130, 246, 0.08) 75%,
-    rgba(37, 99, 235, 0.08) 100%
+    rgba(79, 70, 229, 0.08) 0%,
+    rgba(99, 102, 241, 0.08) 25%,
+    rgba(129, 140, 248, 0.08) 50%,
+    rgba(99, 102, 241, 0.08) 75%,
+    rgba(79, 70, 229, 0.08) 100%
   );
 }
 
@@ -432,7 +432,7 @@ body {
 }
 
 .dark .bento-card-featured {
-  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);
   box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
 }
 
@@ -472,19 +472,19 @@ body {
   --text-primary: #000000;
   --text-secondary: #4A4A4A;
   --text-caption: #8E8E8E;
-  --mint: #2563EB;
-  --mint-hover: #1D4ED8;
-  --mint-tint: #EFF6FF;
+  --mint: #4F46E5;
+  --mint-hover: #4338CA;
+  --mint-tint: #EEF2FF;
 }
 
 .light .animated-gradient-bg {
   background: linear-gradient(
     125deg,
-    rgba(37, 99, 235, 0.03) 0%,
-    rgba(147, 51, 234, 0.03) 25%,
-    rgba(219, 39, 119, 0.03) 50%,
-    rgba(59, 130, 246, 0.03) 75%,
-    rgba(37, 99, 235, 0.03) 100%
+    rgba(79, 70, 229, 0.03) 0%,
+    rgba(99, 102, 241, 0.03) 25%,
+    rgba(129, 140, 248, 0.03) 50%,
+    rgba(99, 102, 241, 0.03) 75%,
+    rgba(79, 70, 229, 0.03) 100%
   );
 }
 
@@ -572,7 +572,7 @@ html.light .light-solid-text {
   left: 15%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%);
   animation-delay: 0s;
 }
 
@@ -581,7 +581,7 @@ html.light .light-solid-text {
   right: 10%;
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
   animation-delay: -5s;
 }
 
@@ -590,31 +590,31 @@ html.light .light-solid-text {
   left: 30%;
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
   animation-delay: -10s;
 }
 
 .light .dashboard-orb-1 {
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%);
 }
 
 .light .dashboard-orb-2 {
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
 }
 
 .light .dashboard-orb-3 {
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
 }
 
 /* Animated Gradient Text for Dashboard Header */
 .dashboard-gradient-text {
   background: linear-gradient(
     90deg,
-    #3b82f6 0%,
-    #8b5cf6 25%,
-    #d946ef 50%,
-    #8b5cf6 75%,
-    #3b82f6 100%
+    #818CF8 0%,
+    #4F46E5 25%,
+    #312E81 50%,
+    #4F46E5 75%,
+    #818CF8 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -787,7 +787,7 @@ html.light .light-solid-text {
   bottom: -2px;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(90deg, #6366F1, #4F46E5);
   transition: width 0.3s ease;
 }
 
@@ -810,7 +810,7 @@ html.light .light-solid-text {
 }
 
 .search-input-animated:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
 }
 
 /* Filter Button Active State */
@@ -824,7 +824,7 @@ html.light .light-solid-text {
   inset: -2px;
   border-radius: inherit;
   padding: 2px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

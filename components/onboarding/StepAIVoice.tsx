@@ -118,7 +118,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
   if (isLoading) {
     return (
       <div className="py-8 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
       </div>
     );
   }
@@ -129,9 +129,9 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Sparkles className="w-8 h-8 text-purple-400" />
+          <Sparkles className="w-8 h-8 text-indigo-400" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -167,12 +167,12 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
                 onClick={() => setTone(option.value)}
                 className={`relative p-4 rounded-xl border-2 text-left transition-all duration-200 ${
                   isSelected
-                    ? 'border-purple-500 bg-purple-500/10'
+                    ? 'border-indigo-500 bg-indigo-500/10'
                     : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className={`text-sm font-semibold ${isSelected ? 'text-purple-400' : 'text-white'}`}>
+                  <span className={`text-sm font-semibold ${isSelected ? 'text-indigo-400' : 'text-white'}`}>
                     {option.label}
                   </span>
                   {option.recommended && (
@@ -186,7 +186,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute top-2 right-2 w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center"
+                    className="absolute top-2 right-2 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center"
                   >
                     <Check className="w-3 h-3 text-white" />
                   </motion.div>
@@ -200,7 +200,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
         <div className="mt-4 p-4 rounded-xl bg-gray-800/50 border border-gray-700/50">
           <div className="text-xs font-medium text-gray-500 mb-2">Preview</div>
           <p className="text-sm text-gray-300 italic leading-relaxed min-h-[3rem]">
-            &ldquo;{displayedPreview}{isTyping && <span className="inline-block w-0.5 h-4 bg-purple-400 ml-0.5 animate-pulse align-middle" />}&rdquo;
+            &ldquo;{displayedPreview}{isTyping && <span className="inline-block w-0.5 h-4 bg-indigo-400 ml-0.5 animate-pulse align-middle" />}&rdquo;
           </p>
         </div>
       </motion.div>
@@ -224,7 +224,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
           placeholder="E.g., Always include a specific next step with a date. Use my first name in the sign-off."
           rows={3}
           maxLength={500}
-          className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500"
+          className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
         <div className="flex flex-wrap gap-2 mt-2">
           {INSTRUCTION_CHIPS.map((chip) => (
@@ -236,7 +236,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
                   prev ? `${prev}\n${chip}` : chip
                 );
               }}
-              className="px-3 py-1.5 text-xs font-medium text-purple-300 bg-purple-500/10 border border-purple-500/20 rounded-full hover:bg-purple-500/20 transition-colors"
+              className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors"
             >
               + {chip}
             </button>
@@ -263,7 +263,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
           placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp\n(555) 123-4567"}
           rows={4}
           maxLength={500}
-          className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 font-mono"
+          className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
         />
       </motion.div>
 
@@ -277,7 +277,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all duration-200 shadow-lg shadow-purple-500/25 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50"
         >
           {isSaving ? (
             <>

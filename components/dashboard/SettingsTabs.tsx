@@ -36,10 +36,10 @@ export function SettingsTabs() {
               className={`flex-1 min-w-0 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 ${
                 activeTab === tab.id
                   ? tab.id === 'ai'
-                    ? 'bg-purple-600/20 light:bg-purple-50 text-purple-300 light:text-purple-700 shadow-sm border border-purple-500/30 light:border-purple-300'
+                    ? 'bg-indigo-600/20 light:bg-indigo-50 text-indigo-300 light:text-indigo-700 shadow-sm border border-indigo-500/30 light:border-indigo-300'
                     : 'bg-gray-700 light:bg-white text-white light:text-gray-900 shadow-sm'
                   : tab.id === 'ai'
-                    ? 'text-purple-400 light:text-purple-500 hover:text-purple-300 light:hover:text-purple-600 hover:bg-purple-500/10 light:hover:bg-purple-50'
+                    ? 'text-indigo-400 light:text-indigo-500 hover:text-indigo-300 light:hover:text-indigo-600 hover:bg-indigo-500/10 light:hover:bg-indigo-50'
                     : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-gray-700/50 light:hover:bg-gray-50'
               }`}
             >

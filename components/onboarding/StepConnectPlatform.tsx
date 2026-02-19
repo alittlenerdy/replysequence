@@ -167,7 +167,7 @@ export function StepConnectPlatform({
         >
           <button
             onClick={() => onPlatformConnected(connectedPlatform)}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
           >
             Continue to Calendar
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

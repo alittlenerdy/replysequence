@@ -81,9 +81,9 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
               {processingCount > 0 ? (
                 <>
                   <div className="relative">
-                    <Loader2 className="w-5 h-5 text-purple-400 animate-spin" />
+                    <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
                     {processingCount > 1 && (
-                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
                         {processingCount}
                       </span>
                     )}
@@ -129,7 +129,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
                       key={meeting.id}
                       className="flex items-center gap-3 p-2 bg-gray-800/50 rounded-lg"
                     >
-                      <Loader2 className="w-4 h-4 text-purple-400 animate-spin shrink-0" />
+                      <Loader2 className="w-4 h-4 text-indigo-400 animate-spin shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-white truncate">
                           {meeting.topic || 'Meeting'}

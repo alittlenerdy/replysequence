@@ -45,9 +45,9 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
               href={item.href}
               className={`
                 relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] rounded-xl mx-1 transition-all duration-200
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset
                 ${isActive
-                  ? 'text-blue-500 bg-blue-500/10 light:bg-blue-50'
+                  ? 'text-indigo-500 bg-indigo-500/10 light:bg-indigo-50'
                   : 'text-gray-400 light:text-gray-500 active:text-gray-200 light:active:text-gray-700 active:bg-white/5 light:active:bg-gray-100'
                 }
               `}

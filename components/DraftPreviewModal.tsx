@@ -415,8 +415,8 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         >
           {/* Ambient gradient orbs for depth */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-2xl">
-            <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-blue-500/[0.04] blur-[100px]" />
-            <div className="absolute -bottom-[150px] -left-[150px] w-[400px] h-[400px] rounded-full bg-purple-500/[0.03] blur-[80px]" />
+            <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-indigo-500/[0.04] blur-[100px]" />
+            <div className="absolute -bottom-[150px] -left-[150px] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.03] blur-[80px]" />
           </div>
           {/* Header - sticky on mobile for easy close access */}
           <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/[0.06] bg-[#16162A]/95 backdrop-blur-sm md:rounded-t-2xl">
@@ -511,8 +511,8 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
           ) : showSendConfirm ? (
             <div className="px-6 py-8">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </div>
@@ -538,7 +538,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                   </button>
                   <button
                     onClick={confirmSend}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -600,7 +600,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         type="text"
                         value={editSubject}
                         onChange={(e) => setEditSubject(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder:text-slate-500"
+                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-500"
                         placeholder="Email subject"
                       />
                     </div>
@@ -629,7 +629,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       <button
                         onClick={handleSave}
                         disabled={isSaving || !hasChanges}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                       >
                         {isSaving ? (
                           <>
@@ -642,7 +642,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         ) : (
                           <>
                             Save
-                            <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
+                            <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-indigo-700/50 rounded border border-indigo-500/30">
                               {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'}+S
                             </kbd>
                           </>
@@ -715,9 +715,9 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
                       const iconColors: Record<string, string> = {
                         sales: 'text-amber-400',
-                        team: 'text-blue-400',
+                        team: 'text-indigo-400',
                         client: 'text-emerald-400',
-                        technical: 'text-purple-400',
+                        technical: 'text-indigo-400',
                         general: 'text-gray-400',
                         onboarding: 'text-cyan-400',
                         strategy: 'text-indigo-400',
@@ -831,7 +831,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           <div className="grid grid-cols-3 gap-4">
                             {/* Opens */}
                             <div className="text-center">
-                              <div className={`text-2xl font-bold ${(draft.openCount ?? 0) > 0 ? 'text-purple-400' : 'text-gray-500'}`}>
+                              <div className={`text-2xl font-bold ${(draft.openCount ?? 0) > 0 ? 'text-indigo-400' : 'text-gray-500'}`}>
                                 {draft.openCount ?? 0}
                               </div>
                               <div className="text-xs text-gray-500">Opens</div>
@@ -966,7 +966,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                                 onClick={() => setRecipientEmail(recipient.email)}
                                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full transition-colors ${
                                   recipientEmail === recipient.email
-                                    ? 'bg-blue-500/30 text-blue-300 border border-blue-500/50'
+                                    ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-500/50'
                                     : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:text-white'
                                 }`}
                                 title={recipient.name ? `${recipient.name} <${recipient.email}>` : recipient.email}
@@ -1008,7 +1008,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       {/* Contextual AI settings link */}
                       <a
                         href="/dashboard/settings?tab=ai"
-                        className="inline-flex items-center gap-1.5 text-xs text-purple-400/70 hover:text-purple-400 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs text-indigo-400/70 hover:text-indigo-400 transition-colors"
                       >
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -1025,13 +1025,13 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             placeholder="Recipient email address"
                             value={recipientEmail}
                             onChange={(e) => setRecipientEmail(e.target.value)}
-                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-500"
+                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder:text-slate-500"
                           />
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-4 py-2 text-sm font-medium text-pink-300 bg-pink-500/15 border border-pink-500/30 rounded-lg hover:bg-pink-500/25 hover:border-pink-500/50 hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-all duration-300 flex items-center gap-2 group"
+                            className="px-4 py-2 text-sm font-medium text-amber-300 bg-amber-500/15 border border-amber-500/30 rounded-lg hover:bg-amber-500/25 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all duration-300 flex items-center gap-2 group"
                             title="Choose a template and regenerate this draft"
                           >
                             <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1057,7 +1057,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           <button
                             onClick={handleSend}
                             disabled={isSending || !recipientEmail}
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                             title="Send email (Cmd+Enter)"
                           >
                             {isSending ? (
@@ -1074,7 +1074,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
                                 Send
-                                <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-blue-700/50 rounded border border-blue-500/30">
+                                <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-indigo-700/50 rounded border border-indigo-500/30">
                                   {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'}+Enter
                                 </kbd>
                               </>

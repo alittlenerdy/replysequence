@@ -27,7 +27,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
             Follow-ups shouldn&apos;t be{' '}
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
               busywork
             </span>
           </h1>
@@ -63,7 +63,7 @@ export default function AboutPage() {
                   { stat: '< 30 sec', label: 'with ReplySequence' },
                 ].map((item) => (
                   <div key={item.label} className="text-center py-4 border-b border-gray-800 light:border-gray-200 last:border-0">
-                    <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                       {item.stat}
                     </div>
                     <div className="text-sm text-gray-400 light:text-gray-600 mt-1">
@@ -137,7 +137,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
           >
             Get Started Free
             <ArrowRight className="w-5 h-5" />

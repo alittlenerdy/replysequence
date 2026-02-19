@@ -347,8 +347,8 @@ export default function FathomComparisonPage() {
             {[
               { value: '8 sec', label: 'Email draft time', gradient: 'from-emerald-400 to-teal-400' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-teal-400 to-cyan-400' },
-              { value: '3', label: 'Platforms supported', gradient: 'from-cyan-400 to-blue-400' },
-              { value: '$19', label: 'Pro plan / month', gradient: 'from-blue-400 to-purple-400' },
+              { value: '3', label: 'Platforms supported', gradient: 'from-cyan-400 to-indigo-400' },
+              { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-400' },
             ].map((stat, i) => (
               <motion.div key={i} variants={staggerItem} className="relative">
                 <motion.div

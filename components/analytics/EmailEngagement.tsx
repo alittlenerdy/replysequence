@@ -79,9 +79,9 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           <p className="text-sm text-gray-400 light:text-gray-500">Track opens, clicks, and replies</p>
         </div>
         {hasData && engagement.avgTimeToOpen && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <Clock className="w-4 h-4 text-blue-400" />
-            <span className="text-sm text-blue-400">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
+            <Clock className="w-4 h-4 text-indigo-400" />
+            <span className="text-sm text-indigo-400">
               {engagement.avgTimeToOpen < 1
                 ? `${Math.round(engagement.avgTimeToOpen * 60)}m avg open time`
                 : `${engagement.avgTimeToOpen}h avg open time`
@@ -96,12 +96,12 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Funnel visualization */}
           <div className="flex items-center justify-between mb-6 px-2">
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-blue-400">{engagement.sent}</div>
+              <div className="text-3xl font-black text-indigo-400">{engagement.sent}</div>
               <div className="text-xs text-gray-500 mt-1">Sent</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-purple-400">{engagement.opened}</div>
+              <div className="text-3xl font-black text-indigo-400">{engagement.opened}</div>
               <div className="text-xs text-gray-500 mt-1">Opened</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
@@ -122,14 +122,14 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Open Rate</span>
-                <span className="text-purple-400 font-semibold">{engagement.openRate}%</span>
+                <span className="text-indigo-400 font-semibold">{engagement.openRate}%</span>
               </div>
               <div className="h-2 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.openRate}%` }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="h-full rounded-full bg-gradient-to-r from-purple-500 to-purple-400"
+                  className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-indigo-400"
                 />
               </div>
             </div>
@@ -175,13 +175,13 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Animated mail illustration */}
           <div className="relative mx-auto w-16 h-16 mb-4">
             <div
-              className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center border border-blue-500/20"
+              className="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 rounded-2xl flex items-center justify-center border border-indigo-500/20"
             >
-              <Mail className="w-8 h-8 text-blue-400/70" />
+              <Mail className="w-8 h-8 text-indigo-400/70" />
             </div>
             {/* Floating notification dot */}
             <div
-              className="absolute -right-1 -top-1 w-4 h-4 bg-purple-500/50 rounded-full flex items-center justify-center"
+              className="absolute -right-1 -top-1 w-4 h-4 bg-indigo-500/50 rounded-full flex items-center justify-center"
             >
               <Eye className="w-2 h-2 text-white" />
             </div>
@@ -197,12 +197,12 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Preview funnel - grayed out */}
           <div className="flex items-center justify-center gap-2 opacity-40">
             <div className="text-center px-3">
-              <div className="text-lg font-bold text-blue-400">--</div>
+              <div className="text-lg font-bold text-indigo-400">--</div>
               <div className="text-xs text-gray-500">Sent</div>
             </div>
             <ArrowRight className="w-4 h-4 text-gray-600" />
             <div className="text-center px-3">
-              <div className="text-lg font-bold text-purple-400">--</div>
+              <div className="text-lg font-bold text-indigo-400">--</div>
               <div className="text-xs text-gray-500">Opened</div>
             </div>
             <ArrowRight className="w-4 h-4 text-gray-600" />

@@ -57,7 +57,7 @@ export function MeetingSummaryPanel({ meetingId }: MeetingSummaryPanelProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-lg border border-indigo-500/20 overflow-hidden">
+    <div className="bg-gradient-to-br from-indigo-500/10 to-indigo-700/10 rounded-lg border border-indigo-500/20 overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}

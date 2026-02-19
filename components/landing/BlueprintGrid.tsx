@@ -92,7 +92,7 @@ export function BlueprintGrid() {
       time += 0.02;
 
       // Draw grid lines
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
       ctx.lineWidth = 0.5;
 
       for (let x = gridSize; x < rect.width; x += gridSize) {
@@ -120,9 +120,9 @@ export function BlueprintGrid() {
           node.x, node.y, 0,
           node.x, node.y, radius * 4
         );
-        gradient.addColorStop(0, `rgba(139, 92, 246, ${opacity})`);
-        gradient.addColorStop(0.5, `rgba(59, 130, 246, ${opacity * 0.5})`);
-        gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+        gradient.addColorStop(0, `rgba(79, 70, 229, ${opacity})`);
+        gradient.addColorStop(0.5, `rgba(99, 102, 241, ${opacity * 0.5})`);
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
 
         ctx.beginPath();
         ctx.arc(node.x, node.y, radius * 4, 0, Math.PI * 2);
@@ -132,7 +132,7 @@ export function BlueprintGrid() {
         // Core node
         ctx.beginPath();
         ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(139, 92, 246, ${opacity + 0.3})`;
+        ctx.fillStyle = `rgba(79, 70, 229, ${opacity + 0.3})`;
         ctx.fill();
       });
 
@@ -155,8 +155,8 @@ export function BlueprintGrid() {
 
         // Draw particle trail
         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8);
-        gradient.addColorStop(0, `rgba(59, 130, 246, ${p.life * 0.8})`);
-        gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+        gradient.addColorStop(0, `rgba(99, 102, 241, ${p.life * 0.8})`);
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
@@ -179,7 +179,7 @@ export function BlueprintGrid() {
     } else {
       // Draw static grid for reduced motion
       const rect = canvas.getBoundingClientRect();
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
       ctx.lineWidth = 0.5;
       for (let x = gridSize; x < rect.width; x += gridSize) {
         ctx.beginPath();
@@ -196,7 +196,7 @@ export function BlueprintGrid() {
       nodes.forEach((node) => {
         ctx.beginPath();
         ctx.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(139, 92, 246, 0.5)';
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.5)';
         ctx.fill();
       });
     }

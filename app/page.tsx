@@ -51,7 +51,7 @@ function CountdownAnimation() {
               initial={{ opacity: 0, y: -10, scale: 1.2 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.8 }}
-              className="text-blue-400 light:text-blue-600 font-bold text-lg w-5 text-center"
+              className="text-indigo-400 light:text-indigo-600 font-bold text-lg w-5 text-center"
             >
               {count}
             </motion.span>
@@ -118,10 +118,10 @@ export default function LandingPage() {
               transition={{ delay: 0.2, duration: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
             >
-              <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-500/10 to-indigo-500/10 light:from-blue-100 light:to-indigo-100 border-2 border-blue-500/30 light:border-blue-400/50 shadow-lg shadow-blue-500/10 light:shadow-blue-200/50">
+              <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 light:from-indigo-100 light:to-indigo-200 border-2 border-indigo-500/30 light:border-indigo-400/50 shadow-lg shadow-indigo-500/10 light:shadow-indigo-200/50">
                 <CountdownAnimation />
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
                   10x faster than typing it yourself
@@ -201,10 +201,10 @@ export default function LandingPage() {
             >
               <a
                 href="/security"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full hover:bg-blue-500/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors"
               >
-                <Lock className="w-3.5 h-3.5 text-blue-400" />
-                <span className="text-xs font-medium text-blue-400">AES-256 Encryption</span>
+                <Lock className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-xs font-medium text-indigo-400">AES-256 Encryption</span>
               </a>
               <a
                 href="/privacy"
@@ -307,7 +307,7 @@ export default function LandingPage() {
 
           <div className="relative">
             {/* Connecting line for desktop */}
-            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30" />
+            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 opacity-30" />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
@@ -344,16 +344,16 @@ export default function LandingPage() {
                   {/* Step indicator circle */}
                   <div className="flex justify-center mb-6">
                     <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-2 ${
-                      item.color === 'blue' ? 'border-blue-500/50 bg-blue-500/10 text-blue-400' :
-                      item.color === 'purple' ? 'border-purple-500/50 bg-purple-500/10 text-purple-400' :
-                      'border-pink-500/50 bg-pink-500/10 text-pink-400'
+                      item.color === 'blue' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
+                      item.color === 'purple' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
+                      'border-amber-500/50 bg-amber-500/10 text-amber-400'
                     }`}>
                       {item.icon}
                       {/* Step number badge */}
                       <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg ${
-                        item.color === 'blue' ? 'bg-gradient-to-br from-blue-500 to-cyan-400' :
-                        item.color === 'purple' ? 'bg-gradient-to-br from-purple-500 to-pink-500' :
-                        'bg-gradient-to-br from-pink-500 to-rose-400'
+                        item.color === 'blue' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
+                        item.color === 'purple' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
+                        'bg-gradient-to-br from-amber-500 to-amber-600'
                       }`}>
                         {item.step}
                       </span>
@@ -450,11 +450,11 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.5 }}
-                  className="group relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-blue-500/30"
+                  className="group relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] hover:border-indigo-500/30"
                 >
                   <div className="flex justify-center mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-gray-700 light:border-gray-200">
-                      <IconComponent className="w-6 h-6 text-blue-400" />
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center border border-gray-700 light:border-gray-200">
+                      <IconComponent className="w-6 h-6 text-indigo-400" />
                     </div>
                   </div>
 
@@ -468,14 +468,14 @@ export default function LandingPage() {
                       animate={{ y: [0, 4, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                     >
-                      <ArrowDown className="w-5 h-5 text-blue-400 mb-1" />
+                      <ArrowDown className="w-5 h-5 text-indigo-400 mb-1" />
                     </motion.div>
-                    <span className="text-xs text-blue-400 font-medium text-center px-2">{mapping.feature}</span>
+                    <span className="text-xs text-indigo-400 font-medium text-center px-2">{mapping.feature}</span>
                     <motion.div
                       animate={{ y: [0, 4, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
                     >
-                      <ArrowDown className="w-5 h-5 text-blue-400 mt-1" />
+                      <ArrowDown className="w-5 h-5 text-indigo-400 mt-1" />
                     </motion.div>
                   </div>
 
@@ -539,7 +539,7 @@ export default function LandingPage() {
                 { label: 'CRM Integrations', value: '2+' },
               ].map((stat, i) => (
                 <div key={i} className="text-center px-6">
-                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600">
                     {stat.value}
                   </div>
                   <div className="text-xs text-gray-500 light:text-gray-600 mt-1">{stat.label}</div>

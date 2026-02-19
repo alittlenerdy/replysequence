@@ -7,9 +7,9 @@ import type { MeetingListItem, MeetingsQueryResult } from '@/lib/dashboard-queri
 
 function PlatformIcon({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string; bg: string }> = {
-    zoom: { label: 'Zoom', color: 'text-blue-400', bg: 'bg-blue-500/15' },
+    zoom: { label: 'Zoom', color: 'text-indigo-400', bg: 'bg-indigo-500/15' },
     google_meet: { label: 'Meet', color: 'text-green-400', bg: 'bg-green-500/15' },
-    microsoft_teams: { label: 'Teams', color: 'text-purple-400', bg: 'bg-purple-500/15' },
+    microsoft_teams: { label: 'Teams', color: 'text-indigo-400', bg: 'bg-indigo-500/15' },
   };
   const { label, color, bg } = config[platform] || { label: platform, color: 'text-gray-400', bg: 'bg-gray-500/15' };
 
@@ -25,7 +25,7 @@ function StatusBadge({ status }: { status: string }) {
     completed: { label: 'Completed', classes: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
     processing: { label: 'Processing', classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
     pending: { label: 'Pending', classes: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
-    ready: { label: 'Ready', classes: 'bg-blue-500/15 text-blue-400 border-blue-500/20' },
+    ready: { label: 'Ready', classes: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
     failed: { label: 'Failed', classes: 'bg-red-500/15 text-red-400 border-red-500/20' },
   };
   const { label, classes } = config[status] || { label: status, classes: 'bg-gray-500/15 text-gray-400 border-gray-500/20' };
@@ -144,7 +144,7 @@ export function MeetingsListView() {
             placeholder="Search meetings..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50"
           />
         </div>
       </div>
@@ -154,7 +154,7 @@ export function MeetingsListView() {
         <select
           value={platform}
           onChange={(e) => { setPlatform(e.target.value); setPage(1); }}
-          className="bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 text-sm text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          className="bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 text-sm text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
         >
           <option value="all">All Platforms</option>
           <option value="zoom">Zoom</option>
@@ -165,7 +165,7 @@ export function MeetingsListView() {
         <select
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-          className="bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 text-sm text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          className="bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 text-sm text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
         >
           <option value="all">All Statuses</option>
           <option value="completed">Completed</option>
@@ -219,7 +219,7 @@ export function MeetingsListView() {
           </p>
           <Link
             href="/dashboard/settings"
-            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors"
           >
             Connect Platform
           </Link>
@@ -230,13 +230,13 @@ export function MeetingsListView() {
             <Link
               key={meeting.id}
               href={`/dashboard/meetings/${meeting.id}`}
-              className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-blue-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-all group light:shadow-sm"
+              className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-all group light:shadow-sm"
             >
               <div className="flex items-start gap-4">
                 <PlatformIcon platform={meeting.platform} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors truncate">
+                    <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors truncate">
                       {meeting.topic || 'Untitled Meeting'}
                     </h3>
                     <StatusBadge status={meeting.status} />

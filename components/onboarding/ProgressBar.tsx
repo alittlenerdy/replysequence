@@ -29,7 +29,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                   step.number < currentStep
                     ? 'bg-emerald-500 text-white'
                     : step.number === currentStep
-                    ? 'bg-blue-500 text-white ring-4 ring-blue-500/20'
+                    ? 'bg-indigo-500 text-white ring-4 ring-indigo-500/20'
                     : 'bg-gray-800 text-gray-500'
                 }`}
               >
@@ -70,7 +70,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
         </div>
         <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-full transition-all duration-500"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
           />
         </div>

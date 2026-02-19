@@ -59,7 +59,7 @@ export default function CompareDropdown() {
         }`}
       >
         {/* Gradient border wrapper */}
-        <div className="p-[1px] rounded-xl bg-gradient-to-br from-blue-500/50 via-purple-500/50 to-pink-500/50">
+        <div className="p-[1px] rounded-xl bg-gradient-to-br from-indigo-500/50 via-indigo-500/50 to-indigo-700/50">
           <div className="bg-gray-900 light:bg-white rounded-xl overflow-hidden">
             <div className="p-2">
               <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -70,18 +70,18 @@ export default function CompareDropdown() {
                   key={competitor.slug}
                   href={`/compare/${competitor.slug}`}
                   onClick={() => setIsOpen(false)}
-                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-200"
+                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-all duration-200"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-white light:text-gray-900 group-hover:text-blue-400 transition-colors">
+                    <div className="text-sm font-medium text-white light:text-gray-900 group-hover:text-indigo-400 transition-colors">
                       {competitor.name}
                     </div>
                     <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
                       {competitor.tagline}
                     </div>
                   </div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-200" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-indigo-400 transition-all duration-200" />
                 </Link>
               ))}
             </div>

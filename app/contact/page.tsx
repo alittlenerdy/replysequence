@@ -26,7 +26,7 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
             Get in{' '}
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
               Touch
             </span>
           </h1>
@@ -43,10 +43,10 @@ export default function ContactPage() {
             {/* Email */}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-blue-500/50 transition-all"
+              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 transition-all"
             >
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/20 mb-4">
-                <Mail className="w-6 h-6 text-blue-400" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-500/20 mb-4">
+                <Mail className="w-6 h-6 text-indigo-400" />
               </div>
               <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                 Email Us
@@ -54,7 +54,7 @@ export default function ContactPage() {
               <p className="text-sm text-gray-400 light:text-gray-600 mb-4">
                 For support, sales questions, or partnership inquiries.
               </p>
-              <span className="text-blue-400 group-hover:text-blue-300 text-sm font-medium transition-colors">
+              <span className="text-indigo-400 group-hover:text-indigo-300 text-sm font-medium transition-colors">
                 jimmy@replysequence.com
               </span>
             </a>
@@ -62,10 +62,10 @@ export default function ContactPage() {
             {/* Feature Requests */}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-purple-500/50 transition-all"
+              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 transition-all"
             >
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-purple-500/20 mb-4">
-                <MessageSquare className="w-6 h-6 text-purple-400" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-500/20 mb-4">
+                <MessageSquare className="w-6 h-6 text-indigo-400" />
               </div>
               <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                 Feature Requests
@@ -73,7 +73,7 @@ export default function ContactPage() {
               <p className="text-sm text-gray-400 light:text-gray-600 mb-4">
                 Tell us what you&apos;d like to see next in ReplySequence.
               </p>
-              <span className="text-purple-400 group-hover:text-purple-300 text-sm font-medium transition-colors">
+              <span className="text-indigo-400 group-hover:text-indigo-300 text-sm font-medium transition-colors">
                 jimmy@replysequence.com
               </span>
             </a>

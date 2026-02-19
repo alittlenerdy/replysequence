@@ -160,7 +160,7 @@ function CrmMockup() {
             <div>
               <div className="font-bold text-gray-900 text-sm">Sarah Kim</div>
               <div className="text-gray-500 text-xs">VP of Engineering</div>
-              <div className="text-blue-600 text-xs font-medium">Acme Corp</div>
+              <div className="text-indigo-600 text-xs font-medium">Acme Corp</div>
             </div>
           </div>
         </div>
@@ -199,7 +199,7 @@ function CrmMockup() {
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5" />
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5" />
               <div>
                 <span className="text-xs text-gray-700">Contact record updated</span>
                 <span className="text-xs text-gray-400 ml-1">1s ago</span>
@@ -479,9 +479,9 @@ export default function HeroAnimation() {
       >
         {/* Step dots */}
         <div className="flex items-center gap-1.5 mr-2">
-          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'zoom' ? 'bg-blue-500' : 'bg-gray-300'}`} />
-          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'crm' ? 'bg-blue-500' : 'bg-gray-300'}`} />
-          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'email' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'zoom' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'crm' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'email' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
         </div>
         {/* Step label */}
         <span className="text-text-caption">

@@ -20,9 +20,9 @@ interface UpcomingMeetingsWidgetProps {
 
 // Platform icons and colors
 const platformConfig: Record<string, { icon: typeof Video; color: string; bgColor: string }> = {
-  zoom: { icon: Video, color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
+  zoom: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
   google_meet: { icon: Video, color: 'text-green-400', bgColor: 'bg-green-500/20' },
-  microsoft_teams: { icon: Video, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
+  microsoft_teams: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
 };
 
 // Format relative time - requires nowMs to be passed to avoid hydration mismatch
@@ -241,7 +241,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
     return (
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4">
         <div className="flex items-center gap-3">
-          <Calendar className="w-5 h-5 text-purple-400 shrink-0" />
+          <Calendar className="w-5 h-5 text-indigo-400 shrink-0" />
           <h3 className="text-sm font-semibold text-white light:text-gray-900">Upcoming Meetings</h3>
         </div>
         <p className="text-gray-400 light:text-gray-500 text-sm mt-2 ml-8">
@@ -249,7 +249,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
             'No video meetings in the next 7 days'
           ) : (
             <>
-              <a href="/dashboard/settings" className="text-purple-400 hover:text-purple-300 underline">
+              <a href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 underline">
                 Connect your calendar
               </a>
               {' '}to see upcoming meetings
@@ -263,14 +263,14 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
   return (
     <div className="relative overflow-hidden rounded-2xl">
       {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-amber-500 to-amber-600 rounded-2xl" />
 
       {/* Inner content */}
       <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
         {/* Header */}
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-purple-400" />
+            <Calendar className="w-5 h-5 text-indigo-400" />
             <h3 className="text-lg font-bold text-white light:text-gray-900">
               Upcoming Meetings
             </h3>

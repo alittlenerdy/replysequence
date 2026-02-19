@@ -265,13 +265,13 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
       className="relative overflow-hidden rounded-2xl"
     >
       {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-indigo-500 to-indigo-700 rounded-2xl" />
 
       {/* Inner content */}
       <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
         {/* Background glow effects */}
         <div className="absolute -right-20 -top-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />
+        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
 
         {/* Celebration overlay */}
         <AnimatePresence>
@@ -283,7 +283,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
         {/* Header */}
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 flex items-center justify-center">
               <Rocket className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
@@ -317,7 +317,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
               initial={{ width: 0 }}
               animate={{ width: `${data.percentComplete}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full"
+              className="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full"
             />
           </div>
           <span className="absolute right-0 -top-1 text-xs font-medium text-gray-400">

@@ -65,7 +65,7 @@ export function StepCRM({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-blue-500/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-indigo-500/20 flex items-center justify-center mx-auto mb-6"
         >
           <Database className="w-8 h-8 text-orange-400" />
         </motion.div>
@@ -179,14 +179,14 @@ export function StepCRM({
                   value={airtableApiKey}
                   onChange={(e) => setAirtableApiKey(e.target.value)}
                   placeholder="Personal Access Token (pat...)"
-                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
                 <input
                   type="text"
                   value={airtableBaseId}
                   onChange={(e) => setAirtableBaseId(e.target.value)}
                   placeholder="Base ID (appXXXXXXXXXX)"
-                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
                 {airtableError && (
                   <p className="text-xs text-red-400">{airtableError}</p>
@@ -238,7 +238,7 @@ export function StepCRM({
         >
           <button
             onClick={onCRMConnected}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
           >
             Continue
             <ArrowRight className="w-5 h-5" />

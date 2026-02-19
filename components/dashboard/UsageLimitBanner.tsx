@@ -63,7 +63,7 @@ export function UsageLimitBanner() {
           <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-blue-500'
+                isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-indigo-500'
               }`}
               style={{ width: `${percentage}%` }}
             />
@@ -78,8 +78,8 @@ export function UsageLimitBanner() {
           href="/dashboard/pricing"
           className={`shrink-0 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
             isAtLimit
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'text-blue-400 bg-blue-500/10 hover:bg-blue-500/20'
+              ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+              : 'text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20'
           }`}
         >
           {isAtLimit ? 'Upgrade to Pro' : 'Upgrade'}

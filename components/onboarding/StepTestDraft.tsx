@@ -107,9 +107,9 @@ export function StepTestDraft({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Sparkles className="w-8 h-8 text-purple-400" />
+          <Sparkles className="w-8 h-8 text-indigo-400" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -139,8 +139,8 @@ export function StepTestDraft({
           >
             <div className="p-4 border-b border-gray-700 bg-gray-800/50">
               <h3 className="font-semibold text-white flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <User className="w-4 h-4 text-blue-400" />
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                  <User className="w-4 h-4 text-indigo-400" />
                 </div>
                 Sample Meeting
               </h3>
@@ -179,9 +179,9 @@ export function StepTestDraft({
             <div className="p-4 border-b border-gray-700 bg-gray-800/50">
               <h3 className="font-semibold text-white flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  showDraft ? 'bg-emerald-500/20' : 'bg-purple-500/20'
+                  showDraft ? 'bg-emerald-500/20' : 'bg-indigo-500/20'
                 }`}>
-                  <Mail className={`w-4 h-4 ${showDraft ? 'text-emerald-400' : 'text-purple-400'}`} />
+                  <Mail className={`w-4 h-4 ${showDraft ? 'text-emerald-400' : 'text-indigo-400'}`} />
                 </div>
                 Generated Draft
                 {showDraft && generationTime && (
@@ -208,7 +208,7 @@ export function StepTestDraft({
                     <p className="text-gray-500 mb-6">Click the button below to generate</p>
                     <button
                       onClick={handleGenerate}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg shadow-purple-500/25"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25"
                     >
                       <Sparkles className="w-5 h-5" />
                       Generate Draft Email
@@ -225,10 +225,10 @@ export function StepTestDraft({
                     className="flex flex-col items-center justify-center py-12 text-center"
                   >
                     <div className="relative">
-                      <div className="w-16 h-16 border-4 border-purple-500/20 rounded-full" />
-                      <div className="absolute top-0 left-0 w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-16 h-16 border-4 border-indigo-500/20 rounded-full" />
+                      <div className="absolute top-0 left-0 w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
                     </div>
-                    <p className="mt-4 text-purple-400 font-medium">Generating your draft...</p>
+                    <p className="mt-4 text-indigo-400 font-medium">Generating your draft...</p>
                     <p className="text-sm text-gray-500 mt-1">AI is analyzing the transcript</p>
                   </motion.div>
                 )}

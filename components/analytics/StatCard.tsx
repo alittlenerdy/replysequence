@@ -167,7 +167,7 @@ export function StatCard({
 
   if (hero) {
     return (
-      <div className="bg-gradient-to-br from-blue-500/40 to-purple-500/40 p-[1px] rounded-2xl">
+      <div className="bg-gradient-to-br from-indigo-500/40 to-indigo-700/40 p-[1px] rounded-2xl">
         {card}
       </div>
     );

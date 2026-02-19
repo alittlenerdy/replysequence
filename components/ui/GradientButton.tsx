@@ -40,7 +40,7 @@ export function GradientButton({
     'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-300',
     sizeClasses[size],
     variant === 'primary'
-      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40'
+      ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40'
       : 'bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 hover:border-gray-600',
     disabled && 'opacity-50 cursor-not-allowed',
     className

@@ -32,7 +32,7 @@ export default function Error({
         )}
         <button
           onClick={reset}
-          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-lg font-medium transition-all shadow-lg shadow-purple-500/25"
+          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 rounded-lg font-medium transition-all shadow-lg shadow-indigo-500/25"
         >
           Try again
         </button>

@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">
+        <div className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-600 mb-4">
           404
         </div>
         <h1 className="text-2xl font-bold text-white mb-3">
@@ -16,7 +16,7 @@ export default function NotFound() {
         <div className="flex items-center justify-center gap-4">
           <Link
             href="/dashboard"
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
           >
             Go to Dashboard
           </Link>

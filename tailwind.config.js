@@ -17,16 +17,16 @@ module.exports = {
           alt: '#F5F5F5',
           pure: '#FFFFFF',
         },
-        // Primary Blue (Brand)
+        // Primary Indigo (Brand)
         mint: {
-          DEFAULT: '#2563EB',
-          hover: '#1D4ED8',
-          tint: '#EFF6FF',
+          DEFAULT: '#4F46E5',
+          hover: '#4338CA',
+          tint: '#EEF2FF',
         },
-        // Blue (CTAs)
+        // Indigo (CTAs)
         neon: {
-          DEFAULT: '#3B82F6',
-          hover: '#2563EB',
+          DEFAULT: '#6366F1',
+          hover: '#4F46E5',
         },
         // Text colors
         text: {
@@ -124,8 +124,8 @@ module.exports = {
           '100%': { transform: 'rotate(360deg)' },
         },
         glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 60px rgba(139, 92, 246, 0.5), 0 0 120px rgba(59, 130, 246, 0.3)' },
-          '50%': { boxShadow: '0 0 100px rgba(139, 92, 246, 0.8), 0 0 200px rgba(59, 130, 246, 0.5)' },
+          '0%, 100%': { boxShadow: '0 0 60px rgba(99, 102, 241, 0.5), 0 0 120px rgba(79, 70, 229, 0.3)' },
+          '50%': { boxShadow: '0 0 100px rgba(99, 102, 241, 0.8), 0 0 200px rgba(79, 70, 229, 0.5)' },
         },
       },
     },

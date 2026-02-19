@@ -66,7 +66,7 @@ export function RichTextEditor({
         className={`
           p-1.5 rounded transition-colors
           ${isActive
-            ? 'bg-blue-500/20 text-blue-400'
+            ? 'bg-indigo-500/20 text-indigo-400'
             : 'text-gray-400 hover:text-white hover:bg-gray-700/50'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}

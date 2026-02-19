@@ -75,9 +75,9 @@ export function StepConnectCalendar({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Calendar className="w-8 h-8 text-blue-400" />
+          <Calendar className="w-8 h-8 text-indigo-400" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -176,7 +176,7 @@ export function StepConnectCalendar({
         >
           <button
             onClick={onCalendarConnected}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
           >
             Continue to Test Draft
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

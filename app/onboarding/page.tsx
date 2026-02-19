@@ -277,7 +277,7 @@ function OnboardingContent() {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto" />
+          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mx-auto" />
           <p className="mt-4 text-gray-400">Loading your progress...</p>
         </div>
       </div>
@@ -299,7 +299,7 @@ function OnboardingContent() {
         <header className="relative z-10 max-w-4xl mx-auto pt-8 px-4">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                 ReplySequence
               </span>
             </div>
@@ -325,9 +325,9 @@ function OnboardingContent() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg"
+            className="mb-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
           >
-            <p className="text-blue-400 text-sm">
+            <p className="text-indigo-400 text-sm">
               Welcome back! Let&apos;s continue where you left off.
             </p>
           </motion.div>
@@ -487,7 +487,7 @@ function OnboardingLoadingFallback() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
       <div className="text-center">
-        <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto" />
+        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mx-auto" />
         <p className="mt-4 text-gray-400">Loading...</p>
       </div>
     </div>

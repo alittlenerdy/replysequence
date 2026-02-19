@@ -102,8 +102,8 @@ export default function SecurityPage() {
       <div className="max-w-6xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-16">
           <div className="flex justify-center mb-6">
-            <div className="p-4 bg-purple-500/10 light:bg-purple-50 rounded-2xl">
-              <Shield className="w-12 h-12 text-purple-400 light:text-purple-600" />
+            <div className="p-4 bg-indigo-500/10 light:bg-indigo-50 rounded-2xl">
+              <Shield className="w-12 h-12 text-indigo-400 light:text-indigo-600" />
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white light:text-gray-900 mb-4">
@@ -121,13 +121,13 @@ export default function SecurityPage() {
             <CheckCircle className="w-4 h-4 text-green-400 light:text-green-600" />
             <span className="text-sm text-green-400 light:text-green-600">256-bit Encryption</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 light:bg-blue-50 border border-blue-500/20 light:border-blue-200 rounded-full">
-            <CheckCircle className="w-4 h-4 text-blue-400 light:text-blue-600" />
-            <span className="text-sm text-blue-400 light:text-blue-600">SOC 2 Infrastructure</span>
+          <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 light:bg-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-full">
+            <CheckCircle className="w-4 h-4 text-indigo-400 light:text-indigo-600" />
+            <span className="text-sm text-indigo-400 light:text-indigo-600">SOC 2 Infrastructure</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 light:bg-purple-50 border border-purple-500/20 light:border-purple-200 rounded-full">
-            <CheckCircle className="w-4 h-4 text-purple-400 light:text-purple-600" />
-            <span className="text-sm text-purple-400 light:text-purple-600">GDPR Compliant</span>
+          <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 light:bg-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-full">
+            <CheckCircle className="w-4 h-4 text-indigo-400 light:text-indigo-600" />
+            <span className="text-sm text-indigo-400 light:text-indigo-600">GDPR Compliant</span>
           </div>
         </div>
 
@@ -136,11 +136,11 @@ export default function SecurityPage() {
           {securityFeatures.map((feature) => (
             <div
               key={feature.title}
-              className="p-6 bg-gray-900/50 light:bg-gray-50 border border-gray-800 light:border-gray-200 rounded-xl hover:border-purple-500/30 light:hover:border-purple-300 transition-colors"
+              className="p-6 bg-gray-900/50 light:bg-gray-50 border border-gray-800 light:border-gray-200 rounded-xl hover:border-indigo-500/30 light:hover:border-indigo-300 transition-colors"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-purple-500/10 light:bg-purple-50 rounded-lg">
-                  <feature.icon className="w-5 h-5 text-purple-400 light:text-purple-600" />
+                <div className="p-2 bg-indigo-500/10 light:bg-indigo-50 rounded-lg">
+                  <feature.icon className="w-5 h-5 text-indigo-400 light:text-indigo-600" />
                 </div>
                 <span className="px-2 py-0.5 text-xs font-medium text-green-400 light:text-green-600 bg-green-500/10 light:bg-green-50 rounded-full">
                   Active
@@ -190,7 +190,7 @@ export default function SecurityPage() {
                 <tbody>
                   {securityHeaders.map((header) => (
                     <tr key={header.header} className="border-b border-gray-800/50 light:border-gray-200 last:border-0">
-                      <td className="p-4 text-sm font-mono text-purple-400 light:text-purple-600">{header.header}</td>
+                      <td className="p-4 text-sm font-mono text-indigo-400 light:text-indigo-600">{header.header}</td>
                       <td className="p-4 text-sm font-mono text-gray-400 light:text-gray-600">{header.value}</td>
                     </tr>
                   ))}
@@ -233,7 +233,7 @@ export default function SecurityPage() {
 
         {/* Vulnerability Reporting */}
         <div className="mb-16">
-          <div className="p-8 bg-gradient-to-r from-purple-500/10 to-blue-500/10 light:from-purple-50 light:to-blue-50 border border-purple-500/20 light:border-purple-200 rounded-2xl text-center">
+          <div className="p-8 bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 light:from-indigo-50 light:to-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-2xl text-center">
             <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">Security Vulnerability Reporting</h2>
             <p className="text-gray-400 light:text-gray-600 mb-6 max-w-2xl mx-auto">
               Found a security issue? We appreciate responsible disclosure.
@@ -241,7 +241,7 @@ export default function SecurityPage() {
             </p>
             <a
               href="mailto:security@replysequence.com"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors"
             >
               <Shield className="w-5 h-5" />
               Report a Vulnerability

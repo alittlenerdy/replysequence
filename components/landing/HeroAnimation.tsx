@@ -55,7 +55,7 @@ export function HeroAnimation() {
         <div className="relative" style={{ willChange: 'transform' }}>
           {/* Outer ring - Video platforms */}
           <div
-            className="absolute rounded-full border-2 border-blue-500/30 animate-orbit-slow"
+            className="absolute rounded-full border-2 border-indigo-500/30 animate-orbit-slow"
             style={{
               width: 'min(600px, 90vw)',
               height: 'min(600px, 90vw)',
@@ -97,7 +97,7 @@ export function HeroAnimation() {
 
           {/* Middle ring - Core features (counter-rotate) */}
           <div
-            className="absolute rounded-full border-2 border-purple-500/40 animate-orbit-reverse"
+            className="absolute rounded-full border-2 border-indigo-500/40 animate-orbit-reverse"
             style={{
               width: 'min(450px, 70vw)',
               height: 'min(450px, 70vw)',
@@ -139,7 +139,7 @@ export function HeroAnimation() {
 
           {/* Inner ring - AI/Docs */}
           <div
-            className="absolute rounded-full border border-pink-500/30 animate-orbit-fast"
+            className="absolute rounded-full border border-amber-500/30 animate-orbit-fast"
             style={{
               width: 'min(300px, 50vw)',
               height: 'min(300px, 50vw)',
@@ -192,7 +192,7 @@ export function HeroAnimation() {
             <div className="relative">
               {/* Outer glow ring - use opacity instead of scale for better perf */}
               <motion.div
-                className="absolute rounded-3xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-xl"
+                className="absolute rounded-3xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 blur-xl"
                 style={{
                   width: 'min(160px, 30vw)',
                   height: 'min(160px, 30vw)',
@@ -206,7 +206,7 @@ export function HeroAnimation() {
 
               {/* Glowing core */}
               <div
-                className="relative w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl animate-glow-pulse"
+                className="relative w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-2xl animate-glow-pulse"
                 style={{ willChange: 'transform, box-shadow' }}
               >
                 {/* AI Icon */}

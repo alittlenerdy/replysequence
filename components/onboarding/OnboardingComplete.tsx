@@ -84,7 +84,7 @@ export function OnboardingComplete({
           recycle={false}
           numberOfPieces={200}
           gravity={0.2}
-          colors={['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b']}
+          colors={['#4f46e5', '#6366f1', '#818cf8', '#10b981', '#f59e0b']}
         />
       )}
 
@@ -103,7 +103,7 @@ export function OnboardingComplete({
         transition={{ delay: 0.2 }}
         className="text-4xl md:text-5xl font-bold mb-4"
       >
-        <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-emerald-400 via-indigo-400 to-indigo-500 bg-clip-text text-transparent">
           You&apos;re all set!
         </span>
       </motion.h1>
@@ -172,7 +172,7 @@ export function OnboardingComplete({
       >
         <button
           onClick={onGoToDashboard}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25"
         >
           <Mail className="w-5 h-5" />
           Go to Dashboard

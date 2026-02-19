@@ -73,14 +73,14 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                   key={tier.name}
                   className={`relative rounded-2xl p-6 lg:p-8 transition-all duration-300 ${
                     tier.highlighted
-                      ? 'bg-gradient-to-b from-blue-500/10 to-indigo-500/10 border-2 border-blue-500/50 shadow-xl shadow-blue-500/10 scale-105 z-10'
+                      ? 'bg-gradient-to-b from-indigo-500/10 to-indigo-700/10 border-2 border-indigo-500/50 shadow-xl shadow-indigo-500/10 scale-105 z-10'
                       : 'bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300'
                   }`}
                 >
                   {/* Most Popular Badge */}
                   {tier.highlighted && !isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-lg">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white text-sm font-semibold shadow-lg">
                         <Sparkles className="w-4 h-4" />
                         Most Popular
                       </span>
@@ -101,12 +101,12 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                   <div className="mb-6 mt-4">
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                       tier.highlighted
-                        ? 'bg-blue-500/20'
+                        ? 'bg-indigo-500/20'
                         : 'bg-gray-800 light:bg-gray-100'
                     }`}>
                       <Icon className={`w-6 h-6 ${
                         tier.highlighted
-                          ? 'text-blue-400'
+                          ? 'text-indigo-400'
                           : 'text-gray-400 light:text-gray-600'
                       }`} />
                     </div>
@@ -153,7 +153,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                       <li key={index} className="flex items-start gap-3">
                         <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                           tier.highlighted
-                            ? 'text-blue-400'
+                            ? 'text-indigo-400'
                             : 'text-emerald-400'
                         }`} />
                         <span className="text-gray-300 light:text-gray-700 text-sm">

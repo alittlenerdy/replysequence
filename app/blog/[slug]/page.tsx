@@ -135,7 +135,7 @@ function inlineFormat(text: string): string {
   // Links: [text](url)
   text = text.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" class="text-purple-400 light:text-purple-600 underline hover:text-purple-300 light:hover:text-purple-500">$1</a>'
+    '<a href="$2" class="text-indigo-400 light:text-indigo-600 underline hover:text-indigo-300 light:hover:text-indigo-500">$1</a>'
   );
   // Inline code: `code`
   text = text.replace(
@@ -200,7 +200,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Back link */}
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-purple-400 light:hover:text-purple-600 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-indigo-400 light:hover:text-indigo-600 transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to blog
@@ -211,7 +211,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-500/10 light:bg-purple-100 text-purple-400 light:text-purple-700"
+                className="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-500/10 light:bg-indigo-100 text-indigo-400 light:text-indigo-700"
               >
                 {tag}
               </span>
@@ -259,7 +259,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               [&_li]:text-gray-300 [&_li]:light:text-gray-700
               [&_strong]:text-white [&_strong]:light:text-gray-900 [&_strong]:font-semibold
               [&_em]:italic
-              [&_a]:text-purple-400 [&_a]:light:text-purple-600 [&_a]:underline [&_a]:hover:text-purple-300 [&_a]:light:hover:text-purple-500
+              [&_a]:text-indigo-400 [&_a]:light:text-indigo-600 [&_a]:underline [&_a]:hover:text-indigo-300 [&_a]:light:hover:text-indigo-500
               [&_code]:bg-gray-800 [&_code]:light:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
@@ -278,7 +278,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </p>
             <a
               href="/sign-up"
-              className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-8 py-4 text-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-8 py-4 text-lg bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
             >
               Get Started Free
             </a>
@@ -298,9 +298,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <Link
                   key={related.slug}
                   href={`/blog/${related.slug}`}
-                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-all duration-300 hover:border-purple-500/50 light:hover:border-purple-400/50"
+                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-all duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50"
                 >
-                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-purple-400 light:group-hover:text-purple-600 transition-colors line-clamp-2">
+                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors line-clamp-2">
                     {related.title}
                   </h3>
                   <p className="text-sm text-gray-400 light:text-gray-600 line-clamp-2">

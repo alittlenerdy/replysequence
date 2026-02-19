@@ -103,7 +103,7 @@ export function EmailPreferencesSettings() {
           className={`
             w-full text-left p-4 rounded-lg border transition-all duration-200
             ${preference === 'review'
-              ? 'border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/50'
+              ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
               : 'border-gray-700 light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
             }
             ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -111,7 +111,7 @@ export function EmailPreferencesSettings() {
         >
           <div className="flex items-start gap-3">
             <div className={`shrink-0 mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-              preference === 'review' ? 'border-blue-500 bg-blue-500' : 'border-gray-500 light:border-gray-300'
+              preference === 'review' ? 'border-indigo-500 bg-indigo-500' : 'border-gray-500 light:border-gray-300'
             }`}>
               {preference === 'review' && (
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -135,7 +135,7 @@ export function EmailPreferencesSettings() {
           className={`
             w-full text-left p-4 rounded-lg border transition-all duration-200
             ${preference === 'auto_send'
-              ? 'border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/50'
+              ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
               : 'border-gray-700 light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
             }
             ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -143,7 +143,7 @@ export function EmailPreferencesSettings() {
         >
           <div className="flex items-start gap-3">
             <div className={`shrink-0 mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-              preference === 'auto_send' ? 'border-blue-500 bg-blue-500' : 'border-gray-500 light:border-gray-300'
+              preference === 'auto_send' ? 'border-indigo-500 bg-indigo-500' : 'border-gray-500 light:border-gray-300'
             }`}>
               {preference === 'auto_send' && (
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

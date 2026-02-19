@@ -40,7 +40,7 @@ const integrations: Integration[] = [
     ],
     status: 'available',
     logo: 'Z',
-    color: 'from-blue-500 to-blue-600',
+    color: 'from-indigo-500 to-indigo-600',
   },
   {
     name: 'Microsoft Teams',
@@ -54,7 +54,7 @@ const integrations: Integration[] = [
     ],
     status: 'available',
     logo: 'T',
-    color: 'from-purple-500 to-indigo-600',
+    color: 'from-indigo-500 to-indigo-700',
   },
   {
     name: 'Google Meet',
@@ -96,7 +96,7 @@ const integrations: Integration[] = [
     ],
     status: 'available',
     logo: 'O',
-    color: 'from-blue-600 to-cyan-500',
+    color: 'from-indigo-600 to-cyan-500',
   },
   {
     name: 'HubSpot',
@@ -138,7 +138,7 @@ const integrations: Integration[] = [
     ],
     status: 'coming_soon',
     logo: 'S',
-    color: 'from-blue-400 to-blue-600',
+    color: 'from-indigo-400 to-indigo-600',
   },
 ];
 
@@ -175,7 +175,7 @@ export default function IntegrationsPage() {
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
             Connect Your{' '}
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
               Entire Stack
             </span>
           </h1>
@@ -294,7 +294,7 @@ export default function IntegrationsPage() {
                 className={`text-center ${staggerClasses[i] || staggerClasses[staggerClasses.length - 1]}`}
                 style={{ animationDelay: `${i * 0.15}s` }}
               >
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-lg mb-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold text-lg mb-4">
                   {item.step}
                 </div>
                 <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
@@ -320,7 +320,7 @@ export default function IntegrationsPage() {
           </p>
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
           >
             Get Started Free
             <ArrowRight className="w-5 h-5" />

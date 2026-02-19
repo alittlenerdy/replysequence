@@ -69,8 +69,8 @@ export function AccountManagement() {
       {/* Export Data */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-            <Download className="w-5 h-5 text-blue-400" />
+          <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+            <Download className="w-5 h-5 text-indigo-400" />
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-medium text-white light:text-gray-900">Export Your Data</h4>
@@ -81,7 +81,7 @@ export function AccountManagement() {
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className="shrink-0 px-4 py-2 text-sm font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition-colors disabled:opacity-50"
+            className="shrink-0 px-4 py-2 text-sm font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-colors disabled:opacity-50"
           >
             {isExporting ? (
               <span className="flex items-center gap-2">

@@ -87,9 +87,9 @@ export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
                 relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-all duration-200
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
                 ${isActive
-                  ? 'border-blue-500 text-white light:text-blue-600 bg-blue-500/10 light:bg-blue-50 font-semibold'
+                  ? 'border-indigo-500 text-white light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 font-semibold'
                   : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100 font-medium'
                 }
               `}

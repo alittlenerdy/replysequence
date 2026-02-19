@@ -136,17 +136,17 @@ export function AICustomization() {
   return (
     <div className="max-w-4xl mx-auto mt-8 space-y-6">
       {/* Animated Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/20 via-blue-600/15 to-purple-600/10 light:from-purple-100 light:via-blue-50 light:to-purple-50 p-6 border border-purple-500/20 light:border-purple-200">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600/20 via-indigo-600/15 to-indigo-600/10 light:from-indigo-100 light:via-indigo-50 light:to-indigo-50 p-6 border border-indigo-500/20 light:border-indigo-200">
         {/* Floating orb decorations */}
-        <div className="absolute -right-8 -top-8 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-blue-500/15 rounded-full blur-2xl" />
+        <div className="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl" />
+        <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-indigo-500/15 rounded-full blur-2xl" />
         <div className="relative flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-500/25">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
             <h3 className="text-xl font-bold text-white light:text-gray-900">Your AI Writing Assistant</h3>
-            <p className="text-sm text-purple-200/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
+            <p className="text-sm text-indigo-200/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
           </div>
         </div>
       </div>
@@ -164,13 +164,13 @@ export function AICustomization() {
                 onClick={() => setPreferences(p => ({ ...p, aiTone: option.value }))}
                 className={`w-full p-4 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/10'
+                    ? 'border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/10'
                     : 'border-gray-700 light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400 bg-gray-900/30 light:bg-gray-50'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className={`text-sm font-semibold ${isSelected ? 'text-purple-400 light:text-purple-600' : 'text-white light:text-gray-900'}`}>
+                    <div className={`text-sm font-semibold ${isSelected ? 'text-indigo-400 light:text-indigo-600' : 'text-white light:text-gray-900'}`}>
                       {option.label}
                     </div>
                     <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
@@ -179,7 +179,7 @@ export function AICustomization() {
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center"
+                      className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center"
                     >
                       <Check className="w-3.5 h-3.5 text-white" />
                     </motion.div>
@@ -194,7 +194,7 @@ export function AICustomization() {
         <div className="mt-4 p-4 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200">
           <div className="text-xs font-medium text-gray-500 light:text-gray-400 mb-2">Preview</div>
           <p className="text-sm text-gray-300 light:text-gray-600 italic leading-relaxed min-h-[3rem]">
-            &ldquo;{displayedPreview}{isTyping && <span className="inline-block w-0.5 h-4 bg-purple-400 ml-0.5 animate-pulse align-middle" />}&rdquo;
+            &ldquo;{displayedPreview}{isTyping && <span className="inline-block w-0.5 h-4 bg-indigo-400 ml-0.5 animate-pulse align-middle" />}&rdquo;
           </p>
         </div>
       </div>
@@ -211,7 +211,7 @@ export function AICustomization() {
           placeholder="E.g., Always include a specific next step with a date. Use my first name in the sign-off."
           rows={3}
           maxLength={500}
-          className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500"
+          className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
         <div className="text-xs text-gray-600 mt-1 text-right">
           {preferences.aiCustomInstructions.length}/500
@@ -235,7 +235,7 @@ export function AICustomization() {
                     : chip,
                 }));
               }}
-              className="px-3 py-1.5 text-xs font-medium text-purple-300 light:text-purple-600 bg-purple-500/10 light:bg-purple-50 border border-purple-500/20 light:border-purple-200 rounded-full hover:bg-purple-500/20 light:hover:bg-purple-100 transition-colors"
+              className="px-3 py-1.5 text-xs font-medium text-indigo-300 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-full hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors"
             >
               + {chip}
             </button>
@@ -255,7 +255,7 @@ export function AICustomization() {
           placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp\n(555) 123-4567"}
           rows={4}
           maxLength={500}
-          className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500 font-mono"
+          className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
         />
       </div>
 
@@ -274,7 +274,7 @@ export function AICustomization() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-500/20 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+          className="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 shadow-lg shadow-indigo-500/20 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
         >
           {isSaving ? (
             <>
@@ -368,8 +368,8 @@ function TemplateManager() {
         className="w-full flex items-center justify-between group"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-            <FileText className="w-4 h-4 text-blue-400" />
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+            <FileText className="w-4 h-4 text-indigo-400" />
           </div>
           <div className="text-left">
             <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Templates</h3>
@@ -459,7 +459,7 @@ function TemplateManager() {
               ) : (
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-blue-400 border border-dashed border-gray-600 light:border-gray-300 rounded-xl hover:border-blue-500/50 hover:bg-blue-500/5 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-indigo-400 border border-dashed border-gray-600 light:border-gray-300 rounded-xl hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Create Custom Template
@@ -496,7 +496,7 @@ function CreateTemplateForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-900/50 light:bg-white border border-blue-500/30 rounded-xl p-4 space-y-3 light:shadow-sm"
+      className="bg-gray-900/50 light:bg-white border border-indigo-500/30 rounded-xl p-4 space-y-3 light:shadow-sm"
     >
       <h4 className="text-sm font-medium text-white light:text-gray-900">New Template</h4>
 
@@ -506,13 +506,13 @@ function CreateTemplateForm({
         onChange={(e) => setName(e.target.value)}
         placeholder="Template name"
         maxLength={100}
-        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
       />
 
       <select
         value={meetingType}
         onChange={(e) => setMeetingType(e.target.value)}
-        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
       >
         <option value="">All meeting types</option>
         <option value="sales_call">Sales Calls</option>
@@ -528,7 +528,7 @@ function CreateTemplateForm({
         placeholder="Instructions for the AI. E.g., 'Focus on budget discussions and decision timelines. Include a pricing summary section.'"
         rows={4}
         maxLength={2000}
-        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500"
       />
       <div className="text-xs text-gray-600 text-right">{promptInstructions.length}/2000</div>
 
@@ -543,7 +543,7 @@ function CreateTemplateForm({
         <button
           type="submit"
           disabled={saving || !name || !promptInstructions}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
         >
           {saving ? (
             <>

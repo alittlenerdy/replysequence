@@ -28,12 +28,12 @@ function FlowLine({ progress }: { progress: number }) {
     <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden lg:block">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-700/50 to-transparent" />
       <motion.div
-        className="absolute top-0 left-0 w-full bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500"
+        className="absolute top-0 left-0 w-full bg-gradient-to-b from-indigo-400 via-indigo-500 to-indigo-700"
         style={{ height: `${progress * 100}%` }}
       />
       {/* Glowing dot at the end */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-lg shadow-purple-500/50"
+        className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-lg shadow-indigo-500/50"
         style={{ top: `${progress * 100}%` }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
         transition={{ duration: 1.5, repeat: Infinity }}
@@ -75,7 +75,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
         <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.5, repeat: Infinity }}
-          className="text-blue-400"
+          className="text-indigo-400"
         >
           |
         </motion.span>
@@ -172,7 +172,7 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.4 }}
       className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden"
-      whileHover={{ scale: 1.01, borderColor: 'rgba(139, 92, 246, 0.3)' }}
+      whileHover={{ scale: 1.01, borderColor: 'rgba(99, 102, 241, 0.3)' }}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -219,7 +219,7 @@ function StepCard({
   title: string;
   description: string;
   children?: React.ReactNode;
-  color: 'blue' | 'purple' | 'pink' | 'emerald';
+  color: 'indigo' | 'amber' | 'emerald';
 }) {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -243,29 +243,21 @@ function StepCard({
   };
 
   const colorClasses = {
-    blue: {
-      border: 'border-blue-500/50',
-      bg: 'bg-blue-500/10',
-      text: 'text-blue-400',
-      badge: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      glow: 'shadow-blue-500/30',
-      hoverGlow: 'hover:shadow-blue-500/40',
+    indigo: {
+      border: 'border-indigo-500/50',
+      bg: 'bg-indigo-500/10',
+      text: 'text-indigo-400',
+      badge: 'bg-gradient-to-r from-indigo-500 to-indigo-600',
+      glow: 'shadow-indigo-500/30',
+      hoverGlow: 'hover:shadow-indigo-500/40',
     },
-    purple: {
-      border: 'border-purple-500/50',
-      bg: 'bg-purple-500/10',
-      text: 'text-purple-400',
-      badge: 'bg-gradient-to-r from-purple-500 to-purple-600',
-      glow: 'shadow-purple-500/30',
-      hoverGlow: 'hover:shadow-purple-500/40',
-    },
-    pink: {
-      border: 'border-pink-500/50',
-      bg: 'bg-pink-500/10',
-      text: 'text-pink-400',
-      badge: 'bg-gradient-to-r from-pink-500 to-pink-600',
-      glow: 'shadow-pink-500/30',
-      hoverGlow: 'hover:shadow-pink-500/40',
+    amber: {
+      border: 'border-amber-500/50',
+      bg: 'bg-amber-500/10',
+      text: 'text-amber-400',
+      badge: 'bg-gradient-to-r from-amber-500 to-amber-600',
+      glow: 'shadow-amber-500/30',
+      hoverGlow: 'hover:shadow-amber-500/40',
     },
     emerald: {
       border: 'border-emerald-500/50',
@@ -400,13 +392,13 @@ export default function HowItWorksPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20 mb-6"
             >
               <motion.span
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               >
-                <Sparkles className="w-4 h-4 text-purple-400" />
+                <Sparkles className="w-4 h-4 text-indigo-400" />
               </motion.span>
               <span className="text-sm font-medium text-gray-300 light:text-gray-700">
                 Powered by Claude AI
@@ -429,8 +421,8 @@ export default function HowItWorksPage() {
             className="flex flex-wrap justify-center gap-6"
           >
             <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(59, 130, 246, 0.5)' }}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(99, 102, 241, 0.5)' }}
             >
               <Zap className="w-5 h-5 text-yellow-400" />
               <span className="text-lg font-bold text-white light:text-gray-900">
@@ -449,10 +441,10 @@ export default function HowItWorksPage() {
               <span className="text-sm text-gray-400 light:text-gray-600">saved weekly</span>
             </motion.div>
             <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(168, 85, 247, 0.5)' }}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(99, 102, 241, 0.5)' }}
             >
-              <CheckCircle className="w-5 h-5 text-purple-400" />
+              <CheckCircle className="w-5 h-5 text-indigo-400" />
               <span className="text-lg font-bold text-white light:text-gray-900">
                 <AnimatedCounter value={100} suffix="%" />
               </span>
@@ -476,7 +468,7 @@ export default function HowItWorksPage() {
             icon={<Video className="w-8 h-8" />}
             title="Connect Your Platform"
             description="Link your Zoom, Microsoft Teams, or Google Meet account with one click. We use secure OAuth to access only what we need - your meeting transcripts."
-            color="blue"
+            color="indigo"
           >
             <div className="mt-6 space-y-3">
               {/* Animated platform badges */}
@@ -539,7 +531,7 @@ export default function HowItWorksPage() {
             icon={<MessageSquare className="w-8 h-8" />}
             title="Record Your Meeting"
             description="Just enable transcription in your meeting settings and have your call as usual. ReplySequence automatically detects when a transcript is available."
-            color="purple"
+            color="indigo"
           >
             <div className="mt-6 space-y-3">
               <Accordion
@@ -548,15 +540,15 @@ export default function HowItWorksPage() {
               >
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-400 mt-0.5">1.</span>
+                    <span className="text-indigo-400 mt-0.5">1.</span>
                     Enable &ldquo;Audio Transcript&rdquo; in your Zoom settings
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-400 mt-0.5">2.</span>
+                    <span className="text-indigo-400 mt-0.5">2.</span>
                     Record to cloud (not local) for automatic processing
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-400 mt-0.5">3.</span>
+                    <span className="text-indigo-400 mt-0.5">3.</span>
                     Transcript is ready within minutes of meeting end
                   </li>
                 </ul>
@@ -568,15 +560,15 @@ export default function HowItWorksPage() {
               >
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
-                    <span className="text-purple-400 mt-0.5">1.</span>
+                    <span className="text-indigo-400 mt-0.5">1.</span>
                     Start transcription from the meeting controls
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-purple-400 mt-0.5">2.</span>
+                    <span className="text-indigo-400 mt-0.5">2.</span>
                     Ensure your admin has enabled transcription
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-purple-400 mt-0.5">3.</span>
+                    <span className="text-indigo-400 mt-0.5">3.</span>
                     Transcript appears in Teams chat after meeting
                   </li>
                 </ul>
@@ -610,7 +602,7 @@ export default function HowItWorksPage() {
             icon={<Sparkles className="w-8 h-8" />}
             title="AI Analyzes Transcript"
             description="Our AI (powered by Claude) reads the entire transcript and extracts everything that matters - key discussion points, commitments made, and action items."
-            color="pink"
+            color="amber"
           >
             <div className="mt-6">
               {/* Animated example output preview with typewriter */}
@@ -620,7 +612,7 @@ export default function HowItWorksPage() {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-blue-400 mb-1">
+                    <div className="flex items-center gap-2 text-sm font-medium text-indigo-400 mb-1">
                       <FileText className="w-4 h-4" />
                       Key Points
                     </div>
@@ -642,7 +634,7 @@ export default function HowItWorksPage() {
                     </ul>
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-purple-400 mb-1">
+                    <div className="flex items-center gap-2 text-sm font-medium text-indigo-400 mb-1">
                       <Users className="w-4 h-4" />
                       Attendees Detected
                     </div>

@@ -23,8 +23,8 @@ export function FeatureCard({ icon: Icon, title, description, index = 0, classNa
         className
       )}
     >
-      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
-        <Icon className="w-6 h-6 text-blue-400" />
+      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
+        <Icon className="w-6 h-6 text-indigo-400" />
       </div>
       <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{title}</h3>
       <p className="text-sm text-gray-400 light:text-gray-600">{description}</p>

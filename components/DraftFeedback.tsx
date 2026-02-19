@@ -124,13 +124,13 @@ export function DraftFeedback({
             onChange={(e) => setFeedbackText(e.target.value)}
             placeholder="What could be improved? (optional)"
             rows={2}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus:border-blue-500 focus:outline-none resize-none"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus:border-indigo-500 focus:outline-none resize-none"
           />
           <div className="flex items-center gap-2">
             <button
               onClick={handleFeedbackSubmit}
               disabled={isSubmitting}
-              className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors disabled:opacity-50"
+              className="px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors disabled:opacity-50"
             >
               {isSubmitting ? 'Saving...' : 'Save feedback'}
             </button>

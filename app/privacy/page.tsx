@@ -29,7 +29,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* Content */}
-        <div className="prose prose-invert prose-purple max-w-none">
+        <div className="prose prose-invert prose-indigo max-w-none">
           <section className="mb-12">
             <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">1. Introduction</h2>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed">
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
             </ul>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed mt-4">
               To exercise these rights, use our{' '}
-              <Link href="/dashboard/settings" className="text-purple-400 hover:text-purple-300 light:text-purple-600 light:hover:text-purple-700">
+              <Link href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 light:text-indigo-600 light:hover:text-indigo-700">
                 account settings
               </Link>{' '}
               or contact us at jimmy@replysequence.com.

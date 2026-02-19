@@ -33,9 +33,9 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 mb-6">
-          <Zap className="w-4 h-4 text-blue-400" />
-          <span className="text-blue-400 text-sm font-medium">Setup takes 2 minutes</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20 mb-6">
+          <Zap className="w-4 h-4 text-indigo-400" />
+          <span className="text-indigo-400 text-sm font-medium">Setup takes 2 minutes</span>
         </div>
       </motion.div>
 
@@ -45,7 +45,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         transition={{ delay: 0.2 }}
         className="text-4xl md:text-5xl font-bold mb-4"
       >
-        <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
           Turn meetings into follow-ups
         </span>
         <br />
@@ -75,8 +75,8 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
             transition={{ delay: 0.5 + index * 0.1 }}
             className="p-6 rounded-2xl bg-gray-900/50 border border-gray-800"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 mx-auto">
-              <feature.icon className="w-6 h-6 text-blue-400" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mb-4 mx-auto">
+              <feature.icon className="w-6 h-6 text-indigo-400" />
             </div>
             <h3 className="font-semibold text-white mb-1">{feature.title}</h3>
             <p className="text-sm text-gray-500">{feature.description}</p>
@@ -89,7 +89,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
         onClick={onNext}
-        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25"
       >
         Start Setup
         <ArrowRight className="w-5 h-5" />

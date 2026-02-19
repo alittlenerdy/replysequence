@@ -24,12 +24,12 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700 light:border-gray-200 overflow-hidden transition-all duration-300 hover:border-gray-600 light:hover:border-gray-300 light:shadow-lg ${className}`}
     >
       {/* Gradient border on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/20 via-indigo-500/20 to-indigo-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Content */}
       <div className="relative p-6 h-full flex flex-col">
         {icon && (
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
             {icon}
           </div>
         )}
@@ -45,7 +45,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       </div>
 
       {/* Glow effect */}
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-700 opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
     </motion.div>
   );
 }
@@ -54,7 +54,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
 function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
   return (
     <motion.span
-      className="font-bold tabular-nums bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
+      className="font-bold tabular-nums bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent"
       animate={{ opacity: [0.7, 1, 0.7] }}
       transition={{ duration: 2, repeat: Infinity }}
     >
@@ -81,14 +81,14 @@ function DashboardPreview() {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <motion.div
-            className="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-purple-500"
+            className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-indigo-700"
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
           <div className="h-3 w-20 bg-gray-700 light:bg-gray-200 rounded" />
         </div>
         <motion.div
-          className="h-6 w-16 bg-blue-500/20 rounded border border-blue-500/30"
+          className="h-6 w-16 bg-indigo-500/20 rounded border border-indigo-500/30"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />
@@ -130,7 +130,7 @@ function DashboardPreview() {
           >
             {/* Avatar with initials */}
             <motion.div
-              className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-[10px] font-medium text-white"
+              className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-[10px] font-medium text-white"
               animate={{ opacity: [0.8, 1, 0.8] }}
               transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
             >
@@ -143,7 +143,7 @@ function DashboardPreview() {
             <motion.div
               className={`w-2 h-2 rounded-full ${
                 email.status === 'sent' ? 'bg-green-400' :
-                email.status === 'draft' ? 'bg-yellow-400' : 'bg-blue-400'
+                email.status === 'draft' ? 'bg-yellow-400' : 'bg-indigo-400'
               }`}
               animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
@@ -172,7 +172,7 @@ function DraftEditorPreview() {
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <Mail className="w-4 h-4 text-blue-400" />
+          <Mail className="w-4 h-4 text-indigo-400" />
         </motion.div>
         <motion.span
           className="text-[10px] text-gray-400 light:text-gray-600"
@@ -210,14 +210,14 @@ function DraftEditorPreview() {
         ))}
         {/* Typing cursor */}
         <motion.span
-          className="inline-block w-1.5 h-3 bg-blue-400 ml-0.5"
+          className="inline-block w-1.5 h-3 bg-indigo-400 ml-0.5"
           animate={{ opacity: [1, 0, 1] }}
           transition={{ duration: 0.8, repeat: Infinity }}
         />
       </div>
       {/* Send button that appears after typing */}
       <motion.div
-        className="mt-2 h-5 w-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded flex items-center justify-center"
+        className="mt-2 h-5 w-16 bg-gradient-to-r from-indigo-500 to-indigo-700 rounded flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 4, duration: 0.3 }}
@@ -453,7 +453,7 @@ function ChartPreview() {
       {bars.map((height, i) => (
         <motion.div
           key={i}
-          className="flex-1 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t"
+          className="flex-1 bg-gradient-to-t from-indigo-500 to-indigo-700 rounded-t"
           animate={{
             height: [`${height}%`, `${Math.min(height + 20, 95)}%`, `${height}%`],
             opacity: [0.8, 1, 0.8]
@@ -491,7 +491,7 @@ function SettingsPreview() {
             {setting}
           </motion.span>
           <motion.div
-            className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600 light:bg-gray-300' : 'bg-blue-500'} flex items-center p-0.5`}
+            className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600 light:bg-gray-300' : 'bg-indigo-500'} flex items-center p-0.5`}
             animate={i !== 1 ? { boxShadow: ['0 0 0 0 rgba(59, 130, 246, 0)', '0 0 8px 2px rgba(59, 130, 246, 0.4)', '0 0 0 0 rgba(59, 130, 246, 0)'] } : {}}
             transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
             whileHover={{ scale: 1.1 }}
@@ -555,7 +555,7 @@ export function BentoGrid() {
           <BentoCard
             title="AI-Generated Drafts"
             description="Edit before sending or trust the AI"
-            icon={<Zap className="w-6 h-6 text-purple-400" />}
+            icon={<Zap className="w-6 h-6 text-indigo-400" />}
             delay={0.1}
           >
             <DraftEditorPreview />
@@ -565,7 +565,7 @@ export function BentoGrid() {
           <BentoCard
             title="Every Meeting Captured"
             description="Automatic transcript download from Zoom, Teams, Meet"
-            icon={<Calendar className="w-6 h-6 text-blue-400" />}
+            icon={<Calendar className="w-6 h-6 text-indigo-400" />}
             delay={0.2}
           >
             <MeetingListPreview />
@@ -585,7 +585,7 @@ export function BentoGrid() {
           <BentoCard
             title="Track Performance"
             description="Response rates, meeting stats, and insights"
-            icon={<BarChart3 className="w-6 h-6 text-pink-400" />}
+            icon={<BarChart3 className="w-6 h-6 text-amber-400" />}
             delay={0.4}
           >
             <ChartPreview />

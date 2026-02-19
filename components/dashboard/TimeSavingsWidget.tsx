@@ -220,18 +220,18 @@ export function TimeSavingsWidget({
       className="relative overflow-hidden rounded-2xl"
     >
       {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-indigo-500 to-indigo-700 rounded-2xl" />
 
       {/* Inner content with slight inset for border effect */}
       <div className="relative m-[2px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
         {/* Background glow effects */}
         <div className="absolute -right-20 -top-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />
+        <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl" />
 
         {/* Header */}
         <div className="relative flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 flex items-center justify-center">
               <Clock className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
@@ -250,7 +250,7 @@ export function TimeSavingsWidget({
             <div className="text-center py-2">
               <div className="text-5xl md:text-6xl font-black mb-2">
                 <span
-                  className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent light-solid-text light:text-cyan-600"
+                  className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-indigo-500 bg-clip-text text-transparent light-solid-text light:text-cyan-600"
                   style={{
                     textShadow: '0 0 60px rgba(34, 211, 238, 0.3)',
                   }}
@@ -305,7 +305,7 @@ export function TimeSavingsWidget({
             <div
               className="space-y-4"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 rounded-full flex items-center justify-center mx-auto">
                 <Sparkles className="w-8 h-8 text-cyan-400" />
               </div>
 

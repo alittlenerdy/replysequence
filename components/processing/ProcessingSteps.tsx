@@ -57,7 +57,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     isComplete
                       ? 'bg-green-500/20 border-2 border-green-500'
                       : isCurrent
-                      ? 'bg-purple-500/20 border-2 border-purple-500'
+                      ? 'bg-indigo-500/20 border-2 border-indigo-500'
                       : isFailed && step.step === 'completed'
                       ? 'bg-red-500/20 border-2 border-red-500'
                       : 'bg-gray-800/50 light:bg-gray-100 border-2 border-gray-600 light:border-gray-300'
@@ -82,7 +82,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     <Check className="w-4 h-4 text-green-500" />
                   </motion.div>
                 ) : isCurrent ? (
-                  <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                  <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />
                 ) : isFailed && step.step === 'completed' ? (
                   <AlertCircle className="w-4 h-4 text-red-500" />
                 ) : (
@@ -92,7 +92,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                 {/* Pulse effect for current step */}
                 {isCurrent && (
                   <motion.div
-                    className="absolute inset-0 rounded-full bg-purple-500/30"
+                    className="absolute inset-0 rounded-full bg-indigo-500/30"
                     animate={{
                       scale: [1, 1.5, 1],
                       opacity: [0.5, 0, 0.5],
@@ -114,7 +114,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     isComplete
                       ? 'text-green-400'
                       : isCurrent
-                      ? 'text-purple-400'
+                      ? 'text-indigo-400'
                       : 'text-gray-500'
                   }
                 `}
@@ -163,7 +163,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                         isComplete
                           ? 'bg-green-500/20 border-2 border-green-500'
                           : isCurrent
-                          ? 'bg-purple-500/20 border-2 border-purple-500'
+                          ? 'bg-indigo-500/20 border-2 border-indigo-500'
                           : isFailed && step.step === 'completed'
                           ? 'bg-red-500/20 border-2 border-red-500'
                           : 'bg-gray-800/50 border-2 border-gray-600'
@@ -180,7 +180,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     {isComplete && step.step !== currentStep ? (
                       <Check className="w-3 h-3 text-green-500" />
                     ) : isCurrent ? (
-                      <Loader2 className="w-3 h-3 text-purple-400 animate-spin" />
+                      <Loader2 className="w-3 h-3 text-indigo-400 animate-spin" />
                     ) : isFailed && step.step === 'completed' ? (
                       <AlertCircle className="w-3 h-3 text-red-500" />
                     ) : (
@@ -194,7 +194,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                         isComplete
                           ? 'text-green-400'
                           : isCurrent
-                          ? 'text-purple-400'
+                          ? 'text-indigo-400'
                           : 'text-gray-500'
                       }
                     `}

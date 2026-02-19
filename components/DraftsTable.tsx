@@ -200,8 +200,8 @@ export function DraftsTable({
       case 'zoom':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-blue-500/30 rounded-lg blur-md group-hover/icon:bg-blue-400/50 transition-all duration-300" />
-            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30">
+            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
                 <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <path d="M15 10L20 7V17L15 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -225,8 +225,8 @@ export function DraftsTable({
       case 'microsoft_teams':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-purple-500/30 rounded-lg blur-md group-hover/icon:bg-purple-400/50 transition-all duration-300" />
-            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/30">
+            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-all duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
                 <rect x="2" y="6" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="18" cy="7" r="3" stroke="currentColor" strokeWidth="2"/>
@@ -316,7 +316,7 @@ export function DraftsTable({
       <div className="flex items-center gap-1">
         {(draft.openCount ?? 0) > 0 && (
           <span
-            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500/20 text-purple-400"
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
             title={`${draft.openCount} open${(draft.openCount ?? 0) > 1 ? 's' : ''}`}
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -377,7 +377,7 @@ export function DraftsTable({
 
         {/* Bulk Action Toolbar */}
         {selectedIds.size > 0 && (
-          <div className="px-4 sm:px-6 py-3 border-b border-blue-500/30 bg-blue-500/10">
+          <div className="px-4 sm:px-6 py-3 border-b border-indigo-500/30 bg-indigo-500/10">
             {showBulkDeleteConfirm ? (
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <span className="text-sm text-red-300">Delete {selectedIds.size} draft{selectedIds.size > 1 ? 's' : ''}? This cannot be undone.</span>
@@ -400,7 +400,7 @@ export function DraftsTable({
               </div>
             ) : showBulkSendConfirm ? (
               <div className="flex items-center justify-between gap-3 flex-wrap">
-                <span className="text-sm text-blue-300">Send {selectedDrafts.filter((d) => d.status !== 'sent').length} email{selectedDrafts.filter((d) => d.status !== 'sent').length > 1 ? 's' : ''} to their meeting hosts?</span>
+                <span className="text-sm text-indigo-300">Send {selectedDrafts.filter((d) => d.status !== 'sent').length} email{selectedDrafts.filter((d) => d.status !== 'sent').length > 1 ? 's' : ''} to their meeting hosts?</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowBulkSendConfirm(false)}
@@ -412,7 +412,7 @@ export function DraftsTable({
                   <button
                     onClick={() => { setShowBulkSendConfirm(false); handleBulkSend(); }}
                     disabled={bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                   >
                     {bulkSending ? 'Sending...' : 'Confirm Send'}
                   </button>
@@ -421,7 +421,7 @@ export function DraftsTable({
             ) : (
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-blue-300 font-medium">{selectedIds.size} selected</span>
+                  <span className="text-indigo-300 font-medium">{selectedIds.size} selected</span>
                   <button
                     onClick={() => setSelectedIds(new Set())}
                     className="text-xs text-gray-400 hover:text-white transition-colors"
@@ -431,7 +431,7 @@ export function DraftsTable({
                 </div>
                 <div className="flex items-center gap-2">
                   {bulkProgress && (
-                    <span className="text-xs text-blue-300">
+                    <span className="text-xs text-indigo-300">
                       {bulkProgress.done}/{bulkProgress.total}
                     </span>
                   )}
@@ -448,7 +448,7 @@ export function DraftsTable({
                   <button
                     onClick={() => setShowBulkSendConfirm(true)}
                     disabled={bulkSending || bulkDeleting || selectedDrafts.every((d) => d.status === 'sent')}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                   >
                     {bulkSending ? 'Sending...' : `Send ${selectedDrafts.filter((d) => d.status !== 'sent').length}`}
                   </button>
@@ -466,8 +466,8 @@ export function DraftsTable({
               className={`
                 p-4 transition-all duration-300 ease-out
                 ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
-                ${selectedIds.has(draft.id) ? 'bg-blue-500/10' : 'hover:bg-gray-700/70 light:hover:bg-blue-50'}
-                active:bg-gray-700/90 light:active:bg-blue-100
+                ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'}
+                active:bg-gray-700/90 light:active:bg-indigo-100
                 cursor-pointer
               `}
               onClick={() => setSelectedDraft(draft)}
@@ -483,7 +483,7 @@ export function DraftsTable({
                       type="checkbox"
                       checked={selectedIds.has(draft.id)}
                       onChange={() => toggleSelect(draft.id)}
-                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                     />
                   </label>
                 )}
@@ -495,7 +495,7 @@ export function DraftsTable({
                       <Link
                         href={`/dashboard/meetings/${draft.meetingId}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-gray-500 hover:text-blue-400 transition-colors shrink-0"
+                        className="text-gray-500 hover:text-indigo-400 transition-colors shrink-0"
                         title="View meeting details"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -533,9 +533,9 @@ export function DraftsTable({
                   }}
                   className="
                     shrink-0 px-4 py-2 rounded-lg min-h-[44px]
-                    text-blue-400 light:text-blue-600
-                    bg-blue-500/10 light:bg-blue-50
-                    hover:bg-blue-500/20 light:hover:bg-blue-100
+                    text-indigo-400 light:text-indigo-600
+                    bg-indigo-500/10 light:bg-indigo-50
+                    hover:bg-indigo-500/20 light:hover:bg-indigo-100
                     active:scale-95
                     transition-all duration-200
                     text-sm font-medium
@@ -559,7 +559,7 @@ export function DraftsTable({
                       type="checkbox"
                       checked={sendableDrafts.length > 0 && selectedIds.size === sendableDrafts.length}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                     />
                   </label>
                 </th>
@@ -586,7 +586,7 @@ export function DraftsTable({
               {drafts.map((draft) => (
                 <tr
                   key={draft.id}
-                  className={`${selectedIds.has(draft.id) ? 'bg-blue-500/10' : 'hover:bg-gray-700/70 light:hover:bg-blue-50'} cursor-pointer`}
+                  className={`${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'} cursor-pointer`}
                   onClick={() => setSelectedDraft(draft)}
                 >
                   <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
@@ -596,7 +596,7 @@ export function DraftsTable({
                           type="checkbox"
                           checked={selectedIds.has(draft.id)}
                           onChange={() => toggleSelect(draft.id)}
-                          className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                          className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                         />
                       </label>
                     ) : (
@@ -612,7 +612,7 @@ export function DraftsTable({
                           <Link
                             href={`/dashboard/meetings/${draft.meetingId}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="text-gray-500 hover:text-blue-400 transition-colors shrink-0"
+                            className="text-gray-500 hover:text-indigo-400 transition-colors shrink-0"
                             title="View meeting details"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -661,7 +661,7 @@ export function DraftsTable({
                         e.stopPropagation();
                         setSelectedDraft(draft);
                       }}
-                      className="px-3 py-1.5 rounded-lg text-blue-400 light:text-blue-600 bg-blue-500/10 light:bg-blue-50 hover:bg-blue-500/20 light:hover:bg-blue-100 transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors"
                     >
                       View
                     </button>

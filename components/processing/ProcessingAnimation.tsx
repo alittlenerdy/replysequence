@@ -89,9 +89,9 @@ export function ProcessingAnimation({
           className="absolute inset-0 opacity-30"
           animate={{
             background: [
-              'radial-gradient(600px circle at 0% 0%, rgba(147, 51, 234, 0.15), transparent 50%)',
-              'radial-gradient(600px circle at 100% 100%, rgba(147, 51, 234, 0.15), transparent 50%)',
-              'radial-gradient(600px circle at 0% 0%, rgba(147, 51, 234, 0.15), transparent 50%)',
+              'radial-gradient(600px circle at 0% 0%, rgba(79, 70, 229, 0.15), transparent 50%)',
+              'radial-gradient(600px circle at 100% 100%, rgba(79, 70, 229, 0.15), transparent 50%)',
+              'radial-gradient(600px circle at 0% 0%, rgba(79, 70, 229, 0.15), transparent 50%)',
             ],
           }}
           transition={{
@@ -109,7 +109,7 @@ export function ProcessingAnimation({
             <div
               className={`
                 p-2 rounded-lg
-                ${isComplete ? 'bg-green-500/20' : isFailed ? 'bg-red-500/20' : 'bg-purple-500/20'}
+                ${isComplete ? 'bg-green-500/20' : isFailed ? 'bg-red-500/20' : 'bg-indigo-500/20'}
               `}
             >
               {isComplete ? (
@@ -117,7 +117,7 @@ export function ProcessingAnimation({
               ) : isFailed ? (
                 <XCircle className="w-5 h-5 text-red-400" />
               ) : (
-                <Video className="w-5 h-5 text-purple-400" />
+                <Video className="w-5 h-5 text-indigo-400" />
               )}
             </div>
             <div>
@@ -139,7 +139,7 @@ export function ProcessingAnimation({
             {isProcessing && (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
-                  <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                  <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />
                   <span className="text-sm text-gray-400 light:text-gray-500">{formatTime(elapsedTime)}</span>
                 </div>
                 {estimatedRemaining > 0 && (
@@ -187,7 +187,7 @@ export function ProcessingAnimation({
                     ? 'bg-gradient-to-r from-green-500 to-emerald-400'
                     : isFailed
                     ? 'bg-gradient-to-r from-red-500 to-rose-400'
-                    : 'bg-gradient-to-r from-purple-600 to-purple-400'
+                    : 'bg-gradient-to-r from-indigo-600 to-indigo-400'
                 }
               `}
               style={{ width: progressWidth }}

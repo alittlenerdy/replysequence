@@ -170,7 +170,7 @@ export function DraftQualityBadge({
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-500 rounded-full"
+                      className="h-full bg-indigo-500 rounded-full"
                       style={{ width: `${completenessScore}%` }}
                     />
                   </div>
@@ -184,7 +184,7 @@ export function DraftQualityBadge({
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-purple-500 rounded-full"
+                      className="h-full bg-indigo-500 rounded-full"
                       style={{ width: `${personalizationScore}%` }}
                     />
                   </div>

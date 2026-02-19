@@ -79,8 +79,8 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
               label="Generated"
               value={total}
               percentage={100}
-              color="#3B82F6"
-              gradient="from-blue-500 to-blue-600"
+              color="#6366F1"
+              gradient="from-indigo-500 to-indigo-600"
               delay={0}
             />
 
@@ -117,7 +117,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
           <div className="mt-6 pt-4 border-t border-gray-800 light:border-gray-200">
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <span>Draft generated</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-blue-500/50 via-amber-500/50 to-emerald-500/50" />
+              <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/50 via-amber-500/50 to-emerald-500/50" />
               <span>Reviewed & sent</span>
             </div>
           </div>
