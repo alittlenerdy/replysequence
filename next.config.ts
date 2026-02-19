@@ -43,6 +43,11 @@ const nextConfig: NextConfig = {
   // Enable React strict mode for better development experience
   reactStrictMode: true,
 
+  // Skip type checking and linting during builds (handled by CI separately)
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   // Optimize images - enable modern formats and compression
   images: {
     formats: ['image/avif', 'image/webp'],
