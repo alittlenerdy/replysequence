@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp, Zap, Timer } from 'lucide-react';
+import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp, Zap, Timer, ChevronDown, ChevronUp, Target } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
@@ -117,7 +117,14 @@ export function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [dateRange, setDateRange] = useState(14);
+  const [dateRange, setDateRange] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('rs-analytics-date-range');
+      return saved ? parseInt(saved, 10) : 14;
+    }
+    return 14;
+  });
+  const [showSystemHealth, setShowSystemHealth] = useState(false);
   const hasFetched = useRef(false);
 
   const fetchAnalytics = useCallback(async (showRefreshState = false) => {
@@ -155,11 +162,18 @@ export function AnalyticsDashboard() {
     }
   }, [dateRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-refresh every 30 seconds
+  // Persist date range to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('rs-analytics-date-range', String(dateRange));
+    }
+  }, [dateRange]);
+
+  // Auto-refresh every 5 minutes
   useEffect(() => {
     const interval = setInterval(() => {
       fetchAnalytics(true);
-    }, 30000);
+    }, 300000);
     return () => clearInterval(interval);
   }, [fetchAnalytics]);
 
@@ -226,7 +240,7 @@ export function AnalyticsDashboard() {
   const emailsSparkline = analytics.dailyEmails.map(d => d.count);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -261,8 +275,8 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* Hero Stats - Enhanced with trends and sparklines */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Hero Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         <StatCard
           icon={<Calendar className="w-5 h-5" />}
           label="Meetings"
@@ -277,16 +291,18 @@ export function AnalyticsDashboard() {
           icon={<Mail className="w-5 h-5" />}
           label="Emails Generated"
           value={analytics.emailsGenerated}
-          gradient="from-purple-500/20 to-purple-600/20"
-          accentColor="#A855F7"
+          gradient="from-blue-500/20 to-blue-600/20"
+          accentColor="#3B82F6"
           delay={0.05}
           comparison={analytics.emailsComparison}
           sparklineData={emailsSparkline}
         />
         <StatCard
-          icon={<Send className="w-5 h-5" />}
-          label="Emails Sent"
-          value={analytics.emailsSent}
+          icon={<Target className="w-5 h-5" />}
+          label="Send Rate"
+          value={analytics.emailsGenerated > 0 ? Math.round((analytics.emailsSent / analytics.emailsGenerated) * 100) : 0}
+          suffix="%"
+          subtitle={`${analytics.emailsSent} of ${analytics.emailsGenerated} sent`}
           gradient="from-emerald-500/20 to-emerald-600/20"
           accentColor="#10B981"
           delay={0.1}
@@ -298,79 +314,90 @@ export function AnalyticsDashboard() {
           value={timeSaved.value}
           suffix={timeSaved.suffix}
           subtitle={timeSaved.label}
-          gradient="from-amber-500/20 to-amber-600/20"
-          accentColor="#F59E0B"
+          gradient="from-emerald-500/20 to-emerald-600/20"
+          accentColor="#10B981"
           delay={0.15}
         />
       </div>
 
-      {/* Scroll hint - visible when there's chart content below */}
-      {hasData && (
-        <div className="flex justify-center -mt-2 -mb-2">
-          <div className="flex flex-col items-center gap-0.5 text-gray-500 animate-bounce" style={{ animationDuration: '2s' }}>
-            <span className="text-[10px] uppercase tracking-wider">Charts below</span>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+      {/* Follow-Up Coverage */}
+      {hasData && analytics.totalMeetings > 0 && (
+        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-white light:text-gray-900">Follow-Up Coverage</h3>
+            <span className="text-xs text-gray-500">
+              {analytics.emailsSent} of {analytics.totalMeetings} meetings followed up
+            </span>
+          </div>
+          <div className="relative">
+            <div className="h-3 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700"
+                style={{ width: `${Math.min(100, Math.round((analytics.emailsSent / analytics.totalMeetings) * 100))}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-2xl font-bold text-emerald-400">
+                {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}%
+              </span>
+              <span className="text-xs text-gray-500 self-end">
+                {analytics.totalMeetings - analytics.emailsSent > 0
+                  ? `${analytics.totalMeetings - analytics.emailsSent} meeting${analytics.totalMeetings - analytics.emailsSent !== 1 ? 's' : ''} without follow-up`
+                  : 'All meetings followed up'}
+              </span>
+            </div>
           </div>
         </div>
       )}
 
-      {/* AI Usage Stats Row */}
+      {/* Under the Hood - Collapsible AI usage stats */}
       {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
-        <div className="grid grid-cols-3 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4 light:shadow-sm"
+        <div className="bg-gray-900/30 light:bg-gray-50 border border-gray-700/50 light:border-gray-200 rounded-2xl overflow-hidden">
+          <button
+            onClick={() => setShowSystemHealth(!showSystemHealth)}
+            className="w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors"
           >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-rose-500/20">
-                <DollarSign className="w-4 h-4 text-rose-400" />
+            <span className="flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5" />
+              Under the Hood
+            </span>
+            {showSystemHealth ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          {showSystemHealth && (
+            <div className="grid grid-cols-3 gap-4 px-5 pb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <DollarSign className="w-3.5 h-3.5 text-gray-500" />
+                  <span className="text-xs text-gray-500">Total AI Cost</span>
+                </div>
+                <p className="text-lg font-bold text-white light:text-gray-900">
+                  ${analytics.aiUsage.totalCost.toFixed(4)}
+                </p>
               </div>
-              <span className="text-xs text-gray-400 light:text-gray-500">Total AI Cost</span>
-            </div>
-            <p className="text-xl font-bold text-white light:text-gray-900">
-              ${analytics.aiUsage.totalCost.toFixed(4)}
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4 light:shadow-sm"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-cyan-500/20">
-                <Zap className="w-4 h-4 text-cyan-400" />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Zap className="w-3.5 h-3.5 text-gray-500" />
+                  <span className="text-xs text-gray-500">Avg Generation Time</span>
+                </div>
+                <p className="text-lg font-bold text-white light:text-gray-900">
+                  {analytics.aiUsage.avgLatency > 0
+                    ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
+                    : '-'}
+                </p>
               </div>
-              <span className="text-xs text-gray-400 light:text-gray-500">Avg Generation Time</span>
-            </div>
-            <p className="text-xl font-bold text-white light:text-gray-900">
-              {analytics.aiUsage.avgLatency > 0
-                ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
-                : '-'}
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4 light:shadow-sm"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-indigo-500/20">
-                <Timer className="w-4 h-4 text-indigo-400" />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Timer className="w-3.5 h-3.5 text-gray-500" />
+                  <span className="text-xs text-gray-500">Meeting Hours</span>
+                </div>
+                <p className="text-lg font-bold text-white light:text-gray-900">
+                  {analytics.aiUsage.totalMeetingMinutes > 0
+                    ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
+                    : '-'}
+                </p>
               </div>
-              <span className="text-xs text-gray-400 light:text-gray-500">Meeting Hours Processed</span>
             </div>
-            <p className="text-xl font-bold text-white light:text-gray-900">
-              {analytics.aiUsage.totalMeetingMinutes > 0
-                ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
-                : '-'}
-            </p>
-          </motion.div>
+          )}
         </div>
       )}
 

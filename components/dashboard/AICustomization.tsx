@@ -21,10 +21,30 @@ interface Template {
 }
 
 const TONE_OPTIONS = [
-  { value: 'professional', label: 'Professional', description: 'Polished and business-appropriate' },
-  { value: 'casual', label: 'Casual', description: 'Relaxed and conversational' },
-  { value: 'friendly', label: 'Friendly', description: 'Warm and personable' },
-  { value: 'concise', label: 'Concise', description: 'Brief and to the point' },
+  {
+    value: 'professional',
+    label: 'Professional',
+    description: 'Polished and business-appropriate',
+    preview: 'Thank you for taking the time to meet today. I wanted to follow up on the key points we discussed and outline the next steps we agreed upon.',
+  },
+  {
+    value: 'casual',
+    label: 'Casual',
+    description: 'Relaxed and conversational',
+    preview: 'Great chatting with you today! Here\'s a quick recap of what we talked about and what we\'re each tackling next.',
+  },
+  {
+    value: 'friendly',
+    label: 'Friendly',
+    description: 'Warm and personable',
+    preview: 'It was really wonderful connecting with you today! I\'m excited about what we discussed and wanted to make sure we\'re aligned on next steps.',
+  },
+  {
+    value: 'concise',
+    label: 'Concise',
+    description: 'Brief and to the point',
+    preview: 'Following up on today\'s meeting. Key decisions: [items]. Next steps: [actions]. Let me know if anything needs adjusting.',
+  },
 ];
 
 export function AICustomization() {
@@ -102,7 +122,7 @@ export function AICustomization() {
         <h3 className="text-lg font-semibold text-white light:text-gray-900">Customize AI Drafts</h3>
       </div>
 
-      {/* Tone Selection */}
+      {/* Tone Selection with Preview */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
         <h4 className="text-sm font-medium text-white light:text-gray-900 mb-3">Email Tone</h4>
         <div className="grid grid-cols-2 gap-3">
@@ -125,12 +145,17 @@ export function AICustomization() {
             </button>
           ))}
         </div>
+
+        {/* Tone preview */}
+        <div className="mt-4 p-3 rounded-lg bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200">
+          <div className="text-xs font-medium text-gray-500 light:text-gray-400 mb-1.5">Preview</div>
+          <p className="text-sm text-gray-300 light:text-gray-600 italic leading-relaxed">
+            &ldquo;{TONE_OPTIONS.find(o => o.value === preferences.aiTone)?.preview}&rdquo;
+          </p>
+        </div>
       </div>
 
-      {/* Email Templates Section - prominent placement */}
-      <TemplateManager />
-
-      {/* Custom Instructions */}
+      {/* Custom Instructions - moved up for visibility */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
         <h4 className="text-sm font-medium text-white light:text-gray-900 mb-1">Custom Instructions</h4>
         <p className="text-xs text-gray-500 mb-3">

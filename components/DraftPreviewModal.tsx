@@ -961,6 +961,17 @@ export function DraftPreviewModal({ draft, onClose, onDraftUpdated }: DraftPrevi
                         </div>
                       )}
 
+                      {/* Contextual AI settings link */}
+                      <a
+                        href="/dashboard/settings?tab=ai"
+                        className="inline-flex items-center gap-1.5 text-xs text-purple-400/70 hover:text-purple-400 transition-colors"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        Want all drafts to sound like this? Customize AI
+                      </a>
+
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1">
                           <label htmlFor="recipient" className="sr-only">Recipient Email</label>
