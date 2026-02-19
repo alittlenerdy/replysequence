@@ -3,16 +3,18 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Send, Clock, RefreshCw, BarChart3, DollarSign, TrendingUp, Zap, Timer, ChevronDown, ChevronUp, Target } from 'lucide-react';
+import { Calendar, Mail, Clock, RefreshCw, BarChart3, DollarSign, Zap, Timer, ChevronDown, ChevronUp, Target, Shield } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
 import { EmailEngagement } from '@/components/analytics/EmailEngagement';
+import { InsightBanner } from '@/components/analytics/InsightBanner';
+import { AtRiskMeetings } from '@/components/analytics/AtRiskMeetings';
 import type { AnalyticsData } from '@/lib/types/analytics';
 
 // Chart loading placeholder
 const ChartSkeleton = () => (
-  <div className="h-64 bg-gray-800/50 light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
+  <div className="h-48 bg-gray-800/50 light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
     <BarChart3 className="w-8 h-8 text-gray-600 light:text-gray-400" />
   </div>
 );
@@ -20,6 +22,16 @@ const ChartSkeleton = () => (
 // Dynamic imports for heavy chart components (uses recharts)
 const ActivityChart = dynamic(
   () => import('@/components/analytics/ActivityChart').then(mod => mod.ActivityChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
+
+const CoverageChart = dynamic(
+  () => import('@/components/analytics/CoverageChart').then(mod => mod.CoverageChart),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
+
+const DualSeriesChart = dynamic(
+  () => import('@/components/analytics/DualSeriesChart').then(mod => mod.DualSeriesChart),
   { ssr: false, loading: () => <ChartSkeleton /> }
 );
 
@@ -45,6 +57,7 @@ export function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [dateRange, setDateRange] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('rs-analytics-date-range');
@@ -52,7 +65,7 @@ export function AnalyticsDashboard() {
     }
     return 14;
   });
-  const [showSystemHealth, setShowSystemHealth] = useState(false);
+  const [showMoreInsights, setShowMoreInsights] = useState(false);
   const hasFetched = useRef(false);
 
   const fetchAnalytics = useCallback(async (showRefreshState = false) => {
@@ -66,6 +79,7 @@ export function AnalyticsDashboard() {
       }
       const data = await response.json();
       setAnalytics(data);
+      setLastUpdated(new Date());
       setError(null);
     } catch (err) {
       console.error('[ANALYTICS] Fetch error:', err);
@@ -105,20 +119,18 @@ export function AnalyticsDashboard() {
     return () => clearInterval(interval);
   }, [fetchAnalytics]);
 
-  // Format time saved for display
-  const formatTimeSaved = (minutes: number): { value: number; suffix: string; label: string } => {
-    if (minutes >= 60) {
-      const hours = Math.floor(minutes / 60);
-      return { value: hours, suffix: 'h', label: `${minutes} minutes saved` };
-    }
-    return { value: minutes, suffix: 'm', label: 'Time saved writing emails' };
-  };
-
-  // Loading skeleton
+  // Loading skeleton — matches new layout
   if (loading) {
     return (
       <div className="space-y-6">
-        {/* Stats skeleton */}
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-48 bg-gray-700 light:bg-gray-200 rounded animate-pulse" />
+          <div className="h-8 w-64 bg-gray-700 light:bg-gray-200 rounded animate-pulse" />
+        </div>
+        {/* Banner skeleton */}
+        <div className="h-16 bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl animate-pulse" />
+        {/* KPI row skeleton */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 animate-pulse">
@@ -128,6 +140,8 @@ export function AnalyticsDashboard() {
             </div>
           ))}
         </div>
+        {/* At-risk skeleton */}
+        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 h-[160px] animate-pulse" />
         {/* Charts skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[...Array(2)].map((_, i) => (
@@ -160,23 +174,32 @@ export function AnalyticsDashboard() {
 
   if (!analytics) return null;
 
-  const timeSaved = formatTimeSaved(analytics.timeSavedMinutes);
   const hasData = analytics.totalMeetings > 0 || analytics.emailsGenerated > 0;
+  const coveragePercent = analytics.totalMeetings > 0 ? Math.round((analytics.emailsSent / analytics.totalMeetings) * 100) : 0;
+  const timeSavedHours = Math.round((analytics.timeSavedMinutes / 60) * 10) / 10;
+  const dollarsSaved = analytics.roi.dollarValue;
 
-  // Extract sparkline data from daily data
-  const meetingsSparkline = analytics.dailyMeetings.map(d => d.count);
-  const emailsSparkline = analytics.dailyEmails.map(d => d.count);
+  // Compute daily follow-up data from dailyEmails (emails with sentAt on that date)
+  // For dual series chart, we need sent emails per day — approximate from dailyEmails for now
+  const dailySentApprox = analytics.dailyCoverage.map(d => ({
+    date: d.date,
+    count: d.followedUpCount,
+  }));
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* 1. Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics Dashboard</h2>
-          <p className="text-sm text-gray-400 light:text-gray-500 mt-1">Track your meeting follow-up performance</p>
+          <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics</h2>
+          {lastUpdated && (
+            <p className="text-xs text-gray-500 mt-1">
+              Last updated: {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Date range selector */}
+          {/* Date range pills */}
           <div className="flex items-center bg-gray-800/80 light:bg-gray-100 rounded-lg border border-gray-700 light:border-gray-200 p-0.5">
             {DATE_RANGES.map((range) => (
               <button
@@ -203,54 +226,29 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* Insight Summary */}
-      {hasData && analytics.totalMeetings > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className="flex items-start gap-3 px-5 py-4 rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200">
-            <TrendingUp className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <p className="text-sm text-gray-300 light:text-gray-700 leading-relaxed">
-              This period, your team followed up on{' '}
-              <strong className="text-white light:text-gray-900">{analytics.emailsSent}</strong> of{' '}
-              <strong className="text-white light:text-gray-900">{analytics.totalMeetings}</strong> meetings
-              within 24 hours. That&apos;s{' '}
-              <strong className="text-amber-400 light:text-amber-600">
-                {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}% coverage
-              </strong>
-              {analytics.sentComparison.trend !== 'neutral' && (
-                <>
-                  {' '}&mdash;{' '}
-                  <span className={analytics.sentComparison.trend === 'up' ? 'text-indigo-400' : 'text-amber-400'}>
-                    {analytics.sentComparison.trend === 'up' ? 'up' : 'down'} {analytics.sentComparison.change}%
-                  </span>
-                  {' '}from last period
-                </>
-              )}
-              .
-            </p>
-          </div>
-        </motion.div>
-      )}
+      {/* 2. Insight Banner */}
+      <InsightBanner
+        totalMeetings={analytics.totalMeetings}
+        emailsSent={analytics.emailsSent}
+        atRiskCount={analytics.atRiskMeetings.length}
+      />
 
-      {/* Bento Grid Stats */}
+      {/* 3. KPI Row — 4 new StatCards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0 }}
-          className="lg:col-span-1"
         >
           <StatCard
-            icon={<Calendar className="w-5 h-5" />}
-            label="Meetings"
-            value={analytics.totalMeetings}
+            icon={<Shield className="w-5 h-5" />}
+            label="Follow-up Coverage"
+            value={coveragePercent}
+            suffix="%"
+            subtitle={`${analytics.emailsSent} of ${analytics.totalMeetings} meetings`}
             gradient="from-indigo-500/20 to-indigo-600/20"
-            accentColor="#3B82F6"
-            comparison={analytics.meetingsComparison}
-            sparklineData={meetingsSparkline}
+            accentColor="#6366F1"
+            comparison={analytics.sentComparison}
             hero
           />
         </motion.div>
@@ -258,17 +256,15 @@ export function AnalyticsDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="lg:col-span-1"
         >
           <StatCard
-            icon={<Mail className="w-5 h-5" />}
-            label="Emails Generated"
-            value={analytics.emailsGenerated}
-            gradient="from-indigo-500/20 to-indigo-600/20"
-            accentColor="#3B82F6"
-            comparison={analytics.emailsComparison}
-            sparklineData={emailsSparkline}
-            hero
+            icon={<Clock className="w-5 h-5" />}
+            label="Median Follow-up Time"
+            value={analytics.medianFollowUpTimeHours !== null ? analytics.medianFollowUpTimeHours : 0}
+            suffix={analytics.medianFollowUpTimeHours !== null ? 'h' : ''}
+            subtitle={analytics.medianFollowUpTimeHours === null ? 'No sent emails yet' : 'After meeting ends'}
+            gradient="from-amber-500/20 to-amber-600/20"
+            accentColor="#F59E0B"
           />
         </motion.div>
         <motion.div
@@ -278,13 +274,13 @@ export function AnalyticsDashboard() {
         >
           <StatCard
             icon={<Target className="w-5 h-5" />}
-            label="Send Rate"
+            label="Draft to Send Rate"
             value={analytics.emailsGenerated > 0 ? Math.round((analytics.emailsSent / analytics.emailsGenerated) * 100) : 0}
             suffix="%"
             subtitle={`${analytics.emailsSent} of ${analytics.emailsGenerated} sent`}
-            gradient="from-amber-500/20 to-amber-600/20"
-            accentColor="#F59E0B"
-            comparison={analytics.sentComparison}
+            gradient="from-indigo-500/20 to-indigo-600/20"
+            accentColor="#3B82F6"
+            comparison={analytics.emailsComparison}
           />
         </motion.div>
         <motion.div
@@ -293,207 +289,160 @@ export function AnalyticsDashboard() {
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           <StatCard
-            icon={<Clock className="w-5 h-5" />}
-            label="Time Saved"
-            value={timeSaved.value}
-            suffix={timeSaved.suffix}
-            subtitle={timeSaved.label}
-            gradient="from-indigo-500/20 to-indigo-600/20"
-            accentColor="#6366F1"
+            icon={<DollarSign className="w-5 h-5" />}
+            label="Time & Value Saved"
+            value={timeSavedHours}
+            suffix="h"
+            subtitle={`~$${Math.round(dollarsSaved).toLocaleString()} saved at $${analytics.hourlyRate}/hr`}
+            gradient="from-amber-500/20 to-amber-600/20"
+            accentColor="#F59E0B"
           />
         </motion.div>
       </div>
 
-      {/* Follow-Up Coverage */}
-      {hasData && analytics.totalMeetings > 0 && (
+      {/* 4. At-Risk Meetings */}
+      {hasData && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.35 }}
         >
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-white light:text-gray-900">Follow-Up Coverage</h3>
-              <span className="text-xs text-gray-500">
-                {analytics.emailsSent} of {analytics.totalMeetings} meetings followed up
-              </span>
-            </div>
-            <div className="relative">
-              <div className="h-3 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-indigo-600 rounded-full transition-all duration-700"
-                  style={{ width: `${Math.min(100, Math.round((analytics.emailsSent / analytics.totalMeetings) * 100))}%` }}
-                />
-              </div>
-              <div className="flex justify-between mt-2">
-                <span className="text-2xl font-bold text-indigo-500">
-                  {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}%
-                </span>
-                <span className="text-xs text-gray-500 self-end">
-                  {analytics.totalMeetings - analytics.emailsSent > 0
-                    ? `${analytics.totalMeetings - analytics.emailsSent} meeting${analytics.totalMeetings - analytics.emailsSent !== 1 ? 's' : ''} without follow-up`
-                    : 'All meetings followed up'}
-                </span>
-              </div>
-            </div>
-          </div>
+          <AtRiskMeetings meetings={analytics.atRiskMeetings} />
         </motion.div>
       )}
 
-      {/* Under the Hood - Collapsible AI usage stats */}
-      {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
+      {/* 5. Trend Charts — Coverage + Dual series */}
+      {hasData && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.45 }}
         >
-          <div className="bg-gray-900/30 light:bg-gray-50 rounded-2xl overflow-hidden">
-            <button
-              onClick={() => setShowSystemHealth(!showSystemHealth)}
-              className={`w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors ${
-                !showSystemHealth ? 'border border-gray-700/50 light:border-gray-200 rounded-2xl' : ''
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <Zap className="w-3.5 h-3.5" />
-                Under the Hood
-              </span>
-              {showSystemHealth ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-            {showSystemHealth && (
-              <div className="grid grid-cols-3 gap-4 px-5 pb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <DollarSign className="w-3.5 h-3.5 text-gray-500" />
-                    <span className="text-xs text-gray-500">Total AI Cost</span>
-                  </div>
-                  <p className="text-lg font-bold text-white light:text-gray-900">
-                    ${analytics.aiUsage.totalCost.toFixed(4)}
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Zap className="w-3.5 h-3.5 text-gray-500" />
-                    <span className="text-xs text-gray-500">Avg Generation Time</span>
-                  </div>
-                  <p className="text-lg font-bold text-white light:text-gray-900">
-                    {analytics.aiUsage.avgLatency > 0
-                      ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
-                      : '-'}
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Timer className="w-3.5 h-3.5 text-gray-500" />
-                    <span className="text-xs text-gray-500">Meeting Hours</span>
-                  </div>
-                  <p className="text-lg font-bold text-white light:text-gray-900">
-                    {analytics.aiUsage.totalMeetingMinutes > 0
-                      ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
-                      : '-'}
-                  </p>
-                </div>
-              </div>
-            )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <CoverageChart data={analytics.dailyCoverage} />
+            <DualSeriesChart
+              meetings={analytics.dailyMeetings}
+              followUps={dailySentApprox}
+            />
           </div>
         </motion.div>
       )}
 
-      {hasData ? (
-        <>
-          {/* ROI Calculator + Email Engagement */}
-          {analytics.emailsGenerated > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
-            >
-              <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
-                <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
-                {analytics.emailsSent > 0 && (
-                  <EmailEngagement engagement={analytics.engagement} />
+      {/* 6. Collapsible "More Insights" */}
+      {hasData && (
+        <div>
+          <button
+            onClick={() => setShowMoreInsights(!showMoreInsights)}
+            className="w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors border border-gray-700/50 light:border-gray-200 rounded-2xl"
+          >
+            <span>More Insights</span>
+            {showMoreInsights ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {showMoreInsights && (
+            <div className="mt-4 space-y-4">
+              {/* ROI + Email Engagement */}
+              {analytics.emailsGenerated > 0 && (
+                <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
+                  <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+                  {analytics.emailsSent > 0 && (
+                    <EmailEngagement engagement={analytics.engagement} />
+                  )}
+                </div>
+              )}
+
+              {/* Platform + Meeting Type */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <PlatformChart data={analytics.platformBreakdown} />
+                {analytics.meetingTypeBreakdown.length > 0 ? (
+                  <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
+                ) : (
+                  <EmailFunnel
+                    total={analytics.emailFunnel.total}
+                    ready={analytics.emailFunnel.ready}
+                    sent={analytics.emailFunnel.sent}
+                    conversionRate={analytics.emailFunnel.conversionRate}
+                  />
                 )}
               </div>
-            </motion.div>
-          )}
 
-          {/* Activity Charts */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <ActivityChart
-                data={analytics.dailyMeetings}
-                title={`Meetings (Last ${dateRange} Days)`}
-                color="#3B82F6"
-                gradientId="meetingsGradient"
-              />
-              <ActivityChart
-                data={analytics.dailyEmails}
-                title={`Follow-up Volume (Last ${dateRange} Days)`}
-                color="#6366F1"
-                gradientId="emailsGradient"
-              />
-            </div>
-          </motion.div>
-
-          {/* Platform, Meeting Type & Funnel */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.7 }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <PlatformChart data={analytics.platformBreakdown} />
-              {analytics.meetingTypeBreakdown.length > 0 ? (
-                <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
-              ) : (
-                <EmailFunnel
-                  total={analytics.emailFunnel.total}
-                  ready={analytics.emailFunnel.ready}
-                  sent={analytics.emailFunnel.sent}
-                  conversionRate={analytics.emailFunnel.conversionRate}
-                />
+              {/* Email Funnel (when meeting type chart takes its spot) */}
+              {analytics.meetingTypeBreakdown.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <EmailFunnel
+                    total={analytics.emailFunnel.total}
+                    ready={analytics.emailFunnel.ready}
+                    sent={analytics.emailFunnel.sent}
+                    conversionRate={analytics.emailFunnel.conversionRate}
+                  />
+                </div>
               )}
-            </div>
-          </motion.div>
 
-          {/* Email Funnel (shown separately when meeting type chart is present) */}
-          {analytics.meetingTypeBreakdown.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.8 }}
-            >
+              {/* AI Usage Stats */}
+              {analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
+                <div className="bg-gray-900/30 light:bg-gray-50 rounded-2xl p-5 border border-gray-700/50 light:border-gray-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Zap className="w-3.5 h-3.5 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-400 light:text-gray-500">Under the Hood</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <span className="text-xs text-gray-500">Total AI Cost</span>
+                      <p className="text-lg font-bold text-white light:text-gray-900">
+                        ${analytics.aiUsage.totalCost.toFixed(4)}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500">Avg Generation Time</span>
+                      <p className="text-lg font-bold text-white light:text-gray-900">
+                        {analytics.aiUsage.avgLatency > 0
+                          ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
+                          : '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500">Meeting Hours</span>
+                      <p className="text-lg font-bold text-white light:text-gray-900">
+                        {analytics.aiUsage.totalMeetingMinutes > 0
+                          ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
+                          : '-'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Activity Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <EmailFunnel
-                  total={analytics.emailFunnel.total}
-                  ready={analytics.emailFunnel.ready}
-                  sent={analytics.emailFunnel.sent}
-                  conversionRate={analytics.emailFunnel.conversionRate}
+                <ActivityChart
+                  data={analytics.dailyMeetings}
+                  title={`Meetings (Last ${dateRange} Days)`}
+                  color="#3B82F6"
+                  gradientId="meetingsGradient"
+                />
+                <ActivityChart
+                  data={analytics.dailyEmails}
+                  title={`Draft Volume (Last ${dateRange} Days)`}
+                  color="#6366F1"
+                  gradientId="emailsGradient"
                 />
               </div>
-            </motion.div>
+            </div>
           )}
-        </>
-      ) : (
-        /* Empty State - Enhanced with illustration and CTAs */
-        <div
-          className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden"
-        >
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!hasData && (
+        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative">
-            {/* Animated chart illustration */}
             <div className="relative mx-auto w-32 h-32 mb-6">
-              {/* Main icon container */}
               <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
                 className="relative w-32 h-32 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-lg"
               >
-                {/* Chart bars animation */}
                 <div className="flex items-end gap-1.5">
                   <motion.div
                     initial={{ height: 8 }}
@@ -528,10 +477,9 @@ export function AnalyticsDashboard() {
             </h3>
             <p className="text-gray-400 light:text-gray-500 max-w-lg mx-auto mb-8">
               Once you connect a meeting platform and host your first meeting, you will see powerful insights here:
-              time saved, ROI calculations, engagement metrics, and activity trends.
+              coverage tracking, ROI calculations, engagement metrics, and activity trends.
             </p>
 
-            {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <a
                 href="/dashboard/settings"
@@ -540,24 +488,17 @@ export function AnalyticsDashboard() {
                 <Calendar className="w-4 h-4" />
                 Connect a Platform
               </a>
-              <a
-                href="/how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-gray-300 light:text-gray-700 bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200 rounded-xl hover:bg-gray-700 light:hover:bg-gray-200 transition-colors"
-              >
-                Learn How It Works
-              </a>
             </div>
 
-            {/* What you'll see preview */}
             <div className="pt-8 border-t border-gray-700 light:border-gray-200">
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">What you will unlock</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-amber-400' },
+                  { icon: <Shield className="w-5 h-5" />, label: 'Coverage Tracking', color: 'text-indigo-400' },
                   { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-indigo-400' },
-                  { icon: <Clock className="w-5 h-5" />, label: 'Time Saved', color: 'text-amber-400' },
-                  { icon: <BarChart3 className="w-5 h-5" />, label: 'Activity Charts', color: 'text-indigo-400' },
-                ].map((item, index) => (
+                  { icon: <Clock className="w-5 h-5" />, label: 'Response Times', color: 'text-amber-400' },
+                  { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-amber-400' },
+                ].map((item) => (
                   <div
                     key={item.label}
                     className="p-3 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-gray-700/50 light:border-gray-200"

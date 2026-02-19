@@ -131,7 +131,7 @@ export async function GET(request: Request) {
     // Get all user meetings filtered by userId (consistent with dashboard)
     console.log('[ANALYTICS-5] Querying meetings for userId:', user.id);
 
-    let userMeetings: { id: string; platform: string | null; createdAt: Date | null; duration: number | null }[] = [];
+    let userMeetings: { id: string; platform: string | null; createdAt: Date | null; duration: number | null; topic: string | null; hostEmail: string; endTime: Date | null; participants: unknown }[] = [];
 
     try {
       userMeetings = await db
@@ -140,6 +140,10 @@ export async function GET(request: Request) {
           platform: meetings.platform,
           createdAt: meetings.createdAt,
           duration: meetings.duration,
+          topic: meetings.topic,
+          hostEmail: meetings.hostEmail,
+          endTime: meetings.endTime,
+          participants: meetings.participants,
         })
         .from(meetings)
         .where(eq(meetings.userId, user.id));
@@ -212,6 +216,8 @@ export async function GET(request: Request) {
         // Get all drafts for user's meetings with engagement data
         const userDrafts = await db
           .select({
+            id: drafts.id,
+            meetingId: drafts.meetingId,
             status: drafts.status,
             createdAt: drafts.createdAt,
             sentAt: drafts.sentAt,
@@ -338,8 +344,103 @@ export async function GET(request: Request) {
 
     console.log('[ANALYTICS-8] Returning analytics data');
 
-    // These new metrics will be populated in Phase 1 (steps 1.1+)
-    // For now, return empty placeholders so the type is satisfied
+    // --- New metrics: median follow-up time, at-risk meetings, daily coverage ---
+
+    // Build a map of meetingId → best draft for at-risk + median computation
+    const draftsByMeeting = new Map<string, { id: string; status: string | null; sentAt: Date | null }>();
+    if (meetingIds.length > 0) {
+      try {
+        const allDrafts = await db
+          .select({ id: drafts.id, meetingId: drafts.meetingId, status: drafts.status, sentAt: drafts.sentAt })
+          .from(drafts)
+          .where(inArray(drafts.meetingId, meetingIds));
+
+        for (const d of allDrafts) {
+          const existing = draftsByMeeting.get(d.meetingId);
+          // Keep the "best" draft: prefer sent > generated > failed > none
+          if (!existing || (d.status === 'sent' && existing.status !== 'sent')) {
+            draftsByMeeting.set(d.meetingId, { id: d.id, status: d.status, sentAt: d.sentAt });
+          }
+        }
+      } catch (e) {
+        console.log('[ANALYTICS-WARN] Error building draft map:', e);
+      }
+    }
+
+    // Median follow-up time: median of (draft.sentAt - meeting.endTime) for sent drafts
+    const followUpTimesHours: number[] = [];
+    for (const m of userMeetings) {
+      if (!m.endTime) continue;
+      const draft = draftsByMeeting.get(m.id);
+      if (draft?.sentAt) {
+        const hours = (new Date(draft.sentAt).getTime() - new Date(m.endTime).getTime()) / (1000 * 60 * 60);
+        if (hours >= 0) followUpTimesHours.push(hours);
+      }
+    }
+    let medianFollowUpTimeHours: number | null = null;
+    if (followUpTimesHours.length > 0) {
+      followUpTimesHours.sort((a, b) => a - b);
+      const mid = Math.floor(followUpTimesHours.length / 2);
+      medianFollowUpTimeHours = followUpTimesHours.length % 2 === 0
+        ? Math.round(((followUpTimesHours[mid - 1] + followUpTimesHours[mid]) / 2) * 10) / 10
+        : Math.round(followUpTimesHours[mid] * 10) / 10;
+    }
+
+    // At-risk meetings: meetings without a sent draft
+    const atRiskMeetings: AtRiskMeeting[] = [];
+    for (const m of userMeetings) {
+      const draft = draftsByMeeting.get(m.id);
+      if (draft?.status === 'sent') continue; // followed up — not at risk
+
+      // Extract contact name from first participant that isn't the host
+      let contactName: string | null = null;
+      if (Array.isArray(m.participants)) {
+        const contact = (m.participants as { user_name?: string; email?: string }[]).find(
+          p => p.email && p.email !== m.hostEmail
+        );
+        contactName = contact?.user_name || null;
+      }
+
+      atRiskMeetings.push({
+        meetingId: m.id,
+        topic: m.topic,
+        hostEmail: m.hostEmail,
+        endTime: m.endTime ? new Date(m.endTime).toISOString() : null,
+        draftStatus: !draft ? 'none' : draft.status === 'failed' ? 'failed' : 'generated',
+        draftId: draft?.id || null,
+        contactName,
+      });
+    }
+    // Sort by endTime descending (most recent first)
+    atRiskMeetings.sort((a, b) => {
+      if (!a.endTime) return 1;
+      if (!b.endTime) return -1;
+      return new Date(b.endTime).getTime() - new Date(a.endTime).getTime();
+    });
+
+    // Daily coverage: per-day meetings count, followed-up count, coverage %
+    const dailyCoverageMap: Record<string, { meetings: number; followedUp: number }> = {};
+    dateRange.forEach(d => { dailyCoverageMap[d] = { meetings: 0, followedUp: 0 }; });
+    for (const m of userMeetings) {
+      if (!m.createdAt) continue;
+      const dateStr = new Date(m.createdAt).toISOString().split('T')[0];
+      if (dailyCoverageMap[dateStr] === undefined) continue;
+      dailyCoverageMap[dateStr].meetings++;
+      const draft = draftsByMeeting.get(m.id);
+      if (draft?.status === 'sent') {
+        dailyCoverageMap[dateStr].followedUp++;
+      }
+    }
+    const dailyCoverage: DailyCoverage[] = dateRange.map(date => {
+      const d = dailyCoverageMap[date];
+      return {
+        date,
+        meetingsCount: d.meetings,
+        followedUpCount: d.followedUp,
+        coveragePercent: d.meetings > 0 ? Math.round((d.followedUp / d.meetings) * 100) : 100,
+      };
+    });
+
     return NextResponse.json<AnalyticsData>({
       totalMeetings,
       emailsGenerated,
@@ -365,9 +466,9 @@ export async function GET(request: Request) {
         avgLatency: latencyCount > 0 ? Math.round(totalLatencyMs / latencyCount) : 0,
         totalMeetingMinutes,
       },
-      medianFollowUpTimeHours: null,
-      atRiskMeetings: [],
-      dailyCoverage: [],
+      medianFollowUpTimeHours,
+      atRiskMeetings,
+      dailyCoverage,
       aiOnboardingComplete: user.aiOnboardingComplete,
       hourlyRate: userHourlyRate,
     });
