@@ -10,6 +10,7 @@ import { ROICalculator } from '@/components/analytics/ROICalculator';
 import { EmailEngagement } from '@/components/analytics/EmailEngagement';
 import { InsightBanner } from '@/components/analytics/InsightBanner';
 import { AtRiskMeetings } from '@/components/analytics/AtRiskMeetings';
+import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
 import type { AnalyticsData } from '@/lib/types/analytics';
 
 // Chart loading placeholder
@@ -225,6 +226,11 @@ export function AnalyticsDashboard() {
           </button>
         </div>
       </div>
+
+      {/* Hourly rate nudge */}
+      {analytics.hourlyRate === 100 && (
+        <NudgeBanner variant="hourly-rate" />
+      )}
 
       {/* 2. Insight Banner */}
       <InsightBanner
