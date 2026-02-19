@@ -21,6 +21,7 @@ const HUBSPOT_SCOPES = [
   'crm.objects.contacts.write',
   'crm.objects.appointments.read',
   'crm.objects.appointments.write',
+  'oauth',
 ];
 
 // Retry configuration
