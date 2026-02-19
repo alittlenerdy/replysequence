@@ -33,10 +33,10 @@ const integrations: Integration[] = [
     category: 'meeting',
     description: 'Automatically capture transcripts from Zoom meetings and generate follow-up emails.',
     features: [
-      'Webhook-based real-time processing',
-      'Cloud recording transcript extraction',
-      'Speaker identification',
-      'Meeting metadata sync',
+      'Auto-capture transcripts from every call',
+      'Detect decisions, next steps, and commitments',
+      'Draft follow-ups in seconds after the call ends',
+      'Speaker identification for accurate attribution',
     ],
     status: 'available',
     logo: 'Z',
@@ -47,10 +47,10 @@ const integrations: Integration[] = [
     category: 'meeting',
     description: 'Process Teams meetings via Microsoft Graph API subscriptions for automatic follow-ups.',
     features: [
-      'Graph API subscription webhooks',
-      'Auto-renewing subscriptions',
-      'Transcript and recording support',
-      'Calendar event integration',
+      'Process Teams calls automatically via subscriptions',
+      'Capture transcripts and recordings',
+      'Calendar sync for scheduled meeting awareness',
+      'Auto-renewing — set it and forget it',
     ],
     status: 'available',
     logo: 'T',
@@ -61,10 +61,10 @@ const integrations: Integration[] = [
     category: 'meeting',
     description: 'Connect Google Meet via Calendar API to process meeting recordings and generate drafts.',
     features: [
-      'Google Calendar sync',
-      'Recording-based transcription',
-      'Google Workspace integration',
-      'Multi-account support',
+      'Sync with Google Calendar for meeting awareness',
+      'Process recordings for transcript extraction',
+      'Works across Google Workspace accounts',
+      'Multi-account support for agencies',
     ],
     status: 'available',
     logo: 'M',
@@ -75,10 +75,10 @@ const integrations: Integration[] = [
     category: 'email',
     description: 'Send follow-up emails directly from your Gmail account for better deliverability.',
     features: [
-      'OAuth-based secure connection',
-      'Send as your real email address',
-      'Automatic token refresh',
-      'No third-party sender branding',
+      'Send from your real Gmail address',
+      'Keep your existing signature and sending domain',
+      'No third-party branding on emails',
+      'Secure OAuth — we never see your password',
     ],
     status: 'available',
     logo: 'G',
@@ -89,10 +89,10 @@ const integrations: Integration[] = [
     category: 'email',
     description: 'Connect your Outlook or Microsoft 365 account to send follow-ups from your business email.',
     features: [
-      'Microsoft Graph API integration',
-      'Send as your work email',
-      'Enterprise-ready OAuth',
-      'Works with M365 Business accounts',
+      'Send from your Microsoft 365 business email',
+      'Enterprise-ready OAuth connection',
+      'Works with all M365 Business accounts',
+      'Your recipients see your name, not ours',
     ],
     status: 'available',
     logo: 'O',
@@ -103,10 +103,10 @@ const integrations: Integration[] = [
     category: 'crm',
     description: 'Automatically log sent emails to HubSpot contacts and create engagement records.',
     features: [
-      'Contact lookup and matching',
-      'Email engagement logging',
-      'Automatic token refresh',
-      'Activity timeline sync',
+      'Push recaps and next steps to the right contact',
+      'Auto-log sent emails as engagement records',
+      'Keep pipeline reviews based on real conversations',
+      'Activity timeline stays up to date',
     ],
     status: 'available',
     logo: 'H',
@@ -117,10 +117,10 @@ const integrations: Integration[] = [
     category: 'crm',
     description: 'Sync meeting data and sent emails to Airtable for custom CRM workflows.',
     features: [
-      'Contact record sync',
-      'Meeting history logging',
-      'Email send tracking',
-      'Custom base support',
+      'Sync meeting data to custom bases',
+      'Track follow-up history per contact',
+      'Log email sends automatically',
+      'Flexible enough for any CRM workflow',
     ],
     status: 'available',
     logo: 'A',
@@ -131,10 +131,10 @@ const integrations: Integration[] = [
     category: 'crm',
     description: 'Log meeting follow-ups directly into Salesforce contacts and opportunities.',
     features: [
-      'Contact and lead matching',
-      'Activity logging',
-      'Opportunity association',
+      'Log follow-ups to contacts and opportunities',
+      'Match activities to the right records',
       'Enterprise SSO support',
+      'Join the early access list',
     ],
     status: 'coming_soon',
     logo: 'S',
@@ -149,9 +149,9 @@ const categoryLabels = {
 };
 
 const categoryDescriptions = {
-  meeting: 'Connect your video conferencing tools to automatically capture transcripts and generate follow-up emails.',
-  email: 'Send emails from your real business address for better deliverability and trust.',
-  crm: 'Log every follow-up email to your CRM automatically. No manual data entry.',
+  meeting: 'Automatically capture every call so you never lose what was said, promised, or decided.',
+  email: 'Send follow-ups from the inbox your prospects already trust — no new tool for them to recognize.',
+  crm: 'Log every recap and next step to your CRM without touching a keyboard. Keep pipeline reviews honest.',
 };
 
 // Stagger class lookup for card animations
@@ -177,18 +177,19 @@ export default function IntegrationsPage() {
             Connect Your{' '}
             <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
               Entire Stack
-            </span>
+            </span>{' '}
+            so You Never Copy-Paste Call Notes Again
           </h1>
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
-            ReplySequence integrates with the tools you already use. Meeting platforms, email providers, and CRMs — all connected.
+            Plug into Zoom, Meet, Teams, Gmail, Outlook, and your CRM so every call becomes a ready-to-send follow-up and a clean CRM update — in seconds.
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500 light:text-gray-400">
             <span className="flex items-center gap-1.5">
-              <Zap className="w-4 h-4 text-emerald-400" />
-              7 integrations available
+              <Zap className="w-4 h-4 text-amber-400" />
+              7 integrations
             </span>
             <span className="text-gray-700 light:text-gray-300">|</span>
-            <span>Setup in under 2 minutes</span>
+            <span>No engineering required</span>
           </div>
         </div>
       </section>
@@ -252,11 +253,23 @@ export default function IntegrationsPage() {
                     <ul className="space-y-2">
                       {integration.features.map((feature, fi) => (
                         <li key={fi} className="flex items-start gap-2 text-sm">
-                          <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                          <Check className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
                           <span className="text-gray-300 light:text-gray-700">{feature}</span>
                         </li>
                       ))}
                     </ul>
+
+                    {integration.status === 'coming_soon' && (
+                      <div className="mt-4 pt-4 border-t border-gray-800 light:border-gray-200">
+                        <Link
+                          href="/contact"
+                          className="inline-flex items-center gap-2 text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 transition-colors"
+                        >
+                          Join the early access list
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -275,18 +288,18 @@ export default function IntegrationsPage() {
             {[
               {
                 step: '1',
-                title: 'Connect Your Accounts',
-                description: 'Link your meeting platform and email in Settings. OAuth-based, no passwords stored.',
+                title: 'Connect in Minutes',
+                description: 'Link Zoom, Teams, or Meet plus your email and CRM. OAuth-based, no passwords stored, no engineering required.',
               },
               {
                 step: '2',
-                title: 'Meet as Usual',
-                description: 'Have your Zoom, Teams, or Meet calls as normal. ReplySequence processes recordings automatically.',
+                title: 'Run Your Calls as Usual',
+                description: 'ReplySequence captures what was said, who said it, and what was decided — so you don\'t have to.',
               },
               {
                 step: '3',
-                title: 'Drafts Appear Instantly',
-                description: 'AI-generated follow-up emails appear in your dashboard. Review, edit, and send — or let auto-send handle it.',
+                title: 'Review, Send, Done',
+                description: 'AI-drafted follow-ups land in your dashboard. Edit if needed, hit send from your real inbox. CRM updates itself.',
               },
             ].map((item, i) => (
               <div
@@ -309,11 +322,56 @@ export default function IntegrationsPage() {
         </div>
       </section>
 
+      {/* Workflow Stack Cards */}
+      <section className="py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
+              <h3 className="text-lg font-bold bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-3">
+                Zoom + Gmail + HubSpot
+              </h3>
+              <p className="text-sm text-gray-400 light:text-gray-600">
+                Run the call in Zoom. ReplySequence drafts your follow-up in Gmail. Recap + next steps are logged to the HubSpot deal — in under 10 seconds.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
+              <h3 className="text-lg font-bold bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-3">
+                Teams + Outlook + Airtable
+              </h3>
+              <p className="text-sm text-gray-400 light:text-gray-600">
+                Finish a Teams call. Get a ready-to-send Outlook email. Action items tracked on the right Airtable record automatically.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Setup & Trust */}
+      <section className="py-12 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-sm text-gray-400 light:text-gray-500 mb-6">Typical setup time: under 5 minutes</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <span className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-500">
+              <Check className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              OAuth connections — we never store passwords
+            </span>
+            <span className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-500">
+              <Check className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              Choose exactly which CRM fields we can update
+            </span>
+            <span className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-500">
+              <Check className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              Your data encrypted in transit and at rest
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
         <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
           <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
-            Ready to connect your tools?
+            Connect your tools and send your first AI follow-up in 5 minutes
           </h2>
           <p className="text-gray-400 light:text-gray-600 mb-8">
             Get started free with 5 AI drafts per month. No credit card required.
@@ -322,7 +380,7 @@ export default function IntegrationsPage() {
             href="/sign-up"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all"
           >
-            Get Started Free
+            Connect Your Tools Free
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

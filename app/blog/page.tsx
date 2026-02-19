@@ -32,20 +32,19 @@ export default function BlogPage() {
       <section className="pt-32 pb-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
-            The{' '}
+            Make Every Call Easier to{' '}
             <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
-              ReplySequence
-            </span>{' '}
-            Blog
+              Follow Up On
+            </span>
           </h1>
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-6">
-            Practical advice on meeting follow-ups, sales productivity, and using AI to spend less time on email and more time closing deals.
+            Playbooks, templates, and real examples for turning sales and customer calls into clear next steps — without spending nights in your inbox.
           </p>
           <a
             href="/blog/rss.xml"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 light:text-gray-400 hover:text-orange-400 light:hover:text-orange-500 transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-gray-500 light:text-gray-400 hover:text-amber-400 light:hover:text-amber-500 transition-colors"
           >
             <Rss className="w-4 h-4" />
             Subscribe via RSS
@@ -55,6 +54,26 @@ export default function BlogPage() {
 
       {/* Blog Grid with Tag Filtering */}
       <BlogGrid posts={blogPosts} />
+
+      {/* Product CTA Strip */}
+      <section className="py-12 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 light:bg-indigo-50 light:border-indigo-100 p-8 text-center">
+            <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">
+              Turn your next call into a ready-to-send follow-up
+            </h3>
+            <p className="text-sm text-gray-400 light:text-gray-600 mb-4 max-w-xl mx-auto">
+              Connect Zoom, Meet, or Teams and we will draft the recap + next steps for you. You edit, hit send, and your CRM updates itself.
+            </p>
+            <a
+              href="/sign-up"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 transition-all"
+            >
+              Try ReplySequence on Your Next Call
+            </a>
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </div>

@@ -263,6 +263,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               [&_code]:bg-gray-800 [&_code]:light:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
+
+          {/* Inline Product Callout */}
+          <div className="my-10 rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-6">
+            <p className="text-sm font-medium text-amber-400 light:text-amber-600 mb-1">How ReplySequence handles this</p>
+            <p className="text-sm text-gray-300 light:text-gray-600 leading-relaxed">
+              ReplySequence connects to your Zoom, Teams, or Meet calls, reads the transcript, and drafts a context-rich follow-up email in about 8 seconds. You review it, make any edits, and send from your real inbox. Your CRM updates automatically.
+            </p>
+            <a
+              href="/sign-up"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 mt-3 transition-colors"
+            >
+              Try it free
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+            </a>
+          </div>
         </div>
       </article>
 
@@ -271,16 +286,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="max-w-3xl mx-auto">
           <div className="rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-8 md:p-12 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900 mb-4">
-              Ready to automate your meeting follow-ups?
+              Tired of writing follow-ups from scratch?
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-6 max-w-xl mx-auto">
-              ReplySequence turns your Zoom, Teams, and Meet calls into polished follow-up emails in seconds. Start free, no credit card required.
+              ReplySequence listens to your Zoom, Teams, and Meet calls and drafts the follow-up for you in about 8 seconds. You approve, edit, and send from your own inbox.
             </p>
             <a
               href="/sign-up"
               className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-8 py-4 text-lg bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
             >
-              Get Started Free
+              Try It on Your Next Call
             </a>
           </div>
         </div>

@@ -31,7 +31,7 @@ const pricingTiers = [
     tier: 'free' as const,
     monthlyPrice: 0,
     annualPrice: 0,
-    description: 'Perfect for trying out ReplySequence',
+    description: 'Test AI-powered follow-ups on a handful of real meetings each month.',
     icon: 'zap' as const,
     features: [
       'Unlimited meetings',
@@ -46,7 +46,7 @@ const pricingTiers = [
     tier: 'pro' as const,
     monthlyPrice: 19,
     annualPrice: 15, // ~21% discount
-    description: 'For individuals who want more power',
+    description: 'For solo founders, AEs, and consultants who want every serious call followed up in seconds.',
     icon: 'sparkles' as const,
     highlighted: true,
     monthlyPriceId: STRIPE_PRICES.pro,
@@ -66,7 +66,7 @@ const pricingTiers = [
     tier: 'team' as const,
     monthlyPrice: 29,
     annualPrice: 24, // ~17% discount
-    description: 'For growing teams and agencies',
+    description: 'For sales and CS teams that need 100% follow-up coverage and clean CRM data across reps.',
     icon: 'building' as const,
     monthlyPriceId: STRIPE_PRICES.team,
     annualPriceId: STRIPE_ANNUAL_PRICES.team,
@@ -137,12 +137,42 @@ async function PricingContent() {
         </div>
       </section>
 
+      {/* Credibility Strip */}
+      {!isLoggedIn && (
+        <section className="pb-4 px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-sm text-gray-400 light:text-gray-500 bg-gray-900/50 light:bg-indigo-50 border border-gray-800 light:border-indigo-100 rounded-full px-6 py-3 inline-block">
+              Teams using ReplySequence hit near-100% follow-up coverage, save hours per week on post-call emails, and can finally see ROI inside the product.
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* Pricing Cards with Billing Toggle */}
       <PricingCards
         tiers={pricingTiers}
         currentTier={currentTier}
         isLoggedIn={isLoggedIn}
       />
+
+      {/* ROI Callout */}
+      {!isLoggedIn && (
+        <section className="py-12 px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-8 md:p-10 text-center">
+              <h3 className="text-xl font-bold text-white light:text-gray-900 mb-4">
+                The math is simple
+              </h3>
+              <p className="text-gray-300 light:text-gray-700 leading-relaxed max-w-2xl mx-auto">
+                If a rep spends 10 hours/month writing follow-ups and their time is worth $100/hr, that is $1,000/month in manual work. ReplySequence turns that into minutes and pays for itself after your first few meetings.
+              </p>
+              <p className="text-sm text-amber-400 light:text-amber-600 font-medium mt-4">
+                See exactly how many hours and dollars you are saving — directly inside the product.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQ Section - only for non-logged in users */}
       {!isLoggedIn && (
@@ -154,20 +184,20 @@ async function PricingContent() {
             <div className="space-y-6">
               {[
                 {
-                  q: 'Can I change plans later?',
-                  a: 'Yes! You can upgrade or downgrade at any time. Changes take effect immediately and billing is prorated.',
+                  q: 'Will emails ever send without my approval?',
+                  a: 'No. ReplySequence always creates a draft first. You review, edit, and hit send from your own inbox. Nothing goes out without your explicit approval.',
                 },
                 {
-                  q: 'What payment methods do you accept?',
-                  a: 'We accept all major credit cards (Visa, Mastercard, American Express) through our secure Stripe integration.',
+                  q: 'How accurate are the summaries and follow-ups?',
+                  a: 'Drafts are based on your actual call transcript — not generic templates. You keep full control to tweak language, add nuance, and decide what goes out. Most users find the drafts capture 90%+ of what they would have written manually.',
                 },
                 {
-                  q: 'Is there a free trial?',
-                  a: 'Our Free plan lets you try ReplySequence with limited features. Upgrade when you\'re ready for unlimited AI drafts.',
+                  q: 'How do you handle call and email data?',
+                  a: 'Meeting transcripts are processed securely with AES-256 encryption and never shared with third parties. You can delete your data at any time. We run on SOC 2 Type II certified infrastructure.',
                 },
                 {
-                  q: 'What happens if I cancel?',
-                  a: 'You\'ll keep access until the end of your billing period. Your data is retained for 30 days in case you want to reactivate.',
+                  q: 'Can I cancel anytime?',
+                  a: 'Yes. You can downgrade to Free or cancel entirely at any time. Changes take effect immediately, and you keep access until the end of your billing period. Your data is retained for 30 days in case you reactivate.',
                 },
                 {
                   q: 'Do you offer annual billing?',
@@ -196,10 +226,10 @@ async function PricingContent() {
         <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
-              Ready to automate your follow-ups?
+              Send your first AI follow-up in 5 minutes
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
-              Start free, upgrade when you need more power.
+              Connect your meeting platform, run a call, and let ReplySequence handle the rest.
             </p>
             <a
               href="/sign-up"
