@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Sparkles, Loader2, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AIPreferences {
   aiTone: string;
@@ -57,6 +58,8 @@ export function AICustomization() {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [displayedPreview, setDisplayedPreview] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -78,6 +81,23 @@ export function AICustomization() {
     }
     load();
   }, []);
+
+  useEffect(() => {
+    const preview = TONE_OPTIONS.find(o => o.value === preferences.aiTone)?.preview || '';
+    setDisplayedPreview('');
+    setIsTyping(true);
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < preview.length) {
+        setDisplayedPreview(preview.slice(0, i + 1));
+        i++;
+      } else {
+        setIsTyping(false);
+        clearInterval(interval);
+      }
+    }, 20);
+    return () => clearInterval(interval);
+  }, [preferences.aiTone]);
 
   async function handleSave() {
     setIsSaving(true);
@@ -115,47 +135,71 @@ export function AICustomization() {
 
   return (
     <div className="max-w-4xl mx-auto mt-8 space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-          <Sparkles className="w-4 h-4 text-purple-400" />
+      {/* Animated Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/20 via-blue-600/15 to-purple-600/10 light:from-purple-100 light:via-blue-50 light:to-purple-50 p-6 border border-purple-500/20 light:border-purple-200">
+        {/* Floating orb decorations */}
+        <div className="absolute -right-8 -top-8 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl" />
+        <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-blue-500/15 rounded-full blur-2xl" />
+        <div className="relative flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white light:text-gray-900">Your AI Writing Assistant</h3>
+            <p className="text-sm text-purple-200/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
+          </div>
         </div>
-        <h3 className="text-lg font-semibold text-white light:text-gray-900">Customize AI Drafts</h3>
       </div>
 
       {/* Tone Selection with Preview */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
         <h4 className="text-sm font-medium text-white light:text-gray-900 mb-3">Email Tone</h4>
-        <div className="grid grid-cols-2 gap-3">
-          {TONE_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setPreferences(p => ({ ...p, aiTone: option.value }))}
-              className={`p-3 rounded-lg border text-left transition-all ${
-                preferences.aiTone === option.value
-                  ? 'border-purple-500 bg-purple-500/10'
-                  : 'border-gray-700 light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400'
-              }`}
-            >
-              <div className={`text-sm font-medium ${
-                preferences.aiTone === option.value ? 'text-purple-400' : 'text-white light:text-gray-900'
-              }`}>
-                {option.label}
-              </div>
-              <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
-            </button>
-          ))}
+        <div className="space-y-3">
+          {TONE_OPTIONS.map((option) => {
+            const isSelected = preferences.aiTone === option.value;
+            return (
+              <motion.button
+                key={option.value}
+                layout
+                onClick={() => setPreferences(p => ({ ...p, aiTone: option.value }))}
+                className={`w-full p-4 rounded-xl border text-left transition-all ${
+                  isSelected
+                    ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/10'
+                    : 'border-gray-700 light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400 bg-gray-900/30 light:bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className={`text-sm font-semibold ${isSelected ? 'text-purple-400 light:text-purple-600' : 'text-white light:text-gray-900'}`}>
+                      {option.label}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
+                  </div>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center"
+                    >
+                      <Check className="w-3.5 h-3.5 text-white" />
+                    </motion.div>
+                  )}
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
 
-        {/* Tone preview */}
-        <div className="mt-4 p-3 rounded-lg bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200">
-          <div className="text-xs font-medium text-gray-500 light:text-gray-400 mb-1.5">Preview</div>
-          <p className="text-sm text-gray-300 light:text-gray-600 italic leading-relaxed">
-            &ldquo;{TONE_OPTIONS.find(o => o.value === preferences.aiTone)?.preview}&rdquo;
+        {/* Typewriter Tone Preview */}
+        <div className="mt-4 p-4 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200">
+          <div className="text-xs font-medium text-gray-500 light:text-gray-400 mb-2">Preview</div>
+          <p className="text-sm text-gray-300 light:text-gray-600 italic leading-relaxed min-h-[3rem]">
+            &ldquo;{displayedPreview}{isTyping && <span className="inline-block w-0.5 h-4 bg-purple-400 ml-0.5 animate-pulse align-middle" />}&rdquo;
           </p>
         </div>
       </div>
 
-      {/* Custom Instructions - moved up for visibility */}
+      {/* Custom Instructions */}
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
         <h4 className="text-sm font-medium text-white light:text-gray-900 mb-1">Custom Instructions</h4>
         <p className="text-xs text-gray-500 mb-3">
@@ -171,6 +215,31 @@ export function AICustomization() {
         />
         <div className="text-xs text-gray-600 mt-1 text-right">
           {preferences.aiCustomInstructions.length}/500
+        </div>
+        {/* Suggestion Chips */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {[
+            'Always mention our free trial',
+            'Keep emails under 150 words',
+            'Include a specific next step',
+            'Use bullet points for action items',
+          ].map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              onClick={() => {
+                setPreferences(p => ({
+                  ...p,
+                  aiCustomInstructions: p.aiCustomInstructions
+                    ? `${p.aiCustomInstructions}\n${chip}`
+                    : chip,
+                }));
+              }}
+              className="px-3 py-1.5 text-xs font-medium text-purple-300 light:text-purple-600 bg-purple-500/10 light:bg-purple-50 border border-purple-500/20 light:border-purple-200 rounded-full hover:bg-purple-500/20 light:hover:bg-purple-100 transition-colors"
+            >
+              + {chip}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -205,7 +274,7 @@ export function AICustomization() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-5 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+          className="px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-500/20 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
         >
           {isSaving ? (
             <>

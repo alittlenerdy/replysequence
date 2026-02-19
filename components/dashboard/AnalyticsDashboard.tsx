@@ -275,185 +275,247 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* Hero Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-        <StatCard
-          icon={<Calendar className="w-5 h-5" />}
-          label="Meetings"
-          value={analytics.totalMeetings}
-          gradient="from-blue-500/20 to-blue-600/20"
-          accentColor="#3B82F6"
-          delay={0}
-          comparison={analytics.meetingsComparison}
-          sparklineData={meetingsSparkline}
-        />
-        <StatCard
-          icon={<Mail className="w-5 h-5" />}
-          label="Emails Generated"
-          value={analytics.emailsGenerated}
-          gradient="from-blue-500/20 to-blue-600/20"
-          accentColor="#3B82F6"
-          delay={0.05}
-          comparison={analytics.emailsComparison}
-          sparklineData={emailsSparkline}
-        />
-        <StatCard
-          icon={<Target className="w-5 h-5" />}
-          label="Send Rate"
-          value={analytics.emailsGenerated > 0 ? Math.round((analytics.emailsSent / analytics.emailsGenerated) * 100) : 0}
-          suffix="%"
-          subtitle={`${analytics.emailsSent} of ${analytics.emailsGenerated} sent`}
-          gradient="from-emerald-500/20 to-emerald-600/20"
-          accentColor="#10B981"
-          delay={0.1}
-          comparison={analytics.sentComparison}
-        />
-        <StatCard
-          icon={<Clock className="w-5 h-5" />}
-          label="Time Saved"
-          value={timeSaved.value}
-          suffix={timeSaved.suffix}
-          subtitle={timeSaved.label}
-          gradient="from-emerald-500/20 to-emerald-600/20"
-          accentColor="#10B981"
-          delay={0.15}
-        />
+      {/* Bento Grid Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0 }}
+          className="lg:col-span-1"
+        >
+          <StatCard
+            icon={<Calendar className="w-5 h-5" />}
+            label="Meetings"
+            value={analytics.totalMeetings}
+            gradient="from-blue-500/20 to-blue-600/20"
+            accentColor="#3B82F6"
+            comparison={analytics.meetingsComparison}
+            sparklineData={meetingsSparkline}
+            hero
+          />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="lg:col-span-1"
+        >
+          <StatCard
+            icon={<Mail className="w-5 h-5" />}
+            label="Emails Generated"
+            value={analytics.emailsGenerated}
+            gradient="from-blue-500/20 to-blue-600/20"
+            accentColor="#3B82F6"
+            comparison={analytics.emailsComparison}
+            sparklineData={emailsSparkline}
+            hero
+          />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <StatCard
+            icon={<Target className="w-5 h-5" />}
+            label="Send Rate"
+            value={analytics.emailsGenerated > 0 ? Math.round((analytics.emailsSent / analytics.emailsGenerated) * 100) : 0}
+            suffix="%"
+            subtitle={`${analytics.emailsSent} of ${analytics.emailsGenerated} sent`}
+            gradient="from-emerald-500/20 to-emerald-600/20"
+            accentColor="#10B981"
+            comparison={analytics.sentComparison}
+          />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <StatCard
+            icon={<Clock className="w-5 h-5" />}
+            label="Time Saved"
+            value={timeSaved.value}
+            suffix={timeSaved.suffix}
+            subtitle={timeSaved.label}
+            gradient="from-emerald-500/20 to-emerald-600/20"
+            accentColor="#10B981"
+          />
+        </motion.div>
       </div>
 
       {/* Follow-Up Coverage */}
       {hasData && analytics.totalMeetings > 0 && (
-        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-white light:text-gray-900">Follow-Up Coverage</h3>
-            <span className="text-xs text-gray-500">
-              {analytics.emailsSent} of {analytics.totalMeetings} meetings followed up
-            </span>
-          </div>
-          <div className="relative">
-            <div className="h-3 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700"
-                style={{ width: `${Math.min(100, Math.round((analytics.emailsSent / analytics.totalMeetings) * 100))}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="text-2xl font-bold text-emerald-400">
-                {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}%
-              </span>
-              <span className="text-xs text-gray-500 self-end">
-                {analytics.totalMeetings - analytics.emailsSent > 0
-                  ? `${analytics.totalMeetings - analytics.emailsSent} meeting${analytics.totalMeetings - analytics.emailsSent !== 1 ? 's' : ''} without follow-up`
-                  : 'All meetings followed up'}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+        >
+          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-white light:text-gray-900">Follow-Up Coverage</h3>
+              <span className="text-xs text-gray-500">
+                {analytics.emailsSent} of {analytics.totalMeetings} meetings followed up
               </span>
             </div>
+            <div className="relative">
+              <div className="h-3 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700"
+                  style={{ width: `${Math.min(100, Math.round((analytics.emailsSent / analytics.totalMeetings) * 100))}%` }}
+                />
+              </div>
+              <div className="flex justify-between mt-2">
+                <span className="text-2xl font-bold text-emerald-400">
+                  {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}%
+                </span>
+                <span className="text-xs text-gray-500 self-end">
+                  {analytics.totalMeetings - analytics.emailsSent > 0
+                    ? `${analytics.totalMeetings - analytics.emailsSent} meeting${analytics.totalMeetings - analytics.emailsSent !== 1 ? 's' : ''} without follow-up`
+                    : 'All meetings followed up'}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Under the Hood - Collapsible AI usage stats */}
       {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
-        <div className="bg-gray-900/30 light:bg-gray-50 border border-gray-700/50 light:border-gray-200 rounded-2xl overflow-hidden">
-          <button
-            onClick={() => setShowSystemHealth(!showSystemHealth)}
-            className="w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors"
-          >
-            <span className="flex items-center gap-2">
-              <Zap className="w-3.5 h-3.5" />
-              Under the Hood
-            </span>
-            {showSystemHealth ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-          {showSystemHealth && (
-            <div className="grid grid-cols-3 gap-4 px-5 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <DollarSign className="w-3.5 h-3.5 text-gray-500" />
-                  <span className="text-xs text-gray-500">Total AI Cost</span>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.45 }}
+        >
+          <div className="bg-gray-900/30 light:bg-gray-50 rounded-2xl overflow-hidden">
+            <button
+              onClick={() => setShowSystemHealth(!showSystemHealth)}
+              className={`w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors ${
+                !showSystemHealth ? 'border border-gray-700/50 light:border-gray-200 rounded-2xl' : ''
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Zap className="w-3.5 h-3.5" />
+                Under the Hood
+              </span>
+              {showSystemHealth ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+            {showSystemHealth && (
+              <div className="grid grid-cols-3 gap-4 px-5 pb-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <DollarSign className="w-3.5 h-3.5 text-gray-500" />
+                    <span className="text-xs text-gray-500">Total AI Cost</span>
+                  </div>
+                  <p className="text-lg font-bold text-white light:text-gray-900">
+                    ${analytics.aiUsage.totalCost.toFixed(4)}
+                  </p>
                 </div>
-                <p className="text-lg font-bold text-white light:text-gray-900">
-                  ${analytics.aiUsage.totalCost.toFixed(4)}
-                </p>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Zap className="w-3.5 h-3.5 text-gray-500" />
-                  <span className="text-xs text-gray-500">Avg Generation Time</span>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Zap className="w-3.5 h-3.5 text-gray-500" />
+                    <span className="text-xs text-gray-500">Avg Generation Time</span>
+                  </div>
+                  <p className="text-lg font-bold text-white light:text-gray-900">
+                    {analytics.aiUsage.avgLatency > 0
+                      ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
+                      : '-'}
+                  </p>
                 </div>
-                <p className="text-lg font-bold text-white light:text-gray-900">
-                  {analytics.aiUsage.avgLatency > 0
-                    ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
-                    : '-'}
-                </p>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Timer className="w-3.5 h-3.5 text-gray-500" />
-                  <span className="text-xs text-gray-500">Meeting Hours</span>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Timer className="w-3.5 h-3.5 text-gray-500" />
+                    <span className="text-xs text-gray-500">Meeting Hours</span>
+                  </div>
+                  <p className="text-lg font-bold text-white light:text-gray-900">
+                    {analytics.aiUsage.totalMeetingMinutes > 0
+                      ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
+                      : '-'}
+                  </p>
                 </div>
-                <p className="text-lg font-bold text-white light:text-gray-900">
-                  {analytics.aiUsage.totalMeetingMinutes > 0
-                    ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
-                    : '-'}
-                </p>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </motion.div>
       )}
 
       {hasData ? (
         <>
           {/* ROI Calculator + Email Engagement */}
           {analytics.emailsGenerated > 0 && (
-            <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
-              <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
-              {analytics.emailsSent > 0 && (
-                <EmailEngagement engagement={analytics.engagement} />
-              )}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+            >
+              <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
+                <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+                {analytics.emailsSent > 0 && (
+                  <EmailEngagement engagement={analytics.engagement} />
+                )}
+              </div>
+            </motion.div>
           )}
 
           {/* Activity Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <ActivityChart
-              data={analytics.dailyMeetings}
-              title="Meetings"
-              color="#3B82F6"
-              gradientId="meetingsGradient"
-            />
-            <ActivityChart
-              data={analytics.dailyEmails}
-              title="Emails Generated"
-              color="#A855F7"
-              gradientId="emailsGradient"
-            />
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <ActivityChart
+                data={analytics.dailyMeetings}
+                title="Meetings"
+                color="#3B82F6"
+                gradientId="meetingsGradient"
+              />
+              <ActivityChart
+                data={analytics.dailyEmails}
+                title="Emails Generated"
+                color="#A855F7"
+                gradientId="emailsGradient"
+              />
+            </div>
+          </motion.div>
 
           {/* Platform, Meeting Type & Funnel */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <PlatformChart data={analytics.platformBreakdown} />
-            {analytics.meetingTypeBreakdown.length > 0 ? (
-              <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
-            ) : (
-              <EmailFunnel
-                total={analytics.emailFunnel.total}
-                ready={analytics.emailFunnel.ready}
-                sent={analytics.emailFunnel.sent}
-                conversionRate={analytics.emailFunnel.conversionRate}
-              />
-            )}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.7 }}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <PlatformChart data={analytics.platformBreakdown} />
+              {analytics.meetingTypeBreakdown.length > 0 ? (
+                <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
+              ) : (
+                <EmailFunnel
+                  total={analytics.emailFunnel.total}
+                  ready={analytics.emailFunnel.ready}
+                  sent={analytics.emailFunnel.sent}
+                  conversionRate={analytics.emailFunnel.conversionRate}
+                />
+              )}
+            </div>
+          </motion.div>
 
           {/* Email Funnel (shown separately when meeting type chart is present) */}
           {analytics.meetingTypeBreakdown.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <EmailFunnel
-                total={analytics.emailFunnel.total}
-                ready={analytics.emailFunnel.ready}
-                sent={analytics.emailFunnel.sent}
-                conversionRate={analytics.emailFunnel.conversionRate}
-              />
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.8 }}
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <EmailFunnel
+                  total={analytics.emailFunnel.total}
+                  ready={analytics.emailFunnel.ready}
+                  sent={analytics.emailFunnel.sent}
+                  conversionRate={analytics.emailFunnel.conversionRate}
+                />
+              </div>
+            </motion.div>
           )}
         </>
       ) : (

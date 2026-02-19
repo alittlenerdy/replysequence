@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, ChevronDown, Star, Plus, Settings2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, Star, Plus, Settings2 } from 'lucide-react';
 import { checkPlatformConnections, type PlatformConnectionDetails, type MeetConnectionInfo } from '@/app/actions/checkPlatformConnections';
 
 interface PlatformConfig {
@@ -15,6 +16,25 @@ interface PlatformConfig {
   connectUrl: string;
   disconnectUrl: string;
   category: 'meeting' | 'calendar' | 'crm' | 'email';
+}
+
+interface PlatformCardProps {
+  platform: PlatformConfig;
+  isConnected: boolean;
+  details: PlatformConnectionDetails;
+  statusColor: 'red' | 'yellow' | 'green' | null;
+  isLoading: boolean;
+  globalIndex: number;
+  handleConnect: (platform: PlatformConfig) => void;
+  handleDisconnect: (platform: PlatformConfig) => void;
+  disconnectConfirm: string | null;
+  setDisconnectConfirm: (id: string | null) => void;
+  handleSetPrimary: (connectionId: string) => void;
+  handleDisconnectMeetConnection: (connectionId: string) => void;
+  meetDisconnectConfirm: string | null;
+  setMeetDisconnectConfirm: (id: string | null) => void;
+  nowMs: number;
+  setShowAirtableForm: (show: boolean) => void;
 }
 
 const platforms: PlatformConfig[] = [
@@ -177,6 +197,315 @@ function formatRelativeTime(date: Date | undefined, nowMs: number): string {
   return 'just now';
 }
 
+function getStatusColor(isConnected: boolean, details: PlatformConnectionDetails): 'red' | 'yellow' | 'green' | null {
+  if (!isConnected) return null;
+  if (details?.isExpired) return 'red';
+  if (details?.isExpiringSoon) return 'yellow';
+  return 'green';
+}
+
+function PlatformCard({
+  platform,
+  isConnected,
+  details,
+  statusColor,
+  isLoading,
+  globalIndex,
+  handleConnect,
+  handleDisconnect,
+  disconnectConfirm,
+  setDisconnectConfirm,
+  handleSetPrimary,
+  handleDisconnectMeetConnection,
+  meetDisconnectConfirm,
+  setMeetDisconnectConfirm,
+  nowMs,
+  setShowAirtableForm,
+}: PlatformCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: globalIndex * 0.05 }}
+    >
+      <div
+        className={`border border-l-4 rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
+          isConnected
+            ? statusColor === 'red'
+              ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
+              : statusColor === 'yellow'
+              ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
+              : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
+            : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
+        }`}
+        style={{ borderLeftColor: platform.color }}
+      >
+        <div className="flex items-center gap-4">
+          {/* Platform Icon */}
+          <div className={`w-14 h-14 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
+            {platform.icon}
+          </div>
+
+          {/* Platform Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
+              {isConnected && (
+                <span className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${
+                  statusColor === 'red'
+                    ? 'bg-red-500/20 text-red-400'
+                    : statusColor === 'yellow'
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : 'bg-emerald-500/20 text-emerald-400'
+                }`}>
+                  {statusColor === 'red' ? (
+                    <>
+                      <AlertTriangle className="w-3 h-3" />
+                      Expired
+                    </>
+                  ) : statusColor === 'yellow' ? (
+                    <>
+                      <Clock className="w-3 h-3" />
+                      Expiring Soon
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-3 h-3" />
+                      Connected
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                    </>
+                  )}
+                </span>
+              )}
+            </div>
+            {isConnected && details?.email ? (
+              <div className="mt-1">
+                <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
+                {details.connectedAt && (
+                  <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
+                    Connected {formatRelativeTime(details.connectedAt, nowMs)}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
+            )}
+            {/* Warning message for expiring/expired tokens */}
+            {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
+              <p className={`text-xs mt-1 ${
+                details.isExpired ? 'text-red-400' : 'text-yellow-400'
+              }`}>
+                {details.isExpired
+                  ? 'Token expired. Reconnect to continue receiving data.'
+                  : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
+              </p>
+            )}
+            {/* CRM-specific: needsReconnect message */}
+            {isConnected && details?.needsReconnect && platform.category === 'crm' && (
+              <p className="text-xs mt-1 text-yellow-400">
+                Your {platform.name} connection needs to be updated. Please disconnect and reconnect.
+              </p>
+            )}
+            {/* CRM-specific: last synced */}
+            {isConnected && !details?.needsReconnect && !details?.isExpired && details?.lastSyncAt && platform.category === 'crm' && (
+              <p className="text-xs mt-1 text-gray-500">
+                Last synced {formatRelativeTime(details.lastSyncAt, nowMs)}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-3 flex justify-end">
+          {isConnected ? (
+            <div className="flex items-center gap-2">
+              {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
+                <button
+                  onClick={() => handleConnect(platform)}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: platform.color }}
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <ExternalLink className="w-4 h-4" />
+                  )}
+                  Reconnect
+                </button>
+              )}
+              {/* Meet: show Add Account + Disconnect All */}
+              {platform.id === 'meet' ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleConnect(platform)}
+                    disabled={isLoading}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Account
+                  </button>
+                  {disconnectConfirm === platform.id ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">Disconnect all?</span>
+                      <button
+                        onClick={() => handleDisconnect(platform)}
+                        disabled={isLoading}
+                        className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes'}
+                      </button>
+                      <button
+                        onClick={() => setDisconnectConfirm(null)}
+                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleDisconnect(platform)}
+                      disabled={isLoading}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      <Unplug className="w-4 h-4" />
+                      Disconnect
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {disconnectConfirm === platform.id ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">Are you sure?</span>
+                      <button
+                        onClick={() => handleDisconnect(platform)}
+                        disabled={isLoading}
+                        className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
+                      </button>
+                      <button
+                        onClick={() => setDisconnectConfirm(null)}
+                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleDisconnect(platform)}
+                      disabled={isLoading}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Unplug className="w-4 h-4" />
+                      )}
+                      Disconnect
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          ) : (
+            platform.id === 'airtable' ? (
+              <button
+                onClick={() => setShowAirtableForm(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors"
+                style={{ backgroundColor: platform.color }}
+              >
+                <Settings2 className="w-4 h-4" />
+                Configure
+              </button>
+            ) : (
+              <button
+                onClick={() => handleConnect(platform)}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
+                style={{ backgroundColor: platform.color }}
+              >
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <ExternalLink className="w-4 h-4" />
+                )}
+                Connect
+              </button>
+            )
+          )}
+        </div>
+
+        {/* Meet Multi-Connection List */}
+        {platform.id === 'meet' && isConnected && details?.connections && details.connections.length > 1 && (
+          <div className="mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200">
+            <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-3">Connected Google Accounts</p>
+            <div className="space-y-2">
+              {details.connections.map((conn: MeetConnectionInfo) => (
+                <div
+                  key={conn.id}
+                  className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-800/50 light:bg-gray-50"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    {conn.isPrimary && (
+                      <Star className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" />
+                    )}
+                    <span className="text-sm text-gray-200 light:text-gray-700 truncate">{conn.email}</span>
+                    {conn.isPrimary && (
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 flex-shrink-0">
+                        Primary
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                    {!conn.isPrimary && (
+                      <button
+                        onClick={() => handleSetPrimary(conn.id)}
+                        className="px-2 py-1 text-[11px] text-gray-400 hover:text-yellow-400 transition-colors rounded"
+                        title="Set as primary"
+                      >
+                        Set Primary
+                      </button>
+                    )}
+                    {meetDisconnectConfirm === conn.id ? (
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleDisconnectMeetConnection(conn.id)}
+                          className="px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/15 rounded transition-colors"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => setMeetDisconnectConfirm(null)}
+                          className="px-2 py-1 text-[11px] text-gray-500 hover:text-gray-300 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleDisconnectMeetConnection(conn.id)}
+                        className="px-2 py-1 text-[11px] text-gray-500 hover:text-red-400 transition-colors rounded"
+                        title="Disconnect this account"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 export function IntegrationSettings() {
   const searchParams = useSearchParams();
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
@@ -262,7 +591,6 @@ export function IntegrationSettings() {
   const [disconnectConfirm, setDisconnectConfirm] = useState<string | null>(null);
   const [meetDisconnectConfirm, setMeetDisconnectConfirm] = useState<string | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['meeting']));
 
   // Meet multi-connection handlers
   const handleSetPrimary = async (connectionId: string) => {
@@ -349,18 +677,6 @@ export function IntegrationSettings() {
     }
   };
 
-  const toggleSection = (sectionKey: string) => {
-    setExpandedSections(prev => {
-      const next = new Set(prev);
-      if (next.has(sectionKey)) {
-        next.delete(sectionKey);
-      } else {
-        next.add(sectionKey);
-      }
-      return next;
-    });
-  };
-
   const getSectionCounts = (category: PlatformConfig['category']) => {
     const sectionPlatforms = platforms.filter(p => p.category === category);
     const connected = sectionPlatforms.filter(p => connectionStatus[p.id]).length;
@@ -400,6 +716,25 @@ export function IntegrationSettings() {
   const connectedCount = Object.values(connectionStatus).filter(Boolean).length;
   const hasNoConnections = connectedCount === 0;
 
+  // Build all platform cards with global index for staggered animation
+  const allPlatformCards = (() => {
+    let globalIndex = 0;
+    const categories: { key: string; label: string; description?: string; category: PlatformConfig['category'] }[] = [
+      { key: 'meeting', label: 'Meeting Platforms', category: 'meeting' },
+      { key: 'calendar', label: 'Calendar Integrations', category: 'calendar', description: 'Sync upcoming meetings for proactive follow-up preparation.' },
+      { key: 'email', label: 'Email Accounts', category: 'email', description: 'Send follow-ups from your real address instead of noreply.' },
+      { key: 'crm', label: 'CRM Integrations', category: 'crm', description: 'Auto-sync sent emails and meeting summaries.' },
+    ];
+    return categories.map(cat => ({
+      ...cat,
+      platforms: platforms.filter(p => p.category === cat.category).map(p => ({
+        platform: p,
+        index: globalIndex++,
+      })),
+      counts: getSectionCounts(cat.category),
+    }));
+  })();
+
   return (
     <div className="max-w-4xl mx-auto">
       {loading ? (
@@ -408,1086 +743,264 @@ export function IntegrationSettings() {
         </div>
       ) : (
         <div className="animate-card-fade-in">
-      {/* Error Banner */}
-      {errorBanner && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm text-red-300 light:text-red-600">{errorBanner}</p>
-          </div>
-          <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Success Banner */}
-      {successBanner && (
-        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
-          <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-          <p className="text-sm text-emerald-300 light:text-emerald-600 flex-1">{successBanner}</p>
-          <button onClick={() => setSuccessBanner(null)} className="text-emerald-400 hover:text-emerald-300">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Getting Started Banner - only show when no platforms connected */}
-      {hasNoConnections && (
-        <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl" />
-          <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
-
-          <div className="relative flex flex-col md:flex-row md:items-center gap-4">
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
-                </span>
-                Get Started in 2 Minutes
-              </h3>
-              <p className="text-gray-300 light:text-gray-600 text-sm">
-                Connect your first meeting platform below. Once connected, ReplySequence will automatically
-                capture transcripts and generate follow-up emails after each meeting.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <a
-                href="/how-it-works"
-                className="text-sm text-blue-400 hover:text-blue-300 whitespace-nowrap"
-              >
-                See how it works
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Meeting Platforms */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection('meeting')}
-          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold text-white light:text-gray-900">Meeting Platforms</h3>
-            {(() => {
-              const { connected, total } = getSectionCounts('meeting');
-              return (
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  connected > 0
-                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
-                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
-                }`}>
-                  {connected}/{total} connected
-                </span>
-              );
-            })()}
-          </div>
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-            expandedSections.has('meeting') ? 'rotate-180' : ''
-          }`} />
-        </button>
-        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-          expandedSections.has('meeting') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-        }`}>
-          <div className="overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
-        {platforms.filter(p => p.category === 'meeting').map((platform, index) => {
-          const isConnected = connectionStatus[platform.id];
-          const details = connectionDetails[platform.id];
-          const isLoading = actionLoading === platform.id;
-
-          // Determine status color: green (healthy), yellow (expiring soon), red (expired)
-          const getStatusColor = () => {
-            if (!isConnected) return null;
-            if (details?.isExpired) return 'red';
-            if (details?.isExpiringSoon) return 'yellow';
-            return 'green';
-          };
-          const statusColor = getStatusColor();
-
-          return (
-            <div
-              key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
-                isConnected
-                  ? statusColor === 'red'
-                    ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
-                    : statusColor === 'yellow'
-                    ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
-                    : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
-                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
-              }`}
-              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
-            >
-              <div className="flex items-center gap-4">
-                {/* Platform Icon */}
-                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
-                  {platform.icon}
-                </div>
-
-                {/* Platform Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
-                    {isConnected && (
-                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusColor === 'red'
-                          ? 'bg-red-500/20 text-red-400'
-                          : statusColor === 'yellow'
-                          ? 'bg-yellow-500/20 text-yellow-400'
-                          : 'bg-emerald-500/20 text-emerald-400'
-                      }`}>
-                        {statusColor === 'red' ? (
-                          <>
-                            <AlertTriangle className="w-3 h-3" />
-                            Expired
-                          </>
-                        ) : statusColor === 'yellow' ? (
-                          <>
-                            <Clock className="w-3 h-3" />
-                            Expiring Soon
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3 h-3" />
-                            Connected
-                          </>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                  {isConnected && details?.email ? (
-                    <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
-                      {details.connectedAt && (
-                        <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
-                  )}
-                  {/* Warning message for expiring/expired tokens */}
-                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
-                    <p className={`text-xs mt-1 ${
-                      details.isExpired ? 'text-red-400' : 'text-yellow-400'
-                    }`}>
-                      {details.isExpired
-                        ? 'Token expired. Reconnect to continue receiving meeting transcripts.'
-                        : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
-                    </p>
-                  )}
-                </div>
+          {/* Error Banner */}
+          {errorBanner && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm text-red-300 light:text-red-600">{errorBanner}</p>
               </div>
-
-              {/* Action Buttons - separate row on mobile */}
-              <div className="mt-3 flex justify-end">
-                {isConnected ? (
-                  <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
-                      <button
-                        onClick={() => handleConnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                        style={{ backgroundColor: platform.color }}
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <ExternalLink className="w-4 h-4" />
-                        )}
-                        Reconnect
-                      </button>
-                    )}
-                    {/* Meet: show Add Account + Disconnect All */}
-                    {platform.id === 'meet' ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleConnect(platform)}
-                          disabled={isLoading}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Add Account
-                        </button>
-                        {disconnectConfirm === platform.id ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400">Disconnect all?</span>
-                            <button
-                              onClick={() => handleDisconnect(platform)}
-                              disabled={isLoading}
-                              className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
-                            >
-                              {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes'}
-                            </button>
-                            <button
-                              onClick={() => setDisconnectConfirm(null)}
-                              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => handleDisconnect(platform)}
-                            disabled={isLoading}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                          >
-                            <Unplug className="w-4 h-4" />
-                            Disconnect
-                          </button>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        {disconnectConfirm === platform.id ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400">Are you sure?</span>
-                            <button
-                              onClick={() => handleDisconnect(platform)}
-                              disabled={isLoading}
-                              className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
-                            >
-                              {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
-                            </button>
-                            <button
-                              onClick={() => setDisconnectConfirm(null)}
-                              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => handleDisconnect(platform)}
-                            disabled={isLoading}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                          >
-                            {isLoading ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Unplug className="w-4 h-4" />
-                            )}
-                            Disconnect
-                          </button>
-                        )}
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleConnect(platform)}
-                    disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                    style={{ backgroundColor: platform.color }}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ExternalLink className="w-4 h-4" />
-                    )}
-                    Connect
-                  </button>
-                )}
-              </div>
-
-              {/* Meet Multi-Connection List */}
-              {platform.id === 'meet' && isConnected && details?.connections && details.connections.length > 1 && (
-                <div className="mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200">
-                  <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-3">Connected Google Accounts</p>
-                  <div className="space-y-2">
-                    {details.connections.map((conn: MeetConnectionInfo) => (
-                      <div
-                        key={conn.id}
-                        className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-800/50 light:bg-gray-50"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          {conn.isPrimary && (
-                            <Star className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" />
-                          )}
-                          <span className="text-sm text-gray-200 light:text-gray-700 truncate">{conn.email}</span>
-                          {conn.isPrimary && (
-                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 flex-shrink-0">
-                              Primary
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1 flex-shrink-0 ml-2">
-                          {!conn.isPrimary && (
-                            <button
-                              onClick={() => handleSetPrimary(conn.id)}
-                              className="px-2 py-1 text-[11px] text-gray-400 hover:text-yellow-400 transition-colors rounded"
-                              title="Set as primary"
-                            >
-                              Set Primary
-                            </button>
-                          )}
-                          {meetDisconnectConfirm === conn.id ? (
-                            <div className="flex items-center gap-1">
-                              <button
-                                onClick={() => handleDisconnectMeetConnection(conn.id)}
-                                className="px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/15 rounded transition-colors"
-                              >
-                                Confirm
-                              </button>
-                              <button
-                                onClick={() => setMeetDisconnectConfirm(null)}
-                                className="px-2 py-1 text-[11px] text-gray-500 hover:text-gray-300 transition-colors"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => handleDisconnectMeetConnection(conn.id)}
-                              className="px-2 py-1 text-[11px] text-gray-500 hover:text-red-400 transition-colors rounded"
-                              title="Disconnect this account"
-                            >
-                              Remove
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Calendar Integrations */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection('calendar')}
-          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold text-white light:text-gray-900">Calendar Integrations</h3>
-            {(() => {
-              const { connected, total } = getSectionCounts('calendar');
-              return (
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  connected > 0
-                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
-                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
-                }`}>
-                  {connected}/{total} connected
-                </span>
-              );
-            })()}
-          </div>
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-            expandedSections.has('calendar') ? 'rotate-180' : ''
-          }`} />
-        </button>
-        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-          expandedSections.has('calendar') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-        }`}>
-          <div className="overflow-hidden">
-      <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
-        Connect your calendar to sync upcoming meetings and enable proactive follow-up preparation.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
-        {platforms.filter(p => p.category === 'calendar').map((platform, index) => {
-          const isConnected = connectionStatus[platform.id];
-          const details = connectionDetails[platform.id];
-          const isLoading = actionLoading === platform.id;
-
-          const getStatusColor = () => {
-            if (!isConnected) return null;
-            if (details?.isExpired) return 'red';
-            if (details?.isExpiringSoon) return 'yellow';
-            return 'green';
-          };
-          const statusColor = getStatusColor();
-
-          return (
-            <div
-              key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
-                isConnected
-                  ? statusColor === 'red'
-                    ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
-                    : statusColor === 'yellow'
-                    ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
-                    : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
-                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
-              }`}
-              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
-                  {platform.icon}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
-                    {isConnected && (
-                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusColor === 'red'
-                          ? 'bg-red-500/20 text-red-400'
-                          : statusColor === 'yellow'
-                          ? 'bg-yellow-500/20 text-yellow-400'
-                          : 'bg-emerald-500/20 text-emerald-400'
-                      }`}>
-                        {statusColor === 'red' ? (
-                          <>
-                            <AlertTriangle className="w-3 h-3" />
-                            Expired
-                          </>
-                        ) : statusColor === 'yellow' ? (
-                          <>
-                            <Clock className="w-3 h-3" />
-                            Expiring Soon
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3 h-3" />
-                            Connected
-                          </>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                  {isConnected && details?.email ? (
-                    <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
-                      {details.connectedAt && (
-                        <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
-                  )}
-                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
-                    <p className={`text-xs mt-1 ${
-                      details.isExpired ? 'text-red-400' : 'text-yellow-400'
-                    }`}>
-                      {details.isExpired
-                        ? 'Token expired. Reconnect to continue syncing your calendar.'
-                        : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons - separate row on mobile */}
-              <div className="mt-3 flex justify-end">
-                {isConnected ? (
-                  <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
-                      <button
-                        onClick={() => handleConnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                        style={{ backgroundColor: platform.color }}
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <ExternalLink className="w-4 h-4" />
-                        )}
-                        Reconnect
-                      </button>
-                    )}
-                    {disconnectConfirm === platform.id ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400">Are you sure?</span>
-                        <button
-                          onClick={() => handleDisconnect(platform)}
-                          disabled={isLoading}
-                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
-                        </button>
-                        <button
-                          onClick={() => setDisconnectConfirm(null)}
-                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleDisconnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Unplug className="w-4 h-4" />
-                        )}
-                        Disconnect
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleConnect(platform)}
-                    disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                    style={{ backgroundColor: platform.color }}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ExternalLink className="w-4 h-4" />
-                    )}
-                    Connect
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Email Accounts */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection('email')}
-          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Accounts</h3>
-            {(() => {
-              const { connected, total } = getSectionCounts('email');
-              return (
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  connected > 0
-                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
-                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
-                }`}>
-                  {connected}/{total} connected
-                </span>
-              );
-            })()}
-          </div>
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-            expandedSections.has('email') ? 'rotate-180' : ''
-          }`} />
-        </button>
-        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-          expandedSections.has('email') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-        }`}>
-          <div className="overflow-hidden">
-      <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
-        Connect your email to send follow-ups from your real address instead of noreply@resend.dev.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
-        {platforms.filter(p => p.category === 'email').map((platform, index) => {
-          const isConnected = connectionStatus[platform.id];
-          const details = connectionDetails[platform.id];
-          const isLoading = actionLoading === platform.id;
-
-          const getStatusColor = () => {
-            if (!isConnected) return null;
-            if (details?.isExpired) return 'red';
-            if (details?.isExpiringSoon) return 'yellow';
-            return 'green';
-          };
-          const statusColor = getStatusColor();
-
-          return (
-            <div
-              key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
-                isConnected
-                  ? statusColor === 'red'
-                    ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
-                    : statusColor === 'yellow'
-                    ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
-                    : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
-                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
-              }`}
-              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
-                  {platform.icon}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
-                    {isConnected && (
-                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusColor === 'red'
-                          ? 'bg-red-500/20 text-red-400'
-                          : statusColor === 'yellow'
-                          ? 'bg-yellow-500/20 text-yellow-400'
-                          : 'bg-emerald-500/20 text-emerald-400'
-                      }`}>
-                        {statusColor === 'red' ? (
-                          <>
-                            <AlertTriangle className="w-3 h-3" />
-                            Expired
-                          </>
-                        ) : statusColor === 'yellow' ? (
-                          <>
-                            <Clock className="w-3 h-3" />
-                            Expiring Soon
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3 h-3" />
-                            Connected
-                          </>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                  {isConnected && details?.email ? (
-                    <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
-                      {details.connectedAt && (
-                        <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
-                  )}
-                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && (
-                    <p className={`text-xs mt-1 ${
-                      details.isExpired ? 'text-red-400' : 'text-yellow-400'
-                    }`}>
-                      {details.isExpired
-                        ? 'Token expired. Reconnect to continue sending from your email.'
-                        : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons - separate row on mobile */}
-              <div className="mt-3 flex justify-end">
-                {isConnected ? (
-                  <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
-                      <button
-                        onClick={() => handleConnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                        style={{ backgroundColor: platform.color }}
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <ExternalLink className="w-4 h-4" />
-                        )}
-                        Reconnect
-                      </button>
-                    )}
-                    {disconnectConfirm === platform.id ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400">Are you sure?</span>
-                        <button
-                          onClick={() => handleDisconnect(platform)}
-                          disabled={isLoading}
-                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
-                        </button>
-                        <button
-                          onClick={() => setDisconnectConfirm(null)}
-                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleDisconnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Unplug className="w-4 h-4" />
-                        )}
-                        Disconnect
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleConnect(platform)}
-                    disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                    style={{ backgroundColor: platform.color }}
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <ExternalLink className="w-4 h-4" />
-                    )}
-                    Connect
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-          </div>
-        </div>
-      </div>
-
-      {/* CRM Integrations */}
-      <div className="mb-4">
-        <button
-          onClick={() => toggleSection('crm')}
-          className="w-full flex items-center justify-between py-3 px-1 group cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold text-white light:text-gray-900">CRM Integrations</h3>
-            {(() => {
-              const { connected, total } = getSectionCounts('crm');
-              return (
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  connected > 0
-                    ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
-                    : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
-                }`}>
-                  {connected}/{total} connected
-                </span>
-              );
-            })()}
-          </div>
-          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-            expandedSections.has('crm') ? 'rotate-180' : ''
-          }`} />
-        </button>
-        <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
-          expandedSections.has('crm') ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-        }`}>
-          <div className="overflow-hidden">
-      <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
-        Connect your CRM to automatically sync sent emails and meeting summaries.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
-        {platforms.filter(p => p.category === 'crm').map((platform, index) => {
-          const isConnected = connectionStatus[platform.id];
-          const details = connectionDetails[platform.id];
-          const isLoading = actionLoading === platform.id;
-
-          const getStatusColor = () => {
-            if (!isConnected) return null;
-            if (details?.isExpired) return 'red';
-            if (details?.isExpiringSoon) return 'yellow';
-            return 'green';
-          };
-          const statusColor = getStatusColor();
-
-          return (
-            <div
-              key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
-                isConnected
-                  ? statusColor === 'red'
-                    ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
-                    : statusColor === 'yellow'
-                    ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
-                    : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
-                  : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
-              }`}
-              style={{ animationDelay: `${index * 75}ms`, animationFillMode: 'both' }}
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl ${platform.bgColor} flex items-center justify-center shrink-0`}>
-                  {platform.icon}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-base font-semibold text-white light:text-gray-900">{platform.name}</h3>
-                    {isConnected && (
-                      <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusColor === 'red'
-                          ? 'bg-red-500/20 text-red-400'
-                          : statusColor === 'yellow'
-                          ? 'bg-yellow-500/20 text-yellow-400'
-                          : 'bg-emerald-500/20 text-emerald-400'
-                      }`}>
-                        {statusColor === 'red' ? (
-                          <>
-                            <AlertTriangle className="w-3 h-3" />
-                            Expired
-                          </>
-                        ) : statusColor === 'yellow' ? (
-                          <>
-                            <Clock className="w-3 h-3" />
-                            Expiring Soon
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3 h-3" />
-                            Connected
-                          </>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                  {isConnected && details?.email ? (
-                    <div className="mt-1">
-                      <p className="text-sm text-gray-300 light:text-gray-700 truncate">{details.email}</p>
-                      {details.connectedAt && (
-                        <p className="text-xs text-gray-500 light:text-gray-400 mt-0.5">
-                          Connected {formatRelativeTime(details.connectedAt, nowMs)}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">{platform.description}</p>
-                  )}
-                  {isConnected && details?.needsReconnect && (
-                    <p className="text-xs mt-1 text-yellow-400">
-                      Your HubSpot connection needs to be updated to sync meeting data. Please disconnect and reconnect.
-                    </p>
-                  )}
-                  {isConnected && !details?.needsReconnect && !details?.isExpired && details?.lastSyncAt && (
-                    <p className="text-xs mt-1 text-gray-500">
-                      Last synced {formatRelativeTime(details.lastSyncAt, nowMs)}
-                    </p>
-                  )}
-                  {isConnected && (details?.isExpired || details?.isExpiringSoon) && !details?.needsReconnect && (
-                    <p className={`text-xs mt-1 ${
-                      details.isExpired ? 'text-red-400' : 'text-yellow-400'
-                    }`}>
-                      {details.isExpired
-                        ? 'Token expired. Reconnect to continue syncing to your CRM.'
-                        : 'Token expiring soon. Consider reconnecting to avoid interruptions.'}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons - separate row on mobile */}
-              <div className="mt-3 flex justify-end">
-                {isConnected ? (
-                  <div className="flex items-center gap-2">
-                    {(details?.isExpired || details?.isExpiringSoon || details?.needsReconnect) && (
-                      <button
-                        onClick={() => handleConnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                        style={{ backgroundColor: platform.color }}
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <ExternalLink className="w-4 h-4" />
-                        )}
-                        Reconnect
-                      </button>
-                    )}
-                    {disconnectConfirm === platform.id ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400">Are you sure?</span>
-                        <button
-                          onClick={() => handleDisconnect(platform)}
-                          disabled={isLoading}
-                          className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
-                        </button>
-                        <button
-                          onClick={() => setDisconnectConfirm(null)}
-                          className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleDisconnect(platform)}
-                        disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {isLoading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Unplug className="w-4 h-4" />
-                        )}
-                        Disconnect
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  platform.id === 'airtable' ? (
-                    <button
-                      onClick={() => setShowAirtableForm(true)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors"
-                      style={{ backgroundColor: platform.color }}
-                    >
-                      <Settings2 className="w-4 h-4" />
-                      Configure
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleConnect(platform)}
-                      disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
-                      style={{ backgroundColor: platform.color }}
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <ExternalLink className="w-4 h-4" />
-                      )}
-                      Connect
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Airtable Configuration Form Modal */}
-      {showAirtableForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-md w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white light:text-gray-900">Connect Airtable</h3>
-              <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white">
-                <X className="w-5 h-5" />
+              <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300">
+                <X className="w-4 h-4" />
               </button>
             </div>
+          )}
 
-            <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
-              Enter your Airtable Personal Access Token and Base ID. You can find these in your{' '}
-              <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
-                Airtable account settings
-              </a>.
-            </p>
+          {/* Success Banner */}
+          {successBanner && (
+            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
+              <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+              <p className="text-sm text-emerald-300 light:text-emerald-600 flex-1">{successBanner}</p>
+              <button onClick={() => setSuccessBanner(null)} className="text-emerald-400 hover:text-emerald-300">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                  Personal Access Token
-                </label>
-                <input
-                  type="password"
-                  value={airtableApiKey}
-                  onChange={(e) => setAirtableApiKey(e.target.value)}
-                  placeholder="pat..."
-                  className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+          {/* Getting Started Banner - only show when no platforms connected */}
+          {hasNoConnections && (
+            <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden">
+              {/* Background decoration */}
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl" />
+              <div className="absolute -left-10 -bottom-10 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                  Base ID
-                </label>
-                <input
-                  type="text"
-                  value={airtableBaseId}
-                  onChange={(e) => setAirtableBaseId(e.target.value)}
-                  placeholder="appXXXXXXXXXXXXXX"
-                  className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Find this in your base URL: airtable.com/<strong>appXXX</strong>/...
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                    Contacts Table
-                  </label>
-                  <input
-                    type="text"
-                    value={airtableContactsTable}
-                    onChange={(e) => setAirtableContactsTable(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+              <div className="relative flex flex-col md:flex-row md:items-center gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                    </span>
+                    Get Started in 2 Minutes
+                  </h3>
+                  <p className="text-gray-300 light:text-gray-600 text-sm">
+                    Connect your first meeting platform below. Once connected, ReplySequence will automatically
+                    capture transcripts and generate follow-up emails after each meeting.
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                    Meetings Table
-                  </label>
-                  <input
-                    type="text"
-                    value={airtableMeetingsTable}
-                    onChange={(e) => setAirtableMeetingsTable(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                <div className="flex gap-2">
+                  <a
+                    href="/how-it-works"
+                    className="text-sm text-blue-400 hover:text-blue-300 whitespace-nowrap"
+                  >
+                    See how it works
+                  </a>
                 </div>
-              </div>
-
-              {airtableError && (
-                <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
-                  {airtableError}
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => { setShowAirtableForm(false); setAirtableError(null); }}
-                  className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAirtableConnect}
-                  disabled={airtableConnecting || !airtableApiKey || !airtableBaseId}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#18BFFF] hover:bg-[#14a8e6] rounded-lg transition-colors disabled:opacity-50"
-                >
-                  {airtableConnecting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Check className="w-4 h-4" />
-                  )}
-                  {airtableConnecting ? 'Testing...' : 'Test & Connect'}
-                </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* Pro Tip - only show when no connections yet */}
-      {hasNoConnections && (
-      <div className="mt-8 p-5 bg-blue-500/10 light:bg-blue-50 border border-blue-500/20 light:border-blue-200 rounded-xl">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/20 light:bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <Lightbulb className="w-4 h-4 text-blue-400 light:text-blue-600" />
+          {/* Setup Progress */}
+          <div className="mb-6 bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-white light:text-gray-900">Setup Progress</h3>
+              <span className="text-sm font-medium text-gray-400 light:text-gray-500">
+                {connectedCount} of {platforms.length} connected
+              </span>
+            </div>
+            <div className="h-2.5 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${(connectedCount / platforms.length) * 100}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 rounded-full"
+              />
+            </div>
           </div>
-          <div>
-            <h4 className="text-white light:text-gray-900 font-semibold mb-1">Pro Tip</h4>
-            <p className="text-gray-300 light:text-gray-600 text-sm">
-              You can connect multiple platforms! ReplySequence will automatically capture meetings from all connected platforms and generate follow-up emails for each.
-            </p>
-          </div>
-        </div>
-      </div>
-      )}
+
+          {/* Platform Sections */}
+          {allPlatformCards.map((section, sectionIndex) => {
+            const { connected, total } = section.counts;
+            return (
+              <div key={section.key}>
+                {/* Category Divider */}
+                <div className={`flex items-center gap-4 mb-4 ${sectionIndex === 0 ? '' : 'mt-8'}`}>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-gray-200 to-transparent" />
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">{section.label}</h3>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                      connected > 0
+                        ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
+                        : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
+                    }`}>
+                      {connected}/{total}
+                    </span>
+                  </div>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-gray-200 to-transparent" />
+                </div>
+
+                {/* Category Description */}
+                {section.description && (
+                  <p className="text-sm text-gray-400 light:text-gray-500 mb-3">
+                    {section.description}
+                  </p>
+                )}
+
+                {/* Platform Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+                  {section.platforms.map(({ platform, index }) => {
+                    const isConnected = connectionStatus[platform.id];
+                    const details = connectionDetails[platform.id];
+                    const isLoading = actionLoading === platform.id;
+                    const statusColor = getStatusColor(isConnected, details);
+
+                    return (
+                      <PlatformCard
+                        key={platform.id}
+                        platform={platform}
+                        isConnected={isConnected}
+                        details={details}
+                        statusColor={statusColor}
+                        isLoading={isLoading}
+                        globalIndex={index}
+                        handleConnect={handleConnect}
+                        handleDisconnect={handleDisconnect}
+                        disconnectConfirm={disconnectConfirm}
+                        setDisconnectConfirm={setDisconnectConfirm}
+                        handleSetPrimary={handleSetPrimary}
+                        handleDisconnectMeetConnection={handleDisconnectMeetConnection}
+                        meetDisconnectConfirm={meetDisconnectConfirm}
+                        setMeetDisconnectConfirm={setMeetDisconnectConfirm}
+                        nowMs={nowMs}
+                        setShowAirtableForm={setShowAirtableForm}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Airtable Configuration Form Modal */}
+          {showAirtableForm && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-md w-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white light:text-gray-900">Connect Airtable</h3>
+                  <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
+                  Enter your Airtable Personal Access Token and Base ID. You can find these in your{' '}
+                  <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                    Airtable account settings
+                  </a>.
+                </p>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                      Personal Access Token
+                    </label>
+                    <input
+                      type="password"
+                      value={airtableApiKey}
+                      onChange={(e) => setAirtableApiKey(e.target.value)}
+                      placeholder="pat..."
+                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                      Base ID
+                    </label>
+                    <input
+                      type="text"
+                      value={airtableBaseId}
+                      onChange={(e) => setAirtableBaseId(e.target.value)}
+                      placeholder="appXXXXXXXXXXXXXX"
+                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Find this in your base URL: airtable.com/<strong>appXXX</strong>/...
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                        Contacts Table
+                      </label>
+                      <input
+                        type="text"
+                        value={airtableContactsTable}
+                        onChange={(e) => setAirtableContactsTable(e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                        Meetings Table
+                      </label>
+                      <input
+                        type="text"
+                        value={airtableMeetingsTable}
+                        onChange={(e) => setAirtableMeetingsTable(e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  {airtableError && (
+                    <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                      {airtableError}
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => { setShowAirtableForm(false); setAirtableError(null); }}
+                      className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAirtableConnect}
+                      disabled={airtableConnecting || !airtableApiKey || !airtableBaseId}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#18BFFF] hover:bg-[#14a8e6] rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {airtableConnecting ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Check className="w-4 h-4" />
+                      )}
+                      {airtableConnecting ? 'Testing...' : 'Test & Connect'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pro Tip - only show when no connections yet */}
+          {hasNoConnections && (
+            <div className="mt-8 p-5 bg-blue-500/10 light:bg-blue-50 border border-blue-500/20 light:border-blue-200 rounded-xl">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 light:bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <Lightbulb className="w-4 h-4 text-blue-400 light:text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-white light:text-gray-900 font-semibold mb-1">Pro Tip</h4>
+                  <p className="text-gray-300 light:text-gray-600 text-sm">
+                    You can connect multiple platforms! ReplySequence will automatically capture meetings from all connected platforms and generate follow-up emails for each.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

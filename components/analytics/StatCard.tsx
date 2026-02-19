@@ -22,6 +22,7 @@ interface StatCardProps {
   delay?: number;
   comparison?: PeriodComparison;
   sparklineData?: number[];
+  hero?: boolean;
 }
 
 function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: string }) {
@@ -83,21 +84,20 @@ export function StatCard({
   delay = 0,
   comparison,
   sparklineData,
+  hero = false,
 }: StatCardProps) {
-  return (
-    <div
-      className="relative group"
-    >
+  const card = (
+    <div className="relative group">
       {/* Glow effect on hover */}
       <div
         className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-100 rounded-2xl blur-xl transition-opacity duration-500`}
       />
 
       {/* Card */}
-      <div className="relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-colors duration-300 overflow-hidden light:shadow-sm">
+      <div className={`relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-colors duration-300 overflow-hidden light:shadow-sm ${hero ? 'h-full' : ''}`}>
         {/* Background decoration */}
         <div
-          className="absolute -right-8 -top-8 w-24 h-24 rounded-full opacity-10 blur-2xl"
+          className={`absolute -right-8 -top-8 rounded-full opacity-10 blur-2xl ${hero ? 'w-40 h-40' : 'w-24 h-24'}`}
           style={{ backgroundColor: accentColor }}
         />
 
@@ -107,7 +107,7 @@ export function StatCard({
           <div className="flex items-start justify-between mb-3">
             {/* Icon */}
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              className={`${hero ? 'w-12 h-12' : 'w-10 h-10'} rounded-xl flex items-center justify-center`}
               style={{ backgroundColor: `${accentColor}20` }}
             >
               <div style={{ color: accentColor }}>{icon}</div>
@@ -121,7 +121,7 @@ export function StatCard({
 
           {/* Value - BIGGER and with gradient */}
           <div
-            className="text-4xl md:text-5xl font-black mb-1 tabular-nums"
+            className={`${hero ? 'text-5xl md:text-6xl' : 'text-4xl md:text-5xl'} font-black mb-1 tabular-nums`}
             style={{
               background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
               WebkitBackgroundClip: 'text',
@@ -133,7 +133,7 @@ export function StatCard({
           </div>
 
           {/* Label */}
-          <div className="text-sm text-gray-400 light:text-gray-500 font-medium">{label}</div>
+          <div className={`${hero ? 'text-base' : 'text-sm'} text-gray-400 light:text-gray-500 font-medium`}>{label}</div>
 
           {/* Trend indicator */}
           {comparison && comparison.change > 0 && (
@@ -164,4 +164,14 @@ export function StatCard({
       </div>
     </div>
   );
+
+  if (hero) {
+    return (
+      <div className="bg-gradient-to-br from-blue-500/40 to-purple-500/40 p-[1px] rounded-2xl">
+        {card}
+      </div>
+    );
+  }
+
+  return card;
 }
