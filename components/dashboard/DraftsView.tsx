@@ -163,6 +163,23 @@ export function DraftsView({
         )}
       </AnimatePresence>
 
+      {/* Nudge banner when drafts await review */}
+      {stats.generated > 0 && (
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200">
+          <span className="text-sm text-amber-300 light:text-amber-700">
+            You have <strong>{stats.generated}</strong> draft{stats.generated !== 1 ? 's' : ''} awaiting your review
+          </span>
+          <button
+            onClick={() => {
+              document.getElementById('drafts-table')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 light:hover:text-amber-500 transition-colors whitespace-nowrap ml-4"
+          >
+            Review Now &rarr;
+          </button>
+        </div>
+      )}
+
       {/* Onboarding Checklist - shows until completed */}
       <OnboardingChecklist />
 

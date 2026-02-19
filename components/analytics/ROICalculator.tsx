@@ -57,12 +57,12 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
 
   return (
     <div
-      className="bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/20 rounded-2xl p-6 relative overflow-hidden"
+      className="bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 rounded-2xl p-6 relative overflow-hidden"
     >
       {/* Header */}
       <div className="relative flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-          <DollarSign className="w-6 h-6 text-emerald-400" />
+        <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+          <DollarSign className="w-6 h-6 text-amber-400" />
         </div>
         <div>
           <h3 className="text-lg font-bold text-white light:text-gray-900">ROI Calculator</h3>
@@ -74,17 +74,17 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
         <div className="relative space-y-6">
           {/* Main dollar value - BIG and prominent */}
           <div className="text-center py-4">
-            <div className="text-5xl md:text-6xl font-black text-emerald-400 mb-2">
+            <div className="text-5xl md:text-6xl font-black text-amber-400 mb-2">
               <AnimatedDollar value={roi.dollarValue} />
             </div>
             <p className="text-sm text-gray-400 light:text-gray-500">estimated time value saved</p>
           </div>
 
           {/* Breakdown */}
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-emerald-500/20">
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-amber-500/20">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <Clock className="w-4 h-4 text-emerald-400" />
+                <Clock className="w-4 h-4 text-amber-400" />
               </div>
               <div className="text-2xl font-bold text-white light:text-gray-900">
                 <AnimatedNumber value={roi.hoursSaved} decimals={1} />
@@ -93,7 +93,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
               <p className="text-xs text-gray-500">saved</p>
             </div>
 
-            <div className="text-center border-x border-emerald-500/20">
+            <div className="text-center border-x border-amber-500/20">
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Zap className="w-4 h-4 text-amber-400" />
               </div>
@@ -114,9 +114,11 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
             </div>
           </div>
 
-          {/* Calculation explanation */}
-          <div className="text-xs text-gray-500 text-center pt-2">
-            Based on {Math.round(15)} min saved per AI-generated email @ ${roi.hourlyRate}/hr
+          {/* ROI narrative */}
+          <div className="text-xs text-gray-400 light:text-gray-500 text-center pt-2 leading-relaxed">
+            Based on your <strong className="text-white light:text-gray-900">${roi.hourlyRate}/hr</strong> rate,
+            ReplySequence has saved you <strong className="text-amber-400">${roi.dollarValue.toLocaleString()}</strong> this
+            period ({roi.hoursSaved}h). <a href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">Update rate</a>
           </div>
         </div>
       ) : (
@@ -144,9 +146,9 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
           </p>
 
           {/* Preview of what they'll see */}
-          <div className="flex justify-center gap-6 pt-4 border-t border-emerald-500/10">
+          <div className="flex justify-center gap-6 pt-4 border-t border-amber-500/10">
             <div className="text-center opacity-50">
-              <Clock className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
+              <Clock className="w-4 h-4 text-amber-400 mx-auto mb-1" />
               <p className="text-xs text-gray-500">Hours saved</p>
             </div>
             <div className="text-center opacity-50">

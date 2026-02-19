@@ -81,9 +81,9 @@ export default function ContactPage() {
 
           {/* Response Time */}
           <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-sm text-emerald-400 font-medium">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+              <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+              <span className="text-sm text-indigo-400 font-medium">
                 We respond to every message within 24 hours
               </span>
             </div>

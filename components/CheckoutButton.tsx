@@ -72,7 +72,7 @@ export function CheckoutButton({
     return (
       <button
         disabled
-        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed ${className}`}
+        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 cursor-not-allowed ${className}`}
       >
         {children || 'Current Plan'}
       </button>

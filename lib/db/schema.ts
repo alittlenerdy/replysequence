@@ -338,6 +338,8 @@ export const users = pgTable(
     aiTone: text('ai_tone').$type<'professional' | 'casual' | 'friendly' | 'concise'>().default('professional'),
     aiCustomInstructions: text('ai_custom_instructions'), // User's custom prompt additions
     aiSignature: text('ai_signature'), // Email signature to append
+    // ROI calculation preferences
+    hourlyRate: integer('hourly_rate').default(100), // User's hourly rate for ROI calcs (default $100/hr)
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

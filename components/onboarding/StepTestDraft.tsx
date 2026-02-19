@@ -173,19 +173,19 @@ export function StepTestDraft({
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
             className={`bg-gray-900/50 border rounded-2xl overflow-hidden transition-all duration-300 ${
-              showDraft ? 'border-emerald-500/50' : 'border-gray-700'
+              showDraft ? 'border-indigo-500/50' : 'border-gray-700'
             }`}
           >
             <div className="p-4 border-b border-gray-700 bg-gray-800/50">
               <h3 className="font-semibold text-white flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  showDraft ? 'bg-emerald-500/20' : 'bg-indigo-500/20'
+                  showDraft ? 'bg-indigo-500/20' : 'bg-indigo-500/20'
                 }`}>
-                  <Mail className={`w-4 h-4 ${showDraft ? 'text-emerald-400' : 'text-indigo-400'}`} />
+                  <Mail className={`w-4 h-4 ${showDraft ? 'text-indigo-400' : 'text-indigo-400'}`} />
                 </div>
                 Generated Draft
                 {showDraft && generationTime && (
-                  <span className="ml-auto text-xs text-emerald-400 flex items-center gap-1">
+                  <span className="ml-auto text-xs text-indigo-400 flex items-center gap-1">
                     <Check className="w-3 h-3" />
                     Generated in {generationTime.toFixed(1)}s
                   </span>
@@ -251,8 +251,8 @@ export function StepTestDraft({
                     </div>
                     <div className="flex items-center justify-between pt-4">
                       <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-emerald-400" />
-                        <span className="text-sm text-emerald-400">Ready to send!</span>
+                        <Check className="w-4 h-4 text-indigo-400" />
+                        <span className="text-sm text-indigo-400">Ready to send!</span>
                       </div>
 
                       {/* Countdown and Continue button */}
@@ -278,7 +278,7 @@ export function StepTestDraft({
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             onClick={handleContinue}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg shadow-emerald-500/25"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25"
                           >
                             Continue
                             <ArrowRight className="w-4 h-4" />

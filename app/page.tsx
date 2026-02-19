@@ -36,7 +36,7 @@ function CountdownAnimation() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="text-emerald-500 light:text-emerald-600 font-bold text-base"
+            className="text-indigo-500 light:text-indigo-600 font-bold text-base"
           >
             ✓ Your email is ready
           </motion.span>

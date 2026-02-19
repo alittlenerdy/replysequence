@@ -716,7 +716,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       const iconColors: Record<string, string> = {
                         sales: 'text-amber-400',
                         team: 'text-indigo-400',
-                        client: 'text-emerald-400',
+                        client: 'text-indigo-400',
                         technical: 'text-indigo-400',
                         general: 'text-gray-400',
                         onboarding: 'text-cyan-400',
@@ -855,7 +855,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             </div>
                             {/* Reply Status */}
                             <div className="text-center">
-                              <div className={`text-2xl font-bold ${draft.repliedAt ? 'text-emerald-400' : 'text-gray-500'}`}>
+                              <div className={`text-2xl font-bold ${draft.repliedAt ? 'text-indigo-400' : 'text-gray-500'}`}>
                                 {draft.repliedAt ? (
                                   <svg className="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

@@ -219,7 +219,7 @@ function StepCard({
   title: string;
   description: string;
   children?: React.ReactNode;
-  color: 'indigo' | 'amber' | 'emerald';
+  color: 'indigo' | 'amber' | 'cyan';
 }) {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -259,13 +259,13 @@ function StepCard({
       glow: 'shadow-amber-500/30',
       hoverGlow: 'hover:shadow-amber-500/40',
     },
-    emerald: {
-      border: 'border-emerald-500/50',
-      bg: 'bg-emerald-500/10',
-      text: 'text-emerald-400',
-      badge: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
-      glow: 'shadow-emerald-500/30',
-      hoverGlow: 'hover:shadow-emerald-500/40',
+    cyan: {
+      border: 'border-indigo-500/50',
+      bg: 'bg-indigo-500/10',
+      text: 'text-indigo-400',
+      badge: 'bg-gradient-to-r from-indigo-500 to-indigo-600',
+      glow: 'shadow-indigo-500/30',
+      hoverGlow: 'hover:shadow-indigo-500/40',
     },
   };
 
@@ -431,10 +431,10 @@ export default function HowItWorksPage() {
               <span className="text-sm text-gray-400 light:text-gray-600">to draft</span>
             </motion.div>
             <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(16, 185, 129, 0.5)' }}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(245, 158, 11, 0.5)' }}
             >
-              <Clock className="w-5 h-5 text-emerald-400" />
+              <Clock className="w-5 h-5 text-amber-400" />
               <span className="text-lg font-bold text-white light:text-gray-900">
                 <AnimatedCounter value={10} />+ hours
               </span>
@@ -517,7 +517,7 @@ export default function HowItWorksPage() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + i * 0.1, type: 'spring' }}
                   >
-                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-indigo-400 flex-shrink-0" />
                   </motion.div>
                   <span>{text}</span>
                 </motion.div>
@@ -580,15 +580,15 @@ export default function HowItWorksPage() {
               >
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
-                    <span className="text-teal-400 mt-0.5">1.</span>
+                    <span className="text-indigo-400 mt-0.5">1.</span>
                     Click &ldquo;Activities&rdquo; then &ldquo;Transcripts&rdquo; to enable
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-teal-400 mt-0.5">2.</span>
+                    <span className="text-indigo-400 mt-0.5">2.</span>
                     Requires Google Workspace Business Standard+
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-teal-400 mt-0.5">3.</span>
+                    <span className="text-indigo-400 mt-0.5">3.</span>
                     Transcript saves to Google Drive automatically
                   </li>
                 </ul>
@@ -623,7 +623,7 @@ export default function HowItWorksPage() {
                     </ul>
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-emerald-400 mb-1">
+                    <div className="flex items-center gap-2 text-sm font-medium text-amber-400 mb-1">
                       <CheckCircle className="w-4 h-4" />
                       Action Items
                     </div>
@@ -653,7 +653,7 @@ export default function HowItWorksPage() {
             icon={<Mail className="w-8 h-8" />}
             title="Review & Send"
             description="Your polished follow-up email draft appears in your dashboard within seconds. Make quick edits if needed, then send with one click."
-            color="emerald"
+            color="cyan"
           >
             <div className="mt-6 space-y-4">
               {/* Animated features grid */}
@@ -670,10 +670,10 @@ export default function HowItWorksPage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(16, 185, 129, 0.1)' }}
+                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(99, 102, 241, 0.1)' }}
                     className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 transition-colors"
                   >
-                    <Icon className="w-5 h-5 text-emerald-400" />
+                    <Icon className="w-5 h-5 text-indigo-400" />
                     <span className="text-sm text-gray-300 light:text-gray-700">{text}</span>
                   </motion.div>
                 ))}

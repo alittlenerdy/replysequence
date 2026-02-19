@@ -84,7 +84,7 @@ export function OnboardingComplete({
           recycle={false}
           numberOfPieces={200}
           gravity={0.2}
-          colors={['#4f46e5', '#6366f1', '#818cf8', '#10b981', '#f59e0b']}
+          colors={['#4f46e5', '#6366f1', '#818cf8', '#f59e0b', '#fbbf24']}
         />
       )}
 
@@ -92,7 +92,7 @@ export function OnboardingComplete({
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', duration: 0.6 }}
-        className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-emerald-500/30"
+        className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-indigo-500/30"
       >
         <Check className="w-12 h-12 text-white" strokeWidth={3} />
       </motion.div>
@@ -103,7 +103,7 @@ export function OnboardingComplete({
         transition={{ delay: 0.2 }}
         className="text-4xl md:text-5xl font-bold mb-4"
       >
-        <span className="bg-gradient-to-r from-emerald-400 via-indigo-400 to-indigo-500 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-amber-400 via-indigo-400 to-indigo-500 bg-clip-text text-transparent">
           You&apos;re all set!
         </span>
       </motion.h1>
@@ -140,12 +140,12 @@ export function OnboardingComplete({
                 >
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      stat.completed ? 'bg-emerald-500/20' : 'bg-gray-800'
+                      stat.completed ? 'bg-indigo-500/20' : 'bg-gray-800'
                     }`}
                   >
                     <Icon
                       className={`w-4 h-4 ${
-                        stat.completed ? 'text-emerald-400' : 'text-gray-500'
+                        stat.completed ? 'text-indigo-400' : 'text-gray-500'
                       }`}
                     />
                   </div>

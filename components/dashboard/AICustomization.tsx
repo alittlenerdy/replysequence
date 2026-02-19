@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Loader2, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, Loader2, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AIPreferences {
   aiTone: string;
   aiCustomInstructions: string;
   aiSignature: string;
+  hourlyRate: number;
 }
 
 interface Template {
@@ -53,6 +54,7 @@ export function AICustomization() {
     aiTone: 'professional',
     aiCustomInstructions: '',
     aiSignature: '',
+    hourlyRate: 100,
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -71,6 +73,7 @@ export function AICustomization() {
             aiTone: data.aiTone || 'professional',
             aiCustomInstructions: data.aiCustomInstructions || '',
             aiSignature: data.aiSignature || '',
+            hourlyRate: data.hourlyRate ?? 100,
           });
         }
       } catch {
@@ -257,6 +260,34 @@ export function AICustomization() {
           maxLength={500}
           className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
         />
+      </div>
+
+      {/* Hourly Rate for ROI */}
+      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
+        <div className="flex items-center gap-2 mb-1">
+          <DollarSign className="w-4 h-4 text-amber-400" />
+          <h4 className="text-sm font-medium text-white light:text-gray-900">Your Hourly Rate</h4>
+        </div>
+        <p className="text-xs text-gray-500 mb-3">
+          Used to calculate ROI and time savings across your dashboard. We never share this value.
+        </p>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-400">$</span>
+          <input
+            type="number"
+            min={1}
+            max={9999}
+            value={preferences.hourlyRate}
+            onChange={(e) => {
+              const val = parseInt(e.target.value, 10);
+              if (!isNaN(val) && val >= 1 && val <= 9999) {
+                setPreferences(p => ({ ...p, hourlyRate: val }));
+              }
+            }}
+            className="w-28 px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 tabular-nums"
+          />
+          <span className="text-sm text-gray-500">/ hour</span>
+        </div>
       </div>
 
       {/* Error Message */}

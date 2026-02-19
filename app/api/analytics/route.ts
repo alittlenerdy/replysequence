@@ -192,7 +192,7 @@ export async function GET(request: Request) {
     // Find user by Clerk ID
     console.log('[ANALYTICS-2] Finding user by clerkId:', clerkUserId);
     const [user] = await db
-      .select({ id: users.id, email: users.email })
+      .select({ id: users.id, email: users.email, hourlyRate: users.hourlyRate })
       .from(users)
       .where(eq(users.clerkId, clerkUserId))
       .limit(1);
@@ -407,8 +407,9 @@ export async function GET(request: Request) {
     }));
 
     // ROI calculation
+    const userHourlyRate = user.hourlyRate ?? DEFAULT_HOURLY_RATE;
     const hoursSaved = timeSavedMinutes / 60;
-    const dollarValue = hoursSaved * DEFAULT_HOURLY_RATE;
+    const dollarValue = hoursSaved * userHourlyRate;
 
     console.log('[ANALYTICS-8] Returning analytics data');
 
@@ -423,7 +424,7 @@ export async function GET(request: Request) {
       roi: {
         hoursSaved: Math.round(hoursSaved * 10) / 10, // 1 decimal place
         dollarValue: Math.round(dollarValue),
-        hourlyRate: DEFAULT_HOURLY_RATE,
+        hourlyRate: userHourlyRate,
         emailsPerHour: 4,
       },
       dailyMeetings,

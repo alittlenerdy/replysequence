@@ -206,10 +206,10 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
   if (typeof value === 'boolean') {
     return value ? (
       <motion.div
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
+        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-indigo-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
         whileHover={{ scale: 1.1 }}
       >
-        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400 light:text-gray-500'}`} />
+        <Check className={`w-5 h-5 ${isWinner ? 'text-indigo-400' : 'text-gray-400 light:text-gray-500'}`} />
       </motion.div>
     ) : (
       <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50 light:bg-gray-100">
@@ -287,7 +287,7 @@ export default function TldvComparisonPage() {
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
               className="relative p-8 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 border-2 border-indigo-500/50 overflow-hidden group shadow-xl shadow-indigo-500/20"
-              style={{ boxShadow: '0 0 40px rgba(168, 85, 247, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
+              style={{ boxShadow: '0 0 40px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
             >
               {/* Shine effect on hover */}
               <motion.div
@@ -347,9 +347,9 @@ export default function TldvComparisonPage() {
           >
             {[
               { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-300 via-indigo-400 to-indigo-600' },
-              { value: '10+ hrs', label: 'Saved per week', gradient: 'from-amber-400 to-rose-400' },
-              { value: '3', label: 'Platforms supported', gradient: 'from-blue-400 to-cyan-400' },
-              { value: '$19', label: 'Pro plan / month', gradient: 'from-emerald-400 to-teal-400' },
+              { value: '10+ hrs', label: 'Saved per week', gradient: 'from-amber-400 to-amber-500' },
+              { value: '3', label: 'Platforms supported', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-600' },
             ].map((stat, i) => (
               <motion.div key={i} variants={staggerItem} className="relative">
                 <motion.div
@@ -379,7 +379,7 @@ export default function TldvComparisonPage() {
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-indigo-50/95 light:to-amber-50/95 backdrop-blur-sm border-b border-gray-800 light:border-indigo-200 mb-4">
+          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-indigo-50/95 light:to-indigo-50/95 backdrop-blur-sm border-b border-gray-800 light:border-indigo-200 mb-4">
             <div className="grid grid-cols-3 py-4">
               <div className="text-gray-500 light:text-indigo-600 font-medium pl-4">Feature</div>
               <div className="text-center">
@@ -475,7 +475,7 @@ export default function TldvComparisonPage() {
                     ? 'bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 light:from-indigo-50 light:via-indigo-50/50 light:to-indigo-50 border-indigo-500/40 light:border-indigo-300 shadow-xl shadow-indigo-500/10 light:shadow-indigo-200/40'
                     : 'bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border-gray-600 light:border-slate-300 hover:border-gray-500 light:hover:border-indigo-300'
                 }`}
-                style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(168, 85, 247, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
+                style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
               >
                 {/* Stat badge */}
                 <motion.div
@@ -545,7 +545,7 @@ export default function TldvComparisonPage() {
                     ? 'border-2 border-amber-500/50 light:border-amber-300 bg-gradient-to-b from-indigo-500/10 via-indigo-400/5 to-transparent light:from-amber-50 light:via-indigo-50 light:to-amber-50 shadow-xl shadow-amber-500/10 light:shadow-amber-200/40'
                     : 'border border-gray-700 light:border-indigo-200 bg-gray-900/30 light:bg-gradient-to-b light:from-indigo-50/50 light:to-amber-50/30 hover:border-gray-600 light:hover:border-indigo-300 light:hover:from-indigo-50/80 light:hover:to-amber-50/60'
                 }`}
-                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(236, 72, 153, 0.1)' } : {}}
+                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(99, 102, 241, 0.1)' } : {}}
               >
                 {tier.highlighted && (
                   <motion.div
@@ -617,7 +617,7 @@ export default function TldvComparisonPage() {
           <motion.div
             whileHover={{ scale: 1.01 }}
             className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-indigo-900/10 to-gray-900/50 light:from-white light:via-indigo-50 light:to-amber-50 border-2 border-indigo-500/30 light:border-indigo-200 overflow-hidden shadow-2xl light:shadow-indigo-100/50"
-            style={{ boxShadow: '0 0 60px rgba(168, 85, 247, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
+            style={{ boxShadow: '0 0 60px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
           >
             {/* Decorative elements */}
             <motion.div

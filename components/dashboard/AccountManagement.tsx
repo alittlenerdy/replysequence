@@ -89,7 +89,7 @@ export function AccountManagement() {
                 Exporting...
               </span>
             ) : exportSuccess ? (
-              <span className="flex items-center gap-2 text-emerald-400">
+              <span className="flex items-center gap-2 text-indigo-400">
                 <Check className="w-4 h-4" />
                 Downloaded
               </span>

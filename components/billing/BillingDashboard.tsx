@@ -47,11 +47,18 @@ interface Invoice {
   invoiceUrl: string | null;
 }
 
+interface UsageData {
+  draftsUsed: number;
+  draftsLimit: number;
+  draftsRemaining: number;
+}
+
 interface BillingData {
   subscription: Subscription | null;
   paymentMethod: PaymentMethod | null;
   invoices: Invoice[];
   tier: 'free' | 'pro' | 'team';
+  usage: UsageData;
 }
 
 const tierConfig = {
@@ -82,12 +89,12 @@ const tierConfig = {
 };
 
 const statusConfig: Record<string, { icon: typeof CheckCircle2; color: string; label: string }> = {
-  active: { icon: CheckCircle2, color: 'text-emerald-400', label: 'Active' },
+  active: { icon: CheckCircle2, color: 'text-indigo-400', label: 'Active' },
   trialing: { icon: Clock, color: 'text-indigo-400', label: 'Trial' },
   past_due: { icon: AlertCircle, color: 'text-amber-400', label: 'Past Due' },
   canceled: { icon: AlertCircle, color: 'text-red-400', label: 'Canceled' },
   unpaid: { icon: AlertCircle, color: 'text-red-400', label: 'Unpaid' },
-  paid: { icon: CheckCircle2, color: 'text-emerald-400', label: 'Paid' },
+  paid: { icon: CheckCircle2, color: 'text-indigo-400', label: 'Paid' },
   open: { icon: Clock, color: 'text-amber-400', label: 'Open' },
   draft: { icon: Clock, color: 'text-gray-400', label: 'Draft' },
   void: { icon: AlertCircle, color: 'text-gray-400', label: 'Void' },
@@ -312,6 +319,108 @@ export function BillingDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Usage Meters */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-4">Usage This Month</h3>
+          <div className="space-y-4">
+            {(() => {
+              const pct = billing.usage.draftsLimit > 0
+                ? Math.min(100, Math.round((billing.usage.draftsUsed / billing.usage.draftsLimit) * 100))
+                : 0;
+              const isWarning = pct > 80;
+              return (
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm text-gray-400 light:text-gray-500">Drafts generated</span>
+                    <span className="text-sm font-medium text-white light:text-gray-900">
+                      {billing.usage.draftsUsed} / {billing.usage.draftsLimit === -1 ? 'Unlimited' : billing.usage.draftsLimit}
+                    </span>
+                  </div>
+                  {billing.usage.draftsLimit !== -1 && (
+                    <div className="h-2.5 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ${isWarning ? 'bg-amber-500' : 'bg-indigo-500'}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  )}
+                  {isWarning && billing.usage.draftsLimit !== -1 && (
+                    <p className="text-xs text-amber-400 mt-1">
+                      {billing.usage.draftsRemaining} draft{billing.usage.draftsRemaining !== 1 ? 's' : ''} remaining this month
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Plan Comparison */}
+      {billing.tier === 'free' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-4">Upgrade Your Plan</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {([
+                { tier: 'free' as const, name: 'Free', price: '$0', features: ['5 drafts/month', '1 platform', 'Basic analytics'] },
+                { tier: 'pro' as const, name: 'Pro', price: '$19', features: ['Unlimited drafts', 'All platforms', 'Full analytics', 'Email engagement'] },
+                { tier: 'team' as const, name: 'Team', price: '$29', features: ['Everything in Pro', 'Team members', 'Priority support', 'CRM integration'] },
+              ]).map((plan) => {
+                const isCurrent = plan.tier === billing.tier;
+                return (
+                  <div
+                    key={plan.tier}
+                    className={`rounded-xl p-4 border ${
+                      isCurrent
+                        ? 'border-indigo-500/40 bg-indigo-500/5'
+                        : 'border-gray-700 light:border-gray-200 hover:border-indigo-500/30 transition-colors'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-white light:text-gray-900">{plan.name}</h4>
+                      {isCurrent && (
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                          Current
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-2xl font-bold text-white light:text-gray-900 mb-3">
+                      {plan.price}<span className="text-sm font-normal text-gray-500">/mo</span>
+                    </p>
+                    <ul className="space-y-1.5 mb-4">
+                      {plan.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-xs text-gray-400 light:text-gray-500">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    {!isCurrent && (
+                      <Link
+                        href="/pricing"
+                        className="block w-full text-center px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+                      >
+                        Upgrade
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Method Card */}

@@ -68,7 +68,7 @@ const integrations: Integration[] = [
     ],
     status: 'available',
     logo: 'M',
-    color: 'from-green-500 to-emerald-600',
+    color: 'from-indigo-500 to-indigo-600',
   },
   {
     name: 'Gmail',
@@ -96,7 +96,7 @@ const integrations: Integration[] = [
     ],
     status: 'available',
     logo: 'O',
-    color: 'from-indigo-600 to-cyan-500',
+    color: 'from-indigo-600 to-indigo-500',
   },
   {
     name: 'HubSpot',

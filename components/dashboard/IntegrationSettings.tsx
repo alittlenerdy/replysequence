@@ -235,7 +235,7 @@ function PlatformCard({
               ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
               : statusColor === 'yellow'
               ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
-              : 'border-emerald-500/30 bg-emerald-500/5 light:bg-emerald-50 light:border-emerald-200'
+              : 'border-indigo-500/30 bg-indigo-500/5 light:bg-indigo-50 light:border-indigo-200'
             : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
         }`}
         style={{ borderLeftColor: platform.color }}
@@ -256,7 +256,7 @@ function PlatformCard({
                     ? 'bg-red-500/20 text-red-400'
                     : statusColor === 'yellow'
                     ? 'bg-yellow-500/20 text-yellow-400'
-                    : 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-indigo-500/20 text-indigo-400'
                 }`}>
                   {statusColor === 'red' ? (
                     <>
@@ -273,8 +273,8 @@ function PlatformCard({
                       <Check className="w-3 h-3" />
                       Connected
                       <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
                       </span>
                     </>
                   )}
@@ -758,10 +758,10 @@ export function IntegrationSettings() {
 
           {/* Success Banner */}
           {successBanner && (
-            <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center gap-3">
-              <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-              <p className="text-sm text-emerald-300 light:text-emerald-600 flex-1">{successBanner}</p>
-              <button onClick={() => setSuccessBanner(null)} className="text-emerald-400 hover:text-emerald-300">
+            <div className="mb-6 p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-3">
+              <Check className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+              <p className="text-sm text-indigo-300 light:text-indigo-600 flex-1">{successBanner}</p>
+              <button onClick={() => setSuccessBanner(null)} className="text-indigo-400 hover:text-indigo-300">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -813,7 +813,7 @@ export function IntegrationSettings() {
                 initial={{ width: 0 }}
                 animate={{ width: `${(connectedCount / platforms.length) * 100}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="h-full bg-gradient-to-r from-indigo-500 via-indigo-700 to-emerald-500 rounded-full"
+                className="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 rounded-full"
               />
             </div>
           </div>
@@ -830,7 +830,7 @@ export function IntegrationSettings() {
                     <h3 className="text-sm font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">{section.label}</h3>
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                       connected > 0
-                        ? 'bg-emerald-500/20 text-emerald-400 light:bg-emerald-100 light:text-emerald-700'
+                        ? 'bg-indigo-500/20 text-indigo-400 light:bg-indigo-100 light:text-indigo-700'
                         : 'bg-gray-700 text-gray-400 light:bg-gray-200 light:text-gray-500'
                     }`}>
                       {connected}/{total}

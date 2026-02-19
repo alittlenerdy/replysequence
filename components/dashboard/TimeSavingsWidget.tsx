@@ -274,7 +274,7 @@ export function TimeSavingsWidget({
               </div>
 
               <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-400">
+                <div className="text-2xl font-bold text-amber-400">
                   <AnimatedDollar value={dollarValue} />
                 </div>
                 <p className="text-xs text-gray-500">value at ${effectiveHourlyRate}/hr</p>
@@ -308,21 +308,21 @@ export function TimeSavingsWidget({
               {/* Potential savings preview */}
               <div className="bg-gray-800/50 light:bg-gray-100 rounded-lg p-4 mt-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <DollarSign className="w-4 h-4 text-emerald-400" />
+                  <DollarSign className="w-4 h-4 text-amber-400" />
                   <span className="text-sm font-medium text-gray-300 light:text-gray-600">Potential Monthly Savings</span>
                 </div>
                 <div className="grid grid-cols-3 gap-4 text-center text-sm">
                   <div>
                     <div className="font-bold text-white light:text-gray-900">10 emails</div>
-                    <div className="text-emerald-400">${Math.round((10 * minutesPerDraft / 60) * effectiveHourlyRate)}</div>
+                    <div className="text-amber-400">${Math.round((10 * minutesPerDraft / 60) * effectiveHourlyRate)}</div>
                   </div>
                   <div className="border-x border-gray-700 light:border-gray-300">
                     <div className="font-bold text-white light:text-gray-900">25 emails</div>
-                    <div className="text-emerald-400">${Math.round((25 * minutesPerDraft / 60) * effectiveHourlyRate)}</div>
+                    <div className="text-amber-400">${Math.round((25 * minutesPerDraft / 60) * effectiveHourlyRate)}</div>
                   </div>
                   <div>
                     <div className="font-bold text-white light:text-gray-900">50 emails</div>
-                    <div className="text-emerald-400">${Math.round((50 * minutesPerDraft / 60) * effectiveHourlyRate)}</div>
+                    <div className="text-amber-400">${Math.round((50 * minutesPerDraft / 60) * effectiveHourlyRate)}</div>
                   </div>
                 </div>
               </div>

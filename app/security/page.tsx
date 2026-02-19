@@ -142,7 +142,7 @@ export default function SecurityPage() {
                 <div className="p-2 bg-indigo-500/10 light:bg-indigo-50 rounded-lg">
                   <feature.icon className="w-5 h-5 text-indigo-400 light:text-indigo-600" />
                 </div>
-                <span className="px-2 py-0.5 text-xs font-medium text-green-400 light:text-green-600 bg-green-500/10 light:bg-green-50 rounded-full">
+                <span className="px-2 py-0.5 text-xs font-medium text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 rounded-full">
                   Active
                 </span>
               </div>
@@ -164,7 +164,7 @@ export default function SecurityPage() {
                 <div className="text-lg font-semibold text-white light:text-gray-900 mb-1">{cert.name}</div>
                 <div className={`text-sm mb-2 ${
                   cert.status === 'Compliant' || cert.status === 'Infrastructure Provider'
-                    ? 'text-green-400 light:text-green-600'
+                    ? 'text-indigo-400 light:text-indigo-600'
                     : 'text-gray-400 light:text-gray-600'
                 }`}>
                   {cert.status}

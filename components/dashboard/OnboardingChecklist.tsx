@@ -34,14 +34,14 @@ function ChecklistItemRow({
       transition={{ delay: index * 0.1 }}
       className={`flex items-start gap-3 p-3 rounded-xl transition-colors ${
         item.completed
-          ? 'bg-emerald-500/10 light:bg-emerald-50'
+          ? 'bg-indigo-500/10 light:bg-indigo-50'
           : 'bg-gray-800/50 light:bg-gray-100 hover:bg-gray-800/70 light:hover:bg-gray-200'
       }`}
     >
       {/* Status icon */}
       <div className="shrink-0 mt-0.5">
         {item.completed ? (
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <CheckCircle2 className="w-5 h-5 text-indigo-400" />
         ) : (
           <Circle className="w-5 h-5 text-gray-500" />
         )}
@@ -52,7 +52,7 @@ function ChecklistItemRow({
         <h4
           className={`font-medium ${
             item.completed
-              ? 'text-emerald-400 line-through'
+              ? 'text-indigo-400 line-through'
               : 'text-white light:text-gray-900'
           }`}
         >
@@ -152,7 +152,7 @@ function CelebrationOverlay({ onClose }: { onClose: () => void }) {
           initial={{ scale: 0 }}
           animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
           transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-          className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-500 to-indigo-500 rounded-full flex items-center justify-center"
+          className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center"
         >
           <Sparkles className="w-10 h-10 text-white" />
         </motion.div>

@@ -176,7 +176,7 @@ export function StepAIVoice({ onSaved }: StepAIVoiceProps) {
                     {option.label}
                   </span>
                   {option.recommended && (
-                    <span className="text-[10px] font-medium text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full">
+                    <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded-full">
                       Recommended
                     </span>
                   )}

@@ -18,6 +18,7 @@ export async function GET() {
         aiTone: users.aiTone,
         aiCustomInstructions: users.aiCustomInstructions,
         aiSignature: users.aiSignature,
+        hourlyRate: users.hourlyRate,
       })
       .from(users)
       .where(eq(users.clerkId, user.id))
@@ -45,7 +46,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { aiTone, aiCustomInstructions, aiSignature } = body;
+    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate } = body;
 
     // Validate tone
     const validTones = ['professional', 'casual', 'friendly', 'concise'];
@@ -61,14 +62,24 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Signature too long' }, { status: 400 });
     }
 
+    // Validate hourly rate
+    if (hourlyRate !== undefined && (typeof hourlyRate !== 'number' || hourlyRate < 1 || hourlyRate > 9999)) {
+      return NextResponse.json({ error: 'Hourly rate must be between 1 and 9999' }, { status: 400 });
+    }
+
+    const updateData: Record<string, unknown> = {
+      aiTone: aiTone || 'professional',
+      aiCustomInstructions: aiCustomInstructions || null,
+      aiSignature: aiSignature || null,
+      updatedAt: new Date(),
+    };
+    if (hourlyRate !== undefined) {
+      updateData.hourlyRate = hourlyRate;
+    }
+
     await db
       .update(users)
-      .set({
-        aiTone: aiTone || 'professional',
-        aiCustomInstructions: aiCustomInstructions || null,
-        aiSignature: aiSignature || null,
-        updatedAt: new Date(),
-      })
+      .set(updateData)
       .where(eq(users.clerkId, user.id));
 
     return NextResponse.json({ success: true });

@@ -131,7 +131,7 @@ export function StatCard({
               <span
                 className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
                   comparison.trend === 'up'
-                    ? 'bg-emerald-500/20 text-emerald-400'
+                    ? 'bg-indigo-500/20 text-indigo-400'
                     : comparison.trend === 'down'
                     ? 'bg-red-500/20 text-red-400'
                     : 'bg-gray-500/20 text-gray-400'

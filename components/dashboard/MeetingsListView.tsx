@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, ChevronLeft, ChevronRight, FileText, Send, Clock } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, FileText, Send, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import type { MeetingListItem, MeetingsQueryResult } from '@/lib/dashboard-queries';
 
 function PlatformIcon({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string; bg: string }> = {
     zoom: { label: 'Zoom', color: 'text-indigo-400', bg: 'bg-indigo-500/15' },
-    google_meet: { label: 'Meet', color: 'text-green-400', bg: 'bg-green-500/15' },
+    google_meet: { label: 'Meet', color: 'text-indigo-400', bg: 'bg-indigo-500/15' },
     microsoft_teams: { label: 'Teams', color: 'text-indigo-400', bg: 'bg-indigo-500/15' },
   };
   const { label, color, bg } = config[platform] || { label: platform, color: 'text-gray-400', bg: 'bg-gray-500/15' };
@@ -20,18 +20,49 @@ function PlatformIcon({ platform }: { platform: string }) {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { label: string; classes: string }> = {
-    completed: { label: 'Completed', classes: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
-    processing: { label: 'Processing', classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
-    pending: { label: 'Pending', classes: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
-    ready: { label: 'Ready', classes: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
-    failed: { label: 'Failed', classes: 'bg-red-500/15 text-red-400 border-red-500/20' },
+type FollowUpStatus = 'no_draft' | 'draft_ready' | 'overdue' | 'sent';
+
+function getFollowUpStatus(meeting: MeetingListItem): FollowUpStatus {
+  if (meeting.sentCount > 0) return 'sent';
+  if (meeting.draftCount > 0) {
+    // Check if draft has been sitting >24h since meeting
+    if (meeting.startTime) {
+      const hoursSinceMeeting = (Date.now() - new Date(meeting.startTime).getTime()) / (1000 * 60 * 60);
+      if (hoursSinceMeeting > 24) return 'overdue';
+    }
+    return 'draft_ready';
+  }
+  return 'no_draft';
+}
+
+function FollowUpBadge({ status }: { status: FollowUpStatus }) {
+  const config: Record<FollowUpStatus, { label: string; classes: string; icon: React.ReactNode }> = {
+    no_draft: {
+      label: 'No draft yet',
+      classes: 'bg-gray-500/15 text-gray-400 border-gray-500/20',
+      icon: <FileText className="w-3 h-3" />,
+    },
+    draft_ready: {
+      label: 'Draft ready',
+      classes: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20',
+      icon: <FileText className="w-3 h-3" />,
+    },
+    overdue: {
+      label: 'Overdue',
+      classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+      icon: <AlertTriangle className="w-3 h-3" />,
+    },
+    sent: {
+      label: 'Follow-up sent',
+      classes: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20',
+      icon: <CheckCircle className="w-3 h-3" />,
+    },
   };
-  const { label, classes } = config[status] || { label: status, classes: 'bg-gray-500/15 text-gray-400 border-gray-500/20' };
+  const { label, classes, icon } = config[status];
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full border ${classes}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full border ${classes}`}>
+      {icon}
       {label}
     </span>
   );
@@ -74,7 +105,7 @@ export function MeetingsListView() {
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState('');
   const [platform, setPlatform] = useState('all');
-  const [status, setStatus] = useState('all');
+  const [followUpFilter, setFollowUpFilter] = useState<FollowUpStatus | 'all'>('all');
 
   const fetchMeetings = useCallback(async () => {
     setLoading(true);
@@ -84,7 +115,7 @@ export function MeetingsListView() {
         page: String(page),
         limit: '20',
         platform,
-        status,
+        status: 'all',
         ...(search && { search }),
       });
       const res = await fetch(`/api/meetings?${params}`);
@@ -102,7 +133,7 @@ export function MeetingsListView() {
     } finally {
       setLoading(false);
     }
-  }, [page, platform, status, search]);
+  }, [page, platform, search]);
 
   useEffect(() => {
     fetchMeetings();
@@ -118,21 +149,36 @@ export function MeetingsListView() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  // Status summary counts
+  const statusCounts = useMemo(() => {
+    const counts = { no_draft: 0, draft_ready: 0, overdue: 0, sent: 0 };
+    for (const m of meetings) {
+      counts[getFollowUpStatus(m)]++;
+    }
+    return counts;
+  }, [meetings]);
+
+  // Client-side follow-up filter
+  const filteredMeetings = useMemo(() => {
+    if (followUpFilter === 'all') return meetings;
+    return meetings.filter((m) => getFollowUpStatus(m) === followUpFilter);
+  }, [meetings, followUpFilter]);
+
+  const platformChips = [
+    { value: 'all', label: 'All' },
+    { value: 'zoom', label: 'Zoom' },
+    { value: 'google_meet', label: 'Meet' },
+    { value: 'microsoft_teams', label: 'Teams' },
+  ];
+
   return (
     <div>
-      {/* Header */}
+      {/* Header — safety-net framing */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-white light:text-gray-900">Meetings</h2>
+          <h2 className="text-2xl font-bold text-white light:text-gray-900">Your Safety Net</h2>
           <p className="text-gray-400 light:text-gray-500 text-sm mt-1">
-            {total > 0
-              ? `${total} meeting${total !== 1 ? 's' : ''} recorded`
-              : 'No meetings recorded yet'}
-            {total > 0 && (
-              <span className="text-gray-500 light:text-gray-400">
-                {' '}&middot; each meeting may generate multiple drafts
-              </span>
-            )}
+            Every meeting is captured. No follow-up falls through the cracks.
           </p>
         </div>
 
@@ -149,30 +195,57 @@ export function MeetingsListView() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-3 mb-6 flex-wrap">
-        <select
-          value={platform}
-          onChange={(e) => { setPlatform(e.target.value); setPage(1); }}
-          className="bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 text-sm text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-        >
-          <option value="all">All Platforms</option>
-          <option value="zoom">Zoom</option>
-          <option value="google_meet">Google Meet</option>
-          <option value="microsoft_teams">Microsoft Teams</option>
-        </select>
+      {/* Status summary band */}
+      {!loading && meetings.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap mb-4">
+          {([
+            { key: 'no_draft' as const, label: 'No draft', color: 'text-gray-400 bg-gray-500/10 border-gray-600' },
+            { key: 'draft_ready' as const, label: 'Draft ready', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' },
+            { key: 'overdue' as const, label: 'Overdue', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
+            { key: 'sent' as const, label: 'Sent', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' },
+          ]).map(({ key, label, color }) => (
+            <button
+              key={key}
+              onClick={() => setFollowUpFilter(followUpFilter === key ? 'all' : key)}
+              className={`
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200
+                ${followUpFilter === key
+                  ? 'ring-2 ring-indigo-500/40 ' + color
+                  : color + ' opacity-70 hover:opacity-100'
+                }
+              `}
+            >
+              {statusCounts[key]} {label}
+            </button>
+          ))}
+          {followUpFilter !== 'all' && (
+            <button
+              onClick={() => setFollowUpFilter('all')}
+              className="text-xs text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors ml-1"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
 
-        <select
-          value={status}
-          onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-          className="bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 text-sm text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-        >
-          <option value="all">All Statuses</option>
-          <option value="completed">Completed</option>
-          <option value="processing">Processing</option>
-          <option value="pending">Pending</option>
-          <option value="failed">Failed</option>
-        </select>
+      {/* Platform filter chips */}
+      <div className="flex items-center gap-1.5 flex-wrap mb-6">
+        {platformChips.map((chip) => (
+          <button
+            key={chip.value}
+            onClick={() => { setPlatform(chip.value); setPage(1); }}
+            className={`
+              px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200
+              ${platform === chip.value
+                ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
+                : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
+              }
+            `}
+          >
+            {chip.label}
+          </button>
+        ))}
       </div>
 
       {/* Error State */}
@@ -208,74 +281,88 @@ export function MeetingsListView() {
             </div>
           ))}
         </div>
-      ) : meetings.length === 0 ? (
+      ) : filteredMeetings.length === 0 ? (
         <div className="text-center py-16 bg-gray-900/30 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-2xl light:shadow-sm">
-          <svg className="w-16 h-16 text-gray-600 light:text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-          <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No meetings yet</h3>
-          <p className="text-gray-400 light:text-gray-500 text-sm max-w-md mx-auto">
-            Connect a meeting platform in Settings to start capturing transcripts and generating follow-up emails automatically.
-          </p>
-          <Link
-            href="/dashboard/settings"
-            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors"
-          >
-            Connect Platform
-          </Link>
+          {meetings.length === 0 ? (
+            <>
+              <svg className="w-16 h-16 text-gray-600 light:text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No meetings yet</h3>
+              <p className="text-gray-400 light:text-gray-500 text-sm max-w-md mx-auto">
+                Connect a meeting platform in Settings to start capturing transcripts and generating follow-up emails automatically.
+              </p>
+              <Link
+                href="/dashboard/settings"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                Connect Platform
+              </Link>
+            </>
+          ) : (
+            <>
+              <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No matches</h3>
+              <p className="text-gray-400 light:text-gray-500 text-sm">
+                No meetings match the current filter. Try a different selection.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
-          {meetings.map((meeting) => (
-            <Link
-              key={meeting.id}
-              href={`/dashboard/meetings/${meeting.id}`}
-              className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-all group light:shadow-sm"
-            >
-              <div className="flex items-start gap-4">
-                <PlatformIcon platform={meeting.platform} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors truncate">
-                      {meeting.topic || 'Untitled Meeting'}
-                    </h3>
-                    <StatusBadge status={meeting.status} />
+          {filteredMeetings.map((meeting) => {
+            const followUp = getFollowUpStatus(meeting);
+            return (
+              <Link
+                key={meeting.id}
+                href={`/dashboard/meetings/${meeting.id}`}
+                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-all group light:shadow-sm"
+              >
+                <div className="flex items-start gap-4">
+                  <PlatformIcon platform={meeting.platform} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors truncate">
+                        {meeting.topic || 'Untitled Meeting'}
+                      </h3>
+                      <FollowUpBadge status={followUp} />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-400 light:text-gray-500">
+                      <span>{formatDate(meeting.startTime)}</span>
+                      {meeting.startTime && (
+                        <span>{formatTime(meeting.startTime)}</span>
+                      )}
+                      {meeting.duration && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {formatDuration(meeting.duration)}
+                        </span>
+                      )}
+                      {meeting.hostEmail && (
+                        <span className="truncate max-w-[200px]">{meeting.hostEmail}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-400 light:text-gray-500">
-                    <span>{formatDate(meeting.startTime)}</span>
-                    {meeting.startTime && (
-                      <span>{formatTime(meeting.startTime)}</span>
-                    )}
-                    {meeting.duration && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {formatDuration(meeting.duration)}
+
+                  {/* Draft stats */}
+                  <div className="shrink-0 flex items-center gap-3 text-xs">
+                    {meeting.draftCount > 0 && (
+                      <span className="flex items-center gap-1 text-gray-400 light:text-gray-500">
+                        <FileText className="w-3.5 h-3.5" />
+                        {meeting.draftCount} draft{meeting.draftCount !== 1 ? 's' : ''}
                       </span>
                     )}
-                    {meeting.hasSummary && (
-                      <span className="text-indigo-400">Summary available</span>
+                    {meeting.sentCount > 0 && (
+                      <span className="flex items-center gap-1 text-indigo-400">
+                        <Send className="w-3.5 h-3.5" />
+                        {meeting.sentCount} sent
+                      </span>
                     )}
                   </div>
                 </div>
-
-                {/* Draft stats */}
-                <div className="shrink-0 flex items-center gap-3 text-xs">
-                  {meeting.draftCount > 0 && (
-                    <span className="flex items-center gap-1 text-gray-400 light:text-gray-500">
-                      <FileText className="w-3.5 h-3.5" />
-                      {meeting.draftCount} draft{meeting.draftCount !== 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {meeting.sentCount > 0 && (
-                    <span className="flex items-center gap-1 text-emerald-400">
-                      <Send className="w-3.5 h-3.5" />
-                      {meeting.sentCount} sent
-                    </span>
-                  )}
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
 

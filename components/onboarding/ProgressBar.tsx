@@ -27,7 +27,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-all duration-300 ${
                   step.number < currentStep
-                    ? 'bg-emerald-500 text-white'
+                    ? 'bg-indigo-500 text-white'
                     : step.number === currentStep
                     ? 'bg-indigo-500 text-white ring-4 ring-indigo-500/20'
                     : 'bg-gray-800 text-gray-500'
@@ -50,7 +50,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
             {index < steps.length - 1 && (
               <div
                 className={`flex-1 h-0.5 mx-2 transition-all duration-300 ${
-                  step.number < currentStep ? 'bg-emerald-500' : 'bg-gray-800'
+                  step.number < currentStep ? 'bg-indigo-500' : 'bg-gray-800'
                 }`}
               />
             )}

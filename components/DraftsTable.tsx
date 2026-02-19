@@ -26,9 +26,38 @@ function scoreToStars(score: number | null): number {
   return 1;
 }
 
+// Time-since-meeting badge: shows how long ago the meeting occurred
+function getTimeSinceBadge(meetingStartTime: Date | null): { label: string; className: string; title: string } | null {
+  if (!meetingStartTime) return null;
+  const msElapsed = Date.now() - new Date(meetingStartTime).getTime();
+  if (msElapsed < 0) return null; // future meeting
+  const hours = msElapsed / (1000 * 60 * 60);
+  const days = Math.floor(hours / 24);
+
+  if (hours < 2) {
+    return {
+      label: '< 2h',
+      className: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
+      title: `Meeting started ${Math.round(hours * 60)}m ago`,
+    };
+  }
+  if (hours < 24) {
+    return {
+      label: `${Math.round(hours)}h`,
+      className: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+      title: `Meeting started ${Math.round(hours)}h ago`,
+    };
+  }
+  return {
+    label: `${days}d`,
+    className: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+    title: `Meeting started ${days} day${days !== 1 ? 's' : ''} ago`,
+  };
+}
+
 // Get quality badge styling based on star count
 function getQualityBadgeStyle(stars: number): { bg: string; text: string; label: string } {
-  if (stars >= 4) return { bg: 'bg-emerald-500/20 border-emerald-500/40', text: 'text-emerald-400', label: stars === 5 ? 'Excellent' : 'Good' };
+  if (stars >= 4) return { bg: 'bg-amber-500/20 border-amber-500/40', text: 'text-amber-400', label: stars === 5 ? 'Excellent' : 'Good' };
   if (stars === 3) return { bg: 'bg-amber-500/20 border-amber-500/40', text: 'text-amber-400', label: 'Review' };
   return { bg: 'bg-red-500/20 border-red-500/40', text: 'text-red-400', label: 'Needs Work' };
 }
@@ -212,7 +241,7 @@ export function DraftsTable({
         return (
           <div className="w-8 h-8 relative group/icon">
             <div className="absolute inset-0 bg-green-500/30 rounded-lg blur-md group-hover/icon:bg-green-400/50 transition-all duration-300" />
-            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30">
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
                 <path d="M15 8L19.5 5.5V18.5L15 16V8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
@@ -266,7 +295,7 @@ export function DraftsTable({
     return (
       <span
         className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
-          isUp ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+          isUp ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'
         }`}
         title={isUp ? 'Rated: Thumbs up' : 'Rated: Thumbs down'}
       >
@@ -336,7 +365,7 @@ export function DraftsTable({
         )}
         {draft.repliedAt && (
           <span
-            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400"
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
             title="Replied"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -350,11 +379,11 @@ export function DraftsTable({
 
   return (
     <>
-      <div className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden">
+      <div id="drafts-table" className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden">
         {/* Table Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white light:text-gray-900">Email Drafts</h2>
+            <h2 className="text-lg font-semibold text-white light:text-gray-900">Follow-ups</h2>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-400 light:text-gray-500">{total} total</span>
               {total > 0 && (
@@ -487,6 +516,14 @@ export function DraftsTable({
                   </label>
                 )}
                 <div className="shrink-0">{getPlatformIcon(draft.meetingPlatform)}</div>
+                {isMounted && (() => {
+                  const badge = getTimeSinceBadge(draft.meetingStartTime);
+                  return badge ? (
+                    <span className={`shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-md border ${badge.className}`} title={badge.title}>
+                      {badge.label}
+                    </span>
+                  ) : null;
+                })()}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-sm font-medium text-white light:text-gray-900 truncate">
@@ -558,13 +595,16 @@ export function DraftsTable({
                 <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="w-[12%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Status
+                </th>
+                <th className="hidden lg:table-cell w-[8%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                  Age
                 </th>
                 <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Quality
                 </th>
-                <th className="hidden lg:table-cell w-[160px] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[130px] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
                 <th className="w-[70px] px-2 py-3">
@@ -616,11 +656,21 @@ export function DraftsTable({
                       {renderEngagementIndicators(draft)}
                     </div>
                   </td>
+                  <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
+                    {isMounted && (() => {
+                      const badge = getTimeSinceBadge(draft.meetingStartTime);
+                      return badge ? (
+                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${badge.className}`} title={badge.title}>
+                          {badge.label}
+                        </span>
+                      ) : <span className="text-xs text-gray-500">-</span>;
+                    })()}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       {draft.qualityScore !== null ? (
                         <span className={`text-xs font-medium ${
-                          draft.qualityScore >= 80 ? 'text-emerald-400' :
+                          draft.qualityScore >= 80 ? 'text-amber-400' :
                           draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
                         }`}>
                           {draft.qualityScore}/100

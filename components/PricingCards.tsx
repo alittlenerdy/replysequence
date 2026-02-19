@@ -90,7 +90,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                   {/* Current Plan Badge */}
                   {isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-semibold border border-emerald-500/30">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-500/20 text-indigo-400 text-sm font-semibold border border-indigo-500/30">
                         <Check className="w-4 h-4" />
                         Current Plan
                       </span>
@@ -154,7 +154,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                         <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                           tier.highlighted
                             ? 'text-indigo-400'
-                            : 'text-emerald-400'
+                            : 'text-indigo-400'
                         }`} />
                         <span className="text-gray-300 light:text-gray-700 text-sm">
                           {feature}

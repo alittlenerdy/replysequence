@@ -110,7 +110,7 @@ export function StepConnectCalendar({
               transition={{ delay: 0.2 + index * 0.1 }}
               className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
                 isThisConnected
-                  ? 'border-emerald-500/50 bg-emerald-500/5'
+                  ? 'border-indigo-500/50 bg-indigo-500/5'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
@@ -123,7 +123,7 @@ export function StepConnectCalendar({
                     {calendar.icon}
                   </div>
                   {isThisConnected && (
-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
                       <Check className="w-3.5 h-3.5" />
                       Connected
                     </div>
@@ -136,7 +136,7 @@ export function StepConnectCalendar({
                   disabled={isThisConnected || connecting !== null}
                   className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
                     isThisConnected
-                      ? 'bg-emerald-500/10 text-emerald-400 cursor-default'
+                      ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                       : isConnecting
                       ? 'bg-gray-800 text-gray-400'
                       : 'text-white hover:opacity-90'

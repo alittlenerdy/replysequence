@@ -23,7 +23,7 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
   }, [duration, onClose]);
 
   const Icon = type === 'success' ? CheckCircle : XCircle;
-  const bgColor = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
+  const bgColor = type === 'success' ? 'bg-indigo-500' : 'bg-red-500';
 
   return (
     <div

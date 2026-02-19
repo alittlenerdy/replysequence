@@ -197,10 +197,10 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
   if (typeof value === 'boolean') {
     return value ? (
       <motion.div
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
+        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-indigo-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
         whileHover={{ scale: 1.1 }}
       >
-        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400 light:text-gray-500'}`} />
+        <Check className={`w-5 h-5 ${isWinner ? 'text-indigo-400' : 'text-gray-400 light:text-gray-500'}`} />
       </motion.div>
     ) : (
       <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50 light:bg-gray-100">
@@ -299,7 +299,7 @@ export default function FirefliesComparisonPage() {
                 Your #1 goal is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-400 font-semibold">sending follow-up emails instantly</span>.
                 You want AI-drafted emails in 8 seconds, not transcripts you have to turn into emails yourself.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium">
                 <Zap className="w-4 h-4 text-indigo-400" />
                 Best for: Sales teams, consultants, account managers
               </div>
@@ -337,10 +337,10 @@ export default function FirefliesComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-cyan-400' },
+              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-indigo-400 to-amber-400' },
               { value: '3', label: 'Platforms supported', gradient: 'from-orange-400 to-amber-400' },
-              { value: '$19', label: 'Pro plan / month', gradient: 'from-emerald-400 to-teal-400' },
+              { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-600' },
             ].map((stat, i) => (
               <motion.div key={i} variants={staggerItem} className="relative">
                 <motion.div
@@ -545,7 +545,7 @@ export default function FirefliesComparisonPage() {
                     ? 'border-2 border-indigo-500/50 light:border-indigo-300 bg-gradient-to-b from-indigo-500/10 via-indigo-400/5 to-transparent light:from-indigo-50 light:via-indigo-50 light:to-indigo-50 shadow-xl shadow-indigo-500/10 light:shadow-indigo-200/40'
                     : 'border border-gray-700 light:border-indigo-200 bg-gray-900/30 light:bg-gradient-to-b light:from-indigo-50/50 light:to-orange-50/30 hover:border-gray-600 light:hover:border-indigo-300 light:hover:from-indigo-50/80 light:hover:to-orange-50/60'
                 }`}
-                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(168, 85, 247, 0.1)' } : {}}
+                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(99, 102, 241, 0.1)' } : {}}
               >
                 {tier.highlighted && (
                   <motion.div
@@ -564,7 +564,7 @@ export default function FirefliesComparisonPage() {
                     className="p-5 rounded-xl bg-gradient-to-br from-indigo-500/15 to-indigo-500/10 border border-indigo-500/40 mb-4 shadow-lg shadow-indigo-500/5"
                   >
                     <div className="mb-4">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 font-bold text-sm">ReplySequence</span>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-bold text-sm">ReplySequence</span>
                       <div className="flex items-baseline gap-1 mt-1">
                         <span className={`font-bold text-white light:text-gray-900 ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 light:text-gray-500 text-sm">{tier.replysequence.period}</span>

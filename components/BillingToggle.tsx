@@ -36,7 +36,7 @@ export function BillingToggle({ onIntervalChange, defaultInterval = 'monthly' }:
         }`}
       >
         Annual
-        <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold">
+        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold">
           Save 20%
         </span>
       </button>

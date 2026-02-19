@@ -30,13 +30,13 @@ function getLabel(stars: number): string {
 }
 
 function getColor(stars: number): string {
-  if (stars >= 4) return 'text-emerald-400';
+  if (stars >= 4) return 'text-indigo-400';
   if (stars === 3) return 'text-amber-400';
   return 'text-red-400';
 }
 
 function getBgColor(stars: number): string {
-  if (stars >= 4) return 'bg-emerald-500/10 border-emerald-500/20';
+  if (stars >= 4) return 'bg-indigo-500/10 border-indigo-500/20';
   if (stars === 3) return 'bg-amber-500/10 border-amber-500/20';
   return 'bg-red-500/10 border-red-500/20';
 }
@@ -156,7 +156,7 @@ export function DraftQualityBadge({
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-emerald-500 rounded-full"
+                      className="h-full bg-indigo-500 rounded-full"
                       style={{ width: `${toneScore}%` }}
                     />
                   </div>

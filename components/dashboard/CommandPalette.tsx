@@ -32,6 +32,14 @@ export function CommandPalette() {
       category: 'navigation',
     },
 {
+      id: 'nav-meetings',
+      label: 'Go to Meetings',
+      description: 'View captured meetings and follow-up status',
+      icon: '\uD83C\uDFA5',
+      action: () => router.push('/dashboard/meetings'),
+      category: 'navigation',
+    },
+    {
       id: 'nav-analytics',
       label: 'Go to Analytics',
       description: 'View analytics dashboard',
@@ -49,7 +57,7 @@ export function CommandPalette() {
     },
     {
       id: 'nav-billing',
-      label: 'Go to Billing',
+      label: 'Go to Plan & Billing',
       description: 'Manage subscription and payments',
       icon: '\uD83D\uDCB3',
       action: () => router.push('/dashboard/billing'),

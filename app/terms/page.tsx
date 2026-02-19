@@ -28,7 +28,7 @@ export default function TermsPage() {
         </div>
 
         {/* Content */}
-        <div className="prose prose-invert prose-purple max-w-none">
+        <div className="prose prose-invert prose-indigo max-w-none">
           <section className="mb-12">
             <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">1. Agreement to Terms</h2>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed">

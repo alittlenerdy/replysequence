@@ -275,6 +275,38 @@ export function AnalyticsDashboard() {
         </div>
       </div>
 
+      {/* Insight Summary */}
+      {hasData && analytics.totalMeetings > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="flex items-start gap-3 px-5 py-4 rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200">
+            <TrendingUp className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-sm text-gray-300 light:text-gray-700 leading-relaxed">
+              This period, your team followed up on{' '}
+              <strong className="text-white light:text-gray-900">{analytics.emailsSent}</strong> of{' '}
+              <strong className="text-white light:text-gray-900">{analytics.totalMeetings}</strong> meetings
+              within 24 hours. That&apos;s{' '}
+              <strong className="text-amber-400 light:text-amber-600">
+                {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}% coverage
+              </strong>
+              {analytics.sentComparison.trend !== 'neutral' && (
+                <>
+                  {' '}&mdash;{' '}
+                  <span className={analytics.sentComparison.trend === 'up' ? 'text-indigo-400' : 'text-amber-400'}>
+                    {analytics.sentComparison.trend === 'up' ? 'up' : 'down'} {analytics.sentComparison.change}%
+                  </span>
+                  {' '}from last period
+                </>
+              )}
+              .
+            </p>
+          </div>
+        </motion.div>
+      )}
+
       {/* Bento Grid Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <motion.div
@@ -322,8 +354,8 @@ export function AnalyticsDashboard() {
             value={analytics.emailsGenerated > 0 ? Math.round((analytics.emailsSent / analytics.emailsGenerated) * 100) : 0}
             suffix="%"
             subtitle={`${analytics.emailsSent} of ${analytics.emailsGenerated} sent`}
-            gradient="from-emerald-500/20 to-emerald-600/20"
-            accentColor="#10B981"
+            gradient="from-amber-500/20 to-amber-600/20"
+            accentColor="#F59E0B"
             comparison={analytics.sentComparison}
           />
         </motion.div>
@@ -338,8 +370,8 @@ export function AnalyticsDashboard() {
             value={timeSaved.value}
             suffix={timeSaved.suffix}
             subtitle={timeSaved.label}
-            gradient="from-emerald-500/20 to-emerald-600/20"
-            accentColor="#10B981"
+            gradient="from-indigo-500/20 to-indigo-600/20"
+            accentColor="#6366F1"
           />
         </motion.div>
       </div>
@@ -361,12 +393,12 @@ export function AnalyticsDashboard() {
             <div className="relative">
               <div className="h-3 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-emerald-600 rounded-full transition-all duration-700"
+                  className="h-full bg-indigo-600 rounded-full transition-all duration-700"
                   style={{ width: `${Math.min(100, Math.round((analytics.emailsSent / analytics.totalMeetings) * 100))}%` }}
                 />
               </div>
               <div className="flex justify-between mt-2">
-                <span className="text-2xl font-bold text-emerald-500">
+                <span className="text-2xl font-bold text-indigo-500">
                   {Math.round((analytics.emailsSent / analytics.totalMeetings) * 100)}%
                 </span>
                 <span className="text-xs text-gray-500 self-end">
@@ -466,14 +498,14 @@ export function AnalyticsDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <ActivityChart
                 data={analytics.dailyMeetings}
-                title="Meetings"
+                title={`Meetings (Last ${dateRange} Days)`}
                 color="#3B82F6"
                 gradientId="meetingsGradient"
               />
               <ActivityChart
                 data={analytics.dailyEmails}
-                title="Emails Generated"
-                color="#A855F7"
+                title={`Follow-up Volume (Last ${dateRange} Days)`}
+                color="#6366F1"
                 gradientId="emailsGradient"
               />
             </div>
@@ -593,7 +625,7 @@ export function AnalyticsDashboard() {
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">What you will unlock</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-emerald-400' },
+                  { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-amber-400' },
                   { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-indigo-400' },
                   { icon: <Clock className="w-5 h-5" />, label: 'Time Saved', color: 'text-amber-400' },
                   { icon: <BarChart3 className="w-5 h-5" />, label: 'Activity Charts', color: 'text-indigo-400' },

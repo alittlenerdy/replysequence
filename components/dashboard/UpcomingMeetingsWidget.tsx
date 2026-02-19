@@ -21,7 +21,7 @@ interface UpcomingMeetingsWidgetProps {
 // Platform icons and colors
 const platformConfig: Record<string, { icon: typeof Video; color: string; bgColor: string }> = {
   zoom: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
-  google_meet: { icon: Video, color: 'text-green-400', bgColor: 'bg-green-500/20' },
+  google_meet: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
   microsoft_teams: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
 };
 
@@ -111,7 +111,7 @@ function MeetingCard({
           disabled={isUpdating}
           className={`shrink-0 p-1.5 rounded-lg transition-colors ${
             autoProcessEnabled
-              ? 'text-emerald-400 hover:bg-emerald-500/20'
+              ? 'text-indigo-400 hover:bg-indigo-500/20'
               : 'text-gray-500 hover:bg-gray-700'
           } disabled:opacity-50`}
           title={autoProcessEnabled ? 'Auto-process enabled' : 'Auto-process disabled'}
@@ -301,7 +301,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
         {/* Auto-process legend */}
         <div className="relative flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200 text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <ToggleRight className="w-4 h-4 text-emerald-400" />
+            <ToggleRight className="w-4 h-4 text-indigo-400" />
             Auto-process on
           </span>
           <span className="flex items-center gap-1">

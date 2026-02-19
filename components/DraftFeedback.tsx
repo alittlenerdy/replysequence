@@ -65,7 +65,7 @@ export function DraftFeedback({
           Was this draft helpful?
         </h3>
         {submitted && (
-          <span className="text-xs text-emerald-400 flex items-center gap-1">
+          <span className="text-xs text-indigo-400 flex items-center gap-1">
             <Check className="w-3 h-3" />
             Saved
           </span>
@@ -78,8 +78,8 @@ export function DraftFeedback({
           disabled={isSubmitting}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-all ${
             rating === 'up'
-              ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-              : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-emerald-500/30 hover:text-emerald-400'
+              ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-400'
+              : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-indigo-500/30 hover:text-indigo-400'
           }`}
         >
           {isSubmitting ? (

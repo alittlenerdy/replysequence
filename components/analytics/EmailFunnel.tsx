@@ -64,7 +64,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
         </div>
         {hasData && (
           <div className="text-right">
-            <p className="text-2xl font-bold text-emerald-400">{conversionRate.toFixed(0)}%</p>
+            <p className="text-2xl font-bold text-amber-400">{conversionRate.toFixed(0)}%</p>
             <p className="text-xs text-gray-400">conversion</p>
           </div>
         )}
@@ -107,8 +107,8 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
               label="Sent"
               value={sent}
               percentage={total > 0 ? (sent / total) * 100 : 0}
-              color="#10B981"
-              gradient="from-emerald-500 to-green-500"
+              color="#6366F1"
+              gradient="from-indigo-500 to-indigo-600"
               delay={0.2}
             />
           </div>
@@ -117,7 +117,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
           <div className="mt-6 pt-4 border-t border-gray-800 light:border-gray-200">
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <span>Draft generated</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/50 via-amber-500/50 to-emerald-500/50" />
+              <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/50 via-amber-500/50 to-indigo-500/50" />
               <span>Reviewed & sent</span>
             </div>
           </div>

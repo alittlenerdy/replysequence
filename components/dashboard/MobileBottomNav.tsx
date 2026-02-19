@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings, CreditCard, type LucideIcon } from 'lucide-react';
+import { FileText, BarChart3, Settings, CreditCard, Video, type LucideIcon } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -12,7 +12,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: 'Drafts', href: '/dashboard', icon: FileText },
+  { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Plan', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 

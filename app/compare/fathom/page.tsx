@@ -45,7 +45,7 @@ function FloatingParticles() {
       {STATIC_PARTICLES.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 light:w-2 light:h-2 bg-emerald-400/30 light:bg-emerald-500/40 rounded-full"
+          className="absolute w-1 h-1 light:w-2 light:h-2 bg-indigo-400/30 light:bg-indigo-500/40 rounded-full"
           style={{
             left: `${particle.left}%`,
             top: `${particle.top}%`,
@@ -205,10 +205,10 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
   if (typeof value === 'boolean') {
     return value ? (
       <motion.div
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-emerald-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
+        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-indigo-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
         whileHover={{ scale: 1.1 }}
       >
-        <Check className={`w-5 h-5 ${isWinner ? 'text-emerald-400' : 'text-gray-400 light:text-gray-500'}`} />
+        <Check className={`w-5 h-5 ${isWinner ? 'text-indigo-400' : 'text-gray-400 light:text-gray-500'}`} />
       </motion.div>
     ) : (
       <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50 light:bg-gray-100">
@@ -232,9 +232,9 @@ export default function FathomComparisonPage() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 light:from-emerald-400/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 light:from-indigo-400/10 via-transparent to-transparent" />
         <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/10 light:bg-emerald-400/20 rounded-full blur-[120px]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-[120px]"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -248,7 +248,7 @@ export default function FathomComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 text-emerald-300 light:text-emerald-600 text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/20 to-indigo-700/20 border border-indigo-500/30 text-indigo-300 light:text-indigo-600 text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
             Honest Comparison
@@ -285,8 +285,8 @@ export default function FathomComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-cyan-500/10 border-2 border-emerald-500/50 overflow-hidden group shadow-xl shadow-emerald-500/20"
-              style={{ boxShadow: '0 0 40px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
+              className="relative p-8 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 border-2 border-indigo-500/50 overflow-hidden group shadow-xl shadow-indigo-500/20"
+              style={{ boxShadow: '0 0 40px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
             >
               {/* Shine effect on hover */}
               <motion.div
@@ -300,15 +300,15 @@ export default function FathomComparisonPage() {
                 animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
-                <Trophy className="w-6 h-6 text-emerald-400 drop-shadow-lg" />
+                <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
               <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
               <p className="text-gray-300 light:text-gray-600 leading-relaxed">
-                Your #1 priority is <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 font-semibold">sending follow-up emails faster</span>.
+                Your #1 priority is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-semibold">sending follow-up emails faster</span>.
                 You need AI-drafted emails in 8 seconds, ready to send or edit, not just meeting notes.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-medium">
-                <Zap className="w-4 h-4 text-emerald-400" />
+              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-medium">
+                <Zap className="w-4 h-4 text-indigo-400" />
                 Best for: Sales reps, consultants, account managers
               </div>
             </motion.div>
@@ -316,14 +316,14 @@ export default function FathomComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-emerald-50 border border-gray-700 light:border-emerald-200 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-gray-200 overflow-hidden group"
             >
               <h3 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fathom if...</h3>
               <p className="text-gray-400 light:text-gray-600 leading-relaxed">
-                You want a <span className="text-gray-200 light:text-emerald-700 font-semibold">generous free tier</span> for meeting notes
+                You want a <span className="text-gray-200 light:text-gray-800 font-semibold">generous free tier</span> for meeting notes
                 and summaries, with solid CRM integration for deal tracking.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-emerald-600 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-gray-600 font-medium">
                 <Users className="w-4 h-4" />
                 Best for: Teams needing free note-taking, CRM-focused workflows
               </div>
@@ -333,9 +333,9 @@ export default function FathomComparisonPage() {
       </section>
 
       {/* Stats Banner */}
-      <AnimatedSection className="py-10 px-4 border-y border-emerald-500/20 bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-cyan-500/5 relative">
+      <AnimatedSection className="py-10 px-4 border-y border-indigo-500/20 bg-gradient-to-r from-indigo-500/5 via-indigo-400/5 to-amber-500/5 relative">
         {/* Background glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-transparent to-teal-500/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-transparent to-amber-500/10 pointer-events-none" />
         <div className="max-w-5xl mx-auto relative">
           <motion.div
             variants={staggerContainer}
@@ -345,10 +345,10 @@ export default function FathomComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-emerald-400 to-teal-400' },
-              { value: '10+ hrs', label: 'Saved per week', gradient: 'from-teal-400 to-cyan-400' },
-              { value: '3', label: 'Platforms supported', gradient: 'from-cyan-400 to-indigo-400' },
-              { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-400' },
+              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-amber-400' },
+              { value: '10+ hrs', label: 'Saved per week', gradient: 'from-amber-400 to-indigo-400' },
+              { value: '3', label: 'Platforms supported', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-amber-400' },
             ].map((stat, i) => (
               <motion.div key={i} variants={staggerItem} className="relative">
                 <motion.div
@@ -378,11 +378,11 @@ export default function FathomComparisonPage() {
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-emerald-50/95 light:to-teal-50/95 backdrop-blur-sm border-b border-gray-800 light:border-emerald-200 mb-4">
+          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-indigo-50/95 light:to-indigo-50/95 backdrop-blur-sm border-b border-gray-800 light:border-indigo-200 mb-4">
             <div className="grid grid-cols-3 py-4">
-              <div className="text-gray-500 light:text-emerald-600 font-medium pl-4">Feature</div>
+              <div className="text-gray-500 light:text-indigo-600 font-medium pl-4">Feature</div>
               <div className="text-center">
-                <span className="text-emerald-400 light:text-emerald-600 font-bold text-lg">ReplySequence</span>
+                <span className="text-indigo-400 light:text-indigo-600 font-bold text-lg">ReplySequence</span>
               </div>
               <div className="text-center">
                 <span className="text-gray-400 light:text-slate-600 font-bold text-lg">Fathom</span>
@@ -394,9 +394,9 @@ export default function FathomComparisonPage() {
           {categories.map((category, catIndex) => (
             <AnimatedSection key={category} delay={catIndex * 0.1} className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-emerald-200 to-transparent" />
-                <span className="text-xs font-semibold text-gray-500 light:text-emerald-600 uppercase tracking-wider">{category}</span>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-emerald-200 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-indigo-200 to-transparent" />
+                <span className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider">{category}</span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-indigo-200 to-transparent" />
               </div>
 
               <motion.div
@@ -415,10 +415,10 @@ export default function FathomComparisonPage() {
                       whileHover={{ scale: 1.01, x: 4 }}
                       className={`grid grid-cols-3 items-center py-4 px-4 rounded-xl transition-all duration-200 ${
                         row.winner === 'replysequence'
-                          ? 'bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent hover:from-emerald-500/15 hover:via-teal-500/10 light:from-emerald-100/80 light:via-teal-50/60 light:to-transparent light:hover:from-emerald-100 light:hover:via-teal-50/80 border-l-2 border-l-emerald-500 border border-emerald-500/30 light:border-emerald-300 shadow-lg shadow-emerald-500/5 light:shadow-emerald-200/30'
+                          ? 'bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-transparent hover:from-indigo-500/15 hover:via-indigo-400/10 light:from-indigo-100/80 light:via-indigo-50/60 light:to-transparent light:hover:from-indigo-100 light:hover:via-indigo-50/80 border-l-2 border-l-indigo-500 border border-indigo-500/30 light:border-indigo-300 shadow-lg shadow-indigo-500/5 light:shadow-indigo-200/30'
                           : row.winner === 'fathom'
                           ? 'bg-gray-800/30 light:bg-slate-50 hover:bg-gray-800/50 light:hover:bg-slate-100 border border-gray-700/50 light:border-slate-200'
-                          : 'bg-gray-900/30 light:bg-emerald-50/30 hover:bg-gray-800/30 light:hover:bg-emerald-50/60 border border-gray-700/30 light:border-emerald-100'
+                          : 'bg-gray-900/30 light:bg-indigo-50/30 hover:bg-gray-800/30 light:hover:bg-indigo-50/60 border border-gray-700/30 light:border-indigo-100'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -427,7 +427,7 @@ export default function FathomComparisonPage() {
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/30"
+                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white text-xs font-bold shadow-lg shadow-indigo-500/30"
                           >
                             Winner
                           </motion.span>
@@ -448,7 +448,7 @@ export default function FathomComparisonPage() {
       </section>
 
       {/* Key Differences */}
-      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-emerald-50/50 to-transparent">
+      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-indigo-50/50 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Key Differences</h2>
@@ -471,17 +471,17 @@ export default function FathomComparisonPage() {
                 whileHover={{ scale: 1.02, y: -4 }}
                 className={`relative p-6 rounded-2xl border-2 overflow-hidden group ${
                   diff.advantage === 'replysequence'
-                    ? 'bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-cyan-500/10 light:from-emerald-50 light:via-teal-50/50 light:to-cyan-50 border-emerald-500/40 light:border-emerald-300 shadow-xl shadow-emerald-500/10 light:shadow-emerald-200/40'
-                    : 'bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-emerald-50 border-gray-600 light:border-slate-300 hover:border-gray-500 light:hover:border-emerald-300'
+                    ? 'bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 light:from-indigo-50 light:via-indigo-50/50 light:to-amber-50 border-indigo-500/40 light:border-indigo-300 shadow-xl shadow-indigo-500/10 light:shadow-indigo-200/40'
+                    : 'bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border-gray-600 light:border-slate-300 hover:border-gray-500 light:hover:border-indigo-300'
                 }`}
-                style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(16, 185, 129, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
+                style={diff.advantage === 'replysequence' ? { boxShadow: '0 0 30px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' } : {}}
               >
                 {/* Stat badge */}
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold ${
                     diff.advantage === 'replysequence'
-                      ? 'bg-emerald-500/20 light:bg-emerald-100 text-emerald-400 light:text-emerald-600'
+                      ? 'bg-indigo-500/20 light:bg-indigo-100 text-indigo-400 light:text-indigo-600'
                       : 'bg-gray-700 light:bg-slate-200 text-gray-400 light:text-slate-600'
                   }`}
                 >
@@ -492,7 +492,7 @@ export default function FathomComparisonPage() {
                   whileHover={{ rotate: 5 }}
                   className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                     diff.advantage === 'replysequence'
-                      ? 'bg-emerald-500/20 light:bg-emerald-100 text-emerald-400 light:text-emerald-600'
+                      ? 'bg-indigo-500/20 light:bg-indigo-100 text-indigo-400 light:text-indigo-600'
                       : 'bg-gray-700 light:bg-slate-200 text-gray-400 light:text-slate-600'
                   }`}
                 >
@@ -503,7 +503,7 @@ export default function FathomComparisonPage() {
                   <h3 className="text-lg font-bold text-white light:text-gray-900">{diff.title}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     diff.advantage === 'replysequence'
-                      ? 'bg-emerald-500/20 light:bg-emerald-100 text-emerald-400 light:text-emerald-600'
+                      ? 'bg-indigo-500/20 light:bg-indigo-100 text-indigo-400 light:text-indigo-600'
                       : 'bg-gray-700 light:bg-slate-200 text-gray-400 light:text-slate-600'
                   }`}>
                     {diff.advantage === 'replysequence' ? 'ReplySequence' : 'Fathom'}
@@ -541,14 +541,14 @@ export default function FathomComparisonPage() {
                 whileHover={{ scale: 1.03, y: -8 }}
                 className={`relative rounded-2xl overflow-hidden group ${
                   tier.highlighted
-                    ? 'border-2 border-teal-500/50 light:border-teal-300 bg-gradient-to-b from-teal-500/10 via-emerald-500/5 to-transparent light:from-teal-50 light:via-emerald-50 light:to-cyan-50 shadow-xl shadow-teal-500/10 light:shadow-teal-200/40'
-                    : 'border border-gray-700 light:border-emerald-200 bg-gray-900/30 light:bg-gradient-to-b light:from-emerald-50/50 light:to-teal-50/30 hover:border-gray-600 light:hover:border-emerald-300 light:hover:from-emerald-50/80 light:hover:to-teal-50/60'
+                    ? 'border-2 border-indigo-500/50 light:border-indigo-300 bg-gradient-to-b from-indigo-500/10 via-indigo-400/5 to-transparent light:from-indigo-50 light:via-indigo-50 light:to-amber-50 shadow-xl shadow-indigo-500/10 light:shadow-indigo-200/40'
+                    : 'border border-gray-700 light:border-indigo-200 bg-gray-900/30 light:bg-gradient-to-b light:from-indigo-50/50 light:to-amber-50/30 hover:border-gray-600 light:hover:border-indigo-300 light:hover:from-indigo-50/80 light:hover:to-amber-50/60'
                 }`}
-                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(20, 184, 166, 0.1)' } : {}}
+                style={tier.highlighted ? { boxShadow: '0 0 40px rgba(99, 102, 241, 0.1)' } : {}}
               >
                 {tier.highlighted && (
                   <motion.div
-                    className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"
+                    className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-indigo-400 to-amber-500"
                     animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
@@ -560,10 +560,10 @@ export default function FathomComparisonPage() {
                   {/* ReplySequence */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
-                    className="p-5 rounded-xl bg-gradient-to-br from-emerald-500/15 to-teal-500/10 border border-emerald-500/40 mb-4 shadow-lg shadow-emerald-500/5"
+                    className="p-5 rounded-xl bg-gradient-to-br from-indigo-500/15 to-indigo-500/10 border border-indigo-500/40 mb-4 shadow-lg shadow-indigo-500/5"
                   >
                     <div className="mb-4">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-bold text-sm">ReplySequence</span>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-bold text-sm">ReplySequence</span>
                       <div className="flex items-baseline gap-1 mt-1">
                         <span className={`font-bold text-white light:text-gray-900 ${tier.replysequence.price.startsWith('$') ? 'text-2xl' : 'text-base'}`}>{tier.replysequence.price}</span>
                         <span className="text-gray-400 light:text-gray-500 text-sm">{tier.replysequence.period}</span>
@@ -578,7 +578,7 @@ export default function FathomComparisonPage() {
                           transition={{ delay: i * 0.1 }}
                           className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-600"
                         >
-                          <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                          <Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
                           {feature}
                         </motion.li>
                       ))}
@@ -615,22 +615,22 @@ export default function FathomComparisonPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-emerald-900/10 to-gray-900/50 light:from-white light:via-emerald-50 light:to-teal-50 border-2 border-emerald-500/30 light:border-emerald-200 overflow-hidden shadow-2xl light:shadow-emerald-100/50"
-            style={{ boxShadow: '0 0 60px rgba(16, 185, 129, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
+            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-indigo-900/10 to-gray-900/50 light:from-white light:via-indigo-50 light:to-amber-50 border-2 border-indigo-500/30 light:border-indigo-200 overflow-hidden shadow-2xl light:shadow-indigo-100/50"
+            style={{ boxShadow: '0 0 60px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
           >
             {/* Decorative elements */}
             <motion.div
-              className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 light:bg-emerald-400/20 rounded-full blur-3xl"
+              className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
             <motion.div
-              className="absolute bottom-0 left-0 w-48 h-48 bg-teal-500/10 light:bg-teal-400/20 rounded-full blur-3xl"
+              className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/10 light:bg-amber-400/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
               transition={{ duration: 8, repeat: Infinity, delay: 1 }}
             />
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/5 light:bg-cyan-400/15 rounded-full blur-3xl"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 light:bg-indigo-400/15 rounded-full blur-3xl"
               animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
               transition={{ duration: 10, repeat: Infinity, delay: 2 }}
             />
@@ -639,9 +639,9 @@ export default function FathomComparisonPage() {
               <div className="flex items-center gap-3 mb-6">
                 <motion.div
                   whileHover={{ rotate: 10 }}
-                  className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 light:from-emerald-100 light:to-teal-100"
+                  className="p-3 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 light:from-indigo-100 light:to-indigo-100"
                 >
-                  <Shield className="w-6 h-6 text-emerald-400" />
+                  <Shield className="w-6 h-6 text-indigo-400" />
                 </motion.div>
                 <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900">The Bottom Line</h2>
               </div>
@@ -653,7 +653,7 @@ export default function FathomComparisonPage() {
                   notes and action items without paying, Fathom is a great choice.
                 </p>
                 <p>
-                  <strong className="text-emerald-400">ReplySequence</strong> is purpose-built for one thing:
+                  <strong className="text-indigo-400">ReplySequence</strong> is purpose-built for one thing:
                   turning your meetings into ready-to-send follow-up emails in 8 seconds. If email follow-up is your
                   bottleneck, ReplySequence will save you 10+ hours per week that Fathom&apos;s notes can&apos;t.
                 </p>
@@ -662,12 +662,12 @@ export default function FathomComparisonPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="p-5 rounded-xl bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-cyan-500/10 border border-teal-500/30 shadow-lg shadow-teal-500/5"
+                className="p-5 rounded-xl bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 border border-indigo-500/30 shadow-lg shadow-indigo-500/5"
               >
                 <p className="text-gray-300 light:text-gray-600 text-sm italic flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" />
+                  <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                   <span>
-                    <strong className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Pro tip:</strong> Start with Fathom&apos;s
+                    <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">Pro tip:</strong> Start with Fathom&apos;s
                     free tier for meeting notes. When you realize the real time sink is writing emails after calls,
                     add ReplySequence to close the loop in 8 seconds.
                   </span>
@@ -679,10 +679,10 @@ export default function FathomComparisonPage() {
       </AnimatedSection>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-t from-emerald-500/10 via-teal-500/5 to-transparent light:from-emerald-50 light:via-teal-50 light:to-transparent relative overflow-hidden">
+      <section className="py-20 px-4 bg-gradient-to-t from-indigo-500/10 via-indigo-400/5 to-transparent light:from-indigo-50 light:via-amber-50 light:to-transparent relative overflow-hidden">
         {/* Background glows */}
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/10 light:bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500/10 light:bg-teal-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 light:bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
         <AnimatedSection className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -691,7 +691,7 @@ export default function FathomComparisonPage() {
             className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
             Ready to Send Follow-ups in{' '}
-            <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-400 to-amber-400 bg-clip-text text-transparent">
               8 Seconds?
             </span>
           </motion.h2>
@@ -716,7 +716,7 @@ export default function FathomComparisonPage() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
               <Link
                 href="/sign-up"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-400 hover:to-indigo-600 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
               >
                 Start Free Trial
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -725,7 +725,7 @@ export default function FathomComparisonPage() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 light:text-emerald-700 bg-gray-800/80 light:bg-emerald-50 hover:bg-gray-700 light:hover:bg-emerald-100 border border-gray-700 light:border-emerald-300 hover:border-gray-600 light:hover:border-emerald-400 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-gray-300 light:text-indigo-700 bg-gray-800/80 light:bg-indigo-50 hover:bg-gray-700 light:hover:bg-indigo-100 border border-gray-700 light:border-indigo-300 hover:border-gray-600 light:hover:border-indigo-400 transition-all duration-300"
               >
                 View Pricing
               </Link>

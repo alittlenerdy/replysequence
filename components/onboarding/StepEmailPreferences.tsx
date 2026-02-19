@@ -49,7 +49,7 @@ export function StepEmailPreferences({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
         >
           <Mail className="w-8 h-8 text-indigo-400" />
         </motion.div>
@@ -112,7 +112,7 @@ export function StepEmailPreferences({
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-white">{option.title}</h3>
                     {option.recommended && (
-                      <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-medium text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
                         Recommended
                       </span>
                     )}
@@ -147,7 +147,7 @@ export function StepEmailPreferences({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50"
         >
           {isSaving ? (
             <>

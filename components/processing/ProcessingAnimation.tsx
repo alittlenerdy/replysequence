@@ -184,7 +184,7 @@ export function ProcessingAnimation({
                 h-full rounded-full
                 ${
                   isComplete
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-400'
+                    ? 'bg-gradient-to-r from-indigo-500 to-indigo-400'
                     : isFailed
                     ? 'bg-gradient-to-r from-red-500 to-rose-400'
                     : 'bg-gradient-to-r from-indigo-600 to-indigo-400'

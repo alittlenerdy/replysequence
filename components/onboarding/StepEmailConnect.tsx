@@ -100,7 +100,7 @@ export function StepEmailConnect({
               transition={{ delay: 0.2 + index * 0.1 }}
               className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
                 emailConnected
-                  ? 'border-emerald-500/50 bg-emerald-500/5'
+                  ? 'border-indigo-500/50 bg-indigo-500/5'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
@@ -113,7 +113,7 @@ export function StepEmailConnect({
                     {provider.icon}
                   </div>
                   {emailConnected && (
-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
                       <Check className="w-3.5 h-3.5" />
                       Connected
                     </div>
@@ -122,14 +122,14 @@ export function StepEmailConnect({
                 <h3 className="text-lg font-bold text-white mb-2">{provider.name}</h3>
                 <p className="text-sm text-gray-400 mb-4">{provider.description}</p>
                 {emailConnected && connectedEmail && (
-                  <p className="text-sm text-emerald-400 mb-4 truncate">{connectedEmail}</p>
+                  <p className="text-sm text-indigo-400 mb-4 truncate">{connectedEmail}</p>
                 )}
                 <button
                   onClick={() => handleConnect(provider.id)}
                   disabled={emailConnected || connecting !== null}
                   className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
                     emailConnected
-                      ? 'bg-emerald-500/10 text-emerald-400 cursor-default'
+                      ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                       : isConnecting
                       ? 'bg-gray-800 text-gray-400'
                       : 'text-white hover:opacity-90'

@@ -413,7 +413,7 @@ function CRMPreview() {
               animate={{ scale: 1 }}
               transition={{ delay: 1 + i * 0.3, type: 'spring' }}
             >
-              <Check className="w-2.5 h-2.5 text-emerald-400 flex-shrink-0" />
+              <Check className="w-2.5 h-2.5 text-indigo-400 flex-shrink-0" />
             </motion.div>
           </motion.div>
         ))}
@@ -426,15 +426,15 @@ function CRMPreview() {
         transition={{ duration: 2, repeat: Infinity }}
       >
         <motion.div
-          className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+          className="w-1.5 h-1.5 rounded-full bg-indigo-400"
           animate={{ scale: [1, 1.5, 1] }}
           transition={{ duration: 1, repeat: Infinity }}
         />
-        <span className="text-[9px] text-emerald-400 light:text-emerald-600 font-medium">Syncing...</span>
+        <span className="text-[9px] text-indigo-400 light:text-indigo-600 font-medium">Syncing...</span>
         {/* Mini progress bar */}
         <div className="w-12 h-1 bg-gray-700 light:bg-gray-300 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full"
+            className="h-full bg-gradient-to-r from-indigo-400 to-indigo-500 rounded-full"
             animate={{ width: ['0%', '100%'] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -575,7 +575,7 @@ export function BentoGrid() {
           <BentoCard
             title="Auto-logged to CRM"
             description="Airtable, HubSpot, Salesforce integrations coming soon"
-            icon={<Users className="w-6 h-6 text-emerald-400" />}
+            icon={<Users className="w-6 h-6 text-indigo-400" />}
             delay={0.3}
           >
             <CRMPreview />

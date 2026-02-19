@@ -45,7 +45,7 @@ const ICON_COLORS: Record<string, string> = {
   sales: 'text-amber-400 bg-amber-500/20 border-amber-500/30',
   team: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
   client: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
-  technical: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30',
+  technical: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
   general: 'text-gray-400 bg-gray-500/20 border-gray-500/30',
   onboarding: 'text-cyan-400 bg-cyan-500/20 border-cyan-500/30',
   strategy: 'text-rose-400 bg-rose-500/20 border-rose-500/30',

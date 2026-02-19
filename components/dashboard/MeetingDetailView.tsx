@@ -11,7 +11,7 @@ import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 function PlatformBadge({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string }> = {
     zoom: { label: 'Zoom', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
-    google_meet: { label: 'Google Meet', color: 'bg-green-500/15 text-green-400 border-green-500/20' },
+    google_meet: { label: 'Google Meet', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
     microsoft_teams: { label: 'Teams', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
   };
   const { label, color } = config[platform] || { label: platform, color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' };
@@ -25,7 +25,7 @@ function PlatformBadge({ platform }: { platform: string }) {
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { label: string; color: string }> = {
-    completed: { label: 'Completed', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
+    completed: { label: 'Completed', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
     processing: { label: 'Processing', color: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
     pending: { label: 'Pending', color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
     ready: { label: 'Ready', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
@@ -43,7 +43,7 @@ function StatusBadge({ status }: { status: string }) {
 function DraftStatusBadge({ status }: { status: string }) {
   const config: Record<string, { color: string }> = {
     generated: { color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
-    sent: { color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
+    sent: { color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/20' },
     failed: { color: 'bg-red-500/15 text-red-400 border-red-500/20' },
     pending: { color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
     generating: { color: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
@@ -242,7 +242,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                 <ul className="space-y-2">
                   {meeting.keyDecisions.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <svg className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <div>
@@ -357,7 +357,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
         </div>
       )}
       {regenerateSuccess && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-400">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-sm text-indigo-400">
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -438,7 +438,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                     />
                   )}
                   {draft.sentAt && draft.sentTo && (
-                    <span className="text-xs text-emerald-400 flex items-center gap-1">
+                    <span className="text-xs text-indigo-400 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
