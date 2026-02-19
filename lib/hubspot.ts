@@ -19,11 +19,8 @@ const HUBSPOT_TOKEN_URL = 'https://api.hubapi.com/oauth/v1/token';
 const HUBSPOT_SCOPES = [
   'crm.objects.contacts.read',
   'crm.objects.contacts.write',
-  'crm.objects.deals.read',
-  'crm.objects.deals.write',
   'crm.objects.meetings.read',
   'crm.objects.meetings.write',
-  'sales-email-read',
 ];
 
 // Retry configuration
