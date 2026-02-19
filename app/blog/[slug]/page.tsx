@@ -35,6 +35,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       authors: [post.author],
       tags: post.tags,
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} | ReplySequence`,
+      description: post.excerpt,
+    },
     alternates: {
       canonical: `https://www.replysequence.com/blog/${post.slug}`,
     },

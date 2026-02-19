@@ -3,6 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { blogPosts } from '@/lib/blog-data';
 import type { Metadata } from 'next';
 import { BlogGrid } from './BlogGrid';
+import { Rss } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -16,6 +17,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://www.replysequence.com/blog',
+    types: {
+      'application/rss+xml': 'https://www.replysequence.com/blog/rss.xml',
+    },
   },
 };
 
@@ -34,9 +38,18 @@ export default function BlogPage() {
             </span>{' '}
             Blog
           </h1>
-          <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-6">
             Practical advice on meeting follow-ups, sales productivity, and using AI to spend less time on email and more time closing deals.
           </p>
+          <a
+            href="/blog/rss.xml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-gray-500 light:text-gray-400 hover:text-orange-400 light:hover:text-orange-500 transition-colors"
+          >
+            <Rss className="w-4 h-4" />
+            Subscribe via RSS
+          </a>
         </div>
       </section>
 
