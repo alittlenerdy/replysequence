@@ -43,7 +43,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-purple-400 light:hover:text-purple-600 transition-colors"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -60,7 +60,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-purple-400 light:hover:text-purple-600 transition-colors"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -77,7 +77,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-purple-400 light:hover:text-purple-600 transition-colors"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors"
                   >
                     {link.label}
                   </Link>
