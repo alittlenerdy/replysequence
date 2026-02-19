@@ -39,15 +39,17 @@ export function SettingsTabs() {
         </div>
       </div>
 
-      {/* Tab content */}
-      {activeTab === 'integrations' && <IntegrationSettings />}
-      {activeTab === 'email' && (
-        <div className="max-w-4xl mx-auto">
-          <EmailPreferencesSettings />
-        </div>
-      )}
-      {activeTab === 'ai' && <AICustomization />}
-      {activeTab === 'account' && <AccountManagement />}
+      {/* Tab content - keyed for re-mount animation on tab switch */}
+      <div key={activeTab} className="animate-card-fade-in">
+        {activeTab === 'integrations' && <IntegrationSettings />}
+        {activeTab === 'email' && (
+          <div className="max-w-4xl mx-auto">
+            <EmailPreferencesSettings />
+          </div>
+        )}
+        {activeTab === 'ai' && <AICustomization />}
+        {activeTab === 'account' && <AccountManagement />}
+      </div>
     </div>
   );
 }

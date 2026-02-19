@@ -512,7 +512,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -814,7 +814,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -1008,7 +1008,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
@@ -1202,7 +1202,7 @@ export function IntegrationSettings() {
           return (
             <div
               key={platform.id}
-              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in ${
+              className={`border rounded-xl p-4 transition-all duration-300 animate-card-fade-in hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
                 isConnected
                   ? statusColor === 'red'
                     ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'
