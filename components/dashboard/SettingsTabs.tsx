@@ -27,7 +27,7 @@ export function SettingsTabs() {
   return (
     <div>
       {/* Tab bar */}
-      <div className="max-w-4xl mx-auto mb-6">
+      <div className={`${activeTab === 'ai' ? 'max-w-6xl' : 'max-w-4xl'} mx-auto mb-6 transition-all duration-300`}>
         <div className="flex gap-1 p-1 rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-200 overflow-x-auto">
           {tabs.map((tab) => (
             <button
