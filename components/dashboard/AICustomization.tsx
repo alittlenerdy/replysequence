@@ -117,7 +117,12 @@ export function AICustomization() {
   });
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [templatesViewed, setTemplatesViewed] = useState(false);
+  const [templatesViewed, setTemplatesViewed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('rs-templates-viewed') === '1';
+    }
+    return false;
+  });
   const [completionDismissed, setCompletionDismissed] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('rs-ai-setup-complete-dismissed') === '1';
@@ -490,7 +495,10 @@ function TemplateManager({ onViewed }: { onViewed: () => void }) {
   function handleExpand() {
     const next = !expanded;
     setExpanded(next);
-    if (next) onViewed();
+    if (next) {
+      onViewed();
+      localStorage.setItem('rs-templates-viewed', '1');
+    }
   }
 
   async function handleDelete(id: string) {

@@ -554,6 +554,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         airtable: { connected: false },
         gmail: { connected: false },
         outlook: { connected: false },
+        google_sheets: { connected: false },
       },
     };
   }

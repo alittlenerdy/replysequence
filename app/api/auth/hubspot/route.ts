@@ -23,13 +23,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Read optional redirect param (for onboarding returnTo support)
+    const redirect = request.nextUrl.searchParams.get('redirect') || '';
+
     // Generate state parameter for CSRF protection
-    // Include userId to verify on callback
+    // Include userId to verify on callback, and returnTo for post-auth redirect
     const state = Buffer.from(
       JSON.stringify({
         userId,
         nonce: randomUUID(),
         timestamp: Date.now(),
+        returnTo: redirect,
       })
     ).toString('base64url');
 

@@ -50,7 +50,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verify state contains correct user
+    // Verify state contains correct user and extract returnTo
+    let returnTo = '';
     try {
       const stateData = JSON.parse(Buffer.from(state, 'base64url').toString());
       if (stateData.userId !== clerkId) {
@@ -66,6 +67,11 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(
           new URL('/dashboard/settings?tab=integrations&error=hubspot_state_expired', request.url)
         );
+      }
+
+      // Extract returnTo for post-auth redirect
+      if (stateData.returnTo && typeof stateData.returnTo === 'string') {
+        returnTo = stateData.returnTo;
       }
     } catch {
       console.error('[HUBSPOT-CALLBACK] Invalid state format');
@@ -136,9 +142,12 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     }));
 
-    // Clear state cookie and redirect to settings
+    // Clear state cookie and redirect (to returnTo if from onboarding, otherwise settings)
+    const successUrl = returnTo && returnTo.startsWith('/')
+      ? `${returnTo}${returnTo.includes('?') ? '&' : '?'}success=hubspot_connected`
+      : '/dashboard/settings?tab=integrations&success=hubspot_connected';
     const response = NextResponse.redirect(
-      new URL('/dashboard/settings?tab=integrations&success=hubspot_connected', request.url)
+      new URL(successUrl, request.url)
     );
     response.cookies.delete('hubspot_oauth_state');
 
