@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Trash2, AlertTriangle, Loader2, X, Check } from 'lucide-react';
+import { Download, Trash2, AlertTriangle, Loader2, X, Check, User } from 'lucide-react';
 
 export function AccountManagement() {
   const [isExporting, setIsExporting] = useState(false);
@@ -52,7 +52,12 @@ export function AccountManagement() {
 
   return (
     <div className="max-w-4xl mx-auto mt-8 space-y-6">
-      <h3 className="text-lg font-semibold text-white light:text-gray-900">Account & Privacy</h3>
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+          <User className="w-4 h-4 text-indigo-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-white light:text-gray-900">Account & Privacy</h3>
+      </div>
 
       {error && (
         <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
@@ -67,7 +72,7 @@ export function AccountManagement() {
       )}
 
       {/* Export Data */}
-      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 light:shadow-sm">
+      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-all duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
             <Download className="w-5 h-5 text-indigo-400" />
@@ -101,7 +106,7 @@ export function AccountManagement() {
       </div>
 
       {/* Delete Account */}
-      <div className="bg-gray-900/50 light:bg-white border border-red-500/20 light:border-red-200 rounded-xl p-5 light:shadow-sm">
+      <div className="bg-gray-900/50 light:bg-white border border-red-500/20 light:border-red-200 rounded-xl p-5 transition-all duration-200 hover:border-red-500/30 light:hover:border-red-300 light:shadow-sm">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
             <Trash2 className="w-5 h-5 text-red-400" />
@@ -139,7 +144,7 @@ export function AccountManagement() {
                     value={deleteConfirmText}
                     onChange={(e) => setDeleteConfirmText(e.target.value)}
                     placeholder="DELETE"
-                    className="px-3 py-1.5 text-sm bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 w-32"
+                    className="px-3 py-1.5 text-sm bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 w-32 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white"
                   />
                   <button
                     onClick={handleDelete}

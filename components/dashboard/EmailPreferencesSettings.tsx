@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Mail } from 'lucide-react';
 
 type EmailPreference = 'review' | 'auto_send';
 
@@ -69,13 +70,18 @@ export function EmailPreferencesSettings() {
   }
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 light:shadow-sm">
+    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 transition-all duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Preferences</h3>
-          <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">
-            Choose how AI-generated drafts are handled after meetings
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+            <Mail className="w-4 h-4 text-indigo-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Preferences</h3>
+            <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">
+              Choose how AI-generated drafts are handled after meetings
+            </p>
+          </div>
         </div>
         {saveSuccess && (
           <span className="flex items-center gap-1.5 text-sm text-indigo-400">

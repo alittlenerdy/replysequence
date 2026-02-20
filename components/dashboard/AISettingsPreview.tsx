@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, Send, Loader2, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TONE_OPTIONS, type ToneValue } from '@/lib/constants/ai-settings';
 
 interface AISettingsPreviewProps {
@@ -45,6 +46,11 @@ function getSubjectLine(tone: ToneValue): string {
   return toneOption?.subjectExample || 'Re: Follow-up from our meeting';
 }
 
+function getToneLabel(tone: ToneValue): string {
+  const toneOption = TONE_OPTIONS.find(o => o.value === tone);
+  return toneOption?.label || 'Professional';
+}
+
 export function AISettingsPreview({ tone, customInstructions, signature }: AISettingsPreviewProps) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -80,9 +86,14 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
     <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl overflow-hidden light:shadow-sm">
       {/* Email header */}
       <div className="px-5 py-3 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/30 light:bg-gray-50">
-        <div className="flex items-center gap-2 mb-2">
-          <Mail className="w-4 h-4 text-indigo-400" />
-          <span className="text-xs font-medium text-gray-400 light:text-gray-500">Live Preview</span>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-indigo-400" />
+            <span className="text-xs font-medium text-gray-400 light:text-gray-500">Live Preview</span>
+          </div>
+          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-indigo-500/15 text-indigo-400 light:bg-indigo-100 light:text-indigo-700">
+            {getToneLabel(tone)} tone
+          </span>
         </div>
         <div className="space-y-1 text-xs">
           <div className="flex gap-2">
@@ -96,11 +107,20 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
         </div>
       </div>
 
-      {/* Email body */}
+      {/* Email body with fade transition */}
       <div className="px-5 py-4">
-        <div className="text-sm text-gray-300 light:text-gray-600 leading-relaxed whitespace-pre-line">
-          {body}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${tone}-${customInstructions.length > 0 ? 'has-instructions' : 'no-instructions'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-sm text-gray-300 light:text-gray-600 leading-relaxed whitespace-pre-line"
+          >
+            {body}
+          </motion.div>
+        </AnimatePresence>
 
         {/* Signature */}
         {signature && (
