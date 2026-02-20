@@ -328,7 +328,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     if (hubspotConnection) {
       hubspotPortalId = hubspotConnection.hubspotPortalId;
       const hasRefreshToken = !!hubspotConnection.hasRefreshToken;
-      const needsReconnect = !hubspotConnection.scopes.includes('crm.objects.meetings.write');
+      const needsReconnect = !hubspotConnection.scopes.includes('crm.objects.appointments.write');
       hubspotDetails = {
         connected: true,
         email: `Portal ${hubspotConnection.hubspotPortalId}`,

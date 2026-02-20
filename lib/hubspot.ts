@@ -21,8 +21,6 @@ const HUBSPOT_SCOPES = [
   'crm.objects.contacts.write',
   'crm.objects.appointments.read',
   'crm.objects.appointments.write',
-  'crm.objects.meetings.read',
-  'crm.objects.meetings.write',
   'oauth',
 ];
 
