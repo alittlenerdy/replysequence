@@ -45,20 +45,32 @@ export async function GET(request: NextRequest) {
     error: error || 'none',
   });
 
+  // Determine error redirect target (onboarding vs settings)
+  const errorRedirectBase = state ? (() => {
+    try {
+      const decoded = Buffer.from(state, 'base64').toString('utf-8');
+      const parsed = JSON.parse(decoded);
+      if (parsed.returnTo?.startsWith('/onboarding')) return '/onboarding?step=3';
+    } catch { /* fall through */ }
+    return '/dashboard/settings';
+  })() : '/dashboard/settings';
+
   // Handle OAuth errors from Google
   if (error) {
     console.error('[GMAIL-OAUTH-CALLBACK-ERROR] OAuth error from Google:', {
       error,
       description: errorDescription,
     });
+    const separator = errorRedirectBase.includes('?') ? '&' : '?';
     return NextResponse.redirect(
-      new URL(`/dashboard/settings?error=gmail_denied&message=${encodeURIComponent(errorDescription || error)}`, baseUrl)
+      new URL(`${errorRedirectBase}${separator}email_error=auth_failed`, baseUrl)
     );
   }
 
   if (!code) {
     console.error('[GMAIL-OAUTH-CALLBACK-ERROR] Missing authorization code');
-    return NextResponse.redirect(new URL('/dashboard/settings?error=missing_code', baseUrl));
+    const separator = errorRedirectBase.includes('?') ? '&' : '?';
+    return NextResponse.redirect(new URL(`${errorRedirectBase}${separator}email_error=auth_failed`, baseUrl));
   }
 
   // Decode state to get userId and returnTo
@@ -147,9 +159,11 @@ export async function GET(request: NextRequest) {
         existingUserId: emailConflict.userId,
         currentUserId: user.id,
       });
-      return NextResponse.redirect(
-        new URL(`/dashboard/settings?error=email_conflict&message=${encodeURIComponent('This Gmail account is already connected to another user.')}`, baseUrl)
-      );
+      const separator = returnTo.includes('?') ? '&' : '?';
+      const errorTarget = returnTo.startsWith('/onboarding')
+        ? `/onboarding?step=3&email_error=already_connected`
+        : `/dashboard/settings?error=email_conflict&message=${encodeURIComponent('This Gmail account is already connected to another user.')}`;
+      return NextResponse.redirect(new URL(errorTarget, baseUrl));
     }
 
     // Upsert email connection
@@ -188,9 +202,10 @@ export async function GET(request: NextRequest) {
       // Create new connection - refresh token required
       if (!refreshTokenEncrypted) {
         console.error('[GMAIL-OAUTH-CALLBACK-ERROR] No refresh token received for new connection');
-        return NextResponse.redirect(
-          new URL('/dashboard/settings?error=no_refresh_token&message=Please try connecting Gmail again', baseUrl)
-        );
+        const errorTarget = returnTo.startsWith('/onboarding')
+          ? '/onboarding?step=3&email_error=token_exchange'
+          : '/dashboard/settings?error=no_refresh_token&message=Please try connecting Gmail again';
+        return NextResponse.redirect(new URL(errorTarget, baseUrl));
       }
 
       await db.insert(emailConnections).values({
@@ -214,11 +229,12 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.redirect(new URL(returnTo, baseUrl));
-  } catch (error) {
-    console.error('[GMAIL-OAUTH-CALLBACK-ERROR] Error processing OAuth callback:', error);
-    return NextResponse.redirect(
-      new URL(`/dashboard/settings?error=oauth_failed&message=${encodeURIComponent(String(error))}`, baseUrl)
-    );
+  } catch (err) {
+    console.error('[GMAIL-OAUTH-CALLBACK-ERROR] Error processing OAuth callback:', err);
+    const errorTarget = returnTo.startsWith('/onboarding')
+      ? '/onboarding?step=3&email_error=token_exchange'
+      : `/dashboard/settings?error=oauth_failed&message=${encodeURIComponent(String(err))}`;
+    return NextResponse.redirect(new URL(errorTarget, baseUrl));
   }
 }
 

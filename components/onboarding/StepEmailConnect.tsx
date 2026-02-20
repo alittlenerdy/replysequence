@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, ExternalLink, Loader2, AlertTriangle, Mail } from 'lucide-react';
+import { Check, ExternalLink, Loader2, AlertTriangle, Mail, Shield, ArrowRight, Info } from 'lucide-react';
 
 interface StepEmailConnectProps {
   emailConnected: boolean;
   connectedEmail: string | null;
   onEmailConnected: () => void;
   onSkip: () => void;
+  error?: string | null;
 }
 
 export function StepEmailConnect({
@@ -16,12 +17,15 @@ export function StepEmailConnect({
   connectedEmail,
   onEmailConnected,
   onSkip,
+  error: initialError,
 }: StepEmailConnectProps) {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [showSkipWarning, setShowSkipWarning] = useState(false);
+  const [error, setError] = useState<string | null>(initialError ?? null);
 
   const handleConnect = (provider: 'gmail' | 'outlook') => {
     setConnecting(provider);
+    setError(null);
     sessionStorage.setItem('onboarding_email', provider);
     const returnUrl = `/onboarding?step=3&email_connected=true`;
 
@@ -36,8 +40,9 @@ export function StepEmailConnect({
     {
       id: 'gmail' as const,
       name: 'Gmail',
-      description: 'Send follow-ups from your Gmail address',
+      description: 'Google Workspace or personal Gmail',
       color: '#EA4335',
+      recommended: true,
       icon: (
         <svg className="w-7 h-7" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -50,8 +55,9 @@ export function StepEmailConnect({
     {
       id: 'outlook' as const,
       name: 'Outlook',
-      description: 'Send follow-ups from your Outlook address',
+      description: 'Microsoft 365 or Outlook.com',
       color: '#0078D4',
+      recommended: false,
       icon: (
         <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#0078D4">
           <path d="M20 18h-2V9.25L12 13 6 9.25V18H4V6h1.2l6.8 4.25L18.8 6H20m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
@@ -62,7 +68,8 @@ export function StepEmailConnect({
 
   return (
     <div className="py-8">
-      <div className="text-center mb-10">
+      {/* Header */}
+      <div className="text-center mb-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -84,11 +91,55 @@ export function StepEmailConnect({
           className="text-gray-400 text-lg max-w-lg mx-auto"
         >
           Connect your email so follow-ups come from you, not a generic noreply address.
-          Recipients are 3x more likely to open emails from real people.
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+      {/* How it works — 3-step guide */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="max-w-2xl mx-auto mb-8 p-4 bg-gray-800/40 border border-gray-700/50 rounded-xl"
+      >
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">How it works</p>
+        <div className="flex items-center gap-3 text-sm">
+          <div className="flex items-center gap-2 text-gray-300">
+            <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span>Choose your provider</span>
+          </div>
+          <ArrowRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-gray-300">
+            <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span>Approve on Google/Microsoft</span>
+          </div>
+          <ArrowRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-gray-300">
+            <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span>You&apos;re back here, done</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Error banner */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3"
+        >
+          <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm text-red-300 font-medium">Connection failed</p>
+            <p className="text-sm text-red-400/80 mt-0.5">{error}</p>
+          </div>
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-300 text-xs">
+            Dismiss
+          </button>
+        </motion.div>
+      )}
+
+      {/* Provider cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-6">
         {providers.map((provider, index) => {
           const isConnecting = connecting === provider.id;
 
@@ -101,9 +152,17 @@ export function StepEmailConnect({
               className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
                 emailConnected
                   ? 'border-indigo-500/50 bg-indigo-500/5'
+                  : provider.recommended
+                  ? 'border-indigo-500/30 hover:border-indigo-500/50'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
+              {/* Recommended badge */}
+              {provider.recommended && !emailConnected && (
+                <div className="absolute top-0 right-0 px-3 py-1 bg-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase tracking-wider rounded-bl-lg">
+                  Most popular
+                </div>
+              )}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div
@@ -143,7 +202,7 @@ export function StepEmailConnect({
                   {isConnecting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Connecting...
+                      Redirecting to {provider.name}...
                     </>
                   ) : emailConnected ? (
                     'Connected'
@@ -159,6 +218,28 @@ export function StepEmailConnect({
           );
         })}
       </div>
+
+      {/* Permissions & security note */}
+      {!emailConnected && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="max-w-2xl mx-auto mb-8 flex items-start gap-3 p-4 bg-gray-800/30 border border-gray-700/30 rounded-xl"
+        >
+          <Shield className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-gray-500 space-y-1">
+            <p className="font-medium text-gray-400 flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5" />
+              What permissions are requested?
+            </p>
+            <p>
+              ReplySequence requests <span className="text-gray-400">send-only</span> access to send follow-up emails on your behalf.
+              We <span className="text-gray-400">never read your inbox</span> or access existing emails. You can revoke access anytime from Settings.
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Continue button when email is connected */}
       {emailConnected && (

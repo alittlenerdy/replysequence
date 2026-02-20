@@ -51,6 +51,7 @@ function OnboardingContent() {
   });
 
   const [showExitModal, setShowExitModal] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   // Load existing progress
   const loadProgress = useCallback(async () => {
@@ -116,6 +117,20 @@ function OnboardingContent() {
         currentStep: 3, // Stay on email step to show connected status
       }));
       saveProgress({ emailConnected: true, currentStep: 3 });
+      window.history.replaceState({}, '', '/onboarding');
+    }
+
+    // Handle email OAuth error
+    const emailErrorParam = searchParams.get('email_error');
+    if (emailErrorParam) {
+      const errorMessages: Record<string, string> = {
+        auth_failed: 'Authorization was denied or cancelled. Please try again.',
+        token_exchange: 'Could not complete the connection. Please try again.',
+        already_connected: 'This email is already connected to another account.',
+        missing_scope: 'Required permissions were not granted. Please approve all requested access.',
+      };
+      setEmailError(errorMessages[emailErrorParam] || 'Connection failed. Please try again.');
+      setState(prev => ({ ...prev, currentStep: 3 }));
       window.history.replaceState({}, '', '/onboarding');
     }
 
@@ -376,6 +391,7 @@ function OnboardingContent() {
                 connectedEmail={state.connectedEmail}
                 onEmailConnected={handleEmailConnected}
                 onSkip={handleEmailSkipped}
+                error={emailError}
               />
             </motion.div>
           )}
