@@ -229,6 +229,72 @@ export function StepCRM({
         </motion.div>
       </div>
 
+      {/* Google Sheets Card - full width below the 2-column grid */}
+      <div className="max-w-2xl mx-auto mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+            crmConnected
+              ? 'border-indigo-500/50 bg-indigo-500/5'
+              : 'border-gray-700 hover:border-gray-600'
+          }`}
+        >
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#34A853]/10">
+                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#34A853">
+                    <path d="M19 11H5v8a2 2 0 002 2h10a2 2 0 002-2v-8zm-3 6H8v-2h8v2zm0-4H8v-2h8v2zM19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v4h18V5a2 2 0 00-2-2zm-7 2a1 1 0 110-2 1 1 0 010 2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Google Sheets</h3>
+                  <p className="text-sm text-gray-400">Sync meeting data to a spreadsheet — no CRM needed</p>
+                </div>
+              </div>
+              {crmConnected && (
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
+                  <Check className="w-3.5 h-3.5" />
+                  Connected
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setConnecting('sheets');
+                sessionStorage.setItem('onboarding_crm', 'sheets');
+                const returnUrl = `/onboarding?step=5&crm_connected=true`;
+                window.location.href = `/api/auth/sheets?redirect=${encodeURIComponent(returnUrl)}`;
+              }}
+              disabled={crmConnected || connecting !== null}
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                crmConnected
+                  ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
+                  : connecting === 'sheets'
+                  ? 'bg-gray-800 text-gray-400'
+                  : 'text-white hover:opacity-90 bg-[#34A853]'
+              }`}
+            >
+              {connecting === 'sheets' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Redirecting to Google...
+                </>
+              ) : crmConnected ? (
+                'Connected'
+              ) : (
+                <>
+                  Connect Google Sheets
+                  <ExternalLink className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
       {/* Continue button when CRM is connected */}
       {crmConnected && (
         <motion.div

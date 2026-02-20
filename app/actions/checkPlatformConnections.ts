@@ -2,6 +2,7 @@
 
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, hubspotConnections, airtableConnections, emailConnections } from '@/lib/db';
+import { sheetsConnections } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export interface MeetConnectionInfo {
@@ -37,6 +38,7 @@ export interface PlatformConnectionsResult {
     airtable: boolean;
     gmail: boolean;
     outlook: boolean;
+    google_sheets: boolean;
   };
   details: {
     zoom: PlatformConnectionDetails;
@@ -48,6 +50,7 @@ export interface PlatformConnectionsResult {
     airtable: PlatformConnectionDetails;
     gmail: PlatformConnectionDetails;
     outlook: PlatformConnectionDetails;
+    google_sheets: PlatformConnectionDetails;
   };
   userId?: string;
   zoomEmail?: string;
@@ -77,7 +80,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] No userId from Clerk auth');
       return {
         connected: false,
-        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false },
+        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false, google_sheets: false },
         details: {
           zoom: { connected: false },
           teams: { connected: false },
@@ -427,7 +430,38 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Outlook email connection found', { outlookEmail, hasRefreshToken });
     }
 
-    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected || airtableConnected || gmailConnected || outlookEmailConnected;
+    // Get Google Sheets CRM connection details
+    let sheetsEmail: string | undefined;
+    let sheetsDetails: PlatformConnectionDetails = { connected: false };
+    const [sheetsConnection] = await db
+      .select({
+        googleEmail: sheetsConnections.googleEmail,
+        spreadsheetId: sheetsConnections.spreadsheetId,
+        spreadsheetName: sheetsConnections.spreadsheetName,
+        connectedAt: sheetsConnections.connectedAt,
+        lastSyncAt: sheetsConnections.lastSyncAt,
+        hasRefreshToken: sheetsConnections.refreshTokenEncrypted,
+      })
+      .from(sheetsConnections)
+      .where(eq(sheetsConnections.userId, existingUser.id))
+      .limit(1);
+
+    const sheetsConnected = !!sheetsConnection;
+    if (sheetsConnection) {
+      sheetsEmail = sheetsConnection.googleEmail;
+      sheetsDetails = {
+        connected: true,
+        email: sheetsConnection.spreadsheetName
+          ? `${sheetsConnection.googleEmail} - ${sheetsConnection.spreadsheetName}`
+          : sheetsConnection.googleEmail,
+        connectedAt: sheetsConnection.connectedAt,
+        isExpired: !sheetsConnection.hasRefreshToken,
+        isExpiringSoon: false,
+        lastSyncAt: sheetsConnection.lastSyncAt ?? undefined,
+      };
+    }
+
+    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected || airtableConnected || gmailConnected || outlookEmailConnected || sheetsConnected;
 
     return {
       connected: hasAnyConnection,
@@ -441,6 +475,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         airtable: airtableConnected,
         gmail: gmailConnected,
         outlook: outlookEmailConnected,
+        google_sheets: sheetsConnected,
       },
       details: {
         zoom: zoomDetails,
@@ -452,6 +487,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         airtable: airtableDetails,
         gmail: gmailDetails,
         outlook: outlookDetails,
+        google_sheets: sheetsDetails,
       },
       userId: existingUser.id,
       zoomEmail,
@@ -487,7 +523,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
 
   return {
     connected: false,
-    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false },
+    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false, google_sheets: false },
     details: {
       zoom: { connected: false },
       teams: { connected: false },
@@ -498,6 +534,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       airtable: { connected: false },
       gmail: { connected: false },
       outlook: { connected: false },
+      google_sheets: { connected: false },
     },
     userId: newUser.id,
   };
@@ -506,7 +543,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     // Return disconnected state on error to show integration cards
     return {
       connected: false,
-      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false },
+      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false, google_sheets: false },
       details: {
         zoom: { connected: false },
         teams: { connected: false },

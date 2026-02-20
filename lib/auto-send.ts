@@ -15,6 +15,7 @@ import { sendViaConnectedAccount } from './email-sender';
 import { injectTracking } from './email-tracking';
 import { syncSentEmailToCrm } from './airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from './hubspot';
+import { syncSentEmailToSheets } from './google-sheets';
 import { decrypt, encrypt } from './encryption';
 import { markDraftAsSent } from './dashboard-queries';
 import type { Participant } from './db/schema';
@@ -279,6 +280,24 @@ export async function attemptAutoSend(params: {
         level: 'error',
         tag: '[AUTO-SEND]',
         message: 'CRM sync failed (non-blocking)',
+        error: err instanceof Error ? err.message : String(err),
+      }));
+    });
+
+    // Google Sheets sync (non-blocking)
+    syncSentEmailToSheets(userId, {
+      recipientEmail,
+      meetingTitle: meeting.topic || 'Meeting',
+      meetingDate: meeting.startTime || new Date(),
+      platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+      draftSubject: draft.subject,
+      draftBody: draft.body,
+    }).catch((err) => {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[AUTO-SEND]',
+        message: 'Google Sheets sync failed (non-blocking)',
+        draftId,
         error: err instanceof Error ? err.message : String(err),
       }));
     });

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections } from '@/lib/db/schema';
+import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections, sheetsConnections } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 // Allow longer timeout for cold starts
@@ -87,7 +87,11 @@ export async function GET() {
         .from(airtableConnections)
         .where(eq(airtableConnections.userId, user.id))
         .limit(1);
-      crmConnected = !!hubspotConn || !!airtableConn;
+      const [sheetsConn] = await db.select({ id: sheetsConnections.id })
+        .from(sheetsConnections)
+        .where(eq(sheetsConnections.userId, user.id))
+        .limit(1);
+      crmConnected = !!hubspotConn || !!airtableConn || !!sheetsConn;
     }
 
     return NextResponse.json({

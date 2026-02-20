@@ -545,6 +545,60 @@ export const airtableConnections = pgTable(
   ]
 );
 
+// Google Sheets CRM connections table - OAuth-based, syncs meeting data to a spreadsheet
+export interface SheetsColumnMapping {
+  sourceField: 'contact_email' | 'meeting_title' | 'meeting_date' | 'platform' | 'draft_subject' | 'draft_body' | 'sent_date';
+  column: string; // Column letter (A, B, C, ...)
+  header: string; // Header label
+  enabled: boolean;
+}
+
+export const DEFAULT_SHEETS_COLUMNS: SheetsColumnMapping[] = [
+  { sourceField: 'contact_email', column: 'A', header: 'Contact Email', enabled: true },
+  { sourceField: 'meeting_title', column: 'B', header: 'Meeting Title', enabled: true },
+  { sourceField: 'meeting_date', column: 'C', header: 'Meeting Date', enabled: true },
+  { sourceField: 'platform', column: 'D', header: 'Platform', enabled: true },
+  { sourceField: 'draft_subject', column: 'E', header: 'Email Subject', enabled: true },
+  { sourceField: 'draft_body', column: 'F', header: 'Email Body', enabled: true },
+  { sourceField: 'sent_date', column: 'G', header: 'Sent Date', enabled: true },
+];
+
+export const sheetsConnections = pgTable(
+  'sheets_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Google account info
+    googleUserId: varchar('google_user_id', { length: 255 }).notNull(),
+    googleEmail: varchar('google_email', { length: 255 }).notNull(),
+    googleDisplayName: varchar('google_display_name', { length: 255 }),
+    // Encrypted tokens (AES-256-GCM)
+    accessTokenEncrypted: text('access_token_encrypted').notNull(),
+    refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
+    // Scopes granted
+    scopes: text('scopes').notNull(),
+    // Sheet configuration
+    spreadsheetId: varchar('spreadsheet_id', { length: 255 }),
+    spreadsheetName: varchar('spreadsheet_name', { length: 500 }),
+    sheetTab: varchar('sheet_tab', { length: 255 }).default('ReplySequence'),
+    columnMappings: jsonb('column_mappings').$type<SheetsColumnMapping[]>(),
+    // Sync tracking
+    lastSyncAt: timestamp('last_sync_at', { withTimezone: true }),
+    // Timestamps
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+    lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('sheets_connections_user_id_idx').on(table.userId),
+    index('sheets_connections_google_user_id_idx').on(table.googleUserId),
+  ]
+);
+
 // Webhook failure status enum values
 export type WebhookFailureStatus = 'pending' | 'retrying' | 'completed' | 'dead_letter';
 

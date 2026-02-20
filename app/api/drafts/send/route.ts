@@ -5,6 +5,7 @@ import { sendEmail } from '@/lib/email';
 import { sendViaConnectedAccount } from '@/lib/email-sender';
 import { syncSentEmailToCrm } from '@/lib/airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
+import { syncSentEmailToSheets } from '@/lib/google-sheets';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { trackEvent } from '@/lib/analytics';
 import { injectTracking } from '@/lib/email-tracking';
@@ -379,6 +380,23 @@ export async function POST(request: NextRequest) {
         }));
       }
     }
+
+    // Sync to Google Sheets CRM (non-blocking)
+    syncSentEmailToSheets(dbUser.id, {
+      recipientEmail,
+      meetingTitle: draft.meetingTopic || 'Meeting',
+      meetingDate: draft.meetingStartTime || new Date(),
+      platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+      draftSubject: draft.subject,
+      draftBody: draft.body,
+    }).catch((sheetsError) => {
+      console.error(JSON.stringify({
+        level: 'error',
+        message: 'Google Sheets sync failed (non-blocking)',
+        draftId,
+        error: sheetsError instanceof Error ? sheetsError.message : String(sheetsError),
+      }));
+    });
 
     return NextResponse.json({
       success: true,

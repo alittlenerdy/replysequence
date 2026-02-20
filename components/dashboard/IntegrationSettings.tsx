@@ -17,7 +17,7 @@ const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], string> = 
 };
 
 interface PlatformConfig {
-  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'airtable' | 'gmail' | 'outlook';
+  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'airtable' | 'google_sheets' | 'gmail' | 'outlook';
   name: string;
   description: string;
   color: string;
@@ -189,6 +189,21 @@ const platforms: PlatformConfig[] = [
     ),
     connectUrl: '', // Form-based, not OAuth redirect
     disconnectUrl: '/api/integrations/airtable/disconnect',
+    category: 'crm',
+  },
+  {
+    id: 'google_sheets',
+    name: 'Google Sheets',
+    description: 'Sync meeting data and sent emails to a spreadsheet',
+    color: '#34A853',
+    bgColor: 'bg-[#34A853]/10',
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#34A853">
+        <path d="M19 11H5v8a2 2 0 002 2h10a2 2 0 002-2v-8zm-3 6H8v-2h8v2zm0-4H8v-2h8v2zM19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v4h18V5a2 2 0 00-2-2zm-7 2a1 1 0 110-2 1 1 0 010 2z"/>
+      </svg>
+    ),
+    connectUrl: '/api/auth/sheets',
+    disconnectUrl: '/api/integrations/sheets/disconnect',
     category: 'crm',
   },
 ];
@@ -539,6 +554,7 @@ export function IntegrationSettings() {
     outlookCalendar: false,
     hubspot: false,
     airtable: false,
+    google_sheets: false,
     gmail: false,
     outlook: false,
   });
@@ -581,6 +597,7 @@ export function IntegrationSettings() {
     outlookCalendar: { connected: false },
     hubspot: { connected: false },
     airtable: { connected: false },
+    google_sheets: { connected: false },
     gmail: { connected: false },
     outlook: { connected: false },
   });
