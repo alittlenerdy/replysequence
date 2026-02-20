@@ -75,7 +75,7 @@ export function UsageLimitBanner() {
           )}
         </div>
         <Link
-          href="/dashboard/pricing"
+          href="/dashboard/billing"
           className={`shrink-0 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
             isAtLimit
               ? 'bg-indigo-600 text-white hover:bg-indigo-700'

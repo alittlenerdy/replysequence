@@ -42,9 +42,11 @@ interface PricingCardsProps {
   tiers: PricingTier[];
   currentTier: SubscriptionTier;
   isLoggedIn: boolean;
+  variant?: 'page' | 'embedded';
 }
 
-export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsProps) {
+export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' }: PricingCardsProps) {
+  const isEmbedded = variant === 'embedded';
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
 
   return (
@@ -56,9 +58,9 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
       />
 
       {/* Pricing Cards */}
-      <section className={isLoggedIn ? 'pb-12 px-4 pt-8' : 'pb-20 px-4 pt-8'}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+      <section className={isEmbedded ? 'pb-4 px-2 pt-4' : isLoggedIn ? 'pb-12 px-4 pt-8' : 'pb-20 px-4 pt-8'}>
+        <div className={isEmbedded ? '' : 'max-w-6xl mx-auto'}>
+          <div className={`grid grid-cols-1 md:grid-cols-3 ${isEmbedded ? 'gap-4' : 'gap-6 lg:gap-8'}`}>
             {tiers.map((tier) => {
               const Icon = icons[tier.icon];
               const isCurrentPlan = currentTier === tier.tier;
@@ -71,9 +73,11 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
               return (
                 <div
                   key={tier.name}
-                  className={`relative rounded-2xl p-6 lg:p-8 transition-all duration-300 ${
+                  className={`relative rounded-2xl transition-all duration-300 ${
+                    isEmbedded ? 'p-4 lg:p-5' : 'p-6 lg:p-8'
+                  } ${
                     tier.highlighted
-                      ? 'bg-gradient-to-b from-indigo-500/10 to-indigo-700/10 border-2 border-indigo-500/50 shadow-xl shadow-indigo-500/10 scale-105 z-10'
+                      ? `bg-gradient-to-b from-indigo-500/10 to-indigo-700/10 border-2 border-indigo-500/50 shadow-xl shadow-indigo-500/10 ${isEmbedded ? '' : 'scale-105'} z-10`
                       : 'bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300'
                   }`}
                 >
@@ -119,8 +123,8 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                   </div>
 
                   {/* Price */}
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-white light:text-gray-900">
+                  <div className={isEmbedded ? 'mb-4' : 'mb-6'}>
+                    <span className={`${isEmbedded ? 'text-3xl' : 'text-4xl'} font-bold text-white light:text-gray-900`}>
                       ${displayPrice}
                     </span>
                     {tier.tier !== 'free' && (
@@ -136,7 +140,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn }: PricingCardsPro
                   </div>
 
                   {/* CTA Button */}
-                  <div className="mb-8">
+                  <div className={isEmbedded ? 'mb-5' : 'mb-8'}>
                     <CheckoutButton
                       tier={tier.tier}
                       priceId={priceId}
