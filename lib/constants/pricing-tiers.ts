@@ -1,4 +1,4 @@
-import { STRIPE_PRICES, STRIPE_ANNUAL_PRICES } from '@/lib/stripe';
+import { STRIPE_PRICES, STRIPE_ANNUAL_PRICES } from '@/lib/stripe-prices';
 
 export interface PricingTier {
   name: string;
