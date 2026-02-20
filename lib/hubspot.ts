@@ -213,6 +213,69 @@ async function hubspotFetch(
 }
 
 /**
+ * Re-export the field mapping type from schema
+ */
+export type { HubSpotFieldMapping } from '@/lib/db/schema';
+import type { HubSpotFieldMapping } from '@/lib/db/schema';
+
+/**
+ * Default field mappings matching the previously hardcoded values.
+ * Used when a user has no custom mappings configured.
+ */
+export const DEFAULT_FIELD_MAPPINGS: HubSpotFieldMapping[] = [
+  { sourceField: 'timestamp', hubspotProperty: 'hs_timestamp', enabled: true },
+  { sourceField: 'meeting_title', hubspotProperty: 'hs_meeting_title', enabled: true },
+  { sourceField: 'meeting_body', hubspotProperty: 'hs_meeting_body', enabled: true },
+  { sourceField: 'meeting_start', hubspotProperty: 'hs_meeting_start_time', enabled: true },
+  { sourceField: 'meeting_end', hubspotProperty: 'hs_meeting_end_time', enabled: true },
+  { sourceField: 'meeting_outcome', hubspotProperty: 'hs_meeting_outcome', enabled: true },
+];
+
+/**
+ * Human-readable labels for source fields
+ */
+export const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], string> = {
+  timestamp: 'Meeting Timestamp',
+  meeting_title: 'Meeting Title',
+  meeting_body: 'Meeting Notes & Follow-up',
+  meeting_start: 'Start Time',
+  meeting_end: 'End Time',
+  meeting_outcome: 'Meeting Outcome',
+};
+
+/**
+ * Fetch available HubSpot meeting properties for the user's portal
+ */
+export async function getHubSpotMeetingProperties(
+  accessToken: string
+): Promise<{ name: string; label: string; type: string }[]> {
+  try {
+    const response = await hubspotFetch(
+      accessToken,
+      '/crm/v3/properties/meetings'
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      log('error', 'Failed to fetch HubSpot meeting properties', { error });
+      return [];
+    }
+
+    const data = await response.json();
+    return (data.results || []).map((p: { name: string; label: string; type: string }) => ({
+      name: p.name,
+      label: p.label,
+      type: p.type,
+    }));
+  } catch (error) {
+    log('error', 'Error fetching HubSpot meeting properties', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return [];
+  }
+}
+
+/**
  * Contact record from HubSpot
  */
 export interface HubSpotContact {
@@ -234,6 +297,7 @@ export interface HubSpotMeetingData {
   draftSubject: string;
   draftBody: string;
   contactId?: string;
+  fieldMappings?: HubSpotFieldMapping[];
 }
 
 /**
@@ -412,17 +476,27 @@ ${data.draftBody}`;
       ? new Date(data.meetingDate.getTime() + data.duration).toISOString()
       : new Date(data.meetingDate.getTime() + 30 * 60 * 1000).toISOString(); // Default 30 min
 
-    // Build request body with inline associations when contact is available
-    const requestBody: Record<string, unknown> = {
-      properties: {
-        hs_timestamp: data.meetingDate.toISOString(),
-        hs_meeting_title: data.meetingTitle,
-        hs_meeting_body: meetingBody,
-        hs_meeting_start_time: data.meetingDate.toISOString(),
-        hs_meeting_end_time: endTime,
-        hs_meeting_outcome: 'COMPLETED',
-      },
+    // Resolve source field values
+    const sourceValues: Record<HubSpotFieldMapping['sourceField'], string> = {
+      timestamp: data.meetingDate.toISOString(),
+      meeting_title: data.meetingTitle,
+      meeting_body: meetingBody,
+      meeting_start: data.meetingDate.toISOString(),
+      meeting_end: endTime,
+      meeting_outcome: 'COMPLETED',
     };
+
+    // Build properties from field mappings (custom or default)
+    const mappings = data.fieldMappings ?? DEFAULT_FIELD_MAPPINGS;
+    const properties: Record<string, string> = {};
+    for (const mapping of mappings) {
+      if (mapping.enabled) {
+        properties[mapping.hubspotProperty] = sourceValues[mapping.sourceField];
+      }
+    }
+
+    // Build request body with inline associations when contact is available
+    const requestBody: Record<string, unknown> = { properties };
 
     // Use inline associations (created atomically with the meeting)
     if (data.contactId) {
@@ -489,6 +563,7 @@ export async function syncSentEmailToHubSpot(
     duration?: number;
     draftSubject: string;
     draftBody: string;
+    fieldMappings?: HubSpotFieldMapping[];
   }
 ): Promise<HubSpotSyncResult> {
   const {
@@ -499,6 +574,7 @@ export async function syncSentEmailToHubSpot(
     duration,
     draftSubject,
     draftBody,
+    fieldMappings,
   } = params;
 
   log('info', 'Starting HubSpot CRM sync', {
@@ -525,6 +601,7 @@ export async function syncSentEmailToHubSpot(
       draftSubject,
       draftBody,
       contactId: contact?.id,
+      fieldMappings,
     };
 
     const engagementId = await createHubSpotMeetingEngagement(accessToken, meetingData);

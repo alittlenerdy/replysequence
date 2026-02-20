@@ -478,6 +478,13 @@ export const meetConnections = pgTable(
   ]
 );
 
+// HubSpot field mapping — maps a ReplySequence source field to a HubSpot meeting property
+export interface HubSpotFieldMapping {
+  sourceField: 'meeting_title' | 'meeting_body' | 'meeting_start' | 'meeting_end' | 'meeting_outcome' | 'timestamp';
+  hubspotProperty: string;
+  enabled: boolean;
+}
+
 // HubSpot CRM connections table - stores OAuth tokens for HubSpot integration
 export const hubspotConnections = pgTable(
   'hubspot_connections',
@@ -496,6 +503,8 @@ export const hubspotConnections = pgTable(
     accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
     // Scopes granted
     scopes: text('scopes').notNull(), // Space-separated list
+    // CRM field mapping configuration (which HubSpot properties to populate)
+    fieldMappings: jsonb('field_mappings').$type<HubSpotFieldMapping[]>(),
     // Timestamps
     connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
     lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),

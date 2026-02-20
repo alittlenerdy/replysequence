@@ -5,6 +5,16 @@ import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, Star, Plus, Settings2 } from 'lucide-react';
 import { checkPlatformConnections, type PlatformConnectionDetails, type MeetConnectionInfo } from '@/app/actions/checkPlatformConnections';
+import type { HubSpotFieldMapping } from '@/lib/db/schema';
+
+const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], string> = {
+  timestamp: 'Meeting Timestamp',
+  meeting_title: 'Meeting Title',
+  meeting_body: 'Meeting Notes & Follow-up',
+  meeting_start: 'Start Time',
+  meeting_end: 'End Time',
+  meeting_outcome: 'Meeting Outcome',
+};
 
 interface PlatformConfig {
   id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'airtable' | 'gmail' | 'outlook';
@@ -35,6 +45,7 @@ interface PlatformCardProps {
   setMeetDisconnectConfirm: (id: string | null) => void;
   nowMs: number;
   setShowAirtableForm: (show: boolean) => void;
+  setShowHubspotFieldMapping: (show: boolean) => void;
 }
 
 const platforms: PlatformConfig[] = [
@@ -221,6 +232,7 @@ function PlatformCard({
   setMeetDisconnectConfirm,
   nowMs,
   setShowAirtableForm,
+  setShowHubspotFieldMapping,
 }: PlatformCardProps) {
   return (
     <motion.div
@@ -335,6 +347,16 @@ function PlatformCard({
                     <ExternalLink className="w-4 h-4" />
                   )}
                   Reconnect
+                </button>
+              )}
+              {/* HubSpot: Configure Fields button */}
+              {platform.id === 'hubspot' && !details?.isExpired && !details?.needsReconnect && (
+                <button
+                  onClick={() => setShowHubspotFieldMapping(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Settings2 className="w-4 h-4" />
+                  Configure Fields
                 </button>
               )}
               {/* Meet: show Add Account + Disconnect All */}
@@ -641,6 +663,60 @@ export function IntegrationSettings() {
   const [airtableError, setAirtableError] = useState<string | null>(null);
   const [airtableConnecting, setAirtableConnecting] = useState(false);
 
+  // HubSpot field mapping state
+  const [showHubspotFieldMapping, setShowHubspotFieldMapping] = useState(false);
+  const [hubspotMappings, setHubspotMappings] = useState<HubSpotFieldMapping[]>([]);
+  const [hubspotProperties, setHubspotProperties] = useState<{ name: string; label: string; type: string }[]>([]);
+  const [hubspotMappingLoading, setHubspotMappingLoading] = useState(false);
+  const [hubspotMappingSaving, setHubspotMappingSaving] = useState(false);
+  const [hubspotMappingError, setHubspotMappingError] = useState<string | null>(null);
+
+  // Load field mappings and properties when the HubSpot modal opens
+  useEffect(() => {
+    if (!showHubspotFieldMapping) return;
+    setHubspotMappingLoading(true);
+    setHubspotMappingError(null);
+
+    Promise.all([
+      fetch('/api/integrations/hubspot/field-mappings').then(r => r.json()),
+      fetch('/api/integrations/hubspot/properties').then(r => r.json()),
+    ])
+      .then(([mappingsData, propertiesData]) => {
+        if (mappingsData.fieldMappings) setHubspotMappings(mappingsData.fieldMappings);
+        if (propertiesData.properties) setHubspotProperties(propertiesData.properties);
+      })
+      .catch(() => setHubspotMappingError('Failed to load field mappings'))
+      .finally(() => setHubspotMappingLoading(false));
+  }, [showHubspotFieldMapping]);
+
+  const handleHubspotMappingSave = async () => {
+    setHubspotMappingSaving(true);
+    setHubspotMappingError(null);
+    try {
+      const response = await fetch('/api/integrations/hubspot/field-mappings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fieldMappings: hubspotMappings }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setShowHubspotFieldMapping(false);
+        setSuccessBanner('HubSpot field mappings saved');
+        setTimeout(() => setSuccessBanner(null), 3000);
+      } else {
+        setHubspotMappingError(data.error || 'Failed to save');
+      }
+    } catch {
+      setHubspotMappingError('Failed to save field mappings');
+    } finally {
+      setHubspotMappingSaving(false);
+    }
+  };
+
+  const updateHubspotMapping = (index: number, updates: Partial<HubSpotFieldMapping>) => {
+    setHubspotMappings(prev => prev.map((m, i) => i === index ? { ...m, ...updates } : m));
+  };
+
   const handleAirtableConnect = async () => {
     if (!airtableApiKey || !airtableBaseId) {
       setAirtableError('API key and Base ID are required');
@@ -873,6 +949,7 @@ export function IntegrationSettings() {
                         setMeetDisconnectConfirm={setMeetDisconnectConfirm}
                         nowMs={nowMs}
                         setShowAirtableForm={setShowAirtableForm}
+                        setShowHubspotFieldMapping={setShowHubspotFieldMapping}
                       />
                     );
                   })}
@@ -980,6 +1057,101 @@ export function IntegrationSettings() {
                       {airtableConnecting ? 'Testing...' : 'Test & Connect'}
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* HubSpot Field Mapping Modal */}
+          {showHubspotFieldMapping && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white light:text-gray-900">HubSpot Field Mappings</h3>
+                  <button onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }} className="text-gray-400 hover:text-white">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
+                  Configure which HubSpot meeting properties get populated when ReplySequence logs meetings to your CRM.
+                </p>
+
+                {hubspotMappingLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {hubspotMappings.map((mapping, index) => (
+                      <div key={mapping.sourceField} className="flex items-center gap-3 p-3 bg-gray-800/50 light:bg-gray-50 rounded-lg">
+                        {/* Toggle */}
+                        <button
+                          onClick={() => updateHubspotMapping(index, { enabled: !mapping.enabled })}
+                          className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 relative ${
+                            mapping.enabled ? 'bg-[#FF7A59]' : 'bg-gray-600 light:bg-gray-300'
+                          }`}
+                        >
+                          <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                            mapping.enabled ? 'left-5' : 'left-1'
+                          }`} />
+                        </button>
+
+                        <div className="flex-1 min-w-0">
+                          {/* Source field label */}
+                          <p className={`text-sm font-medium ${mapping.enabled ? 'text-white light:text-gray-900' : 'text-gray-500'}`}>
+                            {SOURCE_FIELD_LABELS[mapping.sourceField]}
+                          </p>
+
+                          {/* HubSpot property selector */}
+                          {mapping.enabled && hubspotProperties.length > 0 ? (
+                            <select
+                              value={mapping.hubspotProperty}
+                              onChange={(e) => updateHubspotMapping(index, { hubspotProperty: e.target.value })}
+                              className="mt-1 w-full px-2 py-1.5 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded text-xs text-gray-200 light:text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#FF7A59]"
+                            >
+                              {hubspotProperties.map(prop => (
+                                <option key={prop.name} value={prop.name}>
+                                  {prop.label} ({prop.name})
+                                </option>
+                              ))}
+                            </select>
+                          ) : mapping.enabled ? (
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {mapping.hubspotProperty}
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {hubspotMappingError && (
+                  <div className="mt-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                    {hubspotMappingError}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4 mt-4 border-t border-gray-700 light:border-gray-200">
+                  <button
+                    onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }}
+                    className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleHubspotMappingSave}
+                    disabled={hubspotMappingSaving || hubspotMappingLoading}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#FF7A59] hover:bg-[#e5694d] rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {hubspotMappingSaving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Check className="w-4 h-4" />
+                    )}
+                    {hubspotMappingSaving ? 'Saving...' : 'Save Mappings'}
+                  </button>
                 </div>
               </div>
             </div>

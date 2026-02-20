@@ -337,6 +337,7 @@ export async function POST(request: NextRequest) {
                 duration: draft.meetingDuration ? draft.meetingDuration * 60 * 1000 : undefined,
                 draftSubject: draft.subject,
                 draftBody: draft.body,
+                fieldMappings: connection.fieldMappings ?? undefined,
               });
 
               hubspotDetails = {

@@ -365,6 +365,7 @@ async function syncAutoSendToHubSpot(
     platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
     draftSubject: draft.subject,
     draftBody: draft.body,
+    fieldMappings: connection.fieldMappings ?? undefined,
   });
 
   // Only update lastSyncAt on success
