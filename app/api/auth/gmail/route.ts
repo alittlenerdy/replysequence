@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const redirect = searchParams.get('redirect') || '/dashboard/settings?gmail_connected=true';
 
-    // 2. Check env vars
-    const clientId = process.env.GOOGLE_CLIENT_ID;
+    // 2. Check env vars (trim to handle trailing whitespace/newlines in env)
+    const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
     if (!clientId) {
       console.log(JSON.stringify({
         level: 'error',

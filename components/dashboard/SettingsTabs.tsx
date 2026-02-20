@@ -20,7 +20,9 @@ type TabId = (typeof tabs)[number]['id'];
 
 export function SettingsTabs() {
   const searchParams = useSearchParams();
-  const initialTab = (searchParams.get('tab') as TabId) || 'ai';
+  // Auto-switch to integrations tab when returning from OAuth with ?connected= or ?success=
+  const hasConnectionParam = searchParams.get('connected') || searchParams.get('success');
+  const initialTab = (searchParams.get('tab') as TabId) || (hasConnectionParam ? 'integrations' : 'ai');
   const [activeTab, setActiveTab] = useState<TabId>(
     tabs.some(t => t.id === initialTab) ? initialTab : 'ai'
   );
