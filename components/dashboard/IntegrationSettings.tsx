@@ -28,7 +28,7 @@ const SHEETS_FIELD_LABELS: Record<SheetsColumnMapping['sourceField'], string> = 
 };
 
 interface PlatformConfig {
-  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'airtable' | 'google_sheets' | 'gmail' | 'outlook';
+  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'airtable' | 'google_sheets' | 'salesforce' | 'gmail' | 'outlook';
   name: string;
   description: string;
   color: string;
@@ -216,6 +216,21 @@ const platforms: PlatformConfig[] = [
     ),
     connectUrl: '/api/auth/sheets',
     disconnectUrl: '/api/integrations/sheets/disconnect',
+    category: 'crm',
+  },
+  {
+    id: 'salesforce',
+    name: 'Salesforce',
+    description: 'Sync meetings and email activity to Salesforce CRM',
+    color: '#00A1E0',
+    bgColor: 'bg-[#00A1E0]/10',
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#00A1E0">
+        <path d="M10.05 5.24a4.68 4.68 0 013.48-1.55c1.82 0 3.4 1.04 4.17 2.56a5.01 5.01 0 016.3 4.83c0 2.77-2.24 5.01-5.01 5.01h-.18a3.82 3.82 0 01-3.18 1.7 3.82 3.82 0 01-2.63-1.05A4.48 4.48 0 019.27 19a4.48 4.48 0 01-4.22-2.96A4.27 4.27 0 011 11.99a4.27 4.27 0 014.06-4.26 5.15 5.15 0 014.99-2.49z"/>
+      </svg>
+    ),
+    connectUrl: '/api/auth/salesforce',
+    disconnectUrl: '/api/integrations/salesforce/disconnect',
     category: 'crm',
   },
 ];
@@ -578,6 +593,7 @@ export function IntegrationSettings() {
     hubspot: false,
     airtable: false,
     google_sheets: false,
+    salesforce: false,
     gmail: false,
     outlook: false,
   });
@@ -596,12 +612,20 @@ export function IntegrationSettings() {
         hubspot_missing_code: 'HubSpot authorization was cancelled.',
         hubspot_missing_scope_meetings_write: 'HubSpot connected but missing meetings permission. Please reconnect.',
         hubspot_invalid_state: 'HubSpot connection expired. Please try again.',
+        salesforce_connection_failed: 'Salesforce connection failed. Please try again.',
+        salesforce_missing_code: 'Salesforce authorization was cancelled.',
+        salesforce_invalid_state: 'Salesforce connection expired. Please try again.',
+        salesforce_state_expired: 'Salesforce connection timed out. Please try again.',
       };
       setErrorBanner(message || errorMessages[error] || `Connection error: ${error}`);
     }
 
     if (success === 'hubspot_connected') {
       setSuccessBanner('HubSpot connected successfully.');
+      setTimeout(() => setSuccessBanner(null), 3000);
+    }
+    if (success === 'salesforce_connected') {
+      setSuccessBanner('Salesforce connected successfully.');
       setTimeout(() => setSuccessBanner(null), 3000);
     }
   }, [searchParams]);
@@ -621,6 +645,7 @@ export function IntegrationSettings() {
     hubspot: { connected: false },
     airtable: { connected: false },
     google_sheets: { connected: false },
+    salesforce: { connected: false },
     gmail: { connected: false },
     outlook: { connected: false },
   });

@@ -599,6 +599,48 @@ export const sheetsConnections = pgTable(
   ]
 );
 
+// Salesforce field mapping — maps a ReplySequence source field to a Salesforce object field
+export interface SalesforceFieldMapping {
+  sourceField: 'meeting_title' | 'meeting_body' | 'meeting_start' | 'meeting_end' | 'meeting_outcome' | 'timestamp';
+  salesforceField: string;
+  enabled: boolean;
+}
+
+// Salesforce CRM connections table - stores OAuth tokens for Salesforce integration
+export const salesforceConnections = pgTable(
+  'salesforce_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Salesforce account info
+    salesforceUserId: varchar('salesforce_user_id', { length: 255 }).notNull(),
+    salesforceUserEmail: varchar('salesforce_user_email', { length: 255 }),
+    salesforceOrgId: varchar('salesforce_org_id', { length: 255 }),
+    instanceUrl: varchar('instance_url', { length: 500 }).notNull(), // e.g. https://yourorg.my.salesforce.com
+    // Encrypted tokens (AES-256-GCM)
+    accessTokenEncrypted: text('access_token_encrypted').notNull(),
+    refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+    // Token expiration
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }).notNull(),
+    // Scopes granted
+    scopes: text('scopes').notNull(),
+    // CRM field mapping configuration
+    fieldMappings: jsonb('field_mappings').$type<SalesforceFieldMapping[]>(),
+    // Timestamps
+    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
+    lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }),
+    lastSyncAt: timestamp('last_sync_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('salesforce_connections_user_id_idx').on(table.userId),
+    index('salesforce_connections_sf_user_id_idx').on(table.salesforceUserId),
+  ]
+);
+
 // Webhook failure status enum values
 export type WebhookFailureStatus = 'pending' | 'retrying' | 'completed' | 'dead_letter';
 
@@ -688,6 +730,8 @@ export type HubSpotConnection = typeof hubspotConnections.$inferSelect;
 export type NewHubSpotConnection = typeof hubspotConnections.$inferInsert;
 export type AirtableConnection = typeof airtableConnections.$inferSelect;
 export type NewAirtableConnection = typeof airtableConnections.$inferInsert;
+export type SalesforceConnection = typeof salesforceConnections.$inferSelect;
+export type NewSalesforceConnection = typeof salesforceConnections.$inferInsert;
 
 // Calendar connections table - stores OAuth tokens for Google Calendar users (separate from Meet)
 export const calendarConnections = pgTable(

@@ -8,7 +8,7 @@
  */
 
 import { db, users } from './db';
-import { drafts, meetings, emailConnections, emailEvents, userOnboarding, hubspotConnections } from './db/schema';
+import { drafts, meetings, emailConnections, emailEvents, userOnboarding, hubspotConnections, salesforceConnections } from './db/schema';
 import { eq, and } from 'drizzle-orm';
 import { sendEmail } from './email';
 import { sendViaConnectedAccount } from './email-sender';
@@ -16,6 +16,7 @@ import { injectTracking } from './email-tracking';
 import { syncSentEmailToCrm } from './airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from './hubspot';
 import { syncSentEmailToSheets } from './google-sheets';
+import { syncSentEmailToSalesforce, refreshSalesforceToken } from './salesforce';
 import { decrypt, encrypt } from './encryption';
 import { markDraftAsSent } from './dashboard-queries';
 import type { Participant } from './db/schema';
@@ -313,6 +314,17 @@ export async function attemptAutoSend(params: {
       }));
     });
 
+    // Salesforce sync (awaited to prevent Vercel from killing the function)
+    await syncAutoSendToSalesforce(userId, draftId, recipientEmail, meeting, draft).catch((err) => {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[AUTO-SEND]',
+        message: 'Salesforce sync failed (non-blocking)',
+        draftId,
+        error: err instanceof Error ? err.message : String(err),
+      }));
+    });
+
     return {
       autoSent: true,
       recipientEmail,
@@ -394,5 +406,75 @@ async function syncAutoSendToHubSpot(
       .update(hubspotConnections)
       .set({ lastSyncAt: new Date(), updatedAt: new Date() })
       .where(eq(hubspotConnections.id, connection.id));
+  }
+}
+
+/**
+ * Sync auto-sent email to Salesforce (non-blocking helper)
+ */
+async function syncAutoSendToSalesforce(
+  userId: string,
+  draftId: string,
+  recipientEmail: string,
+  meeting: { topic: string | null; platform: string; startTime: Date | null },
+  draft: { subject: string; body: string }
+): Promise<void> {
+  const [connection] = await db
+    .select()
+    .from(salesforceConnections)
+    .where(eq(salesforceConnections.userId, userId))
+    .limit(1);
+
+  if (!connection) return;
+
+  let accessToken = decrypt(connection.accessTokenEncrypted);
+  let instanceUrl = connection.instanceUrl;
+
+  // Refresh token if expired
+  if (connection.accessTokenExpiresAt < new Date()) {
+    try {
+      const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
+      const refreshed = await refreshSalesforceToken(refreshTokenDecrypted);
+      accessToken = refreshed.accessToken;
+      instanceUrl = refreshed.instanceUrl;
+      await db
+        .update(salesforceConnections)
+        .set({
+          accessTokenEncrypted: encrypt(refreshed.accessToken),
+          instanceUrl: refreshed.instanceUrl,
+          accessTokenExpiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hour session
+          lastRefreshedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(salesforceConnections.id, connection.id));
+    } catch (refreshError) {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[AUTO-SEND]',
+        message: 'Salesforce token refresh failed',
+        userId,
+        error: refreshError instanceof Error ? refreshError.message : String(refreshError),
+      }));
+      return;
+    }
+  }
+
+  const crmPlatform = meeting.platform || 'zoom';
+  const sfResult = await syncSentEmailToSalesforce(instanceUrl, accessToken, {
+    recipientEmail,
+    meetingTitle: meeting.topic || 'Meeting',
+    meetingDate: meeting.startTime || new Date(),
+    platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+    draftSubject: draft.subject,
+    draftBody: draft.body,
+    fieldMappings: connection.fieldMappings ?? undefined,
+  });
+
+  // Only update lastSyncAt on success
+  if (sfResult.success) {
+    await db
+      .update(salesforceConnections)
+      .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+      .where(eq(salesforceConnections.id, connection.id));
   }
 }

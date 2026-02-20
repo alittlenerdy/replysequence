@@ -481,6 +481,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           onClose={() => setSelectedDraft(null)}
           onDraftUpdated={() => {
             setSelectedDraft(null);
+            router.refresh();
           }}
         />
       )}

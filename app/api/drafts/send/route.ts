@@ -6,11 +6,12 @@ import { sendViaConnectedAccount } from '@/lib/email-sender';
 import { syncSentEmailToCrm } from '@/lib/airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
 import { syncSentEmailToSheets } from '@/lib/google-sheets';
+import { syncSentEmailToSalesforce, refreshSalesforceToken } from '@/lib/salesforce';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { trackEvent } from '@/lib/analytics';
 import { injectTracking } from '@/lib/email-tracking';
 import { db, emailEvents, users } from '@/lib/db';
-import { meetings, drafts, hubspotConnections, emailConnections } from '@/lib/db/schema';
+import { meetings, drafts, hubspotConnections, salesforceConnections, emailConnections } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import type { MeetingPlatform } from '@/lib/db/schema';
 
@@ -397,6 +398,93 @@ export async function POST(request: NextRequest) {
         error: sheetsError instanceof Error ? sheetsError.message : String(sheetsError),
       }));
     });
+
+    // Sync to Salesforce CRM (awaited to prevent Vercel from killing the function)
+    if (draft.meetingId) {
+      try {
+        const [meeting] = await db
+          .select({ userId: meetings.userId })
+          .from(meetings)
+          .where(eq(meetings.id, draft.meetingId!))
+          .limit(1);
+
+        if (meeting?.userId) {
+          const [sfConnection] = await db
+            .select()
+            .from(salesforceConnections)
+            .where(eq(salesforceConnections.userId, meeting.userId))
+            .limit(1);
+
+          if (sfConnection) {
+            let sfAccessToken = decrypt(sfConnection.accessTokenEncrypted);
+            let sfInstanceUrl = sfConnection.instanceUrl;
+
+            if (sfConnection.accessTokenExpiresAt < new Date()) {
+              try {
+                const refreshTokenDecrypted = decrypt(sfConnection.refreshTokenEncrypted);
+                const refreshed = await refreshSalesforceToken(refreshTokenDecrypted);
+                sfAccessToken = refreshed.accessToken;
+                sfInstanceUrl = refreshed.instanceUrl;
+                await db
+                  .update(salesforceConnections)
+                  .set({
+                    accessTokenEncrypted: encrypt(refreshed.accessToken),
+                    instanceUrl: refreshed.instanceUrl,
+                    accessTokenExpiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+                    lastRefreshedAt: new Date(),
+                    updatedAt: new Date(),
+                  })
+                  .where(eq(salesforceConnections.id, sfConnection.id));
+              } catch (refreshError) {
+                console.error(JSON.stringify({
+                  level: 'error',
+                  message: 'Salesforce token refresh failed',
+                  draftId,
+                  error: refreshError instanceof Error ? refreshError.message : String(refreshError),
+                }));
+                sfAccessToken = '';
+              }
+            }
+
+            if (sfAccessToken) {
+              const sfResult = await syncSentEmailToSalesforce(sfInstanceUrl, sfAccessToken, {
+                recipientEmail,
+                meetingTitle: draft.meetingTopic || 'Meeting',
+                meetingDate: draft.meetingStartTime || new Date(),
+                platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+                draftSubject: draft.subject,
+                draftBody: draft.body,
+                fieldMappings: sfConnection.fieldMappings ?? undefined,
+              });
+
+              if (sfResult.success) {
+                await db
+                  .update(salesforceConnections)
+                  .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+                  .where(eq(salesforceConnections.id, sfConnection.id));
+              }
+
+              console.log(JSON.stringify({
+                level: sfResult.success ? 'info' : 'error',
+                message: sfResult.success ? 'Salesforce CRM sync completed' : 'Salesforce CRM sync failed',
+                draftId,
+                recipientEmail,
+                success: sfResult.success,
+                contactId: sfResult.contactId,
+                error: sfResult.error,
+              }));
+            }
+          }
+        }
+      } catch (sfError) {
+        console.error(JSON.stringify({
+          level: 'error',
+          message: 'Salesforce CRM sync failed (non-blocking)',
+          draftId,
+          error: sfError instanceof Error ? sfError.message : String(sfError),
+        }));
+      }
+    }
 
     return NextResponse.json({
       success: true,
