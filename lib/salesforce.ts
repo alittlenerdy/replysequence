@@ -21,7 +21,7 @@ const SF_TOKEN_URL = 'https://login.salesforce.com/services/oauth2/token';
 const SALESFORCE_SCOPES = [
   'api',           // REST API access
   'refresh_token', // Offline access (refresh tokens)
-  'id',            // Identity URL access (user info)
+  'openid',        // OpenID Connect (user identity)
 ].join(' ');
 
 // Retry configuration
