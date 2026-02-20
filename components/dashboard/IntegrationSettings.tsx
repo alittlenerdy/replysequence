@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Loader2, Check, ExternalLink, Unplug, Lightbulb, AlertTriangle, Clock, X, Star, Plus, Settings2 } from 'lucide-react';
 import { checkPlatformConnections, type PlatformConnectionDetails, type MeetConnectionInfo } from '@/app/actions/checkPlatformConnections';
-import type { HubSpotFieldMapping } from '@/lib/db/schema';
+import type { HubSpotFieldMapping, SheetsColumnMapping } from '@/lib/db/schema';
+import { DEFAULT_SHEETS_COLUMNS } from '@/lib/db/schema';
 
 const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], string> = {
   timestamp: 'Meeting Timestamp',
@@ -14,6 +15,16 @@ const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], string> = 
   meeting_start: 'Start Time',
   meeting_end: 'End Time',
   meeting_outcome: 'Meeting Outcome',
+};
+
+const SHEETS_FIELD_LABELS: Record<SheetsColumnMapping['sourceField'], string> = {
+  contact_email: 'Contact Email',
+  meeting_title: 'Meeting Title',
+  meeting_date: 'Meeting Date',
+  platform: 'Platform',
+  draft_subject: 'Email Subject',
+  draft_body: 'Email Body',
+  sent_date: 'Sent Date',
 };
 
 interface PlatformConfig {
@@ -46,6 +57,7 @@ interface PlatformCardProps {
   nowMs: number;
   setShowAirtableForm: (show: boolean) => void;
   setShowHubspotFieldMapping: (show: boolean) => void;
+  setShowSheetsConfig: (show: boolean) => void;
 }
 
 const platforms: PlatformConfig[] = [
@@ -248,6 +260,7 @@ function PlatformCard({
   nowMs,
   setShowAirtableForm,
   setShowHubspotFieldMapping,
+  setShowSheetsConfig,
 }: PlatformCardProps) {
   return (
     <motion.div
@@ -368,6 +381,16 @@ function PlatformCard({
               {platform.id === 'hubspot' && !details?.isExpired && !details?.needsReconnect && (
                 <button
                   onClick={() => setShowHubspotFieldMapping(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Settings2 className="w-4 h-4" />
+                  Configure Fields
+                </button>
+              )}
+              {/* Google Sheets: Configure Fields button */}
+              {platform.id === 'google_sheets' && (
+                <button
+                  onClick={() => setShowSheetsConfig(true)}
                   className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <Settings2 className="w-4 h-4" />
@@ -688,6 +711,16 @@ export function IntegrationSettings() {
   const [hubspotMappingSaving, setHubspotMappingSaving] = useState(false);
   const [hubspotMappingError, setHubspotMappingError] = useState<string | null>(null);
 
+  // Google Sheets config state
+  const [showSheetsConfig, setShowSheetsConfig] = useState(false);
+  const [sheetsSpreadsheets, setSheetsSpreadsheets] = useState<{ id: string; name: string }[]>([]);
+  const [sheetsSelectedId, setSheetsSelectedId] = useState('');
+  const [sheetsSelectedName, setSheetsSelectedName] = useState('');
+  const [sheetsMappings, setSheetsMappings] = useState<SheetsColumnMapping[]>(DEFAULT_SHEETS_COLUMNS);
+  const [sheetsLoading, setSheetsLoading] = useState(false);
+  const [sheetsSaving, setSheetsSaving] = useState(false);
+  const [sheetsError, setSheetsError] = useState<string | null>(null);
+
   // Load field mappings and properties when the HubSpot modal opens
   useEffect(() => {
     if (!showHubspotFieldMapping) return;
@@ -732,6 +765,66 @@ export function IntegrationSettings() {
 
   const updateHubspotMapping = (index: number, updates: Partial<HubSpotFieldMapping>) => {
     setHubspotMappings(prev => prev.map((m, i) => i === index ? { ...m, ...updates } : m));
+  };
+
+  // Load Sheets spreadsheets and current config when modal opens
+  useEffect(() => {
+    if (!showSheetsConfig) return;
+    setSheetsLoading(true);
+    setSheetsError(null);
+
+    fetch('/api/integrations/sheets/configure')
+      .then(r => r.json())
+      .then(data => {
+        if (data.spreadsheets) setSheetsSpreadsheets(data.spreadsheets);
+        // Load current saved config from connection details
+        const sheetsDetails = connectionDetails.google_sheets;
+        if (sheetsDetails?.spreadsheetId) {
+          setSheetsSelectedId(sheetsDetails.spreadsheetId);
+          setSheetsSelectedName(sheetsDetails.spreadsheetName || '');
+        }
+        if (sheetsDetails?.columnMappings) {
+          setSheetsMappings(sheetsDetails.columnMappings);
+        }
+      })
+      .catch(() => setSheetsError('Failed to load spreadsheets'))
+      .finally(() => setSheetsLoading(false));
+  }, [showSheetsConfig]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSheetsConfigSave = async () => {
+    if (!sheetsSelectedId) {
+      setSheetsError('Please select a spreadsheet');
+      return;
+    }
+    setSheetsSaving(true);
+    setSheetsError(null);
+    try {
+      const response = await fetch('/api/integrations/sheets/configure', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          spreadsheetId: sheetsSelectedId,
+          spreadsheetName: sheetsSelectedName,
+          columnMappings: sheetsMappings,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setShowSheetsConfig(false);
+        setSuccessBanner('Google Sheets configuration saved');
+        setTimeout(() => setSuccessBanner(null), 3000);
+      } else {
+        setSheetsError(data.error || 'Failed to save');
+      }
+    } catch {
+      setSheetsError('Failed to save configuration');
+    } finally {
+      setSheetsSaving(false);
+    }
+  };
+
+  const updateSheetsMapping = (index: number, updates: Partial<SheetsColumnMapping>) => {
+    setSheetsMappings(prev => prev.map((m, i) => i === index ? { ...m, ...updates } : m));
   };
 
   const handleAirtableConnect = async () => {
@@ -974,6 +1067,7 @@ export function IntegrationSettings() {
                         nowMs={nowMs}
                         setShowAirtableForm={setShowAirtableForm}
                         setShowHubspotFieldMapping={setShowHubspotFieldMapping}
+                        setShowSheetsConfig={setShowSheetsConfig}
                       />
                     );
                   })}
@@ -1175,6 +1269,109 @@ export function IntegrationSettings() {
                       <Check className="w-4 h-4" />
                     )}
                     {hubspotMappingSaving ? 'Saving...' : 'Save Mappings'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Google Sheets Configuration Modal */}
+          {showSheetsConfig && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white light:text-gray-900">Google Sheets Configuration</h3>
+                  <button onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }} className="text-gray-400 hover:text-white">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
+                  Choose which spreadsheet to sync to and configure which columns get populated.
+                </p>
+
+                {sheetsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Spreadsheet selector */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1.5">Spreadsheet</label>
+                      {sheetsSpreadsheets.length > 0 ? (
+                        <select
+                          value={sheetsSelectedId}
+                          onChange={(e) => {
+                            setSheetsSelectedId(e.target.value);
+                            const selected = sheetsSpreadsheets.find(s => s.id === e.target.value);
+                            setSheetsSelectedName(selected?.name || '');
+                          }}
+                          className="w-full px-3 py-2 bg-gray-800 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg text-sm text-gray-200 light:text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#34A853]"
+                        >
+                          <option value="">Select a spreadsheet...</option>
+                          {sheetsSpreadsheets.map(s => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <p className="text-sm text-gray-500">No spreadsheets found. Create one in Google Sheets first.</p>
+                      )}
+                    </div>
+
+                    {/* Column mappings */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1.5">Columns</label>
+                      <div className="space-y-2">
+                        {sheetsMappings.map((mapping, index) => (
+                          <div key={mapping.sourceField} className="flex items-center gap-3 p-3 bg-gray-800/50 light:bg-gray-50 rounded-lg">
+                            <button
+                              onClick={() => updateSheetsMapping(index, { enabled: !mapping.enabled })}
+                              className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 relative ${
+                                mapping.enabled ? 'bg-[#34A853]' : 'bg-gray-600 light:bg-gray-300'
+                              }`}
+                            >
+                              <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                                mapping.enabled ? 'left-5' : 'left-1'
+                              }`} />
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium ${mapping.enabled ? 'text-white light:text-gray-900' : 'text-gray-500'}`}>
+                                {SHEETS_FIELD_LABELS[mapping.sourceField]}
+                              </p>
+                              <p className="text-xs text-gray-500">Column {mapping.column} — {mapping.header}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {sheetsError && (
+                  <div className="mt-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                    {sheetsError}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4 mt-4 border-t border-gray-700 light:border-gray-200">
+                  <button
+                    onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }}
+                    className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSheetsConfigSave}
+                    disabled={sheetsSaving || sheetsLoading || !sheetsSelectedId}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#34A853] hover:bg-[#2d9249] rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {sheetsSaving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Check className="w-4 h-4" />
+                    )}
+                    {sheetsSaving ? 'Saving...' : 'Save Configuration'}
                   </button>
                 </div>
               </div>

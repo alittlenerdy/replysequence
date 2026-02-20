@@ -24,6 +24,10 @@ export interface PlatformConnectionDetails {
   lastSyncAt?: Date;
   // Multi-connection support for Meet
   connections?: MeetConnectionInfo[];
+  // Google Sheets config
+  spreadsheetId?: string;
+  spreadsheetName?: string;
+  columnMappings?: import('@/lib/db/schema').SheetsColumnMapping[];
 }
 
 export interface PlatformConnectionsResult {
@@ -439,6 +443,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         googleEmail: sheetsConnections.googleEmail,
         spreadsheetId: sheetsConnections.spreadsheetId,
         spreadsheetName: sheetsConnections.spreadsheetName,
+        columnMappings: sheetsConnections.columnMappings,
         connectedAt: sheetsConnections.connectedAt,
         lastSyncAt: sheetsConnections.lastSyncAt,
         hasRefreshToken: sheetsConnections.refreshTokenEncrypted,
@@ -459,6 +464,9 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !sheetsConnection.hasRefreshToken,
         isExpiringSoon: false,
         lastSyncAt: sheetsConnection.lastSyncAt ?? undefined,
+        spreadsheetId: sheetsConnection.spreadsheetId ?? undefined,
+        spreadsheetName: sheetsConnection.spreadsheetName ?? undefined,
+        columnMappings: sheetsConnection.columnMappings ?? undefined,
       };
     }
 
