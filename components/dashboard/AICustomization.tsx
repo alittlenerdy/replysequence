@@ -64,7 +64,7 @@ function StepIndicator({ preferences, templatesViewed }: StepIndicatorProps) {
   const steps = [
     { label: 'Tone', complete: !!preferences.aiTone },
     { label: 'Instructions', complete: preferences.aiCustomInstructions.length > 0 },
-    { label: 'Rate', complete: preferences.hourlyRate !== 100 },
+    { label: 'Rate', complete: preferences.hourlyRate > 0 },
     { label: 'Templates', complete: templatesViewed },
   ];
   const completedCount = steps.filter(s => s.complete).length;
@@ -130,12 +130,10 @@ export function AICustomization() {
     return false;
   });
 
-  // Compute completion state
+  // Compute completion state — tone + instructions = configured enough
   const isComplete =
     !!preferences.aiTone &&
-    preferences.aiCustomInstructions.length > 0 &&
-    preferences.hourlyRate !== 100 &&
-    templatesViewed;
+    preferences.aiCustomInstructions.length > 0;
 
   // Load preferences
   useEffect(() => {
@@ -180,11 +178,14 @@ export function AICustomization() {
     });
     if (!response.ok) throw new Error('Save failed');
 
-    // Show first-time setup toast
-    const hasSeenToast = localStorage.getItem('rs-ai-setup-toast');
-    if (!hasSeenToast && data.aiCustomInstructions.length > 0) {
-      localStorage.setItem('rs-ai-setup-toast', '1');
-      setShowToast(true);
+    // Show first-time setup toast and dismiss dashboard nudge
+    if (data.aiTone && data.aiCustomInstructions.length > 0) {
+      localStorage.setItem('rs-nudge-ai-settings-dismissed', '1');
+      const hasSeenToast = localStorage.getItem('rs-ai-setup-toast');
+      if (!hasSeenToast) {
+        localStorage.setItem('rs-ai-setup-toast', '1');
+        setShowToast(true);
+      }
     }
   }, []);
 
