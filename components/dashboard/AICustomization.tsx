@@ -57,15 +57,13 @@ function SaveStatusIndicator({ status, lastSavedAt }: { status: AutoSaveStatus; 
 
 interface StepIndicatorProps {
   preferences: AIPreferences;
-  templatesViewed: boolean;
 }
 
-function StepIndicator({ preferences, templatesViewed }: StepIndicatorProps) {
+function StepIndicator({ preferences }: StepIndicatorProps) {
   const steps = [
     { label: 'Tone', complete: !!preferences.aiTone },
     { label: 'Instructions', complete: preferences.aiCustomInstructions.length > 0 },
     { label: 'Rate', complete: preferences.hourlyRate > 0 },
-    { label: 'Templates', complete: templatesViewed },
   ];
   const completedCount = steps.filter(s => s.complete).length;
   const progressPercent = (completedCount / steps.length) * 100;
@@ -117,12 +115,6 @@ export function AICustomization() {
   });
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [templatesViewed, setTemplatesViewed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('rs-templates-viewed') === '1';
-    }
-    return false;
-  });
   const [completionDismissed, setCompletionDismissed] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('rs-ai-setup-complete-dismissed') === '1';
@@ -260,7 +252,7 @@ export function AICustomization() {
           <SaveStatusIndicator status={status} lastSavedAt={lastSavedAt} />
         </div>
         <div className="relative mt-4">
-          <StepIndicator preferences={preferences} templatesViewed={templatesViewed} />
+          <StepIndicator preferences={preferences} />
         </div>
       </div>
 
@@ -434,7 +426,7 @@ export function AICustomization() {
           </div>
 
           {/* Step 4: Email Templates */}
-          <TemplateManager onViewed={() => setTemplatesViewed(true)} />
+          <TemplateManager />
         </div>
 
         {/* Right column: Sticky preview */}
@@ -469,7 +461,7 @@ const MEETING_TYPE_LABELS: Record<string, string> = {
   general: 'General',
 };
 
-function TemplateManager({ onViewed }: { onViewed: () => void }) {
+function TemplateManager() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
@@ -494,12 +486,7 @@ function TemplateManager({ onViewed }: { onViewed: () => void }) {
   }, []);
 
   function handleExpand() {
-    const next = !expanded;
-    setExpanded(next);
-    if (next) {
-      onViewed();
-      localStorage.setItem('rs-templates-viewed', '1');
-    }
+    setExpanded(!expanded);
   }
 
   async function handleDelete(id: string) {
@@ -543,12 +530,11 @@ function TemplateManager({ onViewed }: { onViewed: () => void }) {
         className="w-full flex items-center justify-between group"
       >
         <div className="flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">4</span>
           <FileText className="w-4 h-4 text-indigo-400" />
           <div className="text-left">
             <h4 className="text-sm font-medium text-white light:text-gray-900">Email Templates</h4>
             <p className="text-xs text-gray-500 mt-0.5">
-              {systemTemplates.length} built-in, {customTemplates.length} custom
+              {systemTemplates.length} built-in{customTemplates.length > 0 ? `, ${customTemplates.length} custom` : ''} — customize how drafts are generated per meeting type
             </p>
           </div>
         </div>
