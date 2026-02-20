@@ -273,6 +273,7 @@ export async function attemptAutoSend(params: {
       platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
       draftSubject: draft.subject,
       draftBody: draft.body,
+      userId,
     }).catch((err) => {
       console.error(JSON.stringify({
         level: 'error',
