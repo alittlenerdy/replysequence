@@ -585,6 +585,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       gmail: { connected: false },
       outlook: { connected: false },
       google_sheets: { connected: false },
+      salesforce: { connected: false },
     },
     userId: newUser.id,
   };
@@ -605,6 +606,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         gmail: { connected: false },
         outlook: { connected: false },
         google_sheets: { connected: false },
+        salesforce: { connected: false },
       },
     };
   }
