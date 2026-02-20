@@ -1161,3 +1161,65 @@ export const emailTemplates = pgTable(
 
 export type EmailTemplate = typeof emailTemplates.$inferSelect;
 export type NewEmailTemplate = typeof emailTemplates.$inferInsert;
+
+// Chat message role type
+export type ChatRole = 'user' | 'assistant';
+
+// Source meeting reference in chat messages
+export interface ChatSourceMeeting {
+  meetingId: string;
+  topic: string;
+  date: string; // ISO string
+  platform: MeetingPlatform;
+}
+
+// Chat conversations table - stores conversation sessions for "Ask your meetings" feature
+export const chatConversations = pgTable(
+  'chat_conversations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    title: varchar('title', { length: 500 }).notNull().default('New conversation'),
+    // Optional: scope to a single meeting
+    meetingId: uuid('meeting_id').references(() => meetings.id, { onDelete: 'set null' }),
+    messageCount: integer('message_count').notNull().default(0),
+    lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('chat_conversations_user_id_idx').on(table.userId),
+    index('chat_conversations_meeting_id_idx').on(table.meetingId),
+    index('chat_conversations_last_message_at_idx').on(table.lastMessageAt),
+  ]
+);
+
+// Chat messages table - stores individual messages in a conversation
+export const chatMessages = pgTable(
+  'chat_messages',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    conversationId: uuid('conversation_id')
+      .notNull()
+      .references(() => chatConversations.id, { onDelete: 'cascade' }),
+    role: varchar('role', { length: 20 }).$type<ChatRole>().notNull(),
+    content: text('content').notNull(),
+    // Source meetings referenced in assistant responses
+    sourceMeetings: jsonb('source_meetings').$type<ChatSourceMeeting[]>(),
+    // Token tracking
+    inputTokens: integer('input_tokens'),
+    outputTokens: integer('output_tokens'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('chat_messages_conversation_id_idx').on(table.conversationId),
+    index('chat_messages_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type ChatConversation = typeof chatConversations.$inferSelect;
+export type NewChatConversation = typeof chatConversations.$inferInsert;
+export type ChatMessage = typeof chatMessages.$inferSelect;
+export type NewChatMessage = typeof chatMessages.$inferInsert;

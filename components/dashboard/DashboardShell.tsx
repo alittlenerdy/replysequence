@@ -6,6 +6,7 @@ import { DashboardNav } from './DashboardNav';
 import { MobileBottomNav } from './MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 import { CommandPalette } from './CommandPalette';
+import { MeetingChat } from './MeetingChat';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -51,6 +52,9 @@ export function DashboardShell({ children, firstName = 'there', pendingDrafts = 
 
       {/* Command Palette (Cmd+K) */}
       <CommandPalette />
+
+      {/* Floating AI Chat */}
+      <MeetingChat />
     </div>
   );
 }
