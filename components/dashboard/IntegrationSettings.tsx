@@ -806,6 +806,13 @@ export function IntegrationSettings() {
     }
   };
 
+  // Progress: count non-CRM platforms individually + 1 CRM slot (any CRM connected = done)
+  const nonCrmPlatforms = platforms.filter(p => p.category !== 'crm');
+  const crmPlatforms = platforms.filter(p => p.category === 'crm');
+  const nonCrmConnected = nonCrmPlatforms.filter(p => connectionStatus[p.id]).length;
+  const anyCrmConnected = crmPlatforms.some(p => connectionStatus[p.id]);
+  const progressTotal = nonCrmPlatforms.length + 1; // +1 for CRM as a category
+  const progressConnected = nonCrmConnected + (anyCrmConnected ? 1 : 0);
   const connectedCount = Object.values(connectionStatus).filter(Boolean).length;
   const hasNoConnections = connectedCount === 0;
 
@@ -898,13 +905,13 @@ export function IntegrationSettings() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-white light:text-gray-900">Setup Progress</h3>
               <span className="text-sm font-medium text-gray-400 light:text-gray-500">
-                {connectedCount} of {platforms.length} connected
+                {progressConnected} of {progressTotal} connected
               </span>
             </div>
             <div className="h-2.5 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: `${(connectedCount / platforms.length) * 100}%` }}
+                animate={{ width: `${(progressConnected / progressTotal) * 100}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
                 className="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 rounded-full"
               />
