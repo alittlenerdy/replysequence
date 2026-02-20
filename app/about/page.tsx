@@ -95,7 +95,7 @@ export default function AboutPage() {
               },
               {
                 title: 'Syncs to your CRM',
-                description: 'Sent emails are automatically logged to HubSpot or Airtable. No manual data entry, no missed touchpoints.',
+                description: 'Sent emails are automatically logged to HubSpot, Salesforce, Airtable, or Google Sheets. No manual data entry, no missed touchpoints.',
               },
             ].map((item) => (
               <div key={item.title} className="text-center">

@@ -88,7 +88,7 @@ const faqData = [
   {
     question: 'What CRMs does ReplySequence integrate with?',
     answer:
-      'We integrate with HubSpot and Airtable for CRM logging. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry. Salesforce integration is coming soon.',
+      'We integrate with HubSpot, Salesforce, Airtable, and Google Sheets for CRM logging. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry.',
   },
   {
     question: 'How much does ReplySequence cost?',
@@ -123,7 +123,7 @@ const faqData = [
   {
     question: 'Will this mess up our CRM data?',
     answer:
-      'ReplySequence only writes to agreed-upon fields in your CRM. All activity logs are visible and auditable. We log the follow-up email, key action items, and meeting outcome — nothing more. If you use HubSpot, the integration maps to your existing properties. You can review exactly what gets synced before enabling CRM logging.',
+      'ReplySequence only writes to agreed-upon fields in your CRM. All activity logs are visible and auditable. We log the follow-up email, key action items, and meeting outcome — nothing more. If you use HubSpot or Salesforce, the integration maps to your existing properties. For Google Sheets, you choose exactly which columns to sync. You can review exactly what gets synced before enabling CRM logging.',
   },
   {
     question: 'How accurate is the AI at capturing what happened in a meeting?',

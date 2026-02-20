@@ -783,7 +783,7 @@ export default function FathomComparisonPage() {
                 "name": "Does Fathom integrate with HubSpot and Salesforce?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, Fathom has native integrations with HubSpot and Salesforce, automatically syncing meeting notes and action items to your CRM. ReplySequence also integrates with these CRMs plus Airtable."
+                  "text": "Yes, Fathom has native integrations with HubSpot and Salesforce, automatically syncing meeting notes and action items to your CRM. ReplySequence also integrates with HubSpot, Salesforce, Airtable, and Google Sheets."
                 }
               },
               {

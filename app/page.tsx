@@ -75,6 +75,9 @@ import {
   CheckCircle2,
   Eye,
   Palette,
+  MessageSquare,
+  Sparkles,
+  Search,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -286,6 +289,145 @@ export default function LandingPage() {
                 <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ask Your Meetings Section */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 mb-6">
+              <Sparkles className="w-4 h-4 text-orange-400" />
+              <span className="text-sm font-medium text-orange-400">New Feature</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+              Stop Rereading Transcripts.{' '}
+              <GradientText variant="amber">Ask Instead.</GradientText>
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+              Type a question about your meetings and get instant answers pulled from every transcript — action items, risks, follow-ups, trends.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Chat Preview */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="rounded-2xl border border-orange-500/20 bg-gray-900/80 light:bg-white light:border-orange-200 overflow-hidden shadow-xl shadow-orange-500/5"
+            >
+              {/* Chat header */}
+              <div className="px-5 py-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-orange-500/20 light:border-orange-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-white light:text-gray-900">Ask your meetings</span>
+                    <p className="text-xs text-gray-400 light:text-gray-500">AI-powered meeting search</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Chat messages */}
+              <div className="p-5 space-y-4">
+                {/* User message */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 }}
+                  className="flex justify-end"
+                >
+                  <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm">
+                    What action items came up this week?
+                  </div>
+                </motion.div>
+
+                {/* AI response */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.8 }}
+                  className="flex justify-start"
+                >
+                  <div className="max-w-[90%] px-4 py-3 rounded-2xl rounded-bl-md bg-gray-800 light:bg-gray-100 text-sm text-gray-200 light:text-gray-700 space-y-2">
+                    <p className="font-medium text-white light:text-gray-900">Based on 4 meetings this week:</p>
+                    <p><span className="text-orange-400 font-semibold">Technical issues:</span> API rate limiting needs a fix before launch (Feb 18 standup)</p>
+                    <p><span className="text-orange-400 font-semibold">Follow-ups due:</span> Send pricing proposal to Acme Corp by Friday (Feb 17 demo)</p>
+                    <p><span className="text-orange-400 font-semibold">Risks flagged:</span> Onboarding timeline slipping — 3 users reported confusion</p>
+                    {/* Source badges */}
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Q1 Pipeline Review</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Product Demo Call</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Input area */}
+              <div className="px-5 py-3 border-t border-gray-700 light:border-gray-200">
+                <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200">
+                  <Search className="w-4 h-4 text-gray-500 shrink-0" />
+                  <span className="text-sm text-gray-500">Ask about meetings, follow-ups, or risks...</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Feature bullets */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="space-y-6"
+            >
+              {[
+                {
+                  title: 'Search every transcript at once',
+                  description: 'No more clicking through individual meetings. Ask a question and get answers pulled from all your calls.',
+                },
+                {
+                  title: 'Action items, risks, and trends',
+                  description: 'Get grouped, scannable answers — not walls of text. See what needs attention right now.',
+                },
+                {
+                  title: 'Source-linked answers',
+                  description: 'Every response links back to the specific meeting it came from, so you can verify and dig deeper.',
+                },
+                {
+                  title: 'Works per-meeting or across all',
+                  description: 'Open it from the dashboard to search everything, or from a specific meeting for focused questions.',
+                },
+              ].map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="flex gap-4"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-4 h-4 text-orange-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white light:text-gray-900 mb-1">{feature.title}</h3>
+                    <p className="text-sm text-gray-400 light:text-gray-600">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
@@ -580,7 +722,7 @@ export default function LandingPage() {
               {[
                 { label: 'Platforms Supported', value: '3', amber: false },
                 { label: 'Avg. Draft Time', value: '<30s', amber: true },
-                { label: 'CRM Integrations', value: '2+', amber: false },
+                { label: 'CRM Integrations', value: '4', amber: false },
               ].map((stat, i) => (
                 <div key={i} className="text-center px-6">
                   <div className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r ${stat.amber ? 'from-amber-400 via-amber-500 to-orange-500' : 'from-indigo-300 via-indigo-400 to-indigo-600'}`}>
@@ -629,7 +771,7 @@ export default function LandingPage() {
             "featureList": [
               "AI-powered follow-up email generation",
               "Zoom, Microsoft Teams, and Google Meet integration",
-              "CRM automation with HubSpot and Airtable",
+              "CRM automation with HubSpot, Salesforce, Airtable, and Google Sheets",
               "Email tracking and analytics",
               "Connected email account sending",
             ],

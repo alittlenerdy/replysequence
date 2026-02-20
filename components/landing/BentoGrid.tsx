@@ -309,9 +309,10 @@ function MeetingListPreview() {
 // CRM Preview with animated data flow, contact cards, and sync activity
 function CRMPreview() {
   const platforms = [
-    { name: 'Airtable', color: '#18BFFF' },
     { name: 'HubSpot', color: '#FF7A59' },
     { name: 'Salesforce', color: '#00A1E0' },
+    { name: 'Sheets', color: '#34A853' },
+    { name: 'Airtable', color: '#18BFFF' },
   ];
 
   const syncEvents = [
@@ -574,7 +575,7 @@ export function BentoGrid() {
           {/* CRM Sync */}
           <BentoCard
             title="Auto-logged to CRM"
-            description="Airtable, HubSpot, Salesforce integrations coming soon"
+            description="HubSpot, Salesforce, Airtable, and Google Sheets"
             icon={<Users className="w-6 h-6 text-indigo-400" />}
             delay={0.3}
           >

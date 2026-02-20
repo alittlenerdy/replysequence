@@ -135,7 +135,7 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'Zoom Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Google Meet Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Microsoft Teams Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
-  { feature: 'CRM Integrations', replysequence: 'Airtable + Coming Soon', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Integrations' },
+  { feature: 'CRM Integrations', replysequence: 'HubSpot, Salesforce, Airtable, Sheets', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Integrations' },
   // Fireflies Advantages
   { feature: 'Smart Search', replysequence: 'Basic Search', fireflies: 'AI-Powered Search', winner: 'fireflies', category: 'Search & Analytics' },
   { feature: 'Topic Tracker', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },

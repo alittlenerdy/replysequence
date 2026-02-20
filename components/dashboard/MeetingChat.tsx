@@ -218,6 +218,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group"
+          title="Ask anything about your recent meetings — action items, follow-ups, risks, trends."
         >
           {/* Sparkle icon */}
           <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -247,7 +248,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                 <h3 className="text-sm font-bold text-white light:text-gray-900">
                   {meetingId ? 'Ask this meeting' : 'Ask your meetings'}
                 </h3>
-                <p className="text-[10px] text-orange-300/70 light:text-orange-600/70">AI-powered meeting search</p>
+                <p className="text-[10px] text-orange-300/70 light:text-orange-600/70">Search every transcript for action items, follow-ups, and patterns</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -339,33 +340,39 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                 <p className="text-base font-bold text-white light:text-gray-900 mb-1">
                   {meetingId ? 'Ask about this meeting' : 'Ask your meetings anything'}
                 </p>
-                <p className="text-xs text-gray-400 light:text-gray-500 max-w-[280px] mb-5">
+                <p className="text-xs text-gray-400 light:text-gray-500 max-w-[300px] mb-5">
                   {meetingId
                     ? 'Ask questions about the transcript, decisions, or action items from this meeting.'
-                    : 'Search across all your meetings with AI. Get instant answers about decisions, action items, and conversations.'}
+                    : 'Type a question about your calls instead of digging through transcripts. We\'ll search your meetings and surface answers instantly.'}
                 </p>
-                <div className="space-y-2 w-full max-w-[300px]">
-                  {(meetingId
-                    ? [
-                        'What were the key decisions?',
-                        'List all action items',
-                        'What did each person say about next steps?',
-                      ]
-                    : [
-                        'What action items came up this week?',
-                        'Summarize my last 3 meetings',
-                        'What decisions were made about the budget?',
-                      ]
-                  ).map(suggestion => (
-                    <button
-                      key={suggestion}
-                      onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
-                      className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors"
-                    >
-                      <span className="text-orange-400 light:text-orange-500 mr-1.5">→</span>
-                      {suggestion}
-                    </button>
-                  ))}
+                <div className="w-full max-w-[320px]">
+                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-500 light:text-gray-400 mb-2">Examples</p>
+                  <div className="space-y-2">
+                    {(meetingId
+                      ? [
+                          'What were the key decisions?',
+                          'List all action items',
+                          'What did each person say about next steps?',
+                          'Were there any risks or blockers mentioned?',
+                        ]
+                      : [
+                          'What action items came up this week?',
+                          'Who do I owe a follow-up from this week\'s calls?',
+                          'Which meetings mentioned onboarding issues?',
+                          'Show meetings where next steps weren\'t confirmed',
+                          'What decisions were made about the budget?',
+                        ]
+                    ).map(suggestion => (
+                      <button
+                        key={suggestion}
+                        onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
+                        className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors"
+                      >
+                        <span className="text-orange-400 light:text-orange-500 mr-1.5">→</span>
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -391,7 +398,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={meetingId ? 'Ask about this meeting...' : 'Ask your meetings anything...'}
+                placeholder={meetingId ? 'Ask about this meeting...' : 'Ask about meetings, follow-ups, or risks...'}
                 rows={1}
                 className="flex-1 resize-none bg-gray-800 light:bg-white border border-gray-700 light:border-orange-200 rounded-xl px-3 py-2.5 text-sm text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 max-h-[120px] overflow-y-auto"
                 style={{ minHeight: '42px' }}
@@ -420,7 +427,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               </button>
             </div>
             <p className="text-[10px] text-gray-600 light:text-gray-400 mt-1.5 text-center">
-              AI can make mistakes. Verify important details.
+              Answers are based only on meetings in your dashboard. Nothing is changed unless you confirm it.
             </p>
           </div>
         </div>
