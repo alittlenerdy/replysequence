@@ -213,42 +213,56 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
 
   return (
     <>
-      {/* Floating button */}
+      {/* Prominent floating launcher */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 flex items-center justify-center transition-all hover:scale-105 active:scale-95 md:bottom-8 md:right-8"
-          title="Ask your meetings"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group"
         >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          {/* Sparkle icon */}
+          <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
           </svg>
+          <span className="text-sm font-semibold whitespace-nowrap">Ask your meetings</span>
+          {/* Pulse ring */}
+          <span className="absolute -top-1 -right-1 w-3 h-3">
+            <span className="absolute inset-0 rounded-full bg-white/80 animate-ping" />
+            <span className="absolute inset-0 rounded-full bg-white" />
+          </span>
         </button>
       )}
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-0 right-0 z-50 w-full sm:w-[420px] sm:bottom-6 sm:right-6 h-[85vh] sm:h-[600px] sm:max-h-[80vh] flex flex-col bg-gray-950 light:bg-white border border-gray-800 light:border-gray-200 sm:rounded-2xl shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 light:border-gray-200 bg-gray-900/80 light:bg-gray-50">
-            <div className="flex items-center gap-2">
+        <div className="fixed bottom-0 right-0 z-50 w-full sm:w-[440px] sm:bottom-6 sm:right-6 h-[85vh] sm:h-[620px] sm:max-h-[80vh] flex flex-col bg-gray-950 light:bg-white border border-orange-500/30 light:border-orange-300/50 sm:rounded-2xl shadow-2xl shadow-orange-500/10 overflow-hidden">
+          {/* Header with orange gradient */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-orange-500/20 light:border-orange-200 bg-gradient-to-r from-orange-500/10 to-amber-500/10 light:from-orange-50 light:to-amber-50">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white light:text-gray-900">
+                  {meetingId ? 'Ask this meeting' : 'Ask your meetings'}
+                </h3>
+                <p className="text-[10px] text-orange-300/70 light:text-orange-600/70">AI-powered meeting search</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="p-1.5 rounded-lg hover:bg-gray-800 light:hover:bg-gray-200 text-gray-400 light:text-gray-500 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors"
                 title="Conversation history"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </button>
-              <h3 className="text-sm font-semibold text-white light:text-gray-900">
-                {meetingId ? 'Ask this meeting' : 'Ask your meetings'}
-              </h3>
-            </div>
-            <div className="flex items-center gap-1">
               <button
                 onClick={startNewConversation}
-                className="p-1.5 rounded-lg hover:bg-gray-800 light:hover:bg-gray-200 text-gray-400 light:text-gray-500 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors"
                 title="New conversation"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -257,7 +271,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-gray-800 light:hover:bg-gray-200 text-gray-400 light:text-gray-500 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors"
                 title="Close"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -269,7 +283,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
 
           {/* History sidebar (overlay) */}
           {showHistory && (
-            <div className="absolute inset-0 top-[49px] z-10 bg-gray-950 light:bg-white flex flex-col">
+            <div className="absolute inset-0 top-[57px] z-10 bg-gray-950 light:bg-white flex flex-col">
               <div className="px-4 py-3 border-b border-gray-800 light:border-gray-200">
                 <h4 className="text-sm font-medium text-gray-300 light:text-gray-600">Conversations</h4>
               </div>
@@ -280,8 +294,8 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                   conversations.map(conv => (
                     <div
                       key={conv.id}
-                      className={`flex items-center justify-between px-4 py-3 border-b border-gray-800/50 light:border-gray-100 hover:bg-gray-900 light:hover:bg-gray-50 cursor-pointer transition-colors ${
-                        conv.id === conversationId ? 'bg-gray-900 light:bg-gray-100' : ''
+                      className={`flex items-center justify-between px-4 py-3 border-b border-gray-800/50 light:border-gray-100 hover:bg-orange-500/5 light:hover:bg-orange-50 cursor-pointer transition-colors ${
+                        conv.id === conversationId ? 'bg-orange-500/10 light:bg-orange-50' : ''
                       }`}
                       onClick={() => loadConversation(conv.id)}
                     >
@@ -306,7 +320,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               </div>
               <button
                 onClick={() => setShowHistory(false)}
-                className="px-4 py-3 text-sm text-indigo-400 hover:text-indigo-300 border-t border-gray-800 light:border-gray-200 light:text-indigo-600 light:hover:text-indigo-700 transition-colors"
+                className="px-4 py-3 text-sm text-orange-400 hover:text-orange-300 border-t border-gray-800 light:border-gray-200 light:text-orange-600 light:hover:text-orange-700 transition-colors"
               >
                 Back to chat
               </button>
@@ -317,36 +331,42 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center mb-3">
-                  <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-orange-500/20">
+                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
                   </svg>
                 </div>
-                <p className="text-sm font-medium text-white light:text-gray-900 mb-1">
+                <p className="text-base font-bold text-white light:text-gray-900 mb-1">
                   {meetingId ? 'Ask about this meeting' : 'Ask your meetings anything'}
                 </p>
-                <p className="text-xs text-gray-500 max-w-[260px]">
+                <p className="text-xs text-gray-400 light:text-gray-500 max-w-[280px] mb-5">
                   {meetingId
-                    ? 'Ask questions about the transcript, decisions, or action items.'
-                    : 'Search across all your meetings. Try "What did Sarah say about pricing?"'}
+                    ? 'Ask questions about the transcript, decisions, or action items from this meeting.'
+                    : 'Search across all your meetings with AI. Get instant answers about decisions, action items, and conversations.'}
                 </p>
-                {!meetingId && (
-                  <div className="mt-4 space-y-2 w-full max-w-[280px]">
-                    {[
-                      'What action items came up this week?',
-                      'Summarize my last 3 meetings',
-                      'What decisions were made about the budget?',
-                    ].map(suggestion => (
-                      <button
-                        key={suggestion}
-                        onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
-                        className="w-full text-left text-xs px-3 py-2 rounded-lg bg-gray-900 light:bg-gray-100 text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-200 border border-gray-800 light:border-gray-200 transition-colors"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                <div className="space-y-2 w-full max-w-[300px]">
+                  {(meetingId
+                    ? [
+                        'What were the key decisions?',
+                        'List all action items',
+                        'What did each person say about next steps?',
+                      ]
+                    : [
+                        'What action items came up this week?',
+                        'Summarize my last 3 meetings',
+                        'What decisions were made about the budget?',
+                      ]
+                  ).map(suggestion => (
+                    <button
+                      key={suggestion}
+                      onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
+                      className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors"
+                    >
+                      <span className="text-orange-400 light:text-orange-500 mr-1.5">→</span>
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -364,7 +384,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
           </div>
 
           {/* Input area */}
-          <div className="border-t border-gray-800 light:border-gray-200 px-4 py-3 bg-gray-900/50 light:bg-gray-50">
+          <div className="border-t border-orange-500/20 light:border-orange-200 px-4 py-3 bg-gray-900/50 light:bg-orange-50/50">
             <div className="flex items-end gap-2">
               <textarea
                 ref={inputRef}
@@ -373,7 +393,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                 onKeyDown={handleKeyDown}
                 placeholder={meetingId ? 'Ask about this meeting...' : 'Ask your meetings anything...'}
                 rows={1}
-                className="flex-1 resize-none bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl px-3 py-2.5 text-sm text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 max-h-[120px] overflow-y-auto"
+                className="flex-1 resize-none bg-gray-800 light:bg-white border border-gray-700 light:border-orange-200 rounded-xl px-3 py-2.5 text-sm text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 max-h-[120px] overflow-y-auto"
                 style={{ minHeight: '42px' }}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
@@ -385,7 +405,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isStreaming}
-                className="shrink-0 w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors"
+                className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all"
               >
                 {isStreaming ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -416,14 +436,14 @@ function MessageBubble({ message }: { message: ChatMessage }) {
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-      <div className={`max-w-[85%] ${isUser ? 'order-1' : 'order-1'}`}>
+      <div className="max-w-[85%]">
         {/* Source citations (above assistant messages) */}
         {!isUser && message.sourceMeetings && message.sourceMeetings.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-1.5">
             {message.sourceMeetings.map((src, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20"
               >
                 <PlatformIcon platform={src.platform} />
                 {src.topic}
@@ -435,7 +455,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
         <div
           className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
             isUser
-              ? 'bg-indigo-600 text-white rounded-br-md'
+              ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-br-md'
               : 'bg-gray-800 light:bg-gray-100 text-gray-200 light:text-gray-800 rounded-bl-md'
           }`}
         >
@@ -444,10 +464,10 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           ) : message.content ? (
             <MarkdownContent content={message.content} />
           ) : (
-            <span className="inline-flex items-center gap-1 text-gray-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-pulse" />
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-pulse [animation-delay:150ms]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-pulse [animation-delay:300ms]" />
+            <span className="inline-flex items-center gap-1.5 text-orange-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse [animation-delay:150ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse [animation-delay:300ms]" />
             </span>
           )}
         </div>
@@ -459,7 +479,6 @@ function MessageBubble({ message }: { message: ChatMessage }) {
 // --- Simple Markdown Renderer ---
 
 function MarkdownContent({ content }: { content: string }) {
-  // Simple markdown parsing: bold, lists, headers, line breaks
   const lines = content.split('\n');
   const elements: React.ReactNode[] = [];
   let listItems: string[] = [];
@@ -480,7 +499,6 @@ function MarkdownContent({ content }: { content: string }) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // List items
     if (line.match(/^[-*]\s/)) {
       listItems.push(line.replace(/^[-*]\s/, ''));
       continue;
@@ -488,23 +506,20 @@ function MarkdownContent({ content }: { content: string }) {
 
     flushList();
 
-    // Empty line
     if (!line.trim()) {
       elements.push(<br key={`br-${i}`} />);
       continue;
     }
 
-    // Headers
     if (line.startsWith('### ')) {
-      elements.push(<p key={i} className="font-semibold mt-2 mb-0.5">{formatInline(line.slice(4))}</p>);
+      elements.push(<p key={i} className="font-semibold mt-2 mb-0.5 text-orange-300 light:text-orange-700">{formatInline(line.slice(4))}</p>);
       continue;
     }
     if (line.startsWith('## ')) {
-      elements.push(<p key={i} className="font-semibold mt-2 mb-0.5">{formatInline(line.slice(3))}</p>);
+      elements.push(<p key={i} className="font-semibold mt-2 mb-0.5 text-orange-300 light:text-orange-700">{formatInline(line.slice(3))}</p>);
       continue;
     }
 
-    // Regular paragraph
     elements.push(<p key={i} className="mb-0.5">{formatInline(line)}</p>);
   }
 
@@ -514,11 +529,10 @@ function MarkdownContent({ content }: { content: string }) {
 }
 
 function formatInline(text: string): React.ReactNode {
-  // Bold: **text**
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>;
+      return <strong key={i} className="font-semibold text-white light:text-gray-900">{part.slice(2, -2)}</strong>;
     }
     return part;
   });

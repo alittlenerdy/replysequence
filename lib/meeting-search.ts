@@ -8,7 +8,7 @@
 
 import { db } from './db';
 import { meetings, transcripts } from './db/schema';
-import { eq, and, desc, sql, ilike, or } from 'drizzle-orm';
+import { eq, and, desc, ilike, or, inArray } from 'drizzle-orm';
 import type { MeetingPlatform, SpeakerSegment } from './db/schema';
 
 export interface MeetingSearchResult {
@@ -81,7 +81,7 @@ export async function searchMeetings(params: {
     ))
     .where(and(
       eq(meetings.userId, userId),
-      eq(meetings.status, 'completed'),
+      inArray(meetings.status, ['completed', 'ready']),
       meetingId ? eq(meetings.id, meetingId) : undefined,
       // At least one term must match somewhere
       or(
@@ -176,7 +176,7 @@ async function getRecentMeetings(
     ))
     .where(and(
       eq(meetings.userId, userId),
-      eq(meetings.status, 'completed'),
+      inArray(meetings.status, ['completed', 'ready']),
       meetingId ? eq(meetings.id, meetingId) : undefined,
     ))
     .orderBy(desc(meetings.startTime))
