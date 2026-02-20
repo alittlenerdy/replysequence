@@ -11,6 +11,7 @@ import { EmailEngagement } from '@/components/analytics/EmailEngagement';
 import { InsightBanner } from '@/components/analytics/InsightBanner';
 import { AtRiskMeetings } from '@/components/analytics/AtRiskMeetings';
 import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
+import { SpeakerInsights } from '@/components/analytics/SpeakerInsights';
 import type { AnalyticsData } from '@/lib/types/analytics';
 
 // Chart loading placeholder
@@ -334,7 +335,12 @@ export function AnalyticsDashboard() {
         </motion.div>
       )}
 
-      {/* 6. Collapsible "More Insights" */}
+      {/* 6. Speaker Insights */}
+      {hasData && analytics.speakerAnalytics.meetingsAnalyzed > 0 && (
+        <SpeakerInsights data={analytics.speakerAnalytics} />
+      )}
+
+      {/* 7. Collapsible "More Insights" */}
       {hasData && (
         <div>
           <button

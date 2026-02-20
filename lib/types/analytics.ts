@@ -66,6 +66,28 @@ export interface AtRiskMeeting {
   contactName: string | null;
 }
 
+/** Per-speaker analytics computed from transcript segments */
+export interface SpeakerStat {
+  speaker: string;
+  talkTimeMs: number;
+  talkTimePercent: number;
+  segmentCount: number;
+  avgSegmentMs: number;
+  questionCount: number;
+  longestMonologueMs: number;
+  monologueCount: number; // segments > 60s
+}
+
+/** Aggregate speaker analytics across all meetings */
+export interface SpeakerAnalytics {
+  totalSpeakers: number;
+  totalTalkTimeMs: number;
+  totalMonologues: number;
+  avgTalkToListenRatio: number | null; // ratio of user talk vs total, null if no user data
+  speakers: SpeakerStat[];
+  meetingsAnalyzed: number;
+}
+
 /** Per-day coverage metrics */
 export interface DailyCoverage {
   date: string;
@@ -103,6 +125,8 @@ export interface AnalyticsData {
   medianFollowUpTimeHours: number | null;
   atRiskMeetings: AtRiskMeeting[];
   dailyCoverage: DailyCoverage[];
+  // Speaker analytics
+  speakerAnalytics: SpeakerAnalytics;
   // User context for nudge logic
   aiOnboardingComplete: boolean;
   hourlyRate: number;

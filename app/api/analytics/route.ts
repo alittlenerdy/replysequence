@@ -7,7 +7,9 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq, inArray } from 'drizzle-orm';
-import { db, users, meetings, drafts } from '@/lib/db';
+import { db, users, meetings, drafts, transcripts } from '@/lib/db';
+import { aggregateSpeakerAnalytics } from '@/lib/transcript/speaker-analytics';
+import type { SpeakerSegment } from '@/lib/db/schema';
 import type {
   AnalyticsData,
   DailyDataPoint,
@@ -109,6 +111,7 @@ export async function GET(request: Request) {
     medianFollowUpTimeHours: null,
     atRiskMeetings: [],
     dailyCoverage: [],
+    speakerAnalytics: { totalSpeakers: 0, totalTalkTimeMs: 0, totalMonologues: 0, avgTalkToListenRatio: null, speakers: [], meetingsAnalyzed: 0 },
     aiOnboardingComplete: false,
     hourlyRate: DEFAULT_HOURLY_RATE,
   };
@@ -441,6 +444,27 @@ export async function GET(request: Request) {
       };
     });
 
+    // --- Speaker analytics: compute from transcript speaker segments ---
+    let speakerAnalytics = emptyResponse.speakerAnalytics;
+    if (meetingIds.length > 0) {
+      try {
+        const userTranscripts = await db
+          .select({ speakerSegments: transcripts.speakerSegments })
+          .from(transcripts)
+          .where(inArray(transcripts.meetingId, meetingIds));
+
+        const segmentArrays = userTranscripts
+          .map(t => t.speakerSegments as SpeakerSegment[] | null)
+          .filter((s): s is SpeakerSegment[] => Array.isArray(s) && s.length > 0);
+
+        if (segmentArrays.length > 0) {
+          speakerAnalytics = aggregateSpeakerAnalytics(segmentArrays, user.email);
+        }
+      } catch (e) {
+        console.log('[ANALYTICS-WARN] Error computing speaker analytics:', e);
+      }
+    }
+
     return NextResponse.json<AnalyticsData>({
       totalMeetings,
       emailsGenerated,
@@ -469,6 +493,7 @@ export async function GET(request: Request) {
       medianFollowUpTimeHours,
       atRiskMeetings,
       dailyCoverage,
+      speakerAnalytics,
       aiOnboardingComplete: user.aiOnboardingComplete,
       hourlyRate: userHourlyRate,
     });
