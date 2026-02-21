@@ -28,6 +28,113 @@ function formatDateSafe(date: Date | string | null, isMounted: boolean, options?
 // Import ensureHtml to normalize plain text to HTML for the editor and preview
 import { ensureHtml } from './RichTextEditor';
 
+interface EmailEventTimelineEvent {
+  id: string;
+  type: string;
+  url: string | null;
+  occurredAt: string;
+  location: string | null;
+}
+
+interface EmailEventsData {
+  summary: { sent: number; opened: number; clicked: number; replied: number };
+  clickedUrls: Array<{ url: string; count: number }>;
+  events: EmailEventTimelineEvent[];
+}
+
+function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState<EmailEventsData | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const loadEvents = useCallback(async () => {
+    if (data || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/drafts/${draftId}/events`);
+      if (res.ok) {
+        setData(await res.json());
+      }
+    } catch {
+      // Silently fail — aggregates are still visible
+    } finally {
+      setLoading(false);
+    }
+  }, [draftId, data, loading]);
+
+  const handleToggle = () => {
+    const opening = !isOpen;
+    setIsOpen(opening);
+    if (opening) loadEvents();
+  };
+
+  const eventConfig: Record<string, { label: string; color: string; icon: string }> = {
+    sent: { label: 'Sent', color: 'text-green-400', icon: 'M5 13l4 4L19 7' },
+    opened: { label: 'Opened', color: 'text-indigo-400', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+    clicked: { label: 'Clicked', color: 'text-amber-400', icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' },
+    replied: { label: 'Replied', color: 'text-indigo-400', icon: 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6' },
+    bounced: { label: 'Bounced', color: 'text-red-400', icon: 'M12 9v2m0 4h.01' },
+  };
+
+  return (
+    <div className="mt-3 pt-3 border-t border-white/[0.06]">
+      <button
+        onClick={handleToggle}
+        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-400 transition-colors w-full"
+      >
+        <svg className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+        Activity Timeline
+        {loading && <span className="ml-1 animate-pulse">...</span>}
+      </button>
+
+      {isOpen && data && (
+        <div className="mt-3 space-y-1.5">
+          {/* Clicked URLs summary */}
+          {data.clickedUrls.length > 0 && (
+            <div className="mb-3 p-2 rounded-lg bg-amber-500/5 border border-amber-500/10">
+              <div className="text-xs font-medium text-amber-400/80 mb-1">Links Clicked</div>
+              {data.clickedUrls.map((link, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
+                  <span className="text-amber-400 font-medium">{link.count}x</span>
+                  <span className="truncate">{link.url}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Event timeline */}
+          {data.events.length === 0 ? (
+            <p className="text-xs text-slate-500 text-center py-2">No events recorded</p>
+          ) : (
+            data.events.slice(0, 20).map((event) => {
+              const cfg = eventConfig[event.type] || { label: event.type, color: 'text-gray-400', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' };
+              return (
+                <div key={event.id} className="flex items-center gap-2 text-xs">
+                  <svg className={`w-3 h-3 shrink-0 ${cfg.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={cfg.icon} />
+                  </svg>
+                  <span className={cfg.color}>{cfg.label}</span>
+                  {event.type === 'clicked' && event.url && (
+                    <span className="text-slate-500 truncate max-w-[150px]" title={event.url}>{event.url}</span>
+                  )}
+                  <span className="ml-auto text-slate-600 shrink-0">
+                    {isMounted ? new Date(event.occurredAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '...'}
+                  </span>
+                </div>
+              );
+            })
+          )}
+          {data.events.length > 20 && (
+            <p className="text-xs text-slate-500 text-center">+ {data.events.length - 20} more events</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Dynamic import TipTap editor to reduce initial bundle size
 const RichTextEditor = dynamic(
   () => import('./RichTextEditor').then((mod) => mod.RichTextEditor),
@@ -889,6 +996,11 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                               No engagement tracked yet. Opens are recorded when recipients view the email.
                             </div>
                           )}
+
+                          {/* Detailed Activity Timeline */}
+                          {(draft.openCount ?? 0) > 0 || (draft.clickCount ?? 0) > 0 ? (
+                            <EmailEventTimeline draftId={draft.id} isMounted={isMounted} />
+                          ) : null}
                         </div>
                       </div>
                     ) : null}
