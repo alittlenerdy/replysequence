@@ -29,6 +29,9 @@
     },
     "app/api/cron/renew-teams-subscriptions/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/cleanup-stuck-meetings/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
@@ -51,6 +54,10 @@
     {
       "path": "/api/cron/renew-teams-subscriptions",
       "schedule": "0 */12 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-stuck-meetings",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
