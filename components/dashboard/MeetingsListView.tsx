@@ -163,7 +163,7 @@ export function MeetingsListView() {
 
   // Status summary counts
   const statusCounts = useMemo(() => {
-    const counts = { no_draft: 0, draft_ready: 0, overdue: 0, sent: 0 };
+    const counts: Record<FollowUpStatus, number> = { failed: 0, processing: 0, no_draft: 0, draft_ready: 0, overdue: 0, sent: 0 };
     for (const m of meetings) {
       counts[getFollowUpStatus(m)]++;
     }
