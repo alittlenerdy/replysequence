@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, sql } from 'drizzle-orm';
-import { db, users, zoomConnections, userOnboarding } from '@/lib/db';
+import { db, users, zoomConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 // Allow longer timeout for cold starts and token exchange
@@ -206,32 +206,8 @@ export async function GET(request: NextRequest) {
       zoomConnected: verifyUser?.zoomConnected,
     });
 
-    // Update user_onboarding table if this is an onboarding flow
-    if (returnTo.includes('/onboarding')) {
-      console.log('[ZOOM-CALLBACK] Updating user_onboarding with platform_connected=zoom');
-
-      // Check if record exists
-      const existingOnboarding = await db.query.userOnboarding.findFirst({
-        where: eq(userOnboarding.clerkId, clerkUserId),
-      });
-
-      if (existingOnboarding) {
-        await db
-          .update(userOnboarding)
-          .set({
-            platformConnected: 'zoom',
-            currentStep: 2, // Stay on platform step to show connected status
-            updatedAt: new Date(),
-          })
-          .where(eq(userOnboarding.clerkId, clerkUserId));
-      } else {
-        await db.insert(userOnboarding).values({
-          clerkId: clerkUserId,
-          platformConnected: 'zoom',
-          currentStep: 2, // Stay on platform step to show connected status
-        });
-      }
-    }
+    // Note: userOnboarding step advancement is handled client-side by onboarding/page.tsx
+    // to avoid race conditions between server and client step updates.
 
     console.log('[ZOOM-CALLBACK] OAuth flow completed successfully', {
       clerkUserId,

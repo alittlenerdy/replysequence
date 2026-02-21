@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, sql } from 'drizzle-orm';
-import { db, users, teamsConnections, userOnboarding } from '@/lib/db';
+import { db, users, teamsConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 import { createTeamsSubscription } from '@/lib/teams-api';
 
@@ -219,32 +219,8 @@ export async function GET(request: NextRequest) {
       teamsConnected: verifyUser?.teamsConnected,
     });
 
-    // Update user_onboarding table if this is an onboarding flow
-    if (returnTo.includes('/onboarding')) {
-      console.log('[TEAMS-CALLBACK] Updating user_onboarding with platform_connected=teams');
-
-      // Check if record exists
-      const existingOnboarding = await db.query.userOnboarding.findFirst({
-        where: eq(userOnboarding.clerkId, clerkUserId),
-      });
-
-      if (existingOnboarding) {
-        await db
-          .update(userOnboarding)
-          .set({
-            platformConnected: 'teams',
-            currentStep: 2, // Stay on platform step to show connected status
-            updatedAt: new Date(),
-          })
-          .where(eq(userOnboarding.clerkId, clerkUserId));
-      } else {
-        await db.insert(userOnboarding).values({
-          clerkId: clerkUserId,
-          platformConnected: 'teams',
-          currentStep: 2, // Stay on platform step to show connected status
-        });
-      }
-    }
+    // Note: userOnboarding step advancement is handled client-side by onboarding/page.tsx
+    // to avoid race conditions between server and client step updates.
 
     // Create Graph API subscription for transcript notifications
     // This is what makes Microsoft actually send webhooks when meetings end

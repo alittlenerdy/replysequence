@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, and, sql } from 'drizzle-orm';
-import { db, users, meetConnections, userOnboarding } from '@/lib/db';
+import { db, users, meetConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 
 // Allow longer timeout for cold starts and token exchange
@@ -255,32 +255,8 @@ export async function GET(request: NextRequest) {
       })
       .where(eq(users.id, user.id));
 
-    // Update user_onboarding table if this is an onboarding flow
-    if (returnTo.includes('/onboarding')) {
-      console.log('[MEET-OAUTH-CALLBACK] Updating user_onboarding with platform_connected=meet');
-
-      // Check if record exists
-      const existingOnboarding = await db.query.userOnboarding.findFirst({
-        where: eq(userOnboarding.clerkId, clerkUserId),
-      });
-
-      if (existingOnboarding) {
-        await db
-          .update(userOnboarding)
-          .set({
-            platformConnected: 'meet',
-            currentStep: 2, // Stay on platform step to show connected status
-            updatedAt: new Date(),
-          })
-          .where(eq(userOnboarding.clerkId, clerkUserId));
-      } else {
-        await db.insert(userOnboarding).values({
-          clerkId: clerkUserId,
-          platformConnected: 'meet',
-          currentStep: 2, // Stay on platform step to show connected status
-        });
-      }
-    }
+    // Note: userOnboarding step advancement is handled client-side by onboarding/page.tsx
+    // to avoid race conditions between server and client step updates.
 
     console.log('[MEET-OAUTH-CALLBACK-11] OAuth flow completed successfully', {
       clerkUserId,
