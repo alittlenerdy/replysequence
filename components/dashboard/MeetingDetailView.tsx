@@ -513,7 +513,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             </svg>
             Email Drafts ({meeting.drafts.length})
           </h2>
-          {meeting.status === 'completed' && (
+          {(meeting.status === 'completed' || meeting.status === 'ready') && (
             <button
               onClick={handleRegenerate}
               disabled={isRegenerating}
