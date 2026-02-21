@@ -272,6 +272,21 @@ export interface MeetingDetail {
   keyTopics: Array<{ topic: string; duration?: string }> | null;
   actionItems: Array<{ owner: string; task: string; deadline: string }> | null;
   summaryGeneratedAt: Date | null;
+  sentimentAnalysis: {
+    overall: {
+      score: number;
+      label: string;
+      trend: string;
+      tones: string[];
+    };
+    speakers: Array<{
+      name: string;
+      score: number;
+      label: string;
+      tones: string[];
+    }>;
+  } | null;
+  sentimentAnalyzedAt: Date | null;
   processingStep: string | null;
   processingProgress: number | null;
   processingLogs: Array<{ timestamp: string; step: string; message: string; duration_ms?: number }> | null;
@@ -373,6 +388,8 @@ export async function getMeetingDetail(meetingId: string): Promise<MeetingDetail
     keyTopics: meeting.keyTopics as MeetingDetail['keyTopics'],
     actionItems: meeting.actionItems as MeetingDetail['actionItems'],
     summaryGeneratedAt: meeting.summaryGeneratedAt,
+    sentimentAnalysis: meeting.sentimentAnalysis as MeetingDetail['sentimentAnalysis'],
+    sentimentAnalyzedAt: meeting.sentimentAnalyzedAt ?? null,
     processingStep: meeting.processingStep,
     processingProgress: meeting.processingProgress,
     processingLogs: meeting.processingLogs as MeetingDetail['processingLogs'],

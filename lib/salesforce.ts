@@ -258,6 +258,9 @@ export async function syncSentEmailToSalesforce(
     draftSubject: string;
     draftBody: string;
     fieldMappings?: SalesforceFieldMapping[];
+    sentimentScore?: number;
+    sentimentLabel?: string;
+    emotionalTones?: string;
   }
 ): Promise<SalesforceSyncResult> {
   const { recipientEmail, meetingTitle, meetingDate, platform, draftSubject, draftBody } = params;
@@ -282,14 +285,52 @@ export async function syncSentEmailToSalesforce(
     const platformLabel = platform === 'zoom' ? 'Zoom' : platform === 'microsoft_teams' ? 'Teams' : 'Google Meet';
     const meetingEnd = new Date(meetingDate.getTime() + 30 * 60 * 1000); // Default 30 min duration
 
+    // Build sentiment section for description
+    let sentimentSection = '';
+    if (params.sentimentScore != null || params.sentimentLabel || params.emotionalTones) {
+      sentimentSection = '\n\nSentiment Analysis:';
+      if (params.sentimentLabel) sentimentSection += `\nOverall: ${params.sentimentLabel}`;
+      if (params.sentimentScore != null) sentimentSection += ` (${params.sentimentScore.toFixed(2)})`;
+      if (params.emotionalTones) sentimentSection += `\nTones: ${params.emotionalTones}`;
+    }
+
+    const meetingDescription = `Meeting: ${meetingTitle}\nPlatform: ${platformLabel}\n\nFollow-up email sent via ReplySequence.\nSubject: ${draftSubject}${sentimentSection}`;
+
+    // Resolve source field values for field mapping
+    const sourceValues: Record<SalesforceFieldMapping['sourceField'], string> = {
+      meeting_title: `${platformLabel} Meeting: ${meetingTitle}`,
+      meeting_body: meetingDescription,
+      meeting_start: meetingDate.toISOString(),
+      meeting_end: meetingEnd.toISOString(),
+      meeting_outcome: 'Completed',
+      timestamp: meetingDate.toISOString(),
+      sentiment_score: params.sentimentScore != null ? String(params.sentimentScore) : '',
+      sentiment_label: params.sentimentLabel ?? '',
+      emotional_tones: params.emotionalTones ?? '',
+    };
+
+    // Build event body from field mappings or defaults
+    const mappings = params.fieldMappings ?? DEFAULT_SALESFORCE_FIELD_MAPPINGS;
     const eventBody: Record<string, unknown> = {
-      Subject: `${platformLabel} Meeting: ${meetingTitle}`,
-      StartDateTime: meetingDate.toISOString(),
-      EndDateTime: meetingEnd.toISOString(),
-      Description: `Meeting: ${meetingTitle}\nPlatform: ${platformLabel}\n\nFollow-up email sent via ReplySequence.\nSubject: ${draftSubject}`,
       WhoId: contact.id, // Link to Contact or Lead
       Type: 'Meeting',
     };
+    for (const mapping of mappings) {
+      if (mapping.enabled && sourceValues[mapping.sourceField]) {
+        eventBody[mapping.salesforceField] = sourceValues[mapping.sourceField];
+      }
+    }
+    // Ensure Subject is always set (fallback if not mapped)
+    if (!eventBody.Subject) {
+      eventBody.Subject = `${platformLabel} Meeting: ${meetingTitle}`;
+    }
+    // Ensure StartDateTime and EndDateTime are always set (required by Salesforce API)
+    if (!eventBody.StartDateTime) {
+      eventBody.StartDateTime = meetingDate.toISOString();
+    }
+    if (!eventBody.EndDateTime) {
+      eventBody.EndDateTime = meetingEnd.toISOString();
+    }
 
     const eventResponse = await sfFetchWithRetry(instanceUrl, accessToken, '/sobjects/Event', {
       method: 'POST',
@@ -309,7 +350,7 @@ export async function syncSentEmailToSalesforce(
     // 3. Create a Task for the sent email
     const taskBody: Record<string, unknown> = {
       Subject: `Email: ${draftSubject}`,
-      Description: `Follow-up email sent via ReplySequence after ${platformLabel} meeting: ${meetingTitle}\n\n---\n\n${draftBody}`,
+      Description: `Follow-up email sent via ReplySequence after ${platformLabel} meeting: ${meetingTitle}${sentimentSection}\n\n---\n\n${draftBody}`,
       WhoId: contact.id,
       Status: 'Completed',
       Priority: 'Normal',

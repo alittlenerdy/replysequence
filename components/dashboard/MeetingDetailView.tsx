@@ -286,6 +286,88 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
         </div>
       )}
 
+      {/* Sentiment Analysis Card */}
+      {meeting.transcript && (
+        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
+          <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Meeting Sentiment
+          </h2>
+
+          {!meeting.sentimentAnalysis ? (
+            <p className="text-sm text-gray-500 italic">Analyzing sentiment...</p>
+          ) : (
+            <div className="space-y-4">
+              {/* Overall sentiment row */}
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Score badge */}
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full border ${
+                  meeting.sentimentAnalysis.overall.label === 'positive'
+                    ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
+                    : meeting.sentimentAnalysis.overall.label === 'negative'
+                    ? 'bg-red-500/15 text-red-400 border-red-500/20'
+                    : 'bg-amber-500/15 text-amber-400 border-amber-500/20'
+                }`}>
+                  {meeting.sentimentAnalysis.overall.label === 'positive' ? '+' : meeting.sentimentAnalysis.overall.label === 'negative' ? '' : ''}
+                  {meeting.sentimentAnalysis.overall.score.toFixed(2)}
+                  {' '}
+                  <span className="capitalize">{meeting.sentimentAnalysis.overall.label}</span>
+                </span>
+
+                {/* Trend indicator */}
+                <span className="text-xs text-gray-400 flex items-center gap-1">
+                  {meeting.sentimentAnalysis.overall.trend === 'improving' && '\u2197'}
+                  {meeting.sentimentAnalysis.overall.trend === 'declining' && '\u2198'}
+                  {meeting.sentimentAnalysis.overall.trend === 'stable' && '\u2192'}
+                  {' '}{meeting.sentimentAnalysis.overall.trend}
+                </span>
+
+                {/* Tone tags */}
+                {meeting.sentimentAnalysis.overall.tones.map((tone: string, i: number) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-indigo-500/10 text-indigo-300 light:text-indigo-600 border border-indigo-500/15"
+                  >
+                    {tone}
+                  </span>
+                ))}
+              </div>
+
+              {/* Per-speaker breakdown */}
+              {meeting.sentimentAnalysis.speakers.length > 0 && (
+                <div className="pt-3 border-t border-gray-700/50 light:border-gray-200">
+                  <h3 className="text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider mb-3">
+                    By Speaker
+                  </h3>
+                  <div className="space-y-2">
+                    {meeting.sentimentAnalysis.speakers.map((speaker: { name: string; score: number; label: string; tones: string[] }, i: number) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="text-sm text-gray-300 light:text-gray-600 w-28 truncate">{speaker.name}</span>
+                        <div className="flex-1 h-2 bg-gray-700/50 light:bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              speaker.label === 'positive'
+                                ? 'bg-emerald-500'
+                                : speaker.label === 'negative'
+                                ? 'bg-red-500'
+                                : 'bg-amber-500'
+                            }`}
+                            style={{ width: `${Math.max(5, ((speaker.score + 1) / 2) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-gray-500 w-16 text-right capitalize">{speaker.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Processing Status (if not completed) */}
       {meeting.status === 'processing' && meeting.processingLogs && meeting.processingLogs.length > 0 && (
         <div className="bg-gray-900/50 light:bg-white border border-amber-500/30 rounded-2xl p-6 light:shadow-sm">

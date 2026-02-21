@@ -96,6 +96,18 @@ export interface DailyCoverage {
   coveragePercent: number;
 }
 
+/** Sentiment metrics for the analytics dashboard */
+export interface SentimentMetrics {
+  avgScore: number | null;
+  sentimentComparison: PeriodComparison;
+  sentimentByType: Array<{
+    type: string;
+    avgScore: number;
+    count: number;
+    color: string;
+  }>;
+}
+
 export interface AnalyticsData {
   // Core stats
   totalMeetings: number;
@@ -127,6 +139,8 @@ export interface AnalyticsData {
   dailyCoverage: DailyCoverage[];
   // Speaker analytics
   speakerAnalytics: SpeakerAnalytics;
+  // Sentiment analytics
+  sentimentMetrics: SentimentMetrics;
   // User context for nudge logic
   aiOnboardingComplete: boolean;
   hourlyRate: number;

@@ -20,6 +20,7 @@ import type {
   PeriodComparison,
   AtRiskMeeting,
   DailyCoverage,
+  SentimentMetrics,
 } from '@/lib/types/analytics';
 
 // Allow longer timeout for cold starts
@@ -112,6 +113,7 @@ export async function GET(request: Request) {
     atRiskMeetings: [],
     dailyCoverage: [],
     speakerAnalytics: { totalSpeakers: 0, totalTalkTimeMs: 0, totalMonologues: 0, avgTalkToListenRatio: null, speakers: [], meetingsAnalyzed: 0 },
+    sentimentMetrics: { avgScore: null, sentimentComparison: emptyComparison, sentimentByType: [] },
     aiOnboardingComplete: false,
     hourlyRate: DEFAULT_HOURLY_RATE,
   };
@@ -465,6 +467,82 @@ export async function GET(request: Request) {
       }
     }
 
+    // --- Sentiment analytics ---
+    let sentimentMetrics: SentimentMetrics = {
+      avgScore: null,
+      sentimentComparison: emptyComparison,
+      sentimentByType: [],
+    };
+
+    if (meetingIds.length > 0) {
+      try {
+        const meetingsWithSentiment = await db
+          .select({
+            id: meetings.id,
+            sentimentAnalysis: meetings.sentimentAnalysis,
+            createdAt: meetings.createdAt,
+          })
+          .from(meetings)
+          .where(inArray(meetings.id, meetingIds));
+
+        const analyzed = meetingsWithSentiment.filter(
+          (m) => m.sentimentAnalysis && typeof (m.sentimentAnalysis as Record<string, unknown>)?.overall === 'object'
+        );
+
+        if (analyzed.length > 0) {
+          const scores = analyzed.map(m => {
+            const sa = m.sentimentAnalysis as { overall: { score: number } };
+            return sa.overall.score;
+          });
+          const avgScore = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100) / 100;
+
+          const thisWeekAnalyzed = analyzed.filter(m => {
+            if (!m.createdAt) return false;
+            const d = new Date(m.createdAt).toISOString().split('T')[0];
+            return dateRange.slice(-7).includes(d);
+          });
+          const lastWeekAnalyzed = analyzed.filter(m => {
+            if (!m.createdAt) return false;
+            const d = new Date(m.createdAt).toISOString().split('T')[0];
+            return dateRange.slice(0, 7).includes(d);
+          });
+
+          const thisWeekAvg = thisWeekAnalyzed.length > 0
+            ? thisWeekAnalyzed.reduce((s, m) => s + ((m.sentimentAnalysis as { overall: { score: number } }).overall.score), 0) / thisWeekAnalyzed.length
+            : 0;
+          const lastWeekAvg = lastWeekAnalyzed.length > 0
+            ? lastWeekAnalyzed.reduce((s, m) => s + ((m.sentimentAnalysis as { overall: { score: number } }).overall.score), 0) / lastWeekAnalyzed.length
+            : 0;
+
+          // Sentiment by meeting type
+          const sentimentByType: Record<string, { total: number; count: number }> = {};
+          for (const m of analyzed) {
+            const draft = draftsByMeeting.get(m.id);
+            const mt = (draft as { status: string | null; sentAt: Date | null; meetingType?: string })?.meetingType || 'general';
+            if (!sentimentByType[mt]) sentimentByType[mt] = { total: 0, count: 0 };
+            sentimentByType[mt].total += (m.sentimentAnalysis as { overall: { score: number } }).overall.score;
+            sentimentByType[mt].count++;
+          }
+
+          sentimentMetrics = {
+            avgScore,
+            sentimentComparison: calculateComparison(
+              Math.round(thisWeekAvg * 100),
+              Math.round(lastWeekAvg * 100),
+            ),
+            sentimentByType: Object.entries(sentimentByType).map(([type, data]) => ({
+              type: MEETING_TYPE_LABELS[type] || type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              avgScore: Math.round((data.total / data.count) * 100) / 100,
+              count: data.count,
+              color: MEETING_TYPE_COLORS[type] || '#6B7280',
+            })),
+          };
+        }
+      } catch (e) {
+        console.log('[ANALYTICS-WARN] Error computing sentiment analytics:', e);
+      }
+    }
+
     return NextResponse.json<AnalyticsData>({
       totalMeetings,
       emailsGenerated,
@@ -494,6 +572,7 @@ export async function GET(request: Request) {
       atRiskMeetings,
       dailyCoverage,
       speakerAnalytics,
+      sentimentMetrics,
       aiOnboardingComplete: user.aiOnboardingComplete,
       hourlyRate: userHourlyRate,
     });

@@ -241,6 +241,9 @@ export const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], str
   meeting_start: 'Start Time',
   meeting_end: 'End Time',
   meeting_outcome: 'Meeting Outcome',
+  sentiment_score: 'Sentiment Score',
+  sentiment_label: 'Sentiment Label',
+  emotional_tones: 'Emotional Tones',
 };
 
 /**
@@ -298,6 +301,9 @@ export interface HubSpotMeetingData {
   draftBody: string;
   contactId?: string;
   fieldMappings?: HubSpotFieldMapping[];
+  sentimentScore?: number;
+  sentimentLabel?: string;
+  emotionalTones?: string;
 }
 
 /**
@@ -484,6 +490,9 @@ ${data.draftBody}`;
       meeting_start: data.meetingDate.toISOString(),
       meeting_end: endTime,
       meeting_outcome: 'COMPLETED',
+      sentiment_score: data.sentimentScore != null ? String(data.sentimentScore) : '',
+      sentiment_label: data.sentimentLabel ?? '',
+      emotional_tones: data.emotionalTones ?? '',
     };
 
     // Build properties from field mappings (custom or default)
@@ -564,6 +573,9 @@ export async function syncSentEmailToHubSpot(
     draftSubject: string;
     draftBody: string;
     fieldMappings?: HubSpotFieldMapping[];
+    sentimentScore?: number;
+    sentimentLabel?: string;
+    emotionalTones?: string;
   }
 ): Promise<HubSpotSyncResult> {
   const {
@@ -575,6 +587,9 @@ export async function syncSentEmailToHubSpot(
     draftSubject,
     draftBody,
     fieldMappings,
+    sentimentScore,
+    sentimentLabel,
+    emotionalTones,
   } = params;
 
   log('info', 'Starting HubSpot CRM sync', {
@@ -602,6 +617,9 @@ export async function syncSentEmailToHubSpot(
       draftBody,
       contactId: contact?.id,
       fieldMappings,
+      sentimentScore,
+      sentimentLabel,
+      emotionalTones,
     };
 
     const engagementId = await createHubSpotMeetingEngagement(accessToken, meetingData);

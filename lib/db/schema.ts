@@ -69,6 +69,27 @@ export interface MeetingTopic {
   duration?: string; // e.g., "discussed briefly", "main focus"
 }
 
+// Sentiment analysis types
+export type SentimentLabel = 'positive' | 'neutral' | 'negative' | 'mixed';
+export type SentimentTrend = 'improving' | 'stable' | 'declining';
+
+export interface SpeakerSentiment {
+  name: string;
+  score: number;        // -1.0 to 1.0
+  label: SentimentLabel;
+  tones: string[];
+}
+
+export interface MeetingSentiment {
+  overall: {
+    score: number;        // -1.0 to 1.0
+    label: SentimentLabel;
+    trend: SentimentTrend;
+    tones: string[];
+  };
+  speakers: SpeakerSentiment[];
+}
+
 // Meetings table
 export const meetings = pgTable(
   'meetings',
@@ -94,6 +115,9 @@ export const meetings = pgTable(
     keyTopics: jsonb('key_topics').$type<MeetingTopic[]>(),
     actionItems: jsonb('action_items').$type<ActionItem[]>(),
     summaryGeneratedAt: timestamp('summary_generated_at', { withTimezone: true }),
+    // Sentiment analysis fields (populated async by Haiku)
+    sentimentAnalysis: jsonb('sentiment_analysis').$type<MeetingSentiment>(),
+    sentimentAnalyzedAt: timestamp('sentiment_analyzed_at', { withTimezone: true }),
     // Processing progress tracking fields
     processingStep: text('processing_step').$type<ProcessingStep>(),
     processingProgress: integer('processing_progress').default(0),
@@ -480,7 +504,7 @@ export const meetConnections = pgTable(
 
 // HubSpot field mapping — maps a ReplySequence source field to a HubSpot meeting property
 export interface HubSpotFieldMapping {
-  sourceField: 'meeting_title' | 'meeting_body' | 'meeting_start' | 'meeting_end' | 'meeting_outcome' | 'timestamp';
+  sourceField: 'meeting_title' | 'meeting_body' | 'meeting_start' | 'meeting_end' | 'meeting_outcome' | 'timestamp' | 'sentiment_score' | 'sentiment_label' | 'emotional_tones';
   hubspotProperty: string;
   enabled: boolean;
 }
@@ -601,7 +625,7 @@ export const sheetsConnections = pgTable(
 
 // Salesforce field mapping — maps a ReplySequence source field to a Salesforce object field
 export interface SalesforceFieldMapping {
-  sourceField: 'meeting_title' | 'meeting_body' | 'meeting_start' | 'meeting_end' | 'meeting_outcome' | 'timestamp';
+  sourceField: 'meeting_title' | 'meeting_body' | 'meeting_start' | 'meeting_end' | 'meeting_outcome' | 'timestamp' | 'sentiment_score' | 'sentiment_label' | 'emotional_tones';
   salesforceField: string;
   enabled: boolean;
 }

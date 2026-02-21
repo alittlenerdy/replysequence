@@ -21,9 +21,10 @@ import {
 } from './prompts/optimized-followup';
 import { detectMeetingType, extractParticipants } from './meeting-type-detector';
 import { scoreDraft, type QualityScore } from './quality-scorer';
-import { db, drafts, meetings, users } from './db';
+import { db, drafts, meetings, users, transcripts } from './db';
 import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
+import { analyzeSentiment } from './sentiment';
 // NOTE: Airtable sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
@@ -457,6 +458,27 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
           error: err instanceof Error ? err.message : String(err),
         });
       });
+
+      // Analyze meeting sentiment (non-blocking, async)
+      // Fetch speaker segments from transcript for analysis
+      try {
+        const [transcript] = await db
+          .select({ speakerSegments: transcripts.speakerSegments })
+          .from(transcripts)
+          .where(eq(transcripts.id, transcriptId))
+          .limit(1);
+
+        if (transcript?.speakerSegments && transcript.speakerSegments.length > 0) {
+          analyzeSentiment(meetingId, transcript.speakerSegments).catch((err) => {
+            log('error', 'Sentiment analysis failed (non-blocking)', {
+              meetingId,
+              error: err instanceof Error ? err.message : String(err),
+            });
+          });
+        }
+      } catch {
+        // Non-blocking — if transcript lookup fails, skip sentiment
+      }
 
       return {
         success: true,

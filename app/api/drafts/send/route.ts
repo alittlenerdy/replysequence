@@ -260,6 +260,26 @@ export async function POST(request: NextRequest) {
       }));
     });
 
+    // Fetch meeting sentiment for CRM sync (needed by HubSpot + Salesforce)
+    let meetingSentiment: { score: number; label: string; tones: string } | null = null;
+    if (draft.meetingId) {
+      try {
+        const [meetingRow] = await db
+          .select({ sentimentAnalysis: meetings.sentimentAnalysis })
+          .from(meetings)
+          .where(eq(meetings.id, draft.meetingId))
+          .limit(1);
+        if (meetingRow?.sentimentAnalysis) {
+          const sa = meetingRow.sentimentAnalysis as { overall: { score: number; label: string; tones: string[] } };
+          meetingSentiment = {
+            score: sa.overall.score,
+            label: sa.overall.label,
+            tones: sa.overall.tones.join(', '),
+          };
+        }
+      } catch { /* Non-blocking */ }
+    }
+
     // Sync to HubSpot CRM (awaited to prevent Vercel from killing the function)
     let hubspotDetails: {
       synced: boolean;
@@ -340,6 +360,9 @@ export async function POST(request: NextRequest) {
                 draftSubject: draft.subject,
                 draftBody: draft.body,
                 fieldMappings: connection.fieldMappings ?? undefined,
+                sentimentScore: meetingSentiment?.score,
+                sentimentLabel: meetingSentiment?.label,
+                emotionalTones: meetingSentiment?.tones,
               });
 
               hubspotDetails = {
@@ -455,6 +478,9 @@ export async function POST(request: NextRequest) {
                 draftSubject: draft.subject,
                 draftBody: draft.body,
                 fieldMappings: sfConnection.fieldMappings ?? undefined,
+                sentimentScore: meetingSentiment?.score,
+                sentimentLabel: meetingSentiment?.label,
+                emotionalTones: meetingSentiment?.tones,
               });
 
               if (sfResult.success) {
