@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import { db, waitlistEntries } from '@/lib/db';
-import { eq, sql, count } from 'drizzle-orm';
+import { eq, sql, count, asc, desc } from 'drizzle-orm';
 import { sendEmail } from '@/lib/email';
 import { nanoid } from 'nanoid';
+
+const ADMIN_CLERK_IDS = (process.env.ADMIN_CLERK_IDS || '').split(',').filter(Boolean);
 
 export const runtime = 'nodejs';
 
@@ -141,15 +144,63 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/waitlist - Get waitlist stats or check position
+ * GET /api/waitlist - Get waitlist stats, check position, or list all (admin)
  *
  * Public: ?email=user@example.com → returns position + referral stats
+ * Admin: ?list=all → returns all entries (requires auth)
  * No params: returns total count (public-safe)
  */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
+    const list = searchParams.get('list');
+
+    // Admin: list all entries
+    if (list === 'all') {
+      const { userId } = await auth();
+      if (!userId || !ADMIN_CLERK_IDS.includes(userId)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+
+      const entries = await db
+        .select({
+          id: waitlistEntries.id,
+          email: waitlistEntries.email,
+          name: waitlistEntries.name,
+          position: waitlistEntries.position,
+          status: waitlistEntries.status,
+          tier: waitlistEntries.tier,
+          referralCode: waitlistEntries.referralCode,
+          referralCount: waitlistEntries.referralCount,
+          utmSource: waitlistEntries.utmSource,
+          invitedAt: waitlistEntries.invitedAt,
+          acceptedAt: waitlistEntries.acceptedAt,
+          createdAt: waitlistEntries.createdAt,
+        })
+        .from(waitlistEntries)
+        .orderBy(asc(waitlistEntries.position));
+
+      // Stats by status
+      const statusCounts = entries.reduce((acc, e) => {
+        acc[e.status] = (acc[e.status] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const tierCounts = entries.reduce((acc, e) => {
+        acc[e.tier] = (acc[e.tier] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      return NextResponse.json({
+        entries,
+        stats: {
+          total: entries.length,
+          byStatus: statusCounts,
+          byTier: tierCounts,
+        },
+      });
+    }
 
     if (email) {
       // Look up specific entry

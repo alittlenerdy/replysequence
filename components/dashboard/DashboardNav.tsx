@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings, CreditCard, Video, type LucideIcon } from 'lucide-react';
+import { FileText, BarChart3, Settings, CreditCard, Video, Users, type LucideIcon } from 'lucide-react';
 import { useRef, useCallback } from 'react';
 
 interface Tab {
@@ -16,6 +16,7 @@ const tabs: Tab[] = [
   { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Plan & Billing', href: '/dashboard/billing', icon: CreditCard },
+  { name: 'Waitlist', href: '/dashboard/waitlist', icon: Users },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
