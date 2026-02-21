@@ -727,7 +727,54 @@ export const deadLetterQueue = pgTable(
   ]
 );
 
+// Waitlist types
+export type WaitlistTier = 'standard' | 'priority' | 'vip';
+export type WaitlistStatus = 'waiting' | 'invited' | 'accepted' | 'expired';
+
+// Waitlist entries table - beta waitlist with referral tracking
+export const waitlistEntries = pgTable(
+  'waitlist_entries',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    name: varchar('name', { length: 255 }),
+    // Referral tracking
+    referralCode: varchar('referral_code', { length: 20 }).notNull().unique(),
+    referredBy: uuid('referred_by'),
+    referralCount: integer('referral_count').notNull().default(0),
+    // Tier and status
+    tier: varchar('tier', { length: 20 }).$type<WaitlistTier>().notNull().default('standard'),
+    status: varchar('status', { length: 20 }).$type<WaitlistStatus>().notNull().default('waiting'),
+    position: integer('position'),
+    // Source tracking
+    utmSource: varchar('utm_source', { length: 100 }),
+    utmMedium: varchar('utm_medium', { length: 100 }),
+    utmCampaign: varchar('utm_campaign', { length: 100 }),
+    // Invite tracking
+    invitedAt: timestamp('invited_at', { withTimezone: true }),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+    inviteExpiresAt: timestamp('invite_expires_at', { withTimezone: true }),
+    // Email engagement
+    welcomeEmailSentAt: timestamp('welcome_email_sent_at', { withTimezone: true }),
+    lastUpdateEmailAt: timestamp('last_update_email_at', { withTimezone: true }),
+    // Metadata
+    metadata: jsonb('metadata').$type<Record<string, string>>(),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('waitlist_entries_email_idx').on(table.email),
+    index('waitlist_entries_referral_code_idx').on(table.referralCode),
+    index('waitlist_entries_referred_by_idx').on(table.referredBy),
+    index('waitlist_entries_status_idx').on(table.status),
+    index('waitlist_entries_created_at_idx').on(table.createdAt),
+  ]
+);
+
 // Type exports for use in application code
+export type WaitlistEntry = typeof waitlistEntries.$inferSelect;
+export type NewWaitlistEntry = typeof waitlistEntries.$inferInsert;
 export type Meeting = typeof meetings.$inferSelect;
 export type NewMeeting = typeof meetings.$inferInsert;
 export type Transcript = typeof transcripts.$inferSelect;

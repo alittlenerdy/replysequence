@@ -89,6 +89,7 @@ import { FeatureCard } from '@/components/ui/FeatureCard';
 const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
 const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
 const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
+const WaitlistForm = dynamic(() => import('@/components/landing/WaitlistForm').then(m => ({ default: m.WaitlistForm })), { ssr: false });
 
 export default function LandingPage() {
   return (
@@ -179,31 +180,24 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="flex flex-wrap gap-4 mb-6 justify-center px-4 sm:px-0"
+              className="max-w-2xl mx-auto mb-6 px-4 sm:px-0"
             >
-              <GradientButton
-                href="/sign-up"
-                showArrow
-                size="lg"
-              >
-                Get Started Free
-              </GradientButton>
-              <a
-                href="/how-it-works"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-gray-300 light:text-gray-600 bg-gray-800/50 light:bg-gray-100 hover:bg-gray-700/50 light:hover:bg-gray-200 border border-gray-700 light:border-gray-300 rounded-xl transition-colors"
-              >
-                See How It Works
-              </a>
+              <WaitlistForm />
             </motion.div>
 
-            {/* Value proposition */}
+            {/* Secondary link */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="flex items-center justify-center gap-3 text-gray-500 light:text-gray-600"
+              className="flex items-center justify-center"
             >
-              <span className="text-sm font-medium">Works with Zoom, Google Meet, and Microsoft Teams</span>
+              <a
+                href="/how-it-works"
+                className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 light:text-gray-600 hover:text-gray-300 light:hover:text-gray-900 transition-colors"
+              >
+                See How It Works
+              </a>
             </motion.div>
 
             {/* Security Trust Badges */}
@@ -689,20 +683,11 @@ export default function LandingPage() {
               Ready to <GradientText variant="amber">Close the Gap</GradientText> After Every Meeting?
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
-              Start generating AI-powered follow-up emails from your meetings today. Free plan includes 5 drafts per month.
+              Join the waitlist for early access. Share your link to move up the list.
             </p>
 
             <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-6 sm:p-12 mx-4 sm:mx-0">
-              <GradientButton
-                href="/sign-up"
-                showArrow
-                size="lg"
-              >
-                Get Started Free
-              </GradientButton>
-              <p className="text-gray-500 light:text-gray-600 text-xs sm:text-sm mt-6">
-                No credit card required. 5 free drafts per month.
-              </p>
+              <WaitlistForm />
             </div>
           </motion.div>
         </div>
