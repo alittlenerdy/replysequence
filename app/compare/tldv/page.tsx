@@ -119,32 +119,32 @@ interface ComparisonRow {
 }
 
 const comparisonData: ComparisonRow[] = [
-  // Email Focus
-  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', tldv: 'Manual Process', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', tldv: 'Not available', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Conversational Email Editing', replysequence: true, tldv: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'One-Click Send', replysequence: true, tldv: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Custom Email Templates', replysequence: true, tldv: false, winner: 'replysequence', category: 'Email Workflow' },
-  // Core Features
-  { feature: 'Meeting Recording', replysequence: true, tldv: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'AI Meeting Summaries', replysequence: true, tldv: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Action Item Extraction', replysequence: true, tldv: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'CRM Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Core Features' },
+  // Revenue & Follow-up (was Email Workflow + CRM from Core Features)
+  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', tldv: 'Manual Process', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Email Generation Speed', replysequence: '8 seconds', tldv: 'Not available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Conversational Email Editing', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'One-Click Send', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Custom Email Templates', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Ask Your Meetings Anything', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'CRM Auto-Sync', replysequence: true, tldv: true, winner: 'tie', category: 'Revenue & Follow-up' },
+  // Recording & Transcription (merged Core Features + Recording Features)
+  { feature: 'Meeting Recording', replysequence: true, tldv: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'AI Meeting Summaries', replysequence: true, tldv: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Action Item Extraction', replysequence: true, tldv: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Unlimited Free Recordings', replysequence: 'Limited', tldv: 'Unlimited', winner: 'tldv', category: 'Recording & Transcription' },
+  { feature: 'Timestamp Bookmarks', replysequence: false, tldv: true, winner: 'tldv', category: 'Recording & Transcription' },
+  { feature: 'Video Clip Creation', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Recording & Transcription' },
+  { feature: 'Unlimited Cloud Storage', replysequence: 'Limited', tldv: 'Unlimited', winner: 'tldv', category: 'Recording & Transcription' },
   // Integrations
   { feature: 'Zoom Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Google Meet Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Microsoft Teams Integration', replysequence: true, tldv: true, winner: 'tie', category: 'Integrations' },
-  // tl;dv Advantages - Recording
-  { feature: 'Unlimited Free Recordings', replysequence: 'Limited', tldv: 'Unlimited', winner: 'tldv', category: 'Recording Features' },
-  { feature: 'Timestamp Bookmarks', replysequence: false, tldv: true, winner: 'tldv', category: 'Recording Features' },
-  { feature: 'Video Clip Creation', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Recording Features' },
-  { feature: 'Unlimited Cloud Storage', replysequence: 'Limited', tldv: 'Unlimited', winner: 'tldv', category: 'Recording Features' },
-  // tl;dv Advantages - Language
+  // Language & Localization
   { feature: 'Multi-Language Support', replysequence: 'English Primary', tldv: '30+ Languages', winner: 'tldv', category: 'Language & Localization' },
   { feature: 'Auto Language Detection', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Language & Localization' },
-  // Collaboration
-  { feature: 'Team Collaboration', replysequence: true, tldv: true, winner: 'tie', category: 'Collaboration' },
-  { feature: 'Shareable Highlights', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Collaboration' },
+  // Team Workflows (was Collaboration)
+  { feature: 'Team Collaboration', replysequence: true, tldv: true, winner: 'tie', category: 'Team Workflows' },
+  { feature: 'Shareable Highlights', replysequence: 'Coming Soon', tldv: true, winner: 'tldv', category: 'Team Workflows' },
 ];
 
 const pricingComparison = [
@@ -181,9 +181,9 @@ const keyDifferences = [
   },
   {
     icon: Target,
-    title: 'Email-First Design',
-    description: 'Every feature is built around the email workflow. Meeting ends, email appears, one click to send. That\'s the whole point.',
-    stat: '1-click',
+    title: 'Ask Your Meetings Anything',
+    description: 'Query across all your meetings with conversational AI. Ask "what objections came up this week?" and get answers that turn into follow-ups\u2014no recordings to watch.',
+    stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
   {
@@ -270,11 +270,31 @@ export default function TldvComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
-            Recording vs. Action.{' '}
-            <span className="text-white light:text-gray-900">Here&apos;s which approach fits your workflow.</span>
+            If you need unlimited call recordings and a video archive, tl;dv delivers.{' '}
+            <span className="text-white light:text-gray-900">If you want every call to trigger ready-to-send follow-ups without watching anything, ReplySequence is built for that.</span>
           </motion.p>
+
+          {/* Two Different Jobs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-indigo-50/80 border border-gray-700/50 light:border-indigo-200"
+          >
+            <p className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider mb-3">Two different jobs</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-400 light:text-gray-500 mb-1">tl;dv</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Record, bookmark, and review what was said in meetings.</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Quick verdict cards */}
           <motion.div
@@ -304,13 +324,16 @@ export default function TldvComparisonPage() {
                 <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
               <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
-              <p className="text-gray-300 light:text-gray-600 leading-relaxed">
-                Your #1 goal is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 font-semibold">sending follow-up emails faster</span>.
-                You don&apos;t need to watch recordings—you need actionable emails in 8 seconds.
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 font-medium">
-                <Zap className="w-4 h-4 text-indigo-400" />
-                Best for: Sales teams, account managers, anyone drowning in follow-ups
+              <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not recordings to scrub through</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than timestamp bookmarks</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You never want to watch a call recording again</li>
+              </ul>
+              <div className="mt-5 space-y-1">
+                <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 font-medium text-sm">
+                  <Zap className="w-4 h-4 text-indigo-400" />
+                  Sales teams &middot; Account managers &middot; Anyone drowning in follow-ups
+                </div>
               </div>
             </motion.div>
 
@@ -654,10 +677,9 @@ export default function TldvComparisonPage() {
                   navigation—especially for training or reviewing sales calls—tl;dv delivers.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> is purpose-built for one thing:
-                  turning meetings into follow-up emails as fast as possible. You don&apos;t watch recordings.
-                  You don&apos;t scrub through timestamps. Meeting ends, email appears in 8 seconds, you send it.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where tl;dv stops: turning meetings into action, not archives. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep your pipeline moving—without watching a single recording.
                 </p>
+                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.</p>
               </div>
 
               <motion.div
@@ -691,9 +713,9 @@ export default function TldvComparisonPage() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
-            Ready to Send Follow-ups in{' '}
+            Run Your Next 5 Calls Through{' '}
             <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
-              8 Seconds?
+              ReplySequence
             </span>
           </motion.h2>
           <motion.p
@@ -703,8 +725,7 @@ export default function TldvComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Try ReplySequence free. Connect your Zoom, Teams, or Meet
-            and see the difference for yourself.
+            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -719,7 +740,7 @@ export default function TldvComparisonPage() {
                 href="/sign-up"
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-amber-500 hover:from-indigo-400 hover:to-amber-400 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
               >
-                Start Free Trial
+                Turn This Week&apos;s Calls Into Replies
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -740,7 +761,7 @@ export default function TldvComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 light:text-gray-400 text-sm mt-8"
           >
-            Start with 5 free AI drafts • Cancel anytime
+            5 free AI drafts included. No credit card required.
           </motion.p>
         </AnimatedSection>
       </section>

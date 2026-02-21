@@ -119,28 +119,29 @@ interface ComparisonRow {
 }
 
 const comparisonData: ComparisonRow[] = [
-  // Email Focus
-  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', fathom: 'Not Available', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', fathom: 'Manual copy-paste', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Conversational Email Editing', replysequence: true, fathom: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'One-Click Send', replysequence: true, fathom: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Custom Email Templates', replysequence: true, fathom: false, winner: 'replysequence', category: 'Email Workflow' },
-  // Core Features
-  { feature: 'Meeting Transcription', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'AI Meeting Summaries', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Action Item Extraction', replysequence: true, fathom: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Free Unlimited Recordings', replysequence: false, fathom: true, winner: 'fathom', category: 'Core Features' },
-  { feature: 'Free AI Meetings', replysequence: '5/month', fathom: '5/month', winner: 'tie', category: 'Core Features' },
-  // CRM & Integrations
+  // Revenue & Follow-up
+  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', fathom: 'Not Available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Email Generation Speed', replysequence: '8 seconds', fathom: 'Manual copy-paste', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Conversational Email Editing', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'One-Click Send', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Custom Email Templates', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Ask Your Meetings Anything', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'CRM Auto-Sync', replysequence: true, fathom: true, winner: 'tie', category: 'Revenue & Follow-up' },
+  // Recording & Transcription
+  { feature: 'Meeting Transcription', replysequence: true, fathom: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'AI Meeting Summaries', replysequence: true, fathom: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Action Item Extraction', replysequence: true, fathom: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Free Unlimited Recordings', replysequence: false, fathom: true, winner: 'fathom', category: 'Recording & Transcription' },
+  { feature: 'Free AI Meetings', replysequence: '5/month', fathom: '5/month', winner: 'tie', category: 'Recording & Transcription' },
+  // CRM Integration
   { feature: 'HubSpot Integration', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
   { feature: 'Salesforce Integration', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
-  { feature: 'CRM Auto-Population', replysequence: true, fathom: true, winner: 'tie', category: 'CRM Integration' },
   { feature: 'Copy-Paste Formatting', replysequence: true, fathom: 'Optimized', winner: 'fathom', category: 'CRM Integration' },
   // Platform Support
   { feature: 'Zoom Integration', replysequence: true, fathom: true, winner: 'tie', category: 'Platform Support' },
   { feature: 'Google Meet Integration', replysequence: true, fathom: true, winner: 'tie', category: 'Platform Support' },
   { feature: 'Microsoft Teams Integration', replysequence: true, fathom: true, winner: 'tie', category: 'Platform Support' },
-  // Fathom Advantages
+  // Collaboration
   { feature: 'Team Sharing & Playlists', replysequence: 'Coming Soon', fathom: true, winner: 'fathom', category: 'Collaboration' },
   { feature: 'Highlight Clips', replysequence: false, fathom: true, winner: 'fathom', category: 'Collaboration' },
   { feature: 'AI Notetaker Bot', replysequence: true, fathom: 'Free tier', winner: 'fathom', category: 'Collaboration' },
@@ -180,9 +181,9 @@ const keyDifferences = [
   },
   {
     icon: Target,
-    title: 'Email-First Workflow',
-    description: 'Every feature is optimized for the email follow-up workflow. Draft, edit conversationally with AI, and send—all without switching apps.',
-    stat: '1-click',
+    title: 'Ask Your Meetings Anything',
+    description: 'Query across all your meetings with conversational AI. Ask "what pricing concerns came up this week?" and get answers that turn into follow-ups—not just meeting notes.',
+    stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
   {
@@ -269,11 +270,31 @@ export default function FathomComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
-            Fathom: best free AI notetaker.{' '}
-            <span className="text-white light:text-gray-900">ReplySequence: 8-second email drafts.</span>
+            If you want free meeting notes with solid CRM sync, Fathom is great.{' '}
+            <span className="text-white light:text-gray-900">If you want every call to trigger ready-to-send follow-ups without extra steps, ReplySequence is built for that.</span>
           </motion.p>
+
+          {/* Two Different Jobs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-indigo-50/80 border border-gray-700/50 light:border-indigo-200"
+          >
+            <p className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider mb-3">Two different jobs</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-400 light:text-gray-500 mb-1">Fathom</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Free meeting notes and CRM updates after every call.</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Quick verdict cards */}
           <motion.div
@@ -303,13 +324,16 @@ export default function FathomComparisonPage() {
                 <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
               <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
-              <p className="text-gray-300 light:text-gray-600 leading-relaxed">
-                Your #1 priority is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-semibold">sending follow-up emails faster</span>.
-                You need AI-drafted emails in 8 seconds, ready to send or edit, not just meeting notes.
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-medium">
-                <Zap className="w-4 h-4 text-indigo-400" />
-                Best for: Sales reps, consultants, account managers
+              <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not just notes and summaries</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Your real bottleneck is writing emails after calls, not taking notes</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want one tool that goes from meeting to sent email in 8 seconds</li>
+              </ul>
+              <div className="mt-5 space-y-1">
+                <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-medium text-sm">
+                  <Zap className="w-4 h-4 text-indigo-400" />
+                  Sales reps &middot; Account managers &middot; Consultants
+                </div>
               </div>
             </motion.div>
 
@@ -653,10 +677,9 @@ export default function FathomComparisonPage() {
                   notes and action items without paying, Fathom is a great choice.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> is purpose-built for one thing:
-                  turning your meetings into ready-to-send follow-up emails in 8 seconds. If email follow-up is your
-                  bottleneck, ReplySequence will save you 10+ hours per week that Fathom&apos;s notes can&apos;t.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where Fathom stops: turning notes into replies, not just summaries. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep your pipeline moving without the manual email writing.
                 </p>
+                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.</p>
               </div>
 
               <motion.div
@@ -690,9 +713,9 @@ export default function FathomComparisonPage() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
-            Ready to Send Follow-ups in{' '}
+            Run Your Next 5 Calls Through{' '}
             <span className="bg-gradient-to-r from-indigo-400 to-amber-400 bg-clip-text text-transparent">
-              8 Seconds?
+              ReplySequence
             </span>
           </motion.h2>
           <motion.p
@@ -702,8 +725,7 @@ export default function FathomComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Try ReplySequence free. Connect your Zoom, Teams, or Meet
-            and see the difference for yourself.
+            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -718,7 +740,7 @@ export default function FathomComparisonPage() {
                 href="/sign-up"
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-400 hover:to-indigo-600 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
               >
-                Start Free Trial
+                Turn This Week&apos;s Calls Into Replies
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -739,7 +761,7 @@ export default function FathomComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 text-sm mt-8"
           >
-            Start with 5 free AI drafts - Cancel anytime
+            5 free AI drafts included. No credit card required.
           </motion.p>
         </AnimatedSection>
       </section>

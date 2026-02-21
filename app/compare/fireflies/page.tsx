@@ -120,27 +120,29 @@ interface ComparisonRow {
 }
 
 const comparisonData: ComparisonRow[] = [
-  // Email Focus
-  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', fireflies: 'Not Available', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', fireflies: 'N/A', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Conversational Email Editing', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'One-Click Send', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Custom Email Templates', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Email Workflow' },
-  // Core Features
-  { feature: 'Meeting Transcription', replysequence: true, fireflies: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'AI Meeting Notes', replysequence: true, fireflies: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Action Item Extraction', replysequence: true, fireflies: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Speaker Identification', replysequence: true, fireflies: true, winner: 'tie', category: 'Core Features' },
+  // Revenue & Follow-up
+  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', fireflies: 'Not Available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Email Generation Speed', replysequence: '8 seconds', fireflies: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Conversational Email Editing', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'One-Click Send', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Custom Email Templates', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Ask Your Meetings Anything', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'CRM Auto-Sync', replysequence: true, fireflies: true, winner: 'tie', category: 'Revenue & Follow-up' },
+  { feature: 'CRM Integrations', replysequence: 'HubSpot, Salesforce, Airtable, Sheets', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Revenue & Follow-up' },
+  // Recording & Transcription
+  { feature: 'Meeting Transcription', replysequence: true, fireflies: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'AI Meeting Notes', replysequence: true, fireflies: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Action Item Extraction', replysequence: true, fireflies: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Speaker Identification', replysequence: true, fireflies: true, winner: 'tie', category: 'Recording & Transcription' },
   // Integrations
   { feature: 'Zoom Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Google Meet Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Microsoft Teams Integration', replysequence: true, fireflies: true, winner: 'tie', category: 'Integrations' },
-  { feature: 'CRM Integrations', replysequence: 'HubSpot, Salesforce, Airtable, Sheets', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Integrations' },
-  // Fireflies Advantages
-  { feature: 'Smart Search', replysequence: 'Basic Search', fireflies: 'AI-Powered Search', winner: 'fireflies', category: 'Search & Analytics' },
-  { feature: 'Topic Tracker', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
-  { feature: 'Conversation Intelligence', replysequence: 'Coming Soon', fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
-  { feature: 'Auto-Join Meetings', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Search & Analytics' },
+  // Team Workflows
+  { feature: 'Smart Search', replysequence: 'Basic Search', fireflies: 'AI-Powered Search', winner: 'fireflies', category: 'Team Workflows' },
+  { feature: 'Topic Tracker', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Team Workflows' },
+  { feature: 'Conversation Intelligence', replysequence: 'Coming Soon', fireflies: true, winner: 'fireflies', category: 'Team Workflows' },
+  { feature: 'Auto-Join Meetings', replysequence: false, fireflies: true, winner: 'fireflies', category: 'Team Workflows' },
 ];
 
 const pricingComparison = [
@@ -172,9 +174,9 @@ const keyDifferences = [
   },
   {
     icon: Target,
-    title: 'Email-First Design',
-    description: 'Every feature is built around the email workflow. Draft, edit conversationally, send—all without leaving the app.',
-    stat: '1-click',
+    title: 'Ask Your Meetings Anything',
+    description: 'Query across all your meetings with conversational AI. Ask "what did the client say about pricing?" and get answers that turn into follow-ups—not just search results.',
+    stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
   {
@@ -261,11 +263,31 @@ export default function FirefliesComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
-            Two approaches to meeting productivity.{' '}
-            <span className="text-white light:text-gray-900">Here&apos;s which one fits your workflow.</span>
+            If you need searchable meeting archives, Fireflies delivers.{' '}
+            <span className="text-white light:text-gray-900">If you want every call to reliably trigger follow-ups without you thinking about it, ReplySequence wins.</span>
           </motion.p>
+
+          {/* Two Different Jobs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-indigo-50/80 border border-gray-700/50 light:border-indigo-200"
+          >
+            <p className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider mb-3">Two different jobs</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-orange-400 light:text-orange-600 mb-1">Fireflies.ai</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Capture, search, and analyze what was said in meetings.</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Quick verdict cards */}
           <motion.div
@@ -295,13 +317,16 @@ export default function FirefliesComparisonPage() {
                 <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
               <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
-              <p className="text-gray-300 light:text-gray-600 leading-relaxed">
-                Your #1 goal is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-400 font-semibold">sending follow-up emails instantly</span>.
-                You want AI-drafted emails in 8 seconds, not transcripts you have to turn into emails yourself.
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium">
-                <Zap className="w-4 h-4 text-indigo-400" />
-                Best for: Sales teams, consultants, account managers
+              <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not just searchable transcripts</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than topic tracking</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You don&apos;t want to live in 3 different tools (recorder + notes + sequencer)</li>
+              </ul>
+              <div className="mt-5 space-y-1">
+                <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
+                  <Zap className="w-4 h-4 text-indigo-400" />
+                  RevOps / Sales leaders &middot; Founders / Solo sellers
+                </div>
               </div>
             </motion.div>
 
@@ -658,9 +683,10 @@ export default function FirefliesComparisonPage() {
                   Fireflies delivers real value at a competitive price point.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> is purpose-built for one thing:
-                  turning meetings into follow-up emails as fast as humanly possible. If your bottleneck is
-                  the 20-30 minutes you spend writing emails after every sales call, ReplySequence cuts that to 8 seconds.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where Fireflies stops: turning notes into replies, not just searchable text. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep your pipeline moving without manual work.
+                </p>
+                <p className="font-medium text-white light:text-gray-900">
+                  If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.
                 </p>
               </div>
 
@@ -696,9 +722,9 @@ export default function FirefliesComparisonPage() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
-            Ready to Send Follow-ups in{' '}
+            Run Your Next 5 Calls Through{' '}
             <span className="bg-gradient-to-r from-indigo-400 to-indigo-400 bg-clip-text text-transparent">
-              8 Seconds?
+              ReplySequence
             </span>
           </motion.h2>
           <motion.p
@@ -708,8 +734,7 @@ export default function FirefliesComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Try ReplySequence free. Connect your Zoom, Teams, or Meet
-            and see the difference for yourself.
+            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -724,7 +749,7 @@ export default function FirefliesComparisonPage() {
                 href="/sign-up"
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-400 hover:to-indigo-400 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
               >
-                Start Free Trial
+                Turn This Week&apos;s Calls Into Replies
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -745,7 +770,7 @@ export default function FirefliesComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 light:text-gray-400 text-sm mt-8"
           >
-            Start with 5 free AI drafts. Cancel anytime.
+            5 free AI drafts included. No credit card required.
           </motion.p>
         </AnimatedSection>
       </section>

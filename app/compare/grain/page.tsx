@@ -123,24 +123,25 @@ interface ComparisonRow {
 }
 
 const comparisonData: ComparisonRow[] = [
-  // Email Focus
-  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', grain: 'Not available', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', grain: 'N/A', winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'Conversational Email Editing', replysequence: true, grain: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'One-Click Send', replysequence: true, grain: false, winner: 'replysequence', category: 'Email Workflow' },
-  { feature: 'CRM Auto-Population', replysequence: true, grain: 'Limited', winner: 'replysequence', category: 'Email Workflow' },
-  // Core Features
-  { feature: 'Meeting Recording', replysequence: true, grain: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'AI Meeting Notes', replysequence: true, grain: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Action Item Extraction', replysequence: true, grain: true, winner: 'tie', category: 'Core Features' },
-  { feature: 'Meeting Transcription', replysequence: true, grain: true, winner: 'tie', category: 'Core Features' },
+  // Revenue & Follow-up
+  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', grain: 'Not available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Email Generation Speed', replysequence: '8 seconds', grain: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Conversational Email Editing', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'One-Click Send', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Ask Your Meetings Anything', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'CRM Auto-Sync', replysequence: true, grain: 'Limited', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  // Recording & Transcription
+  { feature: 'Meeting Recording', replysequence: true, grain: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'AI Meeting Notes', replysequence: true, grain: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Action Item Extraction', replysequence: true, grain: true, winner: 'tie', category: 'Recording & Transcription' },
+  { feature: 'Meeting Transcription', replysequence: true, grain: true, winner: 'tie', category: 'Recording & Transcription' },
   // Integrations
   { feature: 'Zoom Integration', replysequence: true, grain: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Google Meet Integration', replysequence: true, grain: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Microsoft Teams Integration', replysequence: true, grain: true, winner: 'tie', category: 'Integrations' },
   { feature: 'Slack Integration', replysequence: 'Coming Soon', grain: true, winner: 'grain', category: 'Integrations' },
   { feature: 'Notion Integration', replysequence: 'Coming Soon', grain: true, winner: 'grain', category: 'Integrations' },
-  // Grain Advantages
+  // Video Features
   { feature: 'Video Highlight Clips', replysequence: false, grain: true, winner: 'grain', category: 'Video Features' },
   { feature: 'Shareable Video Moments', replysequence: false, grain: true, winner: 'grain', category: 'Video Features' },
   { feature: 'Clip Library', replysequence: false, grain: true, winner: 'grain', category: 'Video Features' },
@@ -176,9 +177,9 @@ const keyDifferences = [
   },
   {
     icon: Mail,
-    title: 'Email-First Design',
-    description: 'Every ReplySequence feature is built around sending follow-ups faster. Draft, edit conversationally, send - no extra steps.',
-    stat: '1-click',
+    title: 'Ask Your Meetings Anything',
+    description: 'Query across all your meetings with conversational AI. Ask "what did the client say about budget?" and get answers that turn into follow-ups—not just clips to share.',
+    stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
   {
@@ -265,11 +266,31 @@ export default function GrainComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
-            Different tools for different workflows.{' '}
-            <span className="text-white light:text-gray-900">Here&apos;s which one fits your needs.</span>
+            If you want to share nice clips internally, Grain is a strong choice.{' '}
+            <span className="text-white light:text-gray-900">If you want every call to reliably trigger follow-ups and next steps without you thinking about it, ReplySequence wins.</span>
           </motion.p>
+
+          {/* Two Different Jobs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-indigo-50/80 border border-gray-700/50 light:border-indigo-200"
+          >
+            <p className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider mb-3">Two different jobs</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-400 light:text-gray-500 mb-1">Grain</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Capture and share video highlights from meetings.</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Quick verdict cards */}
           <motion.div
@@ -299,13 +320,16 @@ export default function GrainComparisonPage() {
                 <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
               <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
-              <p className="text-gray-300 light:text-gray-600 leading-relaxed">
-                Your priority is <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-400 font-semibold">sending follow-up emails faster</span>.
-                You want AI-drafted emails in 8 seconds, not video clips to share with your team.
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium">
-                <Zap className="w-4 h-4 text-indigo-400" />
-                Best for: Sales teams, consultants, client-facing roles
+              <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not video clips</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than shareable highlights</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You&apos;re tired of manually writing emails after every client call</li>
+              </ul>
+              <div className="mt-5 space-y-1">
+                <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
+                  <Zap className="w-4 h-4 text-indigo-400" />
+                  Sales teams &middot; Consultants &middot; Client-facing roles
+                </div>
               </div>
             </motion.div>
 
@@ -660,10 +684,9 @@ export default function GrainComparisonPage() {
                   with product teams, or build a library of meeting insights, Grain is purpose-built for that.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> is purpose-built for one thing:
-                  turning meetings into follow-up emails as fast as possible. If your bottleneck is writing
-                  emails after calls, ReplySequence generates ready-to-send drafts in 8 seconds.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where Grain stops: turning meetings into systematic follow-ups, not just shareable moments. Ask your meetings anything, generate ready-to-send emails in 8 seconds, and keep your pipeline moving.
                 </p>
+                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.</p>
               </div>
 
               <motion.div
@@ -696,9 +719,9 @@ export default function GrainComparisonPage() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
-            Ready to Send Follow-ups in{' '}
+            Run Your Next 5 Calls Through{' '}
             <span className="bg-gradient-to-r from-indigo-400 to-indigo-400 bg-clip-text text-transparent">
-              8 Seconds?
+              ReplySequence
             </span>
           </motion.h2>
           <motion.p
@@ -708,8 +731,7 @@ export default function GrainComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Try ReplySequence free. Connect your Zoom, Teams, or Meet
-            and see the difference for yourself.
+            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -724,7 +746,7 @@ export default function GrainComparisonPage() {
                 href="/sign-up"
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-400 hover:to-indigo-400 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
               >
-                Start Free Trial
+                Turn This Week&apos;s Calls Into Replies
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -745,7 +767,7 @@ export default function GrainComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 text-sm mt-8"
           >
-            Start with 5 free AI drafts | Cancel anytime
+            5 free AI drafts included. No credit card required.
           </motion.p>
         </AnimatedSection>
       </section>
