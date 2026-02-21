@@ -211,6 +211,8 @@ export function MeetingsListView() {
       {!loading && meetings.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap mb-4">
           {([
+            ...(statusCounts.failed > 0 ? [{ key: 'failed' as const, label: 'Failed', color: 'text-red-400 bg-red-500/10 border-red-500/30' }] : []),
+            ...(statusCounts.processing > 0 ? [{ key: 'processing' as const, label: 'Processing', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' }] : []),
             { key: 'no_draft' as const, label: 'No draft', color: 'text-gray-400 bg-gray-500/10 border-gray-600' },
             { key: 'draft_ready' as const, label: 'Draft ready', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' },
             { key: 'overdue' as const, label: 'Overdue', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
