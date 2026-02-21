@@ -20,9 +20,11 @@ function PlatformIcon({ platform }: { platform: string }) {
   );
 }
 
-type FollowUpStatus = 'no_draft' | 'draft_ready' | 'overdue' | 'sent';
+type FollowUpStatus = 'failed' | 'processing' | 'no_draft' | 'draft_ready' | 'overdue' | 'sent';
 
 function getFollowUpStatus(meeting: MeetingListItem): FollowUpStatus {
+  if (meeting.status === 'failed') return 'failed';
+  if (meeting.status === 'processing' || meeting.status === 'pending') return 'processing';
   if (meeting.sentCount > 0) return 'sent';
   if (meeting.draftCount > 0) {
     // Check if draft has been sitting >24h since meeting
@@ -37,6 +39,16 @@ function getFollowUpStatus(meeting: MeetingListItem): FollowUpStatus {
 
 function FollowUpBadge({ status }: { status: FollowUpStatus }) {
   const config: Record<FollowUpStatus, { label: string; classes: string; icon: React.ReactNode }> = {
+    failed: {
+      label: 'Failed',
+      classes: 'bg-red-500/15 text-red-400 border-red-500/20',
+      icon: <AlertTriangle className="w-3 h-3" />,
+    },
+    processing: {
+      label: 'Processing...',
+      classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+      icon: <Clock className="w-3 h-3 animate-spin" />,
+    },
     no_draft: {
       label: 'No draft yet',
       classes: 'bg-gray-500/15 text-gray-400 border-gray-500/20',

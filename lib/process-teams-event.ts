@@ -8,6 +8,7 @@
 import { db, meetings, rawEvents, transcripts, teamsConnections } from '@/lib/db';
 import { sendDraftReadyNotification } from '@/lib/draft-notification';
 import { attemptAutoSend } from '@/lib/auto-send';
+import { failProcessing } from '@/lib/processing-progress';
 import { eq } from 'drizzle-orm';
 import {
   getTranscriptContentByUrl,
@@ -470,11 +471,8 @@ async function fetchAndStoreTeamsTranscript(
       error: errorMessage,
     });
 
-    // Mark meeting as failed
-    await db
-      .update(meetings)
-      .set({ status: 'failed', updatedAt: new Date() })
-      .where(eq(meetings.id, meetingId));
+    // Mark meeting as failed with proper error tracking
+    await failProcessing(meetingId, errorMessage);
 
     throw error;
   }

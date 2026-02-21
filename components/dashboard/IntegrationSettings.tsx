@@ -15,6 +15,9 @@ const SOURCE_FIELD_LABELS: Record<HubSpotFieldMapping['sourceField'], string> = 
   meeting_start: 'Start Time',
   meeting_end: 'End Time',
   meeting_outcome: 'Meeting Outcome',
+  sentiment_score: 'Sentiment Score',
+  sentiment_label: 'Sentiment Label',
+  emotional_tones: 'Emotional Tones',
 };
 
 const SHEETS_FIELD_LABELS: Record<SheetsColumnMapping['sourceField'], string> = {

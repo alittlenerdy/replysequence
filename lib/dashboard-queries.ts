@@ -288,6 +288,7 @@ export interface MeetingDetail {
   } | null;
   sentimentAnalyzedAt: Date | null;
   processingStep: string | null;
+  processingError: string | null;
   processingProgress: number | null;
   processingLogs: Array<{ timestamp: string; step: string; message: string; duration_ms?: number }> | null;
   createdAt: Date;
@@ -391,6 +392,7 @@ export async function getMeetingDetail(meetingId: string): Promise<MeetingDetail
     sentimentAnalysis: meeting.sentimentAnalysis as MeetingDetail['sentimentAnalysis'],
     sentimentAnalyzedAt: meeting.sentimentAnalyzedAt ?? null,
     processingStep: meeting.processingStep,
+    processingError: meeting.processingError,
     processingProgress: meeting.processingProgress,
     processingLogs: meeting.processingLogs as MeetingDetail['processingLogs'],
     createdAt: meeting.createdAt,

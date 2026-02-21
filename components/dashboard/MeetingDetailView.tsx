@@ -94,6 +94,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
   const router = useRouter();
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isReprocessing, setIsReprocessing] = useState(false);
   const [regenerateError, setRegenerateError] = useState<string | null>(null);
   const [regenerateSuccess, setRegenerateSuccess] = useState(false);
 
@@ -121,6 +122,31 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
       setRegenerateError('Unable to connect. Check your internet and try again.');
     } finally {
       setIsRegenerating(false);
+    }
+  };
+
+  const handleReprocess = async () => {
+    setIsReprocessing(true);
+    setRegenerateError(null);
+    setRegenerateSuccess(false);
+    try {
+      const res = await fetch(`/api/meetings/${meeting.id}/reprocess`, {
+        method: 'POST',
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setRegenerateSuccess(true);
+        setTimeout(() => {
+          setRegenerateSuccess(false);
+          router.refresh();
+        }, 1500);
+      } else {
+        setRegenerateError(data.error || 'Failed to retry processing. Please try again.');
+      }
+    } catch {
+      setRegenerateError('Unable to connect. Check your internet and try again.');
+    } finally {
+      setIsReprocessing(false);
     }
   };
 
@@ -413,19 +439,50 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             </svg>
             Processing Failed
           </h2>
-          <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
-            Something went wrong while processing this meeting. This can happen if the transcript was unavailable or the recording hasn&apos;t finished uploading.
-          </p>
+          {meeting.processingError ? (
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 light:text-gray-500 mb-2">
+                Failed at step: <span className="text-red-400 font-medium">{meeting.processingStep || 'unknown'}</span>
+              </p>
+              <div className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/15">
+                <p className="text-sm text-red-300 light:text-red-600 font-mono break-words">
+                  {meeting.processingError}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
+              Something went wrong while processing this meeting. This can happen if the transcript was unavailable or the recording hasn&apos;t finished uploading.
+            </p>
+          )}
           <button
-            onClick={handleRegenerate}
-            disabled={isRegenerating}
+            onClick={handleReprocess}
+            disabled={isReprocessing}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 transition-colors disabled:opacity-50"
           >
-            <svg className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className={`w-4 h-4 ${isReprocessing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            {isRegenerating ? 'Regenerating...' : 'Retry Draft Generation'}
+            {isReprocessing ? 'Retrying...' : 'Retry Processing'}
           </button>
+          {/* Processing logs for debugging */}
+          {meeting.processingLogs && meeting.processingLogs.length > 0 && (
+            <details className="mt-4">
+              <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-400 transition-colors">
+                Processing log ({meeting.processingLogs.length} steps)
+              </summary>
+              <div className="mt-2 space-y-1">
+                {meeting.processingLogs.map((log, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs text-gray-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400/50 shrink-0" />
+                    <span className="text-gray-500">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                    <span>{log.message}</span>
+                    {log.duration_ms && <span className="text-gray-600">({log.duration_ms}ms)</span>}
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
         </div>
       )}
 
@@ -443,7 +500,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          New draft generated successfully
+          Processing retry initiated successfully
         </div>
       )}
 

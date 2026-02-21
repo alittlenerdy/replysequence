@@ -486,7 +486,7 @@ export async function GET(request: Request) {
           .where(inArray(meetings.id, meetingIds));
 
         const analyzed = meetingsWithSentiment.filter(
-          (m) => m.sentimentAnalysis && typeof (m.sentimentAnalysis as Record<string, unknown>)?.overall === 'object'
+          (m) => m.sentimentAnalysis && typeof (m.sentimentAnalysis as unknown as Record<string, unknown>)?.overall === 'object'
         );
 
         if (analyzed.length > 0) {
