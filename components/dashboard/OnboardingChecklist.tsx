@@ -23,9 +23,13 @@ interface OnboardingChecklistProps {
 function ChecklistItemRow({
   item,
   index,
+  onSampleAction,
+  sampleLoading,
 }: {
   item: ChecklistItem;
   index: number;
+  onSampleAction?: () => void;
+  sampleLoading?: boolean;
 }) {
   return (
     <motion.div
@@ -70,8 +74,20 @@ function ChecklistItemRow({
         </span>
       )}
 
-      {/* Action button */}
-      {!item.completed && item.actionUrl && (
+      {/* Action button - sample action */}
+      {!item.completed && item.actionType === 'sample' && onSampleAction && (
+        <button
+          onClick={onSampleAction}
+          disabled={sampleLoading}
+          className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {sampleLoading ? 'Generating...' : (item.actionLabel || 'Try')}
+          {!sampleLoading && <Sparkles className="w-3 h-3" />}
+        </button>
+      )}
+
+      {/* Action button - link action */}
+      {!item.completed && item.actionType !== 'sample' && item.actionUrl && (
         <Link
           href={item.actionUrl}
           className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
@@ -86,7 +102,7 @@ function ChecklistItemRow({
       )}
 
       {/* Waiting indicator for items that need prior steps */}
-      {!item.completed && !item.actionUrl && (
+      {!item.completed && item.actionType !== 'sample' && !item.actionUrl && (
         <span className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-700/50 text-gray-400">
           {item.actionLabel || 'Pending'}
         </span>
@@ -183,6 +199,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [sampleLoading, setSampleLoading] = useState(false);
   const hasFetched = useRef(false);
   const prevPercentRef = useRef<number>(0);
 
@@ -206,6 +223,24 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
       setLoading(false);
     }
   }, [onComplete]);
+
+  const handleTrySample = useCallback(async () => {
+    if (sampleLoading) return;
+    setSampleLoading(true);
+    try {
+      const response = await fetch('/api/onboarding/sample-meeting', {
+        method: 'POST',
+      });
+      if (response.ok) {
+        // Refresh checklist to reflect the new draft
+        await fetchChecklist();
+      }
+    } catch (error) {
+      console.error('[ONBOARDING-CHECKLIST] Sample generation failed:', error);
+    } finally {
+      setSampleLoading(false);
+    }
+  }, [sampleLoading, fetchChecklist]);
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -329,7 +364,13 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
               className="space-y-2 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent"
             >
               {data.items.map((item, index) => (
-                <ChecklistItemRow key={item.id} item={item} index={index} />
+                <ChecklistItemRow
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  onSampleAction={item.actionType === 'sample' ? handleTrySample : undefined}
+                  sampleLoading={item.actionType === 'sample' ? sampleLoading : undefined}
+                />
               ))}
             </motion.div>
           )}

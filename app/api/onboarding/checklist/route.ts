@@ -13,6 +13,7 @@ export interface ChecklistItem {
   completed: boolean;
   actionUrl?: string;
   actionLabel?: string;
+  actionType?: 'link' | 'sample';
   optional?: boolean;
 }
 
@@ -151,10 +152,15 @@ export async function GET() {
       {
         id: 'draft',
         label: 'Generate First Draft',
-        description: 'AI will create a follow-up email from your transcript',
+        description: hasPlatformConnected && !hasDraftGenerated
+          ? 'Try a sample meeting or wait for a real one'
+          : 'AI will create a follow-up email from your transcript',
         completed: hasDraftGenerated,
         actionUrl: hasPlatformConnected ? undefined : '/dashboard/settings',
-        actionLabel: hasPlatformConnected ? 'Waiting for meeting' : 'Connect first',
+        actionLabel: hasPlatformConnected
+          ? (hasDraftGenerated ? undefined : 'Try a Sample')
+          : 'Connect first',
+        actionType: hasPlatformConnected && !hasDraftGenerated ? 'sample' : 'link',
       },
       {
         id: 'preferences',
