@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { ArrowRight, Zap, Clock, Mail } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Compare ReplySequence to AI Meeting Tools - Fathom, Otter, Fireflies, tl;dv, Grain',
+  title: 'Compare ReplySequence to AI Meeting Tools - Gong, Otter, Fireflies, Fathom, Chorus, Avoma & More',
   description:
-    'See how ReplySequence compares to Fathom, Otter.ai, Fireflies.ai, tl;dv, and Grain. Find the right AI meeting follow-up tool for your workflow.',
+    'See how ReplySequence compares to Gong, Otter.ai, Fireflies.ai, Fathom, Chorus, Avoma, tl;dv, and Grain. Find the right AI meeting follow-up tool for your workflow.',
   openGraph: {
     title: 'Compare ReplySequence to Top AI Meeting Tools',
     description:
-      'Detailed comparisons of ReplySequence vs Fathom, Otter.ai, Fireflies.ai, tl;dv, and Grain. Find the right tool for meeting follow-ups.',
+      'Detailed comparisons of ReplySequence vs Gong, Otter.ai, Fireflies.ai, Fathom, Chorus, Avoma, and more. Find the right tool for meeting follow-ups.',
     url: 'https://www.replysequence.com/compare',
   },
   alternates: {
@@ -21,11 +21,11 @@ export const metadata: Metadata = {
 
 const competitors = [
   {
-    slug: 'fathom',
-    name: 'Fathom',
-    tagline: 'AI notetaker with meeting summaries',
-    differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-up emails in 8 seconds.',
-    color: 'from-purple-500 to-indigo-600',
+    slug: 'gong',
+    name: 'Gong',
+    tagline: 'Revenue intelligence platform',
+    differentiator: 'Gong analyzes conversations for deal intelligence. ReplySequence generates the follow-up email in 8 seconds at a fraction of the cost.',
+    color: 'from-violet-500 to-purple-600',
   },
   {
     slug: 'otter',
@@ -40,6 +40,27 @@ const competitors = [
     tagline: 'Meeting transcription and search',
     differentiator: 'Fireflies records and transcribes. ReplySequence drafts the follow-up email you actually need to send.',
     color: 'from-amber-500 to-orange-600',
+  },
+  {
+    slug: 'chorus',
+    name: 'Chorus (ZoomInfo)',
+    tagline: 'Enterprise conversation intelligence',
+    differentiator: 'Chorus provides conversation analytics within the ZoomInfo ecosystem. ReplySequence generates follow-up emails independently at $19/mo.',
+    color: 'from-sky-500 to-blue-600',
+  },
+  {
+    slug: 'fathom',
+    name: 'Fathom',
+    tagline: 'AI notetaker with meeting summaries',
+    differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-up emails in 8 seconds.',
+    color: 'from-purple-500 to-indigo-600',
+  },
+  {
+    slug: 'avoma',
+    name: 'Avoma',
+    tagline: 'Meeting lifecycle assistant',
+    differentiator: 'Avoma covers the full meeting lifecycle. ReplySequence focuses on the part that drives revenue: sending follow-ups fast.',
+    color: 'from-teal-500 to-emerald-600',
   },
   {
     slug: 'tldv',

@@ -62,6 +62,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Comparison pages
     {
+      url: `${baseUrl}/compare`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/compare/gong`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/compare/otter`,
       lastModified,
       changeFrequency: 'monthly',
@@ -74,13 +86,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/compare/grain`,
+      url: `${baseUrl}/compare/chorus`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/fathom`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/compare/avoma`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/compare/grain`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
