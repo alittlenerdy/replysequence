@@ -5,10 +5,13 @@ import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 
 const competitors = [
+  { name: 'Gong', slug: 'gong', tagline: 'Revenue intelligence' },
   { name: 'Otter.ai', slug: 'otter', tagline: 'Meeting transcription' },
   { name: 'Fireflies.ai', slug: 'fireflies', tagline: 'AI meeting assistant' },
-  { name: 'Grain', slug: 'grain', tagline: 'Meeting highlights' },
+  { name: 'Chorus', slug: 'chorus', tagline: 'Conversation intelligence' },
   { name: 'Fathom', slug: 'fathom', tagline: 'Free meeting notes' },
+  { name: 'Avoma', slug: 'avoma', tagline: 'Meeting lifecycle' },
+  { name: 'Grain', slug: 'grain', tagline: 'Meeting highlights' },
   { name: 'tl;dv', slug: 'tldv', tagline: 'Meeting recorder' },
 ];
 

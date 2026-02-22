@@ -5,10 +5,13 @@ import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 
 const competitors = [
+  { name: 'vs Gong', slug: 'gong' },
   { name: 'vs Otter.ai', slug: 'otter' },
   { name: 'vs Fireflies.ai', slug: 'fireflies' },
-  { name: 'vs Grain', slug: 'grain' },
+  { name: 'vs Chorus', slug: 'chorus' },
   { name: 'vs Fathom', slug: 'fathom' },
+  { name: 'vs Avoma', slug: 'avoma' },
+  { name: 'vs Grain', slug: 'grain' },
   { name: 'vs tl;dv', slug: 'tldv' },
 ];
 
