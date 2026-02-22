@@ -3,122 +3,121 @@ import { blogPosts } from '@/lib/blog-data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.replysequence.com';
-  const lastModified = new Date();
 
   return [
     {
       url: baseUrl,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
       url: `${baseUrl}/how-it-works`,
-      lastModified,
+      lastModified: new Date('2026-02-10'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/pricing`,
-      lastModified,
+      lastModified: new Date('2026-02-10'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/integrations`,
-      lastModified,
+      lastModified: new Date('2026-02-10'),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified,
+      lastModified: new Date('2026-02-01'),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified,
+      lastModified: new Date('2026-02-01'),
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified,
+      lastModified: new Date('2026-01-27'),
       changeFrequency: 'monthly',
       priority: 0.4,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified,
+      lastModified: new Date('2026-01-27'),
       changeFrequency: 'monthly',
       priority: 0.4,
     },
     {
       url: `${baseUrl}/security`,
-      lastModified,
+      lastModified: new Date('2026-01-27'),
       changeFrequency: 'monthly',
       priority: 0.4,
     },
     // Comparison pages
     {
       url: `${baseUrl}/compare`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/gong`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/otter`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/fireflies`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/chorus`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/fathom`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/avoma`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/grain`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/compare/tldv`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     // Blog
     {
       url: `${baseUrl}/blog`,
-      lastModified,
+      lastModified: new Date('2026-02-22'),
       changeFrequency: 'weekly',
       priority: 0.8,
     },

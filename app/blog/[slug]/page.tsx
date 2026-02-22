@@ -188,10 +188,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <div className="min-h-screen bg-gray-950 light:bg-gray-50">
       <Header />
 
-      {/* JSON-LD */}
+      {/* JSON-LD Article */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.replysequence.com' },
+              { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.replysequence.com/blog' },
+              { '@type': 'ListItem', position: 3, name: post.title, item: `https://www.replysequence.com/blog/${post.slug}` },
+            ],
+          }),
+        }}
       />
 
       {/* Article */}
