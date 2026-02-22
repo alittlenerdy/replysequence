@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         startTime: meetingStart,
         endTime: now,
         duration: sample.duration,
-        participants: sample.attendees.map(name => ({ name, email: '' })),
+        participants: sample.attendees.map(user_name => ({ user_name })),
         status: 'completed',
         processingStep: 'completed',
         processingProgress: 100,
