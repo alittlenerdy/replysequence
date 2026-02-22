@@ -369,6 +369,8 @@ export const users = pgTable(
     userRole: text('user_role').$type<'founder' | 'ae' | 'csm' | 'consultant' | 'other'>(),
     // AI onboarding completion tracking
     aiOnboardingComplete: boolean('ai_onboarding_complete').notNull().default(false),
+    // Activity tracking for churn detection
+    lastActiveAt: timestamp('last_active_at', { withTimezone: true }),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -1295,3 +1297,35 @@ export type ChatConversation = typeof chatConversations.$inferSelect;
 export type NewChatConversation = typeof chatConversations.$inferInsert;
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type NewChatMessage = typeof chatMessages.$inferInsert;
+
+// Feedback type enum
+export type FeedbackType = 'draft_rating' | 'weekly_survey' | 'exit_survey' | 'nps';
+
+// Feedback table - collects all types of user feedback
+export const feedback = pgTable(
+  'feedback',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    draftId: uuid('draft_id').references(() => drafts.id, { onDelete: 'set null' }),
+    type: varchar('type', { length: 30 }).notNull().$type<FeedbackType>(),
+    // For draft_rating: 'up' or 'down'. For exit_survey: selected option
+    rating: varchar('rating', { length: 50 }),
+    // For NPS: 0-10 score
+    score: integer('score'),
+    // Free-text comment
+    comment: text('comment'),
+    // Flexible metadata for survey-specific data
+    metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('feedback_user_id_idx').on(table.userId),
+    index('feedback_type_idx').on(table.type),
+    index('feedback_draft_id_idx').on(table.draftId),
+    index('feedback_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type Feedback = typeof feedback.$inferSelect;
+export type NewFeedback = typeof feedback.$inferInsert;
