@@ -1,11 +1,40 @@
 'use client';
 
+import { useState } from 'react';
+import { Sparkles, Loader2 } from 'lucide-react';
+
 interface EmptyStateProps {
   hasFilters?: boolean;
   onClearFilters?: () => void;
+  onDraftGenerated?: () => void;
 }
 
-export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
+export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: EmptyStateProps) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [sampleError, setSampleError] = useState('');
+
+  async function handleTrySample() {
+    setIsGenerating(true);
+    setSampleError('');
+    try {
+      const res = await fetch('/api/onboarding/sample-meeting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSampleError(data.error || 'Failed to generate sample');
+        return;
+      }
+      // Refresh the drafts list to show the new sample draft
+      onDraftGenerated?.();
+    } catch {
+      setSampleError('Network error. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  }
   return (
     <div className="dashboard-fade-in bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-12 text-center">
       {/* Animated Icon */}
@@ -49,22 +78,36 @@ export function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
             ReplySequence will automatically generate a follow-up email draft when the transcript is ready.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={handleTrySample}
+              disabled={isGenerating}
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Generating Draft...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Try a Sample Meeting
+                </>
+              )}
+            </button>
             <a
               href="/dashboard/settings"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-all duration-300 hover:scale-105"
             >
               <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>
               </svg>
               Connect a Platform
             </a>
-            <a
-              href="/how-it-works"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-all duration-300 hover:scale-105"
-            >
-              Learn How It Works
-            </a>
           </div>
+          {sampleError && (
+            <p className="mt-3 text-sm text-red-400">{sampleError}</p>
+          )}
         </>
       )}
 

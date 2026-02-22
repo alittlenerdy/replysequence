@@ -65,6 +65,8 @@ export interface DraftWithMeeting {
   userFeedback: string | null;
   // Meeting type for template recommendations
   meetingType: string | null;
+  // Demo flag
+  isDemo: boolean;
 }
 
 export interface DraftsQueryParams {
@@ -165,6 +167,8 @@ export async function getDraftsWithMeetings(
       meetingHostEmail: meetings.hostEmail,
       meetingStartTime: meetings.startTime,
       meetingPlatform: meetings.platform,
+      meetingDuration: meetings.duration,
+      isDemo: meetings.isDemo,
       trackingId: drafts.trackingId,
       // Email engagement tracking
       openedAt: drafts.openedAt,

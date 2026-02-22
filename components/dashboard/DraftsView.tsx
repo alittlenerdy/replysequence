@@ -234,6 +234,7 @@ export function DraftsView({
             <EmptyState
               hasFilters={hasActiveFilters}
               onClearFilters={handleClearFilters}
+              onDraftGenerated={() => fetchDrafts()}
             />
           ) : (
             <DraftsTable

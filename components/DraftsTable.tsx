@@ -528,6 +528,11 @@ export function DraftsTable({
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-sm font-medium text-white light:text-gray-900 truncate">
                       {draft.meetingTopic || 'Untitled Meeting'}
+                      {draft.isDemo && (
+                        <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                          Sample
+                        </span>
+                      )}
                     </h3>
                     <span className="text-xs text-gray-500 shrink-0">
                       {formatDateShort(draft.createdAt)}
@@ -638,6 +643,11 @@ export function DraftsTable({
                       <div className="min-w-0">
                         <div className="text-sm font-medium text-white light:text-gray-900 truncate">
                           {draft.meetingTopic || 'Untitled Meeting'}
+                          {draft.isDemo && (
+                            <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                              Sample
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs text-gray-400 light:text-gray-500 truncate">
                           {draft.meetingHostEmail}

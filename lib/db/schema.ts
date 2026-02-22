@@ -125,6 +125,7 @@ export const meetings = pgTable(
     processingStartedAt: timestamp('processing_started_at', { withTimezone: true }),
     processingCompletedAt: timestamp('processing_completed_at', { withTimezone: true }),
     processingError: text('processing_error'),
+    isDemo: boolean('is_demo').notNull().default(false),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
