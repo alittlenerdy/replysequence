@@ -2,7 +2,7 @@
  * Debug endpoint to backfill sentiment analysis for existing meetings.
  * Finds all meetings with transcripts but no sentiment data and runs analysis.
  *
- * POST /api/debug/backfill-sentiment
+ * GET /api/debug/backfill-sentiment
  */
 
 import { auth } from '@clerk/nextjs/server';
@@ -14,7 +14,7 @@ import { analyzeSentiment } from '@/lib/sentiment';
 
 export const maxDuration = 60;
 
-export async function POST() {
+export async function GET() {
   const { userId: clerkId } = await auth();
   if (!clerkId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
