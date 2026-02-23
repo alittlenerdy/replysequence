@@ -13,7 +13,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const DEFAULT_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'ReplySequence <noreply@resend.dev>';
 
 // Landing page URL for viral signature
-const LANDING_PAGE_URL = 'https://replysequence.vercel.app';
+const LANDING_PAGE_URL = 'https://www.replysequence.com';
 
 export interface SendEmailParams {
   to: string;

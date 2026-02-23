@@ -32,6 +32,9 @@
     },
     "app/api/cron/cleanup-stuck-meetings/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/send-onboarding-emails/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
@@ -58,6 +61,10 @@
     {
       "path": "/api/cron/cleanup-stuck-meetings",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/send-onboarding-emails",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

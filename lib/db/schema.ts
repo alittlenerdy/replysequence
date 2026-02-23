@@ -371,6 +371,8 @@ export const users = pgTable(
     aiOnboardingComplete: boolean('ai_onboarding_complete').notNull().default(false),
     // Activity tracking for churn detection
     lastActiveAt: timestamp('last_active_at', { withTimezone: true }),
+    // Onboarding email drip unsubscribe
+    onboardingEmailsUnsubscribed: boolean('onboarding_emails_unsubscribed').notNull().default(false),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -1030,6 +1032,25 @@ export type UserOnboarding = typeof userOnboarding.$inferSelect;
 export type NewUserOnboarding = typeof userOnboarding.$inferInsert;
 export type OnboardingEvent = typeof onboardingEvents.$inferSelect;
 export type NewOnboardingEvent = typeof onboardingEvents.$inferInsert;
+
+// Onboarding emails table - tracks which drip emails have been sent per user
+export const onboardingEmails = pgTable(
+  'onboarding_emails',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull().references(() => users.id),
+    emailNumber: integer('email_number').notNull(), // 1-4
+    sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
+    resendMessageId: varchar('resend_message_id', { length: 255 }),
+  },
+  (table) => [
+    index('onboarding_emails_user_id_idx').on(table.userId),
+    uniqueIndex('onboarding_emails_user_email_unique').on(table.userId, table.emailNumber),
+  ]
+);
+
+export type OnboardingEmail = typeof onboardingEmails.$inferSelect;
+export type NewOnboardingEmail = typeof onboardingEmails.$inferInsert;
 
 // Event subscription status type
 export type EventSubscriptionStatus = 'active' | 'suspended' | 'expired';
