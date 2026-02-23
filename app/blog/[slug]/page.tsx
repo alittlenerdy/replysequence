@@ -6,6 +6,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
 import { ShareButtons } from './ShareButtons';
+import { BlogNewsletterSignup } from '@/components/blog/BlogNewsletterSignup';
+import { StickyNewsletterBar } from '@/components/blog/StickyNewsletterBar';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -297,25 +299,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </article>
 
-      {/* CTA Section */}
+      {/* Newsletter Signup */}
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-8 md:p-12 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900 mb-4">
-              Tired of writing follow-ups from scratch?
-            </h2>
-            <p className="text-gray-400 light:text-gray-600 mb-6 max-w-xl mx-auto">
-              ReplySequence listens to your Zoom, Teams, and Meet calls and drafts the follow-up for you in about 8 seconds. You approve, edit, and send from your own inbox.
-            </p>
-            <a
-              href="/sign-up"
-              className="inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-8 py-4 text-lg bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300"
-            >
-              Try It on Your Next Call
-            </a>
-          </div>
+          <BlogNewsletterSignup />
         </div>
       </section>
+
+      {/* Sticky Newsletter Bar */}
+      <StickyNewsletterBar />
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (

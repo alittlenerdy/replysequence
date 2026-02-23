@@ -4,6 +4,7 @@ import { blogPosts } from '@/lib/blog-data';
 import type { Metadata } from 'next';
 import { BlogGrid } from './BlogGrid';
 import { Rss } from 'lucide-react';
+import { BlogNewsletterSignup } from '@/components/blog/BlogNewsletterSignup';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -55,23 +56,10 @@ export default function BlogPage() {
       {/* Blog Grid with Tag Filtering */}
       <BlogGrid posts={blogPosts} />
 
-      {/* Product CTA Strip */}
+      {/* Newsletter Signup */}
       <section className="py-12 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 light:bg-indigo-50 light:border-indigo-100 p-8 text-center">
-            <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">
-              Turn your next call into a ready-to-send follow-up
-            </h3>
-            <p className="text-sm text-gray-400 light:text-gray-600 mb-4 max-w-xl mx-auto">
-              Connect Zoom, Meet, or Teams and we will draft the recap + next steps for you. You edit, hit send, and your CRM updates itself.
-            </p>
-            <a
-              href="/sign-up"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 transition-all"
-            >
-              Try ReplySequence on Your Next Call
-            </a>
-          </div>
+          <BlogNewsletterSignup />
         </div>
       </section>
 
