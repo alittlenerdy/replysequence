@@ -342,9 +342,9 @@ export function MeetingsListView() {
                       <FollowUpBadge status={followUp} />
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-400 light:text-gray-500">
-                      <span>{formatDate(meeting.startTime)}</span>
+                      <span suppressHydrationWarning>{formatDate(meeting.startTime)}</span>
                       {meeting.startTime && (
-                        <span>{formatTime(meeting.startTime)}</span>
+                        <span suppressHydrationWarning>{formatTime(meeting.startTime)}</span>
                       )}
                       {meeting.duration && (
                         <span className="flex items-center gap-1">

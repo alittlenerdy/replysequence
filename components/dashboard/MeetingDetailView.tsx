@@ -173,7 +173,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             <div className="flex flex-wrap items-center gap-3 mt-3">
               <PlatformBadge platform={meeting.platform} />
               <StatusBadge status={meeting.status} />
-              <span className="text-sm text-gray-400 light:text-gray-500">
+              <span className="text-sm text-gray-400 light:text-gray-500" suppressHydrationWarning>
                 {formatDate(meeting.startTime)}
                 {meeting.startTime && ` at ${formatTime(meeting.startTime)}`}
               </span>
@@ -323,7 +323,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           </h2>
 
           {!meeting.sentimentAnalysis ? (
-            <p className="text-sm text-gray-500 italic">Analyzing sentiment...</p>
+            <p className="text-sm text-gray-500 italic">Sentiment analysis not yet available for this meeting.</p>
           ) : (
             <div className="space-y-4">
               {/* Overall sentiment row */}
@@ -421,7 +421,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             {meeting.processingLogs.map((log, i) => (
               <div key={i} className="flex items-center gap-2 text-xs text-gray-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0" />
-                <span className="text-gray-500">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                <span className="text-gray-500" suppressHydrationWarning>{new Date(log.timestamp).toLocaleTimeString()}</span>
                 <span>{log.message}</span>
                 {log.duration_ms && <span className="text-gray-600">({log.duration_ms}ms)</span>}
               </div>
@@ -475,7 +475,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                 {meeting.processingLogs.map((log, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs text-gray-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-400/50 shrink-0" />
-                    <span className="text-gray-500">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                    <span className="text-gray-500" suppressHydrationWarning>{new Date(log.timestamp).toLocaleTimeString()}</span>
                     <span>{log.message}</span>
                     {log.duration_ms && <span className="text-gray-600">({log.duration_ms}ms)</span>}
                   </div>
@@ -557,7 +557,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                   <div className="shrink-0 flex flex-col items-end gap-1.5">
                     <DraftStatusBadge status={draft.status} />
                     {draft.createdAt && (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500" suppressHydrationWarning>
                         {formatDate(draft.createdAt)}
                       </span>
                     )}
