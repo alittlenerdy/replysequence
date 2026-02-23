@@ -83,6 +83,17 @@ const nextConfig: NextConfig = {
     } : false,
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'replysequence.com' }],
+        destination: 'https://www.replysequence.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
