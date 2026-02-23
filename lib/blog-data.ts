@@ -410,7 +410,7 @@ Both tools leverage the same underlying insight: meeting transcripts are an unde
     slug: 'follow-up-email-templates-that-get-responses',
     excerpt:
       'Most follow-up templates are too generic to work. These five templates are designed around specific meeting scenarios and include the structural elements that drive replies.',
-    date: '2026-02-25',
+    date: '2026-01-20',
     author: 'Jimmy Daly',
     tags: ['email templates', 'sales follow-up', 'sales tips'],
     readingTime: 6,
@@ -552,7 +552,7 @@ The goal is not to eliminate your voice from follow-up emails. It is to eliminat
     slug: 'how-we-built-ai-meeting-transcripts-to-emails',
     excerpt:
       'A behind-the-scenes look at the engineering decisions behind ReplySequence: from transcript parsing to meeting type detection to email generation. What worked, what did not, and what we learned.',
-    date: '2026-02-27',
+    date: '2026-01-23',
     author: 'Jimmy Daly',
     tags: ['engineering', 'AI email drafts', 'meeting transcripts'],
     readingTime: 6,
@@ -625,7 +625,7 @@ Building AI products is as much about understanding the workflow you are improvi
     slug: 'sales-reps-guide-ai-meeting-assistants-2026',
     excerpt:
       'AI meeting assistants have evolved from simple transcription tools to full workflow automation. Here is what sales reps need to know about choosing and using them effectively in 2026.',
-    date: '2026-03-01',
+    date: '2026-01-26',
     author: 'Jimmy Daly',
     tags: ['AI meeting assistant', 'sales tools', 'sales productivity'],
     readingTime: 6,
@@ -706,7 +706,7 @@ The specific tool matters less than the workflow it enables. Choose the one that
     slug: 'crm-data-wrong-ai-meetings-fix',
     excerpt:
       'CRM data quality is a $3 trillion problem. The root cause is not bad software -- it is asking humans to do data entry after every meeting. AI meeting tools solve this at the source.',
-    date: '2026-03-04',
+    date: '2026-01-29',
     author: 'Jimmy Daly',
     tags: ['CRM automation', 'sales productivity', 'AI meeting assistant'],
     readingTime: 5,
@@ -789,7 +789,7 @@ The CRM data problem is not going to be solved by better training, stricter proc
     slug: 'meeting-overload-ai-tools-give-time-back',
     excerpt:
       'The average professional spends 31 hours per month in meetings. AI tools cannot reduce the number of meetings, but they can eliminate the busywork that comes before and after each one.',
-    date: '2026-03-07',
+    date: '2026-02-01',
     author: 'Jimmy Daly',
     tags: ['AI meeting assistant', 'sales tools', 'workflow optimization'],
     readingTime: 5,
@@ -895,7 +895,7 @@ The question is not whether AI meeting tools are worth the investment. It is how
     slug: 'replysequence-vs-fireflies-feature-comparison',
     excerpt:
       'Fireflies.ai and ReplySequence both process meeting transcripts, but they serve different use cases. Here is a detailed feature comparison to help you choose the right tool for your sales workflow.',
-    date: '2026-03-10',
+    date: '2026-02-03',
     author: 'Jimmy Daly',
     tags: ['product comparison', 'AI meeting assistant', 'meeting transcripts'],
     readingTime: 5,
@@ -986,7 +986,7 @@ The choice between Fireflies and ReplySequence is really a choice about which po
     slug: 'consultants-ai-never-forget-client-follow-up',
     excerpt:
       'For consultants, a missed follow-up is not just a lost email -- it is a hit to your reputation. Here is how independent consultants and small firms are using AI to ensure every client interaction gets a timely, professional response.',
-    date: '2026-03-13',
+    date: '2026-02-07',
     author: 'Jimmy Daly',
     tags: ['consulting', 'meeting follow-up', 'AI email drafts'],
     readingTime: 5,
@@ -1069,7 +1069,7 @@ The consultants who thrive are the ones who deliver consistently, follow through
     slug: 'hidden-leak-pipeline-what-happens-after-great-call',
     excerpt:
       'Your team is booking meetings. Demos are going well. But pipeline keeps stalling. The problem is not your pitch -- it is what happens in the 24 hours after the call ends.',
-    date: '2026-03-16',
+    date: '2026-02-09',
     author: 'Jimmy Daly',
     tags: ['sales pipeline', 'meeting follow-up', 'sales management'],
     readingTime: 6,
@@ -1142,7 +1142,7 @@ Your team is doing the hard work of getting meetings and running good calls. Mak
     slug: 'fast-context-rich-follow-up-changes-close-rates',
     excerpt:
       'Speed alone does not close deals. A fast but generic email is just spam with better timing. What actually moves the needle is speed plus specificity.',
-    date: '2026-03-19',
+    date: '2026-02-12',
     author: 'Jimmy Daly',
     tags: ['close rates', 'sales follow-up', 'sales productivity'],
     readingTime: 5,
@@ -1209,7 +1209,7 @@ The best follow-up is not just fast. It is not just detailed. It is both -- and 
     slug: 'team-no-show-problem-not-top-of-funnel',
     excerpt:
       'Most teams respond to rising no-show rates by booking more meetings. The smarter move is building a recovery system for the ones that ghost.',
-    date: '2026-03-22',
+    date: '2026-02-15',
     author: 'Jimmy Daly',
     tags: ['no-shows', 'sales pipeline', 'meeting management'],
     readingTime: 5,
@@ -1288,7 +1288,7 @@ The meetings your team already booked are the cheapest pipeline you have. Every 
     slug: 'best-reps-follow-up-into-team-standard',
     excerpt:
       'Your best rep sends follow-ups that close. Everyone else sends emails that stall. The gap is not talent -- it is that the formula was never extracted and standardized.',
-    date: '2026-03-25',
+    date: '2026-02-17',
     author: 'Jimmy Daly',
     tags: ['sales playbook', 'team management', 'email templates'],
     readingTime: 6,
@@ -1363,7 +1363,7 @@ The gap between your best rep and everyone else is not a talent problem. It is a
     slug: 'status-checks-to-strategy-fixing-one-on-ones',
     excerpt:
       'If your 1:1s with reps are just status checks -- \'Did you follow up with Acme?\' -- you are wasting the most valuable coaching time you have.',
-    date: '2026-03-28',
+    date: '2026-02-19',
     author: 'Jimmy Daly',
     tags: ['sales management', 'coaching', 'sales productivity'],
     readingTime: 5,
