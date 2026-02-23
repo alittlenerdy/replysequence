@@ -25,7 +25,7 @@ const spaceGrotesk = Space_Grotesk({
 const siteUrl = "https://www.replysequence.com";
 
 export const viewport: Viewport = {
-  themeColor: '#3B82F6',
+  themeColor: '#6366f1',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,

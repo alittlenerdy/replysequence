@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
-    <!-- Neon gradient -->
-    <linearGradient id="neonBlue" x1="200" y1="900" x2="900" y2="200" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00E5FF"/>
-      <stop offset="45%" stop-color="#2F7BFF"/>
-      <stop offset="100%" stop-color="#0B3DFF"/>
+    <!-- Indigo gradient matching site palette -->
+    <linearGradient id="indigoGrad" x1="200" y1="900" x2="900" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a5b4fc"/>
+      <stop offset="45%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#4338ca"/>
     </linearGradient>
 
     <!-- Outer glow -->
@@ -22,8 +22,8 @@
     <filter id="innerGlow" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="3" result="b"/>
       <feColorMatrix in="b" type="matrix"
-        values="1 0 0 0 0
-                0 1 0 0 0.8
+        values="1 0 0 0 0.4
+                0 1 0 0 0.3
                 0 0 1 0 1
                 0 0 0 0.9 0" result="c"/>
       <feMerge>
@@ -33,42 +33,42 @@
     </filter>
   </defs>
 
-  <!-- Black background -->
-  <rect width="1024" height="1024" fill="#000"/>
+  <!-- Dark background -->
+  <rect width="1024" height="1024" fill="#0a0a0f"/>
 
   <!-- Three curved arrows (stroke-built) -->
   <g filter="url(#glow)">
     <!-- Arc 1: top -> right -->
     <path d="M 512 170 A 342 342 0 0 1 854 512"
           fill="none"
-          stroke="url(#neonBlue)"
+          stroke="url(#indigoGrad)"
           stroke-width="140"
           stroke-linecap="round"
           filter="url(#innerGlow)"/>
     <!-- Arrowhead 1 (points toward bottom-right) -->
     <path d="M 905 470 L 965 525 L 892 575 Z"
-          fill="url(#neonBlue)"/>
+          fill="url(#indigoGrad)"/>
 
     <!-- Arc 2: right -> bottom -->
     <path d="M 854 512 A 342 342 0 0 1 512 854"
           fill="none"
-          stroke="url(#neonBlue)"
+          stroke="url(#indigoGrad)"
           stroke-width="140"
           stroke-linecap="round"
           filter="url(#innerGlow)"/>
     <!-- Arrowhead 2 (points toward bottom-left) -->
     <path d="M 555 905 L 498 965 L 450 892 Z"
-          fill="url(#neonBlue)"/>
+          fill="url(#indigoGrad)"/>
 
     <!-- Arc 3: bottom -> left -> top -->
     <path d="M 512 854 A 342 342 0 0 1 170 512 A 342 342 0 0 1 512 170"
           fill="none"
-          stroke="url(#neonBlue)"
+          stroke="url(#indigoGrad)"
           stroke-width="140"
           stroke-linecap="round"
           filter="url(#innerGlow)"/>
     <!-- Arrowhead 3 (points toward up-left) -->
     <path d="M 120 500 L 60 455 L 132 405 Z"
-          fill="url(#neonBlue)"/>
+          fill="url(#indigoGrad)"/>
   </g>
 </svg>
