@@ -78,20 +78,13 @@ export const metadata: Metadata = {
     siteName: "ReplySequence",
     title: "ReplySequence - AI Follow-Up Emails from Meetings",
     description: "Turn Zoom, Teams, and Meet calls into perfect follow-up emails in 8 seconds. AI-powered drafts, automatically generated, CRM-ready.",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "ReplySequence - AI-powered meeting follow-up emails",
-      },
-    ],
+    // images are auto-generated from app/opengraph-image.tsx file convention
   },
   twitter: {
     card: "summary_large_image",
     title: "ReplySequence - AI Follow-Up Emails from Meetings",
     description: "Turn Zoom, Teams, and Meet calls into perfect follow-up emails in 8 seconds. Save 10+ hours per week.",
-    images: ["/opengraph-image"],
+    // images are auto-generated from app/opengraph-image.tsx file convention
     creator: "@replysequence",
   },
   robots: {
