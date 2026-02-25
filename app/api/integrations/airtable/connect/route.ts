@@ -9,6 +9,17 @@ import { eq } from 'drizzle-orm';
 import { db, users, airtableConnections } from '@/lib/db';
 import { encrypt } from '@/lib/encryption';
 import Airtable from 'airtable';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
+
+const airtableConnectSchema = z.object({
+  apiKey: z.string().min(1),
+  baseId: z.string().min(1).refine(val => val.startsWith('app'), {
+    message: 'Base ID should start with "app" (e.g., appXXXXXXXXXXXXXX)',
+  }),
+  contactsTable: z.string().max(255).optional(),
+  meetingsTable: z.string().max(255).optional(),
+});
 
 export async function POST(request: NextRequest) {
   const { userId: clerkUserId } = await auth();
@@ -18,23 +29,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const { apiKey, baseId, contactsTable, meetingsTable } = body;
-
-    if (!apiKey || !baseId) {
-      return NextResponse.json(
-        { success: false, error: 'API key and Base ID are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate the base ID format
-    if (!baseId.startsWith('app')) {
-      return NextResponse.json(
-        { success: false, error: 'Base ID should start with "app" (e.g., appXXXXXXXXXXXXXX)' },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, airtableConnectSchema);
+    if ('error' in parsed) return parsed.error;
+    const { apiKey, baseId, contactsTable, meetingsTable } = parsed.data;
 
     // Find user by Clerk ID
     const [user] = await db

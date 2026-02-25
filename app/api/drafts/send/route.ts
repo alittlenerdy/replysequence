@@ -14,6 +14,13 @@ import { db, emailEvents, users } from '@/lib/db';
 import { meetings, drafts, hubspotConnections, salesforceConnections, emailConnections } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import type { MeetingPlatform } from '@/lib/db/schema';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
+
+const sendDraftSchema = z.object({
+  draftId: z.string().uuid(),
+  recipientEmail: z.string().email(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,31 +29,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { draftId, recipientEmail } = body;
-
-    if (!draftId) {
-      return NextResponse.json(
-        { error: 'Draft ID is required' },
-        { status: 400 }
-      );
-    }
-
-    if (!recipientEmail) {
-      return NextResponse.json(
-        { error: 'Recipient email is required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(recipientEmail)) {
-      return NextResponse.json(
-        { error: 'Invalid email address' },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, sendDraftSchema);
+    if ('error' in parsed) return parsed.error;
+    const { draftId, recipientEmail } = parsed.data;
 
     // Verify draft ownership via meeting
     const [dbUser] = await db

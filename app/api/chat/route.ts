@@ -14,8 +14,15 @@ import { eq, and, asc } from 'drizzle-orm';
 import { getClaudeClient, CLAUDE_MODEL } from '@/lib/claude-api';
 import { searchMeetings, buildMeetingContext, getFullTranscript } from '@/lib/meeting-search';
 import type { ChatSourceMeeting, ChatRole } from '@/lib/db/schema';
+import { z } from 'zod';
 
 export const maxDuration = 60;
+
+const chatSchema = z.object({
+  message: z.string().min(1).max(10000),
+  conversationId: z.string().uuid().optional(),
+  meetingId: z.string().uuid().optional(),
+});
 
 const SYSTEM_PROMPT = `You are ReplySequence AI, a helpful assistant that answers questions about the user's meeting history.
 
@@ -28,12 +35,6 @@ You have access to meeting transcripts, summaries, and metadata. When answering:
 - Format your responses with markdown for readability (bold for names/dates, lists for action items)
 
 If no relevant meetings are found, let the user know and suggest they rephrase their question.`;
-
-interface ChatRequestBody {
-  message: string;
-  conversationId?: string;
-  meetingId?: string; // Scope to a single meeting
-}
 
 export async function POST(request: NextRequest) {
   const { userId: clerkId } = await auth();
@@ -52,17 +53,23 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
   }
 
-  let body: ChatRequestBody;
+  let chatInput: z.infer<typeof chatSchema>;
   try {
-    body = await request.json();
+    const raw = await request.json();
+    const result = chatSchema.safeParse(raw);
+    if (!result.success) {
+      const issues = result.error.issues.map(i => ({
+        field: i.path.join('.'),
+        message: i.message,
+      }));
+      return new Response(JSON.stringify({ error: 'Validation failed', issues }), { status: 400 });
+    }
+    chatInput = result.data;
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
   }
 
-  const { message, conversationId, meetingId } = body;
-  if (!message?.trim()) {
-    return new Response(JSON.stringify({ error: 'Message is required' }), { status: 400 });
-  }
+  const { message, conversationId, meetingId } = chatInput;
 
   try {
     // 1. Get or create conversation

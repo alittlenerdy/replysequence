@@ -3,9 +3,17 @@ import { auth } from '@clerk/nextjs/server';
 import { db, drafts, users, meetings } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 import { getClaudeClient, CLAUDE_MODEL, calculateCost, log } from '@/lib/claude-api';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
+
+const refineDraftSchema = z.object({
+  draftId: z.string().uuid(),
+  instruction: z.string().min(1).max(500),
+  field: z.enum(['subject', 'body', 'both']).default('both'),
+});
 
 /**
  * POST /api/drafts/refine
@@ -37,20 +45,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
-    const { draftId, instruction, field = 'both' } = body;
-
-    if (!draftId) {
-      return NextResponse.json({ error: 'draftId is required' }, { status: 400 });
-    }
-
-    if (!instruction || typeof instruction !== 'string') {
-      return NextResponse.json({ error: 'instruction is required' }, { status: 400 });
-    }
-
-    if (instruction.length > 500) {
-      return NextResponse.json({ error: 'instruction too long (max 500 characters)' }, { status: 400 });
-    }
+    const parsed = await parseBody(request, refineDraftSchema);
+    if ('error' in parsed) return parsed.error;
+    const { draftId, instruction, field } = parsed.data;
 
     // Get draft with meeting (must belong to user)
     const [draft] = await db

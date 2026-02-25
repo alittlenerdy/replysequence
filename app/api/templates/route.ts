@@ -4,6 +4,8 @@ import { MEETING_TEMPLATES, getTemplatesForMeetingType } from '@/lib/meeting-tem
 import { db, emailTemplates, users } from '@/lib/db';
 import { eq, and, isNull } from 'drizzle-orm';
 import type { MeetingType } from '@/lib/meeting-type-detector';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 interface TemplateResponse {
   id: string;
@@ -80,6 +82,15 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ templates: [...formatted, ...userTemplates] });
 }
 
+const createTemplateSchema = z.object({
+  name: z.string().min(1).max(255),
+  description: z.string().max(1000).optional(),
+  meetingType: z.string().max(100).optional(),
+  promptInstructions: z.string().min(1).max(10000),
+  icon: z.string().max(50).optional(),
+  isDefault: z.boolean().optional(),
+});
+
 /**
  * POST /api/templates
  * Create a custom template for the authenticated user
@@ -100,15 +111,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
-  const body = await request.json();
-  const { name, description, meetingType, promptInstructions, icon, isDefault } = body;
-
-  if (!name || !promptInstructions) {
-    return NextResponse.json(
-      { error: 'Name and promptInstructions are required' },
-      { status: 400 }
-    );
-  }
+  const parsed = await parseBody(request, createTemplateSchema);
+  if ('error' in parsed) return parsed.error;
+  const { name, description, meetingType, promptInstructions, icon, isDefault } = parsed.data;
 
   // If setting as default, clear other defaults for this meeting type
   if (isDefault && meetingType) {

@@ -4,8 +4,14 @@ import { db, meetings, transcripts, users } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { generateDraft } from '@/lib/generate-draft';
 import { getRandomSampleMeeting, getSampleMeeting } from '@/lib/sample-meetings';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 export const maxDuration = 60;
+
+const sampleMeetingSchema = z.object({
+  sampleId: z.string().max(100).optional(),
+});
 
 /**
  * POST /api/onboarding/sample-meeting
@@ -45,8 +51,9 @@ export async function POST(request: NextRequest) {
     // Parse optional sample ID from body
     let sampleId: string | undefined;
     try {
-      const body = await request.json();
-      sampleId = body.sampleId;
+      const parsed = await parseBody(request, sampleMeetingSchema);
+      if ('error' in parsed) return parsed.error;
+      sampleId = parsed.data.sampleId;
     } catch {
       // No body is fine, we'll pick a random sample
     }

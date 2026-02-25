@@ -4,6 +4,15 @@ import { stripe, STRIPE_PRICES, PriceTier } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
+
+const createCheckoutSchema = z.object({
+  priceId: z.string().optional(),
+  tier: z.enum(['pro', 'team']).optional(),
+}).refine(data => data.priceId || data.tier, {
+  message: 'Price ID or tier is required',
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,11 +25,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse request body
-    const body = await request.json();
-    const { priceId, tier } = body as { priceId?: string; tier?: PriceTier };
+    // Parse and validate request body
+    const parsed = await parseBody(request, createCheckoutSchema);
+    if ('error' in parsed) return parsed.error;
+    const { priceId, tier } = parsed.data;
 
-    // Validate price ID
+    // Resolve price ID from tier if needed
     const resolvedPriceId = priceId || (tier ? STRIPE_PRICES[tier] : null);
     if (!resolvedPriceId) {
       return NextResponse.json(

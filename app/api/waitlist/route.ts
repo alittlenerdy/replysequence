@@ -4,35 +4,32 @@ import { db, waitlistEntries } from '@/lib/db';
 import { eq, sql, count, asc, desc } from 'drizzle-orm';
 import { sendEmail } from '@/lib/email';
 import { nanoid } from 'nanoid';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 const ADMIN_CLERK_IDS = (process.env.ADMIN_CLERK_IDS || '').split(',').filter(Boolean);
 
 export const runtime = 'nodejs';
+
+const waitlistSchema = z.object({
+  email: z.string().email(),
+  name: z.string().max(255).optional(),
+  ref: z.string().max(100).optional(),
+  utmSource: z.string().max(100).optional(),
+  utmMedium: z.string().max(100).optional(),
+  utmCampaign: z.string().max(100).optional(),
+});
 
 /**
  * POST /api/waitlist - Join the waitlist
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, name, ref, utmSource, utmMedium, utmCampaign } = body;
-
-    // Validate email
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, waitlistSchema);
+    if ('error' in parsed) return parsed.error;
+    const { email, name, ref, utmSource, utmMedium, utmCampaign } = parsed.data;
 
     const normalizedEmail = email.toLowerCase().trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(normalizedEmail)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
 
     // Check for duplicate
     const existing = await db
