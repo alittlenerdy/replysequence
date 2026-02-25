@@ -371,6 +371,9 @@ export const users = pgTable(
     aiOnboardingComplete: boolean('ai_onboarding_complete').notNull().default(false),
     // Activity tracking for churn detection
     lastActiveAt: timestamp('last_active_at', { withTimezone: true }),
+    // Dunning flow fields
+    gracePeriodEndsAt: timestamp('grace_period_ends_at', { withTimezone: true }),
+    dunningEmailsSent: integer('dunning_emails_sent').notNull().default(0),
     // Onboarding email drip unsubscribe
     onboardingEmailsUnsubscribed: boolean('onboarding_emails_unsubscribed').notNull().default(false),
     // Timestamps

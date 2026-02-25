@@ -4,6 +4,12 @@ import { stripe, STRIPE_PRICES } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { computeGracePeriodEnd } from '@/lib/subscription';
+import {
+  sendPaymentFailedEmail,
+  sendSubscriptionPastDueEmail,
+  sendSubscriptionCancelledEmail,
+} from '@/lib/dunning';
 
 // Disable body parsing - we need raw body for signature verification
 export const runtime = 'nodejs';
@@ -170,7 +176,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
-  const subscriptionId = subscription.id;
   const status = subscription.status;
   const periodEnd = (subscription as unknown as { current_period_end: number }).current_period_end;
   const endDate = new Date(periodEnd * 1000);
@@ -204,35 +209,112 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     updateData.subscriptionTier = tier;
   }
 
+  // If subscription returned to active, clear dunning state
+  if (mappedStatus === 'active') {
+    updateData.gracePeriodEndsAt = null;
+    updateData.dunningEmailsSent = 0;
+  }
+
   const result = await db
     .update(users)
     .set(updateData)
     .where(eq(users.stripeCustomerId, customerId))
-    .returning({ id: users.id, email: users.email });
+    .returning({ id: users.id, email: users.email, name: users.name, dunningEmailsSent: users.dunningEmailsSent });
 
-  if (result.length > 0) {
-    console.log(`[STRIPE WEBHOOK] customer.subscription.updated: User ${result[0].email} status=${mappedStatus}`);
+  if (result.length === 0) {
+    return;
+  }
+
+  console.log(JSON.stringify({
+    level: 'info',
+    tag: '[STRIPE WEBHOOK]',
+    message: 'Subscription updated',
+    userId: result[0].id,
+    email: result[0].email,
+    status: mappedStatus,
+  }));
+
+  // Send past-due dunning email if Stripe moved the subscription to past_due or unpaid
+  if (mappedStatus === 'past_due' || mappedStatus === 'unpaid') {
+    try {
+      await sendSubscriptionPastDueEmail({
+        email: result[0].email,
+        name: result[0].name,
+      });
+    } catch (emailError) {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[DUNNING]',
+        message: 'Failed to send past-due email from subscription update',
+        userId: result[0].id,
+        error: emailError instanceof Error ? emailError.message : String(emailError),
+      }));
+    }
   }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
-  const subscriptionId = subscription.id;
   const periodEnd = (subscription as unknown as { current_period_end: number }).current_period_end;
   const endDate = new Date(periodEnd * 1000);
 
-  // Keep the tier but mark as canceled - user keeps access until end date
+  // Check if this deletion was caused by non-payment (dunning) by reading current user state
+  const [existingUser] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      dunningEmailsSent: users.dunningEmailsSent,
+      subscriptionTier: users.subscriptionTier,
+    })
+    .from(users)
+    .where(eq(users.stripeCustomerId, customerId))
+    .limit(1);
+
+  const wasDunning = existingUser && existingUser.dunningEmailsSent > 0;
+
+  // Downgrade user to free tier, clear dunning state, mark as canceled
+  // Data is kept intact -- only the tier and status change.
   const result = await db
     .update(users)
     .set({
+      subscriptionTier: 'free',
       subscriptionStatus: 'canceled',
       subscriptionEndDate: endDate,
+      gracePeriodEndsAt: null,
+      dunningEmailsSent: 0,
     })
     .where(eq(users.stripeCustomerId, customerId))
-    .returning({ id: users.id, email: users.email });
+    .returning({ id: users.id, email: users.email, name: users.name });
 
-  if (result.length > 0) {
-    console.log(`[STRIPE WEBHOOK] customer.subscription.deleted: User ${result[0].email} canceled (access until ${endDate.toISOString()})`);
+  if (result.length === 0) {
+    return;
+  }
+
+  console.log(JSON.stringify({
+    level: 'info',
+    tag: '[STRIPE WEBHOOK]',
+    message: 'Subscription deleted, user downgraded to free',
+    userId: result[0].id,
+    email: result[0].email,
+    wasDunning,
+    previousTier: existingUser?.subscriptionTier,
+  }));
+
+  // Send cancellation email (especially important for dunning-caused cancellations)
+  try {
+    await sendSubscriptionCancelledEmail({
+      email: result[0].email,
+      name: result[0].name,
+    });
+  } catch (emailError) {
+    console.error(JSON.stringify({
+      level: 'error',
+      tag: '[DUNNING]',
+      message: 'Failed to send cancellation email',
+      userId: result[0].id,
+      error: emailError instanceof Error ? emailError.message : String(emailError),
+    }));
   }
 }
 
@@ -251,17 +333,27 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   const periodEnd = (subscription as unknown as { current_period_end: number }).current_period_end;
   const endDate = new Date(periodEnd * 1000);
 
+  // Clear dunning state on successful payment
   const result = await db
     .update(users)
     .set({
       subscriptionStatus: 'active',
       subscriptionEndDate: endDate,
+      gracePeriodEndsAt: null,
+      dunningEmailsSent: 0,
     })
     .where(eq(users.stripeCustomerId, customerId))
     .returning({ id: users.id, email: users.email });
 
   if (result.length > 0) {
-    console.log(`[STRIPE WEBHOOK] invoice.payment_succeeded: User ${result[0].email} renewed until ${endDate.toISOString()}`);
+    console.log(JSON.stringify({
+      level: 'info',
+      tag: '[STRIPE WEBHOOK]',
+      message: 'Payment succeeded, dunning state cleared',
+      userId: result[0].id,
+      email: result[0].email,
+      renewedUntil: endDate.toISOString(),
+    }));
   }
 }
 
@@ -273,15 +365,82 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
     return;
   }
 
-  const result = await db
-    .update(users)
-    .set({
-      subscriptionStatus: 'past_due',
+  // Fetch current user to check existing dunning state
+  const [existingUser] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      dunningEmailsSent: users.dunningEmailsSent,
+      gracePeriodEndsAt: users.gracePeriodEndsAt,
     })
+    .from(users)
     .where(eq(users.stripeCustomerId, customerId))
-    .returning({ id: users.id, email: users.email });
+    .limit(1);
 
-  if (result.length > 0) {
-    console.warn(`[STRIPE WEBHOOK] invoice.payment_failed: User ${result[0].email} payment failed`);
+  if (!existingUser) {
+    console.error(JSON.stringify({
+      level: 'error',
+      tag: '[STRIPE WEBHOOK]',
+      message: 'No user found for payment failure',
+      stripeCustomerId: customerId,
+    }));
+    return;
+  }
+
+  const isFirstFailure = existingUser.dunningEmailsSent === 0;
+
+  // Build the update: always mark as past_due, increment dunning counter
+  const updateData: Record<string, unknown> = {
+    subscriptionStatus: 'past_due' as const,
+    dunningEmailsSent: existingUser.dunningEmailsSent + 1,
+  };
+
+  // On first failure, set the grace period (7 days from now)
+  if (isFirstFailure) {
+    updateData.gracePeriodEndsAt = computeGracePeriodEnd();
+  }
+
+  await db
+    .update(users)
+    .set(updateData)
+    .where(eq(users.stripeCustomerId, customerId));
+
+  console.log(JSON.stringify({
+    level: 'warn',
+    tag: '[STRIPE WEBHOOK]',
+    message: 'Payment failed, dunning state updated',
+    userId: existingUser.id,
+    email: existingUser.email,
+    dunningEmailsSent: existingUser.dunningEmailsSent + 1,
+    isFirstFailure,
+  }));
+
+  // Send appropriate dunning email
+  try {
+    if (isFirstFailure) {
+      await sendPaymentFailedEmail(
+        { email: existingUser.email, name: existingUser.name },
+        {
+          amount_due: invoice.amount_due ?? undefined,
+          currency: invoice.currency ?? undefined,
+          hosted_invoice_url: invoice.hosted_invoice_url,
+        },
+      );
+    } else {
+      await sendSubscriptionPastDueEmail({
+        email: existingUser.email,
+        name: existingUser.name,
+      });
+    }
+  } catch (emailError) {
+    // Log but do not throw -- webhook processing should not fail due to email issues
+    console.error(JSON.stringify({
+      level: 'error',
+      tag: '[DUNNING]',
+      message: 'Failed to send dunning email',
+      userId: existingUser.id,
+      error: emailError instanceof Error ? emailError.message : String(emailError),
+    }));
   }
 }
