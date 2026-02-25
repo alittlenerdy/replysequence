@@ -4,6 +4,7 @@ import { db, waitlistEntries } from '@/lib/db';
 import { eq, sql, count, asc, desc } from 'drizzle-orm';
 import { sendEmail } from '@/lib/email';
 import { nanoid } from 'nanoid';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 const ADMIN_CLERK_IDS = (process.env.ADMIN_CLERK_IDS || '').split(',').filter(Boolean);
 
@@ -13,6 +14,17 @@ export const runtime = 'nodejs';
  * POST /api/waitlist - Join the waitlist
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting - public endpoint (5/hour per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`waitlist-post:${clientId}`, RATE_LIMITS.PUBLIC);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const body = await request.json();
     const { email, name, ref, utmSource, utmMedium, utmCampaign } = body;
@@ -123,12 +135,15 @@ export async function POST(request: NextRequest) {
       // Non-critical: log but don't fail the signup
     });
 
-    return NextResponse.json({
-      success: true,
-      position,
-      referralCode,
-      referralLink,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        position,
+        referralCode,
+        referralLink,
+      },
+      { headers: getRateLimitHeaders(rateLimitResult) }
+    );
   } catch (error) {
     console.error(JSON.stringify({
       level: 'error',
@@ -151,6 +166,17 @@ export async function POST(request: NextRequest) {
  * No params: returns total count (public-safe)
  */
 export async function GET(request: NextRequest) {
+  // Apply rate limiting - public endpoint (5/hour per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`waitlist-get:${clientId}`, RATE_LIMITS.PUBLIC);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');

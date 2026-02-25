@@ -10,10 +10,22 @@ import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { verifyUnsubscribeToken } from '@/lib/onboarding-emails';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  // Apply rate limiting - public endpoint (5/hour per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`unsubscribe:${clientId}`, RATE_LIMITS.PUBLIC);
+
+  if (!rateLimitResult.success) {
+    return new NextResponse(
+      renderPage('Too Many Requests', 'Please wait a while before trying again.'),
+      { status: 429, headers: { 'Content-Type': 'text/html', ...getRateLimitHeaders(rateLimitResult) } }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get('userId');
   const token = searchParams.get('token');

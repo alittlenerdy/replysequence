@@ -1,13 +1,25 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { userOnboarding, onboardingEvents } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  // Apply rate limiting - auth endpoint (30/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`onboarding-complete:${clientId}`, RATE_LIMITS.AUTH);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const { userId } = await auth();
     if (!userId) {

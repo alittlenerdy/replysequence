@@ -37,12 +37,14 @@ if (typeof setInterval !== 'undefined') {
 
 // Default configurations for different endpoint types
 export const RATE_LIMITS = {
-  // Standard API endpoints: 100 requests per minute
-  API: { limit: 100, window: 60 },
-  // Authentication endpoints: 10 requests per minute
-  AUTH: { limit: 10, window: 60 },
-  // Webhook endpoints: 500 requests per minute (higher for automated systems)
-  WEBHOOK: { limit: 500, window: 60 },
+  // Standard API endpoints: 100 requests per 15 minutes
+  API: { limit: 100, window: 900 },
+  // Authentication/onboarding endpoints: 30 requests per minute
+  AUTH: { limit: 30, window: 60 },
+  // Webhook endpoints: 200 requests per minute (high for automated platform bursts)
+  WEBHOOK: { limit: 200, window: 60 },
+  // Public endpoints (waitlist, contact, newsletter): 5 requests per hour per IP
+  PUBLIC: { limit: 5, window: 3600 },
   // GDPR exports: 5 per hour
   GDPR: { limit: 5, window: 3600 },
   // Strict: 20 requests per minute
