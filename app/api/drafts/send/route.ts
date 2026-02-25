@@ -50,13 +50,27 @@ export async function POST(request: NextRequest) {
 
     // Verify draft ownership via meeting
     const [dbUser] = await db
-      .select({ id: users.id })
+      .select({ id: users.id, emailSendingPaused: users.emailSendingPaused })
       .from(users)
       .where(eq(users.clerkId, user.id))
       .limit(1);
 
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Check if email sending is paused due to complaints
+    if (dbUser.emailSendingPaused) {
+      console.log(JSON.stringify({
+        level: 'warn',
+        message: 'Email sending blocked - user paused due to complaints',
+        userId: dbUser.id,
+        draftId,
+      }));
+      return NextResponse.json(
+        { error: 'Email sending is paused for your account due to multiple spam complaints. Please contact support to resolve this.' },
+        { status: 403 }
+      );
     }
 
     const [ownedDraft] = await db
@@ -188,6 +202,25 @@ export async function POST(request: NextRequest) {
 
     // Mark draft as sent only after successful email delivery
     await markDraftAsSent(draftId, recipientEmail);
+
+    // Store Resend message ID for webhook event correlation (bounce/complaint tracking)
+    if (result.messageId) {
+      try {
+        await db
+          .update(drafts)
+          .set({ resendMessageId: result.messageId, updatedAt: new Date() })
+          .where(eq(drafts.id, draftId));
+      } catch (msgIdError) {
+        // Log but don't fail - email was already sent
+        console.error(JSON.stringify({
+          level: 'error',
+          message: 'Failed to store Resend message ID on draft',
+          draftId,
+          messageId: result.messageId,
+          error: msgIdError instanceof Error ? msgIdError.message : String(msgIdError),
+        }));
+      }
+    }
 
     // Log sent event to email_events table for granular tracking
     if (draft.trackingId) {
