@@ -8,6 +8,12 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db, users, meetConnections } from '@/lib/db';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
+
+const setPrimarySchema = z.object({
+  connectionId: z.string().uuid(),
+});
 
 export async function POST(request: NextRequest) {
   const { userId: clerkUserId } = await auth();
@@ -16,12 +22,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { connectionId } = body;
-
-  if (!connectionId) {
-    return NextResponse.json({ success: false, error: 'connectionId required' }, { status: 400 });
-  }
+  const parsed = await parseBody(request, setPrimarySchema);
+  if ('error' in parsed) return parsed.error;
+  const { connectionId } = parsed.data;
 
   try {
     const [user] = await db

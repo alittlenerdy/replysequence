@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { sendEmail } from '@/lib/email';
 import { TONE_OPTIONS } from '@/lib/constants/ai-settings';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
+
+const testEmailSchema = z.object({
+  tone: z.string().default('professional'),
+  customInstructions: z.string().max(2000).default(''),
+  signature: z.string().max(1000).default(''),
+});
 
 /**
  * POST /api/drafts/test-email — Send a static preview email to the current user.
@@ -25,8 +33,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { tone = 'professional', customInstructions = '', signature = '' } = body;
+    const parsed = await parseBody(request, testEmailSchema);
+    if ('error' in parsed) return parsed.error;
+    const { tone, customInstructions, signature } = parsed.data;
 
     // Build preview email content
     const toneOption = TONE_OPTIONS.find(o => o.value === tone) || TONE_OPTIONS[0];

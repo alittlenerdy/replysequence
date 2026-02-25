@@ -3,9 +3,17 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { onboardingEvents } from '@/lib/db/schema';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
+
+const onboardingEventSchema = z.object({
+  eventType: z.string().min(1).max(100),
+  stepNumber: z.number().int().min(1).max(10).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
 
 export async function POST(request: NextRequest) {
   // Apply rate limiting - auth endpoint (30/min per IP)
@@ -25,12 +33,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { eventType, stepNumber, metadata } = body;
-
-    if (!eventType) {
-      return NextResponse.json({ error: 'Event type required' }, { status: 400 });
-    }
+    const parsed = await parseBody(request, onboardingEventSchema);
+    if ('error' in parsed) return parsed.error;
+    const { eventType, stepNumber, metadata } = parsed.data;
 
     await db.insert(onboardingEvents).values({
       clerkId: userId,

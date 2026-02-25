@@ -4,8 +4,27 @@ import { db, feedback, users } from '@/lib/db';
 import { eq, desc, and, count } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import type { FeedbackType } from '@/lib/db/schema';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 export const dynamic = 'force-dynamic';
+
+const feedbackSchema = z.object({
+  type: z.enum(['draft_rating', 'weekly_survey', 'exit_survey', 'nps']),
+  draftId: z.string().uuid().optional(),
+  rating: z.string().max(50).optional(),
+  score: z.number().int().min(0).max(10).optional(),
+  comment: z.string().max(5000).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+}).refine(data => {
+  if (data.type === 'nps' && data.score === undefined) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'NPS score must be between 0 and 10',
+  path: ['score'],
+});
 
 /**
  * POST /api/feedback
@@ -39,32 +58,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
-    const { type, draftId, rating, score, comment, metadata } = body as {
-      type: FeedbackType;
-      draftId?: string;
-      rating?: string;
-      score?: number;
-      comment?: string;
-      metadata?: Record<string, unknown>;
-    };
-
-    // Validate type
-    const validTypes: FeedbackType[] = ['draft_rating', 'weekly_survey', 'exit_survey', 'nps'];
-    if (!type || !validTypes.includes(type)) {
-      return NextResponse.json(
-        { error: 'Invalid feedback type. Must be: draft_rating, weekly_survey, exit_survey, or nps' },
-        { status: 400 }
-      );
-    }
-
-    // Validate NPS score
-    if (type === 'nps' && (score === undefined || score < 0 || score > 10)) {
-      return NextResponse.json(
-        { error: 'NPS score must be between 0 and 10' },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, feedbackSchema);
+    if ('error' in parsed) return parsed.error;
+    const { type, draftId, rating, score, comment, metadata } = parsed.data;
 
     const [entry] = await db
       .insert(feedback)

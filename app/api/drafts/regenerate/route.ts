@@ -3,14 +3,21 @@ import { currentUser } from '@clerk/nextjs/server';
 import { db, meetings, transcripts, users } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 import { generateDraft } from '@/lib/generate-draft';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
+const regenerateDraftSchema = z.object({
+  meetingId: z.string().uuid(),
+  templateId: z.string().uuid().optional(),
+});
+
 /**
  * POST /api/drafts/regenerate
  * Regenerate a draft for a meeting that has a transcript
- * Body: { meetingId: string }
+ * Body: { meetingId: string, templateId?: string }
  */
 export async function POST(request: NextRequest) {
   try {
@@ -30,12 +37,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
-    const { meetingId, templateId } = body;
-
-    if (!meetingId) {
-      return NextResponse.json({ error: 'meetingId is required' }, { status: 400 });
-    }
+    const parsed = await parseBody(request, regenerateDraftSchema);
+    if ('error' in parsed) return parsed.error;
+    const { meetingId, templateId } = parsed.data;
 
     // Get meeting (must belong to user)
     const [meeting] = await db

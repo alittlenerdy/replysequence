@@ -3,11 +3,20 @@ import { auth } from '@clerk/nextjs/server';
 import { db, waitlistEntries } from '@/lib/db';
 import { eq, asc, inArray } from 'drizzle-orm';
 import { sendEmail } from '@/lib/email';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 export const runtime = 'nodejs';
 
 // Admin user IDs that can send invites (set in env)
 const ADMIN_CLERK_IDS = (process.env.ADMIN_CLERK_IDS || '').split(',').filter(Boolean);
+
+const waitlistInviteSchema = z.object({
+  count: z.number().int().min(1).max(1000).optional(),
+  emails: z.array(z.string().email()).min(1).optional(),
+}).refine(data => data.count !== undefined || data.emails !== undefined, {
+  message: 'Provide either count or emails array',
+});
 
 /**
  * POST /api/waitlist/invite - Send invites to waitlist users (admin only)
@@ -27,15 +36,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { count: inviteCount, emails } = body;
-
-    if (!inviteCount && (!emails || !Array.isArray(emails) || emails.length === 0)) {
-      return NextResponse.json(
-        { error: 'Provide either count or emails array' },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, waitlistInviteSchema);
+    if ('error' in parsed) return parsed.error;
+    const { count: inviteCount, emails } = parsed.data;
 
     let entriesToInvite;
 
@@ -53,7 +56,7 @@ export async function POST(request: NextRequest) {
         .from(waitlistEntries)
         .where(eq(waitlistEntries.status, 'waiting'))
         .orderBy(asc(waitlistEntries.position))
-        .limit(inviteCount);
+        .limit(inviteCount!);
     }
 
     if (entriesToInvite.length === 0) {

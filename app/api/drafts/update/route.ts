@@ -3,6 +3,16 @@ import { currentUser } from '@clerk/nextjs/server';
 import { db, users, meetings, drafts } from '@/lib/db';
 import { eq, and } from 'drizzle-orm';
 import { updateDraft } from '@/lib/dashboard-queries';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
+
+const updateDraftSchema = z.object({
+  draftId: z.string().uuid(),
+  subject: z.string().optional(),
+  body: z.string().optional(),
+}).refine(data => data.subject !== undefined || data.body !== undefined, {
+  message: 'Subject or body is required',
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,22 +21,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { draftId, subject, body: draftBody } = body;
-
-    if (!draftId) {
-      return NextResponse.json(
-        { error: 'Draft ID is required' },
-        { status: 400 }
-      );
-    }
-
-    if (!subject && !draftBody) {
-      return NextResponse.json(
-        { error: 'Subject or body is required' },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, updateDraftSchema);
+    if ('error' in parsed) return parsed.error;
+    const { draftId, subject, body: draftBody } = parsed.data;
 
     // Verify draft belongs to the current user
     const [dbUser] = await db

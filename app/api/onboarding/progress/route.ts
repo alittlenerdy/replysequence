@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections, sheetsConnections } from '@/lib/db/schema';
+import type { OnboardingStep, ConnectedPlatform, EmailPreference } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
+import { z } from 'zod';
+import { parseBody } from '@/lib/api-validation';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
@@ -121,6 +124,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
+const onboardingProgressSchema = z.object({
+  currentStep: z.number().int().min(1).max(10).optional(),
+  platformConnected: z.string().max(50).nullish(),
+  calendarConnected: z.boolean().optional(),
+  draftGenerated: z.boolean().optional(),
+  emailPreference: z.string().max(50).optional(),
+  emailConnected: z.boolean().optional(),
+  crmConnected: z.boolean().optional(),
+});
+
 export async function POST(request: NextRequest) {
   // Apply rate limiting - auth endpoint (30/min per IP)
   const postClientId = getClientIdentifier(request);
@@ -139,8 +152,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { currentStep, platformConnected, calendarConnected, draftGenerated, emailPreference, emailConnected: emailConnectedVal, crmConnected: crmConnectedVal } = body;
+    const parsed = await parseBody(request, onboardingProgressSchema);
+    if ('error' in parsed) return parsed.error;
+    const { currentStep, platformConnected, calendarConnected, draftGenerated, emailPreference, emailConnected: emailConnectedVal, crmConnected: crmConnectedVal } = parsed.data;
 
     // Build update object with only defined values
     const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -167,13 +181,13 @@ export async function POST(request: NextRequest) {
     } else {
       await db.insert(userOnboarding).values({
         clerkId: userId,
-        currentStep: currentStep || 1,
-        platformConnected: platformConnected || null,
-        calendarConnected: calendarConnected || false,
-        draftGenerated: draftGenerated || false,
-        emailPreference: emailPreference || 'review',
-        emailConnected: emailConnectedVal || false,
-        crmConnected: crmConnectedVal || false,
+        currentStep: (currentStep ?? 1) as OnboardingStep,
+        platformConnected: (platformConnected ?? null) as ConnectedPlatform,
+        calendarConnected: calendarConnected ?? false,
+        draftGenerated: draftGenerated ?? false,
+        emailPreference: (emailPreference ?? 'review') as EmailPreference,
+        emailConnected: emailConnectedVal ?? false,
+        crmConnected: crmConnectedVal ?? false,
       });
     }
 
