@@ -9,6 +9,7 @@
  * - Greeting → Context → Value → CTA structure
  */
 
+import * as Sentry from '@sentry/nextjs';
 import { callClaudeAPI, CLAUDE_MODEL, calculateCost, log, CLAUDE_API_TIMEOUT_MS } from './claude-api';
 import {
   OPTIMIZED_SYSTEM_PROMPT,
@@ -534,6 +535,13 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
   // All retries exhausted - store failed draft
   const generationDurationMs = Date.now() - startTime;
   const errorMessage = lastError?.message || 'Unknown error';
+
+  if (lastError) {
+    Sentry.captureException(lastError, {
+      tags: { component: 'generate-draft' },
+      extra: { meetingId, transcriptId, attempts: attempt, generationDurationMs },
+    });
+  }
 
   log('error', 'Draft generation failed', {
     meetingId,

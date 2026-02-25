@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail } from '@/lib/email';
@@ -519,6 +520,10 @@ export async function POST(request: NextRequest) {
       hubspotDetails,
     });
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { component: 'drafts-send' },
+    });
+
     console.error('Failed to send draft:', error);
     return NextResponse.json(
       { error: 'Failed to send email' },
