@@ -5,6 +5,7 @@ import { db, rawEvents } from '@/lib/db';
 import { processZoomEvent } from '@/lib/process-zoom-event';
 import { recordWebhookFailure } from '@/lib/webhook-retry';
 import { eq, desc } from 'drizzle-orm';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import type {
   ZoomWebhookPayload,
   MeetingEndedPayload,
@@ -19,6 +20,17 @@ export const maxDuration = 60; // 60 second timeout
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
+
+  // Apply rate limiting - webhook endpoint (200/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`webhook-zoom:${clientId}`, RATE_LIMITS.WEBHOOK);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
 
   try {
     // Get raw body for signature verification

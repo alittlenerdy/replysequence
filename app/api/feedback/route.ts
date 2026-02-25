@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db, feedback, users } from '@/lib/db';
 import { eq, desc, and, count } from 'drizzle-orm';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import type { FeedbackType } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,17 @@ export const dynamic = 'force-dynamic';
  * Submit feedback of any type (draft_rating, weekly_survey, exit_survey, nps)
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting - auth endpoint (30/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`feedback-post:${clientId}`, RATE_LIMITS.AUTH);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {
@@ -88,6 +100,17 @@ export async function POST(request: NextRequest) {
  * Query params: type (optional filter), limit (default 50)
  */
 export async function GET(request: NextRequest) {
+  // Apply rate limiting - auth endpoint (30/min per IP)
+  const getClientId = getClientIdentifier(request);
+  const getRateLimitResult = rateLimit(`feedback-get:${getClientId}`, RATE_LIMITS.AUTH);
+
+  if (!getRateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(getRateLimitResult) }
+    );
+  }
+
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {

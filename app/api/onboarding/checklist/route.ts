@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections, airtableConnections } from '@/lib/db/schema';
 import { eq, count } from 'drizzle-orm';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +26,18 @@ export interface ChecklistResponse {
   isComplete: boolean;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Apply rate limiting - auth endpoint (30/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`onboarding-checklist:${clientId}`, RATE_LIMITS.AUTH);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {

@@ -3,6 +3,7 @@ import { db, rawEvents } from '@/lib/db';
 import { processTeamsEvent } from '@/lib/process-teams-event';
 import { validateClientState, parseResourcePath } from '@/lib/teams-api';
 import { recordWebhookFailure } from '@/lib/webhook-retry';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import type { GraphChangeNotification, ChangeNotificationItem } from '@/lib/teams/types';
 import type { RawEvent } from '@/lib/db/schema';
 
@@ -65,6 +66,17 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
+
+  // Apply rate limiting - webhook endpoint (200/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`webhook-teams:${clientId}`, RATE_LIMITS.WEBHOOK);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
 
   try {
     // Check for validation token in query (Microsoft sends this during subscription creation)

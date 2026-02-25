@@ -4,6 +4,7 @@ import { db, meetings, transcripts, users } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { generateDraft } from '@/lib/generate-draft';
 import { getRandomSampleMeeting, getSampleMeeting } from '@/lib/sample-meetings';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 export const maxDuration = 60;
 
@@ -13,6 +14,17 @@ export const maxDuration = 60;
  * Body: { sampleId?: string } - optional specific sample, otherwise random
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting - auth endpoint (30/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`onboarding-sample-meeting:${clientId}`, RATE_LIMITS.AUTH);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
+
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {

@@ -8,6 +8,7 @@ import { eq, and } from 'drizzle-orm';
 import { db, recallBots, meetings, transcripts as transcriptsTable, users, calendarEvents } from '@/lib/db';
 import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
+import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import type { BotStatus, TranscriptWord, TranscriptSpeaker } from '@/lib/recall/types';
 import crypto from 'crypto';
 
@@ -93,6 +94,17 @@ interface RecallWebhookPayload {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
+
+  // Apply rate limiting - webhook endpoint (200/min per IP)
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(`webhook-recall:${clientId}`, RATE_LIMITS.WEBHOOK);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    );
+  }
 
   try {
     // Get raw body for potential signature verification
