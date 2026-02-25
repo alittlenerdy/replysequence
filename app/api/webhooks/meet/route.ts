@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { db, rawEvents, meetConnections } from '@/lib/db';
 import { processMeetEvent } from '@/lib/process-meet-event';
 import { validatePubSubMessage } from '@/lib/meet-api';
@@ -153,6 +154,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-meet', event_type: 'unknown' },
+    });
 
     log('error', '[MEET-1] Webhook processing error', {
       tag: '[WEBHOOK-ERROR]',
@@ -340,6 +345,12 @@ async function handleConferenceEnded(
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-meet', event_type: 'meet.conference.ended' },
+      extra: { rawEventId: rawEvent.id, conferenceRecordName },
+    });
+
     log('error', '[MEET-10] Event processing failed', {
       tag: '[WEBHOOK-ERROR]',
       platform: 'google_meet',
@@ -479,6 +490,12 @@ async function handleTranscriptFileGenerated(
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-meet', event_type: 'meet.transcript.fileGenerated' },
+      extra: { rawEventId: rawEvent.id, transcriptName },
+    });
+
     log('error', '[MEET-10] Transcript event processing failed', {
       tag: '[WEBHOOK-ERROR]',
       platform: 'google_meet',

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { db, rawEvents } from '@/lib/db';
 import { processTeamsEvent } from '@/lib/process-teams-event';
 import { validateClientState, parseResourcePath } from '@/lib/teams-api';
@@ -162,6 +163,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-teams', event_type: 'unknown' },
+    });
+
     log('error', 'Teams webhook processing error', {
       tag: '[WEBHOOK-ERROR]',
       platform: 'microsoft_teams',
@@ -264,6 +269,12 @@ async function processNotification(
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-teams', event_type: eventType },
+      extra: { rawEventId: rawEvent.id },
+    });
+
     log('error', 'Teams event processing failed', {
       tag: '[WEBHOOK-ERROR]',
       platform: 'microsoft_teams',

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import Stripe from 'stripe';
 import { stripe, STRIPE_PRICES } from '@/lib/stripe';
 import { db } from '@/lib/db';
@@ -97,6 +98,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (err) {
+    Sentry.captureException(err, {
+      tags: { component: 'webhook-stripe', event_type: event.type },
+    });
+
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error(`[STRIPE WEBHOOK] Error handling ${event.type}:`, message);
     return NextResponse.json(

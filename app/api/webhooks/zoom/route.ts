@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { verifyZoomSignature, generateChallengeResponse } from '@/lib/zoom/signature';
 import { acquireEventLock, removeEventLock } from '@/lib/idempotency';
 import { db, rawEvents } from '@/lib/db';
@@ -117,6 +118,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-zoom', event_type: 'unknown' },
+    });
 
     console.log(JSON.stringify({
       level: 'error',
@@ -302,6 +307,12 @@ async function handleMeetingEnded(
     }));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-zoom', event_type: 'meeting.ended' },
+      extra: { rawEventId: rawEvent.id, meetingId: extractedData.meetingId },
+    });
+
     console.log(JSON.stringify({
       level: 'error',
       tag: '[WEBHOOK-ERROR]',
@@ -478,6 +489,12 @@ async function handleRecordingCompleted(
     }));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    Sentry.captureException(error, {
+      tags: { component: 'webhook-zoom', event_type: 'recording.completed' },
+      extra: { rawEventId: rawEvent.id, zoomMeetingId: object.uuid },
+    });
+
     console.log(JSON.stringify({
       level: 'error',
       tag: '[WEBHOOK-ERROR]',
@@ -673,6 +690,12 @@ async function handleTranscriptCompleted(
       }));
     } catch (processError) {
       const errorMessage = processError instanceof Error ? processError.message : String(processError);
+
+      Sentry.captureException(processError, {
+        tags: { component: 'webhook-zoom', event_type: 'recording.transcript_completed' },
+        extra: { rawEventId: rawEvent.id },
+      });
+
       console.log(JSON.stringify({
         level: 'error',
         tag: '[WEBHOOK-ERROR]',
@@ -711,6 +734,11 @@ async function handleTranscriptCompleted(
     );
   } catch (unexpectedError) {
     const errorMessage = unexpectedError instanceof Error ? unexpectedError.message : String(unexpectedError);
+
+    Sentry.captureException(unexpectedError, {
+      tags: { component: 'webhook-zoom', event_type: 'transcript_completed_crash' },
+    });
+
     console.log(JSON.stringify({
       level: 'error',
       tag: '[WEBHOOK-ERROR]',
