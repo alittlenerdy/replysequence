@@ -214,6 +214,9 @@ export type DetectedMeetingType = 'sales_call' | 'internal_sync' | 'client_revie
 // Tone type for drafts
 export type DraftTone = 'formal' | 'casual' | 'neutral';
 
+// Bounce type for email bounce tracking
+export type BounceType = 'hard_bounce' | 'soft_bounce' | 'complaint';
+
 // Action item structure
 export interface ActionItem {
   owner: string;
@@ -284,6 +287,12 @@ export const drafts = pgTable(
     refinementCount: integer('refinement_count').default(0),
     lastRefinedAt: timestamp('last_refined_at', { withTimezone: true }),
     lastRefinementInstruction: text('last_refinement_instruction'),
+    // Resend message ID (for webhook event correlation)
+    resendMessageId: varchar('resend_message_id', { length: 255 }),
+    // Email bounce tracking
+    bounceType: text('bounce_type').$type<BounceType>(),
+    bounceReason: text('bounce_reason'),
+    bouncedAt: timestamp('bounced_at', { withTimezone: true }),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
@@ -297,6 +306,8 @@ export const drafts = pgTable(
     index('drafts_meeting_type_idx').on(table.meetingType),
     index('drafts_tracking_id_idx').on(table.trackingId),
     index('drafts_sent_at_idx').on(table.sentAt),
+    index('drafts_bounce_type_idx').on(table.bounceType),
+    index('drafts_resend_message_id_idx').on(table.resendMessageId),
   ]
 );
 
@@ -376,6 +387,9 @@ export const users = pgTable(
     dunningEmailsSent: integer('dunning_emails_sent').notNull().default(0),
     // Onboarding email drip unsubscribe
     onboardingEmailsUnsubscribed: boolean('onboarding_emails_unsubscribed').notNull().default(false),
+    // Email complaint tracking (auto-pause sending after 3 complaints)
+    emailComplaintCount: integer('email_complaint_count').notNull().default(0),
+    emailSendingPaused: boolean('email_sending_paused').notNull().default(false),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -386,6 +400,7 @@ export const users = pgTable(
     index('users_created_at_idx').on(table.createdAt),
     index('users_stripe_customer_id_idx').on(table.stripeCustomerId),
     index('users_subscription_tier_idx').on(table.subscriptionTier),
+    index('users_email_sending_paused_idx').on(table.emailSendingPaused),
   ]
 );
 
