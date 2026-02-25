@@ -21,7 +21,20 @@ function generateNonce(): string {
   return Buffer.from(array).toString('base64')
 }
 
+// Skip middleware for OG image routes (social media crawlers need clean responses)
+const isOgImageRoute = createRouteMatcher([
+  '/opengraph-image',
+  '/twitter-image',
+  '/blog/:slug/opengraph-image',
+  '/blog/:slug/twitter-image',
+])
+
 export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // Let OG image routes pass through without CSP/security headers
+  if (isOgImageRoute(req)) {
+    return NextResponse.next()
+  }
+
   if (isProtectedRoute(req)) {
     await auth.protect()
   }
