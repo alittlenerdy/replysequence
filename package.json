@@ -14,7 +14,9 @@
     "subscribe-meet-events": "tsx scripts/subscribe-meet-events.ts",
     "diagnostic": "tsx scripts/diagnostic.ts",
     "test-meet-poll": "tsx scripts/test-meet-poll.ts",
-    "reencrypt-tokens": "tsx scripts/reencrypt-tokens.ts"
+    "reencrypt-tokens": "tsx scripts/reencrypt-tokens.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
@@ -55,6 +57,8 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.6",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
     "@types/pg": "^8.11.10",
     "@types/react": "^19",
@@ -65,6 +69,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.19.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }
