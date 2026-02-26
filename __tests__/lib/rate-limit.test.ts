@@ -127,15 +127,15 @@ describe('rateLimit', () => {
 
   describe('RATE_LIMITS presets', () => {
     it('has correct API limits', () => {
-      expect(RATE_LIMITS.API).toEqual({ limit: 100, window: 60 });
+      expect(RATE_LIMITS.API).toEqual({ limit: 100, window: 900 });
     });
 
     it('has correct AUTH limits', () => {
-      expect(RATE_LIMITS.AUTH).toEqual({ limit: 10, window: 60 });
+      expect(RATE_LIMITS.AUTH).toEqual({ limit: 30, window: 60 });
     });
 
     it('has correct WEBHOOK limits', () => {
-      expect(RATE_LIMITS.WEBHOOK).toEqual({ limit: 500, window: 60 });
+      expect(RATE_LIMITS.WEBHOOK).toEqual({ limit: 200, window: 60 });
     });
 
     it('has correct GDPR limits', () => {
