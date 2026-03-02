@@ -86,6 +86,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Flywheel: capture the user-edited body and calculate similarity
+    const originalBody = draft.originalBody;
+    const currentBody = draft.body;
+
+    if (originalBody && currentBody !== originalBody) {
+      const { calculateEditDiffScore } = await import('@/lib/flywheel/similarity');
+      const editDiffScore = calculateEditDiffScore(originalBody, currentBody);
+
+      await db
+        .update(drafts)
+        .set({
+          userEditedBody: currentBody,
+          editDiffScore,
+        })
+        .where(eq(drafts.id, draftId));
+
+      // Flywheel: check if style profile needs refresh (non-blocking)
+      import('@/lib/flywheel/style-profile').then(async ({ shouldRefreshStyleProfile, generateStyleProfile }) => {
+        try {
+          const needsRefresh = await shouldRefreshStyleProfile(dbUser.id);
+          if (needsRefresh) {
+            await generateStyleProfile(dbUser.id);
+            console.log(JSON.stringify({
+              level: 'info',
+              message: 'Style profile refreshed',
+              userId: dbUser.id,
+            }));
+          }
+        } catch (err) {
+          console.log(JSON.stringify({
+            level: 'error',
+            message: 'Style profile refresh failed',
+            error: err instanceof Error ? err.message : String(err),
+          }));
+        }
+      });
+    }
+
     console.log('[SEND-1] Sending email, to:', recipientEmail);
     console.log(JSON.stringify({
       level: 'info',

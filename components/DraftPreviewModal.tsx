@@ -192,6 +192,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSendConfirm, setShowSendConfirm] = useState(false);
+  const [showFlywheelDetails, setShowFlywheelDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
   const [regenerateSuccess, setRegenerateSuccess] = useState(false);
@@ -903,6 +904,36 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           gradingNotes={draft.gradingNotes}
                           showDetails={true}
                         />
+                      </div>
+                    )}
+
+                    {/* AI Context (Data Flywheel) */}
+                    {draft.flywheelContextUsed && draft.flywheelMetadata && (
+                      <div className="pt-4 border-t border-white/[0.06]">
+                        <button
+                          onClick={() => setShowFlywheelDetails(!showFlywheelDetails)}
+                          className="flex items-center gap-2 text-sm w-full"
+                        >
+                          <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
+                          </svg>
+                          <span className="font-medium text-indigo-300">
+                            AI Context
+                          </span>
+                          <span className="text-indigo-400/60 text-xs ml-auto">
+                            {showFlywheelDetails ? 'Hide' : 'Show'} details
+                          </span>
+                        </button>
+                        {showFlywheelDetails && (
+                          <div className="mt-2 space-y-1 text-xs text-indigo-300/80">
+                            {draft.flywheelMetadata.styleProfileUsed && (
+                              <p>Writing style: Adapted to your preferences (based on {draft.flywheelMetadata.styleEditCount} past edits)</p>
+                            )}
+                            {draft.flywheelMetadata.contactHistoryUsed && (
+                              <p>Contact history: Referenced {draft.flywheelMetadata.contactEmailCount} past emails, {draft.flywheelMetadata.contactMeetingCount} past meetings with {draft.flywheelMetadata.contactEmail}</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
 

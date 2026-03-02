@@ -36,6 +36,21 @@ export interface FollowUpContext {
   // Template customization
   templateId?: string;
   templateInstructions?: string;
+
+  // Data flywheel context
+  styleProfile?: {
+    toneAdjustments: string;
+    structuralPreferences: string;
+    contentPatterns: string;
+    avoidances: string;
+    sampleCount: number;
+  } | null;
+  contactContext?: {
+    recipientEmail: string;
+    emailCount: number;
+    meetingCount: number;
+    promptBlock: string;
+  } | null;
 }
 
 /**
@@ -221,6 +236,21 @@ ${typeInstructions}`;
 
   if (additionalContext) {
     prompt += `\n\n## ADDITIONAL CONTEXT:\n${additionalContext}`;
+  }
+
+  // Inject flywheel context: user's writing style
+  if (context.styleProfile && context.styleProfile.sampleCount > 0) {
+    prompt += `\n\n## USER WRITING STYLE (learned from ${context.styleProfile.sampleCount} past edits):
+Adapt your writing to match these preferences:
+- Tone: ${context.styleProfile.toneAdjustments}
+- Structure: ${context.styleProfile.structuralPreferences}
+- Content: ${context.styleProfile.contentPatterns}
+- Avoid: ${context.styleProfile.avoidances}`;
+  }
+
+  // Inject flywheel context: contact history
+  if (context.contactContext) {
+    prompt += context.contactContext.promptBlock;
   }
 
   prompt += `
