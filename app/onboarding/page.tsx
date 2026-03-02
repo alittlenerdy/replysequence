@@ -12,19 +12,29 @@ import { StepEmailPreferences } from '@/components/onboarding/StepEmailPreferenc
 import { OnboardingComplete } from '@/components/onboarding/OnboardingComplete';
 import { ProgressBar } from '@/components/onboarding/ProgressBar';
 import { Celebration } from '@/components/onboarding/Celebration';
+import Image from 'next/image';
 import { X, Loader2 } from 'lucide-react';
 
 export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6 | 'complete';
 export type ConnectedPlatform = 'zoom' | 'teams' | 'meet' | null;
 export type EmailPreference = 'review' | 'auto_send';
 
+export type ConnectedCRM = 'hubspot' | 'salesforce' | 'airtable' | 'sheets' | null;
+
 export interface OnboardingState {
   currentStep: OnboardingStep;
   platformConnected: ConnectedPlatform;
   connectedPlatforms: string[];
+  googleCalendarConnected: boolean;
+  outlookCalendarConnected: boolean;
   emailConnected: boolean;
   connectedEmail: string | null;
   crmConnected: boolean;
+  connectedCRM: ConnectedCRM;
+  hubspotConnected: boolean;
+  salesforceConnected: boolean;
+  airtableConnected: boolean;
+  sheetsConnected: boolean;
   emailPreference: EmailPreference;
   isLoading: boolean;
   isReturningUser: boolean;
@@ -40,9 +50,16 @@ function OnboardingContent() {
     currentStep: 1,
     platformConnected: null,
     connectedPlatforms: [],
+    googleCalendarConnected: false,
+    outlookCalendarConnected: false,
     emailConnected: false,
     connectedEmail: null,
     crmConnected: false,
+    connectedCRM: null,
+    hubspotConnected: false,
+    salesforceConnected: false,
+    airtableConnected: false,
+    sheetsConnected: false,
     emailPreference: 'review',
     isLoading: true,
     isReturningUser: false,
@@ -69,9 +86,16 @@ function OnboardingContent() {
           currentStep: data.currentStep || 1,
           platformConnected: data.platformConnected || null,
           connectedPlatforms: data.connectedPlatforms || [],
+          googleCalendarConnected: data.googleCalendarConnected || false,
+          outlookCalendarConnected: data.outlookCalendarConnected || false,
           emailConnected: data.emailConnected || false,
           connectedEmail: data.connectedEmail || null,
           crmConnected: data.crmConnected || false,
+          hubspotConnected: data.hubspotConnected || false,
+          salesforceConnected: data.salesforceConnected || false,
+          airtableConnected: data.airtableConnected || false,
+          sheetsConnected: data.sheetsConnected || false,
+          connectedCRM: data.hubspotConnected ? 'hubspot' : data.salesforceConnected ? 'salesforce' : data.airtableConnected ? 'airtable' : data.sheetsConnected ? 'sheets' : null,
           emailPreference: data.emailPreference || 'review',
           isLoading: false,
           isReturningUser: data.currentStep > 1,
@@ -136,9 +160,15 @@ function OnboardingContent() {
 
     // Handle CRM OAuth callback
     if (crmConnectedParam === 'true') {
+      const crmType = (sessionStorage.getItem('onboarding_crm') || 'hubspot') as ConnectedCRM;
       setState(prev => ({
         ...prev,
         crmConnected: true,
+        connectedCRM: crmType,
+        hubspotConnected: crmType === 'hubspot' ? true : prev.hubspotConnected,
+        salesforceConnected: crmType === 'salesforce' ? true : prev.salesforceConnected,
+        airtableConnected: crmType === 'airtable' ? true : prev.airtableConnected,
+        sheetsConnected: crmType === 'sheets' ? true : prev.sheetsConnected,
         currentStep: 5, // Stay on CRM step to show connected status
       }));
       saveProgress({ crmConnected: true, currentStep: 5 });
@@ -240,10 +270,19 @@ function OnboardingContent() {
     goToStep(5);
   };
 
-  const handleCRMConnected = () => {
-    setState(prev => ({ ...prev, crmConnected: true }));
+  const handleCRMConnected = (crmType?: ConnectedCRM) => {
+    const connectedType = crmType || (sessionStorage.getItem('onboarding_crm') as ConnectedCRM) || null;
+    setState(prev => ({
+      ...prev,
+      crmConnected: true,
+      connectedCRM: connectedType,
+      hubspotConnected: connectedType === 'hubspot' ? true : prev.hubspotConnected,
+      salesforceConnected: connectedType === 'salesforce' ? true : prev.salesforceConnected,
+      airtableConnected: connectedType === 'airtable' ? true : prev.airtableConnected,
+      sheetsConnected: connectedType === 'sheets' ? true : prev.sheetsConnected,
+    }));
     saveProgress({ crmConnected: true, currentStep: 6 });
-    trackEvent('crm_connected', 5);
+    trackEvent('crm_connected', 5, { crm: connectedType });
 
     setState(prev => ({ ...prev, showCelebration: true, celebrationType: 'crm' }));
     setTimeout(() => goToStep(6), 1200);
@@ -313,7 +352,8 @@ function OnboardingContent() {
       {state.currentStep !== 'complete' && (
         <header className="relative z-10 max-w-4xl mx-auto pt-8 px-4">
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Image src="/logo-new.png" alt="" width={28} height={28} className="rounded-sm" />
               <span className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                 ReplySequence
               </span>
@@ -418,6 +458,10 @@ function OnboardingContent() {
             >
               <StepCRM
                 crmConnected={state.crmConnected}
+                hubspotConnected={state.hubspotConnected}
+                salesforceConnected={state.salesforceConnected}
+                airtableConnected={state.airtableConnected}
+                sheetsConnected={state.sheetsConnected}
                 onCRMConnected={handleCRMConnected}
                 onSkip={handleCRMSkipped}
               />
@@ -448,7 +492,7 @@ function OnboardingContent() {
             >
               <OnboardingComplete
                 platformConnected={state.platformConnected}
-                calendarConnected={false}
+                calendarConnected={state.googleCalendarConnected || state.outlookCalendarConnected}
                 onGoToDashboard={() => router.push('/dashboard')}
               />
             </motion.div>

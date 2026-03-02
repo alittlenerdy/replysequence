@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections, sheetsConnections } from '@/lib/db/schema';
+import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections, sheetsConnections, salesforceConnections } from '@/lib/db/schema';
 import type { OnboardingStep, ConnectedPlatform, EmailPreference } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
@@ -91,12 +91,19 @@ export async function GET(request: NextRequest) {
       connectedEmail = emailConn?.email || null;
     }
 
-    // Check CRM connections
-    let crmConnected = false;
+    // Check CRM connections (per-platform)
+    let hubspotConnectedFlag = false;
+    let salesforceConnectedFlag = false;
+    let airtableConnectedFlag = false;
+    let sheetsConnectedFlag = false;
     if (user) {
       const [hubspotConn] = await db.select({ id: hubspotConnections.id })
         .from(hubspotConnections)
         .where(eq(hubspotConnections.userId, user.id))
+        .limit(1);
+      const [salesforceConn] = await db.select({ id: salesforceConnections.id })
+        .from(salesforceConnections)
+        .where(eq(salesforceConnections.userId, user.id))
         .limit(1);
       const [airtableConn] = await db.select({ id: airtableConnections.id })
         .from(airtableConnections)
@@ -106,7 +113,10 @@ export async function GET(request: NextRequest) {
         .from(sheetsConnections)
         .where(eq(sheetsConnections.userId, user.id))
         .limit(1);
-      crmConnected = !!hubspotConn || !!airtableConn || !!sheetsConn;
+      hubspotConnectedFlag = !!hubspotConn;
+      salesforceConnectedFlag = !!salesforceConn;
+      airtableConnectedFlag = !!airtableConn;
+      sheetsConnectedFlag = !!sheetsConn;
     }
 
     return NextResponse.json({
@@ -116,7 +126,11 @@ export async function GET(request: NextRequest) {
       outlookCalendarConnected,
       emailConnected,
       connectedEmail,
-      crmConnected,
+      crmConnected: hubspotConnectedFlag || salesforceConnectedFlag || airtableConnectedFlag || sheetsConnectedFlag,
+      hubspotConnected: hubspotConnectedFlag,
+      salesforceConnected: salesforceConnectedFlag,
+      airtableConnected: airtableConnectedFlag,
+      sheetsConnected: sheetsConnectedFlag,
     });
   } catch (error) {
     console.error('[ONBOARDING] Error fetching progress:', error);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections, airtableConnections } from '@/lib/db/schema';
+import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections, salesforceConnections, airtableConnections } from '@/lib/db/schema';
 import { eq, count } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
           label: 'Connect your calendar',
           description: 'Link Google Calendar or Outlook to see upcoming meetings',
           completed: false,
-          actionUrl: '/dashboard/settings',
+          actionUrl: '/dashboard/settings?tab=integrations',
           actionLabel: 'Connect Calendar',
         },
         {
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
           label: 'Connect a meeting platform',
           description: 'Link Zoom, Teams, or Meet to capture transcripts',
           completed: false,
-          actionUrl: '/dashboard/settings',
+          actionUrl: '/dashboard/settings?tab=integrations',
           actionLabel: 'Connect Platform',
         },
         {
@@ -94,6 +94,7 @@ export async function GET(request: NextRequest) {
       meetingsResult,
       onboardingResult,
       hubspotResult,
+      salesforceResult,
       airtableResult,
     ] = await Promise.all([
       // Check calendar connection
@@ -128,6 +129,12 @@ export async function GET(request: NextRequest) {
         .from(hubspotConnections)
         .where(eq(hubspotConnections.userId, user.id)),
 
+      // Check Salesforce CRM connection
+      db
+        .select({ count: count() })
+        .from(salesforceConnections)
+        .where(eq(salesforceConnections.userId, user.id)),
+
       // Check Airtable CRM connection
       db
         .select({ count: count() })
@@ -141,7 +148,7 @@ export async function GET(request: NextRequest) {
     const hasDraftGenerated = draftsResult[0].count > 0;
     const hasMeetingCaptured = meetingsResult[0].count > 0;
     const hasEmailPreference = onboardingResult[0]?.emailPreference != null;
-    const hasCrmConnected = hubspotResult[0].count > 0 || airtableResult[0].count > 0;
+    const hasCrmConnected = hubspotResult[0].count > 0 || salesforceResult[0].count > 0 || airtableResult[0].count > 0;
 
     // Build checklist items
     const items: ChecklistItem[] = [
@@ -150,7 +157,7 @@ export async function GET(request: NextRequest) {
         label: 'Connect a Meeting Platform',
         description: 'Link Zoom, Teams, or Google Meet to capture transcripts',
         completed: hasPlatformConnected,
-        actionUrl: '/dashboard/settings',
+        actionUrl: '/dashboard/settings?tab=integrations',
         actionLabel: 'Connect',
       },
       {
@@ -158,7 +165,7 @@ export async function GET(request: NextRequest) {
         label: 'Sync Your Calendar',
         description: 'See upcoming meetings and auto-process them',
         completed: hasCalendarConnected,
-        actionUrl: '/dashboard/settings',
+        actionUrl: '/dashboard/settings?tab=integrations',
         actionLabel: 'Sync',
       },
       {
@@ -168,7 +175,7 @@ export async function GET(request: NextRequest) {
           ? 'Try a sample meeting or wait for a real one'
           : 'AI will create a follow-up email from your transcript',
         completed: hasDraftGenerated,
-        actionUrl: hasPlatformConnected ? undefined : '/dashboard/settings',
+        actionUrl: hasPlatformConnected ? undefined : '/dashboard/settings?tab=integrations',
         actionLabel: hasPlatformConnected
           ? (hasDraftGenerated ? undefined : 'Try a Sample')
           : 'Connect first',
@@ -179,7 +186,7 @@ export async function GET(request: NextRequest) {
         label: 'Set Email Preferences',
         description: 'Choose to review drafts or send automatically',
         completed: hasEmailPreference,
-        actionUrl: '/dashboard/settings',
+        actionUrl: '/dashboard/settings?tab=email',
         actionLabel: 'Configure',
       },
       {
@@ -187,15 +194,15 @@ export async function GET(request: NextRequest) {
         label: 'Capture First Meeting',
         description: 'Your first meeting transcript has been processed',
         completed: hasMeetingCaptured,
-        actionUrl: hasPlatformConnected ? undefined : '/dashboard/settings',
+        actionUrl: hasPlatformConnected ? undefined : '/dashboard/settings?tab=integrations',
         actionLabel: hasPlatformConnected ? 'Waiting for meeting' : 'Connect first',
       },
       {
         id: 'crm',
         label: 'Connect Your CRM',
-        description: 'Auto-log meetings to Airtable, HubSpot, or Salesforce',
+        description: 'Auto-log meetings to HubSpot, Salesforce, Airtable, or Sheets',
         completed: hasCrmConnected,
-        actionUrl: '/dashboard/settings',
+        actionUrl: '/dashboard/settings?tab=integrations',
         actionLabel: 'Setup CRM',
         optional: true,
       },

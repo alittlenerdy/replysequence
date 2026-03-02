@@ -6,12 +6,20 @@ import { Check, ExternalLink, Loader2, ArrowRight, Database } from 'lucide-react
 
 interface StepCRMProps {
   crmConnected: boolean;
-  onCRMConnected: () => void;
+  hubspotConnected: boolean;
+  salesforceConnected: boolean;
+  airtableConnected: boolean;
+  sheetsConnected: boolean;
+  onCRMConnected: (crmType?: 'hubspot' | 'salesforce' | 'airtable' | 'sheets' | null) => void;
   onSkip: () => void;
 }
 
 export function StepCRM({
   crmConnected,
+  hubspotConnected,
+  salesforceConnected,
+  airtableConnected,
+  sheetsConnected,
   onCRMConnected,
   onSkip,
 }: StepCRMProps) {
@@ -26,6 +34,13 @@ export function StepCRM({
     sessionStorage.setItem('onboarding_crm', 'hubspot');
     const returnUrl = `/onboarding?step=5&crm_connected=true`;
     window.location.href = `/api/auth/hubspot?redirect=${encodeURIComponent(returnUrl)}`;
+  };
+
+  const handleSalesforceConnect = () => {
+    setConnecting('salesforce');
+    sessionStorage.setItem('onboarding_crm', 'salesforce');
+    const returnUrl = `/onboarding?step=5&crm_connected=true`;
+    window.location.href = `/api/auth/salesforce?redirect=${encodeURIComponent(returnUrl)}`;
   };
 
   const handleAirtableConnect = async () => {
@@ -48,7 +63,7 @@ export function StepCRM({
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        onCRMConnected();
+        onCRMConnected('airtable');
       } else {
         setAirtableError(data.error || 'Failed to connect');
       }
@@ -86,14 +101,14 @@ export function StepCRM({
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-6">
         {/* HubSpot Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
-            crmConnected
+            hubspotConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
           }`}
@@ -105,7 +120,7 @@ export function StepCRM({
                   <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.984 2.21 2.21 0 00-2.212-2.212 2.21 2.21 0 00-2.212 2.212c0 .874.517 1.627 1.267 1.984v2.847a5.395 5.395 0 00-2.627 1.2L7.258 4.744a2.036 2.036 0 00.069-.493 2.035 2.035 0 00-2.035-2.035A2.035 2.035 0 003.257 4.25a2.035 2.035 0 002.035 2.035c.27 0 .527-.054.763-.15l6.324 4.324a5.418 5.418 0 00-.843 2.903c0 1.074.313 2.076.852 2.92l-2.038 2.04a1.95 1.95 0 00-.595-.094 1.97 1.97 0 00-1.968 1.968 1.97 1.97 0 001.968 1.968 1.97 1.97 0 001.968-1.968c0-.211-.034-.414-.095-.603l2.018-2.018a5.42 5.42 0 003.571 1.334 5.432 5.432 0 005.432-5.432 5.42 5.42 0 00-4.485-5.347zm-1.047 8.537a3.16 3.16 0 01-3.163-3.163 3.16 3.16 0 013.163-3.163 3.16 3.16 0 013.163 3.163 3.16 3.16 0 01-3.163 3.163z"/>
                 </svg>
               </div>
-              {crmConnected && (
+              {hubspotConnected && (
                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
                   <Check className="w-3.5 h-3.5" />
                   Connected
@@ -116,9 +131,9 @@ export function StepCRM({
             <p className="text-sm text-gray-400 mb-4">Sync meetings and emails to HubSpot CRM</p>
             <button
               onClick={handleHubSpotConnect}
-              disabled={crmConnected || connecting !== null}
+              disabled={hubspotConnected || connecting !== null}
               className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                crmConnected
+                hubspotConnected
                   ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                   : connecting === 'hubspot'
                   ? 'bg-gray-800 text-gray-400'
@@ -130,11 +145,66 @@ export function StepCRM({
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Connecting...
                 </>
-              ) : crmConnected ? (
+              ) : hubspotConnected ? (
                 'Connected'
               ) : (
                 <>
                   Connect HubSpot
+                  <ExternalLink className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Salesforce Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+            salesforceConnected
+              ? 'border-indigo-500/50 bg-indigo-500/5'
+              : 'border-gray-700 hover:border-gray-600'
+          }`}
+        >
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#00A1E0]/10">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#00A1E0">
+                  <path d="M10.005 3.073a4.17 4.17 0 013.58.21 4.892 4.892 0 014.652-.562 4.858 4.858 0 012.882 3.375 3.91 3.91 0 012.312 1.899A3.87 3.87 0 0124 9.682a3.886 3.886 0 01-1.542 3.112 4.32 4.32 0 01-1.17 5.51 4.36 4.36 0 01-5.152.26 4.62 4.62 0 01-5.796 1.233 4.58 4.58 0 01-2.094-2.15 5.218 5.218 0 01-5.652-1.6A5.17 5.17 0 011.5 12.54a5.2 5.2 0 012.058-4.125A4.94 4.94 0 013.08 5.4a4.92 4.92 0 016.925-2.327z"/>
+                </svg>
+              </div>
+              {salesforceConnected && (
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
+                  <Check className="w-3.5 h-3.5" />
+                  Connected
+                </div>
+              )}
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Salesforce</h3>
+            <p className="text-sm text-gray-400 mb-4">Sync meetings and email activity to Salesforce CRM</p>
+            <button
+              onClick={handleSalesforceConnect}
+              disabled={salesforceConnected || connecting !== null}
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                salesforceConnected
+                  ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
+                  : connecting === 'salesforce'
+                  ? 'bg-gray-800 text-gray-400'
+                  : 'text-white hover:opacity-90 bg-[#00A1E0]'
+              }`}
+            >
+              {connecting === 'salesforce' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Connecting...
+                </>
+              ) : salesforceConnected ? (
+                'Connected'
+              ) : (
+                <>
+                  Connect Salesforce
                   <ExternalLink className="w-4 h-4" />
                 </>
               )}
@@ -148,7 +218,7 @@ export function StepCRM({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
-            crmConnected
+            airtableConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
           }`}
@@ -162,7 +232,7 @@ export function StepCRM({
                   <path d="M3.413 14.72l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
                 </svg>
               </div>
-              {crmConnected && (
+              {airtableConnected && (
                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
                   <Check className="w-3.5 h-3.5" />
                   Connected
@@ -172,7 +242,7 @@ export function StepCRM({
             <h3 className="text-lg font-bold text-white mb-2">Airtable</h3>
             <p className="text-sm text-gray-400 mb-4">Sync meeting data to your Airtable base</p>
 
-            {showAirtableForm && !crmConnected ? (
+            {showAirtableForm && !airtableConnected ? (
               <div className="space-y-3">
                 <input
                   type="password"
@@ -215,52 +285,46 @@ export function StepCRM({
             ) : (
               <button
                 onClick={() => setShowAirtableForm(true)}
-                disabled={crmConnected || connecting !== null}
+                disabled={airtableConnected || connecting !== null}
                 className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                  crmConnected
+                  airtableConnected
                     ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                     : 'text-white hover:opacity-90 bg-[#18BFFF]'
                 }`}
               >
-                {crmConnected ? 'Connected' : 'Configure Airtable'}
+                {airtableConnected ? 'Connected' : 'Configure Airtable'}
               </button>
             )}
           </div>
         </motion.div>
-      </div>
 
-      {/* Google Sheets Card - full width below the 2-column grid */}
-      <div className="max-w-2xl mx-auto mb-8">
+        {/* Google Sheets Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.35 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
-            crmConnected
+            sheetsConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
           }`}
         >
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#34A853]/10">
-                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#34A853">
-                    <path d="M19 11H5v8a2 2 0 002 2h10a2 2 0 002-2v-8zm-3 6H8v-2h8v2zm0-4H8v-2h8v2zM19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v4h18V5a2 2 0 00-2-2zm-7 2a1 1 0 110-2 1 1 0 010 2z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Google Sheets</h3>
-                  <p className="text-sm text-gray-400">Sync meeting data to a spreadsheet — no CRM needed</p>
-                </div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#34A853]/10">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#34A853">
+                  <path d="M19 11H5v8a2 2 0 002 2h10a2 2 0 002-2v-8zm-3 6H8v-2h8v2zm0-4H8v-2h8v2zM19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v4h18V5a2 2 0 00-2-2zm-7 2a1 1 0 110-2 1 1 0 010 2z"/>
+                </svg>
               </div>
-              {crmConnected && (
+              {sheetsConnected && (
                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
                   <Check className="w-3.5 h-3.5" />
                   Connected
                 </div>
               )}
             </div>
+            <h3 className="text-lg font-bold text-white mb-2">Google Sheets</h3>
+            <p className="text-sm text-gray-400 mb-4">Sync meeting data to a spreadsheet</p>
             <button
               onClick={() => {
                 setConnecting('sheets');
@@ -268,9 +332,9 @@ export function StepCRM({
                 const returnUrl = `/onboarding?step=5&crm_connected=true`;
                 window.location.href = `/api/auth/sheets?redirect=${encodeURIComponent(returnUrl)}`;
               }}
-              disabled={crmConnected || connecting !== null}
+              disabled={sheetsConnected || connecting !== null}
               className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                crmConnected
+                sheetsConnected
                   ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                   : connecting === 'sheets'
                   ? 'bg-gray-800 text-gray-400'
@@ -282,7 +346,7 @@ export function StepCRM({
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Redirecting to Google...
                 </>
-              ) : crmConnected ? (
+              ) : sheetsConnected ? (
                 'Connected'
               ) : (
                 <>
@@ -303,7 +367,7 @@ export function StepCRM({
           className="flex justify-center mb-6"
         >
           <button
-            onClick={onCRMConnected}
+            onClick={() => onCRMConnected()}
             className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
           >
             Continue
