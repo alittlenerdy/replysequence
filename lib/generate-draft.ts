@@ -244,6 +244,32 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
   };
   const mappedTone = userAiTone ? toneMap[userAiTone] : undefined;
 
+  // Fetch flywheel context (style profile + contact memory)
+  let styleProfile = null;
+  let contactContext = null;
+  if (userId) {
+    try {
+      // Style profile is already on the user record
+      const [userWithProfile] = await db
+        .select({ styleProfile: users.styleProfile })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      styleProfile = userWithProfile?.styleProfile ?? null;
+
+      // Contact memory: look up recipient email
+      const recipientEmail = context.recipientName
+        ? undefined // recipientName is a name, not email - need email for lookup
+        : context.hostEmail; // fall back to host email for now
+      if (recipientEmail) {
+        const { buildContactContext } = await import('./flywheel/contact-memory');
+        contactContext = await buildContactContext(userId, recipientEmail);
+      }
+    } catch {
+      // Non-blocking — flywheel context is optional
+    }
+  }
+
   // Build optimized context
   const optimizedContext: FollowUpContext = {
     meetingTopic: context.meetingTopic,
@@ -260,6 +286,8 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     additionalContext: combinedAdditionalContext || undefined,
     templateId: template?.id,
     templateInstructions: template?.focusInstructions,
+    styleProfile,
+    contactContext,
   };
 
   // Build the prompt
@@ -370,6 +398,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
           transcriptId,
           subject: parsed.subject,
           body: finalBody,
+          originalBody: finalBody,
           model: CLAUDE_MODEL,
           inputTokens,
           outputTokens,
@@ -383,6 +412,17 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
           actionItems: parsed.actionItems,
           keyPointsReferenced: parsed.keyPointsReferenced,
           status: 'generated',
+          flywheelContextUsed: !!(styleProfile || contactContext),
+          flywheelMetadata: (styleProfile || contactContext) ? {
+            styleProfileUsed: !!styleProfile,
+            styleEditCount: (styleProfile as { sampleCount?: number } | null)?.sampleCount ?? 0,
+            contactHistoryUsed: !!contactContext,
+            contactEmailCount: contactContext?.emailCount ?? 0,
+            contactMeetingCount: contactContext?.meetingCount ?? 0,
+            contactEmail: contactContext?.recipientEmail ?? null,
+            referencedMeetingIds: [],
+            referencedDraftIds: [],
+          } : null,
         })
         .returning();
 

@@ -287,6 +287,22 @@ export const drafts = pgTable(
     refinementCount: integer('refinement_count').default(0),
     lastRefinedAt: timestamp('last_refined_at', { withTimezone: true }),
     lastRefinementInstruction: text('last_refinement_instruction'),
+    // Data flywheel: edit tracking
+    originalBody: text('original_body'),
+    userEditedBody: text('user_edited_body'),
+    editDiffScore: integer('edit_diff_score'),
+    // Data flywheel: context tracking
+    flywheelContextUsed: boolean('flywheel_context_used').default(false),
+    flywheelMetadata: jsonb('flywheel_metadata').$type<{
+      styleProfileUsed: boolean;
+      styleEditCount: number;
+      contactHistoryUsed: boolean;
+      contactEmailCount: number;
+      contactMeetingCount: number;
+      contactEmail: string | null;
+      referencedMeetingIds: string[];
+      referencedDraftIds: string[];
+    }>(),
     // Resend message ID (for webhook event correlation)
     resendMessageId: varchar('resend_message_id', { length: 255 }),
     // Email bounce tracking
@@ -308,6 +324,7 @@ export const drafts = pgTable(
     index('drafts_sent_at_idx').on(table.sentAt),
     index('drafts_bounce_type_idx').on(table.bounceType),
     index('drafts_resend_message_id_idx').on(table.resendMessageId),
+    index('drafts_sent_to_idx').on(table.sentTo),
   ]
 );
 
@@ -387,6 +404,15 @@ export const users = pgTable(
     dunningEmailsSent: integer('dunning_emails_sent').notNull().default(0),
     // Onboarding email drip unsubscribe
     onboardingEmailsUnsubscribed: boolean('onboarding_emails_unsubscribed').notNull().default(false),
+    // Data flywheel: learned writing style profile
+    styleProfile: jsonb('style_profile').$type<{
+      toneAdjustments: string;
+      structuralPreferences: string;
+      contentPatterns: string;
+      avoidances: string;
+      sampleCount: number;
+      lastUpdated: string;
+    }>(),
     // Email complaint tracking (auto-pause sending after 3 complaints)
     emailComplaintCount: integer('email_complaint_count').notNull().default(0),
     emailSendingPaused: boolean('email_sending_paused').notNull().default(false),

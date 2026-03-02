@@ -67,6 +67,19 @@ export interface DraftWithMeeting {
   meetingType: string | null;
   // Demo flag
   isDemo: boolean;
+  // Data flywheel fields
+  originalBody: string | null;
+  flywheelContextUsed: boolean | null;
+  flywheelMetadata: {
+    styleProfileUsed: boolean;
+    styleEditCount: number;
+    contactHistoryUsed: boolean;
+    contactEmailCount: number;
+    contactMeetingCount: number;
+    contactEmail: string | null;
+    referencedMeetingIds: string[];
+    referencedDraftIds: string[];
+  } | null;
 }
 
 export interface DraftsQueryParams {
@@ -189,6 +202,9 @@ export async function getDraftsWithMeetings(
       userFeedback: drafts.userFeedback,
       // Meeting type
       meetingType: drafts.meetingType,
+      // Data flywheel fields
+      flywheelContextUsed: drafts.flywheelContextUsed,
+      flywheelMetadata: drafts.flywheelMetadata,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))
@@ -249,6 +265,10 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       userFeedback: drafts.userFeedback,
       // Meeting type
       meetingType: drafts.meetingType,
+      // Data flywheel fields
+      originalBody: drafts.originalBody,
+      flywheelContextUsed: drafts.flywheelContextUsed,
+      flywheelMetadata: drafts.flywheelMetadata,
     })
     .from(drafts)
     .leftJoin(meetings, eq(drafts.meetingId, meetings.id))

@@ -670,6 +670,58 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Data Flywheel Section */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
+              <span className="text-sm font-medium text-indigo-400">Adaptive AI</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">
+              AI That Learns <GradientText variant="amber">Your Voice</GradientText>
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+              Every edit teaches the AI your writing style. The more you use ReplySequence,
+              the less editing you need.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                title: 'Learns Your Style',
+                description: 'The AI notices when you soften language, add details, or restructure emails \u2014 and adapts.',
+              },
+              {
+                title: 'Remembers Contacts',
+                description: 'References past meetings and emails with each contact for natural, contextual follow-ups.',
+              },
+              {
+                title: 'Gets Better Over Time',
+                description: 'Every draft you send makes the next one more accurate. Your AI improves with you.',
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6 rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white"
+              >
+                <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
