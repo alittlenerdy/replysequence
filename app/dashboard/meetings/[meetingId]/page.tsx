@@ -68,9 +68,10 @@ async function MeetingDetailContent({ meetingId }: { meetingId: string }) {
   }
 
   const firstName = user?.firstName || 'there';
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
 
   return (
-    <DashboardShell firstName={firstName} pendingDrafts={stats.generated}>
+    <DashboardShell firstName={firstName} pendingDrafts={stats.generated} userEmail={userEmail}>
       <MeetingDetailView meeting={meeting} />
     </DashboardShell>
   );

@@ -13,9 +13,10 @@ interface DashboardShellProps {
   children: React.ReactNode;
   firstName?: string;
   pendingDrafts?: number;
+  userEmail?: string;
 }
 
-export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0 }: DashboardShellProps) {
+export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0, userEmail = '' }: DashboardShellProps) {
   return (
     <div className="min-h-screen bg-transparent light:bg-transparent">
       {/* Header */}
@@ -43,7 +44,7 @@ export function DashboardShell({ children, firstName = 'there', pendingDrafts = 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
         {/* Desktop Navigation Tabs */}
-        <DashboardNav pendingDrafts={pendingDrafts} />
+        <DashboardNav pendingDrafts={pendingDrafts} userEmail={userEmail} />
 
         {/* Page Content */}
         {children}

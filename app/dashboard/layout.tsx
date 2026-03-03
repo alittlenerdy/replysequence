@@ -39,6 +39,7 @@ export default async function DashboardLayout({
   ]);
 
   const firstName = user?.firstName || 'there';
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
   const pendingDrafts = stats.generated;
 
   const onboarding = onboardingResult[0];
@@ -50,7 +51,7 @@ export default async function DashboardLayout({
       onboardingIncomplete={onboardingIncomplete}
       onboardingStep={currentStep}
     >
-      <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts}>
+      <DashboardShell firstName={firstName} pendingDrafts={pendingDrafts} userEmail={userEmail}>
         {children}
       </DashboardShell>
     </DashboardLayoutClient>

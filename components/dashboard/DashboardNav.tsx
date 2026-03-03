@@ -20,16 +20,24 @@ const tabs: Tab[] = [
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
+const ADMIN_EMAIL = 'jimmy@replysequence.com';
+
 interface DashboardNavProps {
   pendingDrafts?: number;
+  userEmail?: string;
 }
 
-export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
+export function DashboardNav({ pendingDrafts = 0, userEmail = '' }: DashboardNavProps) {
   const pathname = usePathname();
   const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
+  // Only show Waitlist tab for admin
+  const visibleTabs = tabs.filter(tab =>
+    tab.name !== 'Waitlist' || userEmail === ADMIN_EMAIL
+  );
+
   // Add badge to Drafts tab if there are pending drafts
-  const tabsWithBadges = tabs.map(tab =>
+  const tabsWithBadges = visibleTabs.map(tab =>
     tab.name === 'Drafts' && pendingDrafts > 0
       ? { ...tab, badge: pendingDrafts }
       : tab
@@ -38,19 +46,20 @@ export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
   // Keyboard navigation handler
   const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number) => {
     let nextIndex: number | null = null;
+    const count = visibleTabs.length;
 
     switch (e.key) {
       case 'ArrowLeft':
-        nextIndex = index > 0 ? index - 1 : tabs.length - 1;
+        nextIndex = index > 0 ? index - 1 : count - 1;
         break;
       case 'ArrowRight':
-        nextIndex = index < tabs.length - 1 ? index + 1 : 0;
+        nextIndex = index < count - 1 ? index + 1 : 0;
         break;
       case 'Home':
         nextIndex = 0;
         break;
       case 'End':
-        nextIndex = tabs.length - 1;
+        nextIndex = count - 1;
         break;
     }
 
@@ -58,7 +67,7 @@ export function DashboardNav({ pendingDrafts = 0 }: DashboardNavProps) {
       e.preventDefault();
       tabRefs.current[nextIndex]?.focus();
     }
-  }, []);
+  }, [visibleTabs.length]);
 
   return (
     <div className="hidden md:block border-b border-white/10 light:border-gray-200 mb-8">
