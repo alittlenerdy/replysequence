@@ -87,6 +87,9 @@ export const metadata: Metadata = {
     // images are auto-generated from app/opengraph-image.tsx file convention
     creator: "@replysequence",
   },
+  verification: {
+    google: 'guQOo2SFbRvxWJvXawgIX0IQ2_s-qXLn2M3Qp3tzAtE',
+  },
   robots: {
     index: true,
     follow: true,
