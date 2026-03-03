@@ -214,7 +214,7 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
     );
   }
   return (
-    <span className={`text-sm font-medium ${isWinner ? 'text-white light:text-gray-900' : 'text-gray-400 light:text-gray-500'}`}>
+    <span className={`text-xs sm:text-sm font-medium ${isWinner ? 'text-white light:text-gray-900' : 'text-gray-400 light:text-gray-500'}`}>
       {value}
     </span>
   );
@@ -255,10 +255,10 @@ export default function GrainComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight"
           >
             <span className="text-white light:text-gray-900">ReplySequence</span>
-            <span className="text-gray-500 mx-3">vs</span>
+            <span className="text-gray-500 mx-2 sm:mx-3">vs</span>
             <span className="text-gray-400 light:text-gray-500">Grain</span>
           </motion.h1>
 
@@ -266,7 +266,7 @@ export default function GrainComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
+            className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             If you want to share nice clips internally, Grain is a strong choice.{' '}
             <span className="text-white light:text-gray-900">If you want every call to reliably trigger follow-ups and next steps without you thinking about it, ReplySequence wins.</span>
@@ -280,7 +280,7 @@ export default function GrainComparisonPage() {
             className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-indigo-50/80 border border-gray-700/50 light:border-indigo-200"
           >
             <p className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider mb-3">Two different jobs</p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-400 light:text-gray-500 mb-1">Grain</p>
                 <p className="text-sm text-gray-300 light:text-gray-600">Capture and share video highlights from meetings.</p>
@@ -399,13 +399,13 @@ export default function GrainComparisonPage() {
 
           {/* Comparison Header */}
           <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-indigo-50/95 light:to-indigo-50/95 backdrop-blur-sm border-b border-gray-800 light:border-indigo-200 mb-4">
-            <div className="grid grid-cols-3 py-4">
+            <div className="grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-3 py-3 sm:py-4">
               <div className="text-gray-500 light:text-indigo-600 font-medium pl-4">Feature</div>
               <div className="text-center">
-                <span className="text-indigo-400 light:text-indigo-600 font-bold text-lg">ReplySequence</span>
+                <span className="text-indigo-400 light:text-indigo-600 font-bold text-sm sm:text-lg">ReplySequence</span>
               </div>
               <div className="text-center">
-                <span className="text-gray-400 light:text-gray-500 font-bold text-lg">Grain</span>
+                <span className="text-gray-400 light:text-gray-500 font-bold text-sm sm:text-lg">Grain</span>
               </div>
             </div>
           </div>
@@ -433,7 +433,7 @@ export default function GrainComparisonPage() {
                       key={index}
                       variants={staggerItem}
                       whileHover={{ scale: 1.01, x: 4 }}
-                      className={`grid grid-cols-3 items-center py-4 px-4 rounded-xl transition-all duration-200 ${
+                      className={`grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-3 items-center py-3 px-3 sm:py-4 sm:px-4 rounded-xl transition-all duration-200 ${
                         row.winner === 'replysequence'
                           ? 'bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-transparent hover:from-indigo-500/15 hover:via-indigo-400/10 light:from-indigo-100/80 light:via-indigo-50/60 light:to-transparent light:hover:from-indigo-100 light:hover:via-indigo-50/80 border-l-2 border-l-indigo-500 border border-indigo-500/30 light:border-indigo-300 shadow-lg shadow-indigo-500/5 light:shadow-indigo-200/30'
                           : row.winner === 'grain'
@@ -442,12 +442,12 @@ export default function GrainComparisonPage() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-200 light:text-gray-800 font-medium">{row.feature}</span>
+                        <span className="text-xs sm:text-sm text-gray-200 light:text-gray-800 font-medium">{row.feature}</span>
                         {row.winner === 'replysequence' && (
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white text-xs font-bold shadow-lg shadow-indigo-500/30"
+                            className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white text-xs font-bold shadow-lg shadow-indigo-500/30"
                           >
                             Winner
                           </motion.span>
@@ -456,7 +456,7 @@ export default function GrainComparisonPage() {
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-gray-500 to-gray-600 text-white text-xs font-bold shadow-lg shadow-gray-500/30"
+                            className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-gradient-to-r from-gray-500 to-gray-600 text-white text-xs font-bold shadow-lg shadow-gray-500/30"
                           >
                             Winner
                           </motion.span>

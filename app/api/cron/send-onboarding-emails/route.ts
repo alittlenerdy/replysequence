@@ -1,8 +1,8 @@
 /**
  * Cron Job: Send Onboarding Emails
  *
- * Runs every 15 minutes. For each user who signed up in the last 14 days
- * and hasn't unsubscribed, checks if the next drip email is due and sends it.
+ * Runs every 15 minutes. For each user who signed up in the last 21 days
+ * and hasn't unsubscribed, checks if the next drip email (7 total) is due and sends it.
  *
  * Schedule: Every 15 minutes (configured in vercel.json)
  */
@@ -22,8 +22,8 @@ import type { UserOnboarding } from '@/lib/db/schema';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
-const SAFETY_WINDOW_DAYS = 14;
-const TOTAL_EMAILS = 4;
+const SAFETY_WINDOW_DAYS = 21; // Email 7 is at day 14, need buffer for processing
+const TOTAL_EMAILS = 7;
 
 export async function GET(request: NextRequest) {
   // Verify cron secret
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     // Find users who:
     // 1. Signed up within the safety window
     // 2. Haven't unsubscribed
-    // 3. Haven't received all 4 emails yet
+    // 3. Haven't received all 7 emails yet
     const eligibleUsers = await db
       .select({
         id: users.id,

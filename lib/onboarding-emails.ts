@@ -1,10 +1,11 @@
 /**
  * Onboarding Email Drip Sequence
  *
- * 4-email series sent over 7 days to guide new users through
- * connecting a platform, generating their first draft, and staying engaged.
+ * 7-email series sent over 14 days to guide new users through
+ * connecting a platform, generating their first draft, connecting CRM,
+ * and upgrading to Pro.
  *
- * Smart skipping: emails 2 and 3 are skipped if the user has already
+ * Smart skipping: emails are skipped if the user has already
  * completed the relevant action (tracked in user_onboarding table).
  */
 
@@ -22,7 +23,10 @@ const EMAIL_TIMING_HOURS: Record<number, number> = {
   1: 0,    // Immediate
   2: 24,   // +24 hours
   3: 72,   // +3 days
-  4: 168,  // +7 days
+  4: 120,  // +5 days
+  5: 168,  // +7 days
+  6: 240,  // +10 days
+  7: 336,  // +14 days
 };
 
 interface OnboardingEmailContent {
@@ -218,6 +222,47 @@ export function getEmailContent(emailNumber: number, userId: string, userName?: 
     case 4:
       return {
         emailNumber: 4,
+        subject: 'Connect your CRM — auto-log every meeting',
+        plainText: [
+          `Hey ${firstName},`,
+          '',
+          `Quick one — did you know ReplySequence can automatically log your meetings to your CRM?`,
+          '',
+          `We integrate with:`,
+          `• HubSpot`,
+          `• Salesforce`,
+          `• Airtable`,
+          `• Google Sheets`,
+          '',
+          `Once connected, every meeting transcript, follow-up email, and action item gets logged automatically. No more copying and pasting into your CRM after every call.`,
+          '',
+          `Set it up here: ${BASE_URL}/dashboard/settings?tab=integrations`,
+          '',
+          `- Jimmy`,
+        ].join('\n'),
+        html: wrapHtml(`
+<p style="margin: 0 0 16px;">Hey ${firstName},</p>
+
+<p style="margin: 0 0 16px;">Quick one — did you know ReplySequence can automatically log your meetings to your CRM?</p>
+
+<p style="margin: 0 0 8px;"><strong>We integrate with:</strong></p>
+<ul style="margin: 0 0 16px; padding-left: 24px;">
+  <li style="margin-bottom: 4px;">HubSpot</li>
+  <li style="margin-bottom: 4px;">Salesforce</li>
+  <li style="margin-bottom: 4px;">Airtable</li>
+  <li>Google Sheets</li>
+</ul>
+
+<p style="margin: 0 0 20px;">Once connected, every meeting transcript, follow-up email, and action item gets logged automatically. No more copying and pasting into your CRM after every call.</p>
+
+<a href="${BASE_URL}/dashboard/settings?tab=integrations" style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Connect Your CRM</a>
+
+<p style="margin: 16px 0 0;">- Jimmy</p>`, userId),
+      };
+
+    case 5:
+      return {
+        emailNumber: 5,
         subject: "How's ReplySequence working for you?",
         plainText: [
           `Hey ${firstName},`,
@@ -254,6 +299,94 @@ export function getEmailContent(emailNumber: number, userId: string, userName?: 
 <p style="margin: 0 0 0;">- Jimmy</p>`, userId),
       };
 
+    case 6:
+      return {
+        emailNumber: 6,
+        subject: 'Pro tip: ReplySequence learns your writing style',
+        plainText: [
+          `Hey ${firstName},`,
+          '',
+          `Here's something most users don't realize — ReplySequence gets better the more you use it.`,
+          '',
+          `When you edit a draft before sending, the AI learns your preferences:`,
+          `• Your tone (formal vs. casual)`,
+          `• How you structure follow-ups`,
+          `• Phrases you prefer (and ones you don't)`,
+          '',
+          `After a few edits, your drafts will start sounding like you wrote them from scratch. We call it the Style Flywheel.`,
+          '',
+          `The more meetings you run through ReplySequence, the less editing you'll need.`,
+          '',
+          `Check your latest drafts: ${BASE_URL}/dashboard`,
+          '',
+          `- Jimmy`,
+        ].join('\n'),
+        html: wrapHtml(`
+<p style="margin: 0 0 16px;">Hey ${firstName},</p>
+
+<p style="margin: 0 0 16px;">Here's something most users don't realize — ReplySequence gets better the more you use it.</p>
+
+<p style="margin: 0 0 8px;"><strong>When you edit a draft before sending, the AI learns your preferences:</strong></p>
+<ul style="margin: 0 0 16px; padding-left: 24px;">
+  <li style="margin-bottom: 4px;">Your tone (formal vs. casual)</li>
+  <li style="margin-bottom: 4px;">How you structure follow-ups</li>
+  <li>Phrases you prefer (and ones you don't)</li>
+</ul>
+
+<p style="margin: 0 0 20px;">After a few edits, your drafts will start sounding like you wrote them from scratch. We call it the Style Flywheel.</p>
+
+<p style="margin: 0 0 20px;">The more meetings you run through ReplySequence, the less editing you'll need.</p>
+
+<a href="${BASE_URL}/dashboard" style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Check Your Drafts</a>
+
+<p style="margin: 16px 0 0;">- Jimmy</p>`, userId),
+      };
+
+    case 7:
+      return {
+        emailNumber: 7,
+        subject: 'Unlock unlimited meetings with Pro',
+        plainText: [
+          `Hey ${firstName},`,
+          '',
+          `You've been using ReplySequence for two weeks now. If it's saving you time, you might be hitting the free tier limits soon.`,
+          '',
+          `Pro gives you:`,
+          `• Unlimited meetings per month`,
+          `• CRM auto-logging (HubSpot, Salesforce, Airtable)`,
+          `• Style learning that adapts to your writing`,
+          `• Priority support`,
+          '',
+          `Most users tell me ReplySequence saves them 2-3 hours per week on follow-ups. That's 100+ hours a year.`,
+          '',
+          `See plans: ${BASE_URL}/pricing`,
+          '',
+          `And if you have any questions about whether Pro makes sense for your workflow, just reply — happy to chat.`,
+          '',
+          `- Jimmy`,
+        ].join('\n'),
+        html: wrapHtml(`
+<p style="margin: 0 0 16px;">Hey ${firstName},</p>
+
+<p style="margin: 0 0 16px;">You've been using ReplySequence for two weeks now. If it's saving you time, you might be hitting the free tier limits soon.</p>
+
+<p style="margin: 0 0 8px;"><strong>Pro gives you:</strong></p>
+<ul style="margin: 0 0 16px; padding-left: 24px;">
+  <li style="margin-bottom: 4px;">Unlimited meetings per month</li>
+  <li style="margin-bottom: 4px;">CRM auto-logging (HubSpot, Salesforce, Airtable)</li>
+  <li style="margin-bottom: 4px;">Style learning that adapts to your writing</li>
+  <li>Priority support</li>
+</ul>
+
+<p style="margin: 0 0 20px;">Most users tell me ReplySequence saves them 2-3 hours per week on follow-ups. That's 100+ hours a year.</p>
+
+<a href="${BASE_URL}/pricing" style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">See Pro Plans</a>
+
+<p style="margin: 16px 0 0; color: #6b7280;">And if you have any questions about whether Pro makes sense for your workflow, just reply — happy to chat.</p>
+
+<p style="margin: 16px 0 0;">- Jimmy</p>`, userId),
+      };
+
     default:
       throw new Error(`Invalid email number: ${emailNumber}`);
   }
@@ -269,7 +402,10 @@ export function shouldSkipEmail(emailNumber: number, onboarding: UserOnboarding 
     case 1: return false; // Never skip welcome
     case 2: return !!onboarding.platformConnected; // Skip if platform already connected
     case 3: return !!onboarding.draftGenerated; // Skip if draft already generated
-    case 4: return false; // Never skip feedback ask
+    case 4: return !!onboarding.crmConnected; // Skip if CRM already connected
+    case 5: return false; // Never skip feedback ask
+    case 6: return false; // Never skip style flywheel tip
+    case 7: return !!onboarding.completedAt; // Skip if already fully onboarded (likely paid)
     default: return false;
   }
 }
@@ -296,7 +432,7 @@ export function getNextEmailToSend(
 ): number | null {
   const sentSet = new Set(sentEmailNumbers);
 
-  for (let num = 1; num <= 4; num++) {
+  for (let num = 1; num <= 7; num++) {
     // Already sent
     if (sentSet.has(num)) continue;
 
