@@ -124,17 +124,17 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
 
                   {/* Price */}
                   <div className={isEmbedded ? 'mb-4' : 'mb-6'}>
-                    <span className={`${isEmbedded ? 'text-3xl' : 'text-4xl'} font-bold text-white light:text-gray-900`}>
+                    <span className={`${isEmbedded ? 'text-3xl' : 'text-4xl'} font-bold text-white light:text-gray-900 transition-all duration-300`}>
                       ${displayPrice}
                     </span>
                     {tier.tier !== 'free' && (
                       <span className="text-gray-400 light:text-gray-600">
-                        /month
+                        /mo
                       </span>
                     )}
                     {isAnnual && tier.tier !== 'free' && (
                       <div className="mt-1 text-sm text-gray-500 light:text-gray-400">
-                        ${annualTotal}/year (save ${monthlySavings * 12}/yr)
+                        billed annually at ${annualTotal}
                       </div>
                     )}
                   </div>
