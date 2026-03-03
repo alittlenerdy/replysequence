@@ -88,7 +88,10 @@ export const metadata: Metadata = {
     creator: "@replysequence",
   },
   verification: {
-    google: 'guQOo2SFbRvxWJvXawgIX0IQ2_s-qXLn2M3Qp3tzAtE',
+    google: [
+      'guQOo2SFbRvxWJvXawgIX0IQ2_s-qXLn2M3Qp3tzAtE',
+      '6hfkQ9CcgsUsjvhw3aiaVc6v1URK9YGSlsbvxFfEKZc',
+    ],
   },
   robots: {
     index: true,
