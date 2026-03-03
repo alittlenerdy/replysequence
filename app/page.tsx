@@ -90,6 +90,7 @@ const VideoSection = dynamic(() => import('@/components/landing/VideoSection').t
 const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
 const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
 const WaitlistForm = dynamic(() => import('@/components/landing/WaitlistForm').then(m => ({ default: m.WaitlistForm })), { ssr: false });
+const NonNegotiablesCarousel = dynamic(() => import('@/components/NonNegotiablesCarousel').then(m => ({ default: m.NonNegotiablesCarousel })), { ssr: false });
 
 export default function LandingPage() {
   return (
@@ -572,6 +573,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* 9 Non-Negotiables Carousel */}
+      <NonNegotiablesCarousel />
 
       {/* How It Works */}
       <section className="py-20 px-4 relative z-10">
