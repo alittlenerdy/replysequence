@@ -73,8 +73,17 @@ export async function createQuoteTweet(
     method: 'POST',
     headers: headers(),
     body: JSON.stringify({
-      text: text || '\u200B', // zero-width space fallback if empty rejected
-      quote_post_url: quotePostUrl,
+      platforms: {
+        x: {
+          enabled: true,
+          posts: [
+            {
+              text: text || '\u200B', // zero-width space fallback if empty rejected
+              quote_post_url: quotePostUrl,
+            },
+          ],
+        },
+      },
       publish_at: 'now',
     }),
   });
