@@ -1,11 +1,14 @@
 /**
- * Cron Job: Auto-Retweet @replysequence → @atinylittlenerd
+ * Cron Job: Auto Quote-Tweet @replysequence → @j1mmyhackett
  *
- * Runs twice daily. Fetches recent @replysequence posts via Typefully API,
- * checks which haven't been quote-tweeted yet, and creates quote-tweet
- * drafts on @atinylittlenerd with immediate publish.
+ * Runs twice daily. Finds the most recent @replysequence post that hasn't
+ * been quote-tweeted yet, generates unique commentary in Jimmy's voice
+ * via Claude API, and schedules it to the next free Typefully slot.
  *
- * Schedule: 0 10,22 * * * (10 AM + 10 PM UTC)
+ * Only processes 1 post per run to avoid spamming the timeline.
+ * Only considers posts from the last 7 days.
+ *
+ * Schedule: 0 10,22 * * * (10 AM + 10 PM UTC = 5 AM + 5 PM CT)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -16,13 +19,42 @@ import {
   listPublishedDrafts,
   createQuoteTweet,
   SOCIAL_SET_REPLYSEQUENCE,
-  SOCIAL_SET_ATINYLITTLENERD,
+  SOCIAL_SET_JIMMY,
 } from '@/lib/typefully';
+import { callClaudeAPI } from '@/lib/claude-api';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 const TAG = '[AUTO-RT]';
+const MAX_AGE_DAYS = 7;
+
+const QUOTE_TWEET_SYSTEM_PROMPT = `You are ghostwriting a quote-tweet for Jimmy Hackett (@j1mmyhackett), a Houston-based solopreneur who builds SaaS products.
+
+Jimmy's voice:
+- Short, punchy sentences. Lots of line breaks.
+- Direct and confident but not arrogant
+- Builder identity — he ships fast, shares transparently
+- Uses "I" and speaks from personal experience
+- Conversational, like texting a friend who's also a founder
+- No hashtags, no emojis, no "check this out" cliches
+- Sometimes asks a provocative question
+- Sometimes adds a personal anecdote or hot take
+
+You're quote-tweeting a post from @replysequence, Jimmy's product account. The quote-tweet should feel like Jimmy the human endorsing/amplifying his own product naturally — NOT like a bot, NOT like marketing copy.
+
+Good examples of his style:
+- "Built this because I was tired of forgetting what people said 5 minutes after hanging up."
+- "The gap between 'great call' and 'great follow-up' is where deals die."
+- "Every sales rep I've talked to has the same problem. Nobody has time to write emails after back-to-back calls."
+
+Rules:
+- Max 200 characters (short punchy quote-tweets perform best)
+- Return ONLY the tweet text, nothing else
+- No quotes around the text
+- Never start with "This" or "Check out"
+- Vary your approach: sometimes a hot take, sometimes a question, sometimes a personal story snippet
+- The original post content is provided so you can reference specifics`;
 
 function verifyCronAuth(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization');
@@ -44,22 +76,21 @@ export async function GET(request: NextRequest) {
 
   try {
     // 1. Fetch recent published @replysequence posts
-    const drafts = await listPublishedDrafts(SOCIAL_SET_REPLYSEQUENCE, 20);
+    const drafts = await listPublishedDrafts(SOCIAL_SET_REPLYSEQUENCE, 10);
 
-    // 2. Filter to posts that have an X/Twitter URL
-    const xPosts = drafts.filter((d) => d.x_published_url);
+    // 2. Filter to X posts published within the last 7 days
+    const cutoff = new Date(Date.now() - MAX_AGE_DAYS * 24 * 60 * 60 * 1000);
+    const xPosts = drafts.filter((d) => {
+      if (!d.x_published_url || !d.published_at) return false;
+      return new Date(d.published_at) > cutoff;
+    });
 
     if (xPosts.length === 0) {
-      console.log(JSON.stringify({
-        level: 'info',
-        tag: TAG,
-        message: 'No published X posts found',
-        duration: Date.now() - startTime,
-      }));
-      return NextResponse.json({ processed: 0, quoted: 0, failed: 0, skipped: 0 });
+      console.log(JSON.stringify({ level: 'info', tag: TAG, message: 'No recent X posts found' }));
+      return NextResponse.json({ processed: 0, quoted: 0, skipped: 0 });
     }
 
-    // 3. Batch-check which posts have already been quote-tweeted
+    // 3. Check which posts have already been quote-tweeted
     const draftIds = xPosts.map((d) => d.id);
     const existing = await db
       .select({ sourceTypefullyDraftId: autoRetweets.sourceTypefullyDraftId })
@@ -67,77 +98,86 @@ export async function GET(request: NextRequest) {
       .where(inArray(autoRetweets.sourceTypefullyDraftId, draftIds));
 
     const existingIds = new Set(existing.map((r) => r.sourceTypefullyDraftId));
-
     const newPosts = xPosts.filter((d) => !existingIds.has(d.id));
 
-    let quoted = 0;
-    let failed = 0;
-
-    // 4. Create quote-tweets for new posts
-    for (const post of newPosts) {
-      try {
-        const result = await createQuoteTweet(
-          SOCIAL_SET_ATINYLITTLENERD,
-          post.x_published_url!,
-        );
-
-        await db.insert(autoRetweets).values({
-          sourceTypefullyDraftId: post.id,
-          sourceXUrl: post.x_published_url!,
-          sourcePublishedAt: post.published_at ? new Date(post.published_at) : null,
-          quoteTypefullyDraftId: result.id,
-          quoteStatus: 'published',
-        });
-
-        quoted++;
-
-        console.log(JSON.stringify({
-          level: 'info',
-          tag: TAG,
-          message: 'Quote-tweet created',
-          sourceDraftId: post.id,
-          sourceUrl: post.x_published_url,
-          quoteDraftId: result.id,
-        }));
-      } catch (error) {
-        failed++;
-
-        const errorMessage = error instanceof Error ? error.message : String(error);
-
-        await db.insert(autoRetweets).values({
-          sourceTypefullyDraftId: post.id,
-          sourceXUrl: post.x_published_url!,
-          sourcePublishedAt: post.published_at ? new Date(post.published_at) : null,
-          quoteStatus: 'failed',
-          errorMessage,
-        });
-
-        console.log(JSON.stringify({
-          level: 'error',
-          tag: TAG,
-          message: 'Quote-tweet failed',
-          sourceDraftId: post.id,
-          sourceUrl: post.x_published_url,
-          error: errorMessage,
-        }));
-      }
+    if (newPosts.length === 0) {
+      console.log(JSON.stringify({ level: 'info', tag: TAG, message: 'All posts already quoted', skipped: existingIds.size }));
+      return NextResponse.json({ processed: xPosts.length, quoted: 0, skipped: existingIds.size });
     }
 
-    const skipped = existingIds.size;
-    const duration = Date.now() - startTime;
+    // 4. Pick the OLDEST unquoted post (chronological order)
+    const post = newPosts[newPosts.length - 1];
+
+    // 5. Generate unique quote-tweet text via Claude
+    const { content: quoteText } = await callClaudeAPI({
+      systemPrompt: QUOTE_TWEET_SYSTEM_PROMPT,
+      userPrompt: `Original @replysequence post:\n\n${post.preview}\n\nWrite a quote-tweet for this in Jimmy's voice.`,
+      maxTokens: 100,
+    });
+
+    const trimmedText = quoteText.trim();
 
     console.log(JSON.stringify({
       level: 'info',
       tag: TAG,
-      message: 'Auto-retweet cron completed',
-      processed: xPosts.length,
-      quoted,
-      failed,
-      skipped,
-      duration,
+      message: 'Generated quote-tweet text',
+      text: trimmedText,
+      sourceDraftId: post.id,
     }));
 
-    return NextResponse.json({ processed: xPosts.length, quoted, failed, skipped });
+    // 6. Create quote-tweet scheduled to next free slot
+    try {
+      const result = await createQuoteTweet(
+        SOCIAL_SET_JIMMY,
+        post.x_published_url!,
+        trimmedText,
+      );
+
+      await db.insert(autoRetweets).values({
+        sourceTypefullyDraftId: post.id,
+        sourceXUrl: post.x_published_url!,
+        sourcePublishedAt: post.published_at ? new Date(post.published_at) : null,
+        quoteTypefullyDraftId: result.id,
+        quoteStatus: 'published',
+      });
+
+      console.log(JSON.stringify({
+        level: 'info',
+        tag: TAG,
+        message: 'Quote-tweet scheduled',
+        sourceDraftId: post.id,
+        quoteDraftId: result.id,
+        text: trimmedText,
+        duration: Date.now() - startTime,
+      }));
+
+      return NextResponse.json({
+        processed: xPosts.length,
+        quoted: 1,
+        skipped: existingIds.size,
+        text: trimmedText,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+
+      await db.insert(autoRetweets).values({
+        sourceTypefullyDraftId: post.id,
+        sourceXUrl: post.x_published_url!,
+        sourcePublishedAt: post.published_at ? new Date(post.published_at) : null,
+        quoteStatus: 'failed',
+        errorMessage,
+      });
+
+      console.log(JSON.stringify({
+        level: 'error',
+        tag: TAG,
+        message: 'Quote-tweet failed',
+        sourceDraftId: post.id,
+        error: errorMessage,
+      }));
+
+      return NextResponse.json({ processed: xPosts.length, quoted: 0, failed: 1, skipped: existingIds.size });
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 

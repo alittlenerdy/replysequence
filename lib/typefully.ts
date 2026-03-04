@@ -3,13 +3,13 @@
  *
  * Minimal client for the auto-retweet cron job:
  * - Fetch published drafts from @replysequence
- * - Create quote-tweet drafts on @atinylittlenerd
+ * - Create quote-tweet drafts on @j1mmyhackett
  */
 
 const TYPEFULLY_BASE_URL = 'https://api.typefully.com/v2';
 
 export const SOCIAL_SET_REPLYSEQUENCE = 283435;
-export const SOCIAL_SET_ATINYLITTLENERD = 266757;
+export const SOCIAL_SET_JIMMY = 266757;
 
 function getApiKey(): string {
   const key = process.env.TYPEFULLY_API_KEY;
@@ -26,7 +26,7 @@ function headers(): HeadersInit {
 
 export interface TypefullyDraft {
   id: number;
-  text: string;
+  preview: string;
   status: string;
   published_at: string | null;
   x_published_url: string | null;
@@ -59,13 +59,13 @@ export async function listPublishedDrafts(
 }
 
 /**
- * Create a quote-tweet draft and publish immediately.
- * An empty string as text creates a pure quote-tweet.
+ * Create a quote-tweet draft on X. Schedules to next free slot by default.
  */
 export async function createQuoteTweet(
   socialSetId: number,
   quotePostUrl: string,
-  text = ''
+  text: string,
+  publishAt: string = 'next-free-slot'
 ): Promise<{ id: number }> {
   const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/drafts`;
 
@@ -78,13 +78,13 @@ export async function createQuoteTweet(
           enabled: true,
           posts: [
             {
-              text: text || '\u200B', // zero-width space fallback if empty rejected
+              text,
               quote_post_url: quotePostUrl,
             },
           ],
         },
       },
-      publish_at: 'now',
+      publish_at: publishAt,
     }),
   });
 
