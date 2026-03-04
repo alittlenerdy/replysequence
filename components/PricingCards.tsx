@@ -73,7 +73,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
               return (
                 <div
                   key={tier.name}
-                  className={`relative rounded-2xl transition-all duration-300 ${
+                  className={`relative rounded-2xl transition-[border-color,box-shadow] duration-300 ${
                     isEmbedded ? 'p-4 lg:p-5' : 'p-6 lg:p-8'
                   } ${
                     tier.highlighted

@@ -45,7 +45,7 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
               key={item.href}
               href={item.href}
               className={`
-                relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] rounded-xl mx-1 transition-all duration-200
+                relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] rounded-xl mx-1 transition-colors duration-200
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset
                 ${isActive
                   ? 'text-indigo-500 bg-indigo-500/10 light:bg-indigo-50'
@@ -57,7 +57,7 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
             >
               <div className="relative">
                 <Icon
-                  className={`w-6 h-6 mb-0.5 transition-all ${isActive ? 'scale-110' : ''}`}
+                  className={`w-6 h-6 mb-0.5 transition-colors ${isActive ? 'scale-110' : ''}`}
                   strokeWidth={isActive ? 2.5 : 2}
                   aria-hidden="true"
                 />

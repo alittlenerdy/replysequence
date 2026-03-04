@@ -110,7 +110,7 @@ export function TemplatePicker({ onSelect, onCancel, isRegenerating }: TemplateP
               onClick={() => setSelectedId(template.id)}
               disabled={isRegenerating}
               className={`
-                text-left p-3 rounded-lg border transition-all duration-200
+                text-left p-3 rounded-lg border transition-[border-color,background-color,box-shadow] duration-200
                 ${isSelected
                   ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
                   : 'border-gray-700 bg-gray-800/50 hover:border-gray-600 hover:bg-gray-800'

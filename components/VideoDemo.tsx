@@ -19,13 +19,12 @@ export default function VideoDemo() {
 
         <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-500/10 to-indigo-700/10 border border-gray-700 light:border-gray-200">
           {!isPlaying ? (
-            <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 light:from-gray-100 light:to-white relative group cursor-pointer"
-                 onClick={() => setIsPlaying(true)}>
+            <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 light:from-gray-100 light:to-white relative group">
               {/* Thumbnail placeholder */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-indigo-700/5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-indigo-700/5" aria-hidden="true" />
 
               {/* Fake UI Preview */}
-              <div className="absolute inset-6 md:inset-8 lg:inset-10 rounded-2xl bg-gray-800 light:bg-white shadow-2xl border border-gray-700 light:border-gray-200 overflow-hidden scale-100 md:scale-105">
+              <div className="absolute inset-6 md:inset-8 lg:inset-10 rounded-2xl bg-gray-800 light:bg-white shadow-2xl border border-gray-700 light:border-gray-200 overflow-hidden scale-100 md:scale-105" aria-hidden="true">
                 <div className="h-12 bg-gray-700 light:bg-gray-100 border-b border-gray-600 light:border-gray-200 flex items-center px-4 gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-400" />
                   <div className="w-3 h-3 rounded-full bg-yellow-400" />
@@ -48,8 +47,12 @@ export default function VideoDemo() {
               </div>
 
               {/* Play Button */}
-              <button className="video-play-btn relative z-10 group-hover:scale-110 transition-transform">
-                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+              <button
+                className="video-play-btn relative z-10 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
+                onClick={() => setIsPlaying(true)}
+                aria-label="Play demo video"
+              >
+                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                   <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                 </svg>
               </button>
@@ -67,7 +70,8 @@ export default function VideoDemo() {
                 <p className="text-white/60 text-sm">Add your Loom embed code here</p>
                 <button
                   onClick={() => setIsPlaying(false)}
-                  className="mt-4 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                  className="mt-4 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
+                  aria-label="Close video"
                 >
                   Close
                 </button>

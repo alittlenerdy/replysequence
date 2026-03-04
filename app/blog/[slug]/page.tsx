@@ -49,11 +49,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 }
 
 function formatDate(dateString: string): string {
-  return new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', {
+  return new Intl.DateTimeFormat(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  });
+  }).format(new Date(dateString + 'T00:00:00'));
 }
 
 /**

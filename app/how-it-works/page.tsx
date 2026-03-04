@@ -130,7 +130,7 @@ function Accordion({
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-800/50 light:bg-gray-50 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between p-4 bg-gray-800/50 light:bg-gray-50 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
       >
         <div className="flex items-center gap-3">
           {icon}
@@ -140,7 +140,7 @@ function Accordion({
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
         >
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-5 h-5 text-gray-400" aria-hidden="true" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -176,7 +176,7 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-5 bg-gray-900/50 light:bg-white hover:bg-gray-800/50 light:hover:bg-gray-50 transition-colors text-left"
+        className="w-full flex items-center justify-between p-5 bg-gray-900/50 light:bg-white hover:bg-gray-800/50 light:hover:bg-gray-50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
       >
         <span className="font-semibold text-white light:text-gray-900 pr-4">{question}</span>
         <motion.div
@@ -184,7 +184,7 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
           transition={{ duration: 0.3 }}
           className="flex-shrink-0"
         >
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-5 h-5 text-gray-400" aria-hidden="true" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -325,7 +325,7 @@ function StepCard({
           animate={{ y: [0, 5, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         >
-          <ArrowRight className="w-6 h-6 rotate-90" />
+          <ArrowRight className="w-6 h-6 rotate-90" aria-hidden="true" />
         </motion.div>
       )}
     </motion.div>
@@ -398,7 +398,7 @@ export default function HowItWorksPage() {
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               >
-                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <Sparkles className="w-4 h-4 text-indigo-400" aria-hidden="true" />
               </motion.span>
               <span className="text-sm font-medium text-gray-300 light:text-gray-700">
                 Powered by Claude AI
@@ -424,7 +424,7 @@ export default function HowItWorksPage() {
               className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20"
               whileHover={{ scale: 1.05, borderColor: 'rgba(99, 102, 241, 0.5)' }}
             >
-              <Zap className="w-5 h-5 text-yellow-400" />
+              <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
                 <AnimatedCounter value={8} /> seconds
               </span>
@@ -434,7 +434,7 @@ export default function HowItWorksPage() {
               className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20"
               whileHover={{ scale: 1.05, borderColor: 'rgba(245, 158, 11, 0.5)' }}
             >
-              <Clock className="w-5 h-5 text-amber-400" />
+              <Clock className="w-5 h-5 text-amber-400" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
                 <AnimatedCounter value={10} />+ hours
               </span>
@@ -444,7 +444,7 @@ export default function HowItWorksPage() {
               className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20"
               whileHover={{ scale: 1.05, borderColor: 'rgba(99, 102, 241, 0.5)' }}
             >
-              <CheckCircle className="w-5 h-5 text-indigo-400" />
+              <CheckCircle className="w-5 h-5 text-indigo-400" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
                 <AnimatedCounter value={100} suffix="%" />
               </span>
@@ -517,7 +517,7 @@ export default function HowItWorksPage() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + i * 0.1, type: 'spring' }}
                   >
-                    <CheckCircle className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-indigo-400 flex-shrink-0" aria-hidden="true" />
                   </motion.div>
                   <span>{text}</span>
                 </motion.div>
@@ -613,7 +613,7 @@ export default function HowItWorksPage() {
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-indigo-400 mb-1">
-                      <FileText className="w-4 h-4" />
+                      <FileText className="w-4 h-4" aria-hidden="true" />
                       Key Points
                     </div>
                     <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
@@ -624,7 +624,7 @@ export default function HowItWorksPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-amber-400 mb-1">
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-4 h-4" aria-hidden="true" />
                       Action Items
                     </div>
                     <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
@@ -635,7 +635,7 @@ export default function HowItWorksPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-indigo-400 mb-1">
-                      <Users className="w-4 h-4" />
+                      <Users className="w-4 h-4" aria-hidden="true" />
                       Attendees Detected
                     </div>
                     <div className="text-sm text-gray-400 light:text-gray-600 pl-6">
@@ -673,7 +673,7 @@ export default function HowItWorksPage() {
                     whileHover={{ scale: 1.03, backgroundColor: 'rgba(99, 102, 241, 0.1)' }}
                     className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 transition-colors"
                   >
-                    <Icon className="w-5 h-5 text-indigo-400" />
+                    <Icon className="w-5 h-5 text-indigo-400" aria-hidden="true" />
                     <span className="text-sm text-gray-300 light:text-gray-700">{text}</span>
                   </motion.div>
                 ))}

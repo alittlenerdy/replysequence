@@ -21,7 +21,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700 light:border-gray-200 overflow-hidden transition-all duration-300 hover:border-gray-600 light:hover:border-gray-300 light:shadow-lg ${className}`}
+      className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700 light:border-gray-200 overflow-hidden transition-colors duration-300 hover:border-gray-600 light:hover:border-gray-300 light:shadow-lg ${className}`}
     >
       {/* Gradient border on hover */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/20 via-indigo-500/20 to-indigo-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

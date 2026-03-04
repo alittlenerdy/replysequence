@@ -222,6 +222,7 @@ export function AnalyticsDashboard() {
             disabled={isRefreshing}
             className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
             title="Refresh analytics"
+            aria-label="Refresh data"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>

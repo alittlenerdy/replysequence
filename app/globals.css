@@ -52,7 +52,7 @@ body {
 
   /* CTA Button with Gradient */
   .btn-cta {
-    @apply px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg text-white transition-all duration-300;
+    @apply px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg text-white transition-[background-color,transform,box-shadow] duration-300;
     background: #4F46E5;
     border: none;
     box-shadow: 0 8px 30px rgba(79, 70, 229, 0.4);
@@ -75,7 +75,7 @@ body {
   }
 
   .btn-secondary {
-    @apply px-8 py-4 rounded-full font-bold text-lg transition-all duration-300;
+    @apply px-8 py-4 rounded-full font-bold text-lg transition-[background-color,transform,box-shadow] duration-300;
     background-color: transparent;
     border: 2px solid #000000;
     color: var(--text-primary);
@@ -123,7 +123,7 @@ body {
 
   /* Platform icon pill hover effect */
   .platform-pill {
-    @apply transition-all duration-300;
+    @apply transition-[transform,box-shadow] duration-300;
   }
 
   .platform-pill:hover {
@@ -347,7 +347,7 @@ body {
 
 /* Video Demo Play Button */
 .video-play-btn {
-  @apply w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300;
+  @apply w-20 h-20 rounded-full flex items-center justify-center transition-[transform,box-shadow] duration-300;
   background: linear-gradient(135deg, var(--mint) 0%, var(--neon) 100%);
   box-shadow: 0 8px 32px rgba(79, 70, 229, 0.4);
 }
@@ -359,7 +359,7 @@ body {
 
 /* Bento Grid */
 .bento-card {
-  @apply rounded-2xl p-6 transition-all duration-300;
+  @apply rounded-2xl p-6 transition-[transform,box-shadow,border-color] duration-300;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
@@ -372,7 +372,7 @@ body {
 }
 
 .bento-card-featured {
-  @apply rounded-2xl p-8 transition-all duration-300;
+  @apply rounded-2xl p-8 transition-[transform,box-shadow] duration-300;
   background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);
   color: white;
   border: none;
@@ -446,7 +446,7 @@ body {
 
 /* Theme Toggle Button */
 .theme-toggle {
-  @apply w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300;
+  @apply w-10 h-10 rounded-full flex items-center justify-center transition-[background-color,transform,border-color] duration-300;
   background: var(--background-alt);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -630,7 +630,7 @@ html.light .light-solid-text {
 
 /* Stat Card Hover Effect */
 .stat-card {
-  @apply transition-all duration-300 ease-out;
+  @apply transition-[transform,box-shadow] duration-300 ease-out;
 }
 
 .stat-card:hover {
@@ -644,7 +644,7 @@ html.light .light-solid-text {
 
 /* Icon Glow on Hover */
 .stat-icon-container {
-  @apply transition-all duration-300;
+  @apply transition-[transform,box-shadow] duration-300;
 }
 
 .stat-card:hover .stat-icon-container {
@@ -777,7 +777,7 @@ html.light .light-solid-text {
 
 /* Back to Home Link Hover */
 .back-link {
-  @apply relative transition-all duration-300;
+  @apply relative transition-colors duration-300;
 }
 
 .back-link::after {
@@ -797,7 +797,7 @@ html.light .light-solid-text {
 
 /* Cost Display Glow */
 .cost-display {
-  @apply transition-all duration-300;
+  @apply transition-[text-shadow] duration-300;
 }
 
 .cost-display:hover {
@@ -806,7 +806,7 @@ html.light .light-solid-text {
 
 /* Search Input Focus Animation */
 .search-input-animated {
-  @apply transition-all duration-300;
+  @apply transition-[box-shadow,border-color] duration-300;
 }
 
 .search-input-animated:focus {

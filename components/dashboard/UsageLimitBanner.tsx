@@ -62,7 +62,7 @@ export function UsageLimitBanner() {
           {/* Progress bar */}
           <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-500 ${
+              className={`h-full rounded-full transition-[width] duration-500 ${
                 isAtLimit ? 'bg-red-500' : isNearLimit ? 'bg-amber-500' : 'bg-indigo-500'
               }`}
               style={{ width: `${percentage}%` }}

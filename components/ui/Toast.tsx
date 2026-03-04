@@ -27,7 +27,7 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300 ${bgColor} ${
+      className={`fixed bottom-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white transition-[opacity,transform] duration-300 ${bgColor} ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
       }`}
     >
@@ -39,6 +39,7 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
           setTimeout(onClose, 300);
         }}
         className="ml-2 p-1 hover:bg-white/20 rounded transition-colors"
+        aria-label="Close notification"
       >
         <X className="w-4 h-4" />
       </button>

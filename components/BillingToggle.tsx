@@ -20,7 +20,7 @@ export function BillingToggle({ onIntervalChange, defaultInterval = 'monthly' }:
       <div className="inline-flex items-center rounded-full bg-gray-900 light:bg-gray-100 border border-gray-800 light:border-gray-200 p-1">
         <button
           onClick={() => handleToggle('monthly')}
-          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-all duration-200 ${
+          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 ${
             interval === 'monthly'
               ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25'
               : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700'
@@ -30,7 +30,7 @@ export function BillingToggle({ onIntervalChange, defaultInterval = 'monthly' }:
         </button>
         <button
           onClick={() => handleToggle('annual')}
-          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-all duration-200 flex items-center gap-2 ${
+          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 flex items-center gap-2 ${
             interval === 'annual'
               ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25'
               : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700'

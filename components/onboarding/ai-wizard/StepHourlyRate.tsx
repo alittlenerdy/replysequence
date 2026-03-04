@@ -34,6 +34,7 @@ export function StepHourlyRate({ value, onChange, onNext, onBack }: StepHourlyRa
                   onChange(val);
                 }
               }}
+              aria-label="Hourly rate"
               className="w-28 px-3 py-2.5 text-lg bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 tabular-nums"
             />
             <span className="text-sm text-gray-500">/ hour</span>

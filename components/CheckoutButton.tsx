@@ -107,7 +107,7 @@ export function CheckoutButton({
         <button
           onClick={handleManageSubscription}
           disabled={loading}
-          className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all bg-gray-700 text-white hover:bg-gray-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+          className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] bg-gray-700 text-white hover:bg-gray-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         >
           {loading ? (
             <>
@@ -130,7 +130,7 @@ export function CheckoutButton({
     return (
       <a
         href="/sign-up"
-        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-all bg-gray-700 text-white hover:bg-gray-600 ${className}`}
+        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] bg-gray-700 text-white hover:bg-gray-600 ${className}`}
       >
         {children || 'Get Started'}
       </a>
@@ -143,7 +143,7 @@ export function CheckoutButton({
       <button
         onClick={handleCheckout}
         disabled={loading || !priceId}
-        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] ${
           tier === 'pro'
             ? 'bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40'
             : 'bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40'

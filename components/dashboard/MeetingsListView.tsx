@@ -199,9 +199,10 @@ export function MeetingsListView() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
             type="text"
-            placeholder="Search meetings..."
+            placeholder="Search meetings\u2026"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
+            aria-label="Search meetings"
             className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50"
           />
         </div>
@@ -222,7 +223,7 @@ export function MeetingsListView() {
               key={key}
               onClick={() => setFollowUpFilter(followUpFilter === key ? 'all' : key)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
                 ${followUpFilter === key
                   ? 'ring-2 ring-indigo-500/40 ' + color
                   : color + ' opacity-70 hover:opacity-100'
@@ -250,7 +251,7 @@ export function MeetingsListView() {
             key={chip.value}
             onClick={() => { setPlatform(chip.value); setPage(1); }}
             className={`
-              px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200
+              px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
               ${platform === chip.value
                 ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                 : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -330,7 +331,7 @@ export function MeetingsListView() {
               <Link
                 key={meeting.id}
                 href={`/dashboard/meetings/${meeting.id}`}
-                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-all group light:shadow-sm"
+                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group light:shadow-sm"
               >
                 <div className="flex items-start gap-4">
                   <PlatformIcon platform={meeting.platform} />

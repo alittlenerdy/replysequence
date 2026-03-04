@@ -241,7 +241,7 @@ export default function SecurityPage() {
             </p>
             <a
               href="mailto:security@replysequence.com"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
               <Shield className="w-5 h-5" />
               Report a Vulnerability

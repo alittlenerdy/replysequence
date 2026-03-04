@@ -269,13 +269,15 @@ export function ConversationalRefine({
           value={instruction}
           onChange={(e) => setInstruction(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && !isRefining && handleRefine()}
-          placeholder="Or type your own instruction... (e.g., 'add a PS about our upcoming webinar')"
+          placeholder="Or type your own instruction\u2026 (e.g., 'add a PS about our upcoming webinar')"
           disabled={isRefining}
+          aria-label="Custom refinement instruction"
           className="w-full px-4 py-3 pr-12 text-sm text-white bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent placeholder:text-gray-500 disabled:opacity-50"
         />
         <button
           onClick={() => handleRefine()}
           disabled={isRefining || !instruction.trim()}
+          aria-label="Submit refinement"
           className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-cyan-400 hover:text-cyan-300 disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
         >
           {isRefining ? (

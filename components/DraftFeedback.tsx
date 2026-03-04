@@ -76,7 +76,7 @@ export function DraftFeedback({
         <button
           onClick={() => handleThumbClick('up')}
           disabled={isSubmitting}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors ${
             rating === 'up'
               ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-400'
               : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-indigo-500/30 hover:text-indigo-400'
@@ -93,7 +93,7 @@ export function DraftFeedback({
         <button
           onClick={() => handleThumbClick('down')}
           disabled={isSubmitting}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors ${
             rating === 'down'
               ? 'bg-red-500/20 border-red-500/40 text-red-400'
               : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-red-500/30 hover:text-red-400'
@@ -124,6 +124,7 @@ export function DraftFeedback({
             onChange={(e) => setFeedbackText(e.target.value)}
             placeholder="What could be improved? (optional)"
             rows={2}
+            aria-label="Feedback"
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus:border-indigo-500 focus:outline-none resize-none"
           />
           <div className="flex items-center gap-2">

@@ -135,6 +135,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                   type="text"
                   readOnly
                   value={result.referralLink}
+                  aria-label="Referral link"
                   className="flex-1 px-3 py-2 bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-sm text-gray-300 light:text-gray-700 truncate"
                 />
                 <button
@@ -192,6 +193,8 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Name (optional)"
+                aria-label="Name"
+                autoComplete="name"
                 className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:w-[180px]"
               />
               <input
@@ -200,6 +203,9 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
+                aria-label="Email address"
+                autoComplete="email"
+                spellCheck={false}
                 className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
               />
               <button
@@ -207,7 +213,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 disabled={isSubmitting || !email}
                 className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/20 whitespace-nowrap"
               >
-                {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+                {isSubmitting ? 'Joining\u2026' : 'Join Waitlist'}
               </button>
             </div>
 
@@ -216,6 +222,8 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-red-400 text-sm"
+                role="alert"
+                aria-live="polite"
               >
                 {error}
               </motion.p>

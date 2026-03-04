@@ -132,11 +132,11 @@ export function PlanHeader({ billing, onScrollToPlans }: PlanHeaderProps) {
                         ? 'Cancels'
                         : 'Renews'}{' '}
                     on{' '}
-                    {new Date(billing.subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+                    {new Intl.DateTimeFormat(undefined, {
                       month: 'long',
                       day: 'numeric',
                       year: 'numeric',
-                    })}
+                    }).format(new Date(billing.subscription.currentPeriodEnd))}
                   </span>
                 </div>
               </div>
@@ -185,11 +185,11 @@ export function PlanHeader({ billing, onScrollToPlans }: PlanHeaderProps) {
             <p className="text-sm font-medium text-amber-400">Your subscription is set to cancel</p>
             <p className="text-xs text-amber-400/70 mt-0.5">
               Access continues until{' '}
-              {new Date(billing.subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+              {new Intl.DateTimeFormat(undefined, {
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
-              })}.
+              }).format(new Date(billing.subscription.currentPeriodEnd))}.
             </p>
           </div>
           <ManageSubscriptionButton className="!px-4 !py-2 !text-sm" />

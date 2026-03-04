@@ -19,7 +19,7 @@ export function FeatureCard({ icon: Icon, title, description, index = 0, classNa
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 + index * 0.1, duration: 0.5 }}
       className={cn(
-        'relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 transition-all duration-300 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-900/70 light:hover:bg-gray-50',
+        'relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border border-gray-700 light:border-gray-200 p-6 transition-colors duration-300 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-900/70 light:hover:bg-gray-50',
         className
       )}
     >

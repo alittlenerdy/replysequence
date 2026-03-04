@@ -120,7 +120,7 @@ export default function LandingPage() {
                 'Clean, consistent CRM notes — automatically',
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
                   <span className="text-sm text-gray-300 light:text-gray-600 font-medium">{bullet}</span>
                 </div>
               ))}
@@ -138,7 +138,7 @@ export default function LandingPage() {
                 <CountdownAnimation />
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20">
-                <Zap className="w-4 h-4 text-yellow-400" />
+                <Zap className="w-4 h-4 text-yellow-400" aria-hidden="true" />
                 <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
                   10x faster than typing it yourself
                 </span>
@@ -155,21 +155,21 @@ export default function LandingPage() {
               <span className="text-sm font-medium">Works with</span>
               {/* Zoom logo */}
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10 border border-[#2D8CFF]/20">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#2D8CFF">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#2D8CFF" aria-hidden="true">
                   <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
                 </svg>
                 <span className="text-xs font-semibold text-[#2D8CFF]">Zoom</span>
               </div>
               {/* Teams logo */}
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#5B5FC7]/10 border border-[#5B5FC7]/20">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5B5FC7">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5B5FC7" aria-hidden="true">
                   <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
                 </svg>
                 <span className="text-xs font-semibold text-[#5B5FC7]">Teams</span>
               </div>
               {/* Google Meet logo */}
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00897B]/10 border border-[#00897B]/20">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#00897B">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#00897B" aria-hidden="true">
                   <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                   <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z"/>
                 </svg>
@@ -195,7 +195,7 @@ export default function LandingPage() {
             >
               <a
                 href="/how-it-works"
-                className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 light:text-gray-600 hover:text-gray-300 light:hover:text-gray-900 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 light:text-gray-600 hover:text-gray-300 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] rounded-md"
               >
                 See How It Works
               </a>
@@ -210,16 +210,16 @@ export default function LandingPage() {
             >
               <a
                 href="/security"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
               >
-                <Lock className="w-3.5 h-3.5 text-indigo-400" />
+                <Lock className="w-3.5 h-3.5 text-indigo-400" aria-hidden="true" />
                 <span className="text-xs font-medium text-indigo-400">AES-256 Encryption</span>
               </a>
               <a
                 href="/privacy"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full hover:bg-amber-500/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full hover:bg-amber-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
               >
-                <Shield className="w-3.5 h-3.5 text-amber-400" />
+                <Shield className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
                 <span className="text-xs font-medium text-amber-400">Privacy First</span>
               </a>
             </motion.div>
@@ -278,7 +278,7 @@ export default function LandingPage() {
                 className="rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-6 text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-6 h-6 text-amber-400 light:text-amber-600" />
+                  <item.icon className="w-6 h-6 text-amber-400 light:text-amber-600" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
@@ -299,7 +299,7 @@ export default function LandingPage() {
             className="text-center mb-12"
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 mb-6">
-              <Sparkles className="w-4 h-4 text-orange-400" />
+              <Sparkles className="w-4 h-4 text-orange-400" aria-hidden="true" />
               <span className="text-sm font-medium text-orange-400">New Feature</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
@@ -324,7 +324,7 @@ export default function LandingPage() {
               <div className="px-5 py-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-orange-500/20 light:border-orange-200">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5 text-white" />
+                    <MessageSquare className="w-5 h-5 text-white" aria-hidden="true" />
                   </div>
                   <div>
                     <span className="text-sm font-bold text-white light:text-gray-900">Ask your meetings</span>
@@ -373,7 +373,7 @@ export default function LandingPage() {
               {/* Input area */}
               <div className="px-5 py-3 border-t border-gray-700 light:border-gray-200">
                 <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200">
-                  <Search className="w-4 h-4 text-gray-500 shrink-0" />
+                  <Search className="w-4 h-4 text-gray-500 shrink-0" aria-hidden="true" />
                   <span className="text-sm text-gray-500">Ask about meetings, follow-ups, or risks...</span>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function LandingPage() {
                   className="flex gap-4"
                 >
                   <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-orange-400" />
+                    <CheckCircle2 className="w-4 h-4 text-orange-400" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-white light:text-gray-900 mb-1">{feature.title}</h3>
@@ -493,15 +493,15 @@ export default function LandingPage() {
                 className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 flex flex-col items-center text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" />
+                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
                 </div>
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Before</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
 
-                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" />
+                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" aria-hidden="true" />
                 <p className="text-xs text-gray-500 light:text-gray-500 mb-1">{item.process}</p>
-                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" />
+                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" aria-hidden="true" />
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 light:text-amber-600 mb-2">After</span>
                 <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
@@ -603,21 +603,21 @@ export default function LandingPage() {
               {[
                 {
                   step: '01',
-                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
                   title: 'Connect Your Platform',
                   description: 'No more jumping between Zoom, email, and CRM. Link your platform once — we handle the rest.',
                   color: 'blue',
                 },
                 {
                   step: '02',
-                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
                   title: 'AI Drafts in 8 Seconds',
                   description: 'Skip the 30 minutes of note-reviewing and email-writing. AI captures what was said, who said it, and what to do next.',
                   color: 'purple',
                 },
                 {
                   step: '03',
-                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
                   title: 'Review & Send',
                   description: 'You approve every email before it sends. Add your own touch, then hit send — CRM updates itself.',
                   color: 'pink',
@@ -657,7 +657,7 @@ export default function LandingPage() {
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                     >
-                      <svg className="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </motion.div>

@@ -110,6 +110,7 @@ export function VideoSection() {
                 className="relative"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
+                aria-label="Play video"
               >
                 {/* Pulse rings */}
                 <motion.div

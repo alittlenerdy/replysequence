@@ -492,7 +492,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label="Draft preview">
       {/* Backdrop with blur - hidden on mobile since modal is full screen */}
       {/* Uses onMouseDown instead of onClick to prevent stealing focus from inputs */}
       <div

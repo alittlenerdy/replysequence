@@ -55,7 +55,7 @@ export default function CompareDropdown() {
 
       {/* Dropdown Menu */}
       <div
-        className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl overflow-hidden transition-all duration-200 ${
+        className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl overflow-hidden transition-[opacity,transform] duration-200 ${
           isOpen
             ? 'opacity-100 visible translate-y-0'
             : 'opacity-0 invisible -translate-y-2'
@@ -73,7 +73,7 @@ export default function CompareDropdown() {
                   key={competitor.slug}
                   href={`/compare/${competitor.slug}`}
                   onClick={() => setIsOpen(false)}
-                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-all duration-200"
+                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-colors duration-200"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex-1">
@@ -84,7 +84,7 @@ export default function CompareDropdown() {
                       {competitor.tagline}
                     </div>
                   </div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-indigo-400 transition-all duration-200" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-indigo-400 transition-colors duration-200" />
                 </Link>
               ))}
             </div>

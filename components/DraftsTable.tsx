@@ -491,14 +491,17 @@ export function DraftsTable({
           {drafts.map((draft, index) => (
             <div
               key={draft.id}
+              role="button"
+              tabIndex={0}
               className={`
-                p-4 transition-all duration-300 ease-out
+                p-4 transition-[opacity,transform,background-color] duration-300 ease-out
                 ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
                 ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'}
                 active:bg-gray-700/90 light:active:bg-indigo-100
-                cursor-pointer
+                cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
               `}
               onClick={() => setSelectedDraft(draft)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDraft(draft); } }}
             >
               {/* Top row: Checkbox + Platform icon + Meeting name + Date */}
               <div className="flex items-start gap-3 mb-2">
@@ -620,8 +623,10 @@ export function DraftsTable({
               {drafts.map((draft) => (
                 <tr
                   key={draft.id}
-                  className={`${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'} cursor-pointer`}
+                  tabIndex={0}
+                  className={`${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'} cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500`}
                   onClick={() => setSelectedDraft(draft)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDraft(draft); } }}
                 >
                   <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                     {draft.status !== 'sent' ? (

@@ -120,7 +120,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             relative mb-4 inline-flex rounded-xl p-3
             bg-gradient-to-br ${stat.gradient}
             shadow-sm
-            transition-all duration-300
+            transition-transform duration-300
             group-hover:scale-105
           `}>
             <div className="relative text-white animate-pulse-slow">

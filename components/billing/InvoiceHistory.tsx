@@ -98,11 +98,11 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
                 >
                   <td className="py-4 px-4">
                     <span className="text-white light:text-gray-900 text-sm">
-                      {new Date(invoice.date).toLocaleDateString('en-US', {
+                      {new Intl.DateTimeFormat(undefined, {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
-                      })}
+                      }).format(new Date(invoice.date))}
                     </span>
                   </td>
                   <td className="py-4 px-4 hidden sm:table-cell">

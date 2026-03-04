@@ -222,7 +222,7 @@ export function HeroAnimation() {
       </motion.div>
 
       {/* Connection lines - subtle background effect */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30" aria-hidden="true">
         <defs>
           <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="rgba(59, 130, 246, 0.5)" />

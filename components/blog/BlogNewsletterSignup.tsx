@@ -88,6 +88,9 @@ export function BlogNewsletterSignup() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 required
+                aria-label="Email address"
+                autoComplete="email"
+                spellCheck={false}
                 className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
               />
               <button

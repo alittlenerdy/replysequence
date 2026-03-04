@@ -411,7 +411,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
               </div>
               <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-full transition-[width] duration-500"
                   style={{ width: `${meeting.processingProgress}%` }}
                 />
               </div>
@@ -543,7 +543,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
               <button
                 key={draft.id}
                 onClick={() => setSelectedDraft(draft)}
-                className="w-full text-left p-4 rounded-xl border border-gray-700/50 light:border-gray-200 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-all group"
+                className="w-full text-left p-4 rounded-xl border border-gray-700/50 light:border-gray-200 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">

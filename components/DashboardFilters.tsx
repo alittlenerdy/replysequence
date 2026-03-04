@@ -47,7 +47,7 @@ export function DashboardFilters({
               key={chip.value}
               onClick={() => onStatusChange(chip.value)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
                 ${status === chip.value
                   ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -69,7 +69,7 @@ export function DashboardFilters({
               key={chip.value}
               onClick={() => onDateRangeChange(chip.value)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
                 ${dateRange === chip.value
                   ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -93,9 +93,10 @@ export function DashboardFilters({
           </div>
           <input
             type="text"
-            placeholder="Search meetings..."
+            placeholder="Search meetings\u2026"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
+            aria-label="Search meetings"
             className="
               block w-full pl-9 pr-3 py-2
               border border-gray-700 light:border-gray-300
@@ -104,13 +105,14 @@ export function DashboardFilters({
               placeholder-gray-500 light:placeholder-gray-400
               bg-gray-800/50 light:bg-white
               focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30
-              transition-all duration-200
+              transition-colors duration-200
             "
           />
           {search && (
             <button
               onClick={() => onSearchChange('')}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 light:hover:text-gray-700"
+              aria-label="Clear search"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

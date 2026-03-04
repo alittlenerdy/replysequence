@@ -138,6 +138,7 @@ export function WaitlistAdmin() {
           onClick={fetchData}
           className="p-2 text-gray-400 hover:text-white light:hover:text-gray-900 transition-colors"
           title="Refresh"
+          aria-label="Refresh"
         >
           <RefreshCw className="w-5 h-5" />
         </button>
@@ -162,6 +163,7 @@ export function WaitlistAdmin() {
             max={100}
             value={inviteCount}
             onChange={(e) => setInviteCount(Math.max(1, parseInt(e.target.value) || 1))}
+            aria-label="Number of invites"
             className="w-20 px-3 py-1.5 bg-gray-700 light:bg-gray-100 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm text-center"
           />
           <span className="text-sm text-gray-400 light:text-gray-600">people by position</span>

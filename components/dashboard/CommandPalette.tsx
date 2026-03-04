@@ -220,9 +220,10 @@ export function CommandPalette() {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Type a command or search..."
+                  placeholder="Type a command or search\u2026"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  aria-label="Search commands"
                   className="flex-1 bg-transparent text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 outline-none text-sm"
                 />
                 <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-gray-500 bg-gray-800 light:bg-gray-100 rounded border border-gray-700 light:border-gray-200">

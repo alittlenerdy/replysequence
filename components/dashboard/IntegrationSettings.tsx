@@ -287,7 +287,7 @@ function PlatformCard({
       transition={{ duration: 0.3, delay: globalIndex * 0.05 }}
     >
       <div
-        className={`border border-l-4 rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
+        className={`border border-l-4 rounded-xl p-4 transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/10 ${
           isConnected
             ? statusColor === 'red'
               ? 'border-red-500/30 bg-red-500/5 light:bg-red-50 light:border-red-200'

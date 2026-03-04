@@ -95,7 +95,7 @@ export function DashboardNav({ pendingDrafts = 0, userEmail = '' }: DashboardNav
               tabIndex={isActive ? 0 : -1}
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
-                relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-all duration-200
+                relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-colors duration-200
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
                 ${isActive
                   ? 'border-indigo-500 text-white light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 font-semibold'

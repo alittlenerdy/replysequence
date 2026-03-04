@@ -248,7 +248,8 @@ export function StepCRM({
                   type="password"
                   value={airtableApiKey}
                   onChange={(e) => setAirtableApiKey(e.target.value)}
-                  placeholder="Personal Access Token (pat...)"
+                  placeholder="Personal Access Token (pat\u2026)"
+                  aria-label="Airtable API key"
                   className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
                 <input
@@ -256,6 +257,7 @@ export function StepCRM({
                   value={airtableBaseId}
                   onChange={(e) => setAirtableBaseId(e.target.value)}
                   placeholder="Base ID (appXXXXXXXXXX)"
+                  aria-label="Airtable Base ID"
                   className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
                 {airtableError && (

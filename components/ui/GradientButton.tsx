@@ -37,7 +37,7 @@ export function GradientButton({
   };
 
   const baseClasses = cn(
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-300',
+    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-[color,background-color,box-shadow] duration-300',
     sizeClasses[size],
     variant === 'primary'
       ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40'

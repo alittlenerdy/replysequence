@@ -7,15 +7,17 @@ interface AtRiskMeetingsProps {
   meetings: AtRiskMeeting[];
 }
 
+const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'always', style: 'narrow' });
+
 function formatRelativeTime(isoDate: string | null): string {
   if (!isoDate) return '--';
   const diffMs = Date.now() - new Date(isoDate).getTime();
   const minutes = Math.floor(diffMs / 60000);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return rtf.format(-minutes, 'minute');
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return rtf.format(-hours, 'hour');
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return rtf.format(-days, 'day');
 }
 
 function DraftStatusBadge({ status }: { status: AtRiskMeeting['draftStatus'] }) {

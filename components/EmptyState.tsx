@@ -65,7 +65,7 @@ export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: Emp
           </p>
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-400 light:text-indigo-600 bg-indigo-900/30 light:bg-indigo-50 rounded-lg hover:bg-indigo-900/50 light:hover:bg-indigo-100 transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-400 light:text-indigo-600 bg-indigo-900/30 light:bg-indigo-50 rounded-lg hover:bg-indigo-900/50 light:hover:bg-indigo-100 transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105"
           >
             Clear Filters
           </button>
@@ -81,7 +81,7 @@ export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: Emp
             <button
               onClick={handleTrySample}
               disabled={isGenerating}
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 disabled:opacity-60 disabled:cursor-not-allowed transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
             >
               {isGenerating ? (
                 <>
@@ -97,7 +97,7 @@ export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: Emp
             </button>
             <a
               href="/dashboard/settings"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105"
             >
               <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>

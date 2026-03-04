@@ -43,7 +43,7 @@ export default function ContactPage() {
             {/* Email */}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 transition-all"
+              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-500/20 mb-4">
                 <Mail className="w-6 h-6 text-indigo-400" />
@@ -62,7 +62,7 @@ export default function ContactPage() {
             {/* Feature Requests */}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 transition-all"
+              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-500/20 mb-4">
                 <MessageSquare className="w-6 h-6 text-indigo-400" />
