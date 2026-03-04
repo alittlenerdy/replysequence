@@ -1394,3 +1394,28 @@ export const feedback = pgTable(
 
 export type Feedback = typeof feedback.$inferSelect;
 export type NewFeedback = typeof feedback.$inferInsert;
+
+// Quote-tweet status type
+export type QuoteStatus = 'published' | 'failed';
+
+// Auto-retweets table - tracks @replysequence → @atinylittlenerd quote-tweets
+export const autoRetweets = pgTable(
+  'auto_retweets',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    sourceTypefullyDraftId: integer('source_typefully_draft_id').notNull(),
+    sourceXUrl: text('source_x_url').notNull(),
+    sourcePublishedAt: timestamp('source_published_at', { withTimezone: true }),
+    quoteTypefullyDraftId: integer('quote_typefully_draft_id'),
+    quoteStatus: varchar('quote_status', { length: 20 }).$type<QuoteStatus>().notNull(),
+    errorMessage: text('error_message'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('auto_retweets_source_draft_id_idx').on(table.sourceTypefullyDraftId),
+    index('auto_retweets_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type AutoRetweet = typeof autoRetweets.$inferSelect;
+export type NewAutoRetweet = typeof autoRetweets.$inferInsert;

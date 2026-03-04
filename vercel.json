@@ -35,6 +35,9 @@
     },
     "app/api/cron/send-onboarding-emails/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/auto-retweet/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
@@ -65,6 +68,10 @@
     {
       "path": "/api/cron/send-onboarding-emails",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/auto-retweet",
+      "schedule": "0 10,22 * * *"
     }
   ]
 }
