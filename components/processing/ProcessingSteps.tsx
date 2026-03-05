@@ -24,6 +24,7 @@ const STEP_ORDER: Record<ProcessingStep, number> = {
   meeting_fetched: 1,
   meeting_created: 2,
   transcript_download: 3,
+  transcript_pending: 3,
   transcript_parse: 4,
   transcript_stored: 5,
   draft_generation: 6,

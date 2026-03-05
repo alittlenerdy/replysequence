@@ -26,6 +26,7 @@ export type ProcessingStep =
   | 'meeting_fetched'
   | 'meeting_created'
   | 'transcript_download'
+  | 'transcript_pending'
   | 'transcript_parse'
   | 'transcript_stored'
   | 'draft_generation'

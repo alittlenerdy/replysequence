@@ -17,6 +17,7 @@ export const PROCESSING_STAGES: Record<ProcessingStep, {
   meeting_fetched: { progress: 10, label: 'Finding meeting', avgDurationMs: 1000 },
   meeting_created: { progress: 15, label: 'Meeting record created', avgDurationMs: 500 },
   transcript_download: { progress: 30, label: 'Downloading transcript', avgDurationMs: 8000 },
+  transcript_pending: { progress: 35, label: 'Waiting for transcript', avgDurationMs: 30000 },
   transcript_parse: { progress: 50, label: 'Parsing transcript', avgDurationMs: 3000 },
   transcript_stored: { progress: 60, label: 'Saving transcript', avgDurationMs: 1000 },
   draft_generation: { progress: 80, label: 'Generating follow-up draft', avgDurationMs: 12000 },
