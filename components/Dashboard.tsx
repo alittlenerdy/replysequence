@@ -237,6 +237,7 @@ export function Dashboard({
             {drafts.length === 0 ? (
               <EmptyState
                 hasFilters={hasActiveFilters}
+                hasConnectedPlatforms={initialStats.total > 0}
                 onClearFilters={handleClearFilters}
               />
             ) : (

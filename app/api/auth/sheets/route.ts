@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
     'profile',
     'email',
     'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive.metadata.readonly',
   ];
   const scopes = scopesList.join(' ');
 

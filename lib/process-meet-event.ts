@@ -782,8 +782,22 @@ async function fetchAndStoreMeetTranscript(
       error: errorMessage,
     });
 
-    // Mark meeting as failed with proper error tracking
-    await failProcessing(meetingId, errorMessage);
+    // Treat 404 as retryable (transcript doc not ready yet) - set to pending
+    // so the cron poller can retry on the next run
+    if (errorMessage.includes('404')) {
+      log('warn', '[MEET-8] Transcript 404 - marking as pending for cron retry', { meetingId });
+      await db
+        .update(meetings)
+        .set({
+          status: 'pending',
+          processingStep: 'transcript_pending',
+          processingError: errorMessage,
+          updatedAt: new Date(),
+        })
+        .where(eq(meetings.id, meetingId));
+    } else {
+      await failProcessing(meetingId, errorMessage);
+    }
 
     throw error;
   }

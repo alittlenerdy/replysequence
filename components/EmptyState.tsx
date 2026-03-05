@@ -5,11 +5,12 @@ import { Sparkles, Loader2 } from 'lucide-react';
 
 interface EmptyStateProps {
   hasFilters?: boolean;
+  hasConnectedPlatforms?: boolean;
   onClearFilters?: () => void;
   onDraftGenerated?: () => void;
 }
 
-export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: EmptyStateProps) {
+export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, onDraftGenerated }: EmptyStateProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [sampleError, setSampleError] = useState('');
 
@@ -74,8 +75,9 @@ export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: Emp
         <>
           <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No drafts yet</h3>
           <p className="text-gray-400 light:text-gray-500 mb-6 max-w-md mx-auto">
-            Record a meeting with transcription enabled on Zoom, Google Meet, or Teams.
-            ReplySequence will automatically generate a follow-up email draft when the transcript is ready.
+            {hasConnectedPlatforms
+              ? 'Your platforms are connected. Record a meeting with transcription enabled and ReplySequence will automatically generate a follow-up email draft.'
+              : 'Record a meeting with transcription enabled on Zoom, Google Meet, or Teams. ReplySequence will automatically generate a follow-up email draft when the transcript is ready.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -86,7 +88,7 @@ export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: Emp
               {isGenerating ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating Draft...
+                  Generating Draft{'\u2026'}
                 </>
               ) : (
                 <>
@@ -95,15 +97,17 @@ export function EmptyState({ hasFilters, onClearFilters, onDraftGenerated }: Emp
                 </>
               )}
             </button>
-            <a
-              href="/dashboard/settings"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105"
-            >
-              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>
-              </svg>
-              Connect a Platform
-            </a>
+            {!hasConnectedPlatforms && (
+              <a
+                href="/dashboard/settings"
+                className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105"
+              >
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>
+                </svg>
+                Connect a Platform
+              </a>
+            )}
           </div>
           {sampleError && (
             <p className="mt-3 text-sm text-red-400">{sampleError}</p>

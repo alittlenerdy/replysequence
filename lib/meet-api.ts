@@ -411,30 +411,47 @@ export async function downloadTranscriptFromDocs(
   // Export as plain text
   const exportUrl = `https://www.googleapis.com/drive/v3/files/${documentId}/export?mimeType=text/plain`;
 
-  const response = await fetch(exportUrl, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  // Retry up to 3 times with delays - Google Docs may not be ready immediately
+  // after Meet reports transcript as FILE_GENERATED
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const response = await fetch(exportUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (!response.ok) {
+    if (response.ok) {
+      const content = await response.text();
+      log('info', '[MEET-6] Transcript downloaded from Docs', {
+        documentId,
+        contentLength: content.length,
+        attempt,
+      });
+      return content;
+    }
+
     const errorText = await response.text();
+
+    // Retry on 404 (doc not propagated yet) - but not on other errors
+    if (response.status === 404 && attempt < maxAttempts) {
+      log('warn', `[MEET-6] Docs 404, retrying in ${attempt * 5}s (attempt ${attempt}/${maxAttempts})`, {
+        documentId,
+      });
+      await new Promise(resolve => setTimeout(resolve, attempt * 5000));
+      continue;
+    }
+
     log('error', '[MEET-6] Failed to download transcript from Docs', {
       documentId,
       status: response.status,
       error: errorText,
+      attempt,
     });
     throw new Error(`Failed to download transcript: ${response.status}`);
   }
 
-  const content = await response.text();
-
-  log('info', '[MEET-6] Transcript downloaded from Docs', {
-    documentId,
-    contentLength: content.length,
-  });
-
-  return content;
+  throw new Error('Failed to download transcript: max retries exceeded');
 }
 
 /**

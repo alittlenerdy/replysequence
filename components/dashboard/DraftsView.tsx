@@ -233,6 +233,7 @@ export function DraftsView({
           {drafts.length === 0 ? (
             <EmptyState
               hasFilters={hasActiveFilters}
+              hasConnectedPlatforms={initialStats.total > 0 || processingMeetings.length > 0}
               onClearFilters={handleClearFilters}
               onDraftGenerated={() => fetchDrafts()}
             />
