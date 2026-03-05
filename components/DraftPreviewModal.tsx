@@ -21,7 +21,7 @@ function useHydrationSafe() {
 
 function formatDateSafe(date: Date | string | null, isMounted: boolean, options?: Intl.DateTimeFormatOptions): string {
   if (!date) return '-';
-  if (!isMounted) return '...';
+  if (!isMounted) return '\u2026';
   return new Date(date).toLocaleDateString('en-US', options || { month: 'short', day: 'numeric' });
 }
 
@@ -86,7 +86,7 @@ function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
         Activity Timeline
-        {loading && <span className="ml-1 animate-pulse">...</span>}
+        {loading && <span className="ml-1 animate-pulse">{'\u2026'}</span>}
       </button>
 
       {isOpen && data && (
@@ -120,7 +120,7 @@ function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted
                     <span className="text-slate-500 truncate max-w-[150px]" title={event.url}>{event.url}</span>
                   )}
                   <span className="ml-auto text-slate-600 shrink-0">
-                    {isMounted ? new Date(event.occurredAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '...'}
+                    {isMounted ? new Date(event.occurredAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '\u2026'}
                   </span>
                 </div>
               );
@@ -319,7 +319,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
-    if (!isMounted) return '...';
+    if (!isMounted) return '\u2026';
     return new Date(date).toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',
@@ -498,7 +498,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
       {/* Modal - Full screen on mobile, centered dialog on desktop */}
       <div
-        className="min-h-full md:flex md:items-center md:justify-center md:p-4"
+        className="min-h-full md:flex md:items-center md:justify-center md:p-4 overscroll-contain"
         onMouseDown={(e) => {
           // Close only when clicking the wrapper area itself (outside the modal dialog),
           // not when clicking inside the modal dialog.
@@ -542,6 +542,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                     onClick={() => setShowDeleteConfirm(true)}
                     className="p-2.5 sm:p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     title="Delete draft"
+                    aria-label="Delete draft"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -551,6 +552,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                 <button
                   onClick={handleModalClose}
                   className="p-2.5 sm:p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  aria-label="Close preview"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -562,7 +564,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
           {/* Delete Confirmation */}
           {showDeleteConfirm ? (
-            <div className="px-6 py-8">
+            <div className="px-6 py-8" aria-live="polite">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
                   <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -607,7 +609,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
               </div>
             </div>
           ) : showSendConfirm ? (
-            <div className="px-6 py-8">
+            <div className="px-6 py-8" aria-live="polite">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-500/20 flex items-center justify-center">
                   <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -705,13 +707,14 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
                     {/* Rich Text Editor */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-1">
+                      <label htmlFor="email-body" className="block text-sm font-medium text-gray-400 mb-1">
                         Email Body
                       </label>
                       <RichTextEditor
+                        id="email-body"
                         content={editBody}
                         onChange={setEditBody}
-                        placeholder="Write your email..."
+                        placeholder="Write your email\u2026"
                       />
                     </div>
 
@@ -778,6 +781,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           }}
                           className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                           title="Copy email to clipboard"
+                          aria-label="Copy email to clipboard"
                         >
                           {copied ? (
                             <>
@@ -1159,6 +1163,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             value={recipientEmail}
                             onChange={(e) => setRecipientEmail(e.target.value)}
                             className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent placeholder:text-slate-500"
+                            autoComplete="email"
                           />
                         </div>
                         <div className="flex gap-2 flex-wrap">

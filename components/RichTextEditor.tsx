@@ -10,13 +10,15 @@ interface RichTextEditorProps {
   onChange: (content: string) => void;
   placeholder?: string;
   editable?: boolean;
+  id?: string;
 }
 
 export function RichTextEditor({
   content,
   onChange,
-  placeholder = 'Write your email...',
+  placeholder = 'Write your email\u2026',
   editable = true,
+  id,
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -87,7 +89,7 @@ export function RichTextEditor({
   }
 
   return (
-    <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50">
+    <div id={id} className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50">
       {/* Toolbar */}
       {editable ? (
         <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-600 bg-gray-900/50">
@@ -204,6 +206,7 @@ export function RichTextEditor({
           p-4 min-h-[250px] max-h-[400px] overflow-y-auto
           focus-visible:outline-none
           [&_.ProseMirror]:outline-none
+          [&_.ProseMirror:focus-visible]:ring-2 [&_.ProseMirror:focus-visible]:ring-mint/50
           [&_.ProseMirror]:min-h-[200px]
           [&_.ProseMirror_p]:my-2
           [&_.ProseMirror_ul]:list-disc

@@ -45,7 +45,7 @@ function FollowUpBadge({ status }: { status: FollowUpStatus }) {
       icon: <AlertTriangle className="w-3 h-3" />,
     },
     processing: {
-      label: 'Processing...',
+      label: 'Processing\u2026',
       classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
       icon: <Clock className="w-3 h-3 animate-spin" />,
     },
@@ -107,6 +107,14 @@ function formatDuration(minutes: number | null): string {
   const m = minutes % 60;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
+
+// Static platform filter chips - hoisted to module scope to avoid re-creation on every render
+const PLATFORM_CHIPS = [
+  { value: 'all', label: 'All' },
+  { value: 'zoom', label: 'Zoom' },
+  { value: 'google_meet', label: 'Meet' },
+  { value: 'microsoft_teams', label: 'Teams' },
+] as const;
 
 export function MeetingsListView() {
   const [meetings, setMeetings] = useState<MeetingListItem[]>([]);
@@ -176,13 +184,6 @@ export function MeetingsListView() {
     return meetings.filter((m) => getFollowUpStatus(m) === followUpFilter);
   }, [meetings, followUpFilter]);
 
-  const platformChips = [
-    { value: 'all', label: 'All' },
-    { value: 'zoom', label: 'Zoom' },
-    { value: 'google_meet', label: 'Meet' },
-    { value: 'microsoft_teams', label: 'Teams' },
-  ];
-
   return (
     <div>
       {/* Header — safety-net framing */}
@@ -203,6 +204,7 @@ export function MeetingsListView() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Search meetings"
+            autoComplete="off"
             className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:border-indigo-500/50"
           />
         </div>
@@ -246,7 +248,7 @@ export function MeetingsListView() {
 
       {/* Platform filter chips */}
       <div className="flex items-center gap-1.5 flex-wrap mb-6">
-        {platformChips.map((chip) => (
+        {PLATFORM_CHIPS.map((chip) => (
           <button
             key={chip.value}
             onClick={() => { setPlatform(chip.value); setPage(1); }}
@@ -364,13 +366,13 @@ export function MeetingsListView() {
                     {meeting.draftCount > 0 && (
                       <span className="flex items-center gap-1 text-gray-400 light:text-gray-500">
                         <FileText className="w-3.5 h-3.5" />
-                        {meeting.draftCount} draft{meeting.draftCount !== 1 ? 's' : ''}
+                        <span className="tabular-nums">{meeting.draftCount}</span> draft{meeting.draftCount !== 1 ? 's' : ''}
                       </span>
                     )}
                     {meeting.sentCount > 0 && (
                       <span className="flex items-center gap-1 text-indigo-400">
                         <Send className="w-3.5 h-3.5" />
-                        {meeting.sentCount} sent
+                        <span className="tabular-nums">{meeting.sentCount}</span> sent
                       </span>
                     )}
                   </div>
@@ -384,7 +386,7 @@ export function MeetingsListView() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-6">
-          <p className="text-sm text-gray-400 light:text-gray-500">
+          <p className="text-sm text-gray-400 light:text-gray-500 tabular-nums">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">

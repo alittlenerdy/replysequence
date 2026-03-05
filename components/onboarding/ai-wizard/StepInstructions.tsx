@@ -29,10 +29,11 @@ export function StepInstructions({
       <div className="max-w-lg space-y-5">
         {/* Instructions */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          <label htmlFor="custom-instructions-wizard" className="block text-sm font-medium text-gray-300 mb-1.5">
             Custom Instructions <span className="text-gray-600 font-normal">(optional)</span>
           </label>
           <textarea
+            id="custom-instructions-wizard"
             value={instructions}
             onChange={(e) => onInstructionsChange(e.target.value)}
             placeholder="E.g., Always include a specific next step with a date."
@@ -60,10 +61,11 @@ export function StepInstructions({
 
         {/* Signature */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+          <label htmlFor="email-signature-wizard" className="block text-sm font-medium text-gray-300 mb-1.5">
             Email Signature <span className="text-gray-600 font-normal">(optional)</span>
           </label>
           <textarea
+            id="email-signature-wizard"
             value={signature}
             onChange={(e) => onSignatureChange(e.target.value)}
             placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp"}

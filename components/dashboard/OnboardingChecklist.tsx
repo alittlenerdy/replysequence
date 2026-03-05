@@ -81,7 +81,7 @@ function ChecklistItemRow({
           disabled={sampleLoading}
           className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
-          {sampleLoading ? 'Generating...' : (item.actionLabel || 'Try')}
+          {sampleLoading ? 'Generating\u2026' : (item.actionLabel || 'Try')}
           {!sampleLoading && <Sparkles className="w-3 h-3" />}
         </button>
       )}

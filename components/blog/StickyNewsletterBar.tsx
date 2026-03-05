@@ -113,7 +113,7 @@ export function StickyNewsletterBar() {
                     disabled={isSubmitting || !email}
                     className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
-                    {isSubmitting ? '...' : 'Subscribe'}
+                    {isSubmitting ? '\u2026' : 'Subscribe'}
                   </button>
                 </form>
               </>

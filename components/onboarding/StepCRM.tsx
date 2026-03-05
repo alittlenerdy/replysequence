@@ -250,6 +250,7 @@ export function StepCRM({
                   onChange={(e) => setAirtableApiKey(e.target.value)}
                   placeholder="Personal Access Token (pat\u2026)"
                   aria-label="Airtable API key"
+                  autoComplete="off"
                   className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
                 />
                 <input
@@ -258,8 +259,22 @@ export function StepCRM({
                   onChange={(e) => setAirtableBaseId(e.target.value)}
                   placeholder="Base ID (appXXXXXXXXXX)"
                   aria-label="Airtable Base ID"
+                  autoComplete="off"
                   className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
                 />
+                <div className="p-2.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    <span className="font-medium text-gray-300">Where to find these:</span>{' '}
+                    Create a Personal Access Token at{' '}
+                    <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
+                      airtable.com/create/tokens
+                    </a>
+                    . Required scopes: <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">data.records:read</code>,{' '}
+                    <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">data.records:write</code>,{' '}
+                    <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">schema.bases:read</code>.{' '}
+                    Your Base ID starts with <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">app</code> and is in your base URL.
+                  </p>
+                </div>
                 {airtableError && (
                   <p className="text-xs text-red-400">{airtableError}</p>
                 )}
@@ -280,7 +295,7 @@ export function StepCRM({
                     ) : (
                       <Check className="w-4 h-4" />
                     )}
-                    {connecting === 'airtable' ? 'Testing...' : 'Connect'}
+                    {connecting === 'airtable' ? 'Testing\u2026' : 'Connect'}
                   </button>
                 </div>
               </div>

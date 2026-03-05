@@ -103,7 +103,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
               Never Write Another{' '}
               <GradientText variant="amber" className="font-extrabold">Follow-Up</GradientText>{' '}
               From Scratch Again
@@ -243,7 +243,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               AI Speed, <GradientText variant="amber">Your Control</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
@@ -302,7 +302,7 @@ export default function LandingPage() {
               <Sparkles className="w-4 h-4 text-orange-400" aria-hidden="true" />
               <span className="text-sm font-medium text-orange-400">New Feature</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Stop Rereading Transcripts.{' '}
               <GradientText variant="amber">Ask Instead.</GradientText>
             </h2>
@@ -437,7 +437,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               From <GradientText variant="amber">Before</GradientText> to <GradientText>After</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
@@ -521,7 +521,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Real Leak Is Between <GradientText variant="amber">&apos;Great Call&apos;</GradientText> and <GradientText>&apos;Next Step&apos;</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
@@ -587,7 +587,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               How <GradientText>ReplySequence</GradientText> Works
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
@@ -686,7 +686,7 @@ export default function LandingPage() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
               <span className="text-sm font-medium text-indigo-400">Adaptive AI</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4 text-pretty">
               AI That Learns <GradientText variant="amber">Your Voice</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
@@ -735,7 +735,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Ready to <GradientText variant="amber">Close the Gap</GradientText> After Every Meeting?
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">

@@ -250,7 +250,9 @@ export function AICustomization() {
               <p className="text-sm text-indigo-200/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
             </div>
           </div>
-          <SaveStatusIndicator status={status} lastSavedAt={lastSavedAt} />
+          <div aria-live="polite">
+            <SaveStatusIndicator status={status} lastSavedAt={lastSavedAt} />
+          </div>
         </div>
         <div className="relative mt-4">
           <StepIndicator preferences={preferences} />
@@ -318,10 +320,11 @@ export function AICustomization() {
             </div>
 
             {/* Instructions */}
-            <label className="block text-xs text-gray-400 light:text-gray-500 mb-1.5">
+            <label htmlFor="custom-instructions" className="block text-xs text-gray-400 light:text-gray-500 mb-1.5">
               Added to every draft. E.g., &quot;Always mention our 30-day trial&quot;
             </label>
             <textarea
+              id="custom-instructions"
               value={preferences.aiCustomInstructions}
               onChange={(e) => setPreferences(p => ({ ...p, aiCustomInstructions: e.target.value }))}
               placeholder="E.g., Always include a specific next step with a date. Use my first name in the sign-off\u2026"
@@ -353,10 +356,11 @@ export function AICustomization() {
             </div>
 
             {/* Signature */}
-            <label className="block text-xs text-gray-400 light:text-gray-500 mb-1.5">
+            <label htmlFor="email-signature" className="block text-xs text-gray-400 light:text-gray-500 mb-1.5">
               Email signature (appended to every draft)
             </label>
             <textarea
+              id="email-signature"
               value={preferences.aiSignature}
               onChange={(e) => setPreferences(p => ({ ...p, aiSignature: e.target.value }))}
               placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp\n(555) 123-4567"}
@@ -384,6 +388,7 @@ export function AICustomization() {
                   min={1}
                   max={9999}
                   value={preferences.hourlyRate}
+                  autoComplete="off"
                   onChange={(e) => {
                     const val = parseInt(e.target.value, 10);
                     if (!isNaN(val) && val >= 1 && val <= 9999) {
@@ -587,6 +592,9 @@ function TemplateManager() {
                   </div>
 
                   {/* Custom Templates */}
+                  {customTemplates.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center py-4">No custom templates yet</p>
+                  )}
                   {customTemplates.length > 0 && (
                     <div className="bg-gray-800/30 light:bg-gray-50 rounded-xl p-4">
                       <h4 className="text-sm font-medium text-gray-400 light:text-gray-500 mb-3">Your Templates</h4>
@@ -603,7 +611,7 @@ function TemplateManager() {
                               </div>
                             </div>
                             <button
-                              onClick={() => handleDelete(t.id)}
+                              onClick={() => { if (window.confirm('Delete this template?')) handleDelete(t.id); }}
                               disabled={deleting === t.id}
                               className="shrink-0 ml-2 p-1.5 text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                               title="Delete template"
@@ -679,12 +687,15 @@ function CreateTemplateForm({
         onChange={(e) => setName(e.target.value)}
         placeholder="Template name"
         maxLength={100}
+        aria-label="Template name"
+        autoComplete="off"
         className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
       />
 
       <select
         value={meetingType}
         onChange={(e) => setMeetingType(e.target.value)}
+        aria-label="Meeting type"
         className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
       >
         <option value="">All meeting types</option>
@@ -701,6 +712,7 @@ function CreateTemplateForm({
         placeholder="Instructions for the AI. E.g., 'Focus on budget discussions and decision timelines. Include a pricing summary section.'"
         rows={4}
         maxLength={2000}
+        aria-label="Prompt instructions"
         className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
       />
       <div className="text-xs text-gray-600 text-right">{promptInstructions.length}/2000</div>

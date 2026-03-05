@@ -97,6 +97,7 @@ export function DashboardFilters({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             aria-label="Search meetings"
+            autoComplete="off"
             className="
               block w-full pl-9 pr-3 py-2
               border border-gray-700 light:border-gray-300
@@ -114,7 +115,7 @@ export function DashboardFilters({
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 light:hover:text-gray-700 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               aria-label="Clear search"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>

@@ -315,7 +315,7 @@ export default function GongComparisonPage() {
               >
                 <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
-              <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
+              <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want auto follow-up emails, not just conversation analytics</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need affordable pricing for a small team or solo selling</li>
@@ -334,7 +334,7 @@ export default function GongComparisonPage() {
               transition={{ type: 'spring', stiffness: 300 }}
               className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-indigo-200 overflow-hidden group"
             >
-              <h3 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Gong if...</h3>
+              <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Gong if...</h2>
               <p className="text-gray-400 light:text-gray-600 leading-relaxed">
                 You need <span className="text-gray-200 light:text-indigo-700 font-semibold">deep conversation analytics</span>,
                 pipeline forecasting, and enterprise-grade coaching tools for a large sales org.

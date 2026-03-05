@@ -133,7 +133,7 @@ export function DraftFeedback({
               disabled={isSubmitting}
               className="px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
-              {isSubmitting ? 'Saving...' : 'Save feedback'}
+              {isSubmitting ? 'Saving\u2026' : 'Save feedback'}
             </button>
             <button
               onClick={() => {

@@ -116,7 +116,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
                     </span>
                   </td>
                   <td className="py-4 px-4">
-                    <span className="font-semibold text-white light:text-gray-900 text-sm">
+                    <span className="font-semibold text-white light:text-gray-900 text-sm tabular-nums">
                       ${invoice.amount.toFixed(2)}
                     </span>
                   </td>

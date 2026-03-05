@@ -164,6 +164,7 @@ export function WaitlistAdmin() {
             value={inviteCount}
             onChange={(e) => setInviteCount(Math.max(1, parseInt(e.target.value) || 1))}
             aria-label="Number of invites"
+            autoComplete="off"
             className="w-20 px-3 py-1.5 bg-gray-700 light:bg-gray-100 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm text-center"
           />
           <span className="text-sm text-gray-400 light:text-gray-600">people by position</span>
@@ -173,7 +174,7 @@ export function WaitlistAdmin() {
             className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             <Send className="w-4 h-4" />
-            {inviting ? 'Sending...' : 'Send Invites'}
+            {inviting ? 'Sending\u2026' : 'Send Invites'}
           </button>
         </div>
         {inviteResult && (
@@ -245,7 +246,7 @@ export function WaitlistAdmin() {
                   const TierIcon = tier.icon;
                   return (
                     <tr key={entry.id} className="border-b border-gray-700/50 light:border-gray-100 hover:bg-gray-700/20 light:hover:bg-gray-50">
-                      <td className="px-4 py-3 text-gray-300 light:text-gray-700 font-mono">{entry.position}</td>
+                      <td className="px-4 py-3 text-gray-300 light:text-gray-700 font-mono tabular-nums">{entry.position}</td>
                       <td className="px-4 py-3 text-white light:text-gray-900 font-medium">{entry.email}</td>
                       <td className="px-4 py-3 text-gray-300 light:text-gray-700">{entry.name || '-'}</td>
                       <td className="px-4 py-3">
@@ -259,7 +260,7 @@ export function WaitlistAdmin() {
                           {tier.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-300 light:text-gray-700 font-mono">{entry.referralCount}</td>
+                      <td className="px-4 py-3 text-gray-300 light:text-gray-700 font-mono tabular-nums">{entry.referralCount}</td>
                       <td className="px-4 py-3 text-gray-400 light:text-gray-500 text-xs">{entry.utmSource || 'direct'}</td>
                       <td className="px-4 py-3 text-gray-400 light:text-gray-500 text-xs whitespace-nowrap">
                         {new Date(entry.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

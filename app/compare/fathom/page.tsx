@@ -323,7 +323,7 @@ export default function FathomComparisonPage() {
               >
                 <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
               </motion.div>
-              <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h3>
+              <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not just notes and summaries</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Your real bottleneck is writing emails after calls, not taking notes</li>
@@ -342,7 +342,7 @@ export default function FathomComparisonPage() {
               transition={{ type: 'spring', stiffness: 300 }}
               className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-gray-200 overflow-hidden group"
             >
-              <h3 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fathom if...</h3>
+              <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fathom if...</h2>
               <p className="text-gray-400 light:text-gray-600 leading-relaxed">
                 You want a <span className="text-gray-200 light:text-gray-800 font-semibold">generous free tier</span> for meeting notes
                 and summaries, with solid CRM integration for deal tracking.

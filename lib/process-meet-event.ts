@@ -765,8 +765,15 @@ async function fetchAndStoreMeetTranscript(
       .set({ status: 'ready', updatedAt: new Date() })
       .where(eq(meetings.id, meetingId));
 
-    // Generate draft email
-    await generateDraftForMeeting(meetingId, transcriptRecordId, fullText);
+    // Fetch meeting once for draft generation (avoid re-fetching inside generateDraftForMeeting)
+    const [meetingForDraft] = await db
+      .select()
+      .from(meetings)
+      .where(eq(meetings.id, meetingId))
+      .limit(1);
+
+    // Generate draft email, passing pre-fetched meeting to avoid re-query
+    await generateDraftForMeeting(meetingId, transcriptRecordId, fullText, meetingForDraft);
 
     log('info', '[MEET-10] Transcript processing complete', {
       meetingId,
@@ -805,19 +812,22 @@ async function fetchAndStoreMeetTranscript(
 
 /**
  * Generate draft email for a meeting
+ * Accepts an optional pre-fetched meeting record to avoid duplicate DB queries
  */
 async function generateDraftForMeeting(
   meetingId: string,
   transcriptId: string,
-  transcriptContent: string
+  transcriptContent: string,
+  prefetchedMeeting?: typeof meetings.$inferSelect | null
 ): Promise<void> {
   try {
-    // Fetch meeting details
-    const [meeting] = await db
+    // Use pre-fetched meeting or fetch from DB
+    const meeting = prefetchedMeeting ?? (await db
       .select()
       .from(meetings)
       .where(eq(meetings.id, meetingId))
-      .limit(1);
+      .limit(1)
+    )[0];
 
     if (!meeting) {
       log('error', '[MEET-9] Meeting not found for draft generation', { meetingId });

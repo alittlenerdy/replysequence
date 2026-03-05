@@ -98,7 +98,7 @@ export function BlogNewsletterSignup() {
                 disabled={isSubmitting || !email}
                 className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-indigo-500/20 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
-                {isSubmitting ? 'Subscribing...' : 'Subscribe'}
+                {isSubmitting ? 'Subscribing\u2026' : 'Subscribe'}
               </button>
             </form>
 
@@ -107,6 +107,8 @@ export function BlogNewsletterSignup() {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-red-400 text-sm mt-2"
+                role="alert"
+                aria-live="polite"
               >
                 {error}
               </motion.p>

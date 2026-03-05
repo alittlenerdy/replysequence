@@ -187,7 +187,7 @@ export default function IntegrationsPage() {
       {/* Hero */}
       <section className="pt-32 pb-16 px-4">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6 text-pretty">
             Connect Your{' '}
             <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
               Entire Stack
@@ -197,7 +197,7 @@ export default function IntegrationsPage() {
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
             Plug into Zoom, Meet, Teams, Gmail, Outlook, and 4 CRMs so every call becomes a ready-to-send follow-up and a clean CRM update — in seconds.
           </p>
-          <div className="flex items-center justify-center gap-4 text-sm text-gray-500 light:text-gray-400">
+          <div className="flex items-center justify-center gap-4 text-sm text-gray-500 light:text-gray-400 mb-6">
             <span className="flex items-center gap-1.5">
               <Zap className="w-4 h-4 text-amber-400" />
               9 integrations
@@ -205,6 +205,13 @@ export default function IntegrationsPage() {
             <span className="text-gray-700 light:text-gray-300">|</span>
             <span>No engineering required</span>
           </div>
+          <Link
+            href="/how-it-works"
+            className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300 light:hover:text-indigo-500 transition-colors"
+          >
+            See how it works
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

@@ -3,6 +3,7 @@
  * Server-side only - do not import in client components.
  */
 
+import { cache } from 'react';
 import { db } from './db';
 import { drafts, meetings, transcripts, users, zoomConnections, teamsConnections, meetConnections } from './db/schema';
 import { eq, desc, sql, and, ilike, or, isNull } from 'drizzle-orm';
@@ -10,9 +11,11 @@ import type { DraftStatus, MeetingStatus } from './db/schema';
 import { currentUser } from '@clerk/nextjs/server';
 
 /**
- * Get the current user's database ID from Clerk
+ * Get the current user's database ID from Clerk.
+ * Wrapped with React.cache() to deduplicate within a single server request —
+ * multiple calls from getDraftStats, getDraftsWithMeetings, etc. only hit the DB once.
  */
-async function getCurrentUserId(): Promise<string | null> {
+const getCurrentUserId = cache(async (): Promise<string | null> => {
   const user = await currentUser();
   if (!user) return null;
 
@@ -24,7 +27,7 @@ async function getCurrentUserId(): Promise<string | null> {
     .limit(1);
 
   return dbUser?.id || null;
-}
+});
 
 export interface DraftWithMeeting {
   id: string;

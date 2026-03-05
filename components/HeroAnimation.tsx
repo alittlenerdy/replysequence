@@ -314,7 +314,7 @@ export default function HeroAnimation() {
 
     updateRect();
     window.addEventListener('resize', updateRect);
-    window.addEventListener('scroll', updateRect);
+    window.addEventListener('scroll', updateRect, { passive: true });
 
     return () => {
       window.removeEventListener('resize', updateRect);

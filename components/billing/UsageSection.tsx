@@ -25,7 +25,7 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-sm text-gray-400 light:text-gray-500">Drafts generated</span>
-          <span className="text-sm font-medium text-white light:text-gray-900">
+          <span className="text-sm font-medium text-white light:text-gray-900 tabular-nums">
             {usage.draftsUsed}{isUnlimited ? '' : ` / ${usage.draftsLimit}`}
             {isUnlimited && (
               <span className="text-gray-500 ml-1">(unlimited)</span>

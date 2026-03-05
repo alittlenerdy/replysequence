@@ -113,7 +113,7 @@ async function PricingContent() {
       {/* Hero Section */}
       <section className={isLoggedIn ? 'pt-36 pb-4 px-4' : 'pt-32 pb-4 px-4'}>
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className={`font-display font-bold mb-6 text-white light:text-gray-900 ${isLoggedIn ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl lg:text-6xl'}`}>
+          <h1 className={`font-display font-bold mb-6 text-white light:text-gray-900 text-pretty ${isLoggedIn ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl lg:text-6xl'}`}>
             {isLoggedIn ? 'Manage Your Plan' : (
               <>
                 Simple, Transparent{' '}
@@ -160,9 +160,9 @@ async function PricingContent() {
         <section className="py-12 px-4">
           <div className="max-w-3xl mx-auto">
             <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-8 md:p-10 text-center">
-              <h3 className="text-xl font-bold text-white light:text-gray-900 mb-4">
+              <h2 className="text-xl font-bold text-white light:text-gray-900 mb-4">
                 The math is simple
-              </h3>
+              </h2>
               <p className="text-gray-300 light:text-gray-700 leading-relaxed max-w-2xl mx-auto">
                 If a rep spends 10 hours/month writing follow-ups and their time is worth $100/hr, that is $1,000/month in manual work. ReplySequence turns that into minutes and pays for itself after your first few meetings.
               </p>

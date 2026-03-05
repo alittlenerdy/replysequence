@@ -41,26 +41,29 @@ export async function POST(request: NextRequest) {
     if ('error' in parsed) return parsed.error;
     const { meetingId, templateId } = parsed.data;
 
-    // Get meeting (must belong to user)
-    const [meeting] = await db
-      .select()
-      .from(meetings)
-      .where(and(
-        eq(meetings.id, meetingId),
-        eq(meetings.userId, dbUser.id)
-      ))
-      .limit(1);
+    // Get meeting and transcript in parallel (independent queries)
+    const [meetingResult, transcriptResult] = await Promise.all([
+      db
+        .select()
+        .from(meetings)
+        .where(and(
+          eq(meetings.id, meetingId),
+          eq(meetings.userId, dbUser.id)
+        ))
+        .limit(1),
+      db
+        .select()
+        .from(transcripts)
+        .where(eq(transcripts.meetingId, meetingId))
+        .limit(1),
+    ]);
+
+    const [meeting] = meetingResult;
+    const [transcript] = transcriptResult;
 
     if (!meeting) {
       return NextResponse.json({ error: 'Meeting not found' }, { status: 404 });
     }
-
-    // Get transcript
-    const [transcript] = await db
-      .select()
-      .from(transcripts)
-      .where(eq(transcripts.meetingId, meetingId))
-      .limit(1);
 
     if (!transcript || !transcript.content) {
       return NextResponse.json({ error: 'No transcript found for this meeting' }, { status: 404 });

@@ -889,26 +889,26 @@ async function fetchAndStoreTranscript(
       });
     }
 
-    // Track meeting_processed analytics event (non-blocking)
-    // Get meeting info for analytics
-    const [meetingForAnalytics] = await db
+    // Fetch meeting once for both analytics and draft generation
+    const [meeting] = await db
       .select()
       .from(meetings)
       .where(eq(meetings.id, meetingId))
       .limit(1);
 
-    if (meetingForAnalytics) {
+    // Track meeting_processed analytics event (non-blocking)
+    if (meeting) {
       // Must await for serverless flush to complete
       try {
         await trackEvent(
-          meetingForAnalytics.hostEmail || `zoom-${zoomMeetingId}`,
+          meeting.hostEmail || `zoom-${zoomMeetingId}`,
           'meeting_processed',
           {
             platform: 'zoom',
             meeting_id: meetingId,
             transcript_length: fullText.length,
             speakers_count: segments.length > 0 ? new Set(segments.map(s => s.speaker)).size : 0,
-            duration_minutes: meetingForAnalytics.duration || 0,
+            duration_minutes: meeting.duration || 0,
           }
         );
       } catch { /* Analytics should never fail the operation */ }
@@ -916,12 +916,6 @@ async function fetchAndStoreTranscript(
 
     // Draft generation
     try {
-      const [meeting] = await db
-        .select()
-        .from(meetings)
-        .where(eq(meetings.id, meetingId))
-        .limit(1);
-
       if (!meeting) {
         log('error', 'Meeting not found for draft generation', { meetingId, transcriptId });
         return;

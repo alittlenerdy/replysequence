@@ -430,32 +430,32 @@ async function fetchAndStoreTeamsTranscript(
       .set({ status: 'ready', updatedAt: new Date() })
       .where(eq(meetings.id, meetingId));
 
-    // Track meeting_processed analytics event (non-blocking)
-    const [meetingForAnalytics] = await db
+    // Fetch meeting once for both analytics and draft generation
+    const [meeting] = await db
       .select()
       .from(meetings)
       .where(eq(meetings.id, meetingId))
       .limit(1);
 
-    if (meetingForAnalytics) {
-      // Must await for serverless flush to complete
+    if (meeting) {
+      // Track meeting_processed analytics event (non-blocking)
       try {
         await trackEvent(
-          meetingForAnalytics.hostEmail || `teams-${meetingId}`,
+          meeting.hostEmail || `teams-${meetingId}`,
           'meeting_processed',
           {
             platform: 'teams',
             meeting_id: meetingId,
             transcript_length: fullText.length,
             speakers_count: segments.length > 0 ? new Set(segments.map(s => s.speaker)).size : 0,
-            duration_minutes: meetingForAnalytics.duration || 0,
+            duration_minutes: meeting.duration || 0,
           }
         );
       } catch { /* Analytics should never fail the operation */ }
     }
 
-    // Generate draft email
-    await generateDraftForMeeting(meetingId, transcriptRecordId, fullText);
+    // Generate draft email, passing pre-fetched meeting to avoid re-query
+    await generateDraftForMeeting(meetingId, transcriptRecordId, fullText, meeting);
 
     log('info', 'Teams transcript processing complete', {
       meetingId,
@@ -480,19 +480,22 @@ async function fetchAndStoreTeamsTranscript(
 
 /**
  * Generate draft email for a meeting
+ * Accepts an optional pre-fetched meeting record to avoid duplicate DB queries
  */
 async function generateDraftForMeeting(
   meetingId: string,
   transcriptId: string,
-  transcriptContent: string
+  transcriptContent: string,
+  prefetchedMeeting?: typeof meetings.$inferSelect | null
 ): Promise<void> {
   try {
-    // Fetch meeting details
-    const [meeting] = await db
+    // Use pre-fetched meeting or fetch from DB
+    const meeting = prefetchedMeeting ?? (await db
       .select()
       .from(meetings)
       .where(eq(meetings.id, meetingId))
-      .limit(1);
+      .limit(1)
+    )[0];
 
     if (!meeting) {
       log('error', 'Meeting not found for draft generation', { meetingId });

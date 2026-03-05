@@ -15,7 +15,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { log } from './claude-api';
 
 // Haiku model for cost-effective grading
-export const HAIKU_MODEL = 'claude-haiku-4-20250514';
+export const HAIKU_MODEL = 'claude-haiku-4-5-20251001';
 
 // Haiku pricing per million tokens
 export const HAIKU_PRICING = {

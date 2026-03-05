@@ -74,7 +74,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
         <div className="relative space-y-6">
           {/* Main dollar value - BIG and prominent */}
           <div className="text-center py-4">
-            <div className="text-5xl md:text-6xl font-black text-amber-400 mb-2">
+            <div className="text-5xl md:text-6xl font-black text-amber-400 mb-2 tabular-nums">
               <AnimatedDollar value={roi.dollarValue} />
             </div>
             <p className="text-sm text-gray-400 light:text-gray-500">estimated time value saved</p>
@@ -86,7 +86,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Clock className="w-4 h-4 text-amber-400" />
               </div>
-              <div className="text-2xl font-bold text-white light:text-gray-900">
+              <div className="text-2xl font-bold text-white light:text-gray-900 tabular-nums">
                 <AnimatedNumber value={roi.hoursSaved} decimals={1} />
                 <span className="text-sm text-gray-400 ml-1">hrs</span>
               </div>
@@ -97,7 +97,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
               <div className="flex items-center justify-center gap-1 mb-1">
                 <Zap className="w-4 h-4 text-amber-400" />
               </div>
-              <div className="text-2xl font-bold text-white light:text-gray-900">
+              <div className="text-2xl font-bold text-white light:text-gray-900 tabular-nums">
                 <AnimatedNumber value={emailsGenerated} />
               </div>
               <p className="text-xs text-gray-500">emails</p>
@@ -107,7 +107,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
               <div className="flex items-center justify-center gap-1 mb-1">
                 <TrendingUp className="w-4 h-4 text-blue-400" />
               </div>
-              <div className="text-2xl font-bold text-white light:text-gray-900">
+              <div className="text-2xl font-bold text-white light:text-gray-900 tabular-nums">
                 ${roi.hourlyRate}
               </div>
               <p className="text-xs text-gray-500">/hour rate</p>

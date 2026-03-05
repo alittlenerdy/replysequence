@@ -71,7 +71,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
         exit={{ opacity: 0, y: 100 }}
         className="fixed bottom-4 right-4 z-50"
       >
-        <div className="bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+        <div className="bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden" aria-live="polite" role="status">
           {/* Header - always visible */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -90,8 +90,8 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
                   </div>
                   <span className="text-sm font-medium text-white">
                     {processingCount === 1
-                      ? 'Processing meeting...'
-                      : `Processing ${processingCount} meetings...`}
+                      ? 'Processing meeting\u2026'
+                      : `Processing ${processingCount} meetings\u2026`}
                   </span>
                 </>
               ) : completedCount > 0 ? (
@@ -122,7 +122,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
                 transition={{ duration: 0.2 }}
                 className="border-t border-gray-700"
               >
-                <div className="p-3 space-y-2 max-h-48 overflow-y-auto">
+                <div className="p-3 space-y-2 max-h-48 overflow-y-auto overscroll-contain">
                   {/* Processing meetings */}
                   {meetings.map((meeting) => (
                     <div

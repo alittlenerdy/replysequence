@@ -41,7 +41,7 @@ function formatRelativeTime(date: Date, nowMs: number): string {
 
 // Format time - requires nowMs to be > 0 (client-side) to avoid hydration mismatch
 function formatTime(date: Date, isMounted: boolean): string {
-  if (!isMounted) return '...';
+  if (!isMounted) return '\u2026';
   return date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',

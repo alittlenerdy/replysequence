@@ -155,11 +155,6 @@ export function CommandPalette() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, selectedIndex, filteredCommands, runCommand]);
 
-  // Reset selection when query changes
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
-
   const categoryLabels: Record<string, string> = {
     navigation: 'Navigation',
     action: 'Actions',
@@ -223,8 +218,9 @@ export function CommandPalette() {
                   type="text"
                   placeholder="Type a command or search\u2026"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
                   aria-label="Search commands"
+                  autoComplete="off"
                   className="flex-1 bg-transparent text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 focus-visible:outline-none text-sm"
                 />
                 <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-gray-500 bg-gray-800 light:bg-gray-100 rounded border border-gray-700 light:border-gray-200">
@@ -233,7 +229,7 @@ export function CommandPalette() {
               </div>
 
               {/* Results */}
-              <div className="max-h-[300px] overflow-y-auto py-2">
+              <div className="max-h-[300px] overflow-y-auto py-2 overscroll-contain">
                 {filteredCommands.length === 0 ? (
                   <div className="px-4 py-8 text-center text-sm text-gray-500">
                     No commands found for &quot;{query}&quot;

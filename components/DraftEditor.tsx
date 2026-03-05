@@ -101,7 +101,7 @@ export function DraftEditor({
           onChange={(e) => setBody(e.target.value)}
           rows={15}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-transparent font-mono text-sm text-gray-900 resize-y"
-          placeholder="Email body..."
+          placeholder="Email body\u2026"
         />
       </div>
 
@@ -130,7 +130,7 @@ export function DraftEditor({
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Saving...
+              Saving{'\u2026'}
             </>
           ) : (
             'Save Changes'

@@ -63,18 +63,43 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
   );
 }
 
+// Static data arrays hoisted to module scope to avoid re-creation on every render
+const DASHBOARD_EMAILS = [
+  { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
+  { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
+  { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
+  { name: 'Alex Kim', subject: 'Budget Review Follow-up', status: 'sent' },
+  { name: 'Jordan Lee', subject: 'Re: Technical Integration', status: 'sent' },
+  { name: 'Maria Garcia', subject: 'Quarterly Planning Sync', status: 'draft' },
+  { name: 'David Park', subject: 'Follow-up: Contract Terms', status: 'pending' },
+] as const;
+
+const MEETING_LIST_ITEMS = [
+  { platform: 'Zoom', color: '#2D8CFF', time: '10:00 AM', title: 'Q1 Pipeline Review', host: 'Sarah C.' },
+  { platform: 'Teams', color: '#5B5FC7', time: '2:30 PM', title: 'Product Demo Call', host: 'Mike J.' },
+  { platform: 'Meet', color: '#00897B', time: '4:00 PM', title: 'Client Onboarding', host: 'You' },
+] as const;
+
+const CRM_PLATFORMS = [
+  { name: 'HubSpot', color: '#FF7A59' },
+  { name: 'Salesforce', color: '#00A1E0' },
+  { name: 'Sheets', color: '#34A853' },
+  { name: 'Airtable', color: '#18BFFF' },
+] as const;
+
+const CRM_SYNC_EVENTS = [
+  { contact: 'Sarah C.', action: 'Contact updated', platform: 0 },
+  { contact: 'Mike J.', action: 'Deal created', platform: 1 },
+  { contact: 'Emily D.', action: 'Note added', platform: 2 },
+  { contact: 'Alex K.', action: 'Activity logged', platform: 0 },
+] as const;
+
+const CHART_BARS = [40, 65, 45, 80, 55, 70, 60] as const;
+
+const SETTINGS_ITEMS = ['Tone: Professional', 'Auto-send: Off', 'Template: Default'] as const;
+
 // Simulated Dashboard Preview with animated stats and email list
 function DashboardPreview() {
-  const emails = [
-    { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
-    { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
-    { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
-    { name: 'Alex Kim', subject: 'Budget Review Follow-up', status: 'sent' },
-    { name: 'Jordan Lee', subject: 'Re: Technical Integration', status: 'sent' },
-    { name: 'Maria Garcia', subject: 'Quarterly Planning Sync', status: 'draft' },
-    { name: 'David Park', subject: 'Follow-up: Contract Terms', status: 'pending' },
-  ];
-
   return (
     <div className="w-full h-full min-h-[280px] bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-4">
       {/* Mini header */}
@@ -119,7 +144,7 @@ function DashboardPreview() {
 
       {/* Email list with contact names */}
       <div className="space-y-2">
-        {emails.map((email, i) => (
+        {DASHBOARD_EMAILS.map((email, i) => (
           <motion.div
             key={email.name}
             className="flex items-center gap-2 p-1.5 bg-gray-900/30 light:bg-gray-100/80 rounded-lg"
@@ -230,12 +255,6 @@ function DraftEditorPreview() {
 
 // Simulated Meeting List Preview with realistic meeting entries
 function MeetingListPreview() {
-  const meetings = [
-    { platform: 'Zoom', color: '#2D8CFF', time: '10:00 AM', title: 'Q1 Pipeline Review', host: 'Sarah C.' },
-    { platform: 'Teams', color: '#5B5FC7', time: '2:30 PM', title: 'Product Demo Call', host: 'Mike J.' },
-    { platform: 'Meet', color: '#00897B', time: '4:00 PM', title: 'Client Onboarding', host: 'You' },
-  ];
-
   // Platform-specific icons as mini SVGs
   const PlatformIcon = ({ platform, color }: { platform: string; color: string }) => {
     if (platform === 'Zoom') {
@@ -262,7 +281,7 @@ function MeetingListPreview() {
 
   return (
     <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-2 space-y-2 overflow-hidden">
-      {meetings.map((meeting, i) => (
+      {MEETING_LIST_ITEMS.map((meeting, i) => (
         <motion.div
           key={meeting.platform}
           className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-900/50 light:bg-gray-100"
@@ -308,25 +327,11 @@ function MeetingListPreview() {
 
 // CRM Preview with animated data flow, contact cards, and sync activity
 function CRMPreview() {
-  const platforms = [
-    { name: 'HubSpot', color: '#FF7A59' },
-    { name: 'Salesforce', color: '#00A1E0' },
-    { name: 'Sheets', color: '#34A853' },
-    { name: 'Airtable', color: '#18BFFF' },
-  ];
-
-  const syncEvents = [
-    { contact: 'Sarah C.', action: 'Contact updated', platform: 0 },
-    { contact: 'Mike J.', action: 'Deal created', platform: 1 },
-    { contact: 'Emily D.', action: 'Note added', platform: 2 },
-    { contact: 'Alex K.', action: 'Activity logged', platform: 0 },
-  ];
-
   return (
     <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
       {/* Platform icons row with animated connection lines */}
       <div className="flex items-center justify-center gap-3 mb-3 relative">
-        {platforms.map((platform, i) => (
+        {CRM_PLATFORMS.map((platform, i) => (
           <div key={platform.name} className="flex items-center">
             <motion.div
               className="flex flex-col items-center gap-1"
@@ -364,13 +369,13 @@ function CRMPreview() {
             </motion.div>
 
             {/* Animated data packets flowing between platforms */}
-            {i < platforms.length - 1 && (
+            {i < CRM_PLATFORMS.length - 1 && (
               <div className="relative w-8 h-4 mx-0.5 -mt-3">
                 {[0, 1, 2].map((packet) => (
                   <motion.div
                     key={packet}
                     className="absolute top-1/2 w-1.5 h-1.5 rounded-full"
-                    style={{ backgroundColor: platforms[i + 1].color }}
+                    style={{ backgroundColor: CRM_PLATFORMS[i + 1].color }}
                     animate={{
                       x: [-2, 30],
                       opacity: [0, 1, 1, 0],
@@ -392,7 +397,7 @@ function CRMPreview() {
 
       {/* Live sync feed - scrolling activity log */}
       <div className="space-y-1.5">
-        {syncEvents.map((event, i) => (
+        {CRM_SYNC_EVENTS.map((event, i) => (
           <motion.div
             key={event.contact}
             className="flex items-center gap-2 px-2 py-1 rounded-md bg-gray-900/40 light:bg-gray-100/80"
@@ -403,7 +408,7 @@ function CRMPreview() {
           >
             <motion.div
               className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-              style={{ backgroundColor: platforms[event.platform].color }}
+              style={{ backgroundColor: CRM_PLATFORMS[event.platform].color }}
               animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
             />
@@ -431,7 +436,7 @@ function CRMPreview() {
           animate={{ scale: [1, 1.5, 1] }}
           transition={{ duration: 1, repeat: Infinity }}
         />
-        <span className="text-[9px] text-indigo-400 light:text-indigo-600 font-medium">Syncing...</span>
+        <span className="text-[9px] text-indigo-400 light:text-indigo-600 font-medium">Syncing\u2026</span>
         {/* Mini progress bar */}
         <div className="w-12 h-1 bg-gray-700 light:bg-gray-300 rounded-full overflow-hidden">
           <motion.div
@@ -447,11 +452,9 @@ function CRMPreview() {
 
 // Animated Chart with growing bars
 function ChartPreview() {
-  const bars = [40, 65, 45, 80, 55, 70, 60];
-
   return (
     <div className="w-full h-20 flex items-end justify-between gap-1 px-2">
-      {bars.map((height, i) => (
+      {CHART_BARS.map((height, i) => (
         <motion.div
           key={i}
           className="flex-1 bg-gradient-to-t from-indigo-500 to-indigo-700 rounded-t"
@@ -476,7 +479,7 @@ function ChartPreview() {
 function SettingsPreview() {
   return (
     <div className="w-full h-28 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 space-y-2">
-      {['Tone: Professional', 'Auto-send: Off', 'Template: Default'].map((setting, i) => (
+      {SETTINGS_ITEMS.map((setting, i) => (
         <motion.div
           key={setting}
           className="flex items-center justify-between"

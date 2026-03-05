@@ -64,9 +64,9 @@ function TrialCountdown({ trialEnd }: { trialEnd: string }) {
     <div className="flex items-center gap-2 text-sm text-indigo-400">
       <Clock className="w-4 h-4" />
       <span>
-        {daysRemaining > 0
+        <span className="tabular-nums">{daysRemaining > 0
           ? `${daysRemaining} day${daysRemaining === 1 ? '' : 's'} left in trial`
-          : 'Trial ends today'}
+          : 'Trial ends today'}</span>
       </span>
     </div>
   );
@@ -113,7 +113,7 @@ export function PlanHeader({ billing, onScrollToPlans }: PlanHeaderProps) {
             {billing.subscription ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-bold text-white light:text-gray-900">
+                  <span className="text-3xl font-bold text-white light:text-gray-900 tabular-nums">
                     ${(billing.subscription.plan.amount / 100).toFixed(0)}
                   </span>
                   <span className="text-gray-400 light:text-gray-500">

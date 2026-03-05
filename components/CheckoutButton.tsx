@@ -112,7 +112,7 @@ export function CheckoutButton({
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              Processing...
+              Processing{'\u2026'}
             </>
           ) : (
             children || 'Downgrade'
@@ -152,7 +152,7 @@ export function CheckoutButton({
         {loading ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            Processing...
+            Processing{'\u2026'}
           </>
         ) : (
           children || 'Upgrade'

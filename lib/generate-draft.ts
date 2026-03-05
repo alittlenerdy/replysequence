@@ -194,10 +194,11 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     template = getDefaultTemplate(detectionResult.meetingType);
   }
 
-  // Look up user's AI preferences
+  // Look up user's AI preferences and style profile in a single query
   let userAiTone: string | null = null;
   let userCustomInstructions: string | null = null;
   let userSignature: string | null = null;
+  let styleProfile = null;
   if (userId) {
     try {
       const [userPrefs] = await db
@@ -205,6 +206,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
           aiTone: users.aiTone,
           aiCustomInstructions: users.aiCustomInstructions,
           aiSignature: users.aiSignature,
+          styleProfile: users.styleProfile,
         })
         .from(users)
         .where(eq(users.id, userId))
@@ -213,6 +215,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         userAiTone = userPrefs.aiTone;
         userCustomInstructions = userPrefs.aiCustomInstructions;
         userSignature = userPrefs.aiSignature;
+        styleProfile = userPrefs.styleProfile ?? null;
       }
     } catch {
       // Non-blocking — use defaults if lookup fails
@@ -244,19 +247,10 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
   };
   const mappedTone = userAiTone ? toneMap[userAiTone] : undefined;
 
-  // Fetch flywheel context (style profile + contact memory)
-  let styleProfile = null;
+  // Fetch flywheel context (contact memory — style profile already fetched above)
   let contactContext = null;
   if (userId) {
     try {
-      // Style profile is already on the user record
-      const [userWithProfile] = await db
-        .select({ styleProfile: users.styleProfile })
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
-      styleProfile = userWithProfile?.styleProfile ?? null;
-
       // Contact memory: look up recipient email
       const recipientEmail = context.recipientName
         ? undefined // recipientName is a name, not email - need email for lookup

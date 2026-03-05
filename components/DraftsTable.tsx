@@ -126,6 +126,12 @@ export function DraftsTable({
     [drafts, selectedIds]
   );
 
+  // Memoize unsent selected drafts to avoid repeated .filter() calls in JSX
+  const unsentSelectedDrafts = useMemo(
+    () => selectedDrafts.filter((d) => d.status !== 'sent'),
+    [selectedDrafts]
+  );
+
   const handleBulkSend = async () => {
     const toSend = selectedDrafts.filter((d) => d.status !== 'sent' && d.meetingHostEmail);
     if (toSend.length === 0) return;
@@ -208,7 +214,7 @@ export function DraftsTable({
   // Format date only after mount to avoid hydration mismatch
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
-    if (!isMounted) return '...'; // Placeholder during SSR
+    if (!isMounted) return '\u2026'; // Placeholder during SSR
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -220,7 +226,7 @@ export function DraftsTable({
 
   const truncateSubject = (subject: string, maxLength = 50) => {
     if (subject.length <= maxLength) return subject;
-    return subject.substring(0, maxLength) + '...';
+    return subject.substring(0, maxLength) + '\u2026';
   };
 
   const getPlatformIcon = (platform: string) => {
@@ -281,7 +287,7 @@ export function DraftsTable({
   // Format date for mobile (shorter) - hydration safe
   const formatDateShort = (date: Date | null) => {
     if (!date) return '-';
-    if (!isMounted) return '...';
+    if (!isMounted) return '\u2026';
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -386,7 +392,7 @@ export function DraftsTable({
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white light:text-gray-900">Follow-ups</h2>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-400 light:text-gray-500">{total} total</span>
+              <span className="text-sm text-gray-400 light:text-gray-500 tabular-nums">{total} total</span>
               {total > 0 && (
                 <a
                   href="/api/drafts/export"
@@ -423,13 +429,13 @@ export function DraftsTable({
                     disabled={bulkDeleting}
                     className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
-                    {bulkDeleting ? 'Deleting...' : 'Confirm Delete'}
+                    {bulkDeleting ? 'Deleting\u2026' : 'Confirm Delete'}
                   </button>
                 </div>
               </div>
             ) : showBulkSendConfirm ? (
               <div className="flex items-center justify-between gap-3 flex-wrap">
-                <span className="text-sm text-indigo-300">Send {selectedDrafts.filter((d) => d.status !== 'sent').length} email{selectedDrafts.filter((d) => d.status !== 'sent').length > 1 ? 's' : ''} to their meeting hosts?</span>
+                <span className="text-sm text-indigo-300">Send {unsentSelectedDrafts.length} email{unsentSelectedDrafts.length > 1 ? 's' : ''} to their meeting hosts?</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowBulkSendConfirm(false)}
@@ -443,7 +449,7 @@ export function DraftsTable({
                     disabled={bulkSending}
                     className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
-                    {bulkSending ? 'Sending...' : 'Confirm Send'}
+                    {bulkSending ? 'Sending\u2026' : 'Confirm Send'}
                   </button>
                 </div>
               </div>
@@ -460,7 +466,7 @@ export function DraftsTable({
                 </div>
                 <div className="flex items-center gap-2">
                   {bulkProgress && (
-                    <span className="text-xs text-indigo-300">
+                    <span className="text-xs text-indigo-300 tabular-nums">
                       {bulkProgress.done}/{bulkProgress.total}
                     </span>
                   )}
@@ -476,10 +482,10 @@ export function DraftsTable({
                   </button>
                   <button
                     onClick={() => setShowBulkSendConfirm(true)}
-                    disabled={bulkSending || bulkDeleting || selectedDrafts.every((d) => d.status === 'sent')}
+                    disabled={bulkSending || bulkDeleting || unsentSelectedDrafts.length === 0}
                     className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
-                    {bulkSending ? 'Sending...' : `Send ${selectedDrafts.filter((d) => d.status !== 'sent').length}`}
+                    {bulkSending ? 'Sending\u2026' : `Send ${unsentSelectedDrafts.length}`}
                   </button>
                 </div>
               </div>
@@ -490,19 +496,17 @@ export function DraftsTable({
         {/* Mobile Card Layout - shown on small screens */}
         <div className="md:hidden divide-y divide-gray-700/50 light:divide-gray-200">
           {drafts.map((draft, index) => (
-            <div
+            <button
               key={draft.id}
-              role="button"
-              tabIndex={0}
+              type="button"
               className={`
-                p-4 transition-[opacity,transform,background-color] duration-300 ease-out
+                p-4 transition-[opacity,transform,background-color] duration-300 ease-out w-full text-left
                 ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
                 ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'}
                 active:bg-gray-700/90 light:active:bg-indigo-100
                 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
               `}
               onClick={() => setSelectedDraft(draft)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDraft(draft); } }}
             >
               {/* Top row: Checkbox + Platform icon + Meeting name + Date */}
               <div className="flex items-start gap-3 mb-2">
@@ -517,6 +521,7 @@ export function DraftsTable({
                       onChange={() => toggleSelect(draft.id)}
                       className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                     />
+                    <span className="sr-only">Select draft</span>
                   </label>
                 )}
                 <div className="shrink-0">{getPlatformIcon(draft.meetingPlatform)}</div>
@@ -580,7 +585,7 @@ export function DraftsTable({
                   View
                 </button>
               </div>
-            </div>
+            </button>
           ))}
         </div>
 
@@ -597,6 +602,7 @@ export function DraftsTable({
                       onChange={toggleSelectAll}
                       className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                     />
+                    <span className="sr-only">Select all drafts</span>
                   </label>
                 </th>
                 <th className="w-[28%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
@@ -639,6 +645,7 @@ export function DraftsTable({
                           onChange={() => toggleSelect(draft.id)}
                           className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                         />
+                        <span className="sr-only">Select draft</span>
                       </label>
                     ) : (
                       <div className="w-4" />
@@ -686,7 +693,7 @@ export function DraftsTable({
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       {draft.qualityScore !== null ? (
-                        <span className={`text-xs font-medium ${
+                        <span className={`text-xs font-medium tabular-nums ${
                           draft.qualityScore >= 80 ? 'text-amber-400' :
                           draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
                         }`}>
@@ -722,7 +729,7 @@ export function DraftsTable({
         {totalPages > 1 && (
           <div className="px-4 sm:px-6 py-4 border-t border-gray-700/50 light:border-gray-200 bg-gray-800/50 light:bg-gray-50/80">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-400 light:text-gray-500">
+              <div className="text-sm text-gray-400 light:text-gray-500 tabular-nums">
                 Page {page} of {totalPages}
               </div>
               <div className="flex gap-2">

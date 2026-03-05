@@ -146,7 +146,7 @@ export default function SecurityPage() {
                   Active
                 </span>
               </div>
-              <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">{feature.title}</h3>
+              <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">{feature.title}</h2>
               <p className="text-sm text-gray-400 light:text-gray-600">{feature.description}</p>
             </div>
           ))}

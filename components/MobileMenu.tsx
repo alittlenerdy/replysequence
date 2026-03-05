@@ -75,7 +75,7 @@ export default function MobileMenu() {
       {/* Mobile Menu Overlay - rendered via portal to escape header stacking context */}
       {portalTarget && createPortal(
         <div
-          className={`fixed inset-0 backdrop-blur-lg md:hidden transition-[opacity,visibility] duration-300 ${
+          className={`fixed inset-0 backdrop-blur-lg md:hidden transition-[opacity,visibility] duration-300 overscroll-contain ${
             isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
           }`}
           style={{

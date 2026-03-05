@@ -405,7 +405,7 @@ export default function HowItWorksPage() {
               </span>
             </motion.div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-pretty">
               How <GradientText>ReplySequence</GradientText> Works
             </h1>
             <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
@@ -693,7 +693,7 @@ export default function HowItWorksPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Frequently Asked <GradientText>Questions</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600">
@@ -743,7 +743,7 @@ export default function HowItWorksPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Ready to Save Hours on <GradientText>Follow-ups</GradientText>?
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8 max-w-xl mx-auto">

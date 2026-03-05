@@ -971,7 +971,7 @@ export function IntegrationSettings() {
               <div className="flex-1">
                 <p className="text-sm text-red-300 light:text-red-600">{errorBanner}</p>
               </div>
-              <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+              <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Dismiss error">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -982,7 +982,7 @@ export function IntegrationSettings() {
             <div className="mb-6 p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-3">
               <Check className="w-5 h-5 text-indigo-400 flex-shrink-0" />
               <p className="text-sm text-indigo-300 light:text-indigo-600 flex-1">{successBanner}</p>
-              <button onClick={() => setSuccessBanner(null)} className="text-indigo-400 hover:text-indigo-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+              <button onClick={() => setSuccessBanner(null)} className="text-indigo-400 hover:text-indigo-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Dismiss notification">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1107,10 +1107,10 @@ export function IntegrationSettings() {
           {/* Airtable Configuration Form Modal */}
           {showAirtableForm && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-md w-full">
+              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-md w-full overscroll-contain">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">Connect Airtable</h3>
-                  <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+                  <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Close">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -1124,23 +1124,26 @@ export function IntegrationSettings() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                    <label htmlFor="airtable-token" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
                       Personal Access Token
                     </label>
                     <input
+                      id="airtable-token"
                       type="password"
                       value={airtableApiKey}
                       onChange={(e) => setAirtableApiKey(e.target.value)}
-                      placeholder="pat..."
+                      placeholder="pat\u2026"
+                      autoComplete="off"
                       className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                    <label htmlFor="airtable-base-id" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
                       Base ID
                     </label>
                     <input
+                      id="airtable-base-id"
                       type="text"
                       value={airtableBaseId}
                       onChange={(e) => setAirtableBaseId(e.target.value)}
@@ -1154,10 +1157,11 @@ export function IntegrationSettings() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                      <label htmlFor="airtable-contacts" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
                         Contacts Table
                       </label>
                       <input
+                        id="airtable-contacts"
                         type="text"
                         value={airtableContactsTable}
                         onChange={(e) => setAirtableContactsTable(e.target.value)}
@@ -1165,10 +1169,11 @@ export function IntegrationSettings() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
+                      <label htmlFor="airtable-meetings" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
                         Meetings Table
                       </label>
                       <input
+                        id="airtable-meetings"
                         type="text"
                         value={airtableMeetingsTable}
                         onChange={(e) => setAirtableMeetingsTable(e.target.value)}
@@ -1178,7 +1183,7 @@ export function IntegrationSettings() {
                   </div>
 
                   {airtableError && (
-                    <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                    <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2" role="alert" aria-live="polite">
                       {airtableError}
                     </div>
                   )}
@@ -1200,7 +1205,7 @@ export function IntegrationSettings() {
                       ) : (
                         <Check className="w-4 h-4" />
                       )}
-                      {airtableConnecting ? 'Testing...' : 'Test & Connect'}
+                      {airtableConnecting ? 'Testing\u2026' : 'Test & Connect'}
                     </button>
                   </div>
                 </div>
@@ -1211,10 +1216,10 @@ export function IntegrationSettings() {
           {/* HubSpot Field Mapping Modal */}
           {showHubspotFieldMapping && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">HubSpot Field Mappings</h3>
-                  <button onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+                  <button onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Close">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -1296,7 +1301,7 @@ export function IntegrationSettings() {
                     ) : (
                       <Check className="w-4 h-4" />
                     )}
-                    {hubspotMappingSaving ? 'Saving...' : 'Save Mappings'}
+                    {hubspotMappingSaving ? 'Saving\u2026' : 'Save Mappings'}
                   </button>
                 </div>
               </div>
@@ -1306,10 +1311,10 @@ export function IntegrationSettings() {
           {/* Google Sheets Configuration Modal */}
           {showSheetsConfig && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">Google Sheets Configuration</h3>
-                  <button onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+                  <button onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Close">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -1399,7 +1404,7 @@ export function IntegrationSettings() {
                     ) : (
                       <Check className="w-4 h-4" />
                     )}
-                    {sheetsSaving ? 'Saving...' : 'Save Configuration'}
+                    {sheetsSaving ? 'Saving\u2026' : 'Save Configuration'}
                   </button>
                 </div>
               </div>

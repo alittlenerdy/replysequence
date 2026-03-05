@@ -86,6 +86,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Cache meeting userId once — reused for email connection, HubSpot, and Salesforce lookups
+    let meetingUserId: string | null = null;
+    if (draft.meetingId) {
+      const [meetingForUser] = await db
+        .select({ userId: meetings.userId })
+        .from(meetings)
+        .where(eq(meetings.id, draft.meetingId))
+        .limit(1);
+      meetingUserId = meetingForUser?.userId ?? null;
+    }
+
     // Flywheel: capture the user-edited body and calculate similarity
     const originalBody = draft.originalBody;
     const currentBody = draft.body;
@@ -144,53 +155,44 @@ export async function POST(request: NextRequest) {
     // Try sending via connected email account (Gmail/Outlook), fall back to Resend
     let result: { success: boolean; messageId?: string; error?: string } | null = null;
 
-    if (draft.meetingId) {
+    if (draft.meetingId && meetingUserId) {
       try {
-        // Get userId from the meeting to look up email connection
-        const [meetingForEmail] = await db
-          .select({ userId: meetings.userId })
-          .from(meetings)
-          .where(eq(meetings.id, draft.meetingId))
+        // Look for a default email connection using cached meetingUserId
+        const [emailConnection] = await db
+          .select()
+          .from(emailConnections)
+          .where(and(
+            eq(emailConnections.userId, meetingUserId),
+            eq(emailConnections.isDefault, true),
+          ))
           .limit(1);
 
-        if (meetingForEmail?.userId) {
-          // Look for a default email connection
-          const [emailConnection] = await db
-            .select()
-            .from(emailConnections)
-            .where(and(
-              eq(emailConnections.userId, meetingForEmail.userId),
-              eq(emailConnections.isDefault, true),
-            ))
-            .limit(1);
+        if (emailConnection) {
+          console.log('[SEND-1c] Found connected email account, sending via', emailConnection.provider, emailConnection.email);
 
-          if (emailConnection) {
-            console.log('[SEND-1c] Found connected email account, sending via', emailConnection.provider, emailConnection.email);
+          const connectedResult = await sendViaConnectedAccount({
+            connection: {
+              provider: emailConnection.provider as 'gmail' | 'outlook',
+              email: emailConnection.email,
+              accessTokenEncrypted: emailConnection.accessTokenEncrypted,
+              refreshTokenEncrypted: emailConnection.refreshTokenEncrypted,
+              accessTokenExpiresAt: emailConnection.accessTokenExpiresAt,
+              id: emailConnection.id,
+            },
+            to: recipientEmail,
+            subject: draft.subject,
+            htmlBody: emailBody,
+            textBody: draft.body,
+            replyTo: draft.meetingHostEmail,
+          });
 
-            const connectedResult = await sendViaConnectedAccount({
-              connection: {
-                provider: emailConnection.provider as 'gmail' | 'outlook',
-                email: emailConnection.email,
-                accessTokenEncrypted: emailConnection.accessTokenEncrypted,
-                refreshTokenEncrypted: emailConnection.refreshTokenEncrypted,
-                accessTokenExpiresAt: emailConnection.accessTokenExpiresAt,
-                id: emailConnection.id,
-              },
-              to: recipientEmail,
-              subject: draft.subject,
-              htmlBody: emailBody,
-              textBody: draft.body,
-              replyTo: draft.meetingHostEmail,
-            });
-
-            if (connectedResult.success) {
-              result = {
-                success: true,
-                messageId: connectedResult.messageId,
-              };
-            } else {
-              console.log('[SEND-1d] Connected account send failed, falling back to Resend:', connectedResult.error);
-            }
+          if (connectedResult.success) {
+            result = {
+              success: true,
+              messageId: connectedResult.messageId,
+            };
+          } else {
+            console.log('[SEND-1d] Connected account send failed, falling back to Resend:', connectedResult.error);
           }
         }
       } catch (connError) {
@@ -337,237 +339,246 @@ export async function POST(request: NextRequest) {
       } catch { /* Non-blocking */ }
     }
 
-    // Sync to HubSpot CRM (awaited to prevent Vercel from killing the function)
+    // Run HubSpot, Salesforce, and Google Sheets CRM syncs in parallel
+    // All are independent post-send operations — use Promise.allSettled so each
+    // can succeed/fail independently without blocking the others.
     let hubspotDetails: {
       synced: boolean;
       contactFound: boolean;
       contactName?: string;
       error?: string;
     } | null = null;
-    if (draft.meetingId) {
-      try {
-        // Get userId from the meeting
-        const [meeting] = await db
-          .select({ userId: meetings.userId })
-          .from(meetings)
-          .where(eq(meetings.id, draft.meetingId!))
-          .limit(1);
 
-        if (meeting?.userId) {
-          // Look up HubSpot connection for this user
+    const crmSyncResults = await Promise.allSettled([
+      // HubSpot sync
+      (async () => {
+        if (!draft.meetingId || !meetingUserId) return;
+        try {
+          // Look up HubSpot connection using cached meetingUserId
           const [connection] = await db
             .select()
             .from(hubspotConnections)
-            .where(eq(hubspotConnections.userId, meeting.userId))
+            .where(eq(hubspotConnections.userId, meetingUserId))
             .limit(1);
 
-          if (connection) {
-            // Decrypt access token
-            let accessToken = decrypt(connection.accessTokenEncrypted);
+          if (!connection) return;
 
-            // Check if token is expired; refresh if needed
-            if (connection.accessTokenExpiresAt < new Date()) {
-              console.log(JSON.stringify({
-                level: 'info',
-                message: 'HubSpot token expired, refreshing',
+          // Decrypt access token
+          let accessToken = decrypt(connection.accessTokenEncrypted);
+
+          // Check if token is expired; refresh if needed
+          if (connection.accessTokenExpiresAt < new Date()) {
+            console.log(JSON.stringify({
+              level: 'info',
+              message: 'HubSpot token expired, refreshing',
+              draftId,
+            }));
+
+            try {
+              const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
+              const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
+
+              // Update stored tokens
+              accessToken = refreshed.accessToken;
+              await db
+                .update(hubspotConnections)
+                .set({
+                  accessTokenEncrypted: encrypt(refreshed.accessToken),
+                  refreshTokenEncrypted: encrypt(refreshed.refreshToken),
+                  accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
+                  lastRefreshedAt: new Date(),
+                  updatedAt: new Date(),
+                })
+                .where(eq(hubspotConnections.id, connection.id));
+            } catch (refreshError) {
+              console.error(JSON.stringify({
+                level: 'error',
+                message: 'HubSpot token refresh failed',
                 draftId,
+                error: refreshError instanceof Error ? refreshError.message : String(refreshError),
               }));
-
-              try {
-                const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
-                const refreshed = await refreshHubSpotToken(refreshTokenDecrypted);
-
-                // Update stored tokens
-                accessToken = refreshed.accessToken;
-                await db
-                  .update(hubspotConnections)
-                  .set({
-                    accessTokenEncrypted: encrypt(refreshed.accessToken),
-                    refreshTokenEncrypted: encrypt(refreshed.refreshToken),
-                    accessTokenExpiresAt: new Date(Date.now() + refreshed.expiresIn * 1000),
-                    lastRefreshedAt: new Date(),
-                    updatedAt: new Date(),
-                  })
-                  .where(eq(hubspotConnections.id, connection.id));
-              } catch (refreshError) {
-                console.error(JSON.stringify({
-                  level: 'error',
-                  message: 'HubSpot token refresh failed',
-                  draftId,
-                  error: refreshError instanceof Error ? refreshError.message : String(refreshError),
-                }));
-                // Skip sync if token refresh fails — surface error to user
-                accessToken = '';
-                hubspotDetails = {
-                  synced: false,
-                  contactFound: false,
-                  error: 'HubSpot token expired. Please reconnect in Settings.',
-                };
-              }
-            }
-
-            if (accessToken) {
-              // Sync to HubSpot
-              const hubspotResult = await syncSentEmailToHubSpot(accessToken, {
-                recipientEmail,
-                meetingTitle: draft.meetingTopic || 'Meeting',
-                meetingDate: draft.meetingStartTime || new Date(),
-                platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
-                duration: draft.meetingDuration ? draft.meetingDuration * 60 * 1000 : undefined,
-                draftSubject: draft.subject,
-                draftBody: draft.body,
-                fieldMappings: connection.fieldMappings ?? undefined,
-                sentimentScore: meetingSentiment?.score,
-                sentimentLabel: meetingSentiment?.label,
-                emotionalTones: meetingSentiment?.tones,
-              });
-
+              // Skip sync if token refresh fails — surface error to user
+              accessToken = '';
               hubspotDetails = {
-                synced: hubspotResult.success,
-                contactFound: hubspotResult.contactFound,
-                contactName: hubspotResult.contactName,
-                error: hubspotResult.error,
+                synced: false,
+                contactFound: false,
+                error: 'HubSpot token expired. Please reconnect in Settings.',
               };
-
-              // Update lastSyncAt only on success
-              if (hubspotResult.success) {
-                await db
-                  .update(hubspotConnections)
-                  .set({ lastSyncAt: new Date(), updatedAt: new Date() })
-                  .where(eq(hubspotConnections.id, connection.id));
-              }
-
-              console.log(JSON.stringify({
-                level: hubspotResult.success ? 'info' : 'error',
-                message: hubspotResult.success ? 'HubSpot CRM sync completed' : 'HubSpot CRM sync failed',
-                draftId,
-                recipientEmail,
-                success: hubspotResult.success,
-                contactFound: hubspotResult.contactFound,
-                engagementId: hubspotResult.engagementId,
-                error: hubspotResult.error,
-              }));
             }
           }
+
+          if (accessToken) {
+            // Sync to HubSpot
+            const hubspotResult = await syncSentEmailToHubSpot(accessToken, {
+              recipientEmail,
+              meetingTitle: draft.meetingTopic || 'Meeting',
+              meetingDate: draft.meetingStartTime || new Date(),
+              platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+              duration: draft.meetingDuration ? draft.meetingDuration * 60 * 1000 : undefined,
+              draftSubject: draft.subject,
+              draftBody: draft.body,
+              fieldMappings: connection.fieldMappings ?? undefined,
+              sentimentScore: meetingSentiment?.score,
+              sentimentLabel: meetingSentiment?.label,
+              emotionalTones: meetingSentiment?.tones,
+            });
+
+            hubspotDetails = {
+              synced: hubspotResult.success,
+              contactFound: hubspotResult.contactFound,
+              contactName: hubspotResult.contactName,
+              error: hubspotResult.error,
+            };
+
+            // Update lastSyncAt only on success
+            if (hubspotResult.success) {
+              await db
+                .update(hubspotConnections)
+                .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+                .where(eq(hubspotConnections.id, connection.id));
+            }
+
+            console.log(JSON.stringify({
+              level: hubspotResult.success ? 'info' : 'error',
+              message: hubspotResult.success ? 'HubSpot CRM sync completed' : 'HubSpot CRM sync failed',
+              draftId,
+              recipientEmail,
+              success: hubspotResult.success,
+              contactFound: hubspotResult.contactFound,
+              engagementId: hubspotResult.engagementId,
+              error: hubspotResult.error,
+            }));
+          }
+        } catch (hubspotError) {
+          // Log but don't fail - email was already sent successfully
+          console.error(JSON.stringify({
+            level: 'error',
+            message: 'HubSpot CRM sync failed (non-blocking)',
+            draftId,
+            recipientEmail,
+            error: hubspotError instanceof Error ? hubspotError.message : String(hubspotError),
+          }));
         }
-      } catch (hubspotError) {
-        // Log but don't fail - email was already sent successfully
-        console.error(JSON.stringify({
-          level: 'error',
-          message: 'HubSpot CRM sync failed (non-blocking)',
-          draftId,
-          recipientEmail,
-          error: hubspotError instanceof Error ? hubspotError.message : String(hubspotError),
-        }));
-      }
-    }
+      })(),
 
-    // Sync to Google Sheets CRM (non-blocking)
-    syncSentEmailToSheets(dbUser.id, {
-      recipientEmail,
-      meetingTitle: draft.meetingTopic || 'Meeting',
-      meetingDate: draft.meetingStartTime || new Date(),
-      platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
-      draftSubject: draft.subject,
-      draftBody: draft.body,
-    }).catch((sheetsError) => {
-      console.error(JSON.stringify({
-        level: 'error',
-        message: 'Google Sheets sync failed (non-blocking)',
-        draftId,
-        error: sheetsError instanceof Error ? sheetsError.message : String(sheetsError),
-      }));
-    });
+      // Google Sheets sync
+      (async () => {
+        try {
+          await syncSentEmailToSheets(dbUser.id, {
+            recipientEmail,
+            meetingTitle: draft.meetingTopic || 'Meeting',
+            meetingDate: draft.meetingStartTime || new Date(),
+            platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+            draftSubject: draft.subject,
+            draftBody: draft.body,
+          });
+        } catch (sheetsError) {
+          console.error(JSON.stringify({
+            level: 'error',
+            message: 'Google Sheets sync failed (non-blocking)',
+            draftId,
+            error: sheetsError instanceof Error ? sheetsError.message : String(sheetsError),
+          }));
+        }
+      })(),
 
-    // Sync to Salesforce CRM (awaited to prevent Vercel from killing the function)
-    if (draft.meetingId) {
-      try {
-        const [meeting] = await db
-          .select({ userId: meetings.userId })
-          .from(meetings)
-          .where(eq(meetings.id, draft.meetingId!))
-          .limit(1);
-
-        if (meeting?.userId) {
+      // Salesforce sync
+      (async () => {
+        if (!draft.meetingId || !meetingUserId) return;
+        try {
+          // Look up Salesforce connection using cached meetingUserId
           const [sfConnection] = await db
             .select()
             .from(salesforceConnections)
-            .where(eq(salesforceConnections.userId, meeting.userId))
+            .where(eq(salesforceConnections.userId, meetingUserId))
             .limit(1);
 
-          if (sfConnection) {
-            let sfAccessToken = decrypt(sfConnection.accessTokenEncrypted);
-            let sfInstanceUrl = sfConnection.instanceUrl;
+          if (!sfConnection) return;
 
-            if (sfConnection.accessTokenExpiresAt < new Date()) {
-              try {
-                const refreshTokenDecrypted = decrypt(sfConnection.refreshTokenEncrypted);
-                const refreshed = await refreshSalesforceToken(refreshTokenDecrypted);
-                sfAccessToken = refreshed.accessToken;
-                sfInstanceUrl = refreshed.instanceUrl;
-                await db
-                  .update(salesforceConnections)
-                  .set({
-                    accessTokenEncrypted: encrypt(refreshed.accessToken),
-                    instanceUrl: refreshed.instanceUrl,
-                    accessTokenExpiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
-                    lastRefreshedAt: new Date(),
-                    updatedAt: new Date(),
-                  })
-                  .where(eq(salesforceConnections.id, sfConnection.id));
-              } catch (refreshError) {
-                console.error(JSON.stringify({
-                  level: 'error',
-                  message: 'Salesforce token refresh failed',
-                  draftId,
-                  error: refreshError instanceof Error ? refreshError.message : String(refreshError),
-                }));
-                sfAccessToken = '';
-              }
-            }
+          let sfAccessToken = decrypt(sfConnection.accessTokenEncrypted);
+          let sfInstanceUrl = sfConnection.instanceUrl;
 
-            if (sfAccessToken) {
-              const sfResult = await syncSentEmailToSalesforce(sfInstanceUrl, sfAccessToken, {
-                recipientEmail,
-                meetingTitle: draft.meetingTopic || 'Meeting',
-                meetingDate: draft.meetingStartTime || new Date(),
-                platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
-                draftSubject: draft.subject,
-                draftBody: draft.body,
-                fieldMappings: sfConnection.fieldMappings ?? undefined,
-                sentimentScore: meetingSentiment?.score,
-                sentimentLabel: meetingSentiment?.label,
-                emotionalTones: meetingSentiment?.tones,
-              });
-
-              if (sfResult.success) {
-                await db
-                  .update(salesforceConnections)
-                  .set({ lastSyncAt: new Date(), updatedAt: new Date() })
-                  .where(eq(salesforceConnections.id, sfConnection.id));
-              }
-
-              console.log(JSON.stringify({
-                level: sfResult.success ? 'info' : 'error',
-                message: sfResult.success ? 'Salesforce CRM sync completed' : 'Salesforce CRM sync failed',
+          if (sfConnection.accessTokenExpiresAt < new Date()) {
+            try {
+              const refreshTokenDecrypted = decrypt(sfConnection.refreshTokenEncrypted);
+              const refreshed = await refreshSalesforceToken(refreshTokenDecrypted);
+              sfAccessToken = refreshed.accessToken;
+              sfInstanceUrl = refreshed.instanceUrl;
+              await db
+                .update(salesforceConnections)
+                .set({
+                  accessTokenEncrypted: encrypt(refreshed.accessToken),
+                  instanceUrl: refreshed.instanceUrl,
+                  accessTokenExpiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+                  lastRefreshedAt: new Date(),
+                  updatedAt: new Date(),
+                })
+                .where(eq(salesforceConnections.id, sfConnection.id));
+            } catch (refreshError) {
+              console.error(JSON.stringify({
+                level: 'error',
+                message: 'Salesforce token refresh failed',
                 draftId,
-                recipientEmail,
-                success: sfResult.success,
-                contactId: sfResult.contactId,
-                error: sfResult.error,
+                error: refreshError instanceof Error ? refreshError.message : String(refreshError),
               }));
+              sfAccessToken = '';
             }
           }
+
+          if (sfAccessToken) {
+            const sfResult = await syncSentEmailToSalesforce(sfInstanceUrl, sfAccessToken, {
+              recipientEmail,
+              meetingTitle: draft.meetingTopic || 'Meeting',
+              meetingDate: draft.meetingStartTime || new Date(),
+              platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
+              draftSubject: draft.subject,
+              draftBody: draft.body,
+              fieldMappings: sfConnection.fieldMappings ?? undefined,
+              sentimentScore: meetingSentiment?.score,
+              sentimentLabel: meetingSentiment?.label,
+              emotionalTones: meetingSentiment?.tones,
+            });
+
+            if (sfResult.success) {
+              await db
+                .update(salesforceConnections)
+                .set({ lastSyncAt: new Date(), updatedAt: new Date() })
+                .where(eq(salesforceConnections.id, sfConnection.id));
+            }
+
+            console.log(JSON.stringify({
+              level: sfResult.success ? 'info' : 'error',
+              message: sfResult.success ? 'Salesforce CRM sync completed' : 'Salesforce CRM sync failed',
+              draftId,
+              recipientEmail,
+              success: sfResult.success,
+              contactId: sfResult.contactId,
+              error: sfResult.error,
+            }));
+          }
+        } catch (sfError) {
+          console.error(JSON.stringify({
+            level: 'error',
+            message: 'Salesforce CRM sync failed (non-blocking)',
+            draftId,
+            error: sfError instanceof Error ? sfError.message : String(sfError),
+          }));
         }
-      } catch (sfError) {
+      })(),
+    ]);
+
+    // Log any unexpected rejections from Promise.allSettled
+    crmSyncResults.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        const labels = ['HubSpot', 'Google Sheets', 'Salesforce'];
         console.error(JSON.stringify({
           level: 'error',
-          message: 'Salesforce CRM sync failed (non-blocking)',
+          message: `${labels[index]} CRM sync promise rejected unexpectedly`,
           draftId,
-          error: sfError instanceof Error ? sfError.message : String(sfError),
+          error: result.reason instanceof Error ? result.reason.message : String(result.reason),
         }));
       }
-    }
+    });
 
     return NextResponse.json({
       success: true,

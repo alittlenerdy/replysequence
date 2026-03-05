@@ -99,6 +99,7 @@ export default function ExitSurveyPage() {
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              aria-label="Additional feedback"
               className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
               rows={3}
               placeholder="Anything else you'd like to share? (optional)"
@@ -107,7 +108,7 @@ export default function ExitSurveyPage() {
         )}
 
         {error && (
-          <p className="text-sm text-red-400 mb-4">{error}</p>
+          <p className="text-sm text-red-400 mb-4" role="alert" aria-live="polite">{error}</p>
         )}
 
         <button
@@ -115,7 +116,7 @@ export default function ExitSurveyPage() {
           disabled={!selectedReason || submitting}
           className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
-          {submitting ? 'Submitting...' : 'Submit'}
+          {submitting ? 'Submitting\u2026' : 'Submit'}
         </button>
       </div>
     </div>

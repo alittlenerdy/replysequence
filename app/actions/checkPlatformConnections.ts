@@ -141,138 +141,191 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     });
 
     const now = new Date();
-    const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-    // Helper to check token expiration status
-    const getExpirationStatus = (expiresAt: Date | null) => ({
-      isExpired: expiresAt ? expiresAt < now : false,
-      isExpiringSoon: expiresAt ? (expiresAt > now && expiresAt < twentyFourHoursFromNow) : false,
-    });
+    // Run all platform connection queries in parallel — each is independent
+    const [
+      zoomConnectionRows,
+      teamsConnectionRows,
+      allMeetConnections,
+      calendarConnectionRows,
+      outlookConnectionRows,
+      hubspotConnectionRows,
+      airtableConnectionRows,
+      gmailConnectionRows,
+      outlookEmailConnectionRows,
+      sheetsConnectionRows,
+      salesforceConnectionRows,
+    ] = await Promise.all([
+      // Zoom (only query if flag is set)
+      zoomConnected
+        ? db.select({
+            zoomEmail: zoomConnections.zoomEmail,
+            connectedAt: zoomConnections.connectedAt,
+            expiresAt: zoomConnections.accessTokenExpiresAt,
+            hasRefreshToken: zoomConnections.refreshTokenEncrypted,
+          }).from(zoomConnections).where(eq(zoomConnections.userId, existingUser.id)).limit(1)
+        : Promise.resolve([] as { zoomEmail: string; connectedAt: Date; expiresAt: Date; hasRefreshToken: string | null }[]),
+      // Teams (only query if flag is set)
+      teamsConnected
+        ? db.select({
+            msEmail: teamsConnections.msEmail,
+            connectedAt: teamsConnections.connectedAt,
+            expiresAt: teamsConnections.accessTokenExpiresAt,
+            hasRefreshToken: teamsConnections.refreshTokenEncrypted,
+          }).from(teamsConnections).where(eq(teamsConnections.userId, existingUser.id)).limit(1)
+        : Promise.resolve([] as { msEmail: string; connectedAt: Date; expiresAt: Date; hasRefreshToken: string | null }[]),
+      // Meet (only query if flag is set — supports multiple connections)
+      meetConnected
+        ? db.select({
+            id: meetConnections.id,
+            googleEmail: meetConnections.googleEmail,
+            googleDisplayName: meetConnections.googleDisplayName,
+            isPrimary: meetConnections.isPrimary,
+            connectedAt: meetConnections.connectedAt,
+            expiresAt: meetConnections.accessTokenExpiresAt,
+            hasRefreshToken: meetConnections.refreshTokenEncrypted,
+          }).from(meetConnections).where(eq(meetConnections.userId, existingUser.id))
+        : Promise.resolve([]),
+      // Google Calendar
+      db.select({
+        googleEmail: calendarConnections.googleEmail,
+        connectedAt: calendarConnections.connectedAt,
+        expiresAt: calendarConnections.accessTokenExpiresAt,
+        hasRefreshToken: calendarConnections.refreshTokenEncrypted,
+      }).from(calendarConnections).where(eq(calendarConnections.userId, existingUser.id)).limit(1),
+      // Outlook Calendar
+      db.select({
+        msEmail: outlookCalendarConnections.msEmail,
+        connectedAt: outlookCalendarConnections.connectedAt,
+        expiresAt: outlookCalendarConnections.accessTokenExpiresAt,
+        hasRefreshToken: outlookCalendarConnections.refreshTokenEncrypted,
+      }).from(outlookCalendarConnections).where(eq(outlookCalendarConnections.userId, existingUser.id)).limit(1),
+      // HubSpot
+      db.select({
+        hubspotPortalId: hubspotConnections.hubspotPortalId,
+        connectedAt: hubspotConnections.connectedAt,
+        expiresAt: hubspotConnections.accessTokenExpiresAt,
+        hasRefreshToken: hubspotConnections.refreshTokenEncrypted,
+        scopes: hubspotConnections.scopes,
+        lastSyncAt: hubspotConnections.lastSyncAt,
+      }).from(hubspotConnections).where(eq(hubspotConnections.userId, existingUser.id)).limit(1),
+      // Airtable
+      db.select({
+        baseId: airtableConnections.baseId,
+        connectedAt: airtableConnections.connectedAt,
+        lastSyncAt: airtableConnections.lastSyncAt,
+      }).from(airtableConnections).where(eq(airtableConnections.userId, existingUser.id)).limit(1),
+      // Gmail
+      db.select({
+        email: emailConnections.email,
+        connectedAt: emailConnections.connectedAt,
+        expiresAt: emailConnections.accessTokenExpiresAt,
+        hasRefreshToken: emailConnections.refreshTokenEncrypted,
+      }).from(emailConnections).where(and(
+        eq(emailConnections.userId, existingUser.id),
+        eq(emailConnections.provider, 'gmail'),
+      )).limit(1),
+      // Outlook Email
+      db.select({
+        email: emailConnections.email,
+        connectedAt: emailConnections.connectedAt,
+        expiresAt: emailConnections.accessTokenExpiresAt,
+        hasRefreshToken: emailConnections.refreshTokenEncrypted,
+      }).from(emailConnections).where(and(
+        eq(emailConnections.userId, existingUser.id),
+        eq(emailConnections.provider, 'outlook'),
+      )).limit(1),
+      // Google Sheets
+      db.select({
+        googleEmail: sheetsConnections.googleEmail,
+        spreadsheetId: sheetsConnections.spreadsheetId,
+        spreadsheetName: sheetsConnections.spreadsheetName,
+        columnMappings: sheetsConnections.columnMappings,
+        connectedAt: sheetsConnections.connectedAt,
+        lastSyncAt: sheetsConnections.lastSyncAt,
+        hasRefreshToken: sheetsConnections.refreshTokenEncrypted,
+      }).from(sheetsConnections).where(eq(sheetsConnections.userId, existingUser.id)).limit(1),
+      // Salesforce
+      db.select({
+        salesforceOrgId: salesforceConnections.salesforceOrgId,
+        salesforceUserEmail: salesforceConnections.salesforceUserEmail,
+        instanceUrl: salesforceConnections.instanceUrl,
+        connectedAt: salesforceConnections.connectedAt,
+        expiresAt: salesforceConnections.accessTokenExpiresAt,
+        hasRefreshToken: salesforceConnections.refreshTokenEncrypted,
+        scopes: salesforceConnections.scopes,
+        lastSyncAt: salesforceConnections.lastSyncAt,
+      }).from(salesforceConnections).where(eq(salesforceConnections.userId, existingUser.id)).limit(1),
+    ]);
 
-    // Get Zoom connection details
-    // Note: Zoom access tokens expire in 1 hour, but we have refresh tokens
-    // So we don't show "expiring soon" - only show warning if refresh token is missing
+    // Process Zoom connection details
     let zoomEmail: string | undefined;
     let zoomDetails: PlatformConnectionDetails = { connected: false };
-    if (zoomConnected) {
-      const [connection] = await db
-        .select({
-          zoomEmail: zoomConnections.zoomEmail,
-          connectedAt: zoomConnections.connectedAt,
-          expiresAt: zoomConnections.accessTokenExpiresAt,
-          hasRefreshToken: zoomConnections.refreshTokenEncrypted,
-        })
-        .from(zoomConnections)
-        .where(eq(zoomConnections.userId, existingUser.id))
-        .limit(1);
-      if (connection) {
-        zoomEmail = connection.zoomEmail;
-        // For Zoom: only show warning if we don't have a refresh token
-        // Access tokens auto-refresh via refresh token, so short expiry is normal
-        const hasRefreshToken = !!connection.hasRefreshToken;
-        zoomDetails = {
-          connected: true,
-          email: connection.zoomEmail,
-          connectedAt: connection.connectedAt,
-          expiresAt: connection.expiresAt,
-          isExpired: !hasRefreshToken, // Only "expired" if no refresh token
-          isExpiringSoon: false, // Never "expiring soon" for Zoom (we auto-refresh)
-        };
-      }
-      console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail, hasRefreshToken: !!connection?.hasRefreshToken });
+    const zoomConnection = zoomConnectionRows[0];
+    if (zoomConnection) {
+      zoomEmail = zoomConnection.zoomEmail;
+      const hasRefreshToken = !!zoomConnection.hasRefreshToken;
+      zoomDetails = {
+        connected: true,
+        email: zoomConnection.zoomEmail,
+        connectedAt: zoomConnection.connectedAt,
+        expiresAt: zoomConnection.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+      };
+      console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail, hasRefreshToken });
     }
 
-    // Get Teams connection details
-    // Note: Microsoft access tokens expire in 1 hour, but we have refresh tokens
-    // So we don't show "expiring soon" - only show warning if refresh token is missing
+    // Process Teams connection details
     let teamsEmail: string | undefined;
     let teamsDetails: PlatformConnectionDetails = { connected: false };
-    if (teamsConnected) {
-      const [connection] = await db
-        .select({
-          msEmail: teamsConnections.msEmail,
-          connectedAt: teamsConnections.connectedAt,
-          expiresAt: teamsConnections.accessTokenExpiresAt,
-          hasRefreshToken: teamsConnections.refreshTokenEncrypted,
-        })
-        .from(teamsConnections)
-        .where(eq(teamsConnections.userId, existingUser.id))
-        .limit(1);
-      if (connection) {
-        teamsEmail = connection.msEmail;
-        const hasRefreshToken = !!connection.hasRefreshToken;
-        teamsDetails = {
-          connected: true,
-          email: connection.msEmail,
-          connectedAt: connection.connectedAt,
-          expiresAt: connection.expiresAt,
-          isExpired: !hasRefreshToken, // Only "expired" if no refresh token
-          isExpiringSoon: false, // Never "expiring soon" for Teams (we auto-refresh)
-        };
-      }
-      console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail, hasRefreshToken: !!connection?.hasRefreshToken });
+    const teamsConnection = teamsConnectionRows[0];
+    if (teamsConnection) {
+      teamsEmail = teamsConnection.msEmail;
+      const hasRefreshToken = !!teamsConnection.hasRefreshToken;
+      teamsDetails = {
+        connected: true,
+        email: teamsConnection.msEmail,
+        connectedAt: teamsConnection.connectedAt,
+        expiresAt: teamsConnection.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+      };
+      console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail, hasRefreshToken });
     }
 
-    // Get Meet connection details (supports multiple connections)
-    // Note: Google access tokens expire in 1 hour, but we have refresh tokens
-    // So we don't show "expiring soon" - only show warning if refresh token is missing
+    // Process Meet connection details (supports multiple connections)
     let meetEmail: string | undefined;
     let meetDetails: PlatformConnectionDetails = { connected: false };
-    if (meetConnected) {
-      const allMeetConnections = await db
-        .select({
-          id: meetConnections.id,
-          googleEmail: meetConnections.googleEmail,
-          googleDisplayName: meetConnections.googleDisplayName,
-          isPrimary: meetConnections.isPrimary,
-          connectedAt: meetConnections.connectedAt,
-          expiresAt: meetConnections.accessTokenExpiresAt,
-          hasRefreshToken: meetConnections.refreshTokenEncrypted,
-        })
-        .from(meetConnections)
-        .where(eq(meetConnections.userId, existingUser.id));
-
-      if (allMeetConnections.length > 0) {
-        // Primary connection shown as the "main" email
-        const primary = allMeetConnections.find(c => c.isPrimary) || allMeetConnections[0];
-        meetEmail = primary.googleEmail;
-        const hasRefreshToken = !!primary.hasRefreshToken;
-        meetDetails = {
-          connected: true,
-          email: primary.googleEmail,
-          connectedAt: primary.connectedAt,
-          expiresAt: primary.expiresAt,
-          isExpired: !hasRefreshToken,
-          isExpiringSoon: false,
-          connections: allMeetConnections.map(c => ({
-            id: c.id,
-            email: c.googleEmail,
-            displayName: c.googleDisplayName,
-            isPrimary: c.isPrimary,
-            connectedAt: c.connectedAt,
-          })),
-        };
-      }
+    if (allMeetConnections.length > 0) {
+      const primary = allMeetConnections.find(c => c.isPrimary) || allMeetConnections[0];
+      meetEmail = primary.googleEmail;
+      const hasRefreshToken = !!primary.hasRefreshToken;
+      meetDetails = {
+        connected: true,
+        email: primary.googleEmail,
+        connectedAt: primary.connectedAt,
+        expiresAt: primary.expiresAt,
+        isExpired: !hasRefreshToken,
+        isExpiringSoon: false,
+        connections: allMeetConnections.map(c => ({
+          id: c.id,
+          email: c.googleEmail,
+          displayName: c.googleDisplayName,
+          isPrimary: c.isPrimary,
+          connectedAt: c.connectedAt,
+        })),
+      };
       console.log('[CHECK-CONNECTION] Meet connections found', {
         count: allMeetConnections.length,
         primaryEmail: meetEmail,
       });
     }
 
-    // Get Google Calendar connection details
+    // Process Google Calendar connection details
     let calendarEmail: string | undefined;
     let calendarDetails: PlatformConnectionDetails = { connected: false };
-    const [calendarConnection] = await db
-      .select({
-        googleEmail: calendarConnections.googleEmail,
-        connectedAt: calendarConnections.connectedAt,
-        expiresAt: calendarConnections.accessTokenExpiresAt,
-        hasRefreshToken: calendarConnections.refreshTokenEncrypted,
-      })
-      .from(calendarConnections)
-      .where(eq(calendarConnections.userId, existingUser.id))
-      .limit(1);
-
+    const calendarConnection = calendarConnectionRows[0];
     const calendarConnected = !!calendarConnection;
     if (calendarConnection) {
       calendarEmail = calendarConnection.googleEmail;
@@ -288,20 +341,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Google Calendar connection found', { calendarEmail, hasRefreshToken });
     }
 
-    // Get Outlook Calendar connection details
+    // Process Outlook Calendar connection details
     let outlookCalendarEmail: string | undefined;
     let outlookCalendarDetails: PlatformConnectionDetails = { connected: false };
-    const [outlookConnection] = await db
-      .select({
-        msEmail: outlookCalendarConnections.msEmail,
-        connectedAt: outlookCalendarConnections.connectedAt,
-        expiresAt: outlookCalendarConnections.accessTokenExpiresAt,
-        hasRefreshToken: outlookCalendarConnections.refreshTokenEncrypted,
-      })
-      .from(outlookCalendarConnections)
-      .where(eq(outlookCalendarConnections.userId, existingUser.id))
-      .limit(1);
-
+    const outlookConnection = outlookConnectionRows[0];
     const outlookCalendarConnected = !!outlookConnection;
     if (outlookConnection) {
       outlookCalendarEmail = outlookConnection.msEmail;
@@ -317,22 +360,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Outlook Calendar connection found', { outlookCalendarEmail, hasRefreshToken });
     }
 
-    // Get HubSpot CRM connection details
+    // Process HubSpot CRM connection details
     let hubspotPortalId: string | undefined;
     let hubspotDetails: PlatformConnectionDetails = { connected: false };
-    const [hubspotConnection] = await db
-      .select({
-        hubspotPortalId: hubspotConnections.hubspotPortalId,
-        connectedAt: hubspotConnections.connectedAt,
-        expiresAt: hubspotConnections.accessTokenExpiresAt,
-        hasRefreshToken: hubspotConnections.refreshTokenEncrypted,
-        scopes: hubspotConnections.scopes,
-        lastSyncAt: hubspotConnections.lastSyncAt,
-      })
-      .from(hubspotConnections)
-      .where(eq(hubspotConnections.userId, existingUser.id))
-      .limit(1);
-
+    const hubspotConnection = hubspotConnectionRows[0];
     const hubspotConnected = !!hubspotConnection;
     if (hubspotConnection) {
       hubspotPortalId = hubspotConnection.hubspotPortalId;
@@ -351,19 +382,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] HubSpot connection found', { hubspotPortalId, hasRefreshToken });
     }
 
-    // Get Airtable CRM connection details
+    // Process Airtable CRM connection details
     let airtableBaseId: string | undefined;
     let airtableDetails: PlatformConnectionDetails = { connected: false };
-    const [airtableConnection] = await db
-      .select({
-        baseId: airtableConnections.baseId,
-        connectedAt: airtableConnections.connectedAt,
-        lastSyncAt: airtableConnections.lastSyncAt,
-      })
-      .from(airtableConnections)
-      .where(eq(airtableConnections.userId, existingUser.id))
-      .limit(1);
-
+    const airtableConnection = airtableConnectionRows[0];
     const airtableConnected = !!airtableConnection;
     if (airtableConnection) {
       airtableBaseId = airtableConnection.baseId;
@@ -375,23 +397,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       };
     }
 
-    // Get Gmail email connection details
+    // Process Gmail email connection details
     let gmailEmail: string | undefined;
     let gmailDetails: PlatformConnectionDetails = { connected: false };
-    const [gmailConnection] = await db
-      .select({
-        email: emailConnections.email,
-        connectedAt: emailConnections.connectedAt,
-        expiresAt: emailConnections.accessTokenExpiresAt,
-        hasRefreshToken: emailConnections.refreshTokenEncrypted,
-      })
-      .from(emailConnections)
-      .where(and(
-        eq(emailConnections.userId, existingUser.id),
-        eq(emailConnections.provider, 'gmail'),
-      ))
-      .limit(1);
-
+    const gmailConnection = gmailConnectionRows[0];
     const gmailConnected = !!gmailConnection;
     if (gmailConnection) {
       gmailEmail = gmailConnection.email;
@@ -407,23 +416,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Gmail connection found', { gmailEmail, hasRefreshToken });
     }
 
-    // Get Outlook email connection details
+    // Process Outlook email connection details
     let outlookEmail: string | undefined;
     let outlookDetails: PlatformConnectionDetails = { connected: false };
-    const [outlookEmailConnection] = await db
-      .select({
-        email: emailConnections.email,
-        connectedAt: emailConnections.connectedAt,
-        expiresAt: emailConnections.accessTokenExpiresAt,
-        hasRefreshToken: emailConnections.refreshTokenEncrypted,
-      })
-      .from(emailConnections)
-      .where(and(
-        eq(emailConnections.userId, existingUser.id),
-        eq(emailConnections.provider, 'outlook'),
-      ))
-      .limit(1);
-
+    const outlookEmailConnection = outlookEmailConnectionRows[0];
     const outlookEmailConnected = !!outlookEmailConnection;
     if (outlookEmailConnection) {
       outlookEmail = outlookEmailConnection.email;
@@ -439,23 +435,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Outlook email connection found', { outlookEmail, hasRefreshToken });
     }
 
-    // Get Google Sheets CRM connection details
+    // Process Google Sheets CRM connection details
     let sheetsEmail: string | undefined;
     let sheetsDetails: PlatformConnectionDetails = { connected: false };
-    const [sheetsConnection] = await db
-      .select({
-        googleEmail: sheetsConnections.googleEmail,
-        spreadsheetId: sheetsConnections.spreadsheetId,
-        spreadsheetName: sheetsConnections.spreadsheetName,
-        columnMappings: sheetsConnections.columnMappings,
-        connectedAt: sheetsConnections.connectedAt,
-        lastSyncAt: sheetsConnections.lastSyncAt,
-        hasRefreshToken: sheetsConnections.refreshTokenEncrypted,
-      })
-      .from(sheetsConnections)
-      .where(eq(sheetsConnections.userId, existingUser.id))
-      .limit(1);
-
+    const sheetsConnection = sheetsConnectionRows[0];
     const sheetsConnected = !!sheetsConnection;
     if (sheetsConnection) {
       sheetsEmail = sheetsConnection.googleEmail;
@@ -474,24 +457,10 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       };
     }
 
-    // Get Salesforce CRM connection details
+    // Process Salesforce CRM connection details
     let salesforceOrgId: string | undefined;
     let salesforceDetails: PlatformConnectionDetails = { connected: false };
-    const [salesforceConnection] = await db
-      .select({
-        salesforceOrgId: salesforceConnections.salesforceOrgId,
-        salesforceUserEmail: salesforceConnections.salesforceUserEmail,
-        instanceUrl: salesforceConnections.instanceUrl,
-        connectedAt: salesforceConnections.connectedAt,
-        expiresAt: salesforceConnections.accessTokenExpiresAt,
-        hasRefreshToken: salesforceConnections.refreshTokenEncrypted,
-        scopes: salesforceConnections.scopes,
-        lastSyncAt: salesforceConnections.lastSyncAt,
-      })
-      .from(salesforceConnections)
-      .where(eq(salesforceConnections.userId, existingUser.id))
-      .limit(1);
-
+    const salesforceConnection = salesforceConnectionRows[0];
     const salesforceConnected = !!salesforceConnection;
     if (salesforceConnection) {
       salesforceOrgId = salesforceConnection.salesforceOrgId ?? undefined;

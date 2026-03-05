@@ -65,7 +65,7 @@ export function AccountManagement() {
             <AlertTriangle className="w-4 h-4 shrink-0" />
             {error}
           </div>
-          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Dismiss error">
             <X className="w-4 h-4" />
           </button>
         </div>

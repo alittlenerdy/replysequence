@@ -216,10 +216,25 @@ export async function GET(request: Request) {
     const dailySentCounts: Record<string, number> = {};
     dateRange.forEach(d => { dailySentCounts[d] = 0; });
 
+    // Declare userDrafts in outer scope so it can be reused for draftsByMeeting map below
+    let userDrafts: {
+      id: string;
+      meetingId: string;
+      status: string | null;
+      createdAt: Date | null;
+      sentAt: Date | null;
+      openedAt: Date | null;
+      clickedAt: Date | null;
+      repliedAt: Date | null;
+      meetingType: string | null;
+      costUsd: string | null;
+      generationDurationMs: number | null;
+    }[] = [];
+
     if (meetingIds.length > 0) {
       try {
         // Get all drafts for user's meetings with engagement data
-        const userDrafts = await db
+        userDrafts = await db
           .select({
             id: drafts.id,
             meetingId: drafts.meetingId,
@@ -352,23 +367,13 @@ export async function GET(request: Request) {
     // --- New metrics: median follow-up time, at-risk meetings, daily coverage ---
 
     // Build a map of meetingId → best draft for at-risk + median computation
+    // Reuse userDrafts from the earlier query instead of hitting the DB again
     const draftsByMeeting = new Map<string, { id: string; status: string | null; sentAt: Date | null }>();
-    if (meetingIds.length > 0) {
-      try {
-        const allDrafts = await db
-          .select({ id: drafts.id, meetingId: drafts.meetingId, status: drafts.status, sentAt: drafts.sentAt })
-          .from(drafts)
-          .where(inArray(drafts.meetingId, meetingIds));
-
-        for (const d of allDrafts) {
-          const existing = draftsByMeeting.get(d.meetingId);
-          // Keep the "best" draft: prefer sent > generated > failed > none
-          if (!existing || (d.status === 'sent' && existing.status !== 'sent')) {
-            draftsByMeeting.set(d.meetingId, { id: d.id, status: d.status, sentAt: d.sentAt });
-          }
-        }
-      } catch (e) {
-        console.log('[ANALYTICS-WARN] Error building draft map:', e);
+    for (const d of userDrafts) {
+      const existing = draftsByMeeting.get(d.meetingId);
+      // Keep the "best" draft: prefer sent > generated > failed > none
+      if (!existing || (d.status === 'sent' && existing.status !== 'sent')) {
+        draftsByMeeting.set(d.meetingId, { id: d.id, status: d.status, sentAt: d.sentAt });
       }
     }
 

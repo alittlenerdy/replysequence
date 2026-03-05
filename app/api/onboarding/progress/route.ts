@@ -50,8 +50,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch actual connection statuses from the database
+    // Include meetConnected in user query to avoid a second users table lookup
     const [user] = await db
-      .select({ id: users.id })
+      .select({ id: users.id, meetConnected: users.meetConnected })
       .from(users)
       .where(eq(users.clerkId, userId))
       .limit(1);
@@ -59,64 +60,51 @@ export async function GET(request: NextRequest) {
     const connectedPlatforms: string[] = [];
     let googleCalendarConnected = false;
     let outlookCalendarConnected = false;
-
-    if (user) {
-      // Check each platform connection
-      const [zoomConn] = await db.select({ id: zoomConnections.id }).from(zoomConnections).where(eq(zoomConnections.userId, user.id)).limit(1);
-      const [teamsConn] = await db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1);
-      // Google Meet uses the same connection as Google Calendar (calendarConnections), check user flag
-      const [userRecord] = await db.select({ meetConnected: users.meetConnected }).from(users).where(eq(users.id, user.id)).limit(1);
-
-      if (zoomConn) connectedPlatforms.push('zoom');
-      if (teamsConn) connectedPlatforms.push('teams');
-      if (userRecord?.meetConnected) connectedPlatforms.push('meet');
-
-      // Check calendar connections
-      const [googleCal] = await db.select({ id: calendarConnections.id }).from(calendarConnections).where(eq(calendarConnections.userId, user.id)).limit(1);
-      const [outlookCal] = await db.select({ id: outlookCalendarConnections.id }).from(outlookCalendarConnections).where(eq(outlookCalendarConnections.userId, user.id)).limit(1);
-
-      googleCalendarConnected = !!googleCal;
-      outlookCalendarConnected = !!outlookCal;
-    }
-
-    // Check email connections
     let emailConnected = false;
     let connectedEmail: string | null = null;
-    if (user) {
-      const [emailConn] = await db.select({ id: emailConnections.id, email: emailConnections.email })
-        .from(emailConnections)
-        .where(eq(emailConnections.userId, user.id))
-        .limit(1);
-      emailConnected = !!emailConn;
-      connectedEmail = emailConn?.email || null;
-    }
-
-    // Check CRM connections (per-platform)
     let hubspotConnectedFlag = false;
     let salesforceConnectedFlag = false;
     let airtableConnectedFlag = false;
     let sheetsConnectedFlag = false;
+
     if (user) {
-      const [hubspotConn] = await db.select({ id: hubspotConnections.id })
-        .from(hubspotConnections)
-        .where(eq(hubspotConnections.userId, user.id))
-        .limit(1);
-      const [salesforceConn] = await db.select({ id: salesforceConnections.id })
-        .from(salesforceConnections)
-        .where(eq(salesforceConnections.userId, user.id))
-        .limit(1);
-      const [airtableConn] = await db.select({ id: airtableConnections.id })
-        .from(airtableConnections)
-        .where(eq(airtableConnections.userId, user.id))
-        .limit(1);
-      const [sheetsConn] = await db.select({ id: sheetsConnections.id })
-        .from(sheetsConnections)
-        .where(eq(sheetsConnections.userId, user.id))
-        .limit(1);
-      hubspotConnectedFlag = !!hubspotConn;
-      salesforceConnectedFlag = !!salesforceConn;
-      airtableConnectedFlag = !!airtableConn;
-      sheetsConnectedFlag = !!sheetsConn;
+      // Run all platform connection queries in parallel — each is independent
+      const [
+        zoomConnRows,
+        teamsConnRows,
+        googleCalRows,
+        outlookCalRows,
+        emailConnRows,
+        hubspotConnRows,
+        salesforceConnRows,
+        airtableConnRows,
+        sheetsConnRows,
+      ] = await Promise.all([
+        db.select({ id: zoomConnections.id }).from(zoomConnections).where(eq(zoomConnections.userId, user.id)).limit(1),
+        db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1),
+        db.select({ id: calendarConnections.id }).from(calendarConnections).where(eq(calendarConnections.userId, user.id)).limit(1),
+        db.select({ id: outlookCalendarConnections.id }).from(outlookCalendarConnections).where(eq(outlookCalendarConnections.userId, user.id)).limit(1),
+        db.select({ id: emailConnections.id, email: emailConnections.email }).from(emailConnections).where(eq(emailConnections.userId, user.id)).limit(1),
+        db.select({ id: hubspotConnections.id }).from(hubspotConnections).where(eq(hubspotConnections.userId, user.id)).limit(1),
+        db.select({ id: salesforceConnections.id }).from(salesforceConnections).where(eq(salesforceConnections.userId, user.id)).limit(1),
+        db.select({ id: airtableConnections.id }).from(airtableConnections).where(eq(airtableConnections.userId, user.id)).limit(1),
+        db.select({ id: sheetsConnections.id }).from(sheetsConnections).where(eq(sheetsConnections.userId, user.id)).limit(1),
+      ]);
+
+      if (zoomConnRows[0]) connectedPlatforms.push('zoom');
+      if (teamsConnRows[0]) connectedPlatforms.push('teams');
+      if (user.meetConnected) connectedPlatforms.push('meet');
+
+      googleCalendarConnected = !!googleCalRows[0];
+      outlookCalendarConnected = !!outlookCalRows[0];
+
+      emailConnected = !!emailConnRows[0];
+      connectedEmail = emailConnRows[0]?.email || null;
+
+      hubspotConnectedFlag = !!hubspotConnRows[0];
+      salesforceConnectedFlag = !!salesforceConnRows[0];
+      airtableConnectedFlag = !!airtableConnRows[0];
+      sheetsConnectedFlag = !!sheetsConnRows[0];
     }
 
     return NextResponse.json({

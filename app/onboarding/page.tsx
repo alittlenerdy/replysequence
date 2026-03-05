@@ -76,10 +76,16 @@ function OnboardingContent() {
       const res = await fetch('/api/onboarding/progress');
       if (res.ok) {
         const data = await res.json();
-        if (data.completedAt) {
+        const resetParam = searchParams.get('reset');
+        if (data.completedAt && resetParam !== 'true') {
           // Already completed, redirect to dashboard
           router.push('/dashboard');
           return;
+        }
+        if (data.completedAt && resetParam === 'true') {
+          // Reset onboarding - clear completion and restart
+          await fetch('/api/onboarding/reset', { method: 'POST' });
+          window.history.replaceState({}, '', '/onboarding');
         }
         setState(prev => ({
           ...prev,
@@ -332,7 +338,7 @@ function OnboardingContent() {
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mx-auto" />
-          <p className="mt-4 text-gray-400">Loading your progress...</p>
+          <p className="mt-4 text-gray-400">Loading your progress\u2026</p>
         </div>
       </div>
     );
@@ -514,7 +520,7 @@ function OnboardingContent() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full"
+              className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full overscroll-contain"
               onClick={e => e.stopPropagation()}
             >
               <h3 className="text-xl font-bold text-white mb-2">Are you sure?</h3>
@@ -548,7 +554,7 @@ function OnboardingLoadingFallback() {
     <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
       <div className="text-center">
         <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mx-auto" />
-        <p className="mt-4 text-gray-400">Loading...</p>
+        <p className="mt-4 text-gray-400">Loading\u2026</p>
       </div>
     </div>
   );
