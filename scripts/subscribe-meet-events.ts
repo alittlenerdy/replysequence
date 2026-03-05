@@ -26,7 +26,7 @@ if (process.env.DATABASE_URL) {
 
 // Configuration
 const WORKSPACE_EVENTS_API = 'https://workspaceevents.googleapis.com/v1';
-const PUBSUB_TOPIC = 'projects/replysequence/topics/meet-recordings';
+const PUBSUB_TOPIC = `projects/${process.env.GOOGLE_CLOUD_PROJECT_ID || 'replysequence-gws'}/topics/meet-recordings`;
 const EVENT_TYPES = [
   'google.workspace.meet.recording.v2.fileGenerated',
   'google.workspace.meet.transcript.v2.fileGenerated',

@@ -11,7 +11,7 @@ export const maxDuration = 30;
 const EVENTS_API_BASE = 'https://workspaceevents.googleapis.com/v1';
 
 // Pub/Sub topic for Meet events
-const PUBSUB_TOPIC = 'projects/replysequence/topics/meet-recordings';
+const PUBSUB_TOPIC = `projects/${process.env.GOOGLE_CLOUD_PROJECT_ID || 'replysequence-gws'}/topics/meet-recordings`;
 
 // Event types to subscribe to
 const EVENT_TYPES = [
