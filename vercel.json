@@ -38,6 +38,9 @@
     },
     "app/api/cron/auto-retweet/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/renew-meet-subscriptions/route.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -72,6 +75,10 @@
     {
       "path": "/api/cron/auto-retweet",
       "schedule": "0 19,0 * * *"
+    },
+    {
+      "path": "/api/cron/renew-meet-subscriptions",
+      "schedule": "0 */12 * * *"
     }
   ]
 }

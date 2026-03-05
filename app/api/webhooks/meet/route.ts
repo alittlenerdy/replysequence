@@ -56,6 +56,34 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  // Health check / diagnostic endpoint
+  const diag = request.nextUrl.searchParams.get('diag');
+  if (diag === process.env.CRON_SECRET) {
+    const connectionCount = await db
+      .select({ id: meetConnections.id })
+      .from(meetConnections);
+
+    const expectedAudience = process.env.GOOGLE_PUBSUB_AUDIENCE?.trim() ||
+      (process.env.NEXT_PUBLIC_APP_URL?.trim()?.replace(/\/$/, '') + '/api/webhooks/meet') ||
+      'https://replysequence.vercel.app/api/webhooks/meet';
+
+    return NextResponse.json({
+      status: 'ok',
+      endpoint: '/api/webhooks/meet',
+      config: {
+        hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
+        hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+        hasGlobalRefreshToken: !!process.env.GOOGLE_REFRESH_TOKEN,
+        hasPubSubAudience: !!process.env.GOOGLE_PUBSUB_AUDIENCE,
+        expectedAudience,
+        pubSubTopic: process.env.GOOGLE_PUBSUB_TOPIC || 'not set',
+        appUrl: process.env.NEXT_PUBLIC_APP_URL || 'not set',
+      },
+      connections: connectionCount.length,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   log('warn', '[MEET-1] GET request without challenge');
   return NextResponse.json({ error: 'Missing challenge parameter' }, { status: 400 });
 }
@@ -66,6 +94,14 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
+
+  // Early diagnostic log - confirms webhooks are reaching the endpoint
+  log('info', '[MEET-0] Webhook POST received', {
+    url: request.url,
+    hasAuth: !!request.headers.get('authorization'),
+    contentType: request.headers.get('content-type'),
+    userAgent: request.headers.get('user-agent')?.substring(0, 100),
+  });
 
   // Apply rate limiting - webhook endpoint (200/min per IP)
   const clientId = getClientIdentifier(request);

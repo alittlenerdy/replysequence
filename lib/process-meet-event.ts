@@ -84,9 +84,9 @@ export async function processMeetEvent(
     conferenceRecord: meetEvent.conferenceRecord?.name,
   });
 
-  // Check if Meet API is configured
-  if (!isMeetConfigured()) {
-    log('error', '[MEET-4] Meet API not configured', { rawEventId: rawEvent.id });
+  // Check if Meet API is configured (skip if per-user access token is provided)
+  if (!isMeetConfigured() && !accessToken) {
+    log('error', '[MEET-4] Meet API not configured and no per-user access token', { rawEventId: rawEvent.id });
     return { success: false, action: 'failed', error: 'Meet API not configured' };
   }
 
