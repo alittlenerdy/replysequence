@@ -65,7 +65,7 @@ export async function createQuoteTweet(
   socialSetId: number,
   quotePostUrl: string,
   text: string,
-  publishAt: string = 'next-free-slot'
+  publishAt: string = 'now'
 ): Promise<{ id: number }> {
   const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/drafts`;
 

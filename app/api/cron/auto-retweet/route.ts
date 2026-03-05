@@ -8,7 +8,7 @@
  * Only processes 1 post per run to avoid spamming the timeline.
  * Only considers posts from the last 7 days.
  *
- * Schedule: 0 10,22 * * * (10 AM + 10 PM UTC = 5 AM + 5 PM CT)
+ * Schedule: 0 19,0 * * * (1 PM + 6 PM CT — runs after @replysequence posting slots)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
