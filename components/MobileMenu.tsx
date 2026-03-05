@@ -51,22 +51,22 @@ export default function MobileMenu() {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={isOpen}
       >
         <span
-          className={`block w-6 h-0.5 bg-current transition-all duration-300 ${
+          className={`block w-6 h-0.5 bg-current transition-transform duration-300 ${
             isOpen ? 'rotate-45 translate-y-2' : ''
           }`}
         />
         <span
-          className={`block w-6 h-0.5 bg-current transition-all duration-300 ${
+          className={`block w-6 h-0.5 bg-current transition-opacity duration-300 ${
             isOpen ? 'opacity-0' : ''
           }`}
         />
         <span
-          className={`block w-6 h-0.5 bg-current transition-all duration-300 ${
+          className={`block w-6 h-0.5 bg-current transition-transform duration-300 ${
             isOpen ? '-rotate-45 -translate-y-2' : ''
           }`}
         />
@@ -75,7 +75,7 @@ export default function MobileMenu() {
       {/* Mobile Menu Overlay - rendered via portal to escape header stacking context */}
       {portalTarget && createPortal(
         <div
-          className={`fixed inset-0 backdrop-blur-lg md:hidden transition-all duration-300 ${
+          className={`fixed inset-0 backdrop-blur-lg md:hidden transition-[opacity,visibility] duration-300 ${
             isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
           }`}
           style={{
@@ -86,7 +86,7 @@ export default function MobileMenu() {
         >
           {/* Menu Content - padded to avoid header */}
           <nav
-            className={`flex flex-col items-center justify-center h-full gap-6 px-4 transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center h-full gap-6 px-4 transition-[transform,opacity] duration-300 ${
               isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}
             style={{ paddingTop: '80px', paddingBottom: '40px' }}
@@ -95,7 +95,7 @@ export default function MobileMenu() {
             <a
               href="/how-it-works"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               How It Works
             </a>
@@ -104,18 +104,18 @@ export default function MobileMenu() {
             <div className="flex flex-col items-center">
               <button
                 onClick={() => setCompareOpen(!compareOpen)}
-                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Compare
                 <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
               </button>
-              <div className={`flex flex-col items-center gap-3 mt-4 overflow-hidden transition-all duration-300 ${compareOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className={`flex flex-col items-center gap-3 mt-4 overflow-hidden transition-[max-height,opacity] duration-300 ${compareOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
                 {competitors.map((competitor) => (
                   <a
                     key={competitor.slug}
                     href={`/compare/${competitor.slug}`}
                     onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors"
+                    className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {competitor.name}
                   </a>
@@ -126,35 +126,35 @@ export default function MobileMenu() {
             <a
               href="/integrations"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Integrations
             </a>
             <a
               href="/pricing"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Pricing
             </a>
             <a
               href="/blog"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Blog
             </a>
             <a
               href="/dashboard"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Dashboard
             </a>
             <a
               href="/sign-up"
               onClick={() => setIsOpen(false)}
-              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-all duration-300"
+              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-[color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               style={{
                 background: 'linear-gradient(135deg, #2563eb 0%, #9333ea 100%)',
                 boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',

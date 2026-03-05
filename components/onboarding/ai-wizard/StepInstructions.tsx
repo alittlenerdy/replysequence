@@ -38,7 +38,7 @@ export function StepInstructions({
             placeholder="E.g., Always include a specific next step with a date."
             rows={3}
             maxLength={500}
-            className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
           />
           <div className="flex flex-wrap gap-2 mt-2">
             {INSTRUCTION_CHIPS.map((chip) => (
@@ -50,7 +50,7 @@ export function StepInstructions({
                     instructions ? `${instructions}\n${chip}` : chip
                   );
                 }}
-                className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors"
+                className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 + {chip}
               </button>
@@ -69,7 +69,7 @@ export function StepInstructions({
             placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp"}
             rows={4}
             maxLength={500}
-            className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+            className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-mono"
           />
         </div>
       </div>
@@ -77,13 +77,13 @@ export function StepInstructions({
       <div className="mt-8 flex items-center gap-3">
         <button
           onClick={onBack}
-          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all shadow-lg shadow-indigo-500/25"
+          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Continue
         </button>

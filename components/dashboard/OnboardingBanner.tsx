@@ -65,14 +65,14 @@ export function OnboardingBanner({ currentStep }: OnboardingBannerProps) {
           <div className="flex items-center gap-3">
             <Link
               href="/onboarding"
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium text-sm transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Continue Setup
               <ArrowRight className="h-4 w-4" />
             </Link>
             <button
               onClick={handleDismiss}
-              className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-white/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               aria-label="Dismiss banner"
             >
               <X className="h-5 w-5 text-white/80 hover:text-white" />

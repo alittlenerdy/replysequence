@@ -79,7 +79,7 @@ function ChecklistItemRow({
         <button
           onClick={onSampleAction}
           disabled={sampleLoading}
-          className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           {sampleLoading ? 'Generating...' : (item.actionLabel || 'Try')}
           {!sampleLoading && <Sparkles className="w-3 h-3" />}
@@ -90,7 +90,7 @@ function ChecklistItemRow({
       {!item.completed && item.actionType !== 'sample' && item.actionUrl && (
         <Link
           href={item.actionUrl}
-          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
+          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
             item.optional
               ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-700/70 light:bg-gray-200 light:text-gray-600 light:hover:bg-gray-300'
               : 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30'
@@ -327,7 +327,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
           {/* Collapse toggle */}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-2 rounded-lg hover:bg-gray-800 light:hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             aria-label={collapsed ? 'Expand checklist' : 'Collapse checklist'}
           >
             {collapsed ? (

@@ -60,7 +60,7 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
   }).join(' ');
 
   return (
-    <svg width={width} height={height} className="opacity-60">
+    <svg width={width} height={height} className="opacity-60" aria-hidden="true">
       <polyline
         fill="none"
         stroke={color}

@@ -35,7 +35,7 @@ export function StepHourlyRate({ value, onChange, onNext, onBack }: StepHourlyRa
                 }
               }}
               aria-label="Hourly rate"
-              className="w-28 px-3 py-2.5 text-lg bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 tabular-nums"
+              className="w-28 px-3 py-2.5 text-lg bg-gray-800 border border-gray-700 rounded-lg text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 tabular-nums"
             />
             <span className="text-sm text-gray-500">/ hour</span>
           </div>
@@ -47,7 +47,7 @@ export function StepHourlyRate({ value, onChange, onNext, onBack }: StepHourlyRa
               key={rate}
               type="button"
               onClick={() => onChange(rate)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 value === rate
                   ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                   : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-500'
@@ -62,19 +62,19 @@ export function StepHourlyRate({ value, onChange, onNext, onBack }: StepHourlyRa
       <div className="mt-8 flex items-center gap-3">
         <button
           onClick={onBack}
-          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all shadow-lg shadow-indigo-500/25"
+          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Continue
         </button>
         <button
           onClick={onNext}
-          className="px-4 py-3 text-xs text-gray-500 hover:text-gray-400 transition-colors"
+          className="px-4 py-3 text-xs text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Skip for now
         </button>

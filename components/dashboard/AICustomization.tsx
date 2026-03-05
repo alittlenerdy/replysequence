@@ -227,7 +227,7 @@ export function AICustomization() {
             </div>
             <button
               onClick={handleDismissCompletion}
-              className="text-green-400/60 hover:text-green-300 light:text-green-500 light:hover:text-green-700 transition-colors shrink-0"
+              className="text-green-400/60 hover:text-green-300 light:text-green-500 light:hover:text-green-700 transition-colors shrink-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               aria-label="Dismiss"
             >
               <X className="w-4 h-4" />
@@ -262,7 +262,7 @@ export function AICustomization() {
         {/* Left column: Settings form */}
         <div className="flex-1 min-w-0 space-y-6">
           {/* Step 1: Tone Selection */}
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-all duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">1</span>
               <h4 className="text-sm font-medium text-white light:text-gray-900">Email Tone</h4>
@@ -275,7 +275,7 @@ export function AICustomization() {
                     key={option.value}
                     layout
                     onClick={() => setPreferences(p => ({ ...p, aiTone: option.value }))}
-                    className={`w-full p-3.5 rounded-xl border text-left transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+                    className={`w-full p-3.5 rounded-xl border text-left transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-md outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                       isSelected
                         ? 'border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/20'
                         : 'border-gray-700 light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400 bg-gray-900/30 light:bg-gray-50'
@@ -311,7 +311,7 @@ export function AICustomization() {
           </div>
 
           {/* Step 2: Custom Instructions + Signature */}
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-all duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">2</span>
               <h4 className="text-sm font-medium text-white light:text-gray-900">Custom Instructions & Signature</h4>
@@ -327,7 +327,7 @@ export function AICustomization() {
               placeholder="E.g., Always include a specific next step with a date. Use my first name in the sign-off\u2026"
               rows={3}
               maxLength={500}
-              className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white"
+              className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
             />
             <div className="text-xs text-gray-600 mt-1 text-right">
               {preferences.aiCustomInstructions.length}/500
@@ -345,7 +345,7 @@ export function AICustomization() {
                         : chip,
                     }));
                   }}
-                  className="px-3 py-1.5 text-xs font-medium text-indigo-300 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-full hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors"
+                  className="px-3 py-1.5 text-xs font-medium text-indigo-300 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 border border-indigo-500/20 light:border-indigo-200 rounded-full hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   + {chip}
                 </button>
@@ -362,12 +362,12 @@ export function AICustomization() {
               placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp\n(555) 123-4567"}
               rows={4}
               maxLength={500}
-              className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white font-mono"
+              className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white font-mono"
             />
           </div>
 
           {/* Step 3: Hourly Rate */}
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-all duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">3</span>
               <DollarSign className="w-4 h-4 text-amber-400" />
@@ -391,7 +391,7 @@ export function AICustomization() {
                     }
                   }}
                   aria-label="Hourly rate"
-                  className="w-24 px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white tabular-nums"
+                  className="w-24 px-3 py-2 text-sm bg-gray-800 light:bg-gray-50 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white tabular-nums"
                 />
                 <span className="text-sm text-gray-500">/ hr</span>
               </div>
@@ -401,7 +401,7 @@ export function AICustomization() {
                     key={rate}
                     type="button"
                     onClick={() => setPreferences(p => ({ ...p, hourlyRate: rate }))}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
+                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                       preferences.hourlyRate === rate
                         ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                         : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-500 border border-gray-700 light:border-gray-200 hover:border-gray-500'
@@ -526,10 +526,10 @@ function TemplateManager() {
   const customTemplates = templates.filter((t) => !t.isSystem);
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-all duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
       <button
         onClick={handleExpand}
-        className="w-full flex items-center justify-between group"
+        className="w-full flex items-center justify-between group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"
       >
         <div className="flex items-center gap-2">
           <FileText className="w-4 h-4 text-indigo-400" />
@@ -605,7 +605,7 @@ function TemplateManager() {
                             <button
                               onClick={() => handleDelete(t.id)}
                               disabled={deleting === t.id}
-                              className="shrink-0 ml-2 p-1.5 text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                              className="shrink-0 ml-2 p-1.5 text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                               title="Delete template"
                               aria-label="Delete template"
                             >
@@ -630,7 +630,7 @@ function TemplateManager() {
                   ) : (
                     <button
                       onClick={() => setShowCreateForm(true)}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-indigo-400 border border-dashed border-gray-600 light:border-gray-300 rounded-xl hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-colors"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-indigo-400 border border-dashed border-gray-600 light:border-gray-300 rounded-xl hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <Plus className="w-4 h-4" />
                       Create Custom Template
@@ -679,13 +679,13 @@ function CreateTemplateForm({
         onChange={(e) => setName(e.target.value)}
         placeholder="Template name"
         maxLength={100}
-        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white"
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
       />
 
       <select
         value={meetingType}
         onChange={(e) => setMeetingType(e.target.value)}
-        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white"
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
       >
         <option value="">All meeting types</option>
         <option value="sales_call">Sales Calls</option>
@@ -701,7 +701,7 @@ function CreateTemplateForm({
         placeholder="Instructions for the AI. E.g., 'Focus on budget discussions and decision timelines. Include a pricing summary section.'"
         rows={4}
         maxLength={2000}
-        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white"
+        className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
       />
       <div className="text-xs text-gray-600 text-right">{promptInstructions.length}/2000</div>
 
@@ -709,14 +709,14 @@ function CreateTemplateForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+          className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={saving || !name || !promptInstructions}
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           {saving ? (
             <>

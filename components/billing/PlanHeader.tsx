@@ -151,9 +151,9 @@ export function PlanHeader({ billing, onScrollToPlans }: PlanHeaderProps) {
             {billing.tier === 'free' ? (
               <button
                 onClick={onScrollToPlans}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow]
                   bg-gradient-to-r from-indigo-500 to-indigo-700 text-white
-                  hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+                  hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 <Sparkles className="w-4 h-4" />
                 Upgrade Plan

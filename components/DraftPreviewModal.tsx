@@ -80,9 +80,9 @@ function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted
     <div className="mt-3 pt-3 border-t border-white/[0.06]">
       <button
         onClick={handleToggle}
-        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-400 transition-colors w-full"
+        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-400 transition-colors w-full rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
       >
-        <svg className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
         Activity Timeline
@@ -112,7 +112,7 @@ function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted
               const cfg = eventConfig[event.type] || { label: event.type, color: 'text-gray-400', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' };
               return (
                 <div key={event.id} className="flex items-center gap-2 text-xs">
-                  <svg className={`w-3 h-3 shrink-0 ${cfg.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className={`w-3 h-3 shrink-0 ${cfg.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={cfg.icon} />
                   </svg>
                   <span className={cfg.color}>{cfg.label}</span>
@@ -228,7 +228,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
     if (isEditing) {
       setEditSubject(draft.subject);
       setEditBody(ensureHtml(draft.body));
-      console.log('[EDIT-1] Opening draft editor, id:', draft.id);
     }
   }, [isEditing, draft.id, draft.subject, draft.body]);
 
@@ -301,8 +300,8 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
           const data = await response.json();
           setSuggestedRecipients(data.recipients || []);
         }
-      } catch (err) {
-        console.error('[DRAFT-MODAL] Error fetching recipients:', err);
+      } catch {
+        // Silently fail - recipients are optional suggestions
       } finally {
         setLoadingRecipients(false);
       }
@@ -347,7 +346,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
     setIsSaving(true);
     setError(null);
-    console.log('[EDIT-2] Saving changes, subject:', editSubject.substring(0, 50));
 
     try {
       const response = await fetch('/api/drafts/update', {
@@ -366,7 +364,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         throw new Error(data.error || 'Failed to save draft');
       }
 
-      console.log('[EDIT-3] Changes saved successfully');
       setSaveSuccess(true);
       setTimeout(() => {
         setSaveSuccess(false);
@@ -374,7 +371,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         onDraftUpdated();
       }, 1000);
     } catch (err) {
-      console.error('[EDIT-ERROR] Save failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to save draft');
     } finally {
       setIsSaving(false);
@@ -393,7 +389,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
     setShowSendConfirm(false);
     setIsSending(true);
     setError(null);
-    console.log('[SEND-1] Sending email, to:', recipientEmail);
 
     try {
       const response = await fetch('/api/drafts/send', {
@@ -408,7 +403,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         throw new Error(data.error || 'Failed to send email');
       }
 
-      console.log('[SEND-2] Email sent successfully, messageId:', data.messageId);
       if (data.hubspotDetails) {
         setHubspotDetails(data.hubspotDetails);
       }
@@ -417,7 +411,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         onDraftUpdated();
       }, 1500);
     } catch (err) {
-      console.error('[SEND-ERROR] Send failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to send email');
     } finally {
       setIsSending(false);
@@ -427,7 +420,6 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
   const handleDelete = async () => {
     setIsDeleting(true);
     setError(null);
-    console.log('[DELETE-1] Deleting draft, id:', draft.id);
 
     try {
       const response = await fetch(`/api/drafts/${draft.id}`, {
@@ -439,11 +431,9 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         throw new Error(data.error || 'Failed to delete draft');
       }
 
-      console.log('[DELETE-2] Draft deleted successfully');
       onDraftUpdated();
       onClose();
     } catch (err) {
-      console.error('[DELETE-ERROR] Delete failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete draft');
       setShowDeleteConfirm(false);
     } finally {
@@ -518,7 +508,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         }}
       >
         <div
-          className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-[#0C0C18] md:border md:border-white/[0.06] md:rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),0_0_80px_rgba(59,130,246,0.05)] transform transition-all animate-modal-in overflow-hidden"
+          className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-[#0C0C18] md:border md:border-white/[0.06] md:rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),0_0_80px_rgba(59,130,246,0.05)] transform transition-[transform,opacity] animate-modal-in overflow-hidden"
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Ambient gradient orbs for depth */}
@@ -550,19 +540,19 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                 {draft.status !== 'sent' && !isEditing && (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="p-2.5 sm:p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="p-2.5 sm:p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     title="Delete draft"
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
                 )}
                 <button
                   onClick={handleModalClose}
-                  className="p-2.5 sm:p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="p-2.5 sm:p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -575,7 +565,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
             <div className="px-6 py-8">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
@@ -592,18 +582,18 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={isDeleting}
-                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {isDeleting ? (
                       <>
-                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
@@ -620,7 +610,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
             <div className="px-6 py-8">
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </div>
@@ -640,15 +630,15 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                 <div className="flex justify-center gap-3">
                   <button
                     onClick={() => setShowSendConfirm(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={confirmSend}
-                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                     Send Email
@@ -691,7 +681,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
                     {saveSuccess ? (
                       <div className="flex items-center gap-2 text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-lg">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <span className="font-medium">Changes saved!</span>
@@ -708,7 +698,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         type="text"
                         value={editSubject}
                         onChange={(e) => setEditSubject(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-white placeholder:text-slate-500"
+                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent text-white placeholder:text-slate-500"
                         placeholder="Email subject"
                       />
                     </div>
@@ -730,18 +720,18 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       <button
                         onClick={() => setIsEditing(false)}
                         disabled={isSaving}
-                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleSave}
                         disabled={isSaving || !hasChanges}
-                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         {isSaving ? (
                           <>
-                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                             </svg>
@@ -763,7 +753,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                     {/* Regeneration success banner */}
                     {regenerateSuccess && (
                       <div className="flex items-center gap-2 text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-lg animate-fade-in">
-                        <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <span className="font-medium">Draft regenerated with new template!</span>
@@ -786,19 +776,19 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             setCopied(true);
                             setTimeout(() => setCopied(false), 2000);
                           }}
-                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors"
+                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                           title="Copy email to clipboard"
                         >
                           {copied ? (
                             <>
-                              <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
                               <span className="text-green-400">Copied</span>
                             </>
                           ) : (
                             <>
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                               Copy
@@ -839,7 +829,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                               key={template.id}
                               onClick={() => handleRegenerate(template.id)}
                               disabled={isRegenerating}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] rounded-full hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-white transition-all duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed group"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] rounded-full hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-white transition-colors duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                               title={template.description}
                             >
                               <span className={`w-1.5 h-1.5 rounded-full ${iconColors[template.icon] || 'text-gray-400'} bg-current shrink-0 group-hover:scale-125 transition-transform`} />
@@ -890,7 +880,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                     {draft.qualityScore !== null && (
                       <div className="pt-4 border-t border-white/[0.06]">
                         <h3 className="text-sm font-medium text-slate-400 mb-3 flex items-center gap-2">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           AI Quality Analysis
@@ -912,9 +902,9 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       <div className="pt-4 border-t border-white/[0.06]">
                         <button
                           onClick={() => setShowFlywheelDetails(!showFlywheelDetails)}
-                          className="flex items-center gap-2 text-sm w-full"
+                          className="flex items-center gap-2 text-sm w-full rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                         >
-                          <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
                           </svg>
                           <span className="font-medium text-indigo-300">
@@ -950,7 +940,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       <div className="space-y-4">
                         <div className="bg-green-500/10 rounded-lg p-4 border border-green-500/20">
                           <div className="flex items-center gap-2 text-green-400">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                             <span className="font-medium">Sent to {draft.sentTo}</span>
@@ -961,7 +951,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         {/* Email Engagement Stats */}
                         <div className="bg-[#16162A]/60 rounded-lg p-4 border border-white/[0.06]">
                           <h4 className="text-sm font-medium text-slate-400 mb-3 flex items-center gap-2">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                             Email Engagement
@@ -995,7 +985,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             <div className="text-center">
                               <div className={`text-2xl font-bold ${draft.repliedAt ? 'text-indigo-400' : 'text-gray-500'}`}>
                                 {draft.repliedAt ? (
-                                  <svg className="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <svg className="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                   </svg>
                                 ) : '-'}
@@ -1045,7 +1035,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                   {sendSuccess ? (
                     <div className="space-y-1 py-2">
                       <div className="flex items-center justify-center gap-2 text-green-400">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <span className="font-medium">Email sent successfully!</span>
@@ -1056,7 +1046,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         }`}>
                           {hubspotDetails.synced ? (
                             <>
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
                               <span>
@@ -1067,7 +1057,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             </>
                           ) : (
                             <>
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                               </svg>
                               <span>HubSpot sync failed</span>
@@ -1080,7 +1070,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                     <div className="flex justify-end">
                       <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors"
+                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         Close
                       </button>
@@ -1097,7 +1087,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       {suggestedRecipients.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-xs text-gray-400 flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             Meeting attendees
@@ -1107,7 +1097,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                               <button
                                 key={recipient.email}
                                 onClick={() => setRecipientEmail(recipient.email)}
-                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full transition-colors ${
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                                   recipientEmail === recipient.email
                                     ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-500/50'
                                     : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:text-white'
@@ -1118,7 +1108,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                                   {recipient.name || recipient.email.split('@')[0]}
                                 </span>
                                 {recipientEmail === recipient.email && (
-                                  <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                   </svg>
                                 )}
@@ -1130,7 +1120,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
                       {loadingRecipients && (
                         <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                           </svg>
@@ -1141,7 +1131,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       {/* Sender account indicator - only show when user has a connected email */}
                       {senderEmail && (
                         <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                           <span>Sending from <span className="text-gray-300">{senderEmail}</span></span>
@@ -1151,9 +1141,9 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       {/* Contextual AI settings link */}
                       <a
                         href="/dashboard/settings?tab=ai"
-                        className="inline-flex items-center gap-1.5 text-xs text-indigo-400/70 hover:text-indigo-400 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs text-indigo-400/70 hover:text-indigo-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                         </svg>
                         Want all drafts to sound like this? Customize AI
@@ -1168,44 +1158,44 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             placeholder="Recipient email address"
                             value={recipientEmail}
                             onChange={(e) => setRecipientEmail(e.target.value)}
-                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder:text-slate-500"
+                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent placeholder:text-slate-500"
                           />
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-4 py-2 text-sm font-medium text-amber-300 bg-amber-500/15 border border-amber-500/30 rounded-lg hover:bg-amber-500/25 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all duration-300 flex items-center gap-2 group"
+                            className="px-4 py-2 text-sm font-medium text-amber-300 bg-amber-500/15 border border-amber-500/30 rounded-lg hover:bg-amber-500/25 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-[color,background-color,border-color,box-shadow] duration-300 flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                             title="Choose a template and regenerate this draft"
                           >
-                            <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                             Regenerate
                           </button>
                           <button
                             onClick={() => setIsRefining(true)}
-                            className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors flex items-center gap-2"
+                            className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                           >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                             Refine
                           </button>
                           <button
                             onClick={() => setIsEditing(true)}
-                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors"
+                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                           >
                             Edit
                           </button>
                           <button
                             onClick={handleSend}
                             disabled={isSending || !recipientEmail}
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                             title="Send email (Cmd+Enter)"
                           >
                             {isSending ? (
                               <>
-                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                 </svg>
@@ -1213,7 +1203,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                               </>
                             ) : (
                               <>
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
                                 Send

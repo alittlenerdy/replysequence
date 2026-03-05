@@ -140,7 +140,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 />
                 <button
                   onClick={handleCopy}
-                  className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5"
+                  className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   {copied ? (
                     <>
@@ -163,7 +163,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(result.referralLink)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-[#0077B5]/10 border border-[#0077B5]/30 text-[#0077B5] rounded-lg text-sm font-medium hover:bg-[#0077B5]/20 transition-colors"
+                className="px-4 py-2 bg-[#0077B5]/10 border border-[#0077B5]/30 text-[#0077B5] rounded-lg text-sm font-medium hover:bg-[#0077B5]/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Share on LinkedIn
               </a>
@@ -171,7 +171,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Just joined the ReplySequence waitlist — AI follow-up emails from your Zoom/Teams/Meet calls in 8 seconds.')}&url=${encodeURIComponent(result.referralLink)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-gray-700/50 border border-gray-600 text-gray-300 light:text-gray-700 light:bg-gray-100 light:border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-700 light:hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 bg-gray-700/50 border border-gray-600 text-gray-300 light:text-gray-700 light:bg-gray-100 light:border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-700 light:hover:bg-gray-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Share on X
               </a>
@@ -195,7 +195,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 placeholder="Name (optional)"
                 aria-label="Name"
                 autoComplete="name"
-                className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:w-[180px]"
+                className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent text-sm sm:w-[180px]"
               />
               <input
                 type="email"
@@ -206,12 +206,12 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 aria-label="Email address"
                 autoComplete="email"
                 spellCheck={false}
-                className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent text-sm"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || !email}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/20 whitespace-nowrap"
+                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-indigo-500/20 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 {isSubmitting ? 'Joining\u2026' : 'Join Waitlist'}
               </button>

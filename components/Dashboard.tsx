@@ -47,7 +47,6 @@ export function Dashboard({
 
   const fetchDrafts = useCallback(async () => {
     setIsLoading(true);
-    console.log('[DASHBOARD-1] Fetching drafts, filters:', { page, status, search, dateRange });
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -64,7 +63,6 @@ export function Dashboard({
         setTotal(data.total);
         setTotalPages(data.totalPages);
         setStats(data.stats);
-        console.log('[DASHBOARD-2] Drafts loaded, count:', data.drafts.length);
       }
     } catch (error) {
       console.error('[DASHBOARD-ERROR] Failed to fetch drafts:', error);
@@ -190,11 +188,11 @@ export function Dashboard({
             </div>
             <a
               href="/"
-              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-all duration-300"
+              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors duration-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               <span className="relative">
                 Back to Home
-                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-indigo-600 group-hover:w-full transition-all duration-300" />
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-indigo-600 group-hover:w-full transition-[width] duration-300" />
               </span>
             </a>
           </div>

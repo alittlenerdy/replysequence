@@ -39,19 +39,19 @@ export async function GET(request: NextRequest) {
   if (error) {
     console.error('[ZOOM-CALLBACK] OAuth error from Zoom:', error);
     return NextResponse.redirect(
-      new URL(`/dashboard?error=zoom_denied&message=${encodeURIComponent(error)}`, baseUrl)
+      new URL(`/dashboard/settings?error=zoom_denied&message=${encodeURIComponent(error)}`, baseUrl)
     );
   }
 
   if (!code) {
     console.error('[ZOOM-CALLBACK] Missing authorization code');
-    return NextResponse.redirect(new URL('/dashboard?error=missing_code', baseUrl));
+    return NextResponse.redirect(new URL('/dashboard/settings?error=missing_code', baseUrl));
   }
 
   // Decode state to get userId (set during OAuth initiation when user was authenticated)
   // We trust this userId because it was set by our server during the initial OAuth redirect
   let stateUserId: string;
-  let returnTo = '/dashboard?zoom_connected=true';
+  let returnTo = '/dashboard/settings?connected=zoom';
 
   try {
     const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
   if (!stateUserId) {
     console.error('[ZOOM-CALLBACK] No userId in state - invalid OAuth flow');
-    return NextResponse.redirect(new URL('/dashboard?error=invalid_state', baseUrl));
+    return NextResponse.redirect(new URL('/dashboard/settings?error=invalid_state', baseUrl));
   }
 
   // Optionally verify current session matches (but don't require it - session might not persist through OAuth redirect)
@@ -221,7 +221,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('[ZOOM-CALLBACK] Error processing OAuth callback:', error);
     return NextResponse.redirect(
-      new URL(`/dashboard?error=oauth_failed&message=${encodeURIComponent(String(error))}`, baseUrl)
+      new URL(`/dashboard/settings?error=oauth_failed&message=${encodeURIComponent(String(error))}`, baseUrl)
     );
   }
 }

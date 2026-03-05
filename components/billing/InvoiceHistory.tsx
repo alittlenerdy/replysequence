@@ -55,7 +55,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
           {billing.tier === 'free' && (
             <button
               onClick={onScrollToPlans}
-              className="inline-flex items-center gap-2 mt-3 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+              className="inline-flex items-center gap-2 mt-3 text-sm text-indigo-400 hover:text-indigo-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               <Sparkles className="w-4 h-4" />
               View available plans
@@ -132,7 +132,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
                         href={invoice.pdfUrl || invoice.invoiceUrl!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+                        className="inline-flex items-center gap-1.5 text-sm text-indigo-400 hover:text-indigo-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <Download className="w-4 h-4" />
                         <span className="hidden sm:inline">PDF</span>

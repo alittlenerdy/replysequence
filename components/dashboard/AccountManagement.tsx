@@ -65,7 +65,7 @@ export function AccountManagement() {
             <AlertTriangle className="w-4 h-4 shrink-0" />
             {error}
           </div>
-          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400">
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -86,7 +86,7 @@ export function AccountManagement() {
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className="shrink-0 px-4 py-2 text-sm font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-colors disabled:opacity-50"
+            className="shrink-0 px-4 py-2 text-sm font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             {isExporting ? (
               <span className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export function AccountManagement() {
             {!showDeleteConfirm ? (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="mt-3 px-4 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors"
+                className="mt-3 px-4 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Delete Account
               </button>
@@ -145,12 +145,12 @@ export function AccountManagement() {
                     onChange={(e) => setDeleteConfirmText(e.target.value)}
                     placeholder="DELETE"
                     aria-label="Type DELETE to confirm"
-                    className="px-3 py-1.5 text-sm bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 w-32 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900 light:focus:ring-offset-white"
+                    className="px-3 py-1.5 text-sm bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-600 light:placeholder-gray-400 w-32 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white"
                   />
                   <button
                     onClick={handleDelete}
                     disabled={deleteConfirmText !== 'DELETE' || isDeleting}
-                    className="px-4 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {isDeleting ? (
                       <span className="flex items-center gap-2">
@@ -163,7 +163,7 @@ export function AccountManagement() {
                   </button>
                   <button
                     onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
-                    className="px-4 py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
+                    className="px-4 py-1.5 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>

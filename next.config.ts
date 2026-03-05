@@ -110,15 +110,16 @@ const nextConfig: NextConfig = {
 const analyzedConfig = withBundleAnalyzer(nextConfig);
 
 // Wrap with Sentry for error monitoring and source map uploads
-// Only upload source maps in CI/Vercel — skip locally for fast builds
-export default withSentryConfig(analyzedConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  disableLogger: true,
-  automaticVercelMonitors: true,
-  sourcemaps: {
-    disable: !process.env.CI && !process.env.VERCEL,
-  },
-});
+// Only enable in CI/Vercel — skip locally for fast builds
+const isCIorVercel = !!(process.env.CI || process.env.VERCEL);
+export default isCIorVercel
+  ? withSentryConfig(analyzedConfig, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      silent: !process.env.CI,
+      widenClientFileUpload: true,
+      sourcemaps: {
+        disable: !isCIorVercel,
+      },
+    })
+  : analyzedConfig;

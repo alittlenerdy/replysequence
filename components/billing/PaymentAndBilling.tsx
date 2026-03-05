@@ -46,7 +46,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
             <p className="text-sm text-gray-500 mb-4">Add a payment method when you upgrade to a paid plan.</p>
             <button
               onClick={onScrollToPlans}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               <Sparkles className="w-4 h-4" />
               Upgrade to Pro

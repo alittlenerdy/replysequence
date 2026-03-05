@@ -31,7 +31,6 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
 
         if (!data.completedAt) {
           // Onboarding not complete, redirect to onboarding
-          console.log('[ONBOARDING-GATE] Redirecting to onboarding, step:', data.currentStep);
           router.push('/onboarding');
           return;
         }
@@ -39,7 +38,6 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
         setOnboardingComplete(true);
       } else {
         // No record exists, redirect to onboarding
-        console.log('[ONBOARDING-GATE] No onboarding record, redirecting');
         router.push('/onboarding');
         return;
       }
@@ -51,17 +49,14 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
         const meetConnectedParam = searchParams.get('meet_connected');
 
         if (zoomConnectedParam === 'true') {
-          console.log('[ONBOARDING] Zoom OAuth success detected');
           setSuccessMessage('Zoom connected! You\'re ready to go.');
           setShowSuccessToast(true);
           window.history.replaceState({}, '', '/dashboard');
         } else if (teamsConnectedParam === 'true') {
-          console.log('[ONBOARDING] Teams OAuth success detected');
           setSuccessMessage('Microsoft Teams connected! You\'re ready to go.');
           setShowSuccessToast(true);
           window.history.replaceState({}, '', '/dashboard');
         } else if (meetConnectedParam === 'true') {
-          console.log('[ONBOARDING] Meet OAuth success detected');
           setSuccessMessage('Google Meet connected! You\'re ready to go.');
           setShowSuccessToast(true);
           window.history.replaceState({}, '', '/dashboard');
@@ -81,12 +76,8 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
     checkOnboarding();
   }, [checkOnboarding]);
 
-  // Debug logging
-  console.log('[ONBOARDING-GATE] State:', { checking, onboardingComplete });
-
   // Show loading state
   if (checking || onboardingComplete === null) {
-    console.log('[ONBOARDING-GATE] Showing loading state');
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
@@ -101,7 +92,6 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   }
 
   // Onboarding complete: show the dashboard
-  console.log('[ONBOARDING-GATE] Showing dashboard (onboarding complete)');
   return (
     <>
       {children}

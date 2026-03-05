@@ -83,7 +83,7 @@ export default function ExitSurveyPage() {
             <button
               key={reason.id}
               onClick={() => setSelectedReason(reason.id)}
-              className={`w-full text-left px-4 py-3 rounded-xl border transition-colors ${
+              className={`w-full text-left px-4 py-3 rounded-xl border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 selectedReason === reason.id
                   ? 'border-indigo-500 bg-indigo-500/10 text-white'
                   : 'border-gray-700 bg-gray-900 text-gray-300 hover:border-gray-600'
@@ -99,7 +99,7 @@ export default function ExitSurveyPage() {
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
               rows={3}
               placeholder="Anything else you'd like to share? (optional)"
             />
@@ -113,7 +113,7 @@ export default function ExitSurveyPage() {
         <button
           onClick={handleSubmit}
           disabled={!selectedReason || submitting}
-          className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors"
+          className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           {submitting ? 'Submitting...' : 'Submit'}
         </button>

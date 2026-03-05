@@ -124,7 +124,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
 
                   {/* Price */}
                   <div className={isEmbedded ? 'mb-4' : 'mb-6'}>
-                    <span className={`${isEmbedded ? 'text-3xl' : 'text-4xl'} font-bold text-white light:text-gray-900 transition-all duration-300`}>
+                    <span className={`${isEmbedded ? 'text-3xl' : 'text-4xl'} font-bold text-white light:text-gray-900 transition-opacity duration-300`}>
                       ${displayPrice}
                     </span>
                     {tier.tier !== 'free' && (

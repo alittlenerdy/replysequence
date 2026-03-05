@@ -165,7 +165,7 @@ export function AnalyticsDashboard() {
         <p className="text-red-400 text-lg mb-2">{error}</p>
         <button
           onClick={() => fetchAnalytics()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           <RefreshCw className="w-4 h-4" />
           Try Again
@@ -207,7 +207,7 @@ export function AnalyticsDashboard() {
               <button
                 key={range.value}
                 onClick={() => setDateRange(range.value)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   dateRange === range.value
                     ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
@@ -220,7 +220,7 @@ export function AnalyticsDashboard() {
           <button
             onClick={() => fetchAnalytics(true)}
             disabled={isRefreshing}
-            className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             title="Refresh analytics"
             aria-label="Refresh data"
           >
@@ -346,7 +346,7 @@ export function AnalyticsDashboard() {
         <div>
           <button
             onClick={() => setShowMoreInsights(!showMoreInsights)}
-            className="w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors border border-gray-700/50 light:border-gray-200 rounded-2xl"
+            className="w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors border border-gray-700/50 light:border-gray-200 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             <span>More Insights</span>
             {showMoreInsights ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -496,7 +496,7 @@ export function AnalyticsDashboard() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <a
                 href="/dashboard/settings"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl hover:from-indigo-700 hover:to-indigo-900 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl hover:from-indigo-700 hover:to-indigo-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 <Calendar className="w-4 h-4" />
                 Connect a Platform

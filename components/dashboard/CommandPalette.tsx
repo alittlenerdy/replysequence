@@ -209,6 +209,7 @@ export function CommandPalette() {
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -224,7 +225,7 @@ export function CommandPalette() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   aria-label="Search commands"
-                  className="flex-1 bg-transparent text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 outline-none text-sm"
+                  className="flex-1 bg-transparent text-white light:text-gray-900 placeholder-gray-500 light:placeholder-gray-400 focus-visible:outline-none text-sm"
                 />
                 <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-gray-500 bg-gray-800 light:bg-gray-100 rounded border border-gray-700 light:border-gray-200">
                   ESC
@@ -253,7 +254,7 @@ export function CommandPalette() {
                               key={cmd.id}
                               onClick={() => runCommand(cmd)}
                               onMouseEnter={() => setSelectedIndex(index)}
-                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                                 selectedIndex === index
                                   ? 'bg-indigo-500/10 text-white light:text-gray-900'
                                   : 'text-gray-300 light:text-gray-700 hover:bg-gray-800/50 light:hover:bg-gray-50'

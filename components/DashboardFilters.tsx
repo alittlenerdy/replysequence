@@ -47,7 +47,7 @@ export function DashboardFilters({
               key={chip.value}
               onClick={() => onStatusChange(chip.value)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                 ${status === chip.value
                   ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -69,7 +69,7 @@ export function DashboardFilters({
               key={chip.value}
               onClick={() => onDateRangeChange(chip.value)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                 ${dateRange === chip.value
                   ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -87,7 +87,7 @@ export function DashboardFilters({
         {/* Search */}
         <div className="relative w-full lg:w-64">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-4 w-4 text-gray-500 light:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-4 w-4 text-gray-500 light:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -104,14 +104,14 @@ export function DashboardFilters({
               text-white light:text-gray-900
               placeholder-gray-500 light:placeholder-gray-400
               bg-gray-800/50 light:bg-white
-              focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30
+              focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/30
               transition-colors duration-200
             "
           />
           {search && (
             <button
               onClick={() => onSearchChange('')}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 light:hover:text-gray-700"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 light:hover:text-gray-700 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               aria-label="Clear search"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -125,7 +125,7 @@ export function DashboardFilters({
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 rounded-lg transition-colors"
+            className="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Clear all
           </button>

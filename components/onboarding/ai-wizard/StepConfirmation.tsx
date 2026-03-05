@@ -78,7 +78,7 @@ export function StepConfirmation({
         <button
           onClick={handleSendTest}
           disabled={sendingTest || testSent}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600 disabled:opacity-60"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600 disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           {sendingTest ? (
             <>
@@ -102,14 +102,14 @@ export function StepConfirmation({
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}
-          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Back
         </button>
         <button
           onClick={onComplete}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] shadow-lg shadow-indigo-500/25 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           {isSaving ? (
             <>

@@ -100,7 +100,7 @@ export function BillingDashboard() {
         <p className="text-red-400 text-lg mb-2">{error}</p>
         <button
           onClick={fetchBilling}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           <RefreshCw className="w-4 h-4" />
           Try Again

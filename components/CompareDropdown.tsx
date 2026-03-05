@@ -43,7 +43,7 @@ export default function CompareDropdown() {
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors"
+        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -73,7 +73,7 @@ export default function CompareDropdown() {
                   key={competitor.slug}
                   href={`/compare/${competitor.slug}`}
                   onClick={() => setIsOpen(false)}
-                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-colors duration-200"
+                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex-1">

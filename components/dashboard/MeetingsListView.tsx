@@ -203,7 +203,7 @@ export function MeetingsListView() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Search meetings"
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:border-indigo-500/50"
           />
         </div>
       </div>
@@ -223,7 +223,7 @@ export function MeetingsListView() {
               key={key}
               onClick={() => setFollowUpFilter(followUpFilter === key ? 'all' : key)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                 ${followUpFilter === key
                   ? 'ring-2 ring-indigo-500/40 ' + color
                   : color + ' opacity-70 hover:opacity-100'
@@ -236,7 +236,7 @@ export function MeetingsListView() {
           {followUpFilter !== 'all' && (
             <button
               onClick={() => setFollowUpFilter('all')}
-              className="text-xs text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors ml-1"
+              className="text-xs text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors ml-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Clear
             </button>
@@ -251,7 +251,7 @@ export function MeetingsListView() {
             key={chip.value}
             onClick={() => { setPlatform(chip.value); setPage(1); }}
             className={`
-              px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200
+              px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
               ${platform === chip.value
                 ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                 : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -267,14 +267,14 @@ export function MeetingsListView() {
       {fetchError && (
         <div className="flex items-center justify-between gap-3 px-4 py-3 mb-4 rounded-xl bg-red-500/10 border border-red-500/20">
           <div className="flex items-center gap-2 text-sm text-red-400">
-            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             {fetchError}
           </div>
           <button
             onClick={() => fetchMeetings()}
-            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors"
+            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Retry
           </button>
@@ -300,7 +300,7 @@ export function MeetingsListView() {
         <div className="text-center py-16 bg-gray-900/30 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-2xl light:shadow-sm">
           {meetings.length === 0 ? (
             <>
-              <svg className="w-16 h-16 text-gray-600 light:text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-16 h-16 text-gray-600 light:text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
               <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No meetings yet</h3>
@@ -309,7 +309,7 @@ export function MeetingsListView() {
               </p>
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Connect Platform
               </Link>
@@ -331,7 +331,7 @@ export function MeetingsListView() {
               <Link
                 key={meeting.id}
                 href={`/dashboard/meetings/${meeting.id}`}
-                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group light:shadow-sm"
+                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-indigo-500/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group light:shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 <div className="flex items-start gap-4">
                   <PlatformIcon platform={meeting.platform} />
@@ -391,7 +391,7 @@ export function MeetingsListView() {
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               <ChevronLeft className="w-4 h-4" />
               Previous
@@ -399,7 +399,7 @@ export function MeetingsListView() {
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Next
               <ChevronRight className="w-4 h-4" />

@@ -47,19 +47,19 @@ export async function GET(request: NextRequest) {
       description: errorDescription,
     });
     return NextResponse.redirect(
-      new URL(`/dashboard?error=teams_denied&message=${encodeURIComponent(errorDescription || error)}`, baseUrl)
+      new URL(`/dashboard/settings?error=teams_denied&message=${encodeURIComponent(errorDescription || error)}`, baseUrl)
     );
   }
 
   if (!code) {
     console.error('[TEAMS-CALLBACK] Missing authorization code');
-    return NextResponse.redirect(new URL('/dashboard?error=missing_code', baseUrl));
+    return NextResponse.redirect(new URL('/dashboard/settings?error=missing_code', baseUrl));
   }
 
   // Decode state to get userId (set during OAuth initiation when user was authenticated)
   // We trust this userId because it was set by our server during the initial OAuth redirect
   let stateUserId: string;
-  let returnTo = '/dashboard?teams_connected=true';
+  let returnTo = '/dashboard/settings?connected=teams';
 
   try {
     const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 
   if (!stateUserId) {
     console.error('[TEAMS-CALLBACK] No userId in state - invalid OAuth flow');
-    return NextResponse.redirect(new URL('/dashboard?error=invalid_state', baseUrl));
+    return NextResponse.redirect(new URL('/dashboard/settings?error=invalid_state', baseUrl));
   }
 
   // Optionally verify current session matches (but don't require it - session might not persist through OAuth redirect)
@@ -261,7 +261,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('[TEAMS-CALLBACK] Error processing OAuth callback:', error);
     return NextResponse.redirect(
-      new URL(`/dashboard?error=oauth_failed&message=${encodeURIComponent(String(error))}`, baseUrl)
+      new URL(`/dashboard/settings?error=oauth_failed&message=${encodeURIComponent(String(error))}`, baseUrl)
     );
   }
 }

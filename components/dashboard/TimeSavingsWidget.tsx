@@ -123,7 +123,7 @@ function SavingsSparkline({ data }: { data: number[] }) {
   const areaPoints = `0,${height} ${points} ${width},${height}`;
 
   return (
-    <svg width={width} height={height} className="opacity-60">
+    <svg width={width} height={height} className="opacity-60" aria-hidden="true">
       <defs>
         <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#818CF8" stopOpacity="0.4" />

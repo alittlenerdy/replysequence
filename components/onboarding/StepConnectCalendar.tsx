@@ -45,7 +45,7 @@ export function StepConnectCalendar({
       description: 'Connect to automatically detect Google Meet meetings',
       color: '#4285F4',
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -59,7 +59,7 @@ export function StepConnectCalendar({
       description: 'Connect to automatically detect Teams meetings',
       color: '#0078D4',
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#0078D4">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#0078D4" aria-hidden="true">
           <path d="M24 7.387v10.478c0 .23-.08.424-.238.576-.158.154-.352.23-.58.23h-8.547v-6.959l1.6 1.229c.101.072.222.109.363.109.142 0 .263-.037.363-.109l6.348-4.879.004-.004c.088-.072.149-.163.18-.273a.499.499 0 00-.184-.398L17.635 3.59v3.797h8.547c.228 0 .422.076.58.23.158.152.238.346.238.576v-.806z"/>
           <path d="M15.635 7.387V3.59L7.088 10.11v7.561h8.547V7.387z"/>
           <path d="M7.088 2.613v7.497l8.547 6.561v-7.56l-8.547-6.498z"/>
@@ -108,7 +108,7 @@ export function StepConnectCalendar({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
-              className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+              className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
                 isThisConnected
                   ? 'border-indigo-500/50 bg-indigo-500/5'
                   : 'border-gray-700 hover:border-gray-600'
@@ -134,7 +134,7 @@ export function StepConnectCalendar({
                 <button
                   onClick={() => handleConnect(calendar.id)}
                   disabled={isThisConnected || connecting !== null}
-                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                     isThisConnected
                       ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                       : isConnecting
@@ -176,10 +176,10 @@ export function StepConnectCalendar({
         >
           <button
             onClick={onCalendarConnected}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Continue to Test Draft
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -195,7 +195,7 @@ export function StepConnectCalendar({
         {!showSkipWarning ? (
           <button
             onClick={() => setShowSkipWarning(true)}
-            className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             I&apos;ll do this later
           </button>
@@ -214,13 +214,13 @@ export function StepConnectCalendar({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSkipWarning(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Connect Now
               </button>
               <button
                 onClick={onSkip}
-                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Skip Anyway
               </button>

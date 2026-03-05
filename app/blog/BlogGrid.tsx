@@ -33,7 +33,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <button
             onClick={() => setSelectedTag(null)}
-            className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 ${
+            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
               selectedTag === null
                 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
                 : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
@@ -45,7 +45,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             <button
               key={tag}
               onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
-              className={`text-sm font-medium px-4 py-2 rounded-full transition-all duration-200 ${
+              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 selectedTag === tag
                   ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
                   : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
@@ -64,7 +64,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
               href={`/blog/${post.slug}`}
               className="group block"
             >
-              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-all duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5 light:hover:shadow-indigo-400/10">
+              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5 light:hover:shadow-indigo-400/10">
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags.slice(0, 2).map((tag) => (
@@ -103,7 +103,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
 
                 {/* Read More */}
                 <div className="mt-4 pt-4 border-t border-gray-800/50 light:border-gray-100">
-                  <span className="text-sm font-medium text-indigo-400 light:text-indigo-600 flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                  <span className="text-sm font-medium text-indigo-400 light:text-indigo-600 flex items-center gap-1.5 group-hover:gap-2.5 transition-[gap]">
                     Read article
                     <ArrowRight className="w-4 h-4" />
                   </span>
@@ -121,7 +121,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             </p>
             <button
               onClick={() => setSelectedTag(null)}
-              className="mt-4 text-indigo-400 light:text-indigo-600 hover:underline"
+              className="mt-4 text-indigo-400 light:text-indigo-600 hover:underline rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               View all articles
             </button>

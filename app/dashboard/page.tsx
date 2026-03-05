@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { DraftsView } from '@/components/dashboard/DraftsView';
 import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
-import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
+import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic';
@@ -18,9 +18,10 @@ async function DashboardContent() {
   console.log('[DASHBOARD-1] Fetching initial drafts server-side');
 
   // Fetch initial data server-side
-  const [draftsResult, stats] = await Promise.all([
+  const [draftsResult, stats, hasConnectedPlatforms] = await Promise.all([
     getDraftsWithMeetings({ page: 1, limit: 10 }),
     getDraftStats(),
+    getUserHasConnectedPlatforms(),
   ]);
   console.log('[DASHBOARD-2] Drafts loaded, count:', draftsResult.drafts.length);
 
@@ -37,6 +38,7 @@ async function DashboardContent() {
         initialPage={draftsResult.page}
         initialTotalPages={draftsResult.totalPages}
         initialStats={stats}
+        initialHasConnectedPlatforms={hasConnectedPlatforms}
       />
     </>
   );

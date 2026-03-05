@@ -25,7 +25,7 @@ export function StepRole({ value, onChange, onNext }: StepRoleProps) {
             <button
               key={option.value}
               onClick={() => onChange(option.value)}
-              className={`relative p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+              className={`relative p-4 rounded-xl border-2 text-left transition-[border-color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 isSelected
                   ? 'border-indigo-500 bg-indigo-500/10'
                   : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
@@ -53,7 +53,7 @@ export function StepRole({ value, onChange, onNext }: StepRoleProps) {
         <button
           onClick={onNext}
           disabled={!value}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] shadow-lg shadow-indigo-500/25 disabled:opacity-40 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Continue
         </button>

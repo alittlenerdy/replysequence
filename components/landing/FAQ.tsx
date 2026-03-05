@@ -188,7 +188,7 @@ export function FAQ() {
             Still have questions?{' '}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-700 underline underline-offset-2 transition-colors"
+              className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-700 underline underline-offset-2 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Contact us
             </a>

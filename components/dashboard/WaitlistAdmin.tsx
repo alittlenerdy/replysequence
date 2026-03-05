@@ -136,7 +136,7 @@ export function WaitlistAdmin() {
         </div>
         <button
           onClick={fetchData}
-          className="p-2 text-gray-400 hover:text-white light:hover:text-gray-900 transition-colors"
+          className="p-2 text-gray-400 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           title="Refresh"
           aria-label="Refresh"
         >
@@ -170,7 +170,7 @@ export function WaitlistAdmin() {
           <button
             onClick={handleInvite}
             disabled={inviting || (stats.byStatus.waiting || 0) === 0}
-            className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+            className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             <Send className="w-4 h-4" />
             {inviting ? 'Sending...' : 'Send Invites'}
@@ -188,7 +188,7 @@ export function WaitlistAdmin() {
         <span className="text-xs text-gray-500 light:text-gray-400 font-medium">Filter:</span>
         <button
           onClick={() => setStatusFilter(null)}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
             !statusFilter
               ? 'bg-indigo-600 text-white'
               : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200'
@@ -203,7 +203,7 @@ export function WaitlistAdmin() {
             <button
               key={key}
               onClick={() => setStatusFilter(statusFilter === key ? null : key)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 statusFilter === key
                   ? 'bg-indigo-600 text-white'
                   : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200'

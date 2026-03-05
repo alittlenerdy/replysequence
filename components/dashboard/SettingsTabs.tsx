@@ -47,18 +47,18 @@ export function SettingsTabs() {
       <div ref={sentinelRef} className="h-0" />
 
       {/* Sticky tab bar */}
-      <div className={`sticky top-16 z-30 transition-all duration-200 ${
+      <div className={`sticky top-16 z-30 transition-[background-color,border-color,padding] duration-200 ${
         isStuck
           ? 'bg-[var(--bg-page,#0a0a0a)]/95 backdrop-blur-md border-b border-gray-700/50 light:border-gray-200 py-2'
           : 'py-0'
       }`}>
-        <div className={`${activeTab === 'ai' ? 'max-w-6xl' : 'max-w-4xl'} mx-auto mb-6 transition-all duration-300`}>
+        <div className={`${activeTab === 'ai' ? 'max-w-6xl' : 'max-w-4xl'} mx-auto mb-6 transition-[max-width] duration-300`}>
           <div className="relative flex gap-1 p-1 rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-200 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex-1 min-w-0 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 ${
+                className={`relative flex-1 min-w-0 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   activeTab === tab.id
                     ? tab.id === 'ai'
                       ? 'text-indigo-300 light:text-indigo-700'

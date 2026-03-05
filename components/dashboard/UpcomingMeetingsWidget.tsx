@@ -109,7 +109,7 @@ function MeetingCard({
         <button
           onClick={() => onToggleAutoProcess(event.id, autoProcessEnabled ? 'disabled' : 'enabled')}
           disabled={isUpdating}
-          className={`shrink-0 p-1.5 rounded-lg transition-colors ${
+          className={`shrink-0 p-1.5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
             autoProcessEnabled
               ? 'text-indigo-400 hover:bg-indigo-500/20'
               : 'text-gray-500 hover:bg-gray-700'
@@ -249,7 +249,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
             'No video meetings in the next 7 days'
           ) : (
             <>
-              <a href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 underline">
+              <a href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 underline rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                 Connect your calendar
               </a>
               {' '}to see upcoming meetings

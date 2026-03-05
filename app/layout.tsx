@@ -7,6 +7,7 @@ import { PostHogProvider } from "./providers/posthog-provider";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import MouseTrail from "@/components/MouseTrail";
+import { MotionProvider } from "./providers/motion-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -127,7 +128,7 @@ export default function RootLayout({
     >
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
         <body className="antialiased bg-[#0a0a0f] light:bg-gray-50" suppressHydrationWarning>
-          <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+          <a href="#main-content" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-[9999] focus-visible:px-4 focus-visible:py-2 focus-visible:bg-indigo-600 focus-visible:text-white focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
             Skip to main content
           </a>
           {/* PostHog temporarily disabled to debug hydration issues */}
@@ -149,7 +150,9 @@ export default function RootLayout({
             />
             {/* MouseTrail disabled - hydration issue */}
             {/* <MouseTrail /> */}
-            {children}
+            <MotionProvider>
+              {children}
+            </MotionProvider>
             {/* PWAInstallPrompt disabled - hydration issue */}
             {/* <PWAInstallPrompt /> */}
           {/* </PostHogProvider> */}

@@ -119,7 +119,7 @@ export default function ComparePage() {
             <Link
               key={comp.slug}
               href={`/compare/${comp.slug}`}
-              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 light:hover:border-indigo-400 p-6 transition-all hover:bg-gray-900/80 light:hover:bg-gray-50"
+              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 light:hover:border-indigo-400 p-6 transition-[background-color,border-color] hover:bg-gray-900/80 light:hover:bg-gray-50"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
@@ -135,7 +135,7 @@ export default function ComparePage() {
                     {comp.differentiator}
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all shrink-0" />
+                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-indigo-400 group-hover:translate-x-1 transition-[color,transform] shrink-0" />
               </div>
             </Link>
           ))}
@@ -153,7 +153,7 @@ export default function ComparePage() {
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/20"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl text-sm font-semibold transition-[background,box-shadow] shadow-lg shadow-indigo-500/20"
           >
             Join the Waitlist
             <ArrowRight className="w-4 h-4" />

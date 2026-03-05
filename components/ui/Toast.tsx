@@ -38,7 +38,7 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
           setIsVisible(false);
           setTimeout(onClose, 300);
         }}
-        className="ml-2 p-1 hover:bg-white/20 rounded transition-colors"
+        className="ml-2 p-1 hover:bg-white/20 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         aria-label="Close notification"
       >
         <X className="w-4 h-4" />

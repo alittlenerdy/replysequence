@@ -38,7 +38,7 @@ export function StepConnectPlatform({
       description: 'Connect your Zoom account to capture meeting transcripts',
       color: '#2D8CFF',
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#2D8CFF">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#2D8CFF" aria-hidden="true">
           <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
         </svg>
       ),
@@ -49,7 +49,7 @@ export function StepConnectPlatform({
       description: 'Sync meeting transcripts from your Teams calls',
       color: '#5B5FC7',
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#5B5FC7">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#5B5FC7" aria-hidden="true">
           <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
         </svg>
       ),
@@ -60,7 +60,7 @@ export function StepConnectPlatform({
       description: 'Import transcripts from your Google Meet sessions',
       color: '#00897B',
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#00897B">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#00897B" aria-hidden="true">
           <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
           <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z"/>
         </svg>
@@ -99,7 +99,7 @@ export function StepConnectPlatform({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
-              className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+              className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
                 isConnected
                   ? 'border-indigo-500/50 bg-indigo-500/5'
                   : 'border-gray-700 hover:border-gray-600'
@@ -125,7 +125,7 @@ export function StepConnectPlatform({
                 <button
                   onClick={() => handleConnect(platform.id)}
                   disabled={isConnected || connecting !== null}
-                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                     isConnected
                       ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                       : isConnecting
@@ -167,10 +167,10 @@ export function StepConnectPlatform({
         >
           <button
             onClick={() => onPlatformConnected(connectedPlatform)}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Continue to Calendar
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -186,7 +186,7 @@ export function StepConnectPlatform({
         {!showSkipWarning ? (
           <button
             onClick={() => setShowSkipWarning(true)}
-            className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             I&apos;ll do this later
           </button>
@@ -205,13 +205,13 @@ export function StepConnectPlatform({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSkipWarning(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Connect Now
               </button>
               <button
                 onClick={onSkip}
-                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Skip Anyway
               </button>

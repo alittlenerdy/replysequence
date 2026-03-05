@@ -28,6 +28,7 @@ interface DraftsViewProps {
     avgCost: number;
     avgLatency: number;
   };
+  initialHasConnectedPlatforms: boolean;
 }
 
 export function DraftsView({
@@ -36,12 +37,14 @@ export function DraftsView({
   initialPage,
   initialTotalPages,
   initialStats,
+  initialHasConnectedPlatforms,
 }: DraftsViewProps) {
   const [drafts, setDrafts] = useState<DraftWithMeeting[]>(initialDrafts);
   const [total, setTotal] = useState(initialTotal);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [stats, setStats] = useState(initialStats);
+  const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(initialHasConnectedPlatforms);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
@@ -53,7 +56,6 @@ export function DraftsView({
   const fetchDrafts = useCallback(async () => {
     setIsLoading(true);
     setFetchError(null);
-    console.log('[DRAFTS-VIEW] Fetching drafts, filters:', { page, status, search, dateRange });
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -70,7 +72,9 @@ export function DraftsView({
         setTotal(data.total);
         setTotalPages(data.totalPages);
         setStats(data.stats);
-        console.log('[DRAFTS-VIEW] Drafts loaded, count:', data.drafts.length);
+        if (typeof data.hasConnectedPlatforms === 'boolean') {
+          setHasConnectedPlatforms(data.hasConnectedPlatforms);
+        }
       } else {
         setFetchError(data.error || 'Failed to load drafts');
       }
@@ -173,7 +177,7 @@ export function DraftsView({
             onClick={() => {
               document.getElementById('drafts-table')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 light:hover:text-amber-500 transition-colors whitespace-nowrap ml-4"
+            className="text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 light:hover:text-amber-500 transition-colors whitespace-nowrap ml-4 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Review Now &rarr;
           </button>
@@ -197,14 +201,14 @@ export function DraftsView({
       {fetchError && (
         <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
           <div className="flex items-center gap-2 text-sm text-red-400">
-            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             {fetchError}
           </div>
           <button
             onClick={() => fetchDrafts()}
-            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors"
+            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Retry
           </button>
@@ -233,7 +237,7 @@ export function DraftsView({
           {drafts.length === 0 ? (
             <EmptyState
               hasFilters={hasActiveFilters}
-              hasConnectedPlatforms={initialStats.total > 0 || processingMeetings.length > 0}
+              hasConnectedPlatforms={hasConnectedPlatforms || processingMeetings.length > 0}
               onClearFilters={handleClearFilters}
               onDraftGenerated={() => fetchDrafts()}
             />

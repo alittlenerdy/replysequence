@@ -23,7 +23,7 @@ export default function DashboardError({
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
       <div className="max-w-md text-center space-y-6">
         <div className="w-14 h-14 mx-auto rounded-full bg-red-500/15 flex items-center justify-center">
-          <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
@@ -46,13 +46,13 @@ export default function DashboardError({
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="px-5 py-2.5 text-sm font-medium rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white transition-all shadow-lg shadow-indigo-500/20"
+            className="px-5 py-2.5 text-sm font-medium rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white transition-[background,box-shadow] shadow-lg shadow-indigo-500/20 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Try again
           </button>
           <a
             href="/dashboard"
-            className="px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-700 light:border-gray-300 text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors"
+            className="px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-700 light:border-gray-300 text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Reload page
           </a>

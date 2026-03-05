@@ -144,7 +144,7 @@ export function AIWizard({ onSaved }: AIWizardProps) {
         {WIZARD_STEPS.map((s, i) => (
           <div
             key={s}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
+            className={`h-1.5 rounded-full transition-[width,background-color] duration-300 ${
               i <= currentIndex
                 ? 'w-8 bg-indigo-500'
                 : 'w-4 bg-gray-700'

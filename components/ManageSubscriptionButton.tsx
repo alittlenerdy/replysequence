@@ -46,10 +46,11 @@ export function ManageSubscriptionButton({ className = '' }: ManageSubscriptionB
       <button
         onClick={handleManageSubscription}
         disabled={loading}
-        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all
+        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors
           bg-gray-700 light:bg-gray-200 text-white light:text-gray-900
           hover:bg-gray-600 light:hover:bg-gray-300
           disabled:opacity-50 disabled:cursor-not-allowed
+          outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
           ${className}`}
       >
         {loading ? (

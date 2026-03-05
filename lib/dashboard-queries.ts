@@ -4,7 +4,7 @@
  */
 
 import { db } from './db';
-import { drafts, meetings, transcripts, users } from './db/schema';
+import { drafts, meetings, transcripts, users, zoomConnections, teamsConnections, meetConnections } from './db/schema';
 import { eq, desc, sql, and, ilike, or, isNull } from 'drizzle-orm';
 import type { DraftStatus, MeetingStatus } from './db/schema';
 import { currentUser } from '@clerk/nextjs/server';
@@ -646,4 +646,36 @@ export async function getDraftStats(): Promise<{
     avgCost: Number(result?.avgCost || 0),
     avgLatency: Number(result?.avgLatency || 0),
   };
+}
+
+/**
+ * Check if the current user has any connected meeting platforms (Zoom, Teams, or Meet).
+ * Checks actual connection table rows rather than draft count, so this remains
+ * accurate even after all drafts have been deleted.
+ */
+export async function getUserHasConnectedPlatforms(): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  if (!userId) return false;
+
+  // Check all three platform connection tables in parallel.
+  // We only need to know if at least one row exists, so limit 1.
+  const [zoom, teams, meet] = await Promise.all([
+    db
+      .select({ id: zoomConnections.id })
+      .from(zoomConnections)
+      .where(eq(zoomConnections.userId, userId))
+      .limit(1),
+    db
+      .select({ id: teamsConnections.id })
+      .from(teamsConnections)
+      .where(eq(teamsConnections.userId, userId))
+      .limit(1),
+    db
+      .select({ id: meetConnections.id })
+      .from(meetConnections)
+      .where(eq(meetConnections.userId, userId))
+      .limit(1),
+  ]);
+
+  return zoom.length > 0 || teams.length > 0 || meet.length > 0;
 }

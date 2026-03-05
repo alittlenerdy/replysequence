@@ -79,7 +79,7 @@ export default function WeeklyFeedbackPage() {
             <textarea
               value={worked}
               onChange={(e) => setWorked(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
               rows={3}
               placeholder="Draft quality, speed, integrations..."
             />
@@ -92,7 +92,7 @@ export default function WeeklyFeedbackPage() {
             <textarea
               value={frustrated}
               onChange={(e) => setFrustrated(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
               rows={3}
               placeholder="Bugs, missing features, confusing UI..."
             />
@@ -105,7 +105,7 @@ export default function WeeklyFeedbackPage() {
             <textarea
               value={missing}
               onChange={(e) => setMissing(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
               rows={3}
               placeholder="Features you wish existed..."
             />
@@ -118,7 +118,7 @@ export default function WeeklyFeedbackPage() {
           <button
             type="submit"
             disabled={submitting || (!worked && !frustrated && !missing)}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             {submitting ? 'Submitting...' : 'Submit Feedback'}
             {!submitting && <Send className="w-4 h-4" />}

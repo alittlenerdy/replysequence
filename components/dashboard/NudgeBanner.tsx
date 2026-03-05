@@ -64,13 +64,13 @@ export function NudgeBanner({ variant }: NudgeBannerProps) {
       </div>
       <Link
         href={config.href}
-        className={`shrink-0 px-3 py-1.5 text-xs font-medium ${config.accentClass} border border-current/20 rounded-lg hover:bg-white/5 transition-colors`}
+        className={`shrink-0 px-3 py-1.5 text-xs font-medium ${config.accentClass} border border-current/20 rounded-lg hover:bg-white/5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900`}
       >
         {config.cta}
       </Link>
       <button
         onClick={handleDismiss}
-        className="shrink-0 p-1 text-gray-500 hover:text-gray-300 transition-colors"
+        className="shrink-0 p-1 text-gray-500 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

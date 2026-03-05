@@ -82,7 +82,7 @@ export function StepEmailPreferences({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
               onClick={() => setSelected(option.id)}
-              className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-200 ${
+              className={`w-full text-left p-6 rounded-2xl border-2 transition-[border-color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 isSelected
                   ? 'border-indigo-500 bg-indigo-500/10'
                   : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
@@ -147,7 +147,7 @@ export function StepEmailPreferences({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-indigo-500/25 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           {isSaving ? (
             <>

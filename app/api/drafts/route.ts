@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { getDraftsWithMeetings, getDraftStats } from '@/lib/dashboard-queries';
+import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
@@ -36,9 +36,10 @@ export async function GET(request: NextRequest) {
 
     console.log('[DASHBOARD-1] Fetching drafts API, filters:', { page, status, search, dateRange });
 
-    const [draftsResult, stats] = await Promise.all([
+    const [draftsResult, stats, hasConnectedPlatforms] = await Promise.all([
       getDraftsWithMeetings({ page, limit, status, search, dateRange }),
       getDraftStats(),
+      getUserHasConnectedPlatforms(),
     ]);
 
     console.log('[DASHBOARD-2] Drafts loaded, count:', draftsResult.drafts.length);
@@ -47,6 +48,7 @@ export async function GET(request: NextRequest) {
       {
         ...draftsResult,
         stats,
+        hasConnectedPlatforms,
       },
       { headers: getRateLimitHeaders(rateLimitResult) }
     );

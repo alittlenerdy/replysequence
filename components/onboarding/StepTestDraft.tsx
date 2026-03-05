@@ -172,7 +172,7 @@ export function StepTestDraft({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className={`bg-gray-900/50 border rounded-2xl overflow-hidden transition-all duration-300 ${
+            className={`bg-gray-900/50 border rounded-2xl overflow-hidden transition-colors duration-300 ${
               showDraft ? 'border-indigo-500/50' : 'border-gray-700'
             }`}
           >
@@ -208,7 +208,7 @@ export function StepTestDraft({
                     <p className="text-gray-500 mb-6">Click the button below to generate</p>
                     <button
                       onClick={handleGenerate}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <Sparkles className="w-5 h-5" />
                       Generate Draft Email
@@ -278,7 +278,7 @@ export function StepTestDraft({
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             onClick={handleContinue}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-all duration-200 shadow-lg shadow-indigo-500/25"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                           >
                             Continue
                             <ArrowRight className="w-4 h-4" />

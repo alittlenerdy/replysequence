@@ -44,7 +44,7 @@ export function StepEmailConnect({
       color: '#EA4335',
       recommended: true,
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -59,7 +59,7 @@ export function StepEmailConnect({
       color: '#0078D4',
       recommended: false,
       icon: (
-        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#0078D4">
+        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#0078D4" aria-hidden="true">
           <path d="M20 18h-2V9.25L12 13 6 9.25V18H4V6h1.2l6.8 4.25L18.8 6H20m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
         </svg>
       ),
@@ -132,7 +132,7 @@ export function StepEmailConnect({
             <p className="text-sm text-red-300 font-medium">Connection failed</p>
             <p className="text-sm text-red-400/80 mt-0.5">{error}</p>
           </div>
-          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-300 text-xs">
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-300 text-xs rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
             Dismiss
           </button>
         </motion.div>
@@ -149,7 +149,7 @@ export function StepEmailConnect({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
-              className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+              className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
                 emailConnected
                   ? 'border-indigo-500/50 bg-indigo-500/5'
                   : provider.recommended
@@ -186,7 +186,7 @@ export function StepEmailConnect({
                 <button
                   onClick={() => handleConnect(provider.id)}
                   disabled={emailConnected || connecting !== null}
-                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                     emailConnected
                       ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                       : isConnecting
@@ -250,10 +250,10 @@ export function StepEmailConnect({
         >
           <button
             onClick={onEmailConnected}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Continue to AI Voice
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -269,7 +269,7 @@ export function StepEmailConnect({
         {!showSkipWarning ? (
           <button
             onClick={() => setShowSkipWarning(true)}
-            className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             I&apos;ll do this later
           </button>
@@ -288,13 +288,13 @@ export function StepEmailConnect({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSkipWarning(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Connect Now
               </button>
               <button
                 onClick={onSkip}
-                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
                 Skip Anyway
               </button>

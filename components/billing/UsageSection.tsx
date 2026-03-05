@@ -36,7 +36,7 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
         {!isUnlimited && (
           <div className="h-2.5 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-700 ${
+              className={`h-full rounded-full transition-[width] duration-700 ${
                 isAtLimit ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-indigo-500'
               }`}
               style={{ width: `${pct}%` }}
@@ -61,7 +61,7 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
       {tier === 'free' && isWarning && (
         <button
           onClick={onScrollToPlans}
-          className="mt-4 w-full flex items-center justify-between p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/10 transition-colors group"
+          className="mt-4 w-full flex items-center justify-between p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/10 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-indigo-400" />

@@ -94,7 +94,7 @@ export function PWAInstallPrompt() {
 
           <button
             onClick={handleDismiss}
-            className="text-gray-500 hover:text-gray-300 transition-colors p-1"
+            className="text-gray-500 hover:text-gray-300 transition-colors p-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             aria-label="Dismiss"
           >
             <X className="w-5 h-5" />
@@ -105,13 +105,13 @@ export function PWAInstallPrompt() {
           <div className="flex gap-2 mt-3">
             <button
               onClick={handleDismiss}
-              className="flex-1 px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+              className="flex-1 px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               Not now
             </button>
             <button
               onClick={handleInstall}
-              className="flex-1 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
             >
               <Download className="w-4 h-4" />
               Install
@@ -122,7 +122,7 @@ export function PWAInstallPrompt() {
         {isIOS && (
           <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
             <span>Tap</span>
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2L12 14M12 2L8 6M12 2L16 6M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12"
                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
             </svg>

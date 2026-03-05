@@ -233,7 +233,7 @@ export default function IntegrationsPage() {
                 {categoryIntegrations.map((integration, i) => (
                   <div
                     key={integration.name}
-                    className={`relative rounded-2xl p-6 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
+                    className={`relative rounded-2xl p-6 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300 transition-[border-color,transform,box-shadow] hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
                       staggerClasses[i] || staggerClasses[staggerClasses.length - 1]
                     } ${
                       integration.status === 'coming_soon' ? 'opacity-70' : ''
@@ -408,7 +408,7 @@ export default function IntegrationsPage() {
           </p>
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
           >
             Connect Your Tools Free
             <ArrowRight className="w-5 h-5" />

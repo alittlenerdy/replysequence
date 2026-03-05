@@ -32,7 +32,7 @@ const CARD_COLORS = [
 // Mini illustrations — small SVG scenes that reinforce each non-negotiable visually
 function MailIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Envelope */}
       <rect x="10" y="16" width="60" height="44" rx="6" stroke="currentColor" strokeWidth="2" opacity="0.6" />
       <path d="M10 22l30 20 30-20" stroke="currentColor" strokeWidth="2" opacity="0.6" />
@@ -47,7 +47,7 @@ function MailIllustration({ className }: { className?: string }) {
 
 function AIVoiceIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Sound wave / voice */}
       <path d="M20 40 Q30 20 40 40 Q50 60 60 40 Q70 20 80 40" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" />
       <path d="M25 40 Q35 28 45 40 Q55 52 65 40 Q75 28 85 40" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.3" />
@@ -63,7 +63,7 @@ function AIVoiceIllustration({ className }: { className?: string }) {
 
 function OneClickIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Button shape */}
       <rect x="20" y="22" width="70" height="36" rx="18" stroke="currentColor" strokeWidth="2" opacity="0.5" />
       <text x="55" y="45" textAnchor="middle" fontSize="14" fill="currentColor" fontWeight="bold" opacity="0.6">Send</text>
@@ -79,7 +79,7 @@ function OneClickIllustration({ className }: { className?: string }) {
 
 function PlatformsIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Three monitors/screens */}
       <rect x="5" y="20" width="28" height="22" rx="3" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
       <line x1="19" y1="42" x2="19" y2="48" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
@@ -103,7 +103,7 @@ function PlatformsIllustration({ className }: { className?: string }) {
 
 function CRMSyncIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Database icon */}
       <ellipse cx="30" cy="24" rx="18" ry="8" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
       <path d="M12 24v20c0 4.4 8 8 18 8s18-3.6 18-8V24" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
@@ -124,7 +124,7 @@ function CRMSyncIllustration({ className }: { className?: string }) {
 
 function PrivacyIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Shield */}
       <path d="M60 8 L90 22 L90 46 Q90 64 60 74 Q30 64 30 46 L30 22 Z" stroke="currentColor" strokeWidth="2" opacity="0.5" fill="currentColor" fillOpacity="0.05" />
       {/* Lock inside shield */}
@@ -140,7 +140,7 @@ function PrivacyIllustration({ className }: { className?: string }) {
 
 function SpeedIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Speedometer arc */}
       <path d="M20 60 A40 40 0 0 1 100 60" stroke="currentColor" strokeWidth="2.5" opacity="0.4" strokeLinecap="round" />
       {/* Fast segment */}
@@ -156,7 +156,7 @@ function SpeedIllustration({ className }: { className?: string }) {
 
 function EditableIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Document */}
       <rect x="25" y="8" width="50" height="64" rx="4" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
       {/* Text lines */}
@@ -175,7 +175,7 @@ function EditableIllustration({ className }: { className?: string }) {
 
 function TrackingIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" fill="none" className={className}>
+    <svg viewBox="0 0 120 80" fill="none" className={className} aria-hidden="true">
       {/* Chart bars */}
       <rect x="15" y="45" width="12" height="25" rx="2" fill="currentColor" opacity="0.2" />
       <rect x="33" y="35" width="12" height="35" rx="2" fill="currentColor" opacity="0.3" />
@@ -390,7 +390,7 @@ export function NonNegotiablesCarousel() {
                 <button
                   key={i}
                   onClick={() => setActiveGroup(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  className={`h-2 rounded-full transition-[width,background-color] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                     i === activeGroup
                       ? `w-8 ${groupColor.badge}`
                       : 'w-2 bg-gray-700 light:bg-gray-300 hover:bg-gray-600 light:hover:bg-gray-400'

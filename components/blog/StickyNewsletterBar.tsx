@@ -106,12 +106,12 @@ export function StickyNewsletterBar() {
                     aria-label="Email address"
                     autoComplete="email"
                     spellCheck={false}
-                    className="flex-1 min-w-0 px-3 py-2 bg-gray-800/80 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                    className="flex-1 min-w-0 px-3 py-2 bg-gray-800/80 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent text-sm"
                   />
                   <button
                     type="submit"
                     disabled={isSubmitting || !email}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {isSubmitting ? '...' : 'Subscribe'}
                   </button>
@@ -120,7 +120,7 @@ export function StickyNewsletterBar() {
             )}
             <button
               onClick={handleDismiss}
-              className="p-1.5 text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors shrink-0"
+              className="p-1.5 text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors shrink-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               aria-label="Dismiss"
             >
               <X className="w-4 h-4" />

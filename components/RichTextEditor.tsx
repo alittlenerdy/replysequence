@@ -64,7 +64,7 @@ export function RichTextEditor({
         disabled={disabled}
         title={title}
         className={`
-          p-1.5 rounded transition-colors
+          p-1.5 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
           ${isActive
             ? 'bg-indigo-500/20 text-indigo-400'
             : 'text-gray-400 hover:text-white hover:bg-gray-700/50'}
@@ -96,7 +96,7 @@ export function RichTextEditor({
             isActive={editor.isActive('bold')}
             title="Bold (Ctrl+B)"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z" />
             </svg>
@@ -107,7 +107,7 @@ export function RichTextEditor({
             isActive={editor.isActive('italic')}
             title="Italic (Ctrl+I)"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 4h4m-2 0l-4 16m0 0h4" />
             </svg>
           </MenuButton>
@@ -117,7 +117,7 @@ export function RichTextEditor({
             isActive={editor.isActive('strike')}
             title="Strikethrough"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 12h16M9 4l-2 16m8-16l-2 16" />
             </svg>
           </MenuButton>
@@ -129,7 +129,7 @@ export function RichTextEditor({
             isActive={editor.isActive('bulletList')}
             title="Bullet List"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               <circle cx="2" cy="6" r="1" fill="currentColor" />
               <circle cx="2" cy="12" r="1" fill="currentColor" />
@@ -142,7 +142,7 @@ export function RichTextEditor({
             isActive={editor.isActive('orderedList')}
             title="Numbered List"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13" />
               <text x="2" y="8" className="text-[8px]" fill="currentColor">1</text>
               <text x="2" y="14" className="text-[8px]" fill="currentColor">2</text>
@@ -157,7 +157,7 @@ export function RichTextEditor({
             isActive={editor.isActive('blockquote')}
             title="Quote"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </MenuButton>
@@ -167,7 +167,7 @@ export function RichTextEditor({
             isActive={editor.isActive('code')}
             title="Inline Code"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
           </MenuButton>
@@ -179,7 +179,7 @@ export function RichTextEditor({
             disabled={!editor.can().undo()}
             title="Undo (Ctrl+Z)"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
           </MenuButton>
@@ -189,7 +189,7 @@ export function RichTextEditor({
             disabled={!editor.can().redo()}
             title="Redo (Ctrl+Shift+Z)"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6" />
             </svg>
           </MenuButton>
@@ -202,7 +202,7 @@ export function RichTextEditor({
         className={`
           prose prose-invert max-w-none
           p-4 min-h-[250px] max-h-[400px] overflow-y-auto
-          focus:outline-none
+          focus-visible:outline-none
           [&_.ProseMirror]:outline-none
           [&_.ProseMirror]:min-h-[200px]
           [&_.ProseMirror_p]:my-2

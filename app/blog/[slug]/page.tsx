@@ -293,7 +293,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 mt-3 transition-colors"
             >
               Try it free
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
             </a>
           </div>
         </div>
@@ -321,7 +321,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <Link
                   key={related.slug}
                   href={`/blog/${related.slug}`}
-                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-all duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50"
+                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-[border-color] duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50"
                 >
                   <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors line-clamp-2">
                     {related.title}

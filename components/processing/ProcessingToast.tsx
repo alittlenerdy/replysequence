@@ -75,7 +75,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
           {/* Header - always visible */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-800/50 transition-colors"
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-800/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-xl"
           >
             <div className="flex items-center gap-3">
               {processingCount > 0 ? (
@@ -156,7 +156,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
                 <div className="px-3 pb-3">
                   <Link
                     href="/dashboard"
-                    className="block w-full text-center py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 rounded-lg hover:bg-cyan-500/20 transition-colors"
+                    className="block w-full text-center py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 rounded-lg hover:bg-cyan-500/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     View Dashboard
                   </Link>

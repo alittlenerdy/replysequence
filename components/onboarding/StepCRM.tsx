@@ -107,7 +107,7 @@ export function StepCRM({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+          className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             hubspotConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
@@ -116,7 +116,7 @@ export function StepCRM({
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#FF7A59]/10">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#FF7A59">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#FF7A59" aria-hidden="true">
                   <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.984 2.21 2.21 0 00-2.212-2.212 2.21 2.21 0 00-2.212 2.212c0 .874.517 1.627 1.267 1.984v2.847a5.395 5.395 0 00-2.627 1.2L7.258 4.744a2.036 2.036 0 00.069-.493 2.035 2.035 0 00-2.035-2.035A2.035 2.035 0 003.257 4.25a2.035 2.035 0 002.035 2.035c.27 0 .527-.054.763-.15l6.324 4.324a5.418 5.418 0 00-.843 2.903c0 1.074.313 2.076.852 2.92l-2.038 2.04a1.95 1.95 0 00-.595-.094 1.97 1.97 0 00-1.968 1.968 1.97 1.97 0 001.968 1.968 1.97 1.97 0 001.968-1.968c0-.211-.034-.414-.095-.603l2.018-2.018a5.42 5.42 0 003.571 1.334 5.432 5.432 0 005.432-5.432 5.42 5.42 0 00-4.485-5.347zm-1.047 8.537a3.16 3.16 0 01-3.163-3.163 3.16 3.16 0 013.163-3.163 3.16 3.16 0 013.163 3.163 3.16 3.16 0 01-3.163 3.163z"/>
                 </svg>
               </div>
@@ -132,7 +132,7 @@ export function StepCRM({
             <button
               onClick={handleHubSpotConnect}
               disabled={hubspotConnected || connecting !== null}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 hubspotConnected
                   ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                   : connecting === 'hubspot'
@@ -162,7 +162,7 @@ export function StepCRM({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+          className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             salesforceConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
@@ -171,7 +171,7 @@ export function StepCRM({
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#00A1E0]/10">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#00A1E0">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#00A1E0" aria-hidden="true">
                   <path d="M10.005 3.073a4.17 4.17 0 013.58.21 4.892 4.892 0 014.652-.562 4.858 4.858 0 012.882 3.375 3.91 3.91 0 012.312 1.899A3.87 3.87 0 0124 9.682a3.886 3.886 0 01-1.542 3.112 4.32 4.32 0 01-1.17 5.51 4.36 4.36 0 01-5.152.26 4.62 4.62 0 01-5.796 1.233 4.58 4.58 0 01-2.094-2.15 5.218 5.218 0 01-5.652-1.6A5.17 5.17 0 011.5 12.54a5.2 5.2 0 012.058-4.125A4.94 4.94 0 013.08 5.4a4.92 4.92 0 016.925-2.327z"/>
                 </svg>
               </div>
@@ -187,7 +187,7 @@ export function StepCRM({
             <button
               onClick={handleSalesforceConnect}
               disabled={salesforceConnected || connecting !== null}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 salesforceConnected
                   ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                   : connecting === 'salesforce'
@@ -217,7 +217,7 @@ export function StepCRM({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+          className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             airtableConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
@@ -226,7 +226,7 @@ export function StepCRM({
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#18BFFF]/10">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#18BFFF">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#18BFFF" aria-hidden="true">
                   <path d="M11.52 2.386l-7.297 2.67a1.074 1.074 0 000 2.013l7.297 2.67a1.607 1.607 0 001.106 0l7.297-2.67a1.074 1.074 0 000-2.013l-7.297-2.67a1.607 1.607 0 00-1.106 0z"/>
                   <path d="M3.413 10.22l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
                   <path d="M3.413 14.72l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
@@ -250,7 +250,7 @@ export function StepCRM({
                   onChange={(e) => setAirtableApiKey(e.target.value)}
                   placeholder="Personal Access Token (pat\u2026)"
                   aria-label="Airtable API key"
-                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
                 />
                 <input
                   type="text"
@@ -258,7 +258,7 @@ export function StepCRM({
                   onChange={(e) => setAirtableBaseId(e.target.value)}
                   placeholder="Base ID (appXXXXXXXXXX)"
                   aria-label="Airtable Base ID"
-                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
                 />
                 {airtableError && (
                   <p className="text-xs text-red-400">{airtableError}</p>
@@ -266,14 +266,14 @@ export function StepCRM({
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setShowAirtableForm(false); setAirtableError(null); }}
-                    className="flex-1 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 rounded-lg transition-colors"
+                    className="flex-1 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleAirtableConnect}
                     disabled={connecting === 'airtable' || !airtableApiKey || !airtableBaseId}
-                    className="flex-1 py-2 text-sm text-white bg-[#18BFFF] rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 py-2 text-sm text-white bg-[#18BFFF] rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {connecting === 'airtable' ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -288,7 +288,7 @@ export function StepCRM({
               <button
                 onClick={() => setShowAirtableForm(true)}
                 disabled={airtableConnected || connecting !== null}
-                className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   airtableConnected
                     ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                     : 'text-white hover:opacity-90 bg-[#18BFFF]'
@@ -305,7 +305,7 @@ export function StepCRM({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className={`relative rounded-2xl bg-gray-900/50 border transition-all duration-300 overflow-hidden ${
+          className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             sheetsConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'
               : 'border-gray-700 hover:border-gray-600'
@@ -314,7 +314,7 @@ export function StepCRM({
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#34A853]/10">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#34A853">
+                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#34A853" aria-hidden="true">
                   <path d="M19 11H5v8a2 2 0 002 2h10a2 2 0 002-2v-8zm-3 6H8v-2h8v2zm0-4H8v-2h8v2zM19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v4h18V5a2 2 0 00-2-2zm-7 2a1 1 0 110-2 1 1 0 010 2z"/>
                 </svg>
               </div>
@@ -335,7 +335,7 @@ export function StepCRM({
                 window.location.href = `/api/auth/sheets?redirect=${encodeURIComponent(returnUrl)}`;
               }}
               disabled={sheetsConnected || connecting !== null}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 sheetsConnected
                   ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
                   : connecting === 'sheets'
@@ -370,7 +370,7 @@ export function StepCRM({
         >
           <button
             onClick={() => onCRMConnected()}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Continue
             <ArrowRight className="w-5 h-5" />
@@ -386,7 +386,7 @@ export function StepCRM({
       >
         <button
           onClick={onSkip}
-          className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+          className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
         >
           Skip for now
         </button>

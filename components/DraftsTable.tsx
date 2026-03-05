@@ -228,9 +228,9 @@ export function DraftsTable({
       case 'zoom':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-all duration-300" />
+            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-colors duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <path d="M15 10L20 7V17L15 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -240,9 +240,9 @@ export function DraftsTable({
       case 'google_meet':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-green-500/30 rounded-lg blur-md group-hover/icon:bg-green-400/50 transition-all duration-300" />
+            <div className="absolute inset-0 bg-green-500/30 rounded-lg blur-md group-hover/icon:bg-green-400/50 transition-colors duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/30">
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M15 8L19.5 5.5V18.5L15 16V8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="9" cy="12" r="2" stroke="currentColor" strokeWidth="2"/>
@@ -253,9 +253,9 @@ export function DraftsTable({
       case 'microsoft_teams':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-all duration-300" />
+            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-colors duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/30">
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="2" y="6" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="18" cy="7" r="3" stroke="currentColor" strokeWidth="2"/>
                 <path d="M16 14H22V17C22 18.1046 21.1046 19 20 19H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -266,9 +266,9 @@ export function DraftsTable({
       default:
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-gray-500/30 rounded-lg blur-md group-hover/icon:bg-gray-400/50 transition-all duration-300" />
+            <div className="absolute inset-0 bg-gray-500/30 rounded-lg blur-md group-hover/icon:bg-gray-400/50 transition-colors duration-300" />
             <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 shadow-lg shadow-gray-500/30">
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <path d="M15 10L20 7V17L15 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -299,7 +299,7 @@ export function DraftsTable({
         }`}
         title={isUp ? 'Rated: Thumbs up' : 'Rated: Thumbs down'}
       >
-        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           {isUp ? (
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
           ) : (
@@ -327,6 +327,7 @@ export function DraftsTable({
               className={`${compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} ${s <= stars ? 'text-yellow-400' : 'text-gray-600/50'}`}
               fill="currentColor"
               viewBox="0 0 20 20"
+              aria-hidden="true"
             >
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
@@ -347,7 +348,7 @@ export function DraftsTable({
             className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
             title={`${draft.openCount} open${(draft.openCount ?? 0) > 1 ? 's' : ''}`}
           >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
@@ -358,7 +359,7 @@ export function DraftsTable({
             className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/20 text-amber-400"
             title={`${draft.clickCount} click${(draft.clickCount ?? 0) > 1 ? 's' : ''}`}
           >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
             </svg>
           </span>
@@ -368,7 +369,7 @@ export function DraftsTable({
             className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
             title="Replied"
           >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
           </span>
@@ -390,10 +391,10 @@ export function DraftsTable({
                 <a
                   href="/api/drafts/export"
                   download
-                  className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors border border-gray-600/50"
+                  className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors border border-gray-600/50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   title="Export all drafts as CSV"
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Export
@@ -413,14 +414,14 @@ export function DraftsTable({
                   <button
                     onClick={() => setShowBulkDeleteConfirm(false)}
                     disabled={bulkDeleting}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => { setShowBulkDeleteConfirm(false); handleBulkDelete(); }}
                     disabled={bulkDeleting}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {bulkDeleting ? 'Deleting...' : 'Confirm Delete'}
                   </button>
@@ -433,14 +434,14 @@ export function DraftsTable({
                   <button
                     onClick={() => setShowBulkSendConfirm(false)}
                     disabled={bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => { setShowBulkSendConfirm(false); handleBulkSend(); }}
                     disabled={bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {bulkSending ? 'Sending...' : 'Confirm Send'}
                   </button>
@@ -452,7 +453,7 @@ export function DraftsTable({
                   <span className="text-indigo-300 font-medium">{selectedIds.size} selected</span>
                   <button
                     onClick={() => setSelectedIds(new Set())}
-                    className="text-xs text-gray-400 hover:text-white transition-colors"
+                    className="text-xs text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Clear
                   </button>
@@ -469,14 +470,14 @@ export function DraftsTable({
                   <button
                     onClick={() => setShowBulkDeleteConfirm(true)}
                     disabled={bulkDeleting || bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => setShowBulkSendConfirm(true)}
                     disabled={bulkSending || bulkDeleting || selectedDrafts.every((d) => d.status === 'sent')}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {bulkSending ? 'Sending...' : `Send ${selectedDrafts.filter((d) => d.status !== 'sent').length}`}
                   </button>
@@ -571,8 +572,9 @@ export function DraftsTable({
                     bg-indigo-500/10 light:bg-indigo-50
                     hover:bg-indigo-500/20 light:hover:bg-indigo-100
                     active:scale-95
-                    transition-all duration-200
+                    transition-[background-color,transform] duration-200
                     text-sm font-medium
+                    outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                   "
                 >
                   View
@@ -705,7 +707,7 @@ export function DraftsTable({
                         e.stopPropagation();
                         setSelectedDraft(draft);
                       }}
-                      className="px-3 py-1.5 rounded-lg text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       View
                     </button>
@@ -727,14 +729,14 @@ export function DraftsTable({
                 <button
                   onClick={() => onPageChange(page - 1)}
                   disabled={page <= 1}
-                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
+                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => onPageChange(page + 1)}
                   disabled={page >= totalPages}
-                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
+                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   Next
                 </button>

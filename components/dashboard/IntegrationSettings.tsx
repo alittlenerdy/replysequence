@@ -72,7 +72,7 @@ const platforms: PlatformConfig[] = [
     color: '#2D8CFF',
     bgColor: 'bg-[#2D8CFF]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#2D8CFF">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#2D8CFF">
         <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
       </svg>
     ),
@@ -87,7 +87,7 @@ const platforms: PlatformConfig[] = [
     color: '#5B5FC7',
     bgColor: 'bg-[#5B5FC7]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#5B5FC7">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#5B5FC7">
         <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
       </svg>
     ),
@@ -102,7 +102,7 @@ const platforms: PlatformConfig[] = [
     color: '#00897B',
     bgColor: 'bg-[#00897B]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#00897B">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#00897B">
         <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
         <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z"/>
       </svg>
@@ -119,7 +119,7 @@ const platforms: PlatformConfig[] = [
     color: '#4285F4',
     bgColor: 'bg-[#4285F4]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#4285F4">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#4285F4">
         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
       </svg>
     ),
@@ -134,7 +134,7 @@ const platforms: PlatformConfig[] = [
     color: '#0078D4',
     bgColor: 'bg-[#0078D4]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#0078D4">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#0078D4">
         <path d="M7 3C4.239 3 2 5.239 2 8v8c0 2.761 2.239 5 5 5h10c2.761 0 5-2.239 5-5V8c0-2.761-2.239-5-5-5H7zm0 2h10c1.654 0 3 1.346 3 3v8c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V8c0-1.654 1.346-3 3-3zm1 3v2h2V8H8zm3 0v2h2V8h-2zm3 0v2h2V8h-2zm-6 3v2h2v-2H8zm3 0v2h2v-2h-2zm3 0v2h2v-2h-2zm-6 3v2h2v-2H8zm3 0v2h2v-2h-2z"/>
       </svg>
     ),
@@ -150,7 +150,7 @@ const platforms: PlatformConfig[] = [
     color: '#EA4335',
     bgColor: 'bg-[#EA4335]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#EA4335">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#EA4335">
         <path d="M20 18h-2V9.25L12 13 6 9.25V18H4V6h1.2l6.8 4.25L18.8 6H20m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
       </svg>
     ),
@@ -165,7 +165,7 @@ const platforms: PlatformConfig[] = [
     color: '#0078D4',
     bgColor: 'bg-[#0078D4]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#0078D4">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#0078D4">
         <path d="M7 12l5 3 5-3v7H7v-7zm0-2l5 3 5-3V5H7v5zm-2 9V3h14v16H5z"/>
       </svg>
     ),
@@ -181,7 +181,7 @@ const platforms: PlatformConfig[] = [
     color: '#FF7A59',
     bgColor: 'bg-[#FF7A59]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#FF7A59">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#FF7A59">
         <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.984 2.21 2.21 0 00-2.212-2.212 2.21 2.21 0 00-2.212 2.212c0 .874.517 1.627 1.267 1.984v2.847a5.395 5.395 0 00-2.627 1.2L7.258 4.744a2.036 2.036 0 00.069-.493 2.035 2.035 0 00-2.035-2.035A2.035 2.035 0 003.257 4.25a2.035 2.035 0 002.035 2.035c.27 0 .527-.054.763-.15l6.324 4.324a5.418 5.418 0 00-.843 2.903c0 1.074.313 2.076.852 2.92l-2.038 2.04a1.95 1.95 0 00-.595-.094 1.97 1.97 0 00-1.968 1.968 1.97 1.97 0 001.968 1.968 1.97 1.97 0 001.968-1.968c0-.211-.034-.414-.095-.603l2.018-2.018a5.42 5.42 0 003.571 1.334 5.432 5.432 0 005.432-5.432 5.42 5.42 0 00-4.485-5.347zm-1.047 8.537a3.16 3.16 0 01-3.163-3.163 3.16 3.16 0 013.163-3.163 3.16 3.16 0 013.163 3.163 3.16 3.16 0 01-3.163 3.163z"/>
       </svg>
     ),
@@ -196,7 +196,7 @@ const platforms: PlatformConfig[] = [
     color: '#18BFFF',
     bgColor: 'bg-[#18BFFF]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#18BFFF">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#18BFFF">
         <path d="M11.52 2.386l-7.297 2.67a1.074 1.074 0 000 2.013l7.297 2.67a1.607 1.607 0 001.106 0l7.297-2.67a1.074 1.074 0 000-2.013l-7.297-2.67a1.607 1.607 0 00-1.106 0z"/>
         <path d="M3.413 10.22l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
         <path d="M3.413 14.72l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
@@ -213,7 +213,7 @@ const platforms: PlatformConfig[] = [
     color: '#34A853',
     bgColor: 'bg-[#34A853]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#34A853">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#34A853">
         <path d="M19 11H5v8a2 2 0 002 2h10a2 2 0 002-2v-8zm-3 6H8v-2h8v2zm0-4H8v-2h8v2zM19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5a2 2 0 00-2 2v4h18V5a2 2 0 00-2-2zm-7 2a1 1 0 110-2 1 1 0 010 2z"/>
       </svg>
     ),
@@ -228,7 +228,7 @@ const platforms: PlatformConfig[] = [
     color: '#00A1E0',
     bgColor: 'bg-[#00A1E0]/10',
     icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#00A1E0">
+      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#00A1E0">
         <path d="M10.05 5.24a4.68 4.68 0 013.48-1.55c1.82 0 3.4 1.04 4.17 2.56a5.01 5.01 0 016.3 4.83c0 2.77-2.24 5.01-5.01 5.01h-.18a3.82 3.82 0 01-3.18 1.7 3.82 3.82 0 01-2.63-1.05A4.48 4.48 0 019.27 19a4.48 4.48 0 01-4.22-2.96A4.27 4.27 0 011 11.99a4.27 4.27 0 014.06-4.26 5.15 5.15 0 014.99-2.49z"/>
       </svg>
     ),
@@ -384,7 +384,7 @@ function PlatformCard({
                 <button
                   onClick={() => handleConnect(platform)}
                   disabled={isLoading}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   style={{ backgroundColor: platform.color }}
                 >
                   {isLoading ? (
@@ -399,7 +399,7 @@ function PlatformCard({
               {platform.id === 'hubspot' && !details?.isExpired && !details?.needsReconnect && (
                 <button
                   onClick={() => setShowHubspotFieldMapping(true)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   <Settings2 className="w-4 h-4" />
                   Configure Fields
@@ -409,7 +409,7 @@ function PlatformCard({
               {platform.id === 'google_sheets' && (
                 <button
                   onClick={() => setShowSheetsConfig(true)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   <Settings2 className="w-4 h-4" />
                   Configure Fields
@@ -421,7 +421,7 @@ function PlatformCard({
                   <button
                     onClick={() => handleConnect(platform)}
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700/50 light:text-gray-600 light:hover:text-gray-900 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     <Plus className="w-4 h-4" />
                     Add Account
@@ -432,13 +432,13 @@ function PlatformCard({
                       <button
                         onClick={() => handleDisconnect(platform)}
                         disabled={isLoading}
-                        className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                        className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes'}
                       </button>
                       <button
                         onClick={() => setDisconnectConfirm(null)}
-                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         Cancel
                       </button>
@@ -447,7 +447,7 @@ function PlatformCard({
                     <button
                       onClick={() => handleDisconnect(platform)}
                       disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <Unplug className="w-4 h-4" />
                       Disconnect
@@ -462,13 +462,13 @@ function PlatformCard({
                       <button
                         onClick={() => handleDisconnect(platform)}
                         disabled={isLoading}
-                        className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50"
+                        className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/15 hover:bg-red-500/25 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Yes, disconnect'}
                       </button>
                       <button
                         onClick={() => setDisconnectConfirm(null)}
-                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+                        className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         Cancel
                       </button>
@@ -477,7 +477,7 @@ function PlatformCard({
                     <button
                       onClick={() => handleDisconnect(platform)}
                       disabled={isLoading}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       {isLoading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -494,7 +494,7 @@ function PlatformCard({
             platform.id === 'airtable' ? (
               <button
                 onClick={() => setShowAirtableForm(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 style={{ backgroundColor: platform.color }}
               >
                 <Settings2 className="w-4 h-4" />
@@ -504,7 +504,7 @@ function PlatformCard({
               <button
                 onClick={() => handleConnect(platform)}
                 disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 style={{ backgroundColor: platform.color }}
               >
                 {isLoading ? (
@@ -543,7 +543,7 @@ function PlatformCard({
                     {!conn.isPrimary && (
                       <button
                         onClick={() => handleSetPrimary(conn.id)}
-                        className="px-2 py-1 text-[11px] text-gray-400 hover:text-yellow-400 transition-colors rounded"
+                        className="px-2 py-1 text-[11px] text-gray-400 hover:text-yellow-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                         title="Set as primary"
                       >
                         Set Primary
@@ -553,13 +553,13 @@ function PlatformCard({
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleDisconnectMeetConnection(conn.id)}
-                          className="px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/15 rounded transition-colors"
+                          className="px-2 py-1 text-[11px] text-red-400 hover:bg-red-500/15 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                         >
                           Confirm
                         </button>
                         <button
                           onClick={() => setMeetDisconnectConfirm(null)}
-                          className="px-2 py-1 text-[11px] text-gray-500 hover:text-gray-300 transition-colors"
+                          className="px-2 py-1 text-[11px] text-gray-500 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                         >
                           Cancel
                         </button>
@@ -567,7 +567,7 @@ function PlatformCard({
                     ) : (
                       <button
                         onClick={() => handleDisconnectMeetConnection(conn.id)}
-                        className="px-2 py-1 text-[11px] text-gray-500 hover:text-red-400 transition-colors rounded"
+                        className="px-2 py-1 text-[11px] text-gray-500 hover:text-red-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                         title="Disconnect this account"
                       >
                         Remove
@@ -971,7 +971,7 @@ export function IntegrationSettings() {
               <div className="flex-1">
                 <p className="text-sm text-red-300 light:text-red-600">{errorBanner}</p>
               </div>
-              <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300">
+              <button onClick={() => setErrorBanner(null)} className="text-red-400 hover:text-red-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -982,7 +982,7 @@ export function IntegrationSettings() {
             <div className="mb-6 p-4 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-3">
               <Check className="w-5 h-5 text-indigo-400 flex-shrink-0" />
               <p className="text-sm text-indigo-300 light:text-indigo-600 flex-1">{successBanner}</p>
-              <button onClick={() => setSuccessBanner(null)} className="text-indigo-400 hover:text-indigo-300">
+              <button onClick={() => setSuccessBanner(null)} className="text-indigo-400 hover:text-indigo-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1012,7 +1012,7 @@ export function IntegrationSettings() {
                 <div className="flex gap-2">
                   <a
                     href="/how-it-works"
-                    className="text-sm text-indigo-400 hover:text-indigo-300 whitespace-nowrap"
+                    className="text-sm text-indigo-400 hover:text-indigo-300 whitespace-nowrap rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     See how it works
                   </a>
@@ -1110,14 +1110,14 @@ export function IntegrationSettings() {
               <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-md w-full">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">Connect Airtable</h3>
-                  <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white">
+                  <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
                   Enter your Airtable Personal Access Token and Base ID. You can find these in your{' '}
-                  <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">
+                  <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                     Airtable account settings
                   </a>.
                 </p>
@@ -1132,7 +1132,7 @@ export function IntegrationSettings() {
                       value={airtableApiKey}
                       onChange={(e) => setAirtableApiKey(e.target.value)}
                       placeholder="pat..."
-                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
@@ -1145,7 +1145,7 @@ export function IntegrationSettings() {
                       value={airtableBaseId}
                       onChange={(e) => setAirtableBaseId(e.target.value)}
                       placeholder="appXXXXXXXXXXXXXX"
-                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Find this in your base URL: airtable.com/<strong>appXXX</strong>/...
@@ -1161,7 +1161,7 @@ export function IntegrationSettings() {
                         type="text"
                         value={airtableContactsTable}
                         onChange={(e) => setAirtableContactsTable(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                       />
                     </div>
                     <div>
@@ -1172,7 +1172,7 @@ export function IntegrationSettings() {
                         type="text"
                         value={airtableMeetingsTable}
                         onChange={(e) => setAirtableMeetingsTable(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                       />
                     </div>
                   </div>
@@ -1186,14 +1186,14 @@ export function IntegrationSettings() {
                   <div className="flex gap-3 pt-2">
                     <button
                       onClick={() => { setShowAirtableForm(false); setAirtableError(null); }}
-                      className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
+                      className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleAirtableConnect}
                       disabled={airtableConnecting || !airtableApiKey || !airtableBaseId}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#18BFFF] hover:bg-[#14a8e6] rounded-lg transition-colors disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#18BFFF] hover:bg-[#14a8e6] rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       {airtableConnecting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1214,7 +1214,7 @@ export function IntegrationSettings() {
               <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">HubSpot Field Mappings</h3>
-                  <button onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }} className="text-gray-400 hover:text-white">
+                  <button onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -1234,7 +1234,7 @@ export function IntegrationSettings() {
                         {/* Toggle */}
                         <button
                           onClick={() => updateHubspotMapping(index, { enabled: !mapping.enabled })}
-                          className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 relative ${
+                          className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 relative outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                             mapping.enabled ? 'bg-[#FF7A59]' : 'bg-gray-600 light:bg-gray-300'
                           }`}
                         >
@@ -1254,7 +1254,7 @@ export function IntegrationSettings() {
                             <select
                               value={mapping.hubspotProperty}
                               onChange={(e) => updateHubspotMapping(index, { hubspotProperty: e.target.value })}
-                              className="mt-1 w-full px-2 py-1.5 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded text-xs text-gray-200 light:text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#FF7A59]"
+                              className="mt-1 w-full px-2 py-1.5 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded text-xs text-gray-200 light:text-gray-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#FF7A59]"
                             >
                               {hubspotProperties.map(prop => (
                                 <option key={prop.name} value={prop.name}>
@@ -1282,14 +1282,14 @@ export function IntegrationSettings() {
                 <div className="flex gap-3 pt-4 mt-4 border-t border-gray-700 light:border-gray-200">
                   <button
                     onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }}
-                    className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
+                    className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleHubspotMappingSave}
                     disabled={hubspotMappingSaving || hubspotMappingLoading}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#FF7A59] hover:bg-[#e5694d] rounded-lg transition-colors disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#FF7A59] hover:bg-[#e5694d] rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {hubspotMappingSaving ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -1309,7 +1309,7 @@ export function IntegrationSettings() {
               <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">Google Sheets Configuration</h3>
-                  <button onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }} className="text-gray-400 hover:text-white">
+                  <button onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -1335,7 +1335,7 @@ export function IntegrationSettings() {
                             const selected = sheetsSpreadsheets.find(s => s.id === e.target.value);
                             setSheetsSelectedName(selected?.name || '');
                           }}
-                          className="w-full px-3 py-2 bg-gray-800 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg text-sm text-gray-200 light:text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#34A853]"
+                          className="w-full px-3 py-2 bg-gray-800 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg text-sm text-gray-200 light:text-gray-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#34A853]"
                         >
                           <option value="">Select a spreadsheet...</option>
                           {sheetsSpreadsheets.map(s => (
@@ -1355,7 +1355,7 @@ export function IntegrationSettings() {
                           <div key={mapping.sourceField} className="flex items-center gap-3 p-3 bg-gray-800/50 light:bg-gray-50 rounded-lg">
                             <button
                               onClick={() => updateSheetsMapping(index, { enabled: !mapping.enabled })}
-                              className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 relative ${
+                              className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 relative outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                                 mapping.enabled ? 'bg-[#34A853]' : 'bg-gray-600 light:bg-gray-300'
                               }`}
                             >
@@ -1385,14 +1385,14 @@ export function IntegrationSettings() {
                 <div className="flex gap-3 pt-4 mt-4 border-t border-gray-700 light:border-gray-200">
                   <button
                     onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }}
-                    className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors"
+                    className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSheetsConfigSave}
                     disabled={sheetsSaving || sheetsLoading || !sheetsSelectedId}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#34A853] hover:bg-[#2d9249] rounded-lg transition-colors disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#34A853] hover:bg-[#2d9249] rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     {sheetsSaving ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
