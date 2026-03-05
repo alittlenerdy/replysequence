@@ -46,6 +46,10 @@ export function DraftsView({
   const [stats, setStats] = useState(initialStats);
   const [hasConnectedPlatforms, setHasConnectedPlatforms] = useState(initialHasConnectedPlatforms);
   const [isLoading, setIsLoading] = useState(false);
+  // Hydration guard: render table only after client mount to prevent SSR/client mismatch
+  // (DraftsTable uses date formatting that differs between server and client)
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Filters
@@ -227,12 +231,12 @@ export function DraftsView({
       />
 
       {/* Loading State */}
-      {isLoading && (
+      {(isLoading || !hydrated) && (
         <SkeletonTable />
       )}
 
-      {/* Content */}
-      {!isLoading && (
+      {/* Content - only after hydration to prevent duplicate table rendering */}
+      {!isLoading && hydrated && (
         <>
           {drafts.length === 0 ? (
             <EmptyState

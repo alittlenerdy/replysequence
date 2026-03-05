@@ -440,7 +440,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               From <GradientText variant="amber">Before</GradientText> to <GradientText>After</GradientText>
             </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               See exactly how ReplySequence transforms your post-meeting workflow
             </p>
           </motion.div>
@@ -496,11 +496,11 @@ export default function LandingPage() {
                   <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
                 </div>
 
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Before</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 light:text-gray-500 mb-2">Before</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
 
                 <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" aria-hidden="true" />
-                <p className="text-xs text-gray-500 light:text-gray-500 mb-1">{item.process}</p>
+                <p className="text-xs text-gray-400 light:text-gray-500 mb-1">{item.process}</p>
                 <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" aria-hidden="true" />
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 light:text-amber-600 mb-2">After</span>

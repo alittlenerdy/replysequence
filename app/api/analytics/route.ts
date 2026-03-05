@@ -419,6 +419,7 @@ export async function GET(request: Request) {
         draftStatus: !draft ? 'none' : draft.status === 'failed' ? 'failed' : 'generated',
         draftId: draft?.id || null,
         contactName,
+        platform: m.platform || null,
       });
     }
     // Sort by endTime descending (most recent first)

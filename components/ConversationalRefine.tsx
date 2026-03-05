@@ -178,11 +178,11 @@ export function ConversationalRefine({
           <div className="space-y-2">
             <p className="text-xs font-medium text-gray-400">Body</p>
             <div className="grid grid-cols-2 gap-2">
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg max-h-48 overflow-y-auto">
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg max-h-72 overflow-y-auto">
                 <p className="text-xs text-red-400 mb-1">Before</p>
                 <p className="text-xs text-gray-400 whitespace-pre-wrap">{currentBody}</p>
               </div>
-              <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg max-h-48 overflow-y-auto">
+              <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg max-h-72 overflow-y-auto">
                 <p className="text-xs text-green-400 mb-1">After</p>
                 <p className="text-xs text-white whitespace-pre-wrap">{refinedPreview.body}</p>
               </div>

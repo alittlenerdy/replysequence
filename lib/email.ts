@@ -183,7 +183,7 @@ Try it free → ${signatureUrl}
 /**
  * Append plain text footer to email body
  */
-function appendPlainTextFooter(body: string, utmContent?: string): string {
+export function appendPlainTextFooter(body: string, utmContent?: string): string {
   const footer = generatePlainTextFooter(utmContent);
   return `${body}\n\n${footer}`;
 }
@@ -192,7 +192,7 @@ function appendPlainTextFooter(body: string, utmContent?: string): string {
  * Convert plain text body to simple HTML
  * Preserves line breaks and basic formatting
  */
-function formatBodyAsHtml(body: string, includeSignature: boolean = true, utmContent?: string): string {
+export function formatBodyAsHtml(body: string, includeSignature: boolean = true, utmContent?: string): string {
   // Escape HTML entities
   const escaped = body
     .replace(/&/g, '&amp;')

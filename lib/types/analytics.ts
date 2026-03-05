@@ -64,6 +64,7 @@ export interface AtRiskMeeting {
   draftStatus: 'none' | 'generated' | 'failed';
   draftId: string | null;
   contactName: string | null;
+  platform: string | null;
 }
 
 /** Per-speaker analytics computed from transcript segments */

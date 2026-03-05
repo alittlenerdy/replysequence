@@ -3,6 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Check, ArrowRight, Zap } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import type { JSX } from 'react';
 
 export const metadata: Metadata = {
   title: 'Integrations',
@@ -23,9 +24,64 @@ interface Integration {
   description: string;
   features: string[];
   status: 'available' | 'coming_soon';
-  logo: string; // SVG path or emoji fallback
+  logo: JSX.Element;
   color: string;
 }
+
+// Brand SVG icons
+const ZoomLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M4.585 16.978a3.07 3.07 0 0 1-3.07-3.07V8.143a3.07 3.07 0 0 1 3.07-3.07h9.66a3.07 3.07 0 0 1 3.072 3.07l-.002 2.163 3.636-2.668a.895.895 0 0 1 1.42.725v7.286a.895.895 0 0 1-1.42.725l-3.636-2.669v2.163a3.07 3.07 0 0 1-3.07 3.07l-9.66.04z" />
+  </svg>
+);
+
+const TeamsLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M20.625 7.875h-3.75V5.25a1.125 1.125 0 0 0-1.125-1.125H8.25A1.125 1.125 0 0 0 7.125 5.25v2.625h-3.75A1.125 1.125 0 0 0 2.25 9v6.75a1.125 1.125 0 0 0 1.125 1.125h3.75v2.625A1.125 1.125 0 0 0 8.25 20.625h7.5a1.125 1.125 0 0 0 1.125-1.125v-2.625h3.75a1.125 1.125 0 0 0 1.125-1.125V9a1.125 1.125 0 0 0-1.125-1.125zM9.375 18.375V5.625h5.25v12.75h-5.25z" />
+  </svg>
+);
+
+const MeetLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+  </svg>
+);
+
+const GmailLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M20 18h-2V9.25L12 13 6 9.25V18H4V6h1.2l6.8 4.25L18.8 6H20v12zM20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" />
+  </svg>
+);
+
+const OutlookLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 3c1.657 0 3 1.567 3 3.5S13.657 12 12 12s-3-1.567-3-3.5S10.343 5 12 5zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+  </svg>
+);
+
+const HubSpotLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M17.01 11.4V8.03a1.71 1.71 0 0 0 1-1.55V6.4a1.71 1.71 0 0 0-1.71-1.71h-.08A1.71 1.71 0 0 0 14.5 6.4v.08a1.71 1.71 0 0 0 1 1.55v3.37a4.76 4.76 0 0 0-2.12 1.23l-5.6-4.36a1.83 1.83 0 0 0 .05-.4 1.87 1.87 0 1 0-1.87 1.87c.24 0 .46-.05.67-.13l5.5 4.28a4.78 4.78 0 0 0 .33 5.01l-1.66 1.66a1.4 1.4 0 0 0-.4-.07 1.48 1.48 0 1 0 1.48 1.48 1.4 1.4 0 0 0-.07-.41l1.63-1.63a4.8 4.8 0 1 0 3.56-7.13z" />
+  </svg>
+);
+
+const AirtableLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M11.52 2.309l-8.22 3.1c-.5.19-.5.89 0 1.08l8.22 3.1c.31.12.65.12.96 0l8.22-3.1c.5-.19.5-.89 0-1.08l-8.22-3.1a1.28 1.28 0 0 0-.96 0zm-9.27 6.52v7.14c0 .38.23.72.58.86l8.19 3.41c.29.12.62-.09.62-.41V12.67c0-.38-.23-.72-.58-.86L2.87 8.4a.45.45 0 0 0-.62.41zm18.5 0c0-.5-.62-.77-1-.44l-7.38 5.16c-.35.25-.57.65-.57 1.08v6.78c0 .5.61.78 1 .45l7.38-5.16c.35-.24.57-.65.57-1.08V8.83z" />
+  </svg>
+);
+
+const SalesforceLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M10.05 5.83a4.01 4.01 0 0 1 3.02-1.38 4.04 4.04 0 0 1 3.78 2.65 3.48 3.48 0 0 1 1.49-.34c1.95 0 3.53 1.61 3.53 3.6 0 1.98-1.58 3.59-3.53 3.59-.2 0-.4-.02-.6-.05a3.01 3.01 0 0 1-2.68 1.65c-.34 0-.67-.06-.98-.17a3.6 3.6 0 0 1-3.36 2.33 3.59 3.59 0 0 1-3.12-1.83 3.21 3.21 0 0 1-.65.07c-1.73 0-3.14-1.41-3.14-3.15 0-.95.43-1.8 1.1-2.37a3.47 3.47 0 0 1-.44-1.7c0-1.93 1.56-3.5 3.49-3.5 1.02 0 1.94.44 2.59 1.14z" />
+  </svg>
+);
+
+const SheetsLogo = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
+    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 14H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+  </svg>
+);
 
 const integrations: Integration[] = [
   {
@@ -39,8 +95,8 @@ const integrations: Integration[] = [
       'Speaker identification for accurate attribution',
     ],
     status: 'available',
-    logo: 'Z',
-    color: 'from-indigo-500 to-indigo-600',
+    logo: <ZoomLogo />,
+    color: 'from-[#2D8CFF] to-[#2681F2]',
   },
   {
     name: 'Microsoft Teams',
@@ -53,8 +109,8 @@ const integrations: Integration[] = [
       'Auto-renewing — set it and forget it',
     ],
     status: 'available',
-    logo: 'T',
-    color: 'from-indigo-500 to-indigo-700',
+    logo: <TeamsLogo />,
+    color: 'from-[#5B5FC7] to-[#4B4FB5]',
   },
   {
     name: 'Google Meet',
@@ -67,8 +123,8 @@ const integrations: Integration[] = [
       'Multi-account support for agencies',
     ],
     status: 'available',
-    logo: 'M',
-    color: 'from-indigo-500 to-indigo-600',
+    logo: <MeetLogo />,
+    color: 'from-[#00897B] to-[#00796B]',
   },
   {
     name: 'Gmail',
@@ -81,8 +137,8 @@ const integrations: Integration[] = [
       'Secure OAuth — we never see your password',
     ],
     status: 'available',
-    logo: 'G',
-    color: 'from-red-500 to-orange-500',
+    logo: <GmailLogo />,
+    color: 'from-[#EA4335] to-[#D93025]',
   },
   {
     name: 'Outlook / Microsoft 365',
@@ -95,8 +151,8 @@ const integrations: Integration[] = [
       'Your recipients see your name, not ours',
     ],
     status: 'available',
-    logo: 'O',
-    color: 'from-indigo-600 to-indigo-500',
+    logo: <OutlookLogo />,
+    color: 'from-[#0078D4] to-[#106EBE]',
   },
   {
     name: 'HubSpot',
@@ -109,8 +165,8 @@ const integrations: Integration[] = [
       'Activity timeline stays up to date',
     ],
     status: 'available',
-    logo: 'H',
-    color: 'from-orange-500 to-red-500',
+    logo: <HubSpotLogo />,
+    color: 'from-[#FF7A59] to-[#FF5C35]',
   },
   {
     name: 'Airtable',
@@ -123,8 +179,8 @@ const integrations: Integration[] = [
       'Flexible enough for any CRM workflow',
     ],
     status: 'available',
-    logo: 'A',
-    color: 'from-yellow-500 to-green-500',
+    logo: <AirtableLogo />,
+    color: 'from-[#FCBF49] to-[#18BFFF]',
   },
   {
     name: 'Salesforce',
@@ -137,8 +193,8 @@ const integrations: Integration[] = [
       'Token refresh with session expiry handling',
     ],
     status: 'available',
-    logo: 'S',
-    color: 'from-sky-400 to-blue-600',
+    logo: <SalesforceLogo />,
+    color: 'from-[#00A1E0] to-[#0070D2]',
   },
   {
     name: 'Google Sheets',
@@ -151,8 +207,8 @@ const integrations: Integration[] = [
       'Configure which columns to sync',
     ],
     status: 'available',
-    logo: 'S',
-    color: 'from-green-500 to-emerald-600',
+    logo: <SheetsLogo />,
+    color: 'from-[#0F9D58] to-[#188038]',
   },
 ];
 
@@ -218,7 +274,12 @@ export default function IntegrationsPage() {
       {/* Integration Categories */}
       {categories.map((category, categoryIndex) => {
         const categoryIntegrations = integrations.filter((i) => i.category === category);
-        const isFewCards = categoryIntegrations.length < 3;
+        const cardCount = categoryIntegrations.length;
+        const gridCols = cardCount <= 2
+          ? 'md:grid-cols-2 max-w-4xl mx-auto'
+          : cardCount === 4
+          ? 'md:grid-cols-2 max-w-4xl mx-auto'
+          : 'md:grid-cols-2 lg:grid-cols-3';
 
         return (
           <section key={category} className="py-12 px-4">
@@ -232,11 +293,7 @@ export default function IntegrationsPage() {
                 </p>
               </div>
 
-              <div className={`grid grid-cols-1 gap-6 ${
-                isFewCards
-                  ? 'md:grid-cols-2 max-w-4xl mx-auto'
-                  : 'md:grid-cols-2 lg:grid-cols-3'
-              }`}>
+              <div className={`grid grid-cols-1 gap-6 ${gridCols}`}>
                 {categoryIntegrations.map((integration, i) => (
                   <div
                     key={integration.name}
@@ -257,9 +314,7 @@ export default function IntegrationsPage() {
 
                     {/* Logo */}
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${integration.color} mb-4`}>
-                      <span className="text-white font-bold text-lg">
-                        {integration.logo}
-                      </span>
+                      {integration.logo}
                     </div>
 
                     {/* Name + Description */}

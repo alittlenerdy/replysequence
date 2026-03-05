@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
-import { sendEmail } from '@/lib/email';
+import { sendEmail, formatBodyAsHtml, appendPlainTextFooter } from '@/lib/email';
 import { sendViaConnectedAccount } from '@/lib/email-sender';
 import { syncSentEmailToCrm } from '@/lib/airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
@@ -145,10 +145,13 @@ export async function POST(request: NextRequest) {
       hasTracking: !!draft.trackingId,
     }));
 
+    // Build properly formatted HTML email with footer and tracking
+    let htmlBody = formatBodyAsHtml(draft.body, true, draftId);
+    let textBody = appendPlainTextFooter(draft.body, draftId);
+
     // Inject email tracking (pixel + link wrapping) if trackingId exists
-    let emailBody = draft.body;
     if (draft.trackingId) {
-      emailBody = injectTracking(draft.body, draft.trackingId);
+      htmlBody = injectTracking(htmlBody, draft.trackingId);
       console.log('[SEND-1b] Tracking injected for:', draft.trackingId);
     }
 
@@ -181,8 +184,8 @@ export async function POST(request: NextRequest) {
             },
             to: recipientEmail,
             subject: draft.subject,
-            htmlBody: emailBody,
-            textBody: draft.body,
+            htmlBody,
+            textBody,
             replyTo: draft.meetingHostEmail,
           });
 
@@ -205,7 +208,8 @@ export async function POST(request: NextRequest) {
       result = await sendEmail({
         to: recipientEmail,
         subject: draft.subject,
-        body: emailBody,
+        body: draft.body,
+        html: htmlBody,
         replyTo: draft.meetingHostEmail,
         utmContent: draftId,
         includeSignature: true,

@@ -25,8 +25,8 @@ export function DashboardShell({ children, firstName = 'there', pendingDrafts = 
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo-new.png" alt="ReplySequence" width={28} height={28} className="rounded-sm" />
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:via-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">ReplySequence</span>
+              <Image src="/logo-new.png" alt="ReplySequence" width={36} height={36} className="rounded-sm" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:via-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">ReplySequence</span>
             </Link>
 
             {/* User Menu */}

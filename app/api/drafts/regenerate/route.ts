@@ -11,7 +11,7 @@ export const maxDuration = 60;
 
 const regenerateDraftSchema = z.object({
   meetingId: z.string().uuid(),
-  templateId: z.string().uuid().optional(),
+  templateId: z.string().min(1).optional(),
 });
 
 /**

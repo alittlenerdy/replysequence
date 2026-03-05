@@ -78,7 +78,7 @@ export async function sendDraftReadyNotification(params: DraftNotificationParams
         </div>
 
         <p style="margin: 24px 0 0; color: #64748b; font-size: 12px; text-align: center;">
-          Sent by ReplySequence. You can manage notifications in
+          Sent by <a href="https://www.replysequence.com" style="color: #3b82f6; text-decoration: none; font-weight: 500;">ReplySequence</a>. You can manage notifications in
           <a href="${dashboardUrl.replace('/dashboard', '/dashboard/settings')}" style="color: #3b82f6; text-decoration: none;">Settings</a>.
         </p>
       </div>

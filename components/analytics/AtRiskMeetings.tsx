@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { CheckCircle2, FileText, Wand2 } from 'lucide-react';
 import type { AtRiskMeeting } from '@/lib/types/analytics';
 
@@ -18,6 +19,38 @@ function formatRelativeTime(isoDate: string | null): string {
   if (hours < 24) return rtf.format(-hours, 'hour');
   const days = Math.floor(hours / 24);
   return rtf.format(-days, 'day');
+}
+
+const PLATFORM_STYLES: Record<string, { bg: string; text: string; label: string }> = {
+  zoom: {
+    bg: 'bg-blue-500/10 light:bg-blue-50 border-blue-500/20 light:border-blue-200',
+    text: 'text-blue-400 light:text-blue-600',
+    label: 'Zoom',
+  },
+  teams: {
+    bg: 'bg-purple-500/10 light:bg-purple-50 border-purple-500/20 light:border-purple-200',
+    text: 'text-purple-400 light:text-purple-600',
+    label: 'Teams',
+  },
+  meet: {
+    bg: 'bg-emerald-500/10 light:bg-emerald-50 border-emerald-500/20 light:border-emerald-200',
+    text: 'text-emerald-400 light:text-emerald-600',
+    label: 'Meet',
+  },
+};
+
+function PlatformBadge({ platform }: { platform: string | null }) {
+  const key = platform?.toLowerCase() || '';
+  const style = PLATFORM_STYLES[key];
+  if (!style) return null;
+
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium rounded border ${style.bg} ${style.text}`}
+    >
+      {style.label}
+    </span>
+  );
 }
 
 function DraftStatusBadge({ status }: { status: AtRiskMeeting['draftStatus'] }) {
@@ -67,17 +100,21 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
       {/* Mobile card layout */}
       <div className="md:hidden space-y-3">
         {meetings.slice(0, 10).map((m) => (
-          <div
+          <Link
             key={m.meetingId}
-            className="p-3 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200"
+            href={`/dashboard/meetings/${m.meetingId}`}
+            className="block p-3 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200 hover:bg-gray-800/80 light:hover:bg-gray-100 transition-colors"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="min-w-0">
-                <p className="text-sm font-medium text-white light:text-gray-900 truncate">
-                  {m.topic || 'Untitled Meeting'}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <PlatformBadge platform={m.platform} />
+                  <p className="text-sm font-medium text-white light:text-gray-900 truncate">
+                    {m.topic || 'Untitled Meeting'}
+                  </p>
+                </div>
                 {m.contactName && (
-                  <p className="text-xs text-gray-500 truncate">{m.contactName}</p>
+                  <p className="text-xs text-gray-500 truncate mt-0.5">{m.contactName}</p>
                 )}
               </div>
               <DraftStatusBadge status={m.draftStatus} />
@@ -85,24 +122,22 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-500">Ended {formatRelativeTime(m.endTime)}</span>
               {m.draftStatus === 'generated' && m.draftId ? (
-                <a
-                  href={`/dashboard?draft=${m.draftId}`}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300"
+                <span
+                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600"
                 >
                   <FileText className="w-3 h-3" />
                   Open Draft
-                </a>
+                </span>
               ) : (
-                <a
-                  href={`/dashboard?meeting=${m.meetingId}`}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300"
+                <span
+                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600"
                 >
                   <Wand2 className="w-3 h-3" />
                   Generate Draft
-                </a>
+                </span>
               )}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -112,6 +147,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
           <thead>
             <tr className="text-xs text-gray-500 border-b border-gray-700/50 light:border-gray-200">
               <th className="text-left py-2 pr-4 font-medium">Meeting</th>
+              <th className="text-left py-2 pr-4 font-medium">Platform</th>
               <th className="text-left py-2 pr-4 font-medium">Ended</th>
               <th className="text-left py-2 pr-4 font-medium">Draft Status</th>
               <th className="text-right py-2 font-medium">Action</th>
@@ -119,16 +155,22 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
           </thead>
           <tbody>
             {meetings.slice(0, 10).map((m) => (
-              <tr key={m.meetingId} className="border-b border-gray-800/50 light:border-gray-100 last:border-0">
+              <tr key={m.meetingId} className="border-b border-gray-800/50 light:border-gray-100 last:border-0 group">
                 <td className="py-3 pr-4">
-                  <div className="min-w-0">
-                    <p className="font-medium text-white light:text-gray-900 truncate max-w-[200px]">
+                  <Link
+                    href={`/dashboard/meetings/${m.meetingId}`}
+                    className="block min-w-0 group/link"
+                  >
+                    <p className="font-medium text-white light:text-gray-900 truncate max-w-[200px] group-hover/link:text-indigo-400 light:group-hover/link:text-indigo-600 transition-colors">
                       {m.topic || 'Untitled Meeting'}
                     </p>
                     {m.contactName && (
                       <p className="text-xs text-gray-500 truncate">{m.contactName}</p>
                     )}
-                  </div>
+                  </Link>
+                </td>
+                <td className="py-3 pr-4">
+                  <PlatformBadge platform={m.platform} />
                 </td>
                 <td className="py-3 pr-4 text-gray-400 light:text-gray-500 whitespace-nowrap">
                   {formatRelativeTime(m.endTime)}
@@ -138,21 +180,21 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                 </td>
                 <td className="py-3 text-right">
                   {m.draftStatus === 'generated' && m.draftId ? (
-                    <a
+                    <Link
                       href={`/dashboard?draft=${m.draftId}`}
                       className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300 whitespace-nowrap"
                     >
                       <FileText className="w-3 h-3" />
                       Open Draft
-                    </a>
+                    </Link>
                   ) : (
-                    <a
+                    <Link
                       href={`/dashboard?meeting=${m.meetingId}`}
                       className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300 whitespace-nowrap"
                     >
                       <Wand2 className="w-3 h-3" />
                       Generate Draft
-                    </a>
+                    </Link>
                   )}
                 </td>
               </tr>

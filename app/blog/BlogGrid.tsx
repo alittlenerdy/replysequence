@@ -33,9 +33,9 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <button
             onClick={() => setSelectedTag(null)}
-            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
               selectedTag === null
-                ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                 : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
             }`}
           >
@@ -45,9 +45,9 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             <button
               key={tag}
               onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
-              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                 selectedTag === tag
-                  ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                   : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
               }`}
             >

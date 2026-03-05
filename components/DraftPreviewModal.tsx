@@ -212,16 +212,15 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
   const [editBody, setEditBody] = useState(() => ensureHtml(draft.body));
 
   // Handle AI refinement completion - normalize body to HTML
+  // Stay on the modal so the user can review changes before saving
   const handleRefineComplete = useCallback((newSubject: string, newBody: string) => {
     setEditSubject(newSubject);
     setEditBody(ensureHtml(newBody));
     setIsRefining(false);
+    setIsEditing(true);
     setSaveSuccess(true);
-    setTimeout(() => {
-      setSaveSuccess(false);
-      onDraftUpdated();
-    }, 1500);
-  }, [onDraftUpdated]);
+    setTimeout(() => setSaveSuccess(false), 2000);
+  }, []);
 
   // Reset edit state when entering edit mode - normalize body to HTML
   useEffect(() => {
