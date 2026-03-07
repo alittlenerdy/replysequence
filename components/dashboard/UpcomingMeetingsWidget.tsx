@@ -263,7 +263,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
   return (
     <div className="relative overflow-hidden rounded-2xl">
       {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-amber-500 to-amber-600 rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-amber-500 to-amber-600 light:from-indigo-400 light:via-amber-300 light:to-amber-400 rounded-2xl" />
 
       {/* Inner content */}
       <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">

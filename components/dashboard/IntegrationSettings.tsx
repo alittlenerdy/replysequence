@@ -1100,6 +1100,61 @@ export function IntegrationSettings() {
                     );
                   })}
                 </div>
+
+                {/* Recording Setup Guide - show after meeting platforms when at least one is connected */}
+                {section.key === 'meeting' && connected > 0 && (
+                  <div className="mb-4 p-5 bg-amber-500/10 light:bg-amber-50 border border-amber-500/20 light:border-amber-200 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/20 light:bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <Settings2 className="w-4 h-4 text-amber-400 light:text-amber-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-white light:text-gray-900 font-semibold mb-2">Enable Recording & Transcripts</h4>
+                        <p className="text-gray-300 light:text-gray-600 text-sm mb-3">
+                          ReplySequence needs meeting transcripts to generate follow-up emails. Enable recording on your connected platform:
+                        </p>
+                        <div className="space-y-2 text-sm text-gray-300 light:text-gray-600">
+                          {connectionStatus.zoom && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-medium text-white light:text-gray-900 shrink-0">Zoom:</span>
+                              <span>
+                                Go to{' '}
+                                <a href="https://zoom.us/profile/setting" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">
+                                  Zoom Settings
+                                </a>
+                                {' '}&rarr; Recording &rarr; enable &quot;Cloud Recording&quot; and &quot;Audio Transcript&quot;. Requires admin/licensed account.
+                              </span>
+                            </div>
+                          )}
+                          {connectionStatus.meet && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-medium text-white light:text-gray-900 shrink-0">Google Meet:</span>
+                              <span>
+                                Workspace admin must enable recording at{' '}
+                                <a href="https://admin.google.com/ac/apps/meet/settings" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">
+                                  Admin Console
+                                </a>
+                                {' '}&rarr; Apps &rarr; Google Meet &rarr; Meet Settings &rarr; Recording. Note: you may need to manually click &quot;Record&quot; in each meeting.
+                              </span>
+                            </div>
+                          )}
+                          {connectionStatus.teams && (
+                            <div className="flex items-start gap-2">
+                              <span className="font-medium text-white light:text-gray-900 shrink-0">Teams:</span>
+                              <span>
+                                IT admin must enable recording in{' '}
+                                <a href="https://admin.teams.microsoft.com" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">
+                                  Teams Admin Center
+                                </a>
+                                {' '}&rarr; Meeting Policies &rarr; enable &quot;Cloud Recording&quot; and &quot;Transcription&quot;.
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}

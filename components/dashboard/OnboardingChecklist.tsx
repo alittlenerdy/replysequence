@@ -361,7 +361,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="space-y-2 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent"
+              className="space-y-2"
             >
               {data.items.map((item, index) => (
                 <ChecklistItemRow
