@@ -403,7 +403,7 @@ export async function POST() {
     });
 
     return NextResponse.json(
-      { error: 'Internal server error', debug: errorMessage },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
