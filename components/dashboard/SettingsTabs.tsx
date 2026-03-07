@@ -60,23 +60,15 @@ export function SettingsTabs() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex-1 min-w-fit px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   activeTab === tab.id
-                    ? tab.id === 'ai'
-                      ? 'text-orange-300 light:text-orange-700'
-                      : 'text-white light:text-gray-900'
-                    : tab.id === 'ai'
-                      ? 'text-orange-400 light:text-orange-500 hover:text-orange-300 light:hover:text-orange-600 hover:bg-orange-500/10 light:hover:bg-orange-50'
-                      : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-gray-700/50 light:hover:bg-gray-50'
+                    ? 'text-orange-300 light:text-orange-700'
+                    : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-gray-700/50 light:hover:bg-gray-50'
                 }`}
               >
                 {/* Animated background indicator */}
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="settings-tab-indicator"
-                    className={`absolute inset-0 rounded-lg shadow-sm ${
-                      tab.id === 'ai'
-                        ? 'bg-orange-600/20 light:bg-orange-50 border border-orange-500/30 light:border-orange-300'
-                        : 'bg-gray-700 light:bg-white'
-                    }`}
+                    className="absolute inset-0 rounded-lg shadow-sm bg-orange-600/20 light:bg-orange-50 border border-orange-500/30 light:border-orange-300"
                     transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
                   />
                 )}

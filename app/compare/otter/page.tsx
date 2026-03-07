@@ -207,7 +207,7 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
     );
   }
   return (
-    <span className={`text-xs sm:text-sm font-medium ${isWinner ? 'text-white light:text-gray-900' : 'text-gray-400 light:text-gray-500'}`}>
+    <span className={`text-xs sm:text-sm font-medium text-center ${isWinner ? 'text-white light:text-gray-900' : 'text-gray-400 light:text-gray-500'}`}>
       {value}
     </span>
   );

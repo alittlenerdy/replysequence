@@ -109,7 +109,7 @@ export default function MobileMenu() {
                 Compare
                 <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
               </button>
-              <div className={`flex flex-col items-center gap-3 mt-4 overflow-hidden transition-[max-height,opacity] duration-300 ${compareOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className={`flex flex-col items-center gap-3 mt-4 overflow-y-auto transition-[max-height,opacity] duration-300 ${compareOpen ? 'max-h-[70vh] opacity-100' : 'max-h-0 opacity-0'}`}>
                 {competitors.map((competitor) => (
                   <a
                     key={competitor.slug}

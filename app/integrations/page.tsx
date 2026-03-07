@@ -169,20 +169,6 @@ const integrations: Integration[] = [
     color: 'from-[#FF7A59] to-[#FF5C35]',
   },
   {
-    name: 'Airtable',
-    category: 'crm',
-    description: 'Sync meeting data and sent emails to Airtable for custom CRM workflows.',
-    features: [
-      'Sync meeting data to custom bases',
-      'Track follow-up history per contact',
-      'Log email sends automatically',
-      'Flexible enough for any CRM workflow',
-    ],
-    status: 'available',
-    logo: <AirtableLogo />,
-    color: 'from-[#FCBF49] to-[#18BFFF]',
-  },
-  {
     name: 'Salesforce',
     category: 'crm',
     description: 'Log meeting follow-ups directly into Salesforce contacts and opportunities.',
@@ -195,6 +181,20 @@ const integrations: Integration[] = [
     status: 'available',
     logo: <SalesforceLogo />,
     color: 'from-[#00A1E0] to-[#0070D2]',
+  },
+  {
+    name: 'Airtable',
+    category: 'crm',
+    description: 'Sync meeting data and sent emails to Airtable for custom CRM workflows.',
+    features: [
+      'Sync meeting data to custom bases',
+      'Track follow-up history per contact',
+      'Log email sends automatically',
+      'Flexible enough for any CRM workflow',
+    ],
+    status: 'available',
+    logo: <AirtableLogo />,
+    color: 'from-[#FCBF49] to-[#18BFFF]',
   },
   {
     name: 'Google Sheets',

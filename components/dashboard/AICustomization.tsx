@@ -236,28 +236,30 @@ export function AICustomization() {
         )}
       </AnimatePresence>
 
-      {/* Hero Banner with save status */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600/20 via-indigo-600/15 to-indigo-600/10 light:from-indigo-100 light:via-indigo-50 light:to-indigo-50 p-6 border border-indigo-500/20 light:border-indigo-200 mb-6">
-        <div className="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl" />
-        <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-indigo-500/15 rounded-full blur-2xl" />
-        <div className="relative flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-              <Sparkles className="w-6 h-6 text-white" />
+      {/* Hero Banner with save status — hidden once all 3 steps are complete */}
+      {!(preferences.aiTone && preferences.aiCustomInstructions.length > 0 && preferences.hourlyRate > 0) && (
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600/20 via-indigo-600/15 to-indigo-600/10 light:from-indigo-100 light:via-indigo-50 light:to-indigo-50 p-6 border border-indigo-500/20 light:border-indigo-200 mb-6">
+          <div className="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl" />
+          <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-indigo-500/15 rounded-full blur-2xl" />
+          <div className="relative flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white light:text-gray-900">Your AI Writing Assistant</h3>
+                <p className="text-sm text-indigo-200/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-white light:text-gray-900">Your AI Writing Assistant</h3>
-              <p className="text-sm text-indigo-200/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
+            <div aria-live="polite">
+              <SaveStatusIndicator status={status} lastSavedAt={lastSavedAt} />
             </div>
           </div>
-          <div aria-live="polite">
-            <SaveStatusIndicator status={status} lastSavedAt={lastSavedAt} />
+          <div className="relative mt-4">
+            <StepIndicator preferences={preferences} />
           </div>
         </div>
-        <div className="relative mt-4">
-          <StepIndicator preferences={preferences} />
-        </div>
-      </div>
+      )}
 
       {/* Two-column layout */}
       <div className="flex flex-col lg:flex-row gap-6">
