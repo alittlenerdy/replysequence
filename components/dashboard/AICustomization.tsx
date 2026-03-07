@@ -122,10 +122,11 @@ export function AICustomization() {
     return false;
   });
 
-  // Compute completion state — tone + instructions = configured enough
+  // Compute completion state — all 3 steps done
   const isComplete =
     !!preferences.aiTone &&
-    preferences.aiCustomInstructions.length > 0;
+    preferences.aiCustomInstructions.length > 0 &&
+    preferences.hourlyRate > 0;
 
   // Load preferences
   useEffect(() => {
