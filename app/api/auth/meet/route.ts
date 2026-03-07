@@ -63,7 +63,6 @@ export async function GET(request: NextRequest) {
     'https://www.googleapis.com/auth/calendar.readonly',
     'https://www.googleapis.com/auth/meetings.space.readonly',
     'https://www.googleapis.com/auth/drive.readonly', // For accessing recordings in Drive
-    'https://www.googleapis.com/auth/workspaceevents.readonly', // For Pub/Sub event subscriptions
   ];
   const scopes = scopesList.join(' ');
 

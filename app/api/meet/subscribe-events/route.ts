@@ -362,13 +362,13 @@ export async function POST() {
 
       if (response.status === 403) {
         return NextResponse.json(
-          { error: 'Missing required permissions. Please reconnect Google Meet with correct scopes.' },
+          { error: 'Missing required permissions. Please reconnect Google Meet with correct scopes.', details: errorText.substring(0, 500) },
           { status: 403 }
         );
       }
 
       return NextResponse.json(
-        { error: `Failed to create subscription (${response.status})` },
+        { error: `Failed to create subscription (${response.status})`, details: errorText.substring(0, 500) },
         { status: response.status }
       );
     }
