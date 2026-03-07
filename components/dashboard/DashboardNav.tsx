@@ -98,7 +98,7 @@ export function DashboardNav({ pendingDrafts = 0, userEmail = '' }: DashboardNav
                 relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-colors duration-200
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
                 ${isActive
-                  ? 'border-indigo-500 text-white light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 font-semibold'
+                  ? 'border-orange-500 text-white light:text-orange-600 bg-orange-500/10 light:bg-orange-50 font-semibold'
                   : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100 font-medium'
                 }
               `}

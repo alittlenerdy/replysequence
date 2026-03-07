@@ -507,7 +507,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         }}
       >
         <div
-          className="relative w-full min-h-screen md:min-h-0 md:max-w-5xl bg-[#0C0C18] md:border md:border-white/[0.06] md:rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),0_0_80px_rgba(59,130,246,0.05)] transform transition-[transform,opacity] animate-modal-in overflow-hidden"
+          className="relative w-full h-dvh overflow-y-auto md:h-auto md:min-h-0 md:max-w-5xl bg-[#0C0C18] md:border md:border-white/[0.06] md:rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5),0_0_80px_rgba(59,130,246,0.05)] transform transition-[transform,opacity] animate-modal-in md:overflow-hidden"
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Ambient gradient orbs for depth */}
@@ -518,6 +518,17 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
           {/* Header - sticky on mobile for easy close access */}
           <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/[0.06] bg-[#16162A]/95 backdrop-blur-sm md:rounded-t-2xl">
             <div className="flex items-center justify-between gap-2">
+              {/* Mobile back button - prominent, at leading edge */}
+              <button
+                onClick={handleModalClose}
+                className="md:hidden flex items-center gap-1 px-2 py-1.5 -ml-1 text-gray-300 hover:text-white rounded-lg hover:bg-gray-700/60 active:bg-gray-700 transition-colors min-h-[44px] shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70"
+                aria-label="Go back"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="text-sm font-medium">Back</span>
+              </button>
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <h2 className="text-lg sm:text-xl font-semibold text-white truncate">
                   {showTemplatePicker ? 'Regenerate Draft' : isRefining ? 'AI Refine' : isEditing ? 'Edit Draft' : 'Draft Preview'}
@@ -548,9 +559,10 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                     </svg>
                   </button>
                 )}
+                {/* Desktop close button (X icon) - hidden on mobile where Back button is used */}
                 <button
                   onClick={handleModalClose}
-                  className="p-2.5 sm:p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  className="hidden md:flex p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   aria-label="Close preview"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -650,7 +662,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
           ) : (
             <>
               {/* Content */}
-              <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
+              <div className="px-6 py-4 pb-24 md:pb-4 md:max-h-[60vh] md:overflow-y-auto">
                 {showTemplatePicker ? (
                   <div className="space-y-4">
                     {error && (

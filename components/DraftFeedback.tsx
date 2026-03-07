@@ -78,8 +78,8 @@ export function DraftFeedback({
           disabled={isSubmitting}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
             rating === 'up'
-              ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-400'
-              : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-indigo-500/30 hover:text-indigo-400'
+              ? 'bg-orange-500/20 border-orange-500/40 text-orange-400'
+              : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-orange-500/30 hover:text-orange-400'
           }`}
         >
           {isSubmitting ? (

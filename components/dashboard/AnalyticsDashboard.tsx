@@ -209,7 +209,7 @@ export function AnalyticsDashboard() {
                 onClick={() => setDateRange(range.value)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   dateRange === range.value
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-orange-500 text-white shadow-sm'
                     : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
                 }`}
               >

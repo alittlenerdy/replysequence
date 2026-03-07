@@ -217,7 +217,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="fixed bottom-20 right-6 z-50 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           title="Ask anything about your recent meetings — action items, follow-ups, risks, trends."
         >
           {/* Sparkle icon */}
@@ -235,7 +235,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-0 right-0 z-50 w-full sm:w-[440px] sm:bottom-6 sm:right-6 h-[85vh] sm:h-[620px] sm:max-h-[80vh] flex flex-col bg-gray-950 light:bg-white border border-orange-500/30 light:border-orange-300/50 sm:rounded-2xl shadow-2xl shadow-orange-500/10 overflow-hidden">
+        <div className="fixed bottom-[60px] right-0 z-50 w-full sm:w-[440px] sm:bottom-6 sm:right-6 h-[85vh] sm:h-[620px] sm:max-h-[80vh] flex flex-col bg-gray-950 light:bg-white border border-orange-500/30 light:border-orange-300/50 sm:rounded-2xl shadow-2xl shadow-orange-500/10 overflow-hidden">
           {/* Header with orange gradient */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-orange-500/20 light:border-orange-200 bg-gradient-to-r from-orange-500/10 to-amber-500/10 light:from-orange-50 light:to-amber-50">
             <div className="flex items-center gap-2.5">
