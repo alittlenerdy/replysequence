@@ -46,7 +46,7 @@ export async function sendDraftReadyNotification(params: DraftNotificationParams
         : 'Needs Review'
       : null;
 
-    const dashboardUrl = 'https://replysequence.vercel.app/dashboard';
+    const dashboardUrl = 'https://www.replysequence.com/dashboard';
 
     const body = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 0;">

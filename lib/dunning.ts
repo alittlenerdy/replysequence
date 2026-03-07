@@ -11,7 +11,7 @@
 
 import { sendEmail, type SendEmailResult } from '@/lib/email';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://replysequence.vercel.app';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.replysequence.com';
 const BILLING_URL = `${APP_URL}/dashboard/billing`;
 
 // ── Types ───────────────────────────────────────────────────────────────────

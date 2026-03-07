@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     baseUrl,
     redirectUri,
     returnTo,
-    expectedInZoom: 'https://replysequence.vercel.app/api/auth/zoom/callback',
+    expectedInZoom: 'https://www.replysequence.com/api/auth/zoom/callback',
   });
 
   // Build Zoom OAuth URL

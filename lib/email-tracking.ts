@@ -3,7 +3,7 @@
  * Injects tracking pixel and wraps links for open/click tracking
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://replysequence.vercel.app';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.replysequence.com';
 
 /**
  * Generate a tracking pixel image tag

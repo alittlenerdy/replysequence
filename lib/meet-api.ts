@@ -28,7 +28,7 @@ const GOOGLE_ISSUER = 'https://accounts.google.com';
 // Default audience (can be overridden by env var)
 const DEFAULT_AUDIENCE = process.env.GOOGLE_PUBSUB_AUDIENCE?.trim() ||
   process.env.NEXT_PUBLIC_APP_URL?.trim()?.replace(/\/$/, '') + '/api/webhooks/meet' ||
-  'https://replysequence.vercel.app/api/webhooks/meet';
+  'https://www.replysequence.com/api/webhooks/meet';
 
 // Configuration from environment (trim to prevent newline issues)
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();

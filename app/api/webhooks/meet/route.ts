@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
     const expectedAudience = process.env.GOOGLE_PUBSUB_AUDIENCE?.trim() ||
       (process.env.NEXT_PUBLIC_APP_URL?.trim()?.replace(/\/$/, '') + '/api/webhooks/meet') ||
-      'https://replysequence.vercel.app/api/webhooks/meet';
+      'https://www.replysequence.com/api/webhooks/meet';
 
     return NextResponse.json({
       status: 'ok',
