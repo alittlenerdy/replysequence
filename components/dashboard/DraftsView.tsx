@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
@@ -14,6 +14,8 @@ import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
 import { OnboardingChecklist } from './OnboardingChecklist';
 import { UsageLimitBanner } from './UsageLimitBanner';
+import DraftTour from '@/components/tour/DraftTour';
+import { HelpCircle } from 'lucide-react';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -132,6 +134,17 @@ export function DraftsView({
 
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
+  // Tour integration: expose DraftsTable expansion control to DraftTour
+  const tourExpandRef = useRef<{
+    expandedDraftId: string | null;
+    expandFirst: () => void;
+  } | null>(null);
+
+  const handleRetakeTour = () => {
+    localStorage.removeItem('replysequence-draft-tour-completed');
+    window.location.reload();
+  };
+
   // Track processing meetings for live updates
   const { meetings: processingMeetings, refresh: refreshProcessing } = useProcessingMeetings();
 
@@ -219,16 +232,30 @@ export function DraftsView({
         </div>
       )}
 
-      {/* Filters */}
-      <DashboardFilters
-        status={status}
-        search={search}
-        dateRange={dateRange}
-        onStatusChange={handleStatusChange}
-        onSearchChange={setSearch}
-        onDateRangeChange={handleDateRangeChange}
-        onClearFilters={handleClearFilters}
-      />
+      {/* Filters + Retake Tour */}
+      <div className="flex items-end justify-between gap-4">
+        <div className="flex-1">
+          <DashboardFilters
+            status={status}
+            search={search}
+            dateRange={dateRange}
+            onStatusChange={handleStatusChange}
+            onSearchChange={setSearch}
+            onDateRangeChange={handleDateRangeChange}
+            onClearFilters={handleClearFilters}
+          />
+        </div>
+        {drafts.length > 0 && (
+          <button
+            onClick={handleRetakeTour}
+            className="text-xs text-gray-400 hover:text-gray-200 flex items-center gap-1 whitespace-nowrap pb-1 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            title="Restart the guided tour of draft features"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            Take a tour
+          </button>
+        )}
+      </div>
 
       {/* Loading State */}
       {(isLoading || !hydrated) && (
@@ -246,14 +273,22 @@ export function DraftsView({
               onDraftGenerated={() => fetchDrafts()}
             />
           ) : (
-            <DraftsTable
-              drafts={drafts}
-              total={total}
-              page={page}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              onDraftUpdated={handleDraftUpdated}
-            />
+            <>
+              <DraftsTable
+                drafts={drafts}
+                total={total}
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                onDraftUpdated={handleDraftUpdated}
+                tourExpandRef={tourExpandRef}
+              />
+              <DraftTour
+                hasDrafts={drafts.length > 0}
+                expandedDraftId={tourExpandRef.current?.expandedDraftId ?? null}
+                onExpandFirstDraft={() => tourExpandRef.current?.expandFirst()}
+              />
+            </>
           )}
         </>
       )}

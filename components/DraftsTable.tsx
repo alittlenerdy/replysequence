@@ -83,6 +83,10 @@ interface DraftsTableProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onDraftUpdated: () => void;
+  tourExpandRef?: React.MutableRefObject<{
+    expandedDraftId: string | null;
+    expandFirst: () => void;
+  } | null>;
 }
 
 export function DraftsTable({
@@ -92,6 +96,7 @@ export function DraftsTable({
   totalPages,
   onPageChange,
   onDraftUpdated,
+  tourExpandRef,
 }: DraftsTableProps) {
   // Modal state — used for mobile and for Edit action from expanded row
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
@@ -113,6 +118,21 @@ export function DraftsTable({
   const fetchingRef = useRef<Set<string>>(new Set());
   // Track whether body preview is expanded
   const [bodyExpanded, setBodyExpanded] = useState(false);
+
+  // Expose expansion state to parent via ref (used by DraftTour)
+  useEffect(() => {
+    if (tourExpandRef) {
+      tourExpandRef.current = {
+        expandedDraftId,
+        expandFirst: () => {
+          if (drafts.length > 0) {
+            setExpandedDraftId(drafts[0].id);
+            setBodyExpanded(false);
+          }
+        },
+      };
+    }
+  }); // No dependency array — always sync ref with current values
 
   // Sendable drafts = not yet sent
   const sendableDrafts = useMemo(
