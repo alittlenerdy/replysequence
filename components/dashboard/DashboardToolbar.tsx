@@ -87,7 +87,7 @@ export function DashboardToolbar({ firstName = 'there', pendingDrafts = 0, userE
       {/* Toolbar */}
       <div
         ref={toolbarRef}
-        className="toolbar-noise fixed z-50 bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/60 light:bg-white/70 backdrop-blur-xl border border-white/[0.08] light:border-gray-200/50 shadow-2xl max-md:bottom-4 max-md:left-4 max-md:right-4 max-md:translate-x-0"
+        className="toolbar-noise fixed z-50 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/60 light:bg-white/70 backdrop-blur-xl border border-white/[0.08] light:border-gray-200/50 shadow-2xl overflow-hidden bottom-4 left-4 right-4 md:bottom-6 md:left-1/2 md:right-auto md:-translate-x-1/2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
       >
         {/* Active indicator ring */}
