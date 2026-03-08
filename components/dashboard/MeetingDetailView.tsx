@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { MeetingDetail } from '@/lib/dashboard-queries';
 import { DraftQualityBadge } from '@/components/ui/DraftQualityBadge';
 import { DraftPreviewModal } from '@/components/DraftPreviewModal';
+import { MeetingSummaryCard } from '@/components/dashboard/MeetingSummaryCard';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 
 function PlatformBadge({ platform }: { platform: string }) {
@@ -227,89 +228,12 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
 
       {/* Meeting Summary */}
       {meeting.summary && (
-        <div className="bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 border border-indigo-500/20 rounded-2xl p-6 light:shadow-sm">
-          <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Meeting Summary
-          </h2>
-          <p className="text-gray-200 light:text-gray-700 leading-relaxed mb-6">{meeting.summary}</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Key Topics */}
-            {meeting.keyTopics && meeting.keyTopics.length > 0 && (
-              <div>
-                <h3 className="text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider mb-3">
-                  Topics Discussed
-                </h3>
-                <div className="space-y-2">
-                  {meeting.keyTopics.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 px-3 py-2 bg-indigo-500/10 rounded-lg border border-indigo-500/15"
-                    >
-                      <span className="text-sm text-gray-200 light:text-gray-700">{item.topic}</span>
-                      {item.duration && (
-                        <span className="text-xs text-indigo-400/60 ml-auto shrink-0">{item.duration}</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Key Decisions */}
-            {meeting.keyDecisions && meeting.keyDecisions.length > 0 && (
-              <div>
-                <h3 className="text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider mb-3">
-                  Decisions Made
-                </h3>
-                <ul className="space-y-2">
-                  {meeting.keyDecisions.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <svg className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <div>
-                        <p className="text-sm text-gray-200 light:text-gray-700">{item.decision}</p>
-                        {item.context && (
-                          <p className="text-xs text-gray-500 mt-0.5">{item.context}</p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Action Items */}
-            {meeting.actionItems && meeting.actionItems.length > 0 && (
-              <div>
-                <h3 className="text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider mb-3">
-                  Action Items
-                </h3>
-                <ul className="space-y-2">
-                  {meeting.actionItems.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 px-3 py-2 bg-gray-800/50 light:bg-gray-50 rounded-lg border border-gray-700/50 light:border-gray-200">
-                      <span className="w-4 h-4 mt-0.5 shrink-0 rounded border border-gray-600 light:border-gray-300 flex items-center justify-center" />
-                      <div className="min-w-0">
-                        <p className="text-sm text-gray-200 light:text-gray-700">
-                          <span className="font-medium text-amber-300 light:text-amber-600">{item.owner}</span>
-                          {': '}
-                          {item.task}
-                        </p>
-                        {item.deadline && (
-                          <p className="text-xs text-gray-500 mt-0.5">{item.deadline}</p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+        <MeetingSummaryCard
+          summary={meeting.summary}
+          keyTopics={meeting.keyTopics}
+          keyDecisions={meeting.keyDecisions}
+          actionItems={meeting.actionItems}
+        />
       )}
 
       {/* Sentiment Analysis Card */}
