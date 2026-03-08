@@ -4,19 +4,20 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { SignInButton, UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, Sparkles, CreditCard, Mail, LayoutDashboard } from 'lucide-react';
+import { Home, Sparkles, Scale, CreditCard, Mail, LayoutDashboard } from 'lucide-react';
 import { ActiveIndicator } from './ActiveIndicator';
 import { ToolbarThemeToggle } from './ToolbarThemeToggle';
 
 const OBSERVED_SECTIONS = [
   { id: 'hero', navIndex: 0 },
   { id: 'features', navIndex: 1 },
-  { id: 'waitlist', navIndex: 3 },
+  { id: 'waitlist', navIndex: 4 },
 ] as const;
 
 const NAV_ITEMS = [
   { label: 'Home', icon: Home, target: '#hero' },
   { label: 'Features', icon: Sparkles, target: '#features' },
+  { label: 'Compare', icon: Scale, target: '/compare' },
   { label: 'Pricing', icon: CreditCard, target: '/pricing' },
   { label: 'Waitlist', icon: Mail, target: '#waitlist' },
 ] as const;

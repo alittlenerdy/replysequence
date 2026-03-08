@@ -15,7 +15,7 @@ const competitors = [
   { name: 'tl;dv', slug: 'tldv', tagline: 'Meeting recorder' },
 ];
 
-export default function CompareDropdown() {
+export default function CompareDropdown({ direction = 'down' }: { direction?: 'down' | 'up' }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -55,10 +55,14 @@ export default function CompareDropdown() {
 
       {/* Dropdown Menu */}
       <div
-        className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl overflow-hidden transition-[opacity,transform] duration-200 ${
+        className={`absolute left-1/2 -translate-x-1/2 w-64 rounded-xl overflow-hidden transition-[opacity,transform] duration-200 ${
+          direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'
+        } ${
           isOpen
             ? 'opacity-100 visible translate-y-0'
-            : 'opacity-0 invisible -translate-y-2'
+            : direction === 'up'
+              ? 'opacity-0 invisible translate-y-2'
+              : 'opacity-0 invisible -translate-y-2'
         }`}
       >
         {/* Gradient border wrapper */}

@@ -15,6 +15,14 @@ const companyLinks = [
   { href: '/contact', label: 'Contact' },
 ];
 
+const compareLinks = [
+  { href: '/compare', label: 'All Comparisons' },
+  { href: '/compare/gong', label: 'vs Gong' },
+  { href: '/compare/otter', label: 'vs Otter.ai' },
+  { href: '/compare/fireflies', label: 'vs Fireflies' },
+  { href: '/compare/fathom', label: 'vs Fathom' },
+];
+
 const legalLinks = [
   { href: '/terms', label: 'Terms' },
   { href: '/privacy', label: 'Privacy' },
@@ -25,7 +33,7 @@ export function Footer() {
   return (
     <footer className="py-10 md:py-14 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
@@ -87,6 +95,23 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Company</h3>
             <ul className="space-y-2">
               {companyLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Compare */}
+          <div>
+            <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Compare</h3>
+            <ul className="space-y-2">
+              {compareLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

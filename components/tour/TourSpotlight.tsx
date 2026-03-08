@@ -68,7 +68,10 @@ export default function TourSpotlight({
     });
   }, [step.target]);
 
-  // Scroll target into view, then measure after a short delay
+  // Scroll target into view, then continuously measure until layout settles.
+  // A single delayed measurement is unreliable because the inline panel has a
+  // 250ms expand animation and scrollIntoView('smooth') can take 300-500ms,
+  // both of which shift button positions after the initial read.
   useEffect(() => {
     const el = document.querySelector(`[data-tour="${step.target}"]`);
     if (!el) {
@@ -78,11 +81,20 @@ export default function TourSpotlight({
 
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    const timer = setTimeout(() => {
-      measure();
-    }, 100);
+    // Measure every frame for 1 second to catch scroll + animation settling
+    let frame: number;
+    const start = Date.now();
+    const SETTLE_MS = 1000;
 
-    return () => clearTimeout(timer);
+    const loop = () => {
+      measure();
+      if (Date.now() - start < SETTLE_MS) {
+        frame = requestAnimationFrame(loop);
+      }
+    };
+    frame = requestAnimationFrame(loop);
+
+    return () => cancelAnimationFrame(frame);
   }, [step.target, measure]);
 
   // Re-measure on scroll and resize
