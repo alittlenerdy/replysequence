@@ -1,9 +1,23 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, Fragment } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftPreviewModal } from './DraftPreviewModal';
+import { MeetingSummaryCard } from './dashboard/MeetingSummaryCard';
+
+// Meeting intelligence data returned by GET /api/meetings/[meetingId]
+interface MeetingIntelligence {
+  id: string;
+  topic: string | null;
+  platform: string;
+  startTime: string | null;
+  summary: string | null;
+  keyTopics: Array<{ topic: string; duration?: string }> | null;
+  keyDecisions: Array<{ decision: string; context?: string }> | null;
+  actionItems: Array<{ owner: string; task: string; deadline: string }> | null;
+}
 
 // Hydration-safe date formatting hook
 function useHydrationSafeDate() {
@@ -79,6 +93,7 @@ export function DraftsTable({
   onPageChange,
   onDraftUpdated,
 }: DraftsTableProps) {
+  // Modal state — used for mobile and for Edit action from expanded row
   const [selectedDraft, setSelectedDraft] = useState<DraftWithMeeting | null>(null);
   const [visibleRows, setVisibleRows] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -90,15 +105,26 @@ export function DraftsTable({
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const isMounted = useHydrationSafeDate();
 
+  // Inline expansion state (desktop only)
+  const [expandedDraftId, setExpandedDraftId] = useState<string | null>(null);
+  const [meetingIntelCache, setMeetingIntelCache] = useState<Map<string, MeetingIntelligence>>(new Map());
+  const [meetingIntelLoading, setMeetingIntelLoading] = useState<Set<string>>(new Set());
+  // Track in-flight fetches to avoid duplicate requests
+  const fetchingRef = useRef<Set<string>>(new Set());
+  // Track whether body preview is expanded
+  const [bodyExpanded, setBodyExpanded] = useState(false);
+
   // Sendable drafts = not yet sent
   const sendableDrafts = useMemo(
     () => drafts.filter((d) => d.status !== 'sent'),
     [drafts]
   );
 
-  // Clear selection when drafts change (page change, filter, refresh)
+  // Clear selection and collapse when drafts change (page change, filter, refresh)
   useEffect(() => {
     setSelectedIds(new Set());
+    setExpandedDraftId(null);
+    setBodyExpanded(false);
   }, [drafts]);
 
   const toggleSelect = useCallback((id: string) => {
@@ -131,6 +157,44 @@ export function DraftsTable({
     () => selectedDrafts.filter((d) => d.status !== 'sent'),
     [selectedDrafts]
   );
+
+  // Fetch meeting intelligence data for inline expansion
+  const fetchMeetingIntel = useCallback(async (meetingId: string) => {
+    // Already cached or in-flight
+    if (meetingIntelCache.has(meetingId) || fetchingRef.current.has(meetingId)) return;
+
+    fetchingRef.current.add(meetingId);
+    setMeetingIntelLoading((prev) => new Set(prev).add(meetingId));
+
+    try {
+      const res = await fetch(`/api/meetings/${meetingId}`);
+      if (res.ok) {
+        const data: MeetingIntelligence = await res.json();
+        setMeetingIntelCache((prev) => new Map(prev).set(meetingId, data));
+      }
+    } catch {
+      // Silently fail — the UI will show "no data" state
+    } finally {
+      fetchingRef.current.delete(meetingId);
+      setMeetingIntelLoading((prev) => {
+        const next = new Set(prev);
+        next.delete(meetingId);
+        return next;
+      });
+    }
+  }, [meetingIntelCache]);
+
+  // Handle desktop row click — toggle inline expansion
+  const handleDesktopRowClick = useCallback((draft: DraftWithMeeting) => {
+    if (expandedDraftId === draft.id) {
+      setExpandedDraftId(null);
+      setBodyExpanded(false);
+    } else {
+      setExpandedDraftId(draft.id);
+      setBodyExpanded(false);
+      fetchMeetingIntel(draft.meetingId);
+    }
+  }, [expandedDraftId, fetchMeetingIntel]);
 
   const handleBulkSend = async () => {
     const toSend = selectedDrafts.filter((d) => d.status !== 'sent' && d.meetingHostEmail);
@@ -206,6 +270,24 @@ export function DraftsTable({
     onDraftUpdated();
   };
 
+  // Handle single draft send from expanded view
+  const handleSingleSend = async (draft: DraftWithMeeting) => {
+    if (!draft.meetingHostEmail) return;
+    try {
+      const res = await fetch('/api/drafts/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ draftId: draft.id, recipientEmail: draft.meetingHostEmail }),
+      });
+      if (res.ok) {
+        setExpandedDraftId(null);
+        onDraftUpdated();
+      }
+    } catch {
+      // Error handling — could show inline error but keeping it simple
+    }
+  };
+
   // Show all rows immediately (no stagger animation)
   useEffect(() => {
     setVisibleRows(drafts.length);
@@ -222,11 +304,6 @@ export function DraftsTable({
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
-
-  const truncateSubject = (subject: string, maxLength = 50) => {
-    if (subject.length <= maxLength) return subject;
-    return subject.substring(0, maxLength) + '\u2026';
   };
 
   const getPlatformIcon = (platform: string) => {
@@ -384,6 +461,124 @@ export function DraftsTable({
     );
   };
 
+  // Render the inline expanded content for a draft (desktop)
+  const renderExpandedRow = (draft: DraftWithMeeting) => {
+    const intel = meetingIntelCache.get(draft.meetingId);
+    const isLoading = meetingIntelLoading.has(draft.meetingId);
+    const bodyText = draft.body?.replace(/<[^>]*>/g, '') || '';
+    const truncatedBody = bodyExpanded ? bodyText : bodyText.slice(0, 500);
+    const needsTruncation = bodyText.length > 500;
+
+    return (
+      <tr key={`${draft.id}-expanded`}>
+        <td colSpan={8} className="p-0">
+          <AnimatePresence>
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              <div className="px-6 py-5 bg-gray-800/40 light:bg-gray-50/80 border-t border-gray-700/30 light:border-gray-200">
+                <div className="grid grid-cols-12 gap-6">
+                  {/* Left column: Meeting Intelligence (7/12) */}
+                  <div className="col-span-7">
+                    {isLoading ? (
+                      <div className="space-y-3 animate-pulse">
+                        <div className="h-4 w-40 bg-gray-700 light:bg-gray-200 rounded" />
+                        <div className="h-3 w-full bg-gray-700 light:bg-gray-200 rounded" />
+                        <div className="h-3 w-5/6 bg-gray-700 light:bg-gray-200 rounded" />
+                        <div className="h-3 w-4/6 bg-gray-700 light:bg-gray-200 rounded" />
+                      </div>
+                    ) : intel?.summary ? (
+                      <MeetingSummaryCard
+                        summary={intel.summary}
+                        keyTopics={intel.keyTopics}
+                        keyDecisions={intel.keyDecisions}
+                        actionItems={intel.actionItems}
+                        compact
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center py-8 text-sm text-gray-500">
+                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        No meeting summary available
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right column: Draft Preview (5/12) */}
+                  <div className="col-span-5">
+                    <div className="bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-4">
+                      {/* Subject */}
+                      <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-2">
+                        {draft.subject || 'Untitled Draft'}
+                      </h3>
+
+                      {/* To */}
+                      {draft.meetingHostEmail && (
+                        <p className="text-xs text-gray-400 light:text-gray-500 mb-3">
+                          To: {draft.meetingHostEmail}
+                        </p>
+                      )}
+
+                      {/* Body preview */}
+                      <div className="text-sm text-gray-300 light:text-gray-600 leading-relaxed whitespace-pre-wrap mb-4">
+                        {truncatedBody}
+                        {needsTruncation && !bodyExpanded && '\u2026'}
+                      </div>
+                      {needsTruncation && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setBodyExpanded(!bodyExpanded); }}
+                          className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors mb-4"
+                        >
+                          {bodyExpanded ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
+
+                      {/* Quality + Engagement */}
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        {renderQualityBadge(draft)}
+                        {renderEngagementIndicators(draft)}
+                        {renderUserRating(draft)}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDraft(draft);
+                          }}
+                          className="px-3 py-1.5 text-xs font-medium rounded-lg text-gray-300 light:text-gray-700 bg-gray-700/50 light:bg-gray-100 border border-gray-600/50 light:border-gray-300 hover:bg-gray-700 light:hover:bg-gray-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
+                        >
+                          Edit
+                        </button>
+                        {draft.status !== 'sent' && draft.meetingHostEmail && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSingleSend(draft);
+                            }}
+                            className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
+                          >
+                            Send
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </td>
+      </tr>
+    );
+  };
+
   return (
     <>
       <div id="drafts-table" className="bg-gray-900/60 light:bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-700/50 light:border-gray-200 overflow-hidden">
@@ -493,7 +688,7 @@ export function DraftsTable({
           </div>
         )}
 
-        {/* Mobile Card Layout - shown on small screens */}
+        {/* Mobile Card Layout - shown on small screens, uses modal */}
         <div className="md:hidden divide-y divide-gray-700/50 light:divide-gray-200">
           {drafts.map((draft, index) => (
             <button
@@ -589,7 +784,7 @@ export function DraftsTable({
           ))}
         </div>
 
-        {/* Desktop Table Layout - hidden on small screens */}
+        {/* Desktop Table Layout - hidden on small screens, uses inline expansion */}
         <div className="hidden md:block">
           <table className="w-full table-fixed divide-y divide-gray-700 light:divide-gray-200">
             <thead className="bg-gray-800/50 light:bg-gray-50/80">
@@ -628,99 +823,112 @@ export function DraftsTable({
               </tr>
             </thead>
             <tbody className="bg-gray-900/40 light:bg-white/60 divide-y divide-gray-700/50 light:divide-gray-200">
-              {drafts.map((draft) => (
-                <tr
-                  key={draft.id}
-                  tabIndex={0}
-                  className={`${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'} cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500`}
-                  onClick={() => setSelectedDraft(draft)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedDraft(draft); } }}
-                >
-                  <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
-                    {draft.status !== 'sent' ? (
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.has(draft.id)}
-                          onChange={() => toggleSelect(draft.id)}
-                          className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
-                        />
-                        <span className="sr-only">Select draft</span>
-                      </label>
-                    ) : (
-                      <div className="w-4" />
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      {getPlatformIcon(draft.meetingPlatform)}
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-white light:text-gray-900 truncate">
-                          {draft.meetingTopic || 'Untitled Meeting'}
-                          {draft.isDemo && (
-                            <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                              Sample
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-400 light:text-gray-500 truncate">
-                          {draft.meetingHostEmail}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm text-gray-200 light:text-gray-900 truncate">
-                      {draft.subject}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status={draft.status} size="sm" />
-                      {renderEngagementIndicators(draft)}
-                    </div>
-                  </td>
-                  <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
-                    {isMounted && (() => {
-                      const badge = getTimeSinceBadge(draft.meetingStartTime);
-                      return badge ? (
-                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${badge.className}`} title={badge.title}>
-                          {badge.label}
-                        </span>
-                      ) : <span className="text-xs text-gray-500">-</span>;
-                    })()}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      {draft.qualityScore !== null ? (
-                        <span className={`text-xs font-medium tabular-nums ${
-                          draft.qualityScore >= 80 ? 'text-amber-400' :
-                          draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
-                        }`}>
-                          {draft.qualityScore}/100
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-500">-</span>
-                      )}
-                      {renderUserRating(draft)}
-                    </div>
-                  </td>
-                  <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
-                    {formatDate(draft.createdAt)}
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedDraft(draft);
-                      }}
-                      className="px-3 py-1.5 rounded-lg text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 hover:bg-indigo-500/20 light:hover:bg-indigo-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              {drafts.map((draft) => {
+                const isExpanded = expandedDraftId === draft.id;
+                return (
+                  <Fragment key={draft.id}>
+                    <tr
+                      tabIndex={0}
+                      className={`
+                        ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : isExpanded ? 'bg-gray-800/60 light:bg-indigo-50' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'}
+                        cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
+                        transition-colors
+                      `}
+                      onClick={() => handleDesktopRowClick(draft)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDesktopRowClick(draft); } }}
                     >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                        {draft.status !== 'sent' ? (
+                          <label className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={selectedIds.has(draft.id)}
+                              onChange={() => toggleSelect(draft.id)}
+                              className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                            />
+                            <span className="sr-only">Select draft</span>
+                          </label>
+                        ) : (
+                          <div className="w-4" />
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          {getPlatformIcon(draft.meetingPlatform)}
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-white light:text-gray-900 truncate">
+                              {draft.meetingTopic || 'Untitled Meeting'}
+                              {draft.isDemo && (
+                                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                                  Sample
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-400 light:text-gray-500 truncate">
+                              {draft.meetingHostEmail}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="text-sm text-gray-200 light:text-gray-900 truncate">
+                          {draft.subject}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <StatusBadge status={draft.status} size="sm" />
+                          {renderEngagementIndicators(draft)}
+                        </div>
+                      </td>
+                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
+                        {isMounted && (() => {
+                          const badge = getTimeSinceBadge(draft.meetingStartTime);
+                          return badge ? (
+                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${badge.className}`} title={badge.title}>
+                              {badge.label}
+                            </span>
+                          ) : <span className="text-xs text-gray-500">-</span>;
+                        })()}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          {draft.qualityScore !== null ? (
+                            <span className={`text-xs font-medium tabular-nums ${
+                              draft.qualityScore >= 80 ? 'text-amber-400' :
+                              draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
+                            }`}>
+                              {draft.qualityScore}/100
+                            </span>
+                          ) : (
+                            <span className="text-xs text-gray-500">-</span>
+                          )}
+                          {renderUserRating(draft)}
+                        </div>
+                      </td>
+                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
+                        {formatDate(draft.createdAt)}
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDesktopRowClick(draft);
+                          }}
+                          className={`px-3 py-1.5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                            isExpanded
+                              ? 'text-white light:text-gray-900 bg-indigo-600 hover:bg-indigo-700'
+                              : 'text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 hover:bg-indigo-500/20 light:hover:bg-indigo-100'
+                          }`}
+                        >
+                          {isExpanded ? 'Close' : 'View'}
+                        </button>
+                      </td>
+                    </tr>
+                    {isExpanded && renderExpandedRow(draft)}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -753,7 +961,7 @@ export function DraftsTable({
         )}
       </div>
 
-      {/* Preview Modal */}
+      {/* Preview Modal — used for mobile + Edit action from expanded row */}
       {selectedDraft && (
         <DraftPreviewModal
           draft={selectedDraft}
@@ -767,3 +975,4 @@ export function DraftsTable({
     </>
   );
 }
+
