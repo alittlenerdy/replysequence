@@ -81,7 +81,7 @@ Poll Cron (every 5 min)
 6. **Check results**:
    ```bash
    # Check cron logs
-   vercel logs https://replysequence.vercel.app
+   vercel logs https://www.replysequence.com
 
    # Query database
    npx tsx scripts/diagnostic.ts

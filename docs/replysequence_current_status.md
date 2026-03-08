@@ -94,10 +94,10 @@
 ```
 
 ### Deployment Info
-- **URL:** https://replysequence.vercel.app
+- **URL:** https://www.replysequence.com
 - **GitHub:** Private repo, all commits tracked
 - **Deployment Time:** ~30-45 seconds per push
-- **Logs:** Accessible via `vercel logs https://replysequence.vercel.app`
+- **Logs:** Accessible via `vercel logs https://www.replysequence.com`
 
 ---
 

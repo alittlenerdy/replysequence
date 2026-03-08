@@ -372,7 +372,7 @@ git commit -m "fix: transcript download with download_token auth"
 git push origin main  
 sleep 45
 # Trigger test meeting
-vercel logs https://replysequence.vercel.app --since 10m | grep "TRANSCRIPT"
+vercel logs https://www.replysequence.com --since 10m | grep "TRANSCRIPT"
 # Query database
 SELECT id, LENGTH(content), SUBSTRING(content, 1, 50) 
 FROM transcripts 

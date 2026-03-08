@@ -14,7 +14,7 @@
 **Status:** Week 2/12 MVP Sprint (Jan 27 - Mar 21, 2026)
 
 **Location:** `/Volumes/just_a_little_nerd/replysequence`
-**Production:** https://replysequence.vercel.app
+**Production:** https://www.replysequence.com
 
 ---
 
@@ -260,7 +260,7 @@ npm run db:studio    # Open Drizzle Studio
 
 ```bash
 # View Vercel logs
-vercel logs https://replysequence.vercel.app --since 10m
+vercel logs https://www.replysequence.com --since 10m
 
 # Filter by tag
 vercel logs ... | grep "WEBHOOK-ERROR"

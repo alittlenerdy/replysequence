@@ -7,7 +7,7 @@
 
 ## Deployment Status
 
-- **URL:** https://replysequence.vercel.app
+- **URL:** https://www.replysequence.com
 - **Status:** READY (deployed successfully)
 - **Region:** iad1 (US East)
 - **Vercel Plan:** Pro (60s function timeout enabled)

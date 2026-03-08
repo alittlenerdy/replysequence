@@ -248,7 +248,7 @@ ngrok http 3000
 
 ## Deployment
 
-**Production:** https://replysequence.vercel.app
+**Production:** https://www.replysequence.com
 
 ### Deploy to Vercel
 
@@ -294,4 +294,4 @@ Add all environment variables in Vercel project settings.
 
 **Creator:** Jimmy Hackett
 **Email:** jimmy@playgroundgiants.com
-**Project:** https://replysequence.vercel.app
+**Project:** https://www.replysequence.com
