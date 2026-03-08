@@ -1,6 +1,8 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { INSTRUCTION_CHIPS } from '@/lib/constants/ai-settings';
+import { MessageSquare, PenLine, Check } from 'lucide-react';
 
 interface StepInstructionsProps {
   instructions: string;
@@ -22,48 +24,84 @@ export function StepInstructions({
   return (
     <div>
       <h3 className="text-2xl font-bold text-white mb-2">Custom instructions & signature</h3>
-      <p className="text-gray-400 text-sm mb-6">
+      <p className="text-gray-400 text-sm mb-8">
         Optional but powerful. These are added to every AI-generated email.
       </p>
 
-      <div className="max-w-lg space-y-5">
+      <div className="space-y-6">
         {/* Instructions */}
-        <div>
-          <label htmlFor="custom-instructions-wizard" className="block text-sm font-medium text-gray-300 mb-1.5">
-            Custom Instructions <span className="text-gray-600 font-normal">(optional)</span>
-          </label>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border border-gray-700/50 bg-gray-900/50 p-5"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <MessageSquare className="w-4 h-4 text-indigo-400" />
+            <label htmlFor="custom-instructions-wizard" className="text-sm font-semibold text-white">
+              Custom Instructions
+            </label>
+            <span className="text-xs text-gray-600">(optional)</span>
+          </div>
           <textarea
             id="custom-instructions-wizard"
             value={instructions}
             onChange={(e) => onInstructionsChange(e.target.value)}
             placeholder="E.g., Always include a specific next step with a date."
-            rows={3}
+            rows={4}
             maxLength={500}
-            className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+            className="w-full px-4 py-3 text-sm bg-gray-800/80 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
           />
-          <div className="flex flex-wrap gap-2 mt-2">
-            {INSTRUCTION_CHIPS.map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => {
-                  onInstructionsChange(
-                    instructions ? `${instructions}\n${chip}` : chip
-                  );
-                }}
-                className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-              >
-                + {chip}
-              </button>
-            ))}
+          <p className="text-xs text-gray-600 mt-2 mb-3">Quick add — click to append:</p>
+          <div className="flex flex-wrap gap-2">
+            {INSTRUCTION_CHIPS.map((chip) => {
+              const isAdded = instructions.includes(chip);
+              return (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => {
+                    if (!isAdded) {
+                      onInstructionsChange(
+                        instructions ? `${instructions}\n${chip}` : chip
+                      );
+                    }
+                  }}
+                  disabled={isAdded}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                    isAdded
+                      ? 'text-indigo-400/60 bg-indigo-500/5 border border-indigo-500/10 cursor-default'
+                      : 'text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20'
+                  }`}
+                >
+                  {isAdded ? (
+                    <span className="flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                      {chip}
+                    </span>
+                  ) : (
+                    `+ ${chip}`
+                  )}
+                </button>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Signature */}
-        <div>
-          <label htmlFor="email-signature-wizard" className="block text-sm font-medium text-gray-300 mb-1.5">
-            Email Signature <span className="text-gray-600 font-normal">(optional)</span>
-          </label>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-xl border border-gray-700/50 bg-gray-900/50 p-5"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <PenLine className="w-4 h-4 text-indigo-400" />
+            <label htmlFor="email-signature-wizard" className="text-sm font-semibold text-white">
+              Email Signature
+            </label>
+            <span className="text-xs text-gray-600">(optional)</span>
+          </div>
           <textarea
             id="email-signature-wizard"
             value={signature}
@@ -71,9 +109,9 @@ export function StepInstructions({
             placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp"}
             rows={4}
             maxLength={500}
-            className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-mono"
+            className="w-full px-4 py-3 text-sm bg-gray-800/80 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-mono"
           />
-        </div>
+        </motion.div>
       </div>
 
       <div className="mt-8 flex items-center gap-3">
