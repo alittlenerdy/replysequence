@@ -414,7 +414,7 @@ function SettingsPreview() {
 
 export function BentoGrid() {
   return (
-    <section className="py-20 px-4 relative z-10">
+    <section id="features" className="py-20 px-4 relative z-10">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

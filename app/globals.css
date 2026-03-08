@@ -830,6 +830,54 @@ html.light .light-solid-text {
   mask-composite: exclude;
 }
 
+/* ===================================
+   FLOATING TOOLBAR ANIMATIONS
+   =================================== */
+
+/* Rotating conic-gradient ring */
+@keyframes toolbar-ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.toolbar-ring-gradient {
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  position: absolute;
+  background: conic-gradient(
+    #312e81 0%, #4f46e5 6%, #6366f1 10%, #c7d2fe 13%,
+    #ffffff 14.5%, #ffffff 16%,
+    #f59e0b 17%, #6366f1 18.5%, #312e81 22%,
+    #4f46e5 28%, #6366f1 32%,
+    #06b6d4 33.5%, #c7d2fe 35%, #6366f1 38%, #312e81 42%,
+    #ffffff 46%, #ffffff 47.5%,
+    #4f46e5 49%, #312e81 50%,
+    #4f46e5 56%, #6366f1 60%, #c7d2fe 63%,
+    #ffffff 64.5%, #ffffff 66%,
+    #f59e0b 67%, #6366f1 68.5%, #312e81 72%,
+    #4f46e5 78%, #6366f1 82%,
+    #06b6d4 83.5%, #c7d2fe 85%, #6366f1 88%, #312e81 92%,
+    #ffffff 96%, #ffffff 97.5%,
+    #4f46e5 99%, #312e81 100%
+  );
+  animation: toolbar-ring-spin 4.5s linear infinite;
+}
+
+/* Film grain noise overlay */
+.toolbar-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .dashboard-gradient-text,
@@ -847,5 +895,9 @@ html.light .light-solid-text {
   .stat-card:hover,
   .stat-card:hover .stat-icon-container {
     transform: none !important;
+  }
+
+  .toolbar-ring-gradient {
+    animation: none;
   }
 }

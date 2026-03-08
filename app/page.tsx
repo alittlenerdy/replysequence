@@ -79,7 +79,7 @@ import {
   Sparkles,
   Search,
 } from 'lucide-react';
-import { Header } from '@/components/layout/Header';
+import { FloatingToolbar } from '@/components/landing/FloatingToolbar';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
 import { Testimonials } from '@/components/landing/Testimonials';
@@ -94,11 +94,11 @@ const NonNegotiablesCarousel = dynamic(() => import('@/components/NonNegotiables
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
-      {/* Header */}
-      <Header />
+      {/* Floating Toolbar */}
+      <FloatingToolbar />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 z-10">
+      <section id="hero" className="relative pt-32 pb-20 px-4 z-10">
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
