@@ -120,12 +120,19 @@ export function DraftsTable({
     [drafts]
   );
 
-  // Clear selection and collapse when drafts change (page change, filter, refresh)
+  // Auto-expand first draft on load so users see the inline panel immediately
+  const hasAutoExpanded = useRef(false);
   useEffect(() => {
     setSelectedIds(new Set());
-    setExpandedDraftId(null);
     setBodyExpanded(false);
-  }, [drafts]);
+    if (!hasAutoExpanded.current && drafts.length > 0) {
+      hasAutoExpanded.current = true;
+      setExpandedDraftId(drafts[0].id);
+      fetchMeetingIntel(drafts[0].meetingId);
+    } else {
+      setExpandedDraftId(null);
+    }
+  }, [drafts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -727,9 +734,10 @@ export function DraftsTable({
                     <tr
                       tabIndex={0}
                       className={`
-                        ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : isExpanded ? 'bg-gray-800/60 light:bg-indigo-50' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'}
+                        group/row
+                        ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : isExpanded ? 'bg-gray-800/60 light:bg-indigo-50 border-l-2 border-l-indigo-500' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50 border-l-2 border-l-transparent'}
                         cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
-                        transition-colors
+                        transition-all duration-150
                       `}
                       onClick={() => handleDesktopRowClick(draft)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDesktopRowClick(draft); } }}
@@ -812,13 +820,18 @@ export function DraftsTable({
                             e.stopPropagation();
                             handleDesktopRowClick(draft);
                           }}
-                          className={`px-3 py-1.5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
-                            isExpanded
-                              ? 'text-white light:text-gray-900 bg-indigo-600 hover:bg-indigo-700'
-                              : 'text-indigo-400 light:text-indigo-600 bg-indigo-500/10 light:bg-indigo-50 hover:bg-indigo-500/20 light:hover:bg-indigo-100'
-                          }`}
+                          className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700/50 transition-all outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                          title={isExpanded ? 'Collapse' : 'Expand draft'}
                         >
-                          {isExpanded ? 'Close' : 'View'}
+                          <svg
+                            className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
                         </button>
                       </td>
                     </tr>
