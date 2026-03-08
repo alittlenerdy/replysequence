@@ -483,10 +483,12 @@ async function getSmartNotes(
  * Returns false for failed/pending meetings so the cron can retry them.
  */
 async function isAlreadyProcessed(conferenceRecordName: string): Promise<boolean> {
+  // processMeetEvent stores platformMeetingId as "meet-{id}" (without "conferenceRecords/" prefix)
+  const meetMeetingId = `meet-${conferenceRecordName.replace('conferenceRecords/', '')}`;
   const [existing] = await db
     .select({ id: meetings.id, status: meetings.status })
     .from(meetings)
-    .where(eq(meetings.platformMeetingId, conferenceRecordName))
+    .where(eq(meetings.platformMeetingId, meetMeetingId))
     .limit(1);
 
   if (!existing) return false;
