@@ -82,8 +82,7 @@ import {
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { FeatureCard } from '@/components/ui/FeatureCard';
+import { Testimonials } from '@/components/landing/Testimonials';
 
 // Lazy load heavy components
 const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
@@ -104,9 +103,8 @@ export default function LandingPage() {
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
-              Never Write Another{' '}
-              <GradientText variant="amber" className="font-extrabold">Follow-Up</GradientText>{' '}
-              From Scratch Again
+              Your Meetings Write the{' '}
+              <GradientText variant="amber" className="font-extrabold">Follow-Up</GradientText>
             </h1>
 
             <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
@@ -178,6 +176,7 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div
+              id="waitlist"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
@@ -511,68 +510,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pain Points Section */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Real Leak Is Between <GradientText variant="amber">&apos;Great Call&apos;</GradientText> and <GradientText>&apos;Next Step&apos;</GradientText>
-            </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              You&apos;re booking meetings — but losing deals after them.
-            </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Clock,
-                title: 'Follow-ups are a 30-minute time suck',
-                description: 'Reps spend 30-60 min/day turning messy notes into emails. That\'s selling time lost to admin.',
-              },
-              {
-                icon: FileX,
-                title: 'Rushed emails miss the nuance',
-                description: 'Generic, low-quality follow-ups that feel templated. No mention of what was actually discussed.',
-              },
-              {
-                icon: Zap,
-                title: 'Great calls die in the inbox',
-                description: 'Some meetings never get a recap or clear next steps. Deals stall and pipeline evaporates.',
-              },
-              {
-                icon: Link2Off,
-                title: 'Context switching kills momentum',
-                description: 'Zoom to notes to Gmail to CRM. By the time you\'re drafting, the conversation is cold.',
-              },
-              {
-                icon: BarChart3,
-                title: 'Info scattered across 4 tools',
-                description: 'Notes in Docs, tasks in Notion, CRM not updated. Hard to remember what was agreed.',
-              },
-              {
-                icon: Users,
-                title: 'Managers can\'t see what happened',
-                description: 'Leaders have no way to know if next steps were clearly set or logged after each call.',
-              },
-            ].map((pain, index) => (
-              <FeatureCard
-                key={index}
-                icon={pain.icon}
-                title={pain.title}
-                description={pain.description}
-                index={index}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Testimonials */}
+      <Testimonials />
 
       {/* 9 Non-Negotiables Carousel */}
       <NonNegotiablesCarousel />
@@ -749,36 +689,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Product Capabilities */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex flex-col items-center"
-          >
-            <div className="flex items-center gap-6 mb-6">
-              {[
-                { label: 'Platforms Supported', value: '3', amber: false },
-                { label: 'Avg. Draft Time', value: '<30s', amber: true },
-                { label: 'CRM Integrations', value: '4', amber: false },
-              ].map((stat, i) => (
-                <div key={i} className="text-center px-6">
-                  <div className={`text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r ${stat.amber ? 'from-amber-400 via-amber-500 to-orange-500' : 'from-indigo-300 via-indigo-400 to-indigo-600'}`}>
-                    {stat.value}
-                  </div>
-                  <div className="text-xs text-gray-500 light:text-gray-600 mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-            <p className="text-gray-500 light:text-gray-600 text-sm">
-              Built for sales teams, account managers, and anyone who follows up after meetings
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
       {/* FAQ Section */}
       <FAQ />

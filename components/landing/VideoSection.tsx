@@ -1,12 +1,25 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Play, Sparkles } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { useState } from 'react';
 import { GradientText } from '@/components/ui/GradientText';
 
-export function VideoSection() {
-  const [isHovered, setIsHovered] = useState(false);
+interface VideoSectionProps {
+  videoUrl?: string;
+}
+
+export function VideoSection({ videoUrl }: VideoSectionProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Extract YouTube video ID if it's a YouTube URL
+  function getYouTubeId(url: string): string | null {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([^?&]+)/);
+    return match ? match[1] : null;
+  }
+
+  const youtubeId = videoUrl ? getYouTubeId(videoUrl) : null;
+  const isYouTube = !!youtubeId;
 
   return (
     <section className="py-20 px-4 relative z-10">
@@ -32,110 +45,65 @@ export function VideoSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
         >
-          {/* Video container */}
-          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 light:from-gray-100 light:to-white border border-gray-700 light:border-gray-200 light:shadow-xl aspect-video group cursor-pointer">
-            {/* Animated border glow */}
-            <motion.div
-              className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{ zIndex: -1 }}
-              animate={isHovered ? { opacity: [0.5, 0.8, 0.5] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-
-            {/* Background mockup */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-indigo-900/20 to-indigo-900/10">
-              {/* Simulated dashboard UI */}
-              <div className="absolute inset-4 md:inset-8 rounded-xl bg-gray-900/90 border border-gray-700 overflow-hidden">
-                {/* Header bar */}
-                <div className="h-12 bg-gray-800 border-b border-gray-700 flex items-center px-4 gap-2">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/60" />
-                  </div>
-                  <div className="flex-1 flex justify-center">
-                    <div className="px-4 py-1 rounded-md bg-gray-700/50 text-xs text-gray-400">
-                      replysequence.com/dashboard
-                    </div>
-                  </div>
+          <div className="relative rounded-2xl overflow-hidden border border-gray-700 light:border-gray-200 light:shadow-xl aspect-video bg-gray-900 light:bg-gray-100">
+            {videoUrl && isPlaying ? (
+              // Playing state - show video
+              isYouTube ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                  title="ReplySequence Demo"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+              ) : (
+                <video
+                  src={videoUrl}
+                  autoPlay
+                  controls
+                  className="absolute inset-0 w-full h-full object-cover"
+                >
+                  <track kind="captions" />
+                </video>
+              )
+            ) : videoUrl ? (
+              // Has video but not playing - show thumbnail with play button
+              <>
+                {isYouTube && (
+                  <img
+                    src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+                    alt="Video thumbnail"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )}
+                <button
+                  onClick={() => setIsPlaying(true)}
+                  className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors cursor-pointer group"
+                  aria-label="Play demo video"
+                >
+                  <motion.div
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-2xl shadow-indigo-500/50 group-hover:scale-110 transition-transform"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                  </motion.div>
+                </button>
+              </>
+            ) : (
+              // No video URL - show tasteful coming soon state
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 light:from-gray-50 light:to-gray-100">
+                <div className="w-20 h-20 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
+                  <Play className="w-8 h-8 text-indigo-400 ml-1" />
                 </div>
-
-                {/* Content area */}
-                <div className="p-4 md:p-6 grid grid-cols-3 gap-4 h-full">
-                  {/* Sidebar */}
-                  <div className="col-span-1 space-y-3">
-                    <div className="h-8 bg-gray-800 rounded-lg" />
-                    <div className="h-6 bg-gray-800/60 rounded-lg w-3/4" />
-                    <div className="h-6 bg-gray-800/60 rounded-lg w-1/2" />
-                    <div className="h-6 bg-indigo-500/20 rounded-lg border border-indigo-500/30" />
-                    <div className="h-6 bg-gray-800/60 rounded-lg w-2/3" />
-                  </div>
-
-                  {/* Main content */}
-                  <div className="col-span-2 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div className="h-6 bg-gray-800 rounded w-1/3" />
-                      <div className="h-8 bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-lg w-24" />
-                    </div>
-                    {/* Cards */}
-                    {[1, 2, 3].map((i) => (
-                      <motion.div
-                        key={i}
-                        className="h-20 bg-gray-800/50 rounded-xl border border-gray-700 p-3"
-                        initial={{ opacity: 0.5 }}
-                        animate={{ opacity: [0.5, 0.8, 0.5] }}
-                        transition={{ duration: 2, delay: i * 0.3, repeat: Infinity }}
-                      >
-                        <div className="flex gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-gray-700" />
-                          <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-gray-700 rounded w-2/3" />
-                            <div className="h-3 bg-gray-700/50 rounded w-full" />
-                            <div className="h-3 bg-gray-700/50 rounded w-1/2" />
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                <p className="text-lg font-semibold text-white light:text-gray-900 mb-2">
+                  Product demo dropping soon
+                </p>
+                <p className="text-sm text-gray-400 light:text-gray-600 max-w-md text-center">
+                  We&apos;re recording a walkthrough of the full meeting-to-email flow. Check back shortly.
+                </p>
               </div>
-            </div>
-
-            {/* Play button overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
-              <motion.button
-                className="relative"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Play video"
-              >
-                {/* Pulse rings */}
-                <motion.div
-                  className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700"
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                <motion.div
-                  className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700"
-                  animate={{ scale: [1, 1.8, 1], opacity: [0.3, 0, 0.3] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                />
-
-                {/* Button */}
-                <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-2xl shadow-indigo-500/50">
-                  <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                </div>
-              </motion.button>
-            </div>
-
-            {/* Corner badge */}
-            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900/80 border border-gray-700 backdrop-blur-sm">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs text-gray-300 font-medium">Demo Video Coming Soon</span>
-            </div>
+            )}
           </div>
 
           {/* Caption */}

@@ -73,10 +73,10 @@ export function Header() {
                 </button>
               </SignInButton>
               <a
-                href="/sign-up"
+                href="/#waitlist"
                 className="btn-cta !px-6 !py-2 !text-base outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               >
-                Get Started Free
+                Join Waitlist
               </a>
             </>
           )}

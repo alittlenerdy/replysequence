@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { BarChart3, Mail, Calendar, Users, Zap, Settings, ArrowRight, Check } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { BarChart3, Mail, Calendar, Users, Zap, Settings, Check } from 'lucide-react';
 import { GradientText } from '@/components/ui/GradientText';
 
 interface BentoCardProps {
@@ -14,13 +14,15 @@ interface BentoCardProps {
 }
 
 function BentoCard({ title, description, icon, className = '', children, delay = 0 }: BentoCardProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      whileHover={prefersReducedMotion ? undefined : { y: -4, transition: { duration: 0.2 } }}
       className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700 light:border-gray-200 overflow-hidden transition-colors duration-300 hover:border-gray-600 light:hover:border-gray-300 light:shadow-lg ${className}`}
     >
       {/* Gradient border on hover */}
@@ -50,20 +52,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
   );
 }
 
-// Animated Number Counter
-function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
-  return (
-    <motion.span
-      className="font-bold tabular-nums bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent"
-      animate={{ opacity: [0.7, 1, 0.7] }}
-      transition={{ duration: 2, repeat: Infinity }}
-    >
-      {value}{suffix}
-    </motion.span>
-  );
-}
-
-// Static data arrays hoisted to module scope to avoid re-creation on every render
+// Static data arrays hoisted to module scope
 const DASHBOARD_EMAILS = [
   { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
   { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
@@ -98,28 +87,20 @@ const CHART_BARS = [40, 65, 45, 80, 55, 70, 60] as const;
 
 const SETTINGS_ITEMS = ['Tone: Professional', 'Auto-send: Off', 'Template: Default'] as const;
 
-// Simulated Dashboard Preview with animated stats and email list
+// Dashboard Preview — animations play once on scroll
 function DashboardPreview() {
   return (
     <div className="w-full h-full min-h-[280px] bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-4">
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <motion.div
-            className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-indigo-700"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
+          <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-indigo-700" />
           <div className="h-3 w-20 bg-gray-700 light:bg-gray-200 rounded" />
         </div>
-        <motion.div
-          className="h-6 w-16 bg-indigo-500/20 rounded border border-indigo-500/30"
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
+        <div className="h-6 w-16 bg-indigo-500/20 rounded border border-indigo-500/30" />
       </div>
 
-      {/* Stats row with gradient animated counters */}
+      {/* Stats row */}
       <div className="grid grid-cols-3 gap-3 mb-4">
         {[
           { value: 24, label: 'Meetings' },
@@ -134,15 +115,15 @@ function DashboardPreview() {
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
           >
-            <div className="text-xl font-bold">
-              <AnimatedNumber value={stat.value} />
+            <div className="text-xl font-bold tabular-nums bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+              {stat.value}
             </div>
             <div className="text-xs text-gray-500 light:text-gray-600">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
-      {/* Email list with contact names */}
+      {/* Email list */}
       <div className="space-y-2">
         {DASHBOARD_EMAILS.map((email, i) => (
           <motion.div
@@ -153,25 +134,18 @@ function DashboardPreview() {
             viewport={{ once: true }}
             transition={{ delay: 0.3 + i * 0.1 }}
           >
-            {/* Avatar with initials */}
-            <motion.div
-              className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-[10px] font-medium text-white"
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-            >
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-[10px] font-medium text-white">
               {email.name.split(' ').map(n => n[0]).join('')}
-            </motion.div>
+            </div>
             <div className="flex-1 min-w-0">
               <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">{email.name}</div>
               <div className="text-[9px] text-gray-500 truncate">{email.subject}</div>
             </div>
-            <motion.div
+            <div
               className={`w-2 h-2 rounded-full ${
                 email.status === 'sent' ? 'bg-green-400' :
                 email.status === 'draft' ? 'bg-yellow-400' : 'bg-indigo-400'
               }`}
-              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
             />
           </motion.div>
         ))}
@@ -180,29 +154,25 @@ function DashboardPreview() {
   );
 }
 
-// Simulated Draft Editor Preview with typing animation
+// Draft Editor Preview — typing plays once, cursor blinks
 function DraftEditorPreview() {
   const draftLines = [
     "Hi Sarah,",
     "Thanks for the great call today!",
     "Key points we discussed:",
-    "• Q4 budget allocation",
-    "• Timeline for launch",
+    "\u2022 Q4 budget allocation",
+    "\u2022 Timeline for launch",
   ];
 
   return (
     <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
       <div className="flex items-center gap-2 mb-3">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <Mail className="w-4 h-4 text-indigo-400" />
-        </motion.div>
+        <Mail className="w-4 h-4 text-indigo-400" />
         <motion.span
           className="text-[10px] text-gray-400 light:text-gray-600"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
           To: sarah.chen@company.com
@@ -214,37 +184,26 @@ function DraftEditorPreview() {
             key={i}
             className="text-[9px] text-gray-300 light:text-gray-700 font-mono overflow-hidden whitespace-nowrap"
             initial={{ width: 0, opacity: 0 }}
-            animate={{
-              width: "100%",
-              opacity: 1,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.5 + i * 0.6,
-              ease: "easeOut"
-            }}
+            whileInView={{ width: "100%", opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.5 + i * 0.6, ease: "easeOut" }}
           >
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1] }}
-              transition={{ duration: 0.3, delay: 0.5 + i * 0.6 }}
-            >
-              {line}
-            </motion.span>
+            {line}
           </motion.div>
         ))}
-        {/* Typing cursor */}
+        {/* Typing cursor — keep as infinite */}
         <motion.span
           className="inline-block w-1.5 h-3 bg-indigo-400 ml-0.5"
           animate={{ opacity: [1, 0, 1] }}
           transition={{ duration: 0.8, repeat: Infinity }}
         />
       </div>
-      {/* Send button that appears after typing */}
+      {/* Send button appears after typing */}
       <motion.div
         className="mt-2 h-5 w-16 bg-gradient-to-r from-indigo-500 to-indigo-700 rounded flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
         transition={{ delay: 4, duration: 0.3 }}
       >
         <span className="text-[8px] text-white font-medium">Send Email</span>
@@ -253,9 +212,8 @@ function DraftEditorPreview() {
   );
 }
 
-// Simulated Meeting List Preview with realistic meeting entries
+// Meeting List Preview — slides in once
 function MeetingListPreview() {
-  // Platform-specific icons as mini SVGs
   const PlatformIcon = ({ platform, color }: { platform: string; color: string }) => {
     if (platform === 'Zoom') {
       return (
@@ -286,21 +244,17 @@ function MeetingListPreview() {
           key={meeting.platform}
           className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-900/50 light:bg-gray-100"
           initial={{ x: -50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ delay: i * 0.3, duration: 0.5 }}
           whileHover={{ x: 4, backgroundColor: 'rgba(17, 24, 39, 0.8)' }}
         >
-          {/* Platform icon */}
-          <motion.div
+          <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: `${meeting.color}20` }}
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
           >
             <PlatformIcon platform={meeting.platform} color={meeting.color} />
-          </motion.div>
-
-          {/* Meeting info */}
+          </div>
           <div className="flex-1 min-w-0">
             <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">
               {meeting.title}
@@ -309,93 +263,48 @@ function MeetingListPreview() {
               Host: {meeting.host}
             </div>
           </div>
-
-          {/* Time badge */}
-          <motion.div
+          <div
             className="text-[9px] font-medium px-1.5 py-0.5 rounded"
             style={{ backgroundColor: `${meeting.color}15`, color: meeting.color }}
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
           >
             {meeting.time}
-          </motion.div>
+          </div>
         </motion.div>
       ))}
     </div>
   );
 }
 
-// CRM Preview with animated data flow, contact cards, and sync activity
+// CRM Preview — entrance animations only, sync bar stays animated
 function CRMPreview() {
   return (
     <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
-      {/* Platform icons row with animated connection lines */}
+      {/* Platform icons row */}
       <div className="flex items-center justify-center gap-3 mb-3 relative">
         {CRM_PLATFORMS.map((platform, i) => (
-          <div key={platform.name} className="flex items-center">
-            <motion.div
-              className="flex flex-col items-center gap-1"
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15, type: 'spring', stiffness: 200 }}
+          <motion.div
+            key={platform.name}
+            className="flex flex-col items-center gap-1"
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.15, type: 'spring', stiffness: 200 }}
+          >
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: `${platform.color}20` }}
             >
-              <motion.div
-                className="w-8 h-8 rounded-lg flex items-center justify-center relative"
-                style={{ backgroundColor: `${platform.color}20` }}
-                animate={{
-                  scale: [1, 1.15, 1],
-                  boxShadow: [
-                    `0 0 0 0 ${platform.color}00`,
-                    `0 0 12px 4px ${platform.color}40`,
-                    `0 0 0 0 ${platform.color}00`,
-                  ],
-                }}
-                transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.8 }}
-              >
-                <div
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: platform.color }}
-                />
-                {/* Pulse ring */}
-                <motion.div
-                  className="absolute inset-0 rounded-lg border-2"
-                  style={{ borderColor: platform.color }}
-                  animate={{ scale: [1, 1.6], opacity: [0.6, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.8 }}
-                />
-              </motion.div>
-              <span className="text-[8px] text-gray-500 light:text-gray-600 font-medium">{platform.name}</span>
-            </motion.div>
-
-            {/* Animated data packets flowing between platforms */}
-            {i < CRM_PLATFORMS.length - 1 && (
-              <div className="relative w-8 h-4 mx-0.5 -mt-3">
-                {[0, 1, 2].map((packet) => (
-                  <motion.div
-                    key={packet}
-                    className="absolute top-1/2 w-1.5 h-1.5 rounded-full"
-                    style={{ backgroundColor: CRM_PLATFORMS[i + 1].color }}
-                    animate={{
-                      x: [-2, 30],
-                      opacity: [0, 1, 1, 0],
-                      scale: [0.5, 1, 1, 0.5],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: packet * 0.5 + i * 0.3,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: platform.color }}
+              />
+            </div>
+            <span className="text-[8px] text-gray-500 light:text-gray-600 font-medium">{platform.name}</span>
+          </motion.div>
         ))}
       </div>
 
-      {/* Live sync feed - scrolling activity log */}
+      {/* Sync feed — slides in once */}
       <div className="space-y-1.5">
         {CRM_SYNC_EVENTS.map((event, i) => (
           <motion.div
@@ -406,17 +315,16 @@ function CRMPreview() {
             viewport={{ once: true }}
             transition={{ delay: 0.4 + i * 0.2 }}
           >
-            <motion.div
+            <div
               className="w-1.5 h-1.5 rounded-full flex-shrink-0"
               style={{ backgroundColor: CRM_PLATFORMS[event.platform].color }}
-              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.4 }}
             />
             <span className="text-[9px] text-white light:text-gray-900 font-medium truncate">{event.contact}</span>
             <span className="text-[8px] text-gray-500 truncate flex-1 text-right">{event.action}</span>
             <motion.div
               initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
               transition={{ delay: 1 + i * 0.3, type: 'spring' }}
             >
               <Check className="w-2.5 h-2.5 text-indigo-400 flex-shrink-0" />
@@ -425,19 +333,14 @@ function CRMPreview() {
         ))}
       </div>
 
-      {/* Animated sync status bar */}
-      <motion.div
-        className="flex items-center justify-center gap-2 mt-2"
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
+      {/* Sync status bar — keep as subtle infinite animation */}
+      <div className="flex items-center justify-center gap-2 mt-2">
         <motion.div
           className="w-1.5 h-1.5 rounded-full bg-indigo-400"
-          animate={{ scale: [1, 1.5, 1] }}
-          transition={{ duration: 1, repeat: Infinity }}
+          animate={{ scale: [1, 1.3, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
         />
-        <span className="text-[9px] text-indigo-400 light:text-indigo-600 font-medium">Syncing\u2026</span>
-        {/* Mini progress bar */}
+        <span className="text-[9px] text-indigo-400 light:text-indigo-600 font-medium">Syncing&hellip;</span>
         <div className="w-12 h-1 bg-gray-700 light:bg-gray-300 rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-indigo-400 to-indigo-500 rounded-full"
@@ -445,12 +348,12 @@ function CRMPreview() {
             transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           />
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
 
-// Animated Chart with growing bars
+// Chart Preview — bars grow once on scroll
 function ChartPreview() {
   return (
     <div className="w-full h-20 flex items-end justify-between gap-1 px-2">
@@ -458,16 +361,10 @@ function ChartPreview() {
         <motion.div
           key={i}
           className="flex-1 bg-gradient-to-t from-indigo-500 to-indigo-700 rounded-t"
-          animate={{
-            height: [`${height}%`, `${Math.min(height + 20, 95)}%`, `${height}%`],
-            opacity: [0.8, 1, 0.8]
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            delay: i * 0.15,
-            ease: 'easeInOut'
-          }}
+          initial={{ height: 0 }}
+          whileInView={{ height: `${height}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
           whileHover={{ height: `${Math.min(height + 25, 100)}%`, transition: { duration: 0.2 } }}
         />
       ))}
@@ -475,7 +372,7 @@ function ChartPreview() {
   );
 }
 
-// Settings Preview with animated toggles
+// Settings Preview — slides in once, static after
 function SettingsPreview() {
   return (
     <div className="w-full h-28 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 space-y-2">
@@ -484,40 +381,30 @@ function SettingsPreview() {
           key={setting}
           className="flex items-center justify-between"
           initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ delay: i * 0.15, duration: 0.4 }}
         >
-          <motion.span
-            className="text-[10px] text-gray-400 light:text-gray-600"
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-          >
+          <span className="text-[10px] text-gray-400 light:text-gray-600">
             {setting}
-          </motion.span>
-          <motion.div
+          </span>
+          <div
             className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600 light:bg-gray-300' : 'bg-indigo-500'} flex items-center p-0.5`}
-            animate={i !== 1 ? { boxShadow: ['0 0 0 0 rgba(59, 130, 246, 0)', '0 0 8px 2px rgba(59, 130, 246, 0.4)', '0 0 0 0 rgba(59, 130, 246, 0)'] } : {}}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
-            whileHover={{ scale: 1.1 }}
           >
-            <motion.div
+            <div
               className="w-3 h-3 rounded-full bg-white light:bg-gray-100"
-              animate={{ x: i === 1 ? [0, 0] : [12, 12] }}
-              transition={{ duration: 0.3 }}
+              style={{ transform: i === 1 ? 'translateX(0px)' : 'translateX(12px)' }}
             />
-          </motion.div>
+          </div>
         </motion.div>
       ))}
-      {/* Color swatches with wave animation */}
+      {/* Color swatches — static */}
       <div className="flex gap-1 mt-2">
-        {['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'].map((color, i) => (
-          <motion.div
+        {['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'].map((color) => (
+          <div
             key={color}
-            className="w-4 h-4 rounded-full border-2 border-transparent cursor-pointer"
+            className="w-4 h-4 rounded-full border-2 border-transparent hover:border-white transition-colors cursor-pointer"
             style={{ backgroundColor: color }}
-            animate={{ scale: [1, 1.25, 1], y: [0, -3, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-            whileHover={{ scale: 1.3, borderColor: 'white' }}
           />
         ))}
       </div>
@@ -545,7 +432,6 @@ export function BentoGrid() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Large card - Dashboard */}
           <BentoCard
             title="Dashboard Overview"
             description="See all meetings, drafts, and sent emails in one place"
@@ -555,7 +441,6 @@ export function BentoGrid() {
             <DashboardPreview />
           </BentoCard>
 
-          {/* Draft Editor */}
           <BentoCard
             title="AI-Generated Drafts"
             description="Edit before sending or trust the AI"
@@ -565,7 +450,6 @@ export function BentoGrid() {
             <DraftEditorPreview />
           </BentoCard>
 
-          {/* Meeting List */}
           <BentoCard
             title="Every Meeting Captured"
             description="Automatic transcript download from Zoom, Teams, Meet"
@@ -575,7 +459,6 @@ export function BentoGrid() {
             <MeetingListPreview />
           </BentoCard>
 
-          {/* CRM Sync */}
           <BentoCard
             title="Auto-logged to CRM"
             description="HubSpot, Salesforce, Airtable, and Google Sheets"
@@ -585,7 +468,6 @@ export function BentoGrid() {
             <CRMPreview />
           </BentoCard>
 
-          {/* Analytics */}
           <BentoCard
             title="Track Performance"
             description="Response rates, meeting stats, and insights"
@@ -595,7 +477,6 @@ export function BentoGrid() {
             <ChartPreview />
           </BentoCard>
 
-          {/* Settings */}
           <BentoCard
             title="Customize Your Style"
             description="Set your tone, templates, and preferences"
