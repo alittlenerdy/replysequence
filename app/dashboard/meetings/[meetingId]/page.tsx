@@ -1,9 +1,7 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { currentUser } from '@clerk/nextjs/server';
-import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { MeetingDetailView } from '@/components/dashboard/MeetingDetailView';
-import { getMeetingDetail, getDraftStats } from '@/lib/dashboard-queries';
+import { getMeetingDetail } from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -57,24 +55,13 @@ function MeetingDetailLoading() {
 }
 
 async function MeetingDetailContent({ meetingId }: { meetingId: string }) {
-  const [user, meeting, stats] = await Promise.all([
-    currentUser(),
-    getMeetingDetail(meetingId),
-    getDraftStats(),
-  ]);
+  const meeting = await getMeetingDetail(meetingId);
 
   if (!meeting) {
     notFound();
   }
 
-  const firstName = user?.firstName || 'there';
-  const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
-
-  return (
-    <DashboardShell firstName={firstName} pendingDrafts={stats.generated} userEmail={userEmail}>
-      <MeetingDetailView meeting={meeting} />
-    </DashboardShell>
-  );
+  return <MeetingDetailView meeting={meeting} />;
 }
 
 export default async function MeetingDetailPage({ params }: { params: Promise<{ meetingId: string }> }) {
