@@ -176,7 +176,6 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div
-              id="waitlist"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
@@ -667,7 +666,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 relative z-10">
+      <section id="waitlist" className="py-20 px-4 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

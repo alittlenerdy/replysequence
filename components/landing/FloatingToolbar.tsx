@@ -95,11 +95,17 @@ export function FloatingToolbar() {
     if (target.startsWith('/')) return; // Link handles navigation
     setActiveIndex(index);
 
+    if (target === '#hero') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     const el = document.getElementById(target.replace('#', ''));
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else if (target === '#hero') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Use window.scrollTo instead of scrollIntoView to avoid
+      // issues with overflow-hidden on the root container
+      const top = el.getBoundingClientRect().top + window.scrollY - 20;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
   };
 
