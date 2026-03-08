@@ -128,7 +128,7 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'Custom Email Templates', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'CRM Auto-Sync', replysequence: true, fireflies: true, winner: 'tie', category: 'Revenue & Follow-up' },
-  { feature: 'CRM Integrations', replysequence: 'HubSpot, Salesforce, Airtable, Sheets', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Revenue & Follow-up' },
+  { feature: 'CRM Integrations', replysequence: 'HubSpot, Salesforce, Sheets', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Revenue & Follow-up' },
   // Recording & Transcription
   { feature: 'Meeting Transcription', replysequence: true, fireflies: true, winner: 'tie', category: 'Recording & Transcription' },
   { feature: 'AI Meeting Notes', replysequence: true, fireflies: true, winner: 'tie', category: 'Recording & Transcription' },

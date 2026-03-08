@@ -8,9 +8,8 @@ interface StepCRMProps {
   crmConnected: boolean;
   hubspotConnected: boolean;
   salesforceConnected: boolean;
-  airtableConnected: boolean;
   sheetsConnected: boolean;
-  onCRMConnected: (crmType?: 'hubspot' | 'salesforce' | 'airtable' | 'sheets' | null) => void;
+  onCRMConnected: (crmType?: 'hubspot' | 'salesforce' | 'sheets' | null) => void;
   onSkip: () => void;
 }
 
@@ -18,16 +17,11 @@ export function StepCRM({
   crmConnected,
   hubspotConnected,
   salesforceConnected,
-  airtableConnected,
   sheetsConnected,
   onCRMConnected,
   onSkip,
 }: StepCRMProps) {
   const [connecting, setConnecting] = useState<string | null>(null);
-  const [showAirtableForm, setShowAirtableForm] = useState(false);
-  const [airtableApiKey, setAirtableApiKey] = useState('');
-  const [airtableBaseId, setAirtableBaseId] = useState('');
-  const [airtableError, setAirtableError] = useState<string | null>(null);
 
   const handleHubSpotConnect = () => {
     setConnecting('hubspot');
@@ -41,37 +35,6 @@ export function StepCRM({
     sessionStorage.setItem('onboarding_crm', 'salesforce');
     const returnUrl = `/onboarding?step=5&crm_connected=true`;
     window.location.href = `/api/auth/salesforce?redirect=${encodeURIComponent(returnUrl)}`;
-  };
-
-  const handleAirtableConnect = async () => {
-    if (!airtableApiKey || !airtableBaseId) {
-      setAirtableError('API key and Base ID are required');
-      return;
-    }
-    setAirtableError(null);
-    setConnecting('airtable');
-    try {
-      const res = await fetch('/api/integrations/airtable/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          apiKey: airtableApiKey,
-          baseId: airtableBaseId,
-          contactsTable: 'Contacts',
-          meetingsTable: 'Meetings',
-        }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        onCRMConnected('airtable');
-      } else {
-        setAirtableError(data.error || 'Failed to connect');
-      }
-    } catch {
-      setAirtableError('Connection failed. Please check your credentials.');
-    } finally {
-      setConnecting(null);
-    }
   };
 
   return (
@@ -212,114 +175,11 @@ export function StepCRM({
           </div>
         </motion.div>
 
-        {/* Airtable Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
-            airtableConnected
-              ? 'border-indigo-500/50 bg-indigo-500/5'
-              : 'border-gray-700 hover:border-gray-600'
-          }`}
-        >
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#18BFFF]/10">
-                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="#18BFFF" aria-hidden="true">
-                  <path d="M11.52 2.386l-7.297 2.67a1.074 1.074 0 000 2.013l7.297 2.67a1.607 1.607 0 001.106 0l7.297-2.67a1.074 1.074 0 000-2.013l-7.297-2.67a1.607 1.607 0 00-1.106 0z"/>
-                  <path d="M3.413 10.22l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
-                  <path d="M3.413 14.72l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
-                </svg>
-              </div>
-              {airtableConnected && (
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
-                  <Check className="w-3.5 h-3.5" />
-                  Connected
-                </div>
-              )}
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Airtable</h3>
-            <p className="text-sm text-gray-400 mb-4">Sync meeting data to your Airtable base</p>
-
-            {showAirtableForm && !airtableConnected ? (
-              <div className="space-y-3">
-                <input
-                  type="password"
-                  value={airtableApiKey}
-                  onChange={(e) => setAirtableApiKey(e.target.value)}
-                  placeholder="Personal Access Token (pat\u2026)"
-                  aria-label="Airtable API key"
-                  autoComplete="off"
-                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
-                />
-                <input
-                  type="text"
-                  value={airtableBaseId}
-                  onChange={(e) => setAirtableBaseId(e.target.value)}
-                  placeholder="Base ID (appXXXXXXXXXX)"
-                  aria-label="Airtable Base ID"
-                  autoComplete="off"
-                  className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
-                />
-                <div className="p-2.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    <span className="font-medium text-gray-300">Where to find these:</span>{' '}
-                    Create a Personal Access Token at{' '}
-                    <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
-                      airtable.com/create/tokens
-                    </a>
-                    . Required scopes: <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">data.records:read</code>,{' '}
-                    <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">data.records:write</code>,{' '}
-                    <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">schema.bases:read</code>.{' '}
-                    Your Base ID starts with <code className="text-xs px-1 py-0.5 rounded bg-gray-700 text-amber-300">app</code> and is in your base URL.
-                  </p>
-                </div>
-                {airtableError && (
-                  <p className="text-xs text-red-400">{airtableError}</p>
-                )}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => { setShowAirtableForm(false); setAirtableError(null); }}
-                    className="flex-1 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleAirtableConnect}
-                    disabled={connecting === 'airtable' || !airtableApiKey || !airtableBaseId}
-                    className="flex-1 py-2 text-sm text-white bg-[#18BFFF] rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                  >
-                    {connecting === 'airtable' ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Check className="w-4 h-4" />
-                    )}
-                    {connecting === 'airtable' ? 'Testing\u2026' : 'Connect'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowAirtableForm(true)}
-                disabled={airtableConnected || connecting !== null}
-                className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
-                  airtableConnected
-                    ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
-                    : 'text-white hover:opacity-90 bg-[#18BFFF]'
-                }`}
-              >
-                {airtableConnected ? 'Connected' : 'Configure Airtable'}
-              </button>
-            )}
-          </div>
-        </motion.div>
-
         {/* Google Sheets Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.3 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             sheetsConnected
               ? 'border-indigo-500/50 bg-indigo-500/5'

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, airtableConnections, sheetsConnections, salesforceConnections } from '@/lib/db/schema';
+import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, sheetsConnections, salesforceConnections } from '@/lib/db/schema';
 import type { OnboardingStep, ConnectedPlatform, EmailPreference } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
@@ -64,7 +64,6 @@ export async function GET(request: NextRequest) {
     let connectedEmail: string | null = null;
     let hubspotConnectedFlag = false;
     let salesforceConnectedFlag = false;
-    let airtableConnectedFlag = false;
     let sheetsConnectedFlag = false;
 
     if (user) {
@@ -77,17 +76,15 @@ export async function GET(request: NextRequest) {
         emailConnRows,
         hubspotConnRows,
         salesforceConnRows,
-        airtableConnRows,
         sheetsConnRows,
       ] = await Promise.all([
         db.select({ id: zoomConnections.id }).from(zoomConnections).where(eq(zoomConnections.userId, user.id)).limit(1),
         db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1),
         db.select({ id: calendarConnections.id }).from(calendarConnections).where(eq(calendarConnections.userId, user.id)).limit(1),
         db.select({ id: outlookCalendarConnections.id }).from(outlookCalendarConnections).where(eq(outlookCalendarConnections.userId, user.id)).limit(1),
-        db.select({ id: emailConnections.id, email: emailConnections.email }).from(emailConnections).where(eq(emailConnections.userId, user.id)).limit(1),
+        db.select({ id: emailConnections.id, email: emailConnections.email, provider: emailConnections.provider }).from(emailConnections).where(eq(emailConnections.userId, user.id)).limit(1),
         db.select({ id: hubspotConnections.id }).from(hubspotConnections).where(eq(hubspotConnections.userId, user.id)).limit(1),
         db.select({ id: salesforceConnections.id }).from(salesforceConnections).where(eq(salesforceConnections.userId, user.id)).limit(1),
-        db.select({ id: airtableConnections.id }).from(airtableConnections).where(eq(airtableConnections.userId, user.id)).limit(1),
         db.select({ id: sheetsConnections.id }).from(sheetsConnections).where(eq(sheetsConnections.userId, user.id)).limit(1),
       ]);
 
@@ -100,10 +97,10 @@ export async function GET(request: NextRequest) {
 
       emailConnected = !!emailConnRows[0];
       connectedEmail = emailConnRows[0]?.email || null;
+      const emailProvider = emailConnRows[0]?.provider || null;
 
       hubspotConnectedFlag = !!hubspotConnRows[0];
       salesforceConnectedFlag = !!salesforceConnRows[0];
-      airtableConnectedFlag = !!airtableConnRows[0];
       sheetsConnectedFlag = !!sheetsConnRows[0];
     }
 
@@ -114,10 +111,10 @@ export async function GET(request: NextRequest) {
       outlookCalendarConnected,
       emailConnected,
       connectedEmail,
-      crmConnected: hubspotConnectedFlag || salesforceConnectedFlag || airtableConnectedFlag || sheetsConnectedFlag,
+      emailProvider,
+      crmConnected: hubspotConnectedFlag || salesforceConnectedFlag || sheetsConnectedFlag,
       hubspotConnected: hubspotConnectedFlag,
       salesforceConnected: salesforceConnectedFlag,
-      airtableConnected: airtableConnectedFlag,
       sheetsConnected: sheetsConnectedFlag,
     });
   } catch (error) {

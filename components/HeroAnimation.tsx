@@ -132,7 +132,7 @@ function ZoomMockup() {
   );
 }
 
-// CRM mockup component (Airtable-style)
+// CRM mockup component
 function CrmMockup() {
   return (
     <div className="absolute inset-0 flex items-center justify-center">

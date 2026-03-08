@@ -13,7 +13,7 @@ import { eq, and } from 'drizzle-orm';
 import { sendEmail } from './email';
 import { sendViaConnectedAccount } from './email-sender';
 import { injectTracking } from './email-tracking';
-import { syncSentEmailToCrm } from './airtable';
+
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from './hubspot';
 import { syncSentEmailToSheets } from './google-sheets';
 import { syncSentEmailToSalesforce, refreshSalesforceToken } from './salesforce';
@@ -268,22 +268,6 @@ export async function attemptAutoSend(params: {
 
     // 9. CRM sync (non-blocking)
     const crmPlatform = meeting.platform || 'zoom';
-    syncSentEmailToCrm({
-      recipientEmail,
-      meetingTitle: meeting.topic || 'Meeting',
-      meetingDate: meeting.startTime || new Date(),
-      platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
-      draftSubject: draft.subject,
-      draftBody: draft.body,
-      userId,
-    }).catch((err) => {
-      console.error(JSON.stringify({
-        level: 'error',
-        tag: '[AUTO-SEND]',
-        message: 'CRM sync failed (non-blocking)',
-        error: err instanceof Error ? err.message : String(err),
-      }));
-    });
 
     // Google Sheets sync (non-blocking)
     syncSentEmailToSheets(userId, {

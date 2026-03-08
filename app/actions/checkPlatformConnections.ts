@@ -1,7 +1,7 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, hubspotConnections, airtableConnections, emailConnections, salesforceConnections } from '@/lib/db';
+import { db, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, hubspotConnections, emailConnections, salesforceConnections } from '@/lib/db';
 import { sheetsConnections } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
@@ -39,7 +39,6 @@ export interface PlatformConnectionsResult {
     calendar: boolean;
     outlookCalendar: boolean;
     hubspot: boolean;
-    airtable: boolean;
     gmail: boolean;
     outlook: boolean;
     google_sheets: boolean;
@@ -52,7 +51,6 @@ export interface PlatformConnectionsResult {
     calendar: PlatformConnectionDetails;
     outlookCalendar: PlatformConnectionDetails;
     hubspot: PlatformConnectionDetails;
-    airtable: PlatformConnectionDetails;
     gmail: PlatformConnectionDetails;
     outlook: PlatformConnectionDetails;
     google_sheets: PlatformConnectionDetails;
@@ -65,7 +63,6 @@ export interface PlatformConnectionsResult {
   calendarEmail?: string;
   outlookCalendarEmail?: string;
   hubspotPortalId?: string;
-  airtableBaseId?: string;
   gmailEmail?: string;
   outlookEmail?: string;
   salesforceOrgId?: string;
@@ -87,7 +84,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] No userId from Clerk auth');
       return {
         connected: false,
-        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
+        platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
         details: {
           zoom: { connected: false },
           teams: { connected: false },
@@ -95,7 +92,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
           calendar: { connected: false },
           outlookCalendar: { connected: false },
           hubspot: { connected: false },
-          airtable: { connected: false },
           gmail: { connected: false },
           outlook: { connected: false },
           google_sheets: { connected: false },
@@ -150,7 +146,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       calendarConnectionRows,
       outlookConnectionRows,
       hubspotConnectionRows,
-      airtableConnectionRows,
       gmailConnectionRows,
       outlookEmailConnectionRows,
       sheetsConnectionRows,
@@ -209,12 +204,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         scopes: hubspotConnections.scopes,
         lastSyncAt: hubspotConnections.lastSyncAt,
       }).from(hubspotConnections).where(eq(hubspotConnections.userId, existingUser.id)).limit(1),
-      // Airtable
-      db.select({
-        baseId: airtableConnections.baseId,
-        connectedAt: airtableConnections.connectedAt,
-        lastSyncAt: airtableConnections.lastSyncAt,
-      }).from(airtableConnections).where(eq(airtableConnections.userId, existingUser.id)).limit(1),
       // Gmail
       db.select({
         email: emailConnections.email,
@@ -382,21 +371,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] HubSpot connection found', { hubspotPortalId, hasRefreshToken });
     }
 
-    // Process Airtable CRM connection details
-    let airtableBaseId: string | undefined;
-    let airtableDetails: PlatformConnectionDetails = { connected: false };
-    const airtableConnection = airtableConnectionRows[0];
-    const airtableConnected = !!airtableConnection;
-    if (airtableConnection) {
-      airtableBaseId = airtableConnection.baseId;
-      airtableDetails = {
-        connected: true,
-        email: `Base ${airtableConnection.baseId}`,
-        connectedAt: airtableConnection.connectedAt,
-        lastSyncAt: airtableConnection.lastSyncAt ?? undefined,
-      };
-    }
-
     // Process Gmail email connection details
     let gmailEmail: string | undefined;
     let gmailDetails: PlatformConnectionDetails = { connected: false };
@@ -477,7 +451,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       console.log('[CHECK-CONNECTION] Salesforce connection found', { salesforceOrgId, hasRefreshToken });
     }
 
-    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected || airtableConnected || gmailConnected || outlookEmailConnected || sheetsConnected || salesforceConnected;
+    const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected || gmailConnected || outlookEmailConnected || sheetsConnected || salesforceConnected;
 
     return {
       connected: hasAnyConnection,
@@ -488,7 +462,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         calendar: calendarConnected,
         outlookCalendar: outlookCalendarConnected,
         hubspot: hubspotConnected,
-        airtable: airtableConnected,
         gmail: gmailConnected,
         outlook: outlookEmailConnected,
         google_sheets: sheetsConnected,
@@ -501,7 +474,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         calendar: calendarDetails,
         outlookCalendar: outlookCalendarDetails,
         hubspot: hubspotDetails,
-        airtable: airtableDetails,
         gmail: gmailDetails,
         outlook: outlookDetails,
         google_sheets: sheetsDetails,
@@ -514,7 +486,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       calendarEmail,
       outlookCalendarEmail,
       hubspotPortalId,
-      airtableBaseId,
       gmailEmail,
       outlookEmail,
       salesforceOrgId,
@@ -542,7 +513,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
 
   return {
     connected: false,
-    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
+    platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
     details: {
       zoom: { connected: false },
       teams: { connected: false },
@@ -550,7 +521,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       calendar: { connected: false },
       outlookCalendar: { connected: false },
       hubspot: { connected: false },
-      airtable: { connected: false },
       gmail: { connected: false },
       outlook: { connected: false },
       google_sheets: { connected: false },
@@ -563,7 +533,7 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     // Return disconnected state on error to show integration cards
     return {
       connected: false,
-      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, airtable: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
+      platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
       details: {
         zoom: { connected: false },
         teams: { connected: false },
@@ -571,7 +541,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         calendar: { connected: false },
         outlookCalendar: { connected: false },
         hubspot: { connected: false },
-        airtable: { connected: false },
         gmail: { connected: false },
         outlook: { connected: false },
         google_sheets: { connected: false },

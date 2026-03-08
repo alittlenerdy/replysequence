@@ -358,7 +358,7 @@ ReplySequence is built specifically for the step that comes after the meeting: t
 - **Action item extraction:** Next steps discussed in the meeting are captured and included in the follow-up.
 - **Quality scoring:** Each draft is scored for specificity, actionability, and completeness, so you know when the AI produced something strong versus when it needs more editing.
 - **Direct email sending:** You can review, edit, and send the follow-up directly from ReplySequence without switching to your email client.
-- **CRM sync:** Follow-up emails and meeting data sync to HubSpot and Airtable.
+- **CRM sync:** Follow-up emails and meeting data sync to HubSpot, Salesforce, and Google Sheets.
 
 ReplySequence is built for people whose bottleneck is not meeting notes -- it is the follow-up email that turns a good conversation into a next step.
 
@@ -644,7 +644,7 @@ The first generation of these tools focused on one thing: transcription. You got
 
 **Follow-up email generation:** This is where the category is evolving fastest. Some tools generate full, ready-to-send follow-up emails based on the meeting transcript. This goes beyond summarization into workflow automation -- the AI is not just documenting what happened, it is producing the next action.
 
-**CRM integration:** Leading tools can push meeting data directly to Salesforce, HubSpot, Airtable, and other CRMs. This means your CRM gets updated automatically after every call, with accurate data from the actual conversation.
+**CRM integration:** Leading tools can push meeting data directly to Salesforce, HubSpot, Google Sheets, and other CRMs. This means your CRM gets updated automatically after every call, with accurate data from the actual conversation.
 
 **Meeting intelligence:** Advanced tools analyze patterns across meetings -- which topics come up most, how much time your team spends on demos versus discovery, what questions prospects ask most frequently, and which talk tracks correlate with higher close rates.
 
@@ -767,7 +767,7 @@ The key is that none of this requires the rep to do anything beyond their normal
 
 This is fundamentally different from asking reps to change their behavior. You are not asking them to spend more time on data entry. You are eliminating data entry entirely by capturing the information at the source.
 
-Tools like ReplySequence process meeting transcripts and sync relevant data to HubSpot and Airtable automatically. The follow-up email that gets generated from the same transcript also serves as a documented record of the meeting outcome. One meeting produces two outputs: a follow-up email and a CRM update.
+Tools like ReplySequence process meeting transcripts and sync relevant data to HubSpot and Salesforce automatically. The follow-up email that gets generated from the same transcript also serves as a documented record of the meeting outcome. One meeting produces two outputs: a follow-up email and a CRM update.
 
 ## Getting Started
 
@@ -877,7 +877,7 @@ These tools are most powerful when combined. A practical stack for a sales profe
 - **Reclaim.ai** to protect morning focus time and optimize meeting scheduling
 - **Calendly** to handle the logistics of booking those meetings
 - **ReplySequence** to generate follow-up emails from each meeting transcript
-- **HubSpot or Airtable integration** (via ReplySequence) to keep CRM data updated automatically
+- **HubSpot or Salesforce integration** (via ReplySequence) to keep CRM data updated automatically
 
 This stack eliminates the busywork before, during, and after each meeting, letting you focus on the conversations themselves -- which is where deals actually progress.
 
@@ -926,7 +926,7 @@ Here is a feature-by-feature comparison to help you make the right choice.
 
 **Fireflies:** Integrates with Salesforce, HubSpot, and other CRMs to push meeting notes and transcripts. CRM records are updated with meeting summaries and action items.
 
-**ReplySequence:** Syncs with HubSpot and Airtable. Beyond logging meeting data, ReplySequence also logs the follow-up email that was sent, creating a complete record of both the meeting and the subsequent communication.
+**ReplySequence:** Syncs with HubSpot, Salesforce, and Google Sheets. Beyond logging meeting data, ReplySequence also logs the follow-up email that was sent, creating a complete record of both the meeting and the subsequent communication.
 
 **Verdict:** Both offer CRM integration. Fireflies supports more CRMs. ReplySequence provides a more complete record by including the follow-up email alongside meeting data.
 
@@ -1059,7 +1059,7 @@ If you are a consultant considering AI follow-up tools, here is a practical appr
 
 4. **Track your time savings.** Consultants bill by the hour, so the ROI calculation is straightforward. If the tool saves you 30 minutes per day of follow-up drafting, that is 10+ billable hours per month redirected to client work.
 
-5. **Use the CRM sync.** Even if you use a simple CRM like Airtable or a spreadsheet, having meeting data and follow-up emails logged automatically keeps your client records accurate and makes it easy to prepare for future meetings.
+5. **Use the CRM sync.** Even if you use a simple CRM like Google Sheets or a spreadsheet, having meeting data and follow-up emails logged automatically keeps your client records accurate and makes it easy to prepare for future meetings.
 
 The consultants who thrive are the ones who deliver consistently, follow through reliably, and communicate professionally -- at every touchpoint, with every client, every time. AI does not replace any of those qualities. It makes them sustainable at scale.
 `,

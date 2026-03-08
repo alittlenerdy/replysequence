@@ -721,7 +721,7 @@ export default function LandingPage() {
             "featureList": [
               "AI-powered follow-up email generation",
               "Zoom, Microsoft Teams, and Google Meet integration",
-              "CRM automation with HubSpot, Salesforce, Airtable, and Google Sheets",
+              "CRM automation with HubSpot, Salesforce, and Google Sheets",
               "Email tracking and analytics",
               "Connected email account sending",
             ],

@@ -7,10 +7,10 @@ import type { JSX } from 'react';
 
 export const metadata: Metadata = {
   title: 'Integrations',
-  description: 'ReplySequence integrates with Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Airtable, Salesforce, and Google Sheets. Connect your tools and automate meeting follow-ups.',
+  description: 'ReplySequence integrates with Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets. Connect your tools and automate meeting follow-ups.',
   openGraph: {
     title: 'Integrations | ReplySequence',
-    description: 'Connect Zoom, Teams, Meet, Gmail, Outlook, HubSpot, Airtable, Salesforce, and Google Sheets for automated meeting follow-ups.',
+    description: 'Connect Zoom, Teams, Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets for automated meeting follow-ups.',
     url: 'https://www.replysequence.com/integrations',
   },
   alternates: {
@@ -62,12 +62,6 @@ const OutlookLogo = () => (
 const HubSpotLogo = () => (
   <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
     <path d="M17.01 11.4V8.03a1.71 1.71 0 0 0 1-1.55V6.4a1.71 1.71 0 0 0-1.71-1.71h-.08A1.71 1.71 0 0 0 14.5 6.4v.08a1.71 1.71 0 0 0 1 1.55v3.37a4.76 4.76 0 0 0-2.12 1.23l-5.6-4.36a1.83 1.83 0 0 0 .05-.4 1.87 1.87 0 1 0-1.87 1.87c.24 0 .46-.05.67-.13l5.5 4.28a4.78 4.78 0 0 0 .33 5.01l-1.66 1.66a1.4 1.4 0 0 0-.4-.07 1.48 1.48 0 1 0 1.48 1.48 1.4 1.4 0 0 0-.07-.41l1.63-1.63a4.8 4.8 0 1 0 3.56-7.13z" />
-  </svg>
-);
-
-const AirtableLogo = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden="true">
-    <path d="M11.52 2.309l-8.22 3.1c-.5.19-.5.89 0 1.08l8.22 3.1c.31.12.65.12.96 0l8.22-3.1c.5-.19.5-.89 0-1.08l-8.22-3.1a1.28 1.28 0 0 0-.96 0zm-9.27 6.52v7.14c0 .38.23.72.58.86l8.19 3.41c.29.12.62-.09.62-.41V12.67c0-.38-.23-.72-.58-.86L2.87 8.4a.45.45 0 0 0-.62.41zm18.5 0c0-.5-.62-.77-1-.44l-7.38 5.16c-.35.25-.57.65-.57 1.08v6.78c0 .5.61.78 1 .45l7.38-5.16c.35-.24.57-.65.57-1.08V8.83z" />
   </svg>
 );
 
@@ -183,20 +177,6 @@ const integrations: Integration[] = [
     color: 'from-[#00A1E0] to-[#0070D2]',
   },
   {
-    name: 'Airtable',
-    category: 'crm',
-    description: 'Sync meeting data and sent emails to Airtable for custom CRM workflows.',
-    features: [
-      'Sync meeting data to custom bases',
-      'Track follow-up history per contact',
-      'Log email sends automatically',
-      'Flexible enough for any CRM workflow',
-    ],
-    status: 'available',
-    logo: <AirtableLogo />,
-    color: 'from-[#FCBF49] to-[#18BFFF]',
-  },
-  {
     name: 'Google Sheets',
     category: 'crm',
     description: 'Sync meeting data and follow-ups to Google Sheets for lightweight, flexible CRM workflows.',
@@ -251,12 +231,12 @@ export default function IntegrationsPage() {
             so You Never Copy-Paste Call Notes Again
           </h1>
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
-            Plug into Zoom, Meet, Teams, Gmail, Outlook, and 4 CRMs so every call becomes a ready-to-send follow-up and a clean CRM update — in seconds.
+            Plug into Zoom, Meet, Teams, Gmail, Outlook, and 3 CRMs so every call becomes a ready-to-send follow-up and a clean CRM update — in seconds.
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500 light:text-gray-400 mb-6">
             <span className="flex items-center gap-1.5">
               <Zap className="w-4 h-4 text-amber-400" />
-              9 integrations
+              8 integrations
             </span>
             <span className="text-gray-700 light:text-gray-300">|</span>
             <span>No engineering required</span>
@@ -426,14 +406,6 @@ export default function IntegrationsPage() {
                 Google Meet call wraps up. AI drafts the follow-up in Gmail. Meeting data synced to your Sheets CRM — zero copy-paste.
               </p>
             </div>
-            <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
-              <h3 className="text-lg font-bold bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-3">
-                Zoom + Outlook + Airtable
-              </h3>
-              <p className="text-sm text-gray-400 light:text-gray-600">
-                Finish a Zoom call. Get a ready-to-send Outlook email. Action items tracked on the right Airtable record automatically.
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -489,7 +461,7 @@ export default function IntegrationsPage() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "ReplySequence Integrations",
-            "description": "Connect Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Airtable, Salesforce, and Google Sheets for automated meeting follow-up emails.",
+            "description": "Connect Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets for automated meeting follow-up emails.",
             "url": "https://www.replysequence.com/integrations",
             "isPartOf": {
               "@type": "WebSite",

@@ -73,7 +73,6 @@ const CRM_PLATFORMS = [
   { name: 'HubSpot', color: '#FF7A59' },
   { name: 'Salesforce', color: '#00A1E0' },
   { name: 'Sheets', color: '#34A853' },
-  { name: 'Airtable', color: '#18BFFF' },
 ] as const;
 
 const CRM_SYNC_EVENTS = [
@@ -461,7 +460,7 @@ export function BentoGrid() {
 
           <BentoCard
             title="Auto-logged to CRM"
-            description="HubSpot, Salesforce, Airtable, and Google Sheets"
+            description="HubSpot, Salesforce, and Google Sheets"
             icon={<Users className="w-6 h-6 text-indigo-400" />}
             delay={0.3}
           >

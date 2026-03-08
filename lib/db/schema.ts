@@ -593,32 +593,6 @@ export const hubspotConnections = pgTable(
   ]
 );
 
-// Airtable CRM connections table - stores user-specific PAT and base ID
-export const airtableConnections = pgTable(
-  'airtable_connections',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: uuid('user_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    // Encrypted Personal Access Token (AES-256-GCM)
-    apiKeyEncrypted: text('api_key_encrypted').notNull(),
-    // Airtable base ID (e.g., appXXXXXXXXXXXXXX)
-    baseId: varchar('base_id', { length: 255 }).notNull(),
-    // Table names (customizable, with defaults)
-    contactsTable: varchar('contacts_table', { length: 255 }).notNull().default('Contacts'),
-    meetingsTable: varchar('meetings_table', { length: 255 }).notNull().default('Meetings'),
-    // Timestamps
-    connectedAt: timestamp('connected_at', { withTimezone: true }).notNull().defaultNow(),
-    lastSyncAt: timestamp('last_sync_at', { withTimezone: true }),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [
-    uniqueIndex('airtable_connections_user_id_idx').on(table.userId),
-  ]
-);
-
 // Google Sheets CRM connections table - OAuth-based, syncs meeting data to a spreadsheet
 export interface SheetsColumnMapping {
   sourceField: 'contact_email' | 'meeting_title' | 'meeting_date' | 'platform' | 'draft_subject' | 'draft_body' | 'sent_date';
@@ -849,8 +823,6 @@ export type MeetConnection = typeof meetConnections.$inferSelect;
 export type NewMeetConnection = typeof meetConnections.$inferInsert;
 export type HubSpotConnection = typeof hubspotConnections.$inferSelect;
 export type NewHubSpotConnection = typeof hubspotConnections.$inferInsert;
-export type AirtableConnection = typeof airtableConnections.$inferSelect;
-export type NewAirtableConnection = typeof airtableConnections.$inferInsert;
 export type SalesforceConnection = typeof salesforceConnections.$inferSelect;
 export type NewSalesforceConnection = typeof salesforceConnections.$inferInsert;
 

@@ -231,7 +231,6 @@ export function getEmailContent(emailNumber: number, userId: string, userName?: 
           `We integrate with:`,
           `• HubSpot`,
           `• Salesforce`,
-          `• Airtable`,
           `• Google Sheets`,
           '',
           `Once connected, every meeting transcript, follow-up email, and action item gets logged automatically. No more copying and pasting into your CRM after every call.`,
@@ -249,7 +248,6 @@ export function getEmailContent(emailNumber: number, userId: string, userName?: 
 <ul style="margin: 0 0 16px; padding-left: 24px;">
   <li style="margin-bottom: 4px;">HubSpot</li>
   <li style="margin-bottom: 4px;">Salesforce</li>
-  <li style="margin-bottom: 4px;">Airtable</li>
   <li>Google Sheets</li>
 </ul>
 
@@ -353,7 +351,7 @@ export function getEmailContent(emailNumber: number, userId: string, userName?: 
           '',
           `Pro gives you:`,
           `• Unlimited meetings per month`,
-          `• CRM auto-logging (HubSpot, Salesforce, Airtable)`,
+          `• CRM auto-logging (HubSpot, Salesforce, Google Sheets)`,
           `• Style learning that adapts to your writing`,
           `• Priority support`,
           '',
@@ -373,7 +371,7 @@ export function getEmailContent(emailNumber: number, userId: string, userName?: 
 <p style="margin: 0 0 8px;"><strong>Pro gives you:</strong></p>
 <ul style="margin: 0 0 16px; padding-left: 24px;">
   <li style="margin-bottom: 4px;">Unlimited meetings per month</li>
-  <li style="margin-bottom: 4px;">CRM auto-logging (HubSpot, Salesforce, Airtable)</li>
+  <li style="margin-bottom: 4px;">CRM auto-logging (HubSpot, Salesforce, Google Sheets)</li>
   <li style="margin-bottom: 4px;">Style learning that adapts to your writing</li>
   <li>Priority support</li>
 </ul>

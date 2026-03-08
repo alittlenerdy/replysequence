@@ -61,7 +61,7 @@ export const PRICING_TIERS: PricingTier[] = [
     features: [
       'Everything in Pro',
       'Unlimited team members',
-      'CRM sync (Airtable, HubSpot)',
+      'CRM sync (HubSpot, Salesforce, Google Sheets)',
       'Team sharing & collaboration',
       'Analytics dashboard',
       'API access',

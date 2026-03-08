@@ -35,7 +35,7 @@ Jimmy Hackett: Our users report over 90% accuracy on first drafts. Most emails n
 
 Sarah Chen: We use HubSpot for our CRM. Do you support that?
 
-Jimmy Hackett: Absolutely, HubSpot is one of our core integrations. We also support Salesforce, Pipedrive, and Airtable. The integration logs the meeting, the transcript, and links the draft email to the contact record.
+Jimmy Hackett: Absolutely, HubSpot is one of our core integrations. We also support Salesforce, Pipedrive, and Google Sheets. The integration logs the meeting, the transcript, and links the draft email to the contact record.
 
 Sarah Chen: Perfect. What about pricing? We have a team of 12 sales reps.
 

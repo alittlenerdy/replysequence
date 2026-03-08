@@ -10,7 +10,7 @@
 
 **Name:** ReplySequence
 **Purpose:** Zoom/Meet/Teams -> AI email drafts -> CRM automation
-**Stack:** Next.js 16, PostgreSQL/Drizzle, Clerk, Claude API, Resend, Airtable
+**Stack:** Next.js 16, PostgreSQL/Drizzle, Clerk, Claude API, Resend
 **Status:** Week 2/12 MVP Sprint (Jan 27 - Mar 21, 2026)
 
 **Location:** `/Volumes/just_a_little_nerd/replysequence`
@@ -41,7 +41,6 @@ lib/claude-api.ts                    # Claude SDK client + streaming API
 lib/transcript/vtt-parser.ts         # VTT transcript parsing
 lib/transcript/downloader.ts         # Transcript download
 lib/email.ts                         # Email sending via Resend
-lib/airtable.ts                      # Airtable CRM integration
 lib/webhook-retry.ts                 # Webhook retry logic
 lib/idempotency/index.ts             # Duplicate prevention (Redis)
 ```

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections, salesforceConnections, airtableConnections } from '@/lib/db/schema';
+import { users, calendarConnections, drafts, meetings, userOnboarding, hubspotConnections, salesforceConnections } from '@/lib/db/schema';
 import { eq, count } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
@@ -95,7 +95,6 @@ export async function GET(request: NextRequest) {
       onboardingResult,
       hubspotResult,
       salesforceResult,
-      airtableResult,
     ] = await Promise.all([
       // Check calendar connection
       db
@@ -134,12 +133,6 @@ export async function GET(request: NextRequest) {
         .select({ count: count() })
         .from(salesforceConnections)
         .where(eq(salesforceConnections.userId, user.id)),
-
-      // Check Airtable CRM connection
-      db
-        .select({ count: count() })
-        .from(airtableConnections)
-        .where(eq(airtableConnections.userId, user.id)),
     ]);
 
     // Check platform connection status
@@ -148,7 +141,7 @@ export async function GET(request: NextRequest) {
     const hasDraftGenerated = draftsResult[0].count > 0;
     const hasMeetingCaptured = meetingsResult[0].count > 0;
     const hasEmailPreference = onboardingResult[0]?.emailPreference != null;
-    const hasCrmConnected = hubspotResult[0].count > 0 || salesforceResult[0].count > 0 || airtableResult[0].count > 0;
+    const hasCrmConnected = hubspotResult[0].count > 0 || salesforceResult[0].count > 0;
 
     // Build checklist items
     const items: ChecklistItem[] = [
@@ -200,7 +193,7 @@ export async function GET(request: NextRequest) {
       {
         id: 'crm',
         label: 'Connect Your CRM',
-        description: 'Auto-log meetings to HubSpot, Salesforce, Airtable, or Sheets',
+        description: 'Auto-log meetings to HubSpot, Salesforce, or Sheets',
         completed: hasCrmConnected,
         actionUrl: '/dashboard/settings?tab=integrations',
         actionLabel: 'Setup CRM',

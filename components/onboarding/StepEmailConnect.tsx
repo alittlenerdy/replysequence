@@ -7,6 +7,7 @@ import { Check, ExternalLink, Loader2, AlertTriangle, Mail, Shield, ArrowRight, 
 interface StepEmailConnectProps {
   emailConnected: boolean;
   connectedEmail: string | null;
+  emailProvider: 'gmail' | 'outlook' | null;
   onEmailConnected: () => void;
   onSkip: () => void;
   error?: string | null;
@@ -15,6 +16,7 @@ interface StepEmailConnectProps {
 export function StepEmailConnect({
   emailConnected,
   connectedEmail,
+  emailProvider,
   onEmailConnected,
   onSkip,
   error: initialError,
@@ -142,6 +144,7 @@ export function StepEmailConnect({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-6">
         {providers.map((provider, index) => {
           const isConnecting = connecting === provider.id;
+          const isThisProviderConnected = emailConnected && emailProvider === provider.id;
 
           return (
             <motion.div
@@ -150,8 +153,10 @@ export function StepEmailConnect({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
               className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
-                emailConnected
+                isThisProviderConnected
                   ? 'border-indigo-500/50 bg-indigo-500/5'
+                  : emailConnected
+                  ? 'border-gray-700/50 opacity-60'
                   : provider.recommended
                   ? 'border-indigo-500/30 hover:border-indigo-500/50'
                   : 'border-gray-700 hover:border-gray-600'
@@ -171,7 +176,7 @@ export function StepEmailConnect({
                   >
                     {provider.icon}
                   </div>
-                  {emailConnected && (
+                  {isThisProviderConnected && (
                     <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
                       <Check className="w-3.5 h-3.5" />
                       Connected
@@ -180,15 +185,17 @@ export function StepEmailConnect({
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{provider.name}</h3>
                 <p className="text-sm text-gray-400 mb-4">{provider.description}</p>
-                {emailConnected && connectedEmail && (
+                {isThisProviderConnected && connectedEmail && (
                   <p className="text-sm text-indigo-400 mb-4 truncate">{connectedEmail}</p>
                 )}
                 <button
                   onClick={() => handleConnect(provider.id)}
                   disabled={emailConnected || connecting !== null}
                   className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
-                    emailConnected
+                    isThisProviderConnected
                       ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
+                      : emailConnected
+                      ? 'bg-gray-800/50 text-gray-500 cursor-default'
                       : isConnecting
                       ? 'bg-gray-800 text-gray-400'
                       : 'text-white hover:opacity-90'
@@ -204,8 +211,10 @@ export function StepEmailConnect({
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Redirecting to {provider.name}...
                     </>
-                  ) : emailConnected ? (
+                  ) : isThisProviderConnected ? (
                     'Connected'
+                  ) : emailConnected ? (
+                    'Not connected'
                   ) : (
                     <>
                       Connect {provider.name}

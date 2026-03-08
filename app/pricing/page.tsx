@@ -73,7 +73,7 @@ const pricingTiers = [
     features: [
       'Everything in Pro',
       'Unlimited team members',
-      'CRM sync (HubSpot, Salesforce, Airtable, Sheets)',
+      'CRM sync (HubSpot, Salesforce, Sheets)',
       'Team sharing & collaboration',
       'Analytics dashboard',
       'API access',

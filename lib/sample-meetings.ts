@@ -36,7 +36,7 @@ You: It pulls out the key discussion points, any commitments made, action items 
 
 Mike: We're on HubSpot. Does it update deal records or just create activity logs?
 
-You: Both. It creates a detailed activity log with the meeting summary and action items, and it can update deal properties like next step date, deal stage notes, and custom fields. We also integrate with Google Sheets and Airtable if you need data flowing elsewhere.
+You: Both. It creates a detailed activity log with the meeting summary and action items, and it can update deal properties like next step date, deal stage notes, and custom fields. We also integrate with Google Sheets if you need data flowing elsewhere.
 
 Sarah: What about pricing? We have a team of 12 reps.
 

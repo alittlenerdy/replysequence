@@ -19,7 +19,7 @@ export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6 | 'complete';
 export type ConnectedPlatform = 'zoom' | 'teams' | 'meet' | null;
 export type EmailPreference = 'review' | 'auto_send';
 
-export type ConnectedCRM = 'hubspot' | 'salesforce' | 'airtable' | 'sheets' | null;
+export type ConnectedCRM = 'hubspot' | 'salesforce' | 'sheets' | null;
 
 export interface OnboardingState {
   currentStep: OnboardingStep;
@@ -29,11 +29,11 @@ export interface OnboardingState {
   outlookCalendarConnected: boolean;
   emailConnected: boolean;
   connectedEmail: string | null;
+  emailProvider: 'gmail' | 'outlook' | null;
   crmConnected: boolean;
   connectedCRM: ConnectedCRM;
   hubspotConnected: boolean;
   salesforceConnected: boolean;
-  airtableConnected: boolean;
   sheetsConnected: boolean;
   emailPreference: EmailPreference;
   isLoading: boolean;
@@ -54,11 +54,11 @@ function OnboardingContent() {
     outlookCalendarConnected: false,
     emailConnected: false,
     connectedEmail: null,
+    emailProvider: null,
     crmConnected: false,
     connectedCRM: null,
     hubspotConnected: false,
     salesforceConnected: false,
-    airtableConnected: false,
     sheetsConnected: false,
     emailPreference: 'review',
     isLoading: true,
@@ -96,12 +96,12 @@ function OnboardingContent() {
           outlookCalendarConnected: data.outlookCalendarConnected || false,
           emailConnected: data.emailConnected || false,
           connectedEmail: data.connectedEmail || null,
+          emailProvider: data.emailProvider || null,
           crmConnected: data.crmConnected || false,
           hubspotConnected: data.hubspotConnected || false,
           salesforceConnected: data.salesforceConnected || false,
-          airtableConnected: data.airtableConnected || false,
           sheetsConnected: data.sheetsConnected || false,
-          connectedCRM: data.hubspotConnected ? 'hubspot' : data.salesforceConnected ? 'salesforce' : data.airtableConnected ? 'airtable' : data.sheetsConnected ? 'sheets' : null,
+          connectedCRM: data.hubspotConnected ? 'hubspot' : data.salesforceConnected ? 'salesforce' : data.sheetsConnected ? 'sheets' : null,
           emailPreference: data.emailPreference || 'review',
           isLoading: false,
           isReturningUser: data.currentStep > 1,
@@ -173,7 +173,6 @@ function OnboardingContent() {
         connectedCRM: crmType,
         hubspotConnected: crmType === 'hubspot' ? true : prev.hubspotConnected,
         salesforceConnected: crmType === 'salesforce' ? true : prev.salesforceConnected,
-        airtableConnected: crmType === 'airtable' ? true : prev.airtableConnected,
         sheetsConnected: crmType === 'sheets' ? true : prev.sheetsConnected,
         currentStep: 5, // Stay on CRM step to show connected status
       }));
@@ -284,7 +283,6 @@ function OnboardingContent() {
       connectedCRM: connectedType,
       hubspotConnected: connectedType === 'hubspot' ? true : prev.hubspotConnected,
       salesforceConnected: connectedType === 'salesforce' ? true : prev.salesforceConnected,
-      airtableConnected: connectedType === 'airtable' ? true : prev.airtableConnected,
       sheetsConnected: connectedType === 'sheets' ? true : prev.sheetsConnected,
     }));
     saveProgress({ crmConnected: true, currentStep: 6 });
@@ -435,6 +433,7 @@ function OnboardingContent() {
               <StepEmailConnect
                 emailConnected={state.emailConnected}
                 connectedEmail={state.connectedEmail}
+                emailProvider={state.emailProvider}
                 onEmailConnected={handleEmailConnected}
                 onSkip={handleEmailSkipped}
                 error={emailError}
@@ -466,7 +465,6 @@ function OnboardingContent() {
                 crmConnected={state.crmConnected}
                 hubspotConnected={state.hubspotConnected}
                 salesforceConnected={state.salesforceConnected}
-                airtableConnected={state.airtableConnected}
                 sheetsConnected={state.sheetsConnected}
                 onCRMConnected={handleCRMConnected}
                 onSkip={handleCRMSkipped}

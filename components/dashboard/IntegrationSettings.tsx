@@ -31,7 +31,7 @@ const SHEETS_FIELD_LABELS: Record<SheetsColumnMapping['sourceField'], string> = 
 };
 
 interface PlatformConfig {
-  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'airtable' | 'google_sheets' | 'salesforce' | 'gmail' | 'outlook';
+  id: 'zoom' | 'teams' | 'meet' | 'calendar' | 'outlookCalendar' | 'hubspot' | 'google_sheets' | 'salesforce' | 'gmail' | 'outlook';
   name: string;
   description: string;
   color: string;
@@ -58,7 +58,6 @@ interface PlatformCardProps {
   meetDisconnectConfirm: string | null;
   setMeetDisconnectConfirm: (id: string | null) => void;
   nowMs: number;
-  setShowAirtableForm: (show: boolean) => void;
   setShowHubspotFieldMapping: (show: boolean) => void;
   setShowSheetsConfig: (show: boolean) => void;
 }
@@ -190,23 +189,6 @@ const platforms: PlatformConfig[] = [
     category: 'crm',
   },
   {
-    id: 'airtable',
-    name: 'Airtable',
-    description: 'Sync meeting data and sent emails to your Airtable base',
-    color: '#18BFFF',
-    bgColor: 'bg-[#18BFFF]/10',
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true" fill="#18BFFF">
-        <path d="M11.52 2.386l-7.297 2.67a1.074 1.074 0 000 2.013l7.297 2.67a1.607 1.607 0 001.106 0l7.297-2.67a1.074 1.074 0 000-2.013l-7.297-2.67a1.607 1.607 0 00-1.106 0z"/>
-        <path d="M3.413 10.22l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
-        <path d="M3.413 14.72l7.89 3.09a1.361 1.361 0 001.002 0l7.89-3.09.608 1.55-8.497 3.33a1.361 1.361 0 01-1.003 0l-8.497-3.33.608-1.55z"/>
-      </svg>
-    ),
-    connectUrl: '', // Form-based, not OAuth redirect
-    disconnectUrl: '/api/integrations/airtable/disconnect',
-    category: 'crm',
-  },
-  {
     id: 'google_sheets',
     name: 'Google Sheets',
     description: 'Sync meeting data and sent emails to a spreadsheet',
@@ -276,7 +258,6 @@ function PlatformCard({
   meetDisconnectConfirm,
   setMeetDisconnectConfirm,
   nowMs,
-  setShowAirtableForm,
   setShowHubspotFieldMapping,
   setShowSheetsConfig,
 }: PlatformCardProps) {
@@ -491,17 +472,7 @@ function PlatformCard({
               )}
             </div>
           ) : (
-            platform.id === 'airtable' ? (
-              <button
-                onClick={() => setShowAirtableForm(true)}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                style={{ backgroundColor: platform.color }}
-              >
-                <Settings2 className="w-4 h-4" />
-                Configure
-              </button>
-            ) : (
-              <button
+            <button
                 onClick={() => handleConnect(platform)}
                 disabled={isLoading}
                 className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
@@ -514,7 +485,6 @@ function PlatformCard({
                 )}
                 Connect
               </button>
-            )
           )}
         </div>
 
@@ -594,7 +564,6 @@ export function IntegrationSettings() {
     calendar: false,
     outlookCalendar: false,
     hubspot: false,
-    airtable: false,
     google_sheets: false,
     salesforce: false,
     gmail: false,
@@ -646,7 +615,6 @@ export function IntegrationSettings() {
     calendar: { connected: false },
     outlookCalendar: { connected: false },
     hubspot: { connected: false },
-    airtable: { connected: false },
     google_sheets: { connected: false },
     salesforce: { connected: false },
     gmail: { connected: false },
@@ -721,15 +689,6 @@ export function IntegrationSettings() {
       setErrorBanner('Failed to disconnect Google account');
     }
   };
-
-  // Airtable configuration form state
-  const [showAirtableForm, setShowAirtableForm] = useState(false);
-  const [airtableApiKey, setAirtableApiKey] = useState('');
-  const [airtableBaseId, setAirtableBaseId] = useState('');
-  const [airtableContactsTable, setAirtableContactsTable] = useState('Contacts');
-  const [airtableMeetingsTable, setAirtableMeetingsTable] = useState('Meetings');
-  const [airtableError, setAirtableError] = useState<string | null>(null);
-  const [airtableConnecting, setAirtableConnecting] = useState(false);
 
   // HubSpot field mapping state
   const [showHubspotFieldMapping, setShowHubspotFieldMapping] = useState(false);
@@ -853,42 +812,6 @@ export function IntegrationSettings() {
 
   const updateSheetsMapping = (index: number, updates: Partial<SheetsColumnMapping>) => {
     setSheetsMappings(prev => prev.map((m, i) => i === index ? { ...m, ...updates } : m));
-  };
-
-  const handleAirtableConnect = async () => {
-    if (!airtableApiKey || !airtableBaseId) {
-      setAirtableError('API key and Base ID are required');
-      return;
-    }
-    setAirtableError(null);
-    setAirtableConnecting(true);
-    try {
-      const response = await fetch('/api/integrations/airtable/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          apiKey: airtableApiKey,
-          baseId: airtableBaseId,
-          contactsTable: airtableContactsTable,
-          meetingsTable: airtableMeetingsTable,
-        }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setShowAirtableForm(false);
-        setAirtableApiKey('');
-        setAirtableBaseId('');
-        setSuccessBanner('Airtable connected successfully');
-        setTimeout(() => setSuccessBanner(null), 3000);
-        fetchConnectionStatus();
-      } else {
-        setAirtableError(data.error || 'Failed to connect');
-      }
-    } catch (error) {
-      setAirtableError('Connection failed. Please check your credentials.');
-    } finally {
-      setAirtableConnecting(false);
-    }
   };
 
   const getSectionCounts = (category: PlatformConfig['category']) => {
@@ -1093,7 +1016,6 @@ export function IntegrationSettings() {
                         meetDisconnectConfirm={meetDisconnectConfirm}
                         setMeetDisconnectConfirm={setMeetDisconnectConfirm}
                         nowMs={nowMs}
-                        setShowAirtableForm={setShowAirtableForm}
                         setShowHubspotFieldMapping={setShowHubspotFieldMapping}
                         setShowSheetsConfig={setShowSheetsConfig}
                       />
@@ -1158,115 +1080,6 @@ export function IntegrationSettings() {
               </div>
             );
           })}
-
-          {/* Airtable Configuration Form Modal */}
-          {showAirtableForm && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-md w-full overscroll-contain">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white light:text-gray-900">Connect Airtable</h3>
-                  <button onClick={() => { setShowAirtableForm(false); setAirtableError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Close">
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <p className="text-sm text-gray-400 light:text-gray-500 mb-4">
-                  Enter your Airtable Personal Access Token and Base ID. You can find these in your{' '}
-                  <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
-                    Airtable account settings
-                  </a>.
-                </p>
-
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="airtable-token" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                      Personal Access Token
-                    </label>
-                    <input
-                      id="airtable-token"
-                      type="password"
-                      value={airtableApiKey}
-                      onChange={(e) => setAirtableApiKey(e.target.value)}
-                      placeholder="pat\u2026"
-                      autoComplete="off"
-                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="airtable-base-id" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                      Base ID
-                    </label>
-                    <input
-                      id="airtable-base-id"
-                      type="text"
-                      value={airtableBaseId}
-                      onChange={(e) => setAirtableBaseId(e.target.value)}
-                      placeholder="appXXXXXXXXXXXXXX"
-                      className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Find this in your base URL: airtable.com/<strong>appXXX</strong>/...
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label htmlFor="airtable-contacts" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                        Contacts Table
-                      </label>
-                      <input
-                        id="airtable-contacts"
-                        type="text"
-                        value={airtableContactsTable}
-                        onChange={(e) => setAirtableContactsTable(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="airtable-meetings" className="block text-sm font-medium text-gray-300 light:text-gray-700 mb-1">
-                        Meetings Table
-                      </label>
-                      <input
-                        id="airtable-meetings"
-                        type="text"
-                        value={airtableMeetingsTable}
-                        onChange={(e) => setAirtableMeetingsTable(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-800 light:bg-gray-50 border border-gray-600 light:border-gray-300 rounded-lg text-white light:text-gray-900 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                      />
-                    </div>
-                  </div>
-
-                  {airtableError && (
-                    <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2" role="alert" aria-live="polite">
-                      {airtableError}
-                    </div>
-                  )}
-
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => { setShowAirtableForm(false); setAirtableError(null); }}
-                      className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleAirtableConnect}
-                      disabled={airtableConnecting || !airtableApiKey || !airtableBaseId}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-white bg-[#18BFFF] hover:bg-[#14a8e6] rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                    >
-                      {airtableConnecting ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Check className="w-4 h-4" />
-                      )}
-                      {airtableConnecting ? 'Testing\u2026' : 'Test & Connect'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* HubSpot Field Mapping Modal */}
           {showHubspotFieldMapping && (

@@ -228,7 +228,7 @@ export const NON_NEGOTIABLES: readonly { title: string; description: string; ico
   },
   {
     title: 'CRM sync on autopilot',
-    description: 'HubSpot, Salesforce, Airtable — automatically logged.',
+    description: 'HubSpot, Salesforce, Google Sheets — automatically logged.',
     icon: RefreshCw,
   },
   {

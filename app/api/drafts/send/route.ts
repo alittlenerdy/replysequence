@@ -4,7 +4,6 @@ import { currentUser } from '@clerk/nextjs/server';
 import { getDraftById, markDraftAsSent } from '@/lib/dashboard-queries';
 import { sendEmail, formatBodyAsHtml, appendPlainTextFooter } from '@/lib/email';
 import { sendViaConnectedAccount } from '@/lib/email-sender';
-import { syncSentEmailToCrm } from '@/lib/airtable';
 import { syncSentEmailToHubSpot, refreshHubSpotToken } from '@/lib/hubspot';
 import { syncSentEmailToSheets } from '@/lib/google-sheets';
 import { syncSentEmailToSalesforce, refreshSalesforceToken } from '@/lib/salesforce';
@@ -289,39 +288,9 @@ export async function POST(request: NextRequest) {
       );
     } catch { /* Analytics should never fail the operation */ }
 
-    // Sync to Airtable CRM (non-blocking - don't await in critical path)
-    // This runs after email is confirmed sent
     const crmPlatform = (draft.meetingPlatform === 'microsoft_teams' || draft.meetingPlatform === 'google_meet')
       ? draft.meetingPlatform
       : 'zoom';
-    syncSentEmailToCrm({
-      recipientEmail,
-      meetingTitle: draft.meetingTopic || 'Meeting',
-      meetingDate: draft.meetingStartTime || new Date(),
-      platform: crmPlatform as 'zoom' | 'microsoft_teams' | 'google_meet',
-      draftSubject: draft.subject,
-      draftBody: draft.body,
-      userId: dbUser.id,
-    }).then((crmResult) => {
-      console.log(JSON.stringify({
-        level: 'info',
-        message: 'CRM sync completed',
-        draftId,
-        recipientEmail,
-        crmSuccess: crmResult.success,
-        contactFound: crmResult.contactFound,
-        meetingRecordId: crmResult.meetingRecordId,
-      }));
-    }).catch((crmError) => {
-      // Log but don't fail - email was already sent successfully
-      console.error(JSON.stringify({
-        level: 'error',
-        message: 'CRM sync failed (non-blocking)',
-        draftId,
-        recipientEmail,
-        error: crmError instanceof Error ? crmError.message : String(crmError),
-      }));
-    });
 
     // Fetch meeting sentiment for CRM sync (needed by HubSpot + Salesforce)
     let meetingSentiment: { score: number; label: string; tones: string } | null = null;

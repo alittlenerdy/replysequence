@@ -26,7 +26,7 @@ import { db, drafts, meetings, users, transcripts } from './db';
 import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
 import { analyzeSentiment } from './sentiment';
-// NOTE: Airtable sync moved to drafts/send/route.ts - only log to CRM when email is sent
+// NOTE: CRM sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
 import { getTemplateById, getDefaultTemplate, type MeetingTemplate } from './meeting-templates';
@@ -476,7 +476,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         );
       } catch { /* Analytics should never fail the operation */ }
 
-      // NOTE: Airtable sync moved to drafts/send/route.ts to prevent duplicates
+      // NOTE: CRM sync moved to drafts/send/route.ts to prevent duplicates
       // CRM records are created only when email is actually sent, not on draft generation
 
       // Grade the draft with Claude Haiku (Phase 1 - non-blocking)

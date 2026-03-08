@@ -88,7 +88,7 @@ const faqData = [
   {
     question: 'What CRMs does ReplySequence integrate with?',
     answer:
-      'We integrate with HubSpot, Salesforce, Airtable, and Google Sheets for CRM logging. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry.',
+      'We integrate with HubSpot, Salesforce, and Google Sheets for CRM logging. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry.',
   },
   {
     question: 'How much does ReplySequence cost?',
