@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type JSX } from 'react';
 import dynamic from 'next/dynamic';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
+import type { MeetingTemplate } from '@/lib/meeting-templates';
 import { ConversationalRefine } from './ConversationalRefine';
 import { MeetingSummaryCard } from './dashboard/MeetingSummaryCard';
-import { TemplatePicker } from './TemplatePicker';
 import { DraftFeedback } from './DraftFeedback';
 import { ensureHtml } from './RichTextEditor';
 
@@ -34,6 +34,33 @@ interface MeetingIntelligence {
   actionItems: Array<{ owner: string; task: string; deadline: string }> | null;
 }
 
+const TEMPLATE_ICON_COLORS: Record<string, string> = {
+  sales: 'text-amber-400 bg-amber-500/20 border-amber-500/30',
+  team: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
+  client: 'text-teal-400 bg-teal-500/20 border-teal-500/30',
+  technical: 'text-cyan-400 bg-cyan-500/20 border-cyan-500/30',
+  general: 'text-gray-400 bg-gray-500/20 border-gray-500/30',
+  onboarding: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30',
+  strategy: 'text-rose-400 bg-rose-500/20 border-rose-500/30',
+};
+
+function TemplateIcon({ icon, className = 'w-4 h-4' }: { icon: string; className?: string }) {
+  const icons: Record<string, JSX.Element> = {
+    sales: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
+    team: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />,
+    client: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />,
+    technical: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />,
+    general: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />,
+    onboarding: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />,
+    strategy: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />,
+  };
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      {icons[icon] || icons.general}
+    </svg>
+  );
+}
+
 interface DraftInlinePanelProps {
   draft: DraftWithMeeting;
   meetingIntel: MeetingIntelligence | null;
@@ -60,7 +87,17 @@ export function DraftInlinePanel({
   // Mode state
   const [isEditing, setIsEditing] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
-  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+
+  // Templates — fetched once, always visible
+  const [templates, setTemplates] = useState<MeetingTemplate[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
+  useEffect(() => {
+    fetch('/api/templates')
+      .then((r) => r.ok ? r.json() : { templates: [] })
+      .then((d) => setTemplates(d.templates || []))
+      .catch(() => {})
+      .finally(() => setTemplatesLoading(false));
+  }, []);
 
   // Action state
   const [isSending, setIsSending] = useState(false);
@@ -173,7 +210,6 @@ export function DraftInlinePanel({
       setDraft(newDraft);
       setEditSubject(newDraft.subject);
       setEditBody(ensureHtml(newDraft.body));
-      setShowTemplatePicker(false);
       setSuccess('Draft regenerated');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
@@ -263,14 +299,7 @@ export function DraftInlinePanel({
       <div className="grid grid-cols-12 gap-6">
         {/* Left: Email editing panel */}
         <div className="col-span-7 space-y-4">
-          {/* Template picker overlay */}
-          {showTemplatePicker ? (
-            <TemplatePicker
-              onSelect={handleRegenerate}
-              onCancel={() => setShowTemplatePicker(false)}
-              isRegenerating={isRegenerating}
-            />
-          ) : isRefining ? (
+          {isRefining ? (
             <ConversationalRefine
               draftId={draft.id}
               currentSubject={isEditing ? editSubject : draft.subject}
@@ -399,23 +428,14 @@ export function DraftInlinePanel({
                       Refine with AI
                     </button>
                     {draft.status !== 'sent' && (
-                      <>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setShowTemplatePicker(true); }}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
-                          Templates
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleRegenerate('default'); }}
-                          disabled={isRegenerating}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-orange-300 bg-orange-500/10 border border-orange-500/25 hover:bg-orange-500/20 disabled:opacity-50 transition-colors"
-                        >
-                          <svg className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                          {isRegenerating ? 'Regenerating\u2026' : 'Regenerate'}
-                        </button>
-                      </>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleRegenerate('default'); }}
+                        disabled={isRegenerating}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-orange-300 bg-orange-500/10 border border-orange-500/25 hover:bg-orange-500/20 disabled:opacity-50 transition-colors"
+                      >
+                        <svg className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        {isRegenerating ? 'Regenerating\u2026' : 'Regenerate'}
+                      </button>
                     )}
                     {draft.status !== 'sent' && draft.meetingHostEmail && (
                       <button
@@ -437,6 +457,33 @@ export function DraftInlinePanel({
                 initialRating={draft.userRating}
                 initialFeedback={draft.userFeedback}
               />
+
+              {/* Template strip — always visible */}
+              {!templatesLoading && templates.length > 0 && (
+                <div className="pt-3 border-t border-gray-700/30">
+                  <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
+                    Regenerate with Template
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {templates.map((t) => {
+                      const color = TEMPLATE_ICON_COLORS[t.icon] || TEMPLATE_ICON_COLORS.general;
+                      return (
+                        <button
+                          key={t.id}
+                          onClick={(e) => { e.stopPropagation(); handleRegenerate(t.id); }}
+                          disabled={isRegenerating}
+                          title={t.description}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 ${color}`}
+                        >
+                          <TemplateIcon icon={t.icon} className="w-3.5 h-3.5" />
+                          {t.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
