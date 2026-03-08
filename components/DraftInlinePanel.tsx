@@ -99,6 +99,34 @@ export function DraftInlinePanel({
       .finally(() => setTemplatesLoading(false));
   }, []);
 
+  // Sender & recipient state
+  const [recipientEmail, setRecipientEmail] = useState(initialDraft.meetingHostEmail || '');
+  const [senderEmail, setSenderEmail] = useState<string | null>(null);
+  const [suggestedRecipients, setSuggestedRecipients] = useState<Array<{ email: string; name?: string }>>([]);
+  const [loadingRecipients, setLoadingRecipients] = useState(false);
+
+  useEffect(() => {
+    if (draft.status === 'sent' || !draft.meetingId) return;
+    // Fetch sender info
+    fetch('/api/email/sender-info')
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d?.email) setSenderEmail(d.email); })
+      .catch(() => {});
+    // Fetch suggested recipients
+    setLoadingRecipients(true);
+    fetch(`/api/meetings/${draft.meetingId}/recipients`)
+      .then((r) => r.ok ? r.json() : { recipients: [] })
+      .then((d) => {
+        const recipients = d.recipients || [];
+        setSuggestedRecipients(recipients);
+        if (!recipientEmail && recipients.length > 0) {
+          setRecipientEmail(recipients[0].email);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingRecipients(false));
+  }, [draft.meetingId, draft.status]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Action state
   const [isSending, setIsSending] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -167,14 +195,17 @@ export function DraftInlinePanel({
 
   // Send email
   const handleSend = async () => {
-    if (!draft.meetingHostEmail) return;
+    if (!recipientEmail) {
+      setError('Please enter a recipient email address');
+      return;
+    }
     setIsSending(true);
     setError(null);
     try {
       const res = await fetch('/api/drafts/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ draftId: draft.id, recipientEmail: draft.meetingHostEmail }),
+        body: JSON.stringify({ draftId: draft.id, recipientEmail }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -361,10 +392,10 @@ export function DraftInlinePanel({
                 </div>
               )}
 
-              {/* Recipient */}
-              {draft.meetingHostEmail && (
+              {/* Recipient — shown inline when draft is sent */}
+              {draft.status === 'sent' && draft.meetingHostEmail && (
                 <p className="text-xs text-gray-400 light:text-gray-500 px-1">
-                  To: {draft.meetingHostEmail}
+                  Sent to: {draft.meetingHostEmail}
                 </p>
               )}
 
@@ -437,19 +468,85 @@ export function DraftInlinePanel({
                         {isRegenerating ? 'Regenerating\u2026' : 'Regenerate'}
                       </button>
                     )}
-                    {draft.status !== 'sent' && draft.meetingHostEmail && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleSend(); }}
-                        disabled={isSending}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm shadow-indigo-500/25 disabled:opacity-50 transition-all ml-auto"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                        {isSending ? 'Sending\u2026' : 'Send to Host'}
-                      </button>
-                    )}
                   </>
                 )}
               </div>
+
+              {/* Send section — recipient selection + sender info */}
+              {draft.status !== 'sent' && (
+                <div className="pt-3 border-t border-gray-700/30 space-y-3" onClick={(e) => e.stopPropagation()}>
+                  {/* Suggested recipients */}
+                  {suggestedRecipients.length > 0 && (
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Meeting attendees
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {suggestedRecipients.map((r) => (
+                          <button
+                            key={r.email}
+                            onClick={() => setRecipientEmail(r.email)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded-full transition-colors ${
+                              recipientEmail === r.email
+                                ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-500/50'
+                                : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:text-white'
+                            }`}
+                            title={r.name ? `${r.name} <${r.email}>` : r.email}
+                          >
+                            <span className="truncate max-w-[140px]">{r.name || r.email.split('@')[0]}</span>
+                            {recipientEmail === r.email && (
+                              <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {loadingRecipients && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Loading meeting attendees...
+                    </div>
+                  )}
+
+                  {/* Sender info */}
+                  {senderEmail && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Sending from <span className="text-gray-300">{senderEmail}</span>
+                    </div>
+                  )}
+
+                  {/* Recipient input + Send button */}
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      placeholder="Recipient email address"
+                      value={recipientEmail}
+                      onChange={(e) => setRecipientEmail(e.target.value)}
+                      className="flex-1 px-3 py-2 text-sm text-white light:text-gray-900 bg-gray-900/60 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none placeholder:text-gray-500"
+                      autoComplete="email"
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={isSending || !recipientEmail}
+                      className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm shadow-indigo-500/25 disabled:opacity-50 transition-all"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                      {isSending ? 'Sending\u2026' : 'Send'}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Feedback */}
               <DraftFeedback
