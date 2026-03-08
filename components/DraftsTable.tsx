@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import { StatusBadge } from './ui/StatusBadge';
 import { DraftPreviewModal } from './DraftPreviewModal';
-import { MeetingSummaryCard } from './dashboard/MeetingSummaryCard';
+import { DraftInlinePanel } from './DraftInlinePanel';
 
 // Meeting intelligence data returned by GET /api/meetings/[meetingId]
 interface MeetingIntelligence {
@@ -270,23 +270,11 @@ export function DraftsTable({
     onDraftUpdated();
   };
 
-  // Handle single draft send from expanded view
-  const handleSingleSend = async (draft: DraftWithMeeting) => {
-    if (!draft.meetingHostEmail) return;
-    try {
-      const res = await fetch('/api/drafts/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ draftId: draft.id, recipientEmail: draft.meetingHostEmail }),
-      });
-      if (res.ok) {
-        setExpandedDraftId(null);
-        onDraftUpdated();
-      }
-    } catch {
-      // Error handling — could show inline error but keeping it simple
-    }
-  };
+  // Handle closing the inline panel
+  const handleInlineClose = useCallback(() => {
+    setExpandedDraftId(null);
+    setBodyExpanded(false);
+  }, []);
 
   // Show all rows immediately (no stagger animation)
   useEffect(() => {
@@ -465,9 +453,6 @@ export function DraftsTable({
   const renderExpandedRow = (draft: DraftWithMeeting) => {
     const intel = meetingIntelCache.get(draft.meetingId);
     const isLoading = meetingIntelLoading.has(draft.meetingId);
-    const bodyText = draft.body?.replace(/<[^>]*>/g, '') || '';
-    const truncatedBody = bodyExpanded ? bodyText : bodyText.slice(0, 500);
-    const needsTruncation = bodyText.length > 500;
 
     return (
       <tr key={`${draft.id}-expanded`}>
@@ -478,120 +463,13 @@ export function DraftsTable({
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="px-6 py-6 bg-gray-800/40 light:bg-gray-50/80 border-t border-gray-700/30 light:border-gray-200 space-y-6">
-              {/* Meeting Intelligence — full-width, full-size (same as meeting detail page) */}
-              {isLoading ? (
-                <div className="bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 border border-indigo-500/20 rounded-2xl p-6">
-                  <div className="space-y-4 animate-pulse">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-5 h-5 bg-indigo-500/30 rounded" />
-                      <div className="h-5 w-40 bg-gray-700 light:bg-gray-200 rounded" />
-                    </div>
-                    <div className="h-4 w-full bg-gray-700 light:bg-gray-200 rounded" />
-                    <div className="h-4 w-5/6 bg-gray-700 light:bg-gray-200 rounded" />
-                    <div className="h-4 w-4/6 bg-gray-700 light:bg-gray-200 rounded" />
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                      <div className="space-y-2">
-                        <div className="h-3 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-                        <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded-lg" />
-                        <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded-lg" />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="h-3 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-                        <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded-lg" />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="h-3 w-24 bg-gray-700 light:bg-gray-200 rounded" />
-                        <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded-lg" />
-                        <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded-lg" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : intel?.summary ? (
-                <MeetingSummaryCard
-                  summary={intel.summary}
-                  keyTopics={intel.keyTopics}
-                  keyDecisions={intel.keyDecisions}
-                  actionItems={intel.actionItems}
-                />
-              ) : (
-                <div className="flex items-center justify-center py-8 text-sm text-gray-500 bg-gray-800/30 light:bg-gray-50 rounded-xl border border-gray-700/30 light:border-gray-200">
-                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  No meeting summary available
-                </div>
-              )}
-
-              {/* Draft Email Preview */}
-              <div className="bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-semibold text-white light:text-gray-900 flex items-center gap-2">
-                      <svg className="w-5 h-5 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      {draft.subject || 'Untitled Draft'}
-                    </h3>
-                    {draft.meetingHostEmail && (
-                      <p className="text-sm text-gray-400 light:text-gray-500 mt-1 ml-7">
-                        To: {draft.meetingHostEmail}
-                      </p>
-                    )}
-                  </div>
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedDraft(draft);
-                      }}
-                      className="px-4 py-2 text-sm font-medium rounded-lg text-gray-300 light:text-gray-700 bg-gray-700/50 light:bg-gray-100 border border-gray-600/50 light:border-gray-300 hover:bg-gray-700 light:hover:bg-gray-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
-                    >
-                      Edit
-                    </button>
-                    {draft.status !== 'sent' && draft.meetingHostEmail && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSingleSend(draft);
-                        }}
-                        className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
-                      >
-                        Send to Host
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Body preview */}
-                <div className="text-sm text-gray-300 light:text-gray-600 leading-relaxed whitespace-pre-wrap ml-7">
-                  {truncatedBody}
-                  {needsTruncation && !bodyExpanded && '\u2026'}
-                </div>
-                {needsTruncation && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setBodyExpanded(!bodyExpanded); }}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors mt-2 ml-7"
-                  >
-                    {bodyExpanded ? 'Show less' : 'Read more'}
-                  </button>
-                )}
-
-                {/* Quality + Engagement row */}
-                <div className="flex items-center gap-3 mt-4 ml-7 flex-wrap">
-                  {renderQualityBadge(draft)}
-                  {renderEngagementIndicators(draft)}
-                  {renderUserRating(draft)}
-                  {draft.generationDurationMs && (
-                    <span className="text-xs text-gray-500">
-                      Generated in {(draft.generationDurationMs / 1000).toFixed(1)}s
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
+            <DraftInlinePanel
+              draft={draft}
+              meetingIntel={intel || null}
+              meetingIntelLoading={isLoading}
+              onDraftUpdated={onDraftUpdated}
+              onClose={handleInlineClose}
+            />
           </motion.div>
         </td>
       </tr>

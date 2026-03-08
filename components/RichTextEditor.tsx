@@ -11,6 +11,8 @@ interface RichTextEditorProps {
   placeholder?: string;
   editable?: boolean;
   id?: string;
+  minHeight?: string;
+  maxHeight?: string;
 }
 
 export function RichTextEditor({
@@ -19,6 +21,8 @@ export function RichTextEditor({
   placeholder = 'Write your email\u2026',
   editable = true,
   id,
+  minHeight = '250px',
+  maxHeight = '400px',
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -201,13 +205,13 @@ export function RichTextEditor({
       {/* Editor Content */}
       <EditorContent
         editor={editor}
+        style={{ minHeight, maxHeight }}
         className={`
           prose prose-invert max-w-none
-          p-4 min-h-[250px] max-h-[400px] overflow-y-auto
+          p-4 overflow-y-auto
           focus-visible:outline-none
           [&_.ProseMirror]:outline-none
           [&_.ProseMirror:focus-visible]:ring-2 [&_.ProseMirror:focus-visible]:ring-mint/50
-          [&_.ProseMirror]:min-h-[200px]
           [&_.ProseMirror_p]:my-2
           [&_.ProseMirror_ul]:list-disc
           [&_.ProseMirror_ul]:pl-5
