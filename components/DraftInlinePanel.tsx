@@ -445,6 +445,7 @@ export function DraftInlinePanel({
                 ) : (
                   <>
                     <button
+                      data-tour="edit-draft"
                       onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
                       className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-sky-300 bg-sky-500/10 border border-sky-500/25 hover:bg-sky-500/20 transition-colors"
                     >
@@ -452,6 +453,7 @@ export function DraftInlinePanel({
                       Edit
                     </button>
                     <button
+                      data-tour="refine-draft"
                       onClick={(e) => { e.stopPropagation(); setIsRefining(true); }}
                       className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-violet-300 bg-violet-500/15 border border-violet-500/30 hover:bg-violet-500/25 transition-colors"
                     >
@@ -460,6 +462,7 @@ export function DraftInlinePanel({
                     </button>
                     {draft.status !== 'sent' && (
                       <button
+                        data-tour="regenerate-draft"
                         onClick={(e) => { e.stopPropagation(); handleRegenerate('default'); }}
                         disabled={isRegenerating}
                         className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-orange-300 bg-orange-500/10 border border-orange-500/25 hover:bg-orange-500/20 disabled:opacity-50 transition-colors"
@@ -474,7 +477,7 @@ export function DraftInlinePanel({
 
               {/* Send section — recipient selection + sender info */}
               {draft.status !== 'sent' && (
-                <div className="pt-3 border-t border-gray-700/30 space-y-3" onClick={(e) => e.stopPropagation()}>
+                <div data-tour="send-section" className="pt-3 border-t border-gray-700/30 space-y-3" onClick={(e) => e.stopPropagation()}>
                   {/* Suggested recipients */}
                   {suggestedRecipients.length > 0 && (
                     <div className="space-y-1.5">

@@ -727,11 +727,12 @@ export function DraftsTable({
               </tr>
             </thead>
             <tbody className="bg-gray-900/40 light:bg-white/60 divide-y divide-gray-700/50 light:divide-gray-200">
-              {drafts.map((draft) => {
+              {drafts.map((draft, index) => {
                 const isExpanded = expandedDraftId === draft.id;
                 return (
                   <Fragment key={draft.id}>
                     <tr
+                      data-tour={index === 0 ? 'draft-row' : undefined}
                       tabIndex={0}
                       className={`
                         group/row
