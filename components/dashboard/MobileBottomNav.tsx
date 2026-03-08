@@ -11,8 +11,8 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
+  { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Plan', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },

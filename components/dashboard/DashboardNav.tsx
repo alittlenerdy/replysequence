@@ -12,8 +12,8 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
+  { name: 'Drafts', href: '/dashboard', icon: FileText },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { name: 'Plan & Billing', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Waitlist', href: '/dashboard/waitlist', icon: Users },
