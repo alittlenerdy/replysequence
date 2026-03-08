@@ -224,7 +224,7 @@ export function DraftInlinePanel({
   };
 
   return (
-    <div className="px-6 py-6 bg-gray-800/40 light:bg-gray-50/80 border-t border-gray-700/30 light:border-gray-200">
+    <div className="px-6 py-6 bg-gradient-to-b from-gray-800/60 to-gray-800/30 light:from-gray-50 light:to-white border-t-2 border-indigo-500/40 light:border-indigo-400/30">
       {/* Error/Success feedback */}
       {error && (
         <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400">
@@ -238,7 +238,7 @@ export function DraftInlinePanel({
         </div>
       )}
       {success && (
-        <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-sm text-indigo-400">
+        <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-400">
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -283,9 +283,11 @@ export function DraftInlinePanel({
               {/* Header with actions */}
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-base font-semibold text-white light:text-gray-900 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-sm shadow-indigo-500/30">
+                    <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
                   Follow-up Email
                 </h3>
                 <div className="flex items-center gap-1.5">
@@ -344,11 +346,11 @@ export function DraftInlinePanel({
                     content={editBody}
                     onChange={setEditBody}
                     placeholder="Write your follow-up email..."
-                    minHeight="150px"
-                    maxHeight="300px"
+                    minHeight="200px"
+                    maxHeight="500px"
                   />
                 ) : (
-                  <div className="bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-lg p-4 max-h-[300px] overflow-y-auto">
+                  <div className="bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-lg p-4 max-h-[500px] overflow-y-auto">
                     {renderBody()}
                   </div>
                 )}
@@ -361,8 +363,9 @@ export function DraftInlinePanel({
                     <button
                       onClick={(e) => { e.stopPropagation(); handleSave(); }}
                       disabled={isSaving || !hasChanges}
-                      className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-sm shadow-emerald-500/25 disabled:opacity-50 transition-all"
                     >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                       {isSaving ? 'Saving\u2026' : 'Save'}
                     </button>
                     <button
@@ -373,8 +376,9 @@ export function DraftInlinePanel({
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setIsRefining(true); }}
-                      className="px-4 py-2 text-sm font-medium rounded-lg text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-violet-300 bg-violet-500/15 border border-violet-500/30 hover:bg-violet-500/25 transition-colors"
                     >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                       Refine with AI
                     </button>
                   </>
@@ -382,30 +386,44 @@ export function DraftInlinePanel({
                   <>
                     <button
                       onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
-                      className="px-4 py-2 text-sm font-medium rounded-lg text-gray-300 bg-gray-700/50 border border-gray-600/50 hover:bg-gray-700 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-sky-300 bg-sky-500/10 border border-sky-500/25 hover:bg-sky-500/20 transition-colors"
                     >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       Edit
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setIsRefining(true); }}
-                      className="px-4 py-2 text-sm font-medium rounded-lg text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-violet-300 bg-violet-500/15 border border-violet-500/30 hover:bg-violet-500/25 transition-colors"
                     >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                       Refine with AI
                     </button>
                     {draft.status !== 'sent' && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setShowTemplatePicker(true); }}
-                        className="px-4 py-2 text-sm font-medium rounded-lg text-gray-300 bg-gray-700/50 border border-gray-600/50 hover:bg-gray-700 transition-colors"
-                      >
-                        Regenerate
-                      </button>
+                      <>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setShowTemplatePicker(true); }}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
+                          Templates
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleRegenerate('default'); }}
+                          disabled={isRegenerating}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-orange-300 bg-orange-500/10 border border-orange-500/25 hover:bg-orange-500/20 disabled:opacity-50 transition-colors"
+                        >
+                          <svg className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                          {isRegenerating ? 'Regenerating\u2026' : 'Regenerate'}
+                        </button>
+                      </>
                     )}
                     {draft.status !== 'sent' && draft.meetingHostEmail && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleSend(); }}
                         disabled={isSending}
-                        className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 transition-colors ml-auto"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm shadow-indigo-500/25 disabled:opacity-50 transition-all ml-auto"
                       >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                         {isSending ? 'Sending\u2026' : 'Send to Host'}
                       </button>
                     )}
@@ -448,6 +466,7 @@ export function DraftInlinePanel({
               keyTopics={meetingIntel.keyTopics}
               keyDecisions={meetingIntel.keyDecisions}
               actionItems={meetingIntel.actionItems}
+              compact
             />
           ) : (
             <div className="flex items-center justify-center py-12 text-sm text-gray-500 bg-gray-800/30 rounded-xl border border-gray-700/30">
