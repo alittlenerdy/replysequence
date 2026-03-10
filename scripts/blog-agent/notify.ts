@@ -16,9 +16,8 @@ export async function notifySlack(params: {
   // Extract PR number from URL (e.g., "https://github.com/alittlenerdy/replysequence/pull/7" → "7")
   const prNumber = params.prUrl.split('/').pop() || '';
 
-  // Vercel preview URL pattern for the branch
-  const branchSlug = params.branch.replace(/\//g, '-').substring(0, 60);
-  const previewUrl = `https://replysequence-git-${branchSlug}-littleghosts.vercel.app`;
+  // Link to the PR checks tab where the Vercel deployment URL appears
+  const previewUrl = `${params.prUrl}/checks`;
 
   const blocks = [
     {
@@ -61,7 +60,7 @@ export async function notifySlack(params: {
         },
         {
           type: 'button',
-          text: { type: 'plain_text', text: 'Preview Site' },
+          text: { type: 'plain_text', text: 'Preview Deploy' },
           url: previewUrl,
           action_id: 'blog_preview',
         },
