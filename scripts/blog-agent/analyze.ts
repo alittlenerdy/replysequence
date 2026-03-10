@@ -75,7 +75,9 @@ Analyze these pain points and propose the most compelling blog post topic that w
       maxTokens: 500,
     });
 
-    const parsed = JSON.parse(content);
+    // Strip markdown code fences if Claude wraps the JSON
+    const cleaned = content.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+    const parsed = JSON.parse(cleaned);
 
     return {
       painPoints: topPainPoints,

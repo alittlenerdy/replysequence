@@ -67,7 +67,9 @@ Write the full blog post now.`;
       maxTokens: 4096,
     });
 
-    const parsed = JSON.parse(content);
+    // Strip markdown code fences if Claude wraps the JSON
+    const cleaned = content.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+    const parsed = JSON.parse(cleaned);
     const today = new Date().toISOString().split('T')[0];
 
     return {
