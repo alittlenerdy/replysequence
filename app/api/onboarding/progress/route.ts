@@ -62,6 +62,7 @@ export async function GET(request: NextRequest) {
     let outlookCalendarConnected = false;
     let emailConnected = false;
     let connectedEmail: string | null = null;
+    let emailProvider: string | null = null;
     let hubspotConnectedFlag = false;
     let salesforceConnectedFlag = false;
     let sheetsConnectedFlag = false;
@@ -97,7 +98,7 @@ export async function GET(request: NextRequest) {
 
       emailConnected = !!emailConnRows[0];
       connectedEmail = emailConnRows[0]?.email || null;
-      const emailProvider = emailConnRows[0]?.provider || null;
+      emailProvider = emailConnRows[0]?.provider || null;
 
       hubspotConnectedFlag = !!hubspotConnRows[0];
       salesforceConnectedFlag = !!salesforceConnRows[0];
