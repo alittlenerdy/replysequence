@@ -16,7 +16,8 @@
     "test-meet-poll": "tsx scripts/test-meet-poll.ts",
     "reencrypt-tokens": "tsx scripts/reencrypt-tokens.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "blog-agent": "tsx scripts/blog-agent/index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
@@ -57,6 +58,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.6",
+    "@rollup/rollup-darwin-arm64": "^4.59.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
