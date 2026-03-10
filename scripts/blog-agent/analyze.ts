@@ -47,7 +47,11 @@ export async function analyzePainPoints(painPoints: PainPoint[]): Promise<Analyz
     .map((p, i) => `${i + 1}. [${p.source}] (${p.engagement} engagement) "${p.text}"`)
     .join('\n');
 
+  const currentYear = new Date().getFullYear();
+
   const systemPrompt = `You are an SEO content strategist. Analyze these pain points from social media and propose a blog post topic.
+
+Important: The current year is ${currentYear}. If you reference a year in the title, use ${currentYear}. Never use past years like 2024 or 2025.
 
 Return ONLY valid JSON with this structure:
 {
