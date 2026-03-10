@@ -56,11 +56,20 @@ export async function publishDraft(draft: BlogDraft): Promise<{ prUrl: string; b
       return null;
     }
 
-    // Create branch
-    const branchName = `blog/${draft.date}-${draft.slug}`;
+    // Create branch with unique suffix if branch already exists
+    const baseBranch = `blog/${draft.date}-${draft.slug}`;
     exec('git checkout main');
     exec('git pull origin main');
-    exec(`git checkout -b ${branchName}`);
+
+    let branchName = baseBranch;
+    try {
+      exec(`git checkout -b ${branchName}`);
+    } catch {
+      // Branch exists locally or remotely — add numeric suffix
+      const suffix = Math.floor(Math.random() * 1000);
+      branchName = `${baseBranch}-${suffix}`;
+      exec(`git checkout -b ${branchName}`);
+    }
 
     // Insert new post at the beginning of the array
     const newEntry = formatBlogPostEntry(draft);

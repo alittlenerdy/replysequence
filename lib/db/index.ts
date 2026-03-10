@@ -10,8 +10,8 @@ const pool = new Pool({
   max: 1, // Single connection per serverless instance to avoid pool exhaustion
   idleTimeoutMillis: 20000,
   connectionTimeoutMillis: 10000,
-  // SSL required for Supabase
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  // SSL required for Supabase (both production and CI environments)
+  ssl: process.env.NODE_ENV === 'development' ? false : { rejectUnauthorized: false },
 });
 
 // Create drizzle instance
