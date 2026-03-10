@@ -372,10 +372,15 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         issueCount: qualityResult.issues.length,
       });
 
-      // Calculate costs
+      // Calculate costs (with prompt caching awareness)
       const inputTokens = response.inputTokens;
       const outputTokens = response.outputTokens;
-      const costUsd = calculateCost(inputTokens, outputTokens);
+      const costUsd = calculateCost(
+        inputTokens,
+        outputTokens,
+        response.cacheCreationTokens,
+        response.cacheReadTokens,
+      );
       const totalDurationMs = Date.now() - startTime;
 
       // Append action items to body if they exist

@@ -14,10 +14,12 @@ export const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
 // API timeout in milliseconds (20 seconds for Vercel)
 export const CLAUDE_API_TIMEOUT_MS = 20 * 1000;
 
-// Pricing per million tokens
+// Pricing per million tokens (Sonnet 4)
 export const CLAUDE_PRICING = {
   inputPerMillion: 3.00,
   outputPerMillion: 15.00,
+  cacheWritePerMillion: 3.75,  // 25% premium on first cache write
+  cacheReadPerMillion: 0.30,   // 90% discount on cache hits
 };
 
 // Singleton Anthropic client
@@ -69,12 +71,23 @@ export function log(
 }
 
 /**
- * Calculate cost for a Claude API call
+ * Calculate cost for a Claude API call, with prompt caching support.
+ * When cache tokens are provided, they're priced at the discounted cache rates
+ * instead of the standard input rate.
  */
-export function calculateCost(inputTokens: number, outputTokens: number): number {
-  const inputCost = (inputTokens / 1_000_000) * CLAUDE_PRICING.inputPerMillion;
+export function calculateCost(
+  inputTokens: number,
+  outputTokens: number,
+  cacheCreationTokens = 0,
+  cacheReadTokens = 0,
+): number {
+  // Non-cached input tokens (subtract cached portions)
+  const standardInputTokens = Math.max(0, inputTokens - cacheCreationTokens - cacheReadTokens);
+  const inputCost = (standardInputTokens / 1_000_000) * CLAUDE_PRICING.inputPerMillion;
   const outputCost = (outputTokens / 1_000_000) * CLAUDE_PRICING.outputPerMillion;
-  return inputCost + outputCost;
+  const cacheWriteCost = (cacheCreationTokens / 1_000_000) * CLAUDE_PRICING.cacheWritePerMillion;
+  const cacheReadCost = (cacheReadTokens / 1_000_000) * CLAUDE_PRICING.cacheReadPerMillion;
+  return inputCost + outputCost + cacheWriteCost + cacheReadCost;
 }
 
 /**
@@ -96,6 +109,8 @@ export async function callClaudeAPI({
   content: string;
   inputTokens: number;
   outputTokens: number;
+  cacheCreationTokens: number;
+  cacheReadTokens: number;
   stopReason: string;
 }> {
   const startTime = Date.now();
@@ -113,7 +128,13 @@ export async function callClaudeAPI({
     const stream = client.messages.stream({
       model: CLAUDE_MODEL,
       max_tokens: maxTokens,
-      system: systemPrompt,
+      system: [
+        {
+          type: 'text' as const,
+          text: systemPrompt,
+          cache_control: { type: 'ephemeral' as const },
+        },
+      ],
       messages: [{ role: 'user', content: userPrompt }],
     });
 
@@ -130,18 +151,26 @@ export async function callClaudeAPI({
       throw new Error('No text content in response');
     }
 
+    const usage = finalMessage.usage;
+    const cacheCreationTokens = (usage as unknown as Record<string, number>).cache_creation_input_tokens || 0;
+    const cacheReadTokens = (usage as unknown as Record<string, number>).cache_read_input_tokens || 0;
+
     log('info', 'Claude API streaming success', {
       latency: elapsed,
-      inputTokens: finalMessage.usage.input_tokens,
-      outputTokens: finalMessage.usage.output_tokens,
+      inputTokens: usage.input_tokens,
+      outputTokens: usage.output_tokens,
+      cacheCreationTokens,
+      cacheReadTokens,
       contentLength: textBlock.text.length,
       stopReason: finalMessage.stop_reason,
     });
 
     return {
       content: textBlock.text,
-      inputTokens: finalMessage.usage.input_tokens,
-      outputTokens: finalMessage.usage.output_tokens,
+      inputTokens: usage.input_tokens,
+      outputTokens: usage.output_tokens,
+      cacheCreationTokens,
+      cacheReadTokens,
       stopReason: finalMessage.stop_reason || 'end_turn',
     };
   } catch (error: unknown) {

@@ -137,7 +137,13 @@ BODY:
       messages: [
         { role: 'user', content: userPrompt }
       ],
-      system: systemPrompt,
+      system: [
+        {
+          type: 'text' as const,
+          text: systemPrompt,
+          cache_control: { type: 'ephemeral' as const },
+        },
+      ],
     });
 
     const content = response.content[0];
@@ -148,7 +154,9 @@ BODY:
     const refinedContent = content.text.trim();
     const inputTokens = response.usage.input_tokens;
     const outputTokens = response.usage.output_tokens;
-    const costUsd = calculateCost(inputTokens, outputTokens);
+    const cacheCreation = (response.usage as unknown as Record<string, number>).cache_creation_input_tokens || 0;
+    const cacheRead = (response.usage as unknown as Record<string, number>).cache_read_input_tokens || 0;
+    const costUsd = calculateCost(inputTokens, outputTokens, cacheCreation, cacheRead);
 
     log('info', '[REFINE-2] Claude API response received', {
       draftId,

@@ -151,7 +151,13 @@ Now grade this email on the 4 dimensions (tone, completeness, personalization, a
     const message = await client.messages.create({
       model: HAIKU_MODEL,
       max_tokens: 500, // Small response needed
-      system: GRADING_SYSTEM_PROMPT,
+      system: [
+        {
+          type: 'text' as const,
+          text: GRADING_SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' as const },
+        },
+      ],
       messages: [{ role: 'user', content: userPrompt }],
     });
 

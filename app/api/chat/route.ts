@@ -207,7 +207,13 @@ User's question: ${message}`;
     const stream = client.messages.stream({
       model: CLAUDE_MODEL,
       max_tokens: 2048,
-      system: SYSTEM_PROMPT,
+      system: [
+        {
+          type: 'text' as const,
+          text: SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' as const },
+        },
+      ],
       messages: claudeMessages,
     });
 
