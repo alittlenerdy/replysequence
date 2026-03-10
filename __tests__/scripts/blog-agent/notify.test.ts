@@ -9,7 +9,7 @@ describe('notify', () => {
   it('skips notification when SLACK_BOT_TOKEN is not set', async () => {
     delete process.env.SLACK_BOT_TOKEN;
     global.fetch = vi.fn();
-    await notifySlack({ title: 'Test', excerpt: 'Test', tags: ['test'], prUrl: 'https://github.com/pr/1' });
+    await notifySlack({ title: 'Test', excerpt: 'Test', tags: ['test'], prUrl: 'https://github.com/pr/1', branch: 'blog/test' });
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
@@ -24,6 +24,7 @@ describe('notify', () => {
       excerpt: 'A deep dive into follow-up friction.',
       tags: ['sales', 'automation'],
       prUrl: 'https://github.com/alittlenerdy/replysequence/pull/42',
+      branch: 'blog/2026-03-10-why-sales-teams-waste-hours',
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
@@ -40,7 +41,10 @@ describe('notify', () => {
     expect(body.channel).toBe('C0ALL6NQSLQ');
     expect(body.blocks).toHaveLength(4);
     expect(body.blocks[0].type).toBe('header');
-    expect(body.blocks[3].elements[0].url).toContain('pull/42');
+    // First two buttons are approve/reject (no url), third is preview, fourth is view PR
+    expect(body.blocks[3].elements[0].action_id).toBe('blog_approve');
+    expect(body.blocks[3].elements[1].action_id).toBe('blog_reject');
+    expect(body.blocks[3].elements[3].url).toContain('pull/42');
   });
 
   it('handles Slack API errors gracefully', async () => {
@@ -50,7 +54,7 @@ describe('notify', () => {
     });
 
     await expect(
-      notifySlack({ title: 'Test', excerpt: 'Test', tags: ['test'], prUrl: 'https://github.com/pr/1' })
+      notifySlack({ title: 'Test', excerpt: 'Test', tags: ['test'], prUrl: 'https://github.com/pr/1', branch: 'blog/test' })
     ).resolves.toBeUndefined();
   });
 });

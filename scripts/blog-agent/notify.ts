@@ -5,12 +5,20 @@ export async function notifySlack(params: {
   excerpt: string;
   tags: string[];
   prUrl: string;
+  branch: string;
 }): Promise<void> {
   const token = process.env.SLACK_BOT_TOKEN;
   if (!token) {
     console.log(JSON.stringify({ level: 'warn', message: 'SLACK_BOT_TOKEN not set, skipping Slack notification' }));
     return;
   }
+
+  // Extract PR number from URL (e.g., "https://github.com/alittlenerdy/replysequence/pull/7" → "7")
+  const prNumber = params.prUrl.split('/').pop() || '';
+
+  // Vercel preview URL pattern for the branch
+  const branchSlug = params.branch.replace(/\//g, '-').substring(0, 60);
+  const previewUrl = `https://replysequence-git-${branchSlug}-littleghosts.vercel.app`;
 
   const blocks = [
     {
@@ -35,12 +43,33 @@ export async function notifySlack(params: {
     },
     {
       type: 'actions',
+      block_id: `blog_pr_${prNumber}`,
       elements: [
         {
           type: 'button',
-          text: { type: 'plain_text', text: 'Review PR' },
-          url: params.prUrl,
+          text: { type: 'plain_text', text: 'Approve & Merge' },
           style: 'primary',
+          action_id: 'blog_approve',
+          value: prNumber,
+        },
+        {
+          type: 'button',
+          text: { type: 'plain_text', text: 'Reject' },
+          style: 'danger',
+          action_id: 'blog_reject',
+          value: prNumber,
+        },
+        {
+          type: 'button',
+          text: { type: 'plain_text', text: 'Preview Site' },
+          url: previewUrl,
+          action_id: 'blog_preview',
+        },
+        {
+          type: 'button',
+          text: { type: 'plain_text', text: 'View PR' },
+          url: params.prUrl,
+          action_id: 'blog_view_pr',
         },
       ],
     },

@@ -113,6 +113,7 @@ export async function main() {
     excerpt: draft.excerpt,
     tags: draft.tags,
     prUrl: result.prUrl,
+    branch: result.branch,
   });
 
   const elapsed = Date.now() - startTime;
