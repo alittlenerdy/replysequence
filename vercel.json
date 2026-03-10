@@ -50,6 +50,9 @@
     },
     "app/api/cron/conversion-nudge/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/waitlist-nudge/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
@@ -99,6 +102,10 @@
     },
     {
       "path": "/api/cron/conversion-nudge",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/waitlist-nudge",
       "schedule": "*/15 * * * *"
     }
   ]
