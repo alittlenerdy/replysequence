@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq, and } from 'drizzle-orm';
-import { db, users, emailConnections } from '@/lib/db';
+import { db, emailConnections } from '@/lib/db';
 
 export async function DELETE() {
   try {
@@ -28,20 +28,6 @@ export async function DELETE() {
           eq(emailConnections.provider, 'outlook')
         )
       );
-
-    // Check if user still has any email connections (e.g. Gmail)
-    const [remainingEmail] = await db
-      .select({ id: emailConnections.id })
-      .from(emailConnections)
-      .where(eq(emailConnections.userId, dbUser.id))
-      .limit(1);
-
-    if (!remainingEmail) {
-      await db
-        .update(users)
-        .set({ emailConnected: false, updatedAt: new Date() })
-        .where(eq(users.id, dbUser.id));
-    }
 
     console.log(JSON.stringify({
       level: 'info',
