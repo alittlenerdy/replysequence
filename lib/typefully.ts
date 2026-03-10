@@ -59,6 +59,70 @@ export async function listPublishedDrafts(
 }
 
 /**
+ * Create a tweet thread draft on X. Schedules to next free slot by default.
+ */
+export async function createThreadDraft(
+  socialSetId: number,
+  posts: { text: string }[],
+  scheduleSlot: 'next-free-slot' | 'queue' = 'next-free-slot'
+): Promise<{ id: number }> {
+  const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/drafts`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({
+      platforms: {
+        x: {
+          enabled: true,
+          posts: posts.map(p => ({ text: p.text })),
+        },
+      },
+      schedule: scheduleSlot,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Typefully create thread error ${res.status}: ${body}`);
+  }
+
+  return res.json();
+}
+
+/**
+ * Create a LinkedIn post draft. Schedules to next free slot by default.
+ */
+export async function createLinkedInDraft(
+  socialSetId: number,
+  text: string,
+  scheduleSlot: 'next-free-slot' | 'queue' = 'next-free-slot'
+): Promise<{ id: number }> {
+  const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/drafts`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({
+      platforms: {
+        linkedin: {
+          enabled: true,
+          posts: [{ text }],
+        },
+      },
+      schedule: scheduleSlot,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Typefully create LinkedIn draft error ${res.status}: ${body}`);
+  }
+
+  return res.json();
+}
+
+/**
  * Create a quote-tweet draft on X. Schedules to next free slot by default.
  */
 export async function createQuoteTweet(

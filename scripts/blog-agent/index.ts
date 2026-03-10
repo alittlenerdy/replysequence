@@ -5,6 +5,7 @@ import { generateBlogPost } from './generate';
 import { publishDraft, getExistingSlugs } from './publish';
 import { notifySlack } from './notify';
 import { generateHeroImage } from './generate-image';
+import { distributeBlogPost } from './distribute';
 import { readFileSync } from 'fs';
 import { db, users } from '@/lib/db';
 import { eq } from 'drizzle-orm';
@@ -119,7 +120,25 @@ export async function main() {
     process.exit(1);
   }
 
-  // Step 8: Notify Slack
+  // Step 8: Create social media drafts (non-blocking)
+  const socialResult = await distributeBlogPost(draft).catch((err) => {
+    console.log(JSON.stringify({
+      level: 'error',
+      message: 'Social distribution failed (non-blocking)',
+      error: err instanceof Error ? err.message : String(err),
+    }));
+    return { tweetThreadId: undefined, linkedInDraftId: undefined, quoteRtId: undefined };
+  });
+
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Social distribution complete',
+    tweetThreadId: socialResult.tweetThreadId ?? null,
+    linkedInDraftId: socialResult.linkedInDraftId ?? null,
+    quoteRtId: socialResult.quoteRtId ?? null,
+  }));
+
+  // Step 9: Notify Slack
   await notifySlack({
     title: draft.title,
     excerpt: draft.excerpt,
