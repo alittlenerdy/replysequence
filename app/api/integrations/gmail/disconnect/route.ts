@@ -48,6 +48,20 @@ export async function DELETE() {
       )
       .returning();
 
+    // 4. Check if user still has any email connections (e.g. Outlook)
+    const [remainingEmail] = await db
+      .select({ id: emailConnections.id })
+      .from(emailConnections)
+      .where(eq(emailConnections.userId, dbUser.id))
+      .limit(1);
+
+    if (!remainingEmail) {
+      await db
+        .update(users)
+        .set({ emailConnected: false, updatedAt: new Date() })
+        .where(eq(users.id, dbUser.id));
+    }
+
     console.log(JSON.stringify({
       level: 'info',
       tag: `${tag}-2`,

@@ -104,7 +104,9 @@ function OnboardingContent() {
           connectedCRM: data.hubspotConnected ? 'hubspot' : data.salesforceConnected ? 'salesforce' : data.sheetsConnected ? 'sheets' : null,
           emailPreference: data.emailPreference || 'review',
           isLoading: false,
-          isReturningUser: data.currentStep > 1,
+          isReturningUser: data.currentStep > 1 && data.createdAt
+            ? (Date.now() - new Date(data.createdAt).getTime()) > 5 * 60 * 1000
+            : false,
         }));
       } else {
         setState(prev => ({ ...prev, isLoading: false }));
