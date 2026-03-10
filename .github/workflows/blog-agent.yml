@@ -51,6 +51,7 @@ jobs:
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_POOLER: ${{ secrets.DATABASE_URL_POOLER }}
           ADMIN_CLERK_ID: ${{ secrets.ADMIN_CLERK_ID }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx tsx scripts/blog-agent/index.ts
