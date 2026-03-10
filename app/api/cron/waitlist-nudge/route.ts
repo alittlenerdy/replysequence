@@ -11,6 +11,7 @@ import { db } from '@/lib/db';
 import { waitlistEntries } from '@/lib/db/schema';
 import { and, eq, lt, isNotNull, isNull } from 'drizzle-orm';
 import { Resend } from 'resend';
+import { notifyAgentSlack } from '@/lib/slack-agents';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -117,15 +118,39 @@ export async function GET(request: NextRequest) {
       durationMs,
     }));
 
+    if (nudged > 0 || errors > 0) {
+      await notifyAgentSlack({
+        agent: 'Waitlist Nudge',
+        status: errors > 0 ? 'warning' : 'success',
+        summary: nudged > 0
+          ? `Sent ${nudged} waitlist reminder${nudged > 1 ? 's' : ''}${errors > 0 ? ` (${errors} failed)` : ''}`
+          : `${errors} waitlist email${errors > 1 ? 's' : ''} failed to send`,
+        details: {
+          'Eligible': eligibleEntries.length,
+          'Nudged': nudged,
+          ...(errors > 0 && { 'Errors': errors }),
+        },
+        durationMs,
+      });
+    }
+
     return NextResponse.json({ processed: eligibleEntries.length, nudged, errors, durationMs });
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     console.log(JSON.stringify({
       level: 'error',
       tag: '[WAITLIST-NUDGE]',
       message: 'Cron failed',
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMsg,
       durationMs: Date.now() - startTime,
     }));
+    await notifyAgentSlack({
+      agent: 'Waitlist Nudge',
+      status: 'error',
+      summary: 'Cron crashed',
+      details: { 'Error': errorMsg },
+      durationMs: Date.now() - startTime,
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

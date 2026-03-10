@@ -17,6 +17,7 @@ import { db } from '@/lib/db';
 import { users, usageLogs, drafts, meetings } from '@/lib/db/schema';
 import { eq, and, gte, sql, count } from 'drizzle-orm';
 import { Resend } from 'resend';
+import { notifyAgentSlack } from '@/lib/slack-agents';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -200,15 +201,41 @@ export async function GET(request: NextRequest) {
       durationMs,
     }));
 
+    // Notify Slack on activity or errors
+    if (nudged > 0 || errors > 0) {
+      await notifyAgentSlack({
+        agent: 'Conversion Nudge',
+        status: errors > 0 ? 'warning' : 'success',
+        summary: nudged > 0
+          ? `Sent ${nudged} upgrade nudge${nudged > 1 ? 's' : ''}${errors > 0 ? ` (${errors} failed)` : ''}`
+          : `${errors} nudge email${errors > 1 ? 's' : ''} failed to send`,
+        details: {
+          'Eligible users': freeUsersWithUsage.length,
+          'Already nudged': nudgedSet.size,
+          'Nudged': nudged,
+          ...(errors > 0 && { 'Errors': errors }),
+        },
+        durationMs,
+      });
+    }
+
     return NextResponse.json({ processed: freeUsersWithUsage.length, nudged, errors, durationMs });
   } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     console.log(JSON.stringify({
       level: 'error',
       tag: '[NUDGE]',
       message: 'Conversion nudge cron failed',
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMsg,
       durationMs: Date.now() - startTime,
     }));
+    await notifyAgentSlack({
+      agent: 'Conversion Nudge',
+      status: 'error',
+      summary: 'Cron crashed',
+      details: { 'Error': errorMsg },
+      durationMs: Date.now() - startTime,
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

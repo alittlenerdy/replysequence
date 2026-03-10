@@ -15,6 +15,7 @@ import { refreshHubSpotToken } from '@/lib/hubspot';
 import { refreshSalesforceToken } from '@/lib/salesforce';
 import { refreshGmailToken, refreshOutlookToken } from '@/lib/email-sender';
 import { sendEmail } from '@/lib/email';
+import { notifyAgentSlack } from '@/lib/slack-agents';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -414,10 +415,48 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Notify Slack — always on failures, summary on success if tokens were checked
+    if (failed > 0) {
+      const failedPlatforms = results
+        .filter((r) => r.status === 'failed')
+        .map((r) => r.platform)
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .join(', ');
+      await notifyAgentSlack({
+        agent: 'Token Health',
+        status: 'error',
+        summary: `${failed} token refresh${failed > 1 ? 'es' : ''} failed`,
+        details: {
+          'Failed platforms': failedPlatforms,
+          'Total checked': total,
+          'Refreshed': refreshed,
+          'Failed': failed,
+        },
+        durationMs: summary.duration,
+      });
+    } else if (total > 0) {
+      await notifyAgentSlack({
+        agent: 'Token Health',
+        status: 'success',
+        summary: `${refreshed} token${refreshed > 1 ? 's' : ''} refreshed successfully`,
+        details: {
+          'Total checked': total,
+          'Refreshed': refreshed,
+        },
+        durationMs: summary.duration,
+      });
+    }
+
     return NextResponse.json({ success: true, ...summary });
   } catch (error) {
-    log('error', 'Token health check failed', {
-      error: error instanceof Error ? error.message : String(error),
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    log('error', 'Token health check failed', { error: errorMsg });
+    await notifyAgentSlack({
+      agent: 'Token Health',
+      status: 'error',
+      summary: 'Cron crashed',
+      details: { 'Error': errorMsg },
+      durationMs: Date.now() - startTime,
     });
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
