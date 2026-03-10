@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import type { BlogPost } from '@/lib/blog-data';
 
@@ -64,7 +65,20 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
               href={`/blog/${post.slug}`}
               className="group block"
             >
-              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5 light:hover:shadow-indigo-400/10">
+              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5 light:hover:shadow-indigo-400/10">
+                {/* Hero Image */}
+                {post.heroImage && (
+                  <div className="relative w-full aspect-[16/9]">
+                    <Image
+                      src={post.heroImage}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags.slice(0, 2).map((tag) => (
@@ -107,6 +121,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
                     Read article
                     <ArrowRight className="w-4 h-4" />
                   </span>
+                </div>
                 </div>
               </article>
             </Link>

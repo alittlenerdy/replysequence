@@ -27,6 +27,7 @@ export interface BlogDraft {
   author: string;
   tags: string[];
   readingTime: number;
+  heroImage?: string;
 }
 
 export interface VoicePreferences {

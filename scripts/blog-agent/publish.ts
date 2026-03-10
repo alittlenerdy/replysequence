@@ -22,6 +22,8 @@ export function formatBlogPostEntry(draft: BlogDraft): string {
   const escapedExcerpt = draft.excerpt.replace(/'/g, "\\'");
   const escapedTitle = draft.title.replace(/'/g, "\\'");
 
+  const heroImageLine = draft.heroImage ? `\n    heroImage: '${draft.heroImage}',` : '';
+
   return `  {
     title: '${escapedTitle}',
     slug: '${draft.slug}',
@@ -30,7 +32,7 @@ export function formatBlogPostEntry(draft: BlogDraft): string {
     date: '${draft.date}',
     author: '${draft.author}',
     tags: [${draft.tags.map((t) => `'${t}'`).join(', ')}],
-    readingTime: ${draft.readingTime},
+    readingTime: ${draft.readingTime},${heroImageLine}
     content: \`
 ${escapedContent}
 \`,
@@ -94,8 +96,11 @@ export async function publishDraft(draft: BlogDraft): Promise<{ prUrl: string; b
     );
     writeFileSync(BLOG_DATA_PATH, updatedContent);
 
-    // Commit and push
+    // Stage blog data and any generated images
     exec(`git add ${BLOG_DATA_PATH}`);
+    if (draft.heroImage) {
+      exec(`git add public/blog/images/`);
+    }
     exec(`git commit -m "feat(blog): add post \\"${draft.title}\\""`);
     exec(`git push origin ${branchName}`);
 

@@ -4,6 +4,7 @@ import { blogPosts, getBlogPost, getAllBlogSlugs } from '@/lib/blog-data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { Calendar, Clock, ArrowLeft, User } from 'lucide-react';
 import { ShareButtons } from './ShareButtons';
 import { BlogNewsletterSignup } from '@/components/blog/BlogNewsletterSignup';
@@ -36,6 +37,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       publishedTime: post.date,
       authors: [post.author],
       tags: post.tags,
+      ...(post.heroImage && {
+        images: [{ url: `https://www.replysequence.com${post.heroImage}`, width: 1200, height: 675 }],
+      }),
     },
     twitter: {
       card: 'summary_large_image',
@@ -256,6 +260,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {post.readingTime} min read
             </span>
           </div>
+
+          {/* Hero Image */}
+          {post.heroImage && (
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-10">
+              <Image
+                src={post.heroImage}
+                alt={post.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
 
           {/* Share Buttons */}
           <div className="flex items-center justify-between mb-10">

@@ -4,6 +4,7 @@ import { analyzePainPoints, deduplicateAgainstExisting } from './analyze';
 import { generateBlogPost } from './generate';
 import { publishDraft, getExistingSlugs } from './publish';
 import { notifySlack } from './notify';
+import { generateHeroImage } from './generate-image';
 import { readFileSync } from 'fs';
 import { db, users } from '@/lib/db';
 import { eq } from 'drizzle-orm';
@@ -100,14 +101,25 @@ export async function main() {
     wordCount: draft.content.split(/\s+/).length,
   }));
 
-  // Step 6: Create PR
+  // Step 6: Generate hero image (non-blocking — post publishes without image if this fails)
+  const heroImage = await generateHeroImage({
+    title: draft.title,
+    tags: draft.tags,
+    slug: draft.slug,
+    date: draft.date,
+  });
+  if (heroImage) {
+    draft.heroImage = heroImage;
+  }
+
+  // Step 7: Create PR
   const result = await publishDraft(draft);
   if (!result) {
     console.log(JSON.stringify({ level: 'error', message: 'PR creation failed' }));
     process.exit(1);
   }
 
-  // Step 7: Notify Slack
+  // Step 8: Notify Slack
   await notifySlack({
     title: draft.title,
     excerpt: draft.excerpt,
