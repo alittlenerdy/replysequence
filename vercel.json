@@ -44,6 +44,9 @@
     },
     "app/api/cron/token-health/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/webhook-health/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
@@ -86,6 +89,10 @@
     {
       "path": "/api/cron/token-health",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/webhook-health",
+      "schedule": "*/15 * * * *"
     }
   ]
 }
