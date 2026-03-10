@@ -432,7 +432,7 @@ export const users = pgTable(
 );
 
 // Usage action types
-export type UsageAction = 'draft_generated' | 'meeting_processed' | 'email_sent';
+export type UsageAction = 'draft_generated' | 'meeting_processed' | 'email_sent' | 'conversion_nudge_sent';
 
 // Usage logs table - tracks user actions for free tier limits
 export const usageLogs = pgTable(

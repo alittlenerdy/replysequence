@@ -47,6 +47,9 @@
     },
     "app/api/cron/webhook-health/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/conversion-nudge/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [
@@ -92,6 +95,10 @@
     },
     {
       "path": "/api/cron/webhook-health",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/conversion-nudge",
       "schedule": "*/15 * * * *"
     }
   ]
