@@ -24,14 +24,8 @@ export async function generateHeroImage(params: {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-preview-05-20',
+      model: 'gemini-2.5-flash-image',
       contents: prompt,
-      config: {
-        responseModalities: ['image'],
-        imageConfig: {
-          aspectRatio: '16:9',
-        },
-      },
     });
 
     const parts = response.candidates?.[0]?.content?.parts;
