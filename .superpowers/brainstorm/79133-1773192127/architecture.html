@@ -1,0 +1,196 @@
+<h2>DelveStats — Architecture Overview</h2>
+<p class="subtitle">Review each section. Does this match what you're envisioning?</p>
+
+<div class="section">
+  <h3>System Architecture</h3>
+  <div class="mockup">
+    <div class="mockup-header">How it all fits together</div>
+    <div class="mockup-body" style="background: #0f1117; padding: 24px; font-family: monospace; font-size: 11px; color: #e1e4e8;">
+
+      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <div style="flex:1; text-align: center;">
+          <div style="background: #f0883e22; border: 1px solid #f0883e; border-radius: 8px; padding: 12px;">
+            <div style="color: #f0883e; font-weight: bold;">Anthropic API</div>
+            <div style="color: #666; font-size: 10px;">Usage endpoint</div>
+          </div>
+        </div>
+        <div style="flex:1; text-align: center;">
+          <div style="background: #7c8aff22; border: 1px solid #7c8aff; border-radius: 8px; padding: 12px;">
+            <div style="color: #7c8aff; font-weight: bold;">Google AI API</div>
+            <div style="color: #666; font-size: 10px;">Billing endpoint</div>
+          </div>
+        </div>
+        <div style="flex:1; text-align: center;">
+          <div style="background: #3fb95022; border: 1px solid #3fb950; border-radius: 8px; padding: 12px;">
+            <div style="color: #3fb950; font-weight: bold;">OpenAI API</div>
+            <div style="color: #666; font-size: 10px;">Usage endpoint</div>
+          </div>
+        </div>
+        <div style="flex:1; text-align: center;">
+          <div style="background: #da70d622; border: 1px solid #da70d6; border-radius: 8px; padding: 12px;">
+            <div style="color: #da70d6; font-weight: bold;">Kimi API</div>
+            <div style="color: #666; font-size: 10px;">Usage endpoint</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; color: #444; margin-bottom: 8px;">▼ &nbsp; ▼ &nbsp; ▼ &nbsp; ▼</div>
+      <div style="text-align: center; color: #666; font-size: 10px; margin-bottom: 16px;">Cron polls every hour</div>
+
+      <div style="background: #161b22; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <span style="color: #e1e4e8; font-weight: bold; font-size: 14px;">DelveStats (Next.js)</span>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="flex:1; background: #0f1117; border-radius: 8px; padding: 10px; text-align: center;">
+            <div style="color: #7c8aff; font-size: 10px; font-weight: bold;">PROVIDER ADAPTERS</div>
+            <div style="color: #555; font-size: 9px; margin-top: 4px;">Normalize each API's<br>response format</div>
+          </div>
+          <div style="flex:1; background: #0f1117; border-radius: 8px; padding: 10px; text-align: center;">
+            <div style="color: #f0883e; font-size: 10px; font-weight: bold;">CRON HANDLER</div>
+            <div style="color: #555; font-size: 9px; margin-top: 4px;">Scheduled polling<br>via Vercel Cron</div>
+          </div>
+          <div style="flex:1; background: #0f1117; border-radius: 8px; padding: 10px; text-align: center;">
+            <div style="color: #3fb950; font-size: 10px; font-weight: bold;">ALERT ENGINE</div>
+            <div style="color: #555; font-size: 9px; margin-top: 4px;">Threshold checks<br>→ webhook POST</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex:1; background: #0f1117; border-radius: 8px; padding: 10px; text-align: center;">
+            <div style="color: #da70d6; font-size: 10px; font-weight: bold;">DASHBOARD UI</div>
+            <div style="color: #555; font-size: 9px; margin-top: 4px;">React + Charts<br>Overview / Cards / Table</div>
+          </div>
+          <div style="flex:1; background: #0f1117; border-radius: 8px; padding: 10px; text-align: center;">
+            <div style="color: #e1e4e8; font-size: 10px; font-weight: bold;">SQLite + DRIZZLE</div>
+            <div style="color: #555; font-size: 9px; margin-top: 4px;">Usage records<br>Provider configs</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; color: #444; margin-bottom: 8px;">▼ threshold exceeded</div>
+
+      <div style="display: flex; gap: 16px;">
+        <div style="flex:1; text-align: center;">
+          <div style="background: #161b22; border: 1px solid #333; border-radius: 8px; padding: 10px;">
+            <div style="color: #e1e4e8; font-size: 10px;">Slack (default)</div>
+          </div>
+        </div>
+        <div style="flex:1; text-align: center;">
+          <div style="background: #161b22; border: 1px solid #333; border-radius: 8px; padding: 10px;">
+            <div style="color: #e1e4e8; font-size: 10px;">Discord</div>
+          </div>
+        </div>
+        <div style="flex:1; text-align: center;">
+          <div style="background: #161b22; border: 1px solid #333; border-radius: 8px; padding: 10px;">
+            <div style="color: #e1e4e8; font-size: 10px;">Any Webhook</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Data Model</h3>
+  <div class="mockup">
+    <div class="mockup-header">SQLite Tables (via Drizzle ORM)</div>
+    <div class="mockup-body" style="background: #0f1117; padding: 20px; font-family: monospace; font-size: 11px; color: #e1e4e8;">
+      <div style="display: flex; gap: 16px;">
+        <div style="flex:1;">
+          <div style="color: #7c8aff; font-weight: bold; margin-bottom: 8px;">usage_records</div>
+          <div style="background: #161b22; border-radius: 6px; padding: 10px; line-height: 1.8;">
+            <div><span style="color: #f0883e;">id</span> <span style="color: #555;">INTEGER PK</span></div>
+            <div><span style="color: #3fb950;">provider</span> <span style="color: #555;">TEXT</span></div>
+            <div><span style="color: #3fb950;">model</span> <span style="color: #555;">TEXT</span></div>
+            <div><span style="color: #3fb950;">input_tokens</span> <span style="color: #555;">INTEGER</span></div>
+            <div><span style="color: #3fb950;">output_tokens</span> <span style="color: #555;">INTEGER</span></div>
+            <div><span style="color: #3fb950;">cost_usd</span> <span style="color: #555;">REAL</span></div>
+            <div><span style="color: #3fb950;">recorded_at</span> <span style="color: #555;">TEXT (ISO)</span></div>
+            <div><span style="color: #3fb950;">period_start</span> <span style="color: #555;">TEXT</span></div>
+            <div><span style="color: #3fb950;">period_end</span> <span style="color: #555;">TEXT</span></div>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div style="color: #7c8aff; font-weight: bold; margin-bottom: 8px;">alert_rules</div>
+          <div style="background: #161b22; border-radius: 6px; padding: 10px; line-height: 1.8;">
+            <div><span style="color: #f0883e;">id</span> <span style="color: #555;">INTEGER PK</span></div>
+            <div><span style="color: #3fb950;">provider</span> <span style="color: #555;">TEXT (nullable)</span></div>
+            <div><span style="color: #3fb950;">threshold_usd</span> <span style="color: #555;">REAL</span></div>
+            <div><span style="color: #3fb950;">period</span> <span style="color: #555;">TEXT (daily/weekly/monthly)</span></div>
+            <div><span style="color: #3fb950;">webhook_url</span> <span style="color: #555;">TEXT</span></div>
+            <div><span style="color: #3fb950;">enabled</span> <span style="color: #555;">INTEGER (bool)</span></div>
+            <div><span style="color: #3fb950;">last_triggered</span> <span style="color: #555;">TEXT</span></div>
+          </div>
+          <div style="color: #7c8aff; font-weight: bold; margin: 12px 0 8px;">poll_log</div>
+          <div style="background: #161b22; border-radius: 6px; padding: 10px; line-height: 1.8;">
+            <div><span style="color: #f0883e;">id</span> <span style="color: #555;">INTEGER PK</span></div>
+            <div><span style="color: #3fb950;">provider</span> <span style="color: #555;">TEXT</span></div>
+            <div><span style="color: #3fb950;">status</span> <span style="color: #555;">TEXT (ok/error)</span></div>
+            <div><span style="color: #3fb950;">error_msg</span> <span style="color: #555;">TEXT</span></div>
+            <div><span style="color: #3fb950;">polled_at</span> <span style="color: #555;">TEXT</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Provider Adapter Pattern</h3>
+  <div class="mockup">
+    <div class="mockup-header">Each provider implements one interface</div>
+    <div class="mockup-body" style="background: #0f1117; padding: 20px; font-family: monospace; font-size: 12px; color: #e1e4e8; line-height: 1.8;">
+      <div style="color: #7c8aff;">interface</div> <span style="color: #3fb950;">UsageProvider</span> {<br>
+      &nbsp;&nbsp;<span style="color: #f0883e;">name</span>: string;<br>
+      &nbsp;&nbsp;<span style="color: #f0883e;">fetchUsage</span>(startDate, endDate): <span style="color: #7c8aff;">Promise</span>&lt;<span style="color: #3fb950;">UsageRecord[]</span>&gt;;<br>
+      &nbsp;&nbsp;<span style="color: #f0883e;">isConfigured</span>(): boolean;<br>
+      }<br><br>
+      <span style="color: #555;">// Adapters:</span><br>
+      <span style="color: #f0883e;">AnthropicProvider</span> → calls /v1/usage<br>
+      <span style="color: #7c8aff;">GoogleAIProvider</span> → calls Cloud Billing API<br>
+      <span style="color: #3fb950;">OpenAIProvider</span> → calls /v1/organization/usage<br>
+      <span style="color: #da70d6;">KimiProvider</span> → calls Kimi usage API<br><br>
+      <span style="color: #555;">// Adding a new provider = one file implementing the interface</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Key Decisions Summary</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Stack</div>
+      <p>Next.js + SQLite + Drizzle ORM</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Providers (v1)</div>
+      <p>Anthropic, Google AI, OpenAI, Kimi</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Data Collection</div>
+      <p>Hourly cron polling, stored in SQLite</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Dashboard</div>
+      <p>Overview (A) + Provider Cards (B) + Table (C)</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Config</div>
+      <p>.env file — API keys + webhook URL + thresholds</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Alerts</div>
+      <p>Configurable webhook (Slack default) on spend thresholds</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">Deployment</div>
+      <p>Vercel (one-click deploy button) + delvestats.com</p>
+    </div>
+    <div style="background: var(--card-bg, #1a1a2e); border-radius: 8px; padding: 16px;">
+      <div class="label">License</div>
+      <p>MIT — open source on GitHub</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<h2>Where should the agent find pain points?</h2>
+<p class="subtitle">Select all sources you want the agent to monitor. These feed into blog post generation.</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="reddit" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Reddit</h3>
+      <p>Subreddits like r/sales, r/salesforce, r/coldcalling, r/B2Bsales, r/startups. Rich with real user frustrations and detailed problem descriptions. Great for long-tail SEO keywords.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="x-twitter" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>X / Twitter</h3>
+      <p>Complaints and hot takes about meeting follow-ups, CRM friction, sales tools. Good for trending topics but less depth than Reddit. You already have an X scraper in Slack.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="g2-capterra" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>G2 / Capterra Reviews</h3>
+      <p>Negative reviews of competitors (Gong, Chorus, Fireflies, Otter). Reveals exact feature gaps and frustrations people have with existing tools. Goldmine for comparison posts.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="forums-communities" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Sales Forums & Communities</h3>
+      <p>SalesHacker, RevGenius, Pavilion community posts. Professional discussions about workflow pain points. Higher signal, lower volume.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="quora-stackexchange" onclick="toggleSelect(this)">
+    <div class="letter">E</div>
+    <div class="content">
+      <h3>Quora / StackExchange</h3>
+      <p>Questions people are actively searching answers for — maps directly to SEO queries. "How do I write follow-up emails faster?" style content.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+  <h3 style="margin-top: 0;">How these feed into blog posts</h3>
+  <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 1rem;">
+    <div style="padding: 0.75rem 1.25rem; background: rgba(99,102,241,0.15); border-radius: 8px; border: 1px solid rgba(99,102,241,0.3); font-size: 0.9rem;">Sources you pick</div>
+    <div style="color: rgba(255,255,255,0.4);">→</div>
+    <div style="padding: 0.75rem 1.25rem; background: rgba(99,102,241,0.15); border-radius: 8px; border: 1px solid rgba(99,102,241,0.3); font-size: 0.9rem;">Pain point extraction</div>
+    <div style="color: rgba(255,255,255,0.4);">→</div>
+    <div style="padding: 0.75rem 1.25rem; background: rgba(99,102,241,0.15); border-radius: 8px; border: 1px solid rgba(99,102,241,0.3); font-size: 0.9rem;">Keyword research</div>
+    <div style="color: rgba(255,255,255,0.4);">→</div>
+    <div style="padding: 0.75rem 1.25rem; background: rgba(99,102,241,0.15); border-radius: 8px; border: 1px solid rgba(99,102,241,0.3); font-size: 0.9rem;">Draft blog post</div>
+    <div style="color: rgba(255,255,255,0.4);">→</div>
+    <div style="padding: 0.75rem 1.25rem; background: rgba(34,197,94,0.15); border-radius: 8px; border: 1px solid rgba(34,197,94,0.3); font-size: 0.9rem;">Your review</div>
+    <div style="color: rgba(255,255,255,0.4);">→</div>
+    <div style="padding: 0.75rem 1.25rem; background: rgba(34,197,94,0.15); border-radius: 8px; border: 1px solid rgba(34,197,94,0.3); font-size: 0.9rem;">Publish</div>
+  </div>
+</div>

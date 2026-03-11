@@ -1,0 +1,136 @@
+<h2>SEO Blog Agent — Full Design</h2>
+<p class="subtitle">Review the complete pipeline. Let me know if anything needs changing.</p>
+
+<!-- Pipeline Overview -->
+<div class="section">
+  <h3>Pipeline Overview</h3>
+  <div style="display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; margin-top: 1rem;">
+    <!-- Step 1 -->
+    <div style="flex: 1; min-width: 140px; padding: 1rem; background: rgba(99,102,241,0.1); border-radius: 10px; border: 1px solid rgba(99,102,241,0.25); text-align: center;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🔍</div>
+      <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">1. Scrape</div>
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">Reddit + X pain points</div>
+    </div>
+    <div style="display: flex; align-items: center; color: rgba(255,255,255,0.3);">→</div>
+    <!-- Step 2 -->
+    <div style="flex: 1; min-width: 140px; padding: 1rem; background: rgba(99,102,241,0.1); border-radius: 10px; border: 1px solid rgba(99,102,241,0.25); text-align: center;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🧠</div>
+      <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">2. Analyze</div>
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">Extract keywords, pick format</div>
+    </div>
+    <div style="display: flex; align-items: center; color: rgba(255,255,255,0.3);">→</div>
+    <!-- Step 3 -->
+    <div style="flex: 1; min-width: 140px; padding: 1rem; background: rgba(99,102,241,0.1); border-radius: 10px; border: 1px solid rgba(99,102,241,0.25); text-align: center;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">✍️</div>
+      <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">3. Generate</div>
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">Claude writes draft post</div>
+    </div>
+    <div style="display: flex; align-items: center; color: rgba(255,255,255,0.3);">→</div>
+    <!-- Step 4 -->
+    <div style="flex: 1; min-width: 140px; padding: 1rem; background: rgba(234,179,8,0.1); border-radius: 10px; border: 1px solid rgba(234,179,8,0.25); text-align: center;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📋</div>
+      <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">4. PR + Slack</div>
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">Create PR, notify in Slack</div>
+    </div>
+    <div style="display: flex; align-items: center; color: rgba(255,255,255,0.3);">→</div>
+    <!-- Step 5 -->
+    <div style="flex: 1; min-width: 140px; padding: 1rem; background: rgba(34,197,94,0.1); border-radius: 10px; border: 1px solid rgba(34,197,94,0.25); text-align: center;">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">✅</div>
+      <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">5. You Review</div>
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">Merge PR to publish</div>
+    </div>
+  </div>
+</div>
+
+<!-- Architecture -->
+<div class="section" style="margin-top: 2rem;">
+  <h3>Architecture Details</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+
+    <div style="padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+      <div class="label" style="color: rgba(99,102,241,0.8); margin-bottom: 0.75rem;">Scheduler</div>
+      <div style="font-weight: 600; margin-bottom: 0.5rem;">GitHub Actions Cron</div>
+      <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5;">
+        Runs Mon / Wed / Fri at 9am CST<br>
+        Generates 1 post per run<br>
+        ~3 posts/week cadence
+      </div>
+    </div>
+
+    <div style="padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+      <div class="label" style="color: rgba(99,102,241,0.8); margin-bottom: 0.75rem;">Data Sources</div>
+      <div style="font-weight: 600; margin-bottom: 0.5rem;">Reddit + X</div>
+      <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5;">
+        Reddit: r/sales, r/salesforce, r/coldcalling, r/B2Bsales<br>
+        X: keywords around meeting follow-ups, sales tools, CRM pain
+      </div>
+    </div>
+
+    <div style="padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+      <div class="label" style="color: rgba(99,102,241,0.8); margin-bottom: 0.75rem;">AI Generation</div>
+      <div style="font-weight: 600; margin-bottom: 0.5rem;">Claude API + Your Voice</div>
+      <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5;">
+        Pulls voice prefs from user_preferences table<br>
+        Alternates problem-solution & comparison formats<br>
+        Generates title, slug, excerpt, content, tags, reading time
+      </div>
+    </div>
+
+    <div style="padding: 1.25rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+      <div class="label" style="color: rgba(99,102,241,0.8); margin-bottom: 0.75rem;">Delivery</div>
+      <div style="font-weight: 600; margin-bottom: 0.5rem;">GitHub PR + Slack</div>
+      <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5;">
+        Auto-creates branch & PR with new post in blog-data.ts<br>
+        Posts to #blog-drafts Slack channel with title, excerpt, PR link<br>
+        Merge PR = publish to site
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Files -->
+<div class="section" style="margin-top: 2rem;">
+  <h3>What Gets Built</h3>
+  <div style="font-family: monospace; font-size: 0.85rem; line-height: 2; padding: 1.25rem; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+    <div><span style="color: rgba(34,197,94,0.8);">new</span> <span style="color: rgba(255,255,255,0.7);">.github/workflows/blog-agent.yml</span> <span style="color: rgba(255,255,255,0.3);">— cron schedule + orchestration</span></div>
+    <div><span style="color: rgba(34,197,94,0.8);">new</span> <span style="color: rgba(255,255,255,0.7);">scripts/blog-agent/scrape.ts</span> <span style="color: rgba(255,255,255,0.3);">— Reddit + X scraping</span></div>
+    <div><span style="color: rgba(34,197,94,0.8);">new</span> <span style="color: rgba(255,255,255,0.7);">scripts/blog-agent/analyze.ts</span> <span style="color: rgba(255,255,255,0.3);">— pain point extraction + keyword analysis</span></div>
+    <div><span style="color: rgba(34,197,94,0.8);">new</span> <span style="color: rgba(255,255,255,0.7);">scripts/blog-agent/generate.ts</span> <span style="color: rgba(255,255,255,0.3);">— Claude draft generation with voice prefs</span></div>
+    <div><span style="color: rgba(34,197,94,0.8);">new</span> <span style="color: rgba(255,255,255,0.7);">scripts/blog-agent/publish.ts</span> <span style="color: rgba(255,255,255,0.3);">— create branch, update blog-data.ts, open PR</span></div>
+    <div><span style="color: rgba(34,197,94,0.8);">new</span> <span style="color: rgba(255,255,255,0.7);">scripts/blog-agent/notify.ts</span> <span style="color: rgba(255,255,255,0.3);">— Slack webhook notification</span></div>
+    <div style="margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem;">
+      <span style="color: rgba(234,179,8,0.8);">mod</span> <span style="color: rgba(255,255,255,0.7);">lib/blog-data.ts</span> <span style="color: rgba(255,255,255,0.3);">— new posts appended by agent PRs</span>
+    </div>
+  </div>
+</div>
+
+<!-- Secrets Needed -->
+<div class="section" style="margin-top: 2rem;">
+  <h3>Secrets / Config Needed</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem;">
+    <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
+      <span style="color: rgba(234,179,8,0.8); font-family: monospace;">ANTHROPIC_API_KEY</span>
+      <span style="color: rgba(255,255,255,0.4);"> — you have this</span>
+    </div>
+    <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
+      <span style="color: rgba(234,179,8,0.8); font-family: monospace;">REDDIT_CLIENT_ID/SECRET</span>
+      <span style="color: rgba(255,255,255,0.4);"> — new, free</span>
+    </div>
+    <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
+      <span style="color: rgba(234,179,8,0.8); font-family: monospace;">TWITTER_BEARER_TOKEN</span>
+      <span style="color: rgba(255,255,255,0.4);"> — X API access</span>
+    </div>
+    <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
+      <span style="color: rgba(234,179,8,0.8); font-family: monospace;">SLACK_WEBHOOK_URL</span>
+      <span style="color: rgba(255,255,255,0.4);"> — new channel webhook</span>
+    </div>
+    <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
+      <span style="color: rgba(234,179,8,0.8); font-family: monospace;">DATABASE_URL</span>
+      <span style="color: rgba(255,255,255,0.4);"> — for voice prefs lookup</span>
+    </div>
+    <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
+      <span style="color: rgba(234,179,8,0.8); font-family: monospace;">GH_TOKEN</span>
+      <span style="color: rgba(255,255,255,0.4);"> — auto-provided by Actions</span>
+    </div>
+  </div>
+</div>

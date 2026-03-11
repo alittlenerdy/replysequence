@@ -1,0 +1,178 @@
+<h2>Dashboard Layout</h2>
+<p class="subtitle">What feels right for the main view when you open DelveStats?</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f1117; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 11px; color: #e1e4e8;">
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+            <div style="color: #7c8aff; font-size: 20px; font-weight: bold;">$4.82</div>
+            <div style="color: #666; font-size: 10px;">TODAY</div>
+          </div>
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+            <div style="color: #3fb950; font-size: 20px; font-weight: bold;">$28.41</div>
+            <div style="color: #666; font-size: 10px;">THIS WEEK</div>
+          </div>
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+            <div style="color: #f0883e; font-size: 20px; font-weight: bold;">$94.20</div>
+            <div style="color: #666; font-size: 10px;">THIS MONTH</div>
+          </div>
+        </div>
+        <div style="background: #161b22; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+          <div style="color: #666; font-size: 10px; margin-bottom: 8px;">COST TREND (30 DAYS)</div>
+          <div style="display: flex; align-items: flex-end; gap: 3px; height: 60px;">
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 30%;"></div>
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 45%;"></div>
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 35%;"></div>
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 60%;"></div>
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 50%;"></div>
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 70%;"></div>
+            <div style="flex:1; background: #7c8aff; border-radius: 2px; height: 55%;"></div>
+            <div style="flex:1; background: #3fb950; border-radius: 2px; height: 40%;"></div>
+            <div style="flex:1; background: #3fb950; border-radius: 2px; height: 65%;"></div>
+            <div style="flex:1; background: #3fb950; border-radius: 2px; height: 80%;"></div>
+            <div style="flex:1; background: #3fb950; border-radius: 2px; height: 45%;"></div>
+            <div style="flex:1; background: #f0883e; border-radius: 2px; height: 90%;"></div>
+            <div style="flex:1; background: #f0883e; border-radius: 2px; height: 75%;"></div>
+            <div style="flex:1; background: #f0883e; border-radius: 2px; height: 85%;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+            <span style="color: #444; font-size: 9px;">Mar 1</span>
+            <span style="color: #444; font-size: 9px;">Mar 15</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #f0883e;">Anthropic</span>
+              <span style="color: #e1e4e8;">$52.10</span>
+            </div>
+            <div style="background: #333; height: 4px; border-radius: 2px; margin-top: 6px;">
+              <div style="background: #f0883e; height: 100%; width: 55%; border-radius: 2px;"></div>
+            </div>
+          </div>
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #7c8aff;">Google AI</span>
+              <span style="color: #e1e4e8;">$22.40</span>
+            </div>
+            <div style="background: #333; height: 4px; border-radius: 2px; margin-top: 6px;">
+              <div style="background: #7c8aff; height: 100%; width: 24%; border-radius: 2px;"></div>
+            </div>
+          </div>
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #3fb950;">OpenAI</span>
+              <span style="color: #e1e4e8;">$19.70</span>
+            </div>
+            <div style="background: #333; height: 4px; border-radius: 2px; margin-top: 6px;">
+              <div style="background: #3fb950; height: 100%; width: 21%; border-radius: 2px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Overview First</h3>
+      <p>Total spend front and center. Cost trend chart. Provider breakdown below. Drill into details on click.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f1117; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 11px; color: #e1e4e8;">
+        <div style="display: flex; gap: 12px;">
+          <div style="flex: 1;">
+            <div style="background: #161b22; border-radius: 8px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #f0883e;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: #f0883e; font-weight: bold;">Anthropic</span>
+                <span style="color: #e1e4e8; font-weight: bold;">$52.10/mo</span>
+              </div>
+              <div style="color: #666; font-size: 10px; margin-bottom: 4px;">claude-sonnet-4 — 1.2M tokens — $38.20</div>
+              <div style="color: #666; font-size: 10px; margin-bottom: 4px;">claude-haiku-4 — 840K tokens — $12.10</div>
+              <div style="color: #666; font-size: 10px;">claude-opus-4 — 52K tokens — $1.80</div>
+            </div>
+            <div style="background: #161b22; border-radius: 8px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #7c8aff;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: #7c8aff; font-weight: bold;">Google AI</span>
+                <span style="color: #e1e4e8; font-weight: bold;">$22.40/mo</span>
+              </div>
+              <div style="color: #666; font-size: 10px; margin-bottom: 4px;">gemini-2.0-flash — 2.1M tokens — $18.90</div>
+              <div style="color: #666; font-size: 10px;">gemini-2.5-pro — 180K tokens — $3.50</div>
+            </div>
+            <div style="background: #161b22; border-radius: 8px; padding: 12px; border-left: 3px solid #3fb950;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: #3fb950; font-weight: bold;">OpenAI</span>
+                <span style="color: #e1e4e8; font-weight: bold;">$19.70/mo</span>
+              </div>
+              <div style="color: #666; font-size: 10px; margin-bottom: 4px;">gpt-4o — 950K tokens — $14.20</div>
+              <div style="color: #666; font-size: 10px;">gpt-4o-mini — 1.8M tokens — $5.50</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Provider Cards</h3>
+      <p>Each provider is a card showing model-level breakdown. Stacked vertically. Scan everything at a glance without clicking.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f1117; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 11px; color: #e1e4e8;">
+        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+            <div style="color: #e1e4e8; font-size: 22px; font-weight: bold;">$94.20</div>
+            <div style="color: #666; font-size: 10px;">TOTAL THIS MONTH</div>
+          </div>
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+            <div style="color: #3fb950; font-size: 22px; font-weight: bold;">4</div>
+            <div style="color: #666; font-size: 10px;">PROVIDERS</div>
+          </div>
+          <div style="flex:1; background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+            <div style="color: #7c8aff; font-size: 22px; font-weight: bold;">6.2M</div>
+            <div style="color: #666; font-size: 10px;">TOKENS</div>
+          </div>
+        </div>
+        <div style="background: #161b22; border-radius: 8px; padding: 12px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr style="color: #666; font-size: 10px; text-transform: uppercase;">
+              <td style="padding: 4px 0;">Provider</td>
+              <td style="padding: 4px 0;">Model</td>
+              <td style="padding: 4px 0; text-align: right;">Tokens</td>
+              <td style="padding: 4px 0; text-align: right;">Cost</td>
+              <td style="padding: 4px 0; text-align: right;">Trend</td>
+            </tr>
+            <tr style="border-top: 1px solid #222;">
+              <td style="padding: 6px 0; color: #f0883e;">Anthropic</td>
+              <td style="padding: 6px 0;">claude-sonnet-4</td>
+              <td style="padding: 6px 0; text-align: right;">1.2M</td>
+              <td style="padding: 6px 0; text-align: right;">$38.20</td>
+              <td style="padding: 6px 0; text-align: right; color: #f85149;">+12%</td>
+            </tr>
+            <tr style="border-top: 1px solid #222;">
+              <td style="padding: 6px 0; color: #7c8aff;">Google</td>
+              <td style="padding: 6px 0;">gemini-flash</td>
+              <td style="padding: 6px 0; text-align: right;">2.1M</td>
+              <td style="padding: 6px 0; text-align: right;">$18.90</td>
+              <td style="padding: 6px 0; text-align: right; color: #3fb950;">-8%</td>
+            </tr>
+            <tr style="border-top: 1px solid #222;">
+              <td style="padding: 6px 0; color: #3fb950;">OpenAI</td>
+              <td style="padding: 6px 0;">gpt-4o</td>
+              <td style="padding: 6px 0; text-align: right;">950K</td>
+              <td style="padding: 6px 0; text-align: right;">$14.20</td>
+              <td style="padding: 6px 0; text-align: right; color: #3fb950;">-3%</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C: Table View</h3>
+      <p>Summary stats at top. Detailed sortable table below. Data-dense, spreadsheet energy. Best for power users.</p>
+    </div>
+  </div>
+</div>
