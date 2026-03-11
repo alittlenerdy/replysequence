@@ -2,7 +2,7 @@
 
 > Quick reference for Claude Code and AI assistants working on ReplySequence
 
-**Last Updated:** February 5, 2026
+**Last Updated:** March 11, 2026
 
 ---
 
@@ -11,7 +11,7 @@
 **Name:** ReplySequence
 **Purpose:** Zoom/Meet/Teams -> AI email drafts -> CRM automation
 **Stack:** Next.js 16, PostgreSQL/Drizzle, Clerk, Claude API, Resend
-**Status:** Week 2/12 MVP Sprint (Jan 27 - Mar 21, 2026)
+**Status:** Week 7/12 MVP Sprint (Jan 27 - Mar 21, 2026) — Beta launch pending Google OAuth verification
 
 **Location:** `/Volumes/just_a_little_nerd/replysequence`
 **Production:** https://www.replysequence.com
@@ -193,6 +193,65 @@ try {
   return NextResponse.json({ received: true }, { status: 200 });
 }
 ```
+
+### 5. Cron Agent Pattern
+
+All cron agents follow this structure (see `app/api/cron/*/route.ts`):
+
+```typescript
+import { NextResponse } from 'next/server';
+
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
+  // 1. Verify cron secret
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // 2. Query for actionable items
+  // 3. Process each item
+  // 4. Send Slack notification on completion/failure
+  // 5. Return summary
+
+  return NextResponse.json({ processed: count });
+}
+```
+
+Configure in `vercel.json` under `functions` (maxDuration) and `crons` (schedule).
+
+---
+
+## ClickUp Quick Reference
+
+- **Workspace ID**: `9013469200` (always required in MCP calls)
+- **Immediates List**: `901326290802` (daily plans)
+- **Sprint 2 List**: `901324927980`
+- **Backlog List**: `901324927994`
+- **Bugs List**: `901324928003`
+- Always set custom fields: Effort, Owner, Phase, Priority, Product Area, Sprint, Quarter
+- **Dropdown fields require UUID option IDs**, not orderindex numbers — get UUIDs from a `get_task` response
+- Status quirks: Backlog list uses `to do` not `backlog`/`prioritized`/`ready`; Bugs list `reported`/`closed` don't work via API
+- **Never mark tasks "complete"/"done"** — use `ready for review`, Jimmy marks done after testing
+- Full field reference: `/Volumes/just_a_little_nerd/CLICKUP_FIELDS.md`
+
+## Typefully Quick Reference
+
+- **@replysequence** (product): social set `283435`
+- **@atinylittlenerd** (Jimmy personal): social set `266757`
+- Always create a quote-tweet draft on @atinylittlenerd when publishing on @replysequence
+- Use `quote_post_url` field with the published tweet URL
+- Schedule the RT draft ~2-4 hours after the @replysequence post
+- LinkedIn posts MUST include images — text-only gets no engagement
+
+## Build & Deploy Checklist
+
+1. Run `npx next build` with `run_in_background: true` (never pipe to `tail` — it buffers output)
+2. Check build output for type errors
+3. Push to main — auto-deploys to Vercel
+4. Verify production URL responds: `curl -s -o /dev/null -w '%{http_code}' https://www.replysequence.com`
 
 ---
 

@@ -10,9 +10,9 @@ import * as path from 'path';
 const envPath = path.resolve(process.cwd(), '.env.local');
 dotenv.config({ path: envPath });
 
-const PROJECT_ID = 'replysequence';
+const PROJECT_ID = 'replysequence-gws';
 const TOPIC_NAME = 'meet-recordings';
-const MEET_SERVICE_ACCOUNT = 'serviceAccount:meet-api-push@system.gserviceaccount.com';
+const MEET_SERVICE_ACCOUNT = 'serviceAccount:meet-api-event-push@system.gserviceaccount.com';
 
 async function getAccessToken(): Promise<string> {
   // Use the user's OAuth token to call the IAM API
