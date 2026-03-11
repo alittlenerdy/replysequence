@@ -8,6 +8,7 @@
 import { db, meetings, rawEvents, transcripts, teamsConnections } from '@/lib/db';
 import { sendDraftReadyNotification } from '@/lib/draft-notification';
 import { attemptAutoSend } from '@/lib/auto-send';
+import { extractSignals } from '@/lib/signals/extract';
 import { failProcessing } from '@/lib/processing-progress';
 import { eq } from 'drizzle-orm';
 import {
@@ -506,6 +507,18 @@ async function generateDraftForMeeting(
       meetingId,
       transcriptId,
       topic: meeting.topic,
+    });
+
+    // Signal extraction (fire-and-forget, non-blocking)
+    extractSignals({
+      meetingId,
+      transcript: transcriptContent,
+      meetingTopic: meeting.topic || undefined,
+    }).catch((err) => {
+      log('error', 'Signal extraction failed (non-blocking)', {
+        meetingId,
+        error: err instanceof Error ? err.message : String(err),
+      });
     });
 
     const draftResult = await generateDraft({

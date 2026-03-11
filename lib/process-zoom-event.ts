@@ -5,6 +5,7 @@ import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
 import { sendDraftReadyNotification } from '@/lib/draft-notification';
 import { attemptAutoSend } from '@/lib/auto-send';
+import { extractSignals } from '@/lib/signals/extract';
 import {
   startPipeline,
   startStage,
@@ -913,6 +914,19 @@ async function fetchAndStoreTranscript(
         );
       } catch { /* Analytics should never fail the operation */ }
     }
+
+    // Signal extraction (fire-and-forget, non-blocking)
+    // Runs in parallel with draft generation — failures don't affect the pipeline
+    extractSignals({
+      meetingId,
+      transcript: fullText,
+      meetingTopic: meeting?.topic || undefined,
+    }).catch((err) => {
+      log('error', 'Signal extraction failed (non-blocking)', {
+        meetingId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    });
 
     // Draft generation
     try {
