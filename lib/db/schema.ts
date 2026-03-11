@@ -127,6 +127,8 @@ export const meetings = pgTable(
     processingCompletedAt: timestamp('processing_completed_at', { withTimezone: true }),
     processingError: text('processing_error'),
     isDemo: boolean('is_demo').notNull().default(false),
+    // Context Store: optional link to accumulated deal context
+    dealContextId: uuid('deal_context_id'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -140,6 +142,7 @@ export const meetings = pgTable(
     index('meetings_created_at_idx').on(table.createdAt),
     index('meetings_processing_step_idx').on(table.processingStep),
     index('meetings_processing_started_at_idx').on(table.processingStartedAt),
+    index('meetings_deal_context_id_idx').on(table.dealContextId),
   ]
 );
 
@@ -1392,3 +1395,94 @@ export const autoRetweets = pgTable(
 
 export type AutoRetweet = typeof autoRetweets.$inferSelect;
 export type NewAutoRetweet = typeof autoRetweets.$inferInsert;
+
+// ============================================================
+// Conversation Context Store
+// ============================================================
+
+// Signal type enum for meeting transcript analysis
+export const signalTypeEnum = pgEnum('signal_type', [
+  'commitment', 'risk', 'stakeholder', 'objection', 'timeline', 'budget',
+]);
+
+// Deal stage tracking
+export type DealStage =
+  | 'prospecting'
+  | 'qualification'
+  | 'discovery'
+  | 'proposal'
+  | 'negotiation'
+  | 'closed_won'
+  | 'closed_lost';
+
+// Deal contexts table — accumulated context per deal/company
+export const dealContexts = pgTable(
+  'deal_contexts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Company/deal identification
+    companyName: varchar('company_name', { length: 500 }).notNull(),
+    companyDomain: varchar('company_domain', { length: 255 }),
+    dealStage: varchar('deal_stage', { length: 50 }).$type<DealStage>().default('prospecting'),
+    // Accumulated context (updated after each meeting)
+    stakeholders: jsonb('stakeholders').$type<string[]>().default([]),
+    objections: jsonb('objections').$type<string[]>().default([]),
+    commitments: jsonb('commitments').$type<string[]>().default([]),
+    risks: jsonb('risks').$type<string[]>().default([]),
+    nextSteps: jsonb('next_steps').$type<string[]>().default([]),
+    // Reference to most recent meeting
+    lastMeetingId: uuid('last_meeting_id').references(() => meetings.id, { onDelete: 'set null' }),
+    lastMeetingAt: timestamp('last_meeting_at', { withTimezone: true }),
+    // Stats
+    meetingCount: integer('meeting_count').notNull().default(0),
+    signalCount: integer('signal_count').notNull().default(0),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('deal_contexts_user_id_idx').on(table.userId),
+    index('deal_contexts_company_name_idx').on(table.companyName),
+    index('deal_contexts_company_domain_idx').on(table.companyDomain),
+    index('deal_contexts_deal_stage_idx').on(table.dealStage),
+    index('deal_contexts_last_meeting_at_idx').on(table.lastMeetingAt),
+    uniqueIndex('deal_contexts_user_company_idx').on(table.userId, table.companyDomain),
+  ]
+);
+
+// Signals table — individual signals extracted from meeting transcripts
+export const signals = pgTable(
+  'signals',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    dealContextId: uuid('deal_context_id')
+      .references(() => dealContexts.id, { onDelete: 'set null' }),
+    // Signal data
+    type: signalTypeEnum('type').notNull(),
+    value: text('value').notNull(),
+    confidence: decimal('confidence', { precision: 3, scale: 2 }).notNull(), // 0.00 to 1.00
+    speaker: varchar('speaker', { length: 255 }),
+    quote: text('quote'),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('signals_meeting_id_idx').on(table.meetingId),
+    index('signals_deal_context_id_idx').on(table.dealContextId),
+    index('signals_type_idx').on(table.type),
+    index('signals_confidence_idx').on(table.confidence),
+    index('signals_created_at_idx').on(table.createdAt),
+  ]
+);
+
+// Type exports for Context Store
+export type DealContext = typeof dealContexts.$inferSelect;
+export type NewDealContext = typeof dealContexts.$inferInsert;
+export type SignalRecord = typeof signals.$inferSelect;
+export type NewSignalRecord = typeof signals.$inferInsert;
