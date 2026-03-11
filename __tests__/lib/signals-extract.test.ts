@@ -21,6 +21,10 @@ vi.mock('@/lib/signals/risk-detector', () => ({
   detectRisks: vi.fn().mockResolvedValue({ success: true, risks: [], count: 0, overallRiskLevel: 'low' }),
 }));
 
+vi.mock('@/lib/map/generate', () => ({
+  generateMap: vi.fn().mockResolvedValue({ success: true, stepCount: 0, commitmentSteps: 0, recommendedSteps: 0 }),
+}));
+
 import { extractSignals, parseSignalResponse } from '@/lib/signals/extract';
 import { callClaudeAPI } from '@/lib/claude-api';
 import { insertSignals } from '@/lib/context-store';

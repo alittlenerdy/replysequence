@@ -12,6 +12,7 @@ import { signalBatchSchema, type Signal } from '@/lib/signals/types';
 import { insertSignals } from '@/lib/context-store';
 import { generateNextSteps } from '@/lib/signals/next-steps';
 import { detectRisks } from '@/lib/signals/risk-detector';
+import { generateMap } from '@/lib/map/generate';
 
 // ── Extraction Metrics ───────────────────────────────────────────────
 
@@ -128,11 +129,12 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
       });
 
       // Run downstream consumers in parallel (fire-and-forget)
-      // Next-step tracking and risk detection use the extracted signals
+      // Next-step tracking, risk detection, and MAP generation use the extracted signals
       const downstreamInput = { meetingId, dealContextId, signals, meetingTopic };
       Promise.allSettled([
         generateNextSteps(downstreamInput),
         detectRisks(downstreamInput),
+        generateMap(downstreamInput),
       ]).then((results) => {
         for (const r of results) {
           if (r.status === 'rejected') {

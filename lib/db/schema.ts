@@ -1486,3 +1486,60 @@ export type DealContext = typeof dealContexts.$inferSelect;
 export type NewDealContext = typeof dealContexts.$inferInsert;
 export type SignalRecord = typeof signals.$inferSelect;
 export type NewSignalRecord = typeof signals.$inferInsert;
+
+// ── Mutual Action Plans ──────────────────────────────────────────────
+
+export type MapStatus = 'draft' | 'active' | 'completed' | 'archived';
+export type MapStepStatus = 'pending' | 'in_progress' | 'completed' | 'skipped';
+export type MapStepSource = 'commitment' | 'next_step' | 'risk_mitigation' | 'recommended';
+
+export const mutualActionPlans = pgTable(
+  'mutual_action_plans',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    dealContextId: uuid('deal_context_id').references(() => dealContexts.id, { onDelete: 'set null' }),
+    meetingId: uuid('meeting_id').notNull().references(() => meetings.id, { onDelete: 'cascade' }),
+    title: varchar('title', { length: 500 }).notNull(),
+    summary: text('summary').notNull(),
+    status: varchar('status', { length: 50 }).$type<MapStatus>().notNull().default('draft'),
+    stepCount: integer('step_count').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('maps_deal_context_id_idx').on(table.dealContextId),
+    index('maps_meeting_id_idx').on(table.meetingId),
+    index('maps_status_idx').on(table.status),
+    index('maps_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export const mapSteps = pgTable(
+  'map_steps',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    mapId: uuid('map_id').notNull().references(() => mutualActionPlans.id, { onDelete: 'cascade' }),
+    sortOrder: integer('sort_order').notNull().default(0),
+    title: varchar('title', { length: 500 }).notNull(),
+    description: text('description'),
+    owner: varchar('owner', { length: 255 }),
+    status: varchar('status', { length: 50 }).$type<MapStepStatus>().notNull().default('pending'),
+    dueDate: varchar('due_date', { length: 100 }),
+    sourceSignalId: uuid('source_signal_id').references(() => signals.id, { onDelete: 'set null' }),
+    sourceType: varchar('source_type', { length: 50 }).$type<MapStepSource>(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('map_steps_map_id_idx').on(table.mapId),
+    index('map_steps_sort_order_idx').on(table.sortOrder),
+    index('map_steps_status_idx').on(table.status),
+    index('map_steps_source_signal_id_idx').on(table.sourceSignalId),
+  ]
+);
+
+// Type exports for MAP
+export type MutualActionPlan = typeof mutualActionPlans.$inferSelect;
+export type NewMutualActionPlan = typeof mutualActionPlans.$inferInsert;
+export type MapStep = typeof mapSteps.$inferSelect;
+export type NewMapStep = typeof mapSteps.$inferInsert;
