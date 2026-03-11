@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq, and } from 'drizzle-orm';
-import { db, emailConnections } from '@/lib/db';
+import { db, emailConnections, users } from '@/lib/db';
 
 export async function DELETE() {
   try {
