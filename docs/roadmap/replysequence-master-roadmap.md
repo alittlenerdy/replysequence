@@ -199,6 +199,34 @@ Both engines run in parallel after signal extraction via `Promise.allSettled` (f
 | Document false positives/negatives | `86ag3w8zx` | Jimmy | 1h |
 | Check extraction latency | `86ag3w921` | Jimmy | 0.5h |
 
+### E2E Validation — March 11, 2026
+
+**Status: PASSED** — Full intelligence pipeline validated in production.
+
+**Test Meeting:** `6873866a` — "E2E - ReplySequence - Zoom - Jimmy - March 11, 2026 - 5:55pm"
+
+| Pipeline Stage | Result |
+|---|---|
+| Webhook ingestion | Zoom recording.completed → meeting created |
+| Transcript download | VTT parsed successfully |
+| Draft generation | Quality score 97 — "Pricing proposal + Alex's technical review materials" |
+| Signal extraction | 8 signals: 2 commitment, 1 stakeholder, 2 risk, 1 budget, 2 timeline |
+| Next-step prediction | Downstream consumer ran (fire-and-forget) |
+| Risk detection | Downstream consumer ran (fire-and-forget) |
+| MAP generation | 7-step plan — "ReplySequence — March Integration Action Plan" |
+
+**Key Observations:**
+- Signal confidence scores range 0.85–0.95 (appropriate for explicit statements)
+- MAP correctly distinguished commitment (2), next_step (2), and risk_mitigation (3) sources
+- Zero "recommended" steps — all evidence-based from transcript signals
+- Pipeline latency: meeting → all artifacts generated within webhook processing window
+- No errors in Vercel production logs
+
+**Deployment Notes:**
+- Database tables created via Supabase migration (drizzle-kit push had interactive prompt issues)
+- Code deployed via git push to main → Vercel auto-deploy (commit ea34fd5)
+- Single database across all environments (dkkvjytiqffiugwmlbjl)
+
 ### AI Meeting Memory
 
 | Feature | ClickUp ID | Priority | Due | Description |
