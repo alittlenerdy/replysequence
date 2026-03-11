@@ -73,6 +73,22 @@ export default function CompareDropdown({ direction = 'down' }: { direction?: 'd
               <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 ReplySequence vs
               </div>
+              <Link
+                href="/compare"
+                onClick={() => setIsOpen(false)}
+                className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 mb-1"
+              >
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
+                    All Comparisons
+                  </div>
+                  <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
+                    See the full overview
+                  </div>
+                </div>
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50 group-hover:bg-indigo-400 transition-colors duration-200" />
+              </Link>
+              <div className="border-t border-gray-800 light:border-gray-200 my-1" />
               {competitors.map((competitor, index) => (
                 <Link
                   key={competitor.slug}
