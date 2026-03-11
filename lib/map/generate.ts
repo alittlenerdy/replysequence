@@ -217,6 +217,7 @@ async function fetchSignals(meetingId: string): Promise<Signal[]> {
   const rows = await getSignalsForMeeting(meetingId);
   // Map DB rows to Signal type (db stores confidence as string)
   return rows.map((r) => ({
+    id: r.id,
     type: r.type as Signal['type'],
     value: r.value,
     confidence: Number(r.confidence),
@@ -272,9 +273,62 @@ export function parseMapResponse(content: string): z.infer<typeof mapResponseSch
 /**
  * Try to find the signal ID that best matches a generated step.
  * Returns null if no strong match — this is best-effort attribution.
+ *
+ * Matching strategy (in priority order):
+ * 1. Quote overlap — if step has a sourceQuote, find a signal whose quote contains it (or vice versa)
+ * 2. Type + value keyword match — match sourceType to signal type, then check value overlap
  */
-function findMatchingSignalId(step: MapStepGenerated, _signals: Signal[]): null {
-  // For MVP, we don't have signal IDs in the Signal type (they come from DB rows).
-  // Full attribution will be added when we pass DB rows with IDs.
-  return null;
+function findMatchingSignalId(step: MapStepGenerated, signals: Signal[]): string | null {
+  // Only signals with IDs (from DB) can be attributed
+  const withIds = signals.filter((s): s is Signal & { id: string } => !!s.id);
+  if (withIds.length === 0) return null;
+
+  // Map step sourceType back to signal types
+  const typeMap: Record<string, string[]> = {
+    commitment: ['commitment'],
+    next_step: ['commitment', 'timeline'],
+    risk_mitigation: ['risk', 'objection'],
+    recommended: ['commitment', 'timeline', 'stakeholder', 'budget', 'objection', 'risk'],
+  };
+
+  const relevantTypes = typeMap[step.sourceType] || [];
+  const typeCandidates = withIds.filter((s) => relevantTypes.includes(s.type));
+
+  // Strategy 1: Quote overlap
+  if (step.sourceQuote && step.sourceQuote.length > 10) {
+    const quoteNorm = step.sourceQuote.toLowerCase();
+    for (const s of typeCandidates) {
+      if (s.quote) {
+        const sigQuoteNorm = s.quote.toLowerCase();
+        // Check if either quote contains a substantial portion of the other
+        if (sigQuoteNorm.includes(quoteNorm) || quoteNorm.includes(sigQuoteNorm)) {
+          return s.id;
+        }
+      }
+    }
+  }
+
+  // Strategy 2: Value keyword overlap (at least 3 significant words must match)
+  const stepWords = extractKeywords(step.title + ' ' + (step.description || ''));
+  let bestMatch: { id: string; overlap: number } | null = null;
+
+  for (const s of typeCandidates) {
+    const signalWords = extractKeywords(s.value + ' ' + (s.quote || ''));
+    const overlap = stepWords.filter((w) => signalWords.includes(w)).length;
+    if (overlap >= 3 && (!bestMatch || overlap > bestMatch.overlap)) {
+      bestMatch = { id: s.id, overlap };
+    }
+  }
+
+  return bestMatch?.id ?? null;
+}
+
+/** Extract lowercase keywords (3+ chars, no stop words) for fuzzy matching */
+function extractKeywords(text: string): string[] {
+  const stopWords = new Set(['the', 'and', 'for', 'with', 'that', 'this', 'from', 'will', 'our', 'their', 'they', 'have', 'been', 'would', 'could', 'should', 'about', 'into']);
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .split(/\s+/)
+    .filter((w) => w.length >= 3 && !stopWords.has(w));
 }

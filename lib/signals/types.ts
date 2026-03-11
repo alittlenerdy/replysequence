@@ -27,7 +27,14 @@ export const signalSchema = z.object({
   quote: z.string().max(5000).optional(),
 });
 
-export type Signal = z.infer<typeof signalSchema>;
+/**
+ * Base signal type from Claude API extraction (no id).
+ * When signals are fetched from the database, they include an `id` field.
+ */
+export type Signal = z.infer<typeof signalSchema> & {
+  /** Database UUID — present when signal was loaded from DB, absent during extraction */
+  id?: string;
+};
 
 /**
  * Schema for validating a batch of signals from one extraction run.

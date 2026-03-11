@@ -136,8 +136,8 @@ describe('generateMap', () => {
       meetingId: 'meeting-1',
       dealContextId: 'deal-1',
       signals: [
-        { type: 'commitment', value: 'Send proposal by Friday', confidence: 0.9 },
-        { type: 'timeline', value: 'Demo next week', confidence: 0.8 },
+        { id: 'sig-1', type: 'commitment', value: 'Send proposal by Friday', confidence: 0.9 },
+        { id: 'sig-2', type: 'timeline', value: 'Demo next week', confidence: 0.8 },
       ],
     });
 
@@ -248,5 +248,123 @@ describe('generateMap', () => {
     expect(result.commitmentSteps).toBe(2);
     expect(result.recommendedSteps).toBe(1);
     expect(result.stepCount).toBe(4);
+  });
+
+  it('attributes MAP steps to source signals by quote matching', async () => {
+    mockCallClaudeAPI.mockResolvedValue({
+      content: JSON.stringify({
+        title: 'Attribution Test',
+        summary: 'Testing source attribution',
+        steps: [
+          {
+            title: 'Send updated pricing',
+            description: 'Volume discounts included',
+            owner: 'Seller',
+            dueDate: 'Friday',
+            sourceType: 'commitment',
+            sourceQuote: "I'll have the updated pricing over to you by Thursday",
+          },
+        ],
+      }),
+      inputTokens: 400,
+      outputTokens: 150,
+      cacheCreationTokens: 0,
+      cacheReadTokens: 0,
+      stopReason: 'end_turn',
+    });
+
+    await generateMap({
+      meetingId: 'meeting-1',
+      signals: [
+        {
+          id: 'sig-abc',
+          type: 'commitment',
+          value: 'Will send updated pricing by Thursday',
+          confidence: 0.92,
+          quote: "I'll have the updated pricing over to you by Thursday",
+        },
+        { id: 'sig-def', type: 'risk', value: 'Budget freeze Q2', confidence: 0.7 },
+      ],
+    });
+
+    // Verify createMap was called with the attributed signal ID
+    expect(mockCreateMap).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: expect.arrayContaining([
+          expect.objectContaining({ sourceSignalId: 'sig-abc' }),
+        ]),
+      }),
+    );
+  });
+
+  it('attributes MAP steps by keyword overlap when no quote match', async () => {
+    mockCallClaudeAPI.mockResolvedValue({
+      content: JSON.stringify({
+        title: 'Keyword Match Test',
+        summary: 'Testing keyword attribution',
+        steps: [
+          {
+            title: 'Schedule engineering demo next week',
+            description: 'Include the technical evaluation team',
+            owner: 'Buyer',
+            dueDate: 'Next week',
+            sourceType: 'next_step',
+          },
+        ],
+      }),
+      inputTokens: 400,
+      outputTokens: 150,
+      cacheCreationTokens: 0,
+      cacheReadTokens: 0,
+      stopReason: 'end_turn',
+    });
+
+    await generateMap({
+      meetingId: 'meeting-1',
+      signals: [
+        { id: 'sig-111', type: 'commitment', value: 'Schedule demo with engineering team next week', confidence: 0.85 },
+        { id: 'sig-222', type: 'budget', value: 'Budget is $50k for this quarter', confidence: 0.9 },
+      ],
+    });
+
+    expect(mockCreateMap).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: expect.arrayContaining([
+          expect.objectContaining({ sourceSignalId: 'sig-111' }),
+        ]),
+      }),
+    );
+  });
+
+  it('returns null sourceSignalId when signals have no IDs', async () => {
+    mockCallClaudeAPI.mockResolvedValue({
+      content: JSON.stringify({
+        title: 'No ID Test',
+        summary: 'Signals from extraction have no IDs',
+        steps: [
+          { title: 'Do something', description: '', owner: '', dueDate: '', sourceType: 'commitment' },
+        ],
+      }),
+      inputTokens: 400,
+      outputTokens: 100,
+      cacheCreationTokens: 0,
+      cacheReadTokens: 0,
+      stopReason: 'end_turn',
+    });
+
+    await generateMap({
+      meetingId: 'meeting-1',
+      signals: [
+        { type: 'commitment', value: 'Something without an ID', confidence: 0.9 },
+      ],
+    });
+
+    expect(mockCreateMap).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: expect.arrayContaining([
+          expect.objectContaining({ sourceSignalId: null }),
+        ]),
+      }),
+    );
   });
 });
