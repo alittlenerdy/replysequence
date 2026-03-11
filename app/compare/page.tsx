@@ -76,6 +76,13 @@ const competitors = [
     differentiator: 'Grain clips meeting highlights. ReplySequence drafts follow-up emails from the full conversation.',
     color: 'from-rose-500 to-pink-600',
   },
+  {
+    slug: 'manual',
+    name: 'Manual Follow-Up',
+    tagline: 'The DIY approach',
+    differentiator: 'Manual follow-ups take 23 minutes and 44% never get sent. ReplySequence does it in 8 seconds, every time.',
+    color: 'from-gray-500 to-slate-600',
+  },
 ];
 
 export default function ComparePage() {
