@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and Chorus by ZoomInfo for meeting intelligence and follow-up emails.',
     url: 'https://www.replysequence.com/compare/chorus',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/chorus',

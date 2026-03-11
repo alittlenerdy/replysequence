@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and Otter.ai for meeting transcription and follow-up. Discover which tool saves you more time.',
     url: 'https://www.replysequence.com/compare/otter',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/otter',

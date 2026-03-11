@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and Fathom for AI meeting notes and follow-up emails. Discover which tool saves you more time with a detailed feature comparison.',
     url: 'https://www.replysequence.com/compare/fathom',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/fathom',

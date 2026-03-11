@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and Grain for meeting recording and follow-up. Discover which tool saves you more time on post-meeting tasks.',
     url: 'https://www.replysequence.com/compare/grain',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/grain',

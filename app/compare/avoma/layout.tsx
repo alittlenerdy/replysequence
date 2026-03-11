@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and Avoma for meeting intelligence and follow-up emails.',
     url: 'https://www.replysequence.com/compare/avoma',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/avoma',

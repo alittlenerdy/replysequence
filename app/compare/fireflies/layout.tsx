@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and Fireflies.ai for meeting transcription and follow-up emails. Discover which tool saves you more time on post-meeting tasks.',
     url: 'https://www.replysequence.com/compare/fireflies',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/fireflies',

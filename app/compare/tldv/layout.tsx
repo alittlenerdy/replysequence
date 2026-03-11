@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description: 'Compare ReplySequence and tl;dv for meeting recordings and AI-powered follow-ups. Discover which tool saves you more time after sales calls.',
     url: 'https://www.replysequence.com/compare/tldv',
     type: 'article',
+    images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
   },
   alternates: {
     canonical: 'https://www.replysequence.com/compare/tldv',
