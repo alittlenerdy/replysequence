@@ -27,12 +27,16 @@ vi.mock('@/lib/db', () => {
     }),
   });
 
+  const mockDeleteWhere = vi.fn().mockResolvedValue(undefined);
+  const mockDelete = vi.fn().mockReturnValue({ where: mockDeleteWhere });
+
   // Import actual schema types for reference
   return {
     db: {
       select: vi.fn().mockReturnValue({ from: mockFrom }),
       insert: vi.fn().mockReturnValue({ values: mockValues }),
       update: vi.fn().mockReturnValue({ set: mockSet }),
+      delete: mockDelete,
     },
     dealContexts: {},
     signals: {},
@@ -93,6 +97,19 @@ describe('context-store', () => {
         signals: [],
       });
       expect(result).toEqual([]);
+    });
+
+    it('deletes existing signals before inserting (idempotency)', async () => {
+      const { db } = await import('@/lib/db');
+      await insertSignals({
+        meetingId: '123e4567-e89b-12d3-a456-426614174000',
+        signals: [
+          { type: 'commitment', value: 'Follow up Thursday', confidence: 0.9 },
+        ],
+      });
+      // Verify delete was called before insert
+      expect(db.delete).toHaveBeenCalled();
+      expect(db.insert).toHaveBeenCalled();
     });
   });
 

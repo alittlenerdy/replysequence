@@ -3,12 +3,22 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock claude-api before importing extract module
 vi.mock('@/lib/claude-api', () => ({
   callClaudeAPI: vi.fn(),
+  calculateCost: vi.fn().mockReturnValue(0.001),
   log: vi.fn(),
 }));
 
 // Mock context-store
 vi.mock('@/lib/context-store', () => ({
   insertSignals: vi.fn().mockResolvedValue([{ id: 'mock-signal-id' }]),
+}));
+
+// Mock downstream consumers
+vi.mock('@/lib/signals/next-steps', () => ({
+  generateNextSteps: vi.fn().mockResolvedValue({ success: true, nextSteps: [], count: 0 }),
+}));
+
+vi.mock('@/lib/signals/risk-detector', () => ({
+  detectRisks: vi.fn().mockResolvedValue({ success: true, risks: [], count: 0, overallRiskLevel: 'low' }),
 }));
 
 import { extractSignals, parseSignalResponse } from '@/lib/signals/extract';

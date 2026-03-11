@@ -7,9 +7,24 @@
  * Pipeline: Transcript → extractSignals() → validate with Zod → write to signals table
  */
 
-import { callClaudeAPI, log } from '@/lib/claude-api';
+import { callClaudeAPI, calculateCost, log } from '@/lib/claude-api';
 import { signalBatchSchema, type Signal } from '@/lib/signals/types';
 import { insertSignals } from '@/lib/context-store';
+import { generateNextSteps } from '@/lib/signals/next-steps';
+import { detectRisks } from '@/lib/signals/risk-detector';
+
+// ── Extraction Metrics ───────────────────────────────────────────────
+
+/**
+ * Structured metric log for signal extraction quality monitoring.
+ * All metrics use tag [SIGNAL-METRICS] for Vercel log filtering.
+ */
+function logMetric(
+  event: string,
+  data: Record<string, unknown>,
+): void {
+  log('info', `[SIGNAL-METRICS] ${event}`, data);
+}
 
 // ── System Prompt ────────────────────────────────────────────────────
 
@@ -75,12 +90,14 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
   const startTime = Date.now();
 
   if (!transcript || transcript.trim().length < 50) {
-    log('info', 'Transcript too short for signal extraction', {
+    logMetric('skipped_short_transcript', {
       meetingId,
       transcriptLength: transcript?.length || 0,
     });
     return { success: true, signals: [], signalCount: 0 };
   }
+
+  logMetric('extraction_started', { meetingId, transcriptLength: transcript.length });
 
   try {
     const userPrompt = buildUserPrompt(transcript, meetingTopic);
@@ -92,6 +109,12 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
     });
 
     const durationMs = Date.now() - startTime;
+    const costUsd = calculateCost(
+      response.inputTokens,
+      response.outputTokens,
+      response.cacheCreationTokens,
+      response.cacheReadTokens,
+    );
 
     // Parse and validate the JSON response
     const signals = parseSignalResponse(response.content);
@@ -103,15 +126,36 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
         dealContextId,
         signals,
       });
+
+      // Run downstream consumers in parallel (fire-and-forget)
+      // Next-step tracking and risk detection use the extracted signals
+      const downstreamInput = { meetingId, dealContextId, signals, meetingTopic };
+      Promise.allSettled([
+        generateNextSteps(downstreamInput),
+        detectRisks(downstreamInput),
+      ]).then((results) => {
+        for (const r of results) {
+          if (r.status === 'rejected') {
+            log('error', 'Downstream signal consumer failed (non-blocking)', {
+              meetingId,
+              error: r.reason instanceof Error ? r.reason.message : String(r.reason),
+            });
+          }
+        }
+      });
     }
 
-    log('info', 'Signal extraction complete', {
+    // ── Emit metrics ──
+    logMetric('extraction_complete', {
       meetingId,
       signalCount: signals.length,
+      zeroSignals: signals.length === 0,
       byType: countByType(signals),
       inputTokens: response.inputTokens,
       outputTokens: response.outputTokens,
+      costUsd: costUsd.toFixed(6),
       durationMs,
+      transcriptLength: transcript.length,
     });
 
     return {
@@ -120,13 +164,14 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
       signalCount: signals.length,
       inputTokens: response.inputTokens,
       outputTokens: response.outputTokens,
+      costUsd,
       durationMs,
     };
   } catch (error) {
     const durationMs = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : String(error);
 
-    log('error', 'Signal extraction failed', {
+    logMetric('extraction_failed', {
       meetingId,
       error: errorMessage,
       durationMs,
@@ -171,7 +216,7 @@ export function parseSignalResponse(content: string): Signal[] {
   try {
     parsed = JSON.parse(jsonStr);
   } catch {
-    log('error', 'Failed to parse signal extraction JSON', {
+    logMetric('parse_failure', {
       contentPreview: content.slice(0, 200),
     });
     return [];
@@ -180,7 +225,7 @@ export function parseSignalResponse(content: string): Signal[] {
   const result = signalBatchSchema.safeParse(parsed);
 
   if (!result.success) {
-    log('error', 'Signal extraction validation failed', {
+    logMetric('validation_failure', {
       errors: result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`),
     });
     return [];

@@ -81,12 +81,17 @@ interface InsertSignalsParams {
 
 /**
  * Insert a batch of extracted signals for a meeting.
+ * Idempotent: deletes any existing signals for the meetingId first,
+ * so reprocessing a meeting always produces a clean signal set.
  * Returns the inserted signal records.
  */
 export async function insertSignals(params: InsertSignalsParams) {
   const { meetingId, dealContextId, signals: signalBatch } = params;
 
   if (signalBatch.length === 0) return [];
+
+  // Delete existing signals for this meeting (idempotency — last write wins)
+  await db.delete(signals).where(eq(signals.meetingId, meetingId));
 
   const rows: NewSignalRecord[] = signalBatch.map((s) => ({
     meetingId,
