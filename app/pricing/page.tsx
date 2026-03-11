@@ -20,6 +20,12 @@ export const metadata = {
     description: 'Simple, transparent pricing for ReplySequence. Start free, upgrade when you need more power.',
     url: 'https://www.replysequence.com/pricing',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pricing | ReplySequence',
+    description: 'Simple, transparent pricing for ReplySequence. Start free, upgrade when you need more power.',
+    creator: '@replysequence',
+  },
   alternates: {
     canonical: 'https://www.replysequence.com/pricing',
   },
@@ -241,10 +247,7 @@ async function PricingContent() {
         </section>
       )}
 
-      {/* Footer - only for non-logged in users */}
-      {!isLoggedIn && (
-        <Footer />
-      )}
+      <Footer />
 
       {/* JSON-LD Pricing Structured Data */}
       <script

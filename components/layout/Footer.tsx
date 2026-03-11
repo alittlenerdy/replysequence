@@ -20,7 +20,12 @@ const compareLinks = [
   { href: '/compare/gong', label: 'vs Gong' },
   { href: '/compare/otter', label: 'vs Otter.ai' },
   { href: '/compare/fireflies', label: 'vs Fireflies' },
+  { href: '/compare/chorus', label: 'vs Chorus' },
   { href: '/compare/fathom', label: 'vs Fathom' },
+  { href: '/compare/avoma', label: 'vs Avoma' },
+  { href: '/compare/grain', label: 'vs Grain' },
+  { href: '/compare/tldv', label: 'vs tl;dv' },
+  { href: '/compare/manual', label: 'vs Manual Follow-Up' },
 ];
 
 const legalLinks = [

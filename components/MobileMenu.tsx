@@ -25,14 +25,35 @@ export default function MobileMenu() {
     setPortalTarget(document.body);
   }, []);
 
-  // Close menu on escape key
+  const menuRef = useRef<HTMLElement>(null);
+
+  // Close menu on escape key + focus trap
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+      // Focus trap when menu is open
+      if (e.key === 'Tab' && isOpen && menuRef.current) {
+        const focusable = menuRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -86,6 +107,7 @@ export default function MobileMenu() {
         >
           {/* Menu Content - padded to avoid header */}
           <nav
+            ref={menuRef}
             className={`flex flex-col items-center justify-center h-full gap-6 px-4 transition-[transform,opacity] duration-300 ${
               isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}

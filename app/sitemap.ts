@@ -114,6 +114,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/compare/manual`,
+      lastModified: new Date('2026-03-11'),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     // Blog
     {
       url: `${baseUrl}/blog`,

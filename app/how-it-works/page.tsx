@@ -312,7 +312,7 @@ function StepCard({
       </motion.div>
 
       {/* Content */}
-      <h3 className="text-xl md:text-2xl font-bold text-white light:text-gray-900 mb-3">{title}</h3>
+      <h2 className="text-xl md:text-2xl font-bold text-white light:text-gray-900 mb-3">{title}</h2>
       <p className="text-gray-400 light:text-gray-600 mb-4">{description}</p>
 
       {/* Additional content */}

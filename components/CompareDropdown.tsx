@@ -13,6 +13,7 @@ const competitors = [
   { name: 'Avoma', slug: 'avoma', tagline: 'Meeting lifecycle' },
   { name: 'Grain', slug: 'grain', tagline: 'Meeting highlights' },
   { name: 'tl;dv', slug: 'tldv', tagline: 'Meeting recorder' },
+  { name: 'Manual Follow-Up', slug: 'manual', tagline: 'Spreadsheets & memory' },
 ];
 
 export default function CompareDropdown({ direction = 'down' }: { direction?: 'down' | 'up' }) {

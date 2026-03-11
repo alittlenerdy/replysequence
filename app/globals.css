@@ -30,6 +30,17 @@ body {
   overflow-x: hidden;
 }
 
+/* Visible focus indicators for dark theme */
+*:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}
+
+/* Preserve custom focus styles where already defined */
+[class*="focus-visible:ring"]:focus-visible {
+  outline: none;
+}
+
 /* Floating Gradient Circles - Nike Pegasus Inspired */
 @layer components {
   .floating-gradient {

@@ -167,7 +167,9 @@ export default function RootLayout({
             {/* MouseTrail disabled - hydration issue */}
             {/* <MouseTrail /> */}
             <MotionProvider>
-              {children}
+              <main id="main-content">
+                {children}
+              </main>
             </MotionProvider>
             {/* PWAInstallPrompt disabled - hydration issue */}
             {/* <PWAInstallPrompt /> */}

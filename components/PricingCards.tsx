@@ -77,7 +77,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                     isEmbedded ? 'p-4 lg:p-5' : 'p-6 lg:p-8'
                   } ${
                     tier.highlighted
-                      ? `bg-gradient-to-b from-indigo-500/10 to-indigo-700/10 border-2 border-indigo-500/50 shadow-xl shadow-indigo-500/10 ${isEmbedded ? '' : 'scale-105'} z-10`
+                      ? `bg-gradient-to-b from-indigo-500/10 to-indigo-700/10 border-2 border-indigo-500/50 shadow-xl shadow-indigo-500/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
                       : 'bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300'
                   }`}
                 >
