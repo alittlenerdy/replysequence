@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { DraftsView } from '@/components/dashboard/DraftsView';
 import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
+import { BriefingsSection } from '@/components/dashboard/BriefingsSection';
 import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
@@ -28,6 +29,7 @@ async function DashboardContent() {
   return (
     <>
       <NudgeBanner variant="ai-settings" />
+      <BriefingsSection />
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">Follow-ups</h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">Review, edit, and send your meeting follow-ups</p>
