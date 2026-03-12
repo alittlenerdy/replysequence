@@ -69,7 +69,11 @@ async function refreshGoogleToken(refreshToken: string): Promise<{
     }).toString(),
   });
 
-  if (!response.ok) return null;
+  if (!response.ok) {
+    const errorBody = await response.text().catch(() => 'unable to read body');
+    log('error', 'Google token refresh failed', { status: response.status, error: errorBody });
+    return null;
+  }
   return response.json();
 }
 
