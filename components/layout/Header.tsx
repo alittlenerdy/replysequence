@@ -17,7 +17,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-xl sm:text-2xl font-display font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:via-indigo-600 light:to-indigo-600 bg-clip-text text-transparent rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
-          <Image src="/logo-new.png" alt="" width={36} height={36} className="rounded-md drop-shadow-lg light:drop-shadow-md" />
+          <Image src="/logo.png" alt="" width={36} height={36} className="rounded-md drop-shadow-lg light:drop-shadow-md" />
           ReplySequence
         </Link>
 

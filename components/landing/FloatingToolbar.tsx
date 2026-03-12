@@ -139,7 +139,7 @@ export function FloatingToolbar() {
           href="/"
           className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors relative z-10"
         >
-          <Image src="/logo-new.png" alt="" width={24} height={24} className="rounded-md" />
+          <Image src="/logo.png" alt="" width={24} height={24} className="rounded-md" />
           <span className="text-sm font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">
             RS
           </span>

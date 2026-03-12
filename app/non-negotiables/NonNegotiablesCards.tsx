@@ -60,7 +60,7 @@ function CardShell({ children }: { children: React.ReactNode }) {
 function LogoBadge() {
   return (
     <div className="flex items-center gap-3">
-      <Image src="/logo-new.png" alt="ReplySequence" width={40} height={40} />
+      <Image src="/logo.png" alt="ReplySequence" width={40} height={40} />
       <span className="text-white/90 font-semibold text-xl tracking-tight">
         ReplySequence
       </span>
@@ -74,7 +74,7 @@ function TitleCard() {
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800" />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
         <Image
-          src="/logo-new.png"
+          src="/logo.png"
           alt="ReplySequence"
           width={80}
           height={80}
@@ -139,7 +139,7 @@ function CTACard() {
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800" />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
         <Image
-          src="/logo-new.png"
+          src="/logo.png"
           alt="ReplySequence"
           width={80}
           height={80}

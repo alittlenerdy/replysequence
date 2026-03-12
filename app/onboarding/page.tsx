@@ -359,7 +359,7 @@ function OnboardingContent() {
         <header className="relative z-10 max-w-4xl mx-auto pt-8 px-4">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
-              <Image src="/logo-new.png" alt="" width={28} height={28} className="rounded-sm" />
+              <Image src="/logo.png" alt="" width={28} height={28} className="rounded-sm" />
               <span className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                 ReplySequence
               </span>
