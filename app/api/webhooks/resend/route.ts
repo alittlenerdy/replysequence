@@ -12,12 +12,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
-import { eq, sql } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { db, drafts, users } from '@/lib/db';
-import { meetings, emailEvents } from '@/lib/db/schema';
+import { meetings, emailEvents, sequenceSteps, emailSequences } from '@/lib/db/schema';
 import { sendEmail } from '@/lib/email';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
-import type { BounceType } from '@/lib/db/schema';
+import type { BounceType, SequencePauseReason } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -290,6 +290,74 @@ async function handlePositiveEvent(event: ResendWebhookEvent): Promise<void> {
       emailId: email_id,
       draftId: draft.id,
       error: insertError instanceof Error ? insertError.message : String(insertError),
+    }));
+  }
+
+  // Check if this email belongs to a sequence step — auto-pause if recipient engaged
+  await checkSequenceAutoPause(email_id, eventType);
+}
+
+/**
+ * Auto-pause a follow-up sequence when the recipient engages.
+ * If a sequence step's email is opened or clicked, pause remaining steps.
+ */
+async function checkSequenceAutoPause(
+  resendMessageId: string,
+  eventType: 'opened' | 'clicked'
+): Promise<void> {
+  try {
+    // Look up sequence step by Resend message ID
+    const [step] = await db
+      .select({
+        id: sequenceSteps.id,
+        sequenceId: sequenceSteps.sequenceId,
+        stepNumber: sequenceSteps.stepNumber,
+      })
+      .from(sequenceSteps)
+      .where(eq(sequenceSteps.resendMessageId, resendMessageId))
+      .limit(1);
+
+    if (!step) return; // Not a sequence email — nothing to do
+
+    // Update the step's engagement tracking
+    const now = new Date();
+    const updateData: Record<string, unknown> = { updatedAt: now };
+    if (eventType === 'opened') updateData.openedAt = now;
+    if (eventType === 'clicked') updateData.clickedAt = now;
+
+    await db.update(sequenceSteps).set(updateData).where(eq(sequenceSteps.id, step.id));
+
+    // Pause the parent sequence
+    const pauseReason: SequencePauseReason = eventType === 'opened' ? 'recipient_opened' : 'recipient_opened';
+    await db.update(emailSequences).set({
+      status: 'paused',
+      pauseReason,
+      pausedAt: now,
+      updatedAt: now,
+    }).where(
+      and(
+        eq(emailSequences.id, step.sequenceId),
+        eq(emailSequences.status, 'active')
+      )
+    );
+
+    console.log(JSON.stringify({
+      level: 'info',
+      tag: '[RESEND-WEBHOOK]',
+      message: 'Sequence auto-paused due to recipient engagement',
+      sequenceId: step.sequenceId,
+      stepId: step.id,
+      stepNumber: step.stepNumber,
+      eventType,
+    }));
+  } catch (error) {
+    // Non-critical — don't fail the webhook
+    console.log(JSON.stringify({
+      level: 'warn',
+      tag: '[RESEND-WEBHOOK]',
+      message: 'Failed to check sequence auto-pause',
+      resendMessageId,
+      error: error instanceof Error ? error.message : String(error),
     }));
   }
 }

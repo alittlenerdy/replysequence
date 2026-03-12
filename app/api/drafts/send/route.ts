@@ -16,6 +16,7 @@ import { eq, and } from 'drizzle-orm';
 import type { MeetingPlatform } from '@/lib/db/schema';
 import { z } from 'zod';
 import { parseBody } from '@/lib/api-validation';
+import { scheduleFollowUpSequence } from '@/lib/sequence-scheduler';
 
 const sendDraftSchema = z.object({
   draftId: z.string().uuid(),
@@ -552,6 +553,24 @@ export async function POST(request: NextRequest) {
         }));
       }
     });
+
+    // Schedule follow-up sequence (non-blocking, runs after response)
+    if (draft.meetingId && meetingUserId) {
+      scheduleFollowUpSequence({
+        draftId,
+        meetingId: draft.meetingId,
+        userId: meetingUserId,
+        recipientEmail,
+        sentAt: new Date(),
+      }).catch((err) => {
+        console.error(JSON.stringify({
+          level: 'error',
+          message: 'Follow-up sequence scheduling failed (non-blocking)',
+          draftId,
+          error: err instanceof Error ? err.message : String(err),
+        }));
+      });
+    }
 
     return NextResponse.json({
       success: true,

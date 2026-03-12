@@ -1544,3 +1544,95 @@ export type MutualActionPlan = typeof mutualActionPlans.$inferSelect;
 export type NewMutualActionPlan = typeof mutualActionPlans.$inferInsert;
 export type MapStep = typeof mapSteps.$inferSelect;
 export type NewMapStep = typeof mapSteps.$inferInsert;
+
+// ── Follow-Up Sequences ──────────────────────────────────────────────
+
+export type SequenceStatus = 'active' | 'paused' | 'completed' | 'cancelled';
+export type SequenceStepStatus = 'pending' | 'scheduled' | 'sent' | 'skipped' | 'failed';
+export type SequencePauseReason = 'recipient_replied' | 'recipient_opened' | 'user_paused' | 'bounce' | 'complaint';
+
+export const emailSequences = pgTable(
+  'email_sequences',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    draftId: uuid('draft_id')
+      .references(() => drafts.id, { onDelete: 'set null' }), // The initial draft that spawned the sequence
+    // Recipient info
+    recipientEmail: varchar('recipient_email', { length: 255 }).notNull(),
+    recipientName: varchar('recipient_name', { length: 255 }),
+    // Sequence metadata
+    status: varchar('status', { length: 20 }).$type<SequenceStatus>().notNull().default('active'),
+    pauseReason: varchar('pause_reason', { length: 30 }).$type<SequencePauseReason>(),
+    pausedAt: timestamp('paused_at', { withTimezone: true }),
+    // Generation tracking
+    totalSteps: integer('total_steps').notNull().default(0),
+    completedSteps: integer('completed_steps').notNull().default(0),
+    // Context used for generation (snapshot)
+    meetingTopic: varchar('meeting_topic', { length: 500 }),
+    meetingSummary: text('meeting_summary'),
+    actionItems: jsonb('action_items').$type<string[]>(),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('email_sequences_user_id_idx').on(table.userId),
+    index('email_sequences_meeting_id_idx').on(table.meetingId),
+    index('email_sequences_status_idx').on(table.status),
+    index('email_sequences_recipient_email_idx').on(table.recipientEmail),
+  ]
+);
+
+export const sequenceSteps = pgTable(
+  'sequence_steps',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    sequenceId: uuid('sequence_id')
+      .notNull()
+      .references(() => emailSequences.id, { onDelete: 'cascade' }),
+    // Step metadata
+    stepNumber: integer('step_number').notNull(), // 1, 2, 3...
+    stepType: varchar('step_type', { length: 30 }).notNull(), // 'check_in', 'nudge', 'breakup', etc.
+    // Email content
+    subject: text('subject').notNull(),
+    body: text('body').notNull(),
+    // Scheduling
+    delayHours: integer('delay_hours').notNull(), // Hours after initial send (step 1) to send this
+    scheduledAt: timestamp('scheduled_at', { withTimezone: true }), // Computed: initial sentAt + delayHours
+    // Status
+    status: varchar('status', { length: 20 }).$type<SequenceStepStatus>().notNull().default('pending'),
+    // Sending results
+    resendMessageId: varchar('resend_message_id', { length: 255 }),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+    // Engagement tracking
+    trackingId: uuid('tracking_id').defaultRandom(),
+    openedAt: timestamp('opened_at', { withTimezone: true }),
+    clickedAt: timestamp('clicked_at', { withTimezone: true }),
+    repliedAt: timestamp('replied_at', { withTimezone: true }),
+    // Error tracking
+    errorMessage: text('error_message'),
+    retryCount: integer('retry_count').default(0),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('sequence_steps_sequence_id_idx').on(table.sequenceId),
+    index('sequence_steps_status_idx').on(table.status),
+    index('sequence_steps_scheduled_at_idx').on(table.scheduledAt),
+    index('sequence_steps_tracking_id_idx').on(table.trackingId),
+    index('sequence_steps_resend_message_id_idx').on(table.resendMessageId),
+  ]
+);
+
+// Type exports for Sequences
+export type EmailSequence = typeof emailSequences.$inferSelect;
+export type NewEmailSequence = typeof emailSequences.$inferInsert;
+export type SequenceStep = typeof sequenceSteps.$inferSelect;
+export type NewSequenceStep = typeof sequenceSteps.$inferInsert;

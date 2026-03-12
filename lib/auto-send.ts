@@ -19,6 +19,7 @@ import { syncSentEmailToSheets } from './google-sheets';
 import { syncSentEmailToSalesforce, refreshSalesforceToken } from './salesforce';
 import { decrypt, encrypt } from './encryption';
 import { markDraftAsSent } from './dashboard-queries';
+import { scheduleFollowUpSequence } from './sequence-scheduler';
 import type { Participant } from './db/schema';
 
 interface AutoSendResult {
@@ -266,7 +267,24 @@ export async function attemptAutoSend(params: {
       messageId: result.messageId,
     }));
 
-    // 9. CRM sync (non-blocking)
+    // 9. Schedule follow-up sequence (non-blocking)
+    scheduleFollowUpSequence({
+      draftId,
+      meetingId,
+      userId,
+      recipientEmail,
+      sentAt: new Date(),
+    }).catch((err) => {
+      console.error(JSON.stringify({
+        level: 'error',
+        tag: '[AUTO-SEND]',
+        message: 'Follow-up sequence scheduling failed (non-blocking)',
+        draftId,
+        error: err instanceof Error ? err.message : String(err),
+      }));
+    });
+
+    // 10. CRM sync (non-blocking)
     const crmPlatform = meeting.platform || 'zoom';
 
     // Google Sheets sync (non-blocking)
