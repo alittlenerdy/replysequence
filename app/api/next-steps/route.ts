@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
         dealContextId: nextStepsTable.dealContextId,
         // Join meeting topic
         meetingTopic: meetings.topic,
-        meetingDate: meetings.meetingDate,
+        meetingDate: meetings.startTime,
         // Join deal company
         companyName: dealContexts.companyName,
       })

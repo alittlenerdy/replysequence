@@ -143,6 +143,7 @@ export async function GET(request: NextRequest) {
         await sendEmail({
           to: user.email,
           subject: `${steps.length} overdue action item${steps.length > 1 ? 's' : ''} from your meetings`,
+          body: '',
           html,
         });
         emailsSent++;

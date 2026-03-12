@@ -1709,9 +1709,6 @@ export const preMeetingBriefings = pgTable(
 );
 
 // Type exports for Pre-Meeting Briefings
-export type PreMeetingBriefing = typeof preMeetingBriefings.$inferSelect;
-export type NewPreMeetingBriefing = typeof preMeetingBriefings.$inferInsert;
-
 // ── Next Steps (Action Item Tracking) ──────────────────────────────────
 
 export type NextStepStatus = 'pending' | 'completed' | 'dismissed' | 'overdue';
@@ -1765,5 +1762,3 @@ export const nextStepsTable = pgTable(
 export type NextStepRecord = typeof nextStepsTable.$inferSelect;
 export type NewNextStepRecord = typeof nextStepsTable.$inferInsert;
 
-export type PreMeetingBriefing = typeof preMeetingBriefings.$inferSelect;
-export type NewPreMeetingBriefing = typeof preMeetingBriefings.$inferInsert;
