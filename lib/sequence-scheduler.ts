@@ -10,9 +10,9 @@
  */
 
 import { db, emailSequences, sequenceSteps, meetings, users } from './db';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { generateSequence } from './sequence-generator';
-import type { Participant } from './db/schema';
+import type { Participant, ActionItem } from './db/schema';
 
 interface ScheduleSequenceParams {
   draftId: string;
@@ -60,16 +60,16 @@ export async function scheduleFollowUpSequence(
     const recipient = participants.find(
       (p) => p.email?.toLowerCase() === recipientEmail.toLowerCase()
     );
-    const recipientName = recipient?.name || recipientEmail.split('@')[0];
+    const recipientName = recipient?.user_name || recipientEmail.split('@')[0];
 
     // Get sender name
     const [user] = await db
-      .select({ firstName: users.firstName, lastName: users.lastName })
+      .select({ name: users.name })
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
 
-    const senderName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Your contact';
+    const senderName = user?.name || 'Your contact';
 
     // Get the initial draft content
     const { drafts } = await import('./db/schema');
@@ -84,8 +84,7 @@ export async function scheduleFollowUpSequence(
     }
 
     const actionItems = (meeting.actionItems || []).map(
-      (item: string | { description: string; owner?: string }) =>
-        typeof item === 'string' ? item : `${item.description} (${item.owner || 'unassigned'})`
+      (item: ActionItem) => `${item.task} (${item.owner || 'unassigned'})`
     );
 
     // Generate the sequence

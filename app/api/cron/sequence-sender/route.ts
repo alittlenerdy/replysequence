@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
 
         // Get sender info
         const [user] = await db
-          .select({ email: users.email, firstName: users.firstName })
+          .select({ email: users.email, name: users.name })
           .from(users)
           .where(eq(users.id, step.userId))
           .limit(1);

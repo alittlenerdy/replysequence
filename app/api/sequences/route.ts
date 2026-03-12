@@ -11,12 +11,13 @@ import { db, emailSequences, sequenceSteps, users, meetings, drafts } from '@/li
 import { eq, and, desc } from 'drizzle-orm';
 import { generateSequence } from '@/lib/sequence-generator';
 import { z } from 'zod';
+import type { ActionItem } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
 
 async function getUserId(clerkId: string): Promise<string | null> {
   const [user] = await db
-    .select({ id: users.id, firstName: users.firstName })
+    .select({ id: users.id })
     .from(users)
     .where(eq(users.clerkId, clerkId))
     .limit(1);
@@ -122,15 +123,15 @@ export async function POST(request: NextRequest) {
 
   // Get sender name
   const [user] = await db
-    .select({ firstName: users.firstName, lastName: users.lastName })
+    .select({ name: users.name })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
 
-  const senderName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Your contact';
+  const senderName = user?.name || 'Your contact';
 
   const actionItems = (meeting.actionItems || []).map(
-    (item) => typeof item === 'string' ? item : `${item.description} (${item.owner || 'unassigned'})`
+    (item: ActionItem) => `${item.task} (${item.owner || 'unassigned'})`
   );
 
   const result = await generateSequence({
