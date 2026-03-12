@@ -59,6 +59,9 @@
     },
     "app/api/cron/pre-meeting-briefing/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/next-step-reminders/route.ts": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -121,6 +124,10 @@
     {
       "path": "/api/cron/pre-meeting-briefing",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/next-step-reminders",
+      "schedule": "0 8 * * *"
     }
   ]
 }

@@ -3,14 +3,17 @@
  *
  * First downstream consumer of extracted signals.
  * Analyzes signals from a meeting and generates predicted next steps
- * using Claude API, then writes them to the deal context.
+ * using Claude API, then writes them to the deal context and next_steps table.
  *
- * Pipeline: extractSignals() → generateNextSteps() → updateAccumulatedContext()
+ * Pipeline: extractSignals() → generateNextSteps() → persist to DB + updateAccumulatedContext()
  */
 
 import { callClaudeAPI, log } from '@/lib/claude-api';
 import { updateAccumulatedContext } from '@/lib/context-store';
+import { db, nextStepsTable, meetings } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 import type { Signal } from '@/lib/signals/types';
+import type { NextStepType, NextStepUrgency, NextStepOwnerType, NextStepSource } from '@/lib/db/schema';
 import { z } from 'zod';
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -18,6 +21,9 @@ import { z } from 'zod';
 export interface NextStep {
   task: string;
   owner: string;
+  ownerType: 'rep' | 'prospect' | 'other';
+  type: 'email' | 'call' | 'document' | 'internal' | 'meeting';
+  urgency: 'immediate' | 'this_week' | 'next_week' | 'no_deadline';
   deadline: string;
   source: 'explicit' | 'predicted';
   confidence: 'high' | 'medium' | 'low';
@@ -26,6 +32,9 @@ export interface NextStep {
 const nextStepSchema = z.object({
   task: z.string().min(1).max(500),
   owner: z.string().max(255),
+  ownerType: z.enum(['rep', 'prospect', 'other']).default('rep'),
+  type: z.enum(['email', 'call', 'document', 'internal', 'meeting']).default('email'),
+  urgency: z.enum(['immediate', 'this_week', 'next_week', 'no_deadline']).default('this_week'),
   deadline: z.string().max(100),
   source: z.enum(['explicit', 'predicted']),
   confidence: z.enum(['high', 'medium', 'low']),
@@ -40,11 +49,14 @@ const nextStepsResponseSchema = z.object({
 const NEXT_STEPS_SYSTEM_PROMPT = `You are a sales operations analyst. Given a set of deal signals extracted from a meeting, generate actionable next steps.
 
 For each signal, determine:
-1. What action should be taken as a result?
-2. Who should own it? (use the signal's speaker name, "Sales rep", "Prospect", or a role like "Engineering lead")
-3. What's a reasonable deadline? (use relative terms: "Within 24 hours", "Before next meeting", "This week", "Within 2 weeks", etc.)
-4. Is this an explicit next step (directly stated in the meeting) or a predicted one (inferred from the signal)?
-5. Confidence level: high (directly stated), medium (strongly implied), low (suggested based on best practices)
+1. task: What action should be taken? (start with a verb, be concise)
+2. owner: Who should own it? (use the signal's speaker name, "Sales rep", "Prospect", or a role like "Engineering lead")
+3. ownerType: "rep" (sales team), "prospect" (buyer side), or "other" (third party)
+4. type: "email" (send an email), "call" (make a phone call), "document" (create/send a document), "internal" (internal team action), "meeting" (schedule a meeting)
+5. urgency: "immediate" (within 24h), "this_week", "next_week", "no_deadline"
+6. deadline: Human-readable deadline (e.g., "Within 24 hours", "Before next meeting", "This week")
+7. source: "explicit" (directly stated in meeting) or "predicted" (inferred from signal)
+8. confidence: "high" (directly stated), "medium" (strongly implied), "low" (suggested based on best practices)
 
 Rules:
 - Prioritize explicit next steps over predictions
@@ -59,6 +71,9 @@ Respond with ONLY valid JSON:
     {
       "task": "Send revised proposal with updated pricing tiers",
       "owner": "Sales rep",
+      "ownerType": "rep",
+      "type": "document",
+      "urgency": "immediate",
       "deadline": "Within 48 hours",
       "source": "explicit",
       "confidence": "high"
@@ -79,20 +94,53 @@ export interface GenerateNextStepsResult {
   success: boolean;
   nextSteps: NextStep[];
   count: number;
+  persisted: number;
   durationMs?: number;
   error?: string;
 }
 
 /**
+ * Compute a due date from urgency relative to meeting time.
+ */
+function computeDueDate(urgency: NextStepUrgency, referenceDate: Date): Date | null {
+  const d = new Date(referenceDate);
+  switch (urgency) {
+    case 'immediate':
+      d.setHours(d.getHours() + 24);
+      return d;
+    case 'this_week':
+      d.setDate(d.getDate() + 5);
+      return d;
+    case 'next_week':
+      d.setDate(d.getDate() + 10);
+      return d;
+    case 'no_deadline':
+      return null;
+  }
+}
+
+/**
+ * Look up the userId for a meeting.
+ */
+async function getMeetingUserId(meetingId: string): Promise<string | null> {
+  const [meeting] = await db
+    .select({ userId: meetings.userId })
+    .from(meetings)
+    .where(eq(meetings.id, meetingId))
+    .limit(1);
+  return meeting?.userId || null;
+}
+
+/**
  * Generate next steps from extracted signals using Claude API.
- * Writes results to the deal context if dealContextId is provided.
+ * Writes results to the next_steps table and deal context.
  */
 export async function generateNextSteps(input: GenerateNextStepsInput): Promise<GenerateNextStepsResult> {
   const { meetingId, dealContextId, signals, meetingTopic } = input;
   const startTime = Date.now();
 
   if (signals.length === 0) {
-    return { success: true, nextSteps: [], count: 0 };
+    return { success: true, nextSteps: [], count: 0, persisted: 0 };
   }
 
   try {
@@ -107,7 +155,7 @@ export async function generateNextSteps(input: GenerateNextStepsInput): Promise<
     const durationMs = Date.now() - startTime;
     const nextSteps = parseNextStepsResponse(response.content);
 
-    // Write to deal context if linked
+    // Write to deal context if linked (backwards-compatible string format)
     if (dealContextId && nextSteps.length > 0) {
       await updateAccumulatedContext({
         dealContextId,
@@ -115,10 +163,37 @@ export async function generateNextSteps(input: GenerateNextStepsInput): Promise<
       });
     }
 
+    // Persist individual records to next_steps table
+    let persisted = 0;
+    if (nextSteps.length > 0) {
+      const userId = await getMeetingUserId(meetingId);
+      if (userId) {
+        const now = new Date();
+        const rows = nextSteps.map((step) => ({
+          userId,
+          meetingId,
+          dealContextId: dealContextId || null,
+          task: step.task,
+          owner: step.owner,
+          ownerType: step.ownerType as NextStepOwnerType,
+          type: step.type as NextStepType,
+          urgency: step.urgency as NextStepUrgency,
+          source: step.source as NextStepSource,
+          confidence: step.confidence,
+          status: 'pending' as const,
+          dueDate: computeDueDate(step.urgency as NextStepUrgency, now),
+        }));
+
+        const inserted = await db.insert(nextStepsTable).values(rows).returning({ id: nextStepsTable.id });
+        persisted = inserted.length;
+      }
+    }
+
     log('info', '[NEXT-STEPS] Generation complete', {
       meetingId,
       signalCount: signals.length,
       nextStepCount: nextSteps.length,
+      persisted,
       explicit: nextSteps.filter((s) => s.source === 'explicit').length,
       predicted: nextSteps.filter((s) => s.source === 'predicted').length,
       durationMs,
@@ -128,6 +203,7 @@ export async function generateNextSteps(input: GenerateNextStepsInput): Promise<
       success: true,
       nextSteps,
       count: nextSteps.length,
+      persisted,
       durationMs,
     };
   } catch (error) {
@@ -144,6 +220,7 @@ export async function generateNextSteps(input: GenerateNextStepsInput): Promise<
       success: false,
       nextSteps: [],
       count: 0,
+      persisted: 0,
       durationMs,
       error: errorMessage,
     };

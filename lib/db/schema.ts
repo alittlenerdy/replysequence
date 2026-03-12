@@ -1708,5 +1708,62 @@ export const preMeetingBriefings = pgTable(
   ]
 );
 
+// Type exports for Pre-Meeting Briefings
+export type PreMeetingBriefing = typeof preMeetingBriefings.$inferSelect;
+export type NewPreMeetingBriefing = typeof preMeetingBriefings.$inferInsert;
+
+// ── Next Steps (Action Item Tracking) ──────────────────────────────────
+
+export type NextStepStatus = 'pending' | 'completed' | 'dismissed' | 'overdue';
+export type NextStepType = 'email' | 'call' | 'document' | 'internal' | 'meeting';
+export type NextStepUrgency = 'immediate' | 'this_week' | 'next_week' | 'no_deadline';
+export type NextStepOwnerType = 'rep' | 'prospect' | 'other';
+export type NextStepSource = 'explicit' | 'predicted';
+
+export const nextStepsTable = pgTable(
+  'next_steps',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    dealContextId: uuid('deal_context_id')
+      .references(() => dealContexts.id, { onDelete: 'set null' }),
+    // Task details
+    task: text('task').notNull(),
+    owner: varchar('owner', { length: 255 }).notNull(),
+    ownerType: varchar('owner_type', { length: 20 }).$type<NextStepOwnerType>().notNull().default('rep'),
+    type: varchar('type', { length: 20 }).$type<NextStepType>().notNull().default('email'),
+    urgency: varchar('urgency', { length: 20 }).$type<NextStepUrgency>().notNull().default('this_week'),
+    // AI metadata
+    source: varchar('source', { length: 20 }).$type<NextStepSource>().notNull().default('predicted'),
+    confidence: varchar('confidence', { length: 10 }).notNull().default('medium'), // high/medium/low
+    // Status tracking
+    status: varchar('status', { length: 20 }).$type<NextStepStatus>().notNull().default('pending'),
+    dueDate: timestamp('due_date', { withTimezone: true }),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    // Reminder tracking
+    reminderSentAt: timestamp('reminder_sent_at', { withTimezone: true }),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('next_steps_user_id_idx').on(table.userId),
+    index('next_steps_meeting_id_idx').on(table.meetingId),
+    index('next_steps_deal_context_id_idx').on(table.dealContextId),
+    index('next_steps_status_idx').on(table.status),
+    index('next_steps_due_date_idx').on(table.dueDate),
+    index('next_steps_user_status_idx').on(table.userId, table.status),
+  ]
+);
+
+// Type exports for Next Steps
+export type NextStepRecord = typeof nextStepsTable.$inferSelect;
+export type NewNextStepRecord = typeof nextStepsTable.$inferInsert;
+
 export type PreMeetingBriefing = typeof preMeetingBriefings.$inferSelect;
 export type NewPreMeetingBriefing = typeof preMeetingBriefings.$inferInsert;
