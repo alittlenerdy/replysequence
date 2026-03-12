@@ -7,6 +7,7 @@ import type { MeetingDetail } from '@/lib/dashboard-queries';
 import { DraftQualityBadge } from '@/components/ui/DraftQualityBadge';
 import { DraftPreviewModal } from '@/components/DraftPreviewModal';
 import { MeetingSummaryCard } from '@/components/dashboard/MeetingSummaryCard';
+import { SequencesSection } from '@/components/dashboard/SequencesSection';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 
 function PlatformBadge({ platform }: { platform: string }) {
@@ -532,6 +533,20 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           </div>
         )}
       </div>
+
+      {/* Follow-Up Sequences */}
+      {(meeting.status === 'completed' || meeting.status === 'ready') && (
+        <SequencesSection
+          meetingId={meeting.id}
+          participants={meeting.participants}
+          drafts={meeting.drafts.map(d => ({
+            id: d.id,
+            subject: d.subject,
+            sentTo: d.sentTo,
+            status: d.status,
+          }))}
+        />
+      )}
 
       {/* Draft Preview Modal */}
       {selectedDraft && (
