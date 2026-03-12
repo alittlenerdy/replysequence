@@ -1439,6 +1439,7 @@ export const dealContexts = pgTable(
     // Stats
     meetingCount: integer('meeting_count').notNull().default(0),
     signalCount: integer('signal_count').notNull().default(0),
+    dealHealthScore: integer('deal_health_score'),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

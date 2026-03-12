@@ -9,10 +9,11 @@
 
 import { callClaudeAPI, calculateCost, log } from '@/lib/claude-api';
 import { signalBatchSchema, type Signal } from '@/lib/signals/types';
-import { insertSignals } from '@/lib/context-store';
+import { insertSignals, getDealContext, updateHealthScore } from '@/lib/context-store';
 import { generateNextSteps } from '@/lib/signals/next-steps';
 import { detectRisks } from '@/lib/signals/risk-detector';
 import { generateMap } from '@/lib/map/generate';
+import { calculateHealthScore } from '@/lib/health-score/calculate';
 
 // ── Extraction Metrics ───────────────────────────────────────────────
 
@@ -135,12 +136,36 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
         generateNextSteps(downstreamInput),
         detectRisks(downstreamInput),
         generateMap(downstreamInput),
-      ]).then((results) => {
+      ]).then(async (results) => {
         for (const r of results) {
           if (r.status === 'rejected') {
             log('error', 'Downstream signal consumer failed (non-blocking)', {
               meetingId,
               error: r.reason instanceof Error ? r.reason.message : String(r.reason),
+            });
+          }
+        }
+
+        // Calculate health score after downstream consumers update the deal context
+        if (dealContextId) {
+          try {
+            const ctx = await getDealContext(dealContextId);
+            if (ctx) {
+              const health = calculateHealthScore({
+                risks: (ctx.risks as string[]) || [],
+                nextSteps: (ctx.nextSteps as string[]) || [],
+                stakeholders: (ctx.stakeholders as string[]) || [],
+                commitments: (ctx.commitments as string[]) || [],
+                signalCount: ctx.signalCount,
+                meetingCount: ctx.meetingCount,
+              });
+              await updateHealthScore(dealContextId, health.score);
+            }
+          } catch (err) {
+            log('error', 'Health score calculation failed (non-blocking)', {
+              meetingId,
+              dealContextId,
+              error: err instanceof Error ? err.message : String(err),
             });
           }
         }

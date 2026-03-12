@@ -244,6 +244,36 @@ export async function updateAccumulatedContext(params: UpdateAccumulatedContextP
   return updated;
 }
 
+// ── Update Health Score ──────────────────────────────────────────────
+
+/**
+ * Update the deal health score on a deal context.
+ * Called after signal extraction computes the score.
+ */
+export async function updateHealthScore(dealContextId: string, score: number) {
+  const [updated] = await db
+    .update(dealContexts)
+    .set({ dealHealthScore: score, updatedAt: new Date() })
+    .where(eq(dealContexts.id, dealContextId))
+    .returning();
+
+  return updated;
+}
+
+// ── Get Deal Context ────────────────────────────────────────────────
+
+/**
+ * Get a deal context by ID.
+ */
+export async function getDealContext(dealContextId: string) {
+  const [ctx] = await db
+    .select()
+    .from(dealContexts)
+    .where(eq(dealContexts.id, dealContextId))
+    .limit(1);
+  return ctx || null;
+}
+
 // ── Get Signals for Meeting ──────────────────────────────────────────
 
 /**

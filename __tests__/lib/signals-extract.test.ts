@@ -10,6 +10,8 @@ vi.mock('@/lib/claude-api', () => ({
 // Mock context-store
 vi.mock('@/lib/context-store', () => ({
   insertSignals: vi.fn().mockResolvedValue([{ id: 'mock-signal-id' }]),
+  getDealContext: vi.fn().mockResolvedValue(null),
+  updateHealthScore: vi.fn().mockResolvedValue(null),
 }));
 
 // Mock downstream consumers
@@ -23,6 +25,10 @@ vi.mock('@/lib/signals/risk-detector', () => ({
 
 vi.mock('@/lib/map/generate', () => ({
   generateMap: vi.fn().mockResolvedValue({ success: true, stepCount: 0, commitmentSteps: 0, recommendedSteps: 0 }),
+}));
+
+vi.mock('@/lib/health-score/calculate', () => ({
+  calculateHealthScore: vi.fn().mockReturnValue({ score: 50, label: 'neutral', breakdown: {} }),
 }));
 
 import { extractSignals, parseSignalResponse } from '@/lib/signals/extract';
