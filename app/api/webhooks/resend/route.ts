@@ -2,6 +2,7 @@
  * Resend Webhook Handler
  *
  * Handles email delivery events from Resend:
+ * - email.delivered/opened/clicked: records positive events in email_events table
  * - email.bounced: marks draft as bounced, notifies user
  * - email.complained: tracks complaint, auto-pauses sending after 3 complaints
  * - email.delivery_delayed: logs the delay for monitoring
@@ -13,7 +14,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { eq, sql } from 'drizzle-orm';
 import { db, drafts, users } from '@/lib/db';
-import { meetings } from '@/lib/db/schema';
+import { meetings, emailEvents } from '@/lib/db/schema';
 import { sendEmail } from '@/lib/email';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import type { BounceType } from '@/lib/db/schema';
@@ -25,7 +26,14 @@ export const maxDuration = 60;
 const COMPLAINT_PAUSE_THRESHOLD = 3;
 
 // Resend webhook event types we handle
-type ResendEventType = 'email.bounced' | 'email.complained' | 'email.delivery_delayed';
+type ResendEventType =
+  | 'email.sent'
+  | 'email.delivered'
+  | 'email.opened'
+  | 'email.clicked'
+  | 'email.bounced'
+  | 'email.complained'
+  | 'email.delivery_delayed';
 
 // Resend webhook event payload structure
 interface ResendWebhookEvent {
@@ -41,6 +49,10 @@ interface ResendWebhookEvent {
     bounce?: {
       message: string;
       type?: string; // 'hard' or 'soft'
+    };
+    // Click-specific fields
+    click?: {
+      link: string;
     };
   };
 }
@@ -145,6 +157,12 @@ export async function POST(request: NextRequest) {
 
     // Route to appropriate handler
     switch (event.type) {
+      case 'email.delivered':
+      case 'email.opened':
+      case 'email.clicked':
+        await handlePositiveEvent(event);
+        break;
+
       case 'email.bounced':
         await handleEmailBounced(event);
         break;
@@ -155,6 +173,10 @@ export async function POST(request: NextRequest) {
 
       case 'email.delivery_delayed':
         await handleDeliveryDelayed(event);
+        break;
+
+      case 'email.sent':
+        // Logged above, no additional handling needed
         break;
 
       default:
@@ -191,6 +213,84 @@ export async function POST(request: NextRequest) {
 
     // Return 200 to prevent Resend retries
     return NextResponse.json({ received: true }, { status: 200 });
+  }
+}
+
+/**
+ * Handle positive email events (delivered, opened, clicked).
+ * Records in email_events table for tracking and Follow-Up Sequence auto-pause.
+ */
+async function handlePositiveEvent(event: ResendWebhookEvent): Promise<void> {
+  const { email_id } = event.data;
+
+  // Map Resend event type to our EmailEventType
+  const eventTypeMap: Record<string, 'opened' | 'clicked'> = {
+    'email.opened': 'opened',
+    'email.clicked': 'clicked',
+  };
+
+  // email.delivered is informational — we only persist opens/clicks as actionable events
+  if (event.type === 'email.delivered') {
+    console.log(JSON.stringify({
+      level: 'info',
+      tag: '[RESEND-WEBHOOK]',
+      message: 'Email delivered',
+      emailId: email_id,
+      to: event.data.to,
+    }));
+    return;
+  }
+
+  const eventType = eventTypeMap[event.type];
+  if (!eventType) return;
+
+  // Look up the draft by Resend message ID
+  const [draft] = await db
+    .select({
+      id: drafts.id,
+      trackingId: drafts.trackingId,
+    })
+    .from(drafts)
+    .where(eq(drafts.resendMessageId, email_id))
+    .limit(1);
+
+  if (!draft || !draft.trackingId) {
+    console.log(JSON.stringify({
+      level: 'info',
+      tag: '[RESEND-WEBHOOK]',
+      message: `${event.type} event for unknown/untracked email`,
+      emailId: email_id,
+    }));
+    return;
+  }
+
+  // Insert email event
+  try {
+    await db.insert(emailEvents).values({
+      draftId: draft.id,
+      trackingId: draft.trackingId,
+      eventType,
+      clickedUrl: event.data.click?.link || null,
+    });
+
+    console.log(JSON.stringify({
+      level: 'info',
+      tag: '[RESEND-WEBHOOK]',
+      message: `Email ${eventType} event recorded`,
+      emailId: email_id,
+      draftId: draft.id,
+      clickedUrl: event.data.click?.link,
+    }));
+  } catch (insertError) {
+    // Duplicate events are expected (multiple opens) — log and continue
+    console.log(JSON.stringify({
+      level: 'warn',
+      tag: '[RESEND-WEBHOOK]',
+      message: `Failed to record ${eventType} event (may be duplicate)`,
+      emailId: email_id,
+      draftId: draft.id,
+      error: insertError instanceof Error ? insertError.message : String(insertError),
+    }));
   }
 }
 
