@@ -1,471 +1,188 @@
-# CLAUDE.md - AI Assistant Reference
-
-> Quick reference for Claude Code and AI assistants working on ReplySequence
-
-**Last Updated:** March 11, 2026
-
----
-
-## Project Context
-
-**Name:** ReplySequence
-**Purpose:** Zoom/Meet/Teams -> AI email drafts -> CRM automation
-**Stack:** Next.js 16, PostgreSQL/Drizzle, Clerk, Claude API, Resend
-**Status:** Week 7/12 MVP Sprint (Jan 27 - Mar 21, 2026) — Beta launch pending Google OAuth verification
-
-**Location:** `/Volumes/just_a_little_nerd/replysequence`
-**Production:** https://www.replysequence.com
-
----
-
-## Key File Locations
-
-### API Routes
-```
-app/api/webhooks/zoom/route.ts       # Zoom webhook handler
-app/api/webhooks/teams/route.ts      # Teams webhook handler
-app/api/webhooks/meet/route.ts       # Meet webhook handler
-app/api/drafts/route.ts              # Draft list endpoint
-app/api/drafts/[id]/route.ts         # Draft by ID
-app/api/drafts/send/route.ts         # Email sending endpoint
-app/api/drafts/update/route.ts       # Draft update endpoint
-```
-
-### Core Logic
-```
-lib/process-zoom-event.ts            # Zoom event processing
-lib/process-teams-event.ts           # Teams event processing
-lib/process-meet-event.ts            # Meet event processing
-lib/generate-draft.ts                # AI draft generation
-lib/claude-api.ts                    # Claude SDK client + streaming API
-lib/transcript/vtt-parser.ts         # VTT transcript parsing
-lib/transcript/downloader.ts         # Transcript download
-lib/email.ts                         # Email sending via Resend
-lib/webhook-retry.ts                 # Webhook retry logic
-lib/idempotency/index.ts             # Duplicate prevention (Redis)
-```
-
-### Database
-```
-lib/db/schema.ts                     # Drizzle schema (all tables)
-lib/db/index.ts                      # Database client
-drizzle.config.ts                    # Drizzle configuration
-drizzle/                             # Migrations folder
-```
-
-### Configuration
-```
-.env.local                           # Environment variables (not committed)
-.env.example                         # Template for environment setup
-```
-
----
-
-## Critical Patterns
-
-### 1. Webhook Processing Flow
-
-```typescript
-// Standard webhook pattern (see app/api/webhooks/zoom/route.ts)
-export async function POST(request: NextRequest) {
-  const startTime = Date.now();
-
-  // 1. Get raw body for signature verification
-  const rawBody = await request.text();
-
-  // 2. Verify webhook signature
-  const signature = request.headers.get('x-zm-signature') || '';
-  if (!verifyZoomSignature(rawBody, signature, timestamp)) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-  }
-
-  // 3. Parse payload
-  const payload = JSON.parse(rawBody);
-
-  // 4. Idempotency check via Redis lock
-  const lockKey = `${event_type}-${meeting_uuid}`;
-  const acquired = await acquireEventLock(lockKey);
-  if (!acquired) {
-    return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
-  }
-
-  // 5. Store raw event for audit trail
-  const rawEvent = await storeRawEvent(eventType, eventId, rawBody);
-
-  // 6. Process event (downloads transcript, creates meeting, generates draft)
-  await processZoomEvent(rawEvent);
-
-  // 7. Always return 200 to prevent platform retries
-  return NextResponse.json({ received: true }, { status: 200 });
-}
-```
-
-### 2. Claude API Usage
-
-The project uses the Anthropic SDK with a singleton pattern:
-
-```typescript
-// lib/claude-api.ts
-import Anthropic from '@anthropic-ai/sdk';
-
-let claudeClient: Anthropic | null = null;
-
-export function getClaudeClient(): Anthropic {
-  if (!claudeClient) {
-    claudeClient = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-      timeout: 20 * 1000,  // 20 seconds for Vercel
-      maxRetries: 2,
-    });
-  }
-  return claudeClient;
-}
-
-// Model: claude-sonnet-4-20250514
-export const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
-```
-
-Draft generation (lib/generate-draft.ts) includes:
-- Meeting type detection (sales_call, internal_sync, etc.)
-- Quality scoring (0-100)
-- Action item extraction
-- Retry with exponential backoff
-
-### 3. Database Queries (Drizzle ORM)
-
-```typescript
-import { db, meetings, drafts, transcripts } from '@/lib/db';
-import { eq, desc } from 'drizzle-orm';
-
-// Insert
-const [meeting] = await db
-  .insert(meetings)
-  .values({
-    platform: 'zoom',
-    zoomMeetingId: payload.uuid,
-    hostEmail: payload.host_email,
-    status: 'processing',
-  })
-  .returning();
-
-// Query
-const { data } = await db
-  .select()
-  .from(drafts)
-  .where(eq(drafts.meetingId, meetingId))
-  .orderBy(desc(drafts.createdAt))
-  .limit(1);
-
-// Update
-await db
-  .update(meetings)
-  .set({ status: 'completed', processingStep: 'completed' })
-  .where(eq(meetings.id, meetingId));
-```
-
-### 4. Error Handling
-
-```typescript
-// Always use try-catch with structured JSON logging
-try {
-  const result = await processWebhook(payload);
-  console.log(JSON.stringify({
-    level: 'info',
-    message: 'Webhook processed successfully',
-    meetingId: result.meetingId,
-    duration: Date.now() - startTime,
-  }));
-  return NextResponse.json({ success: true }, { status: 200 });
-} catch (error) {
-  console.log(JSON.stringify({
-    level: 'error',
-    tag: '[WEBHOOK-ERROR]',
-    message: 'Webhook processing failed',
-    platform: 'zoom',
-    error: error instanceof Error ? error.message : String(error),
-    timestamp: new Date().toISOString(),
-  }));
-
-  // Record failure for retry
-  await recordWebhookFailure('zoom', eventType, payload, errorMessage);
-
-  // Still return 200 to prevent platform retries
-  return NextResponse.json({ received: true }, { status: 200 });
-}
-```
-
-### 5. Cron Agent Pattern
-
-All cron agents follow this structure (see `app/api/cron/*/route.ts`):
-
-```typescript
-import { NextResponse } from 'next/server';
-
-export const maxDuration = 60;
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: NextRequest) {
-  // 1. Verify cron secret
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // 2. Query for actionable items
-  // 3. Process each item
-  // 4. Send Slack notification on completion/failure
-  // 5. Return summary
-
-  return NextResponse.json({ processed: count });
-}
-```
-
-Configure in `vercel.json` under `functions` (maxDuration) and `crons` (schedule).
-
----
-
-## ClickUp Quick Reference
-
-- **Workspace ID**: `9013469200` (always required in MCP calls)
-- **Immediates List**: `901326290802` (daily plans)
-- **Sprint 2 List**: `901324927980`
-- **Backlog List**: `901324927994`
-- **Bugs List**: `901324928003`
-- Always set custom fields: Effort, Owner, Phase, Priority, Product Area, Sprint, Quarter
-- **Dropdown fields require UUID option IDs**, not orderindex numbers — get UUIDs from a `get_task` response
-- Status quirks: Backlog list uses `to do` not `backlog`/`prioritized`/`ready`; Bugs list `reported`/`closed` don't work via API
-- **Never mark tasks "complete"/"done"** — use `ready for review`, Jimmy marks done after testing
-- Full field reference: `/Volumes/just_a_little_nerd/CLICKUP_FIELDS.md`
-
-## Typefully Quick Reference
-
-- **@replysequence** (product): social set `283435`
-- **@atinylittlenerd** (Jimmy personal): social set `266757`
-- Always create a quote-tweet draft on @atinylittlenerd when publishing on @replysequence
-- Use `quote_post_url` field with the published tweet URL
-- Schedule the RT draft ~2-4 hours after the @replysequence post
-- LinkedIn posts MUST include images — text-only gets no engagement
-
-## Build & Deploy Checklist
-
-1. Run `npx next build` with `run_in_background: true` (never pipe to `tail` — it buffers output)
-2. Check build output for type errors
-3. Push to main — auto-deploys to Vercel
-4. Verify production URL responds: `curl -s -o /dev/null -w '%{http_code}' https://www.replysequence.com`
-
----
-
-## Common Gotchas
-
-### 1. Webhook Timeouts
-
-**Issue:** Vercel has timeout limits (60s configured, but default is 10s on hobby)
-**Solution:**
-- `export const maxDuration = 60;` at top of route file
-- Process async where possible
-- Use Redis for idempotency to handle retries gracefully
-
-### 2. Idempotency
-
-**Issue:** Platforms retry webhooks on failures
-**Solution:** Redis-based locks in `lib/idempotency/index.ts`
-```typescript
-const lockKey = `${event_type}-${meeting_uuid}`;
-const acquired = await acquireEventLock(lockKey);
-if (!acquired) return; // Already processing
-```
-
-### 3. OAuth Token Encryption
-
-**Issue:** OAuth tokens need secure storage
-**Solution:** AES-256-GCM encryption in `lib/encryption.ts`
-- Tokens stored encrypted in `*_connections` tables
-- Service role for server-side operations
-
-### 4. VTT Speaker Detection
-
-**Issue:** Some platforms don't include speaker names in VTT
-**Workaround:** Parser assigns "Speaker 1", "Speaker 2" labels
-
----
-
-## Development Workflows
-
-### Adding New Platform Integration
-
-1. Create webhook route: `app/api/webhooks/[platform]/route.ts`
-2. Create types: `lib/[platform]/types.ts`
-3. Implement processor: `lib/process-[platform]-event.ts`
-4. Add OAuth flow: `app/api/auth/[platform]/route.ts` and callback
-5. Add connection table to schema if needed
-6. Test with ngrok: `ngrok http 3000`
-
-### Testing Changes
+# Claude Code Configuration - RuFlo V3
+
+## Behavioral Rules (Always Enforced)
+
+- Do what has been asked; nothing more, nothing less
+- NEVER create files unless they're absolutely necessary for achieving your goal
+- ALWAYS prefer editing an existing file to creating a new one
+- NEVER proactively create documentation files (*.md) or README files unless explicitly requested
+- NEVER save working files, text/mds, or tests to the root folder
+- Never continuously check status after spawning a swarm — wait for results
+- ALWAYS read a file before editing it
+- NEVER commit secrets, credentials, or .env files
+
+## File Organization
+
+- NEVER save to root folder — use the directories below
+- Use `/src` for source code files
+- Use `/tests` for test files
+- Use `/docs` for documentation and markdown files
+- Use `/config` for configuration files
+- Use `/scripts` for utility scripts
+- Use `/examples` for example code
+
+## Project Architecture
+
+- Follow Domain-Driven Design with bounded contexts
+- Keep files under 500 lines
+- Use typed interfaces for all public APIs
+- Prefer TDD London School (mock-first) for new code
+- Use event sourcing for state changes
+- Ensure input validation at system boundaries
+
+### Project Config
+
+- **Topology**: hierarchical-mesh
+- **Max Agents**: 15
+- **Memory**: hybrid
+- **HNSW**: Enabled
+- **Neural**: Enabled
+
+## Build & Test
 
 ```bash
-# Local development
-npm run dev
-
-# Build (catches TypeScript errors)
+# Build
 npm run build
 
-# Database operations
-npm run db:push      # Push schema changes
-npm run db:studio    # Open Drizzle Studio
+# Test
+npm test
+
+# Lint
+npm run lint
 ```
 
-### Debugging Webhooks
+- ALWAYS run tests after making code changes
+- ALWAYS verify build succeeds before committing
+
+## Security Rules
+
+- NEVER hardcode API keys, secrets, or credentials in source files
+- NEVER commit .env files or any file containing secrets
+- Always validate user input at system boundaries
+- Always sanitize file paths to prevent directory traversal
+- Run `npx @claude-flow/cli@latest security scan` after security-related changes
+
+## Concurrency: 1 MESSAGE = ALL RELATED OPERATIONS
+
+- All operations MUST be concurrent/parallel in a single message
+- Use Claude Code's Task tool for spawning agents, not just MCP
+- ALWAYS batch ALL todos in ONE TodoWrite call (5-10+ minimum)
+- ALWAYS spawn ALL agents in ONE message with full instructions via Task tool
+- ALWAYS batch ALL file reads/writes/edits in ONE message
+- ALWAYS batch ALL Bash commands in ONE message
+
+## Swarm Orchestration
+
+- MUST initialize the swarm using CLI tools when starting complex tasks
+- MUST spawn concurrent agents using Claude Code's Task tool
+- Never use CLI tools alone for execution — Task tool agents do the actual work
+- MUST call CLI tools AND Task tool in ONE message for complex work
+
+### 3-Tier Model Routing (ADR-026)
+
+| Tier | Handler | Latency | Cost | Use Cases |
+|------|---------|---------|------|-----------|
+| **1** | Agent Booster (WASM) | <1ms | $0 | Simple transforms (var→const, add types) — Skip LLM |
+| **2** | Haiku | ~500ms | $0.0002 | Simple tasks, low complexity (<30%) |
+| **3** | Sonnet/Opus | 2-5s | $0.003-0.015 | Complex reasoning, architecture, security (>30%) |
+
+- Always check for `[AGENT_BOOSTER_AVAILABLE]` or `[TASK_MODEL_RECOMMENDATION]` before spawning agents
+- Use Edit tool directly when `[AGENT_BOOSTER_AVAILABLE]`
+
+## Swarm Configuration & Anti-Drift
+
+- ALWAYS use hierarchical topology for coding swarms
+- Keep maxAgents at 6-8 for tight coordination
+- Use specialized strategy for clear role boundaries
+- Use `raft` consensus for hive-mind (leader maintains authoritative state)
+- Run frequent checkpoints via `post-task` hooks
+- Keep shared memory namespace for all agents
 
 ```bash
-# View Vercel logs
-vercel logs https://www.replysequence.com --since 10m
-
-# Filter by tag
-vercel logs ... | grep "WEBHOOK-ERROR"
-
-# Local webhook testing
-ngrok http 3000
-# Use ngrok URL in platform webhook settings
+npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized
 ```
 
----
+## Swarm Execution Rules
 
-## Security Notes
+- ALWAYS use `run_in_background: true` for all agent Task calls
+- ALWAYS put ALL agent Task calls in ONE message for parallel execution
+- After spawning, STOP — do NOT add more tool calls or check status
+- Never poll TaskOutput or check swarm status — trust agents to return
+- When agent results arrive, review ALL results before proceeding
 
-### API Keys
-- Never commit `.env.local`
-- Use Vercel environment variables for production
-- Rotate keys if accidentally exposed
+## V3 CLI Commands
 
-### Webhook Verification
-- Always verify signatures before processing
-- Use platform-specific verification (Zoom: HMAC, Teams: Graph validation)
-- Return 401 for invalid signatures
+### Core Commands
 
-### Database Access
-- OAuth tokens encrypted at rest
-- User-scoped queries via Clerk userId
-- Service role for webhooks (no user context)
+| Command | Subcommands | Description |
+|---------|-------------|-------------|
+| `init` | 4 | Project initialization |
+| `agent` | 8 | Agent lifecycle management |
+| `swarm` | 6 | Multi-agent swarm coordination |
+| `memory` | 11 | AgentDB memory with HNSW search |
+| `task` | 6 | Task creation and lifecycle |
+| `session` | 7 | Session state management |
+| `hooks` | 17 | Self-learning hooks + 12 workers |
+| `hive-mind` | 6 | Byzantine fault-tolerant consensus |
 
----
-
-## Quick Commands
+### Quick CLI Examples
 
 ```bash
-# Development
-npm run dev                 # Start dev server
-npm run build              # Production build
-npm run worker             # Run BullMQ worker
-
-# Database
-npm run db:push            # Push schema changes
-npm run db:generate        # Generate migrations
-npm run db:migrate         # Run migrations
-npm run db:studio          # Open Drizzle Studio
-
-# Deployment
-git push origin main       # Auto-deploys to Vercel
-vercel                     # Manual deploy
-vercel logs                # View production logs
+npx @claude-flow/cli@latest init --wizard
+npx @claude-flow/cli@latest agent spawn -t coder --name my-coder
+npx @claude-flow/cli@latest swarm init --v3-mode
+npx @claude-flow/cli@latest memory search --query "authentication patterns"
+npx @claude-flow/cli@latest doctor --fix
 ```
 
----
+## Available Agents (60+ Types)
 
-## When Things Break
+### Core Development
+`coder`, `reviewer`, `tester`, `planner`, `researcher`
 
-### Webhook Not Triggering
-1. Check Vercel logs for errors
-2. Verify webhook URL in platform settings
-3. Test signature verification locally
-4. Check Redis connection for idempotency
+### Specialized
+`security-architect`, `security-auditor`, `memory-specialist`, `performance-engineer`
 
-### Draft Generation Failing
-1. Verify ANTHROPIC_API_KEY is set
-2. Check API usage/rate limits
-3. Review transcript content (empty?)
-4. Check `drafts` table for error messages
+### Swarm Coordination
+`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`
 
-### Database Errors
-1. Verify DATABASE_URL connection
-2. Check migration status: `npm run db:push`
-3. Review schema changes in `lib/db/schema.ts`
-4. Check Drizzle Studio: `npm run db:studio`
+### GitHub & Repository
+`pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`
 
-### OAuth Flow Issues
-1. Verify redirect URIs match exactly
-2. Check token expiry in `*_connections` tables
-3. Verify scopes in platform app settings
-4. Check encryption key consistency
+### SPARC Methodology
+`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`
 
----
+## Memory Commands Reference
 
-Plan Mode Review Protocol
+```bash
+# Store (REQUIRED: --key, --value; OPTIONAL: --namespace, --ttl, --tags)
+npx @claude-flow/cli@latest memory store --key "pattern-auth" --value "JWT with refresh" --namespace patterns
 
-Review this plan thoroughly before making any code changes. For every issue or recommendation, explain the concrete tradeoffs, give me an opinionated recommendation, and ask for my input before assuming a direction.
+# Search (REQUIRED: --query; OPTIONAL: --namespace, --limit, --threshold)
+npx @claude-flow/cli@latest memory search --query "authentication patterns"
 
-My Engineering Preferences
+# List (OPTIONAL: --namespace, --limit)
+npx @claude-flow/cli@latest memory list --namespace patterns --limit 10
 
-DRY is important—flag repetition aggressively.
-Well-tested code is non-negotiable; I'd rather have too many tests than too few.
-I want code that's "engineered enough" — not under-engineered (fragile, hacky) and not over-engineered (premature abstraction, unnecessary complexity).
-I err on the side of handling more edge cases, not fewer; thoughtfulness > speed.
-Bias toward explicit over clever.
+# Retrieve (REQUIRED: --key; OPTIONAL: --namespace)
+npx @claude-flow/cli@latest memory retrieve --key "pattern-auth" --namespace patterns
+```
 
-1. Architecture Review
+## Quick Setup
 
-Evaluate:
-Overall system design and component boundaries.
-Dependency graph and coupling concerns.
-Data flow patterns and potential bottlenecks.
-Scaling characteristics and single points of failure.
-Security architecture (auth, data access, API boundaries).
+```bash
+claude mcp add claude-flow -- npx -y @claude-flow/cli@latest
+npx @claude-flow/cli@latest daemon start
+npx @claude-flow/cli@latest doctor --fix
+```
 
-2. Code Quality Review
+## Claude Code vs CLI Tools
 
-Evaluate:
-Code organization and module structure.
-DRY violations—be aggressive here.
-Error handling patterns and missing edge cases (call these out explicitly).
-Technical debt hotspots.
-Areas that are over-engineered or under-engineered relative to my preferences.
+- Claude Code's Task tool handles ALL execution: agents, file ops, code generation, git
+- CLI tools handle coordination via Bash: swarm init, memory, hooks, routing
+- NEVER use CLI tools as a substitute for Task tool agents
 
-3. Test Review
+## Support
 
-Evaluate:
-Test coverage gaps (unit, integration, e2e).
-Test quality and assertion strength.
-Missing edge case coverage—be thorough.
-Untested failure modes and error paths.
-
-4. Performance Review
-
-Evaluate:
-N+1 queries and database access patterns.
-Memory-usage concerns.
-Caching opportunities.
-Slow or high-complexity code paths.
-
-For Each Issue You Find
-
-Describe the problem concretely, with file and line references.
-Present 2–3 options, including "do nothing" where that's reasonable.
-For each option, specify: implementation effort, risk, impact on other code, and maintenance burden.
-Give me your recommended option and why, mapped to my preferences above.
-Then explicitly ask whether I agree or want to choose a different direction before proceeding.
-
-Workflow and Interaction
-
-Do not assume my priorities on timeline or scale.
-After each section, pause and ask for my feedback before moving on.
-
-Before You Start
-
-Ask if I want one of two options:
-
-1/ BIG CHANGE: Work through this interactively, one section at a time (Architecture → Code Quality → Tests → Performance) with at most 4 top issues in each section.
-
-2/ SMALL CHANGE: Work through interactively ONE question per review section.
-
-FOR EACH STAGE OF REVIEW: output the explanation and pros and cons AND your opinionated recommendation, then use AskUserQuestion. NUMBER issues, give LETTERS for options. Make the recommended option always the 1st option.
-
-**For questions:** See README.md or contact jimmy@playgroundgiants.com
+- Documentation: https://github.com/ruvnet/claude-flow
+- Issues: https://github.com/ruvnet/claude-flow/issues

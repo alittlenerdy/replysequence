@@ -58,9 +58,21 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   return NextResponse.json({ ...sequence, steps });
 }
 
-const patchSchema = z.object({
-  action: z.enum(['pause', 'resume', 'cancel']),
-});
+const patchSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('pause') }),
+  z.object({ action: z.literal('resume') }),
+  z.object({ action: z.literal('cancel') }),
+  z.object({
+    action: z.literal('edit_step'),
+    stepId: z.string().uuid(),
+    subject: z.string().min(1).max(500).optional(),
+    body: z.string().min(1).max(10000).optional(),
+  }),
+  z.object({
+    action: z.literal('schedule_all'),
+    startAt: z.string().datetime().optional(), // ISO string; defaults to now
+  }),
+]);
 
 /**
  * PATCH — pause, resume, or cancel a sequence
@@ -142,6 +154,84 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
 
       return NextResponse.json({ status: 'cancelled' });
+    }
+
+    case 'edit_step': {
+      const { stepId, subject, body: stepBody } = parsed.data;
+      if (!subject && !stepBody) {
+        return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
+      }
+
+      // Only allow editing pending or scheduled steps
+      const [step] = await db
+        .select({ id: sequenceSteps.id, status: sequenceSteps.status })
+        .from(sequenceSteps)
+        .where(
+          and(
+            eq(sequenceSteps.id, stepId),
+            eq(sequenceSteps.sequenceId, sequenceId)
+          )
+        )
+        .limit(1);
+
+      if (!step) {
+        return NextResponse.json({ error: 'Step not found' }, { status: 404 });
+      }
+      if (step.status !== 'pending' && step.status !== 'scheduled') {
+        return NextResponse.json({ error: 'Can only edit pending or scheduled steps' }, { status: 400 });
+      }
+
+      const updates: Record<string, unknown> = { updatedAt: now };
+      if (subject) updates.subject = subject;
+      if (stepBody) updates.body = stepBody;
+
+      await db.update(sequenceSteps).set(updates).where(eq(sequenceSteps.id, stepId));
+      return NextResponse.json({ updated: true, stepId });
+    }
+
+    case 'schedule_all': {
+      if (sequence.status !== 'active' && sequence.status !== 'paused') {
+        return NextResponse.json({ error: 'Sequence is not active or paused' }, { status: 400 });
+      }
+
+      const startAt = parsed.data.startAt ? new Date(parsed.data.startAt) : now;
+
+      // Get all pending steps and schedule them
+      const pendingSteps = await db
+        .select({ id: sequenceSteps.id, delayHours: sequenceSteps.delayHours })
+        .from(sequenceSteps)
+        .where(
+          and(
+            eq(sequenceSteps.sequenceId, sequenceId),
+            eq(sequenceSteps.status, 'pending')
+          )
+        )
+        .orderBy(sequenceSteps.stepNumber);
+
+      for (const step of pendingSteps) {
+        const scheduledAt = new Date(startAt.getTime() + step.delayHours * 60 * 60 * 1000);
+        await db.update(sequenceSteps).set({
+          scheduledAt,
+          status: 'scheduled',
+          updatedAt: now,
+        }).where(eq(sequenceSteps.id, step.id));
+      }
+
+      // Ensure sequence is active
+      if (sequence.status === 'paused') {
+        await db.update(emailSequences).set({
+          status: 'active',
+          pauseReason: null,
+          pausedAt: null,
+          updatedAt: now,
+        }).where(eq(emailSequences.id, sequenceId));
+      }
+
+      return NextResponse.json({
+        scheduled: true,
+        stepsScheduled: pendingSteps.length,
+        startAt: startAt.toISOString(),
+      });
     }
   }
 }

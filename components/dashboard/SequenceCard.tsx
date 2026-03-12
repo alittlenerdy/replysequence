@@ -135,10 +135,30 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
+// Optimal send time suggestions per step type
+const TIMING_SUGGESTIONS: Record<string, { label: string; tip: string }> = {
+  check_in: {
+    label: 'Best: Tue-Thu 9-11 AM',
+    tip: '48h check-ins get 23% higher open rates mid-week mornings',
+  },
+  value_nudge: {
+    label: 'Best: Mon or Wed 2-4 PM',
+    tip: 'Value-add emails perform best early in the week, afternoon',
+  },
+  breakup: {
+    label: 'Best: Tue 10 AM',
+    tip: 'Breakup emails get the most replies Tuesday mornings',
+  },
+};
+
 export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
+  const [editingStep, setEditingStep] = useState<string | null>(null);
+  const [editSubject, setEditSubject] = useState('');
+  const [editBody, setEditBody] = useState('');
+  const [isScheduling, setIsScheduling] = useState(false);
 
   const handleAction = async (action: 'pause' | 'resume' | 'cancel') => {
     setIsLoading(true);
@@ -161,6 +181,65 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
       setIsLoading(false);
     }
   };
+
+  const startEditing = (step: SequenceStepData) => {
+    setEditingStep(step.id);
+    setEditSubject(step.subject);
+    setEditBody(step.body);
+    setExpandedStep(step.id);
+  };
+
+  const handleSaveEdit = async (stepId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/sequences/${sequence.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'edit_step',
+          stepId,
+          subject: editSubject,
+          body: editBody,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Failed to save edit');
+        return;
+      }
+      setEditingStep(null);
+      onStatusChange?.();
+    } catch {
+      setError('Failed to save edit');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleScheduleAll = async () => {
+    setIsScheduling(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/sequences/${sequence.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'schedule_all' }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Failed to schedule');
+        return;
+      }
+      onStatusChange?.();
+    } catch {
+      setError('Failed to schedule');
+    } finally {
+      setIsScheduling(false);
+    }
+  };
+
+  const hasPendingSteps = sequence.steps.some(s => s.status === 'pending');
 
   const statusConfig = STATUS_CONFIG[sequence.status];
   const progress = sequence.totalSteps > 0
@@ -209,6 +288,15 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                 className="px-2.5 py-1 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors disabled:opacity-50"
               >
                 Resume
+              </button>
+            )}
+            {hasPendingSteps && (sequence.status === 'active' || sequence.status === 'paused') && (
+              <button
+                onClick={handleScheduleAll}
+                disabled={isScheduling || isLoading}
+                className="px-2.5 py-1 text-xs font-medium rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors disabled:opacity-50"
+              >
+                {isScheduling ? 'Scheduling...' : 'Schedule All'}
               </button>
             )}
             {(sequence.status === 'active' || sequence.status === 'paused') && (
@@ -316,14 +404,80 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
               {/* Expanded content */}
               {isExpanded && (
                 <div className="px-4 pb-4 pt-1 ml-10">
-                  <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 p-3">
-                    <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Subject</p>
-                    <p className="text-sm text-gray-200 light:text-gray-800 mb-3">{step.subject}</p>
-                    <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Body</p>
-                    <p className="text-sm text-gray-300 light:text-gray-700 whitespace-pre-wrap leading-relaxed">
-                      {step.body}
-                    </p>
-                  </div>
+                  {/* Timing suggestion */}
+                  {(step.status === 'pending' || step.status === 'scheduled') && TIMING_SUGGESTIONS[step.stepType] && (
+                    <div className="mb-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-500/5 border border-indigo-500/10">
+                      <svg className="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-xs text-indigo-300 light:text-indigo-600">
+                        <strong>{TIMING_SUGGESTIONS[step.stepType].label}</strong>
+                        <span className="text-gray-500 ml-1.5">{TIMING_SUGGESTIONS[step.stepType].tip}</span>
+                      </span>
+                    </div>
+                  )}
+
+                  {editingStep === step.id ? (
+                    /* Inline editor */
+                    <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-indigo-500/30 p-3 space-y-3">
+                      <div>
+                        <label className="text-xs font-medium text-gray-400 light:text-gray-500 block mb-1">Subject</label>
+                        <input
+                          type="text"
+                          value={editSubject}
+                          onChange={(e) => setEditSubject(e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-indigo-500/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-gray-400 light:text-gray-500 block mb-1">Body</label>
+                        <textarea
+                          value={editBody}
+                          onChange={(e) => setEditBody(e.target.value)}
+                          rows={6}
+                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-indigo-500/50 resize-y"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setEditingStep(null)}
+                          className="px-3 py-1.5 text-xs font-medium rounded-lg text-gray-400 hover:text-gray-200 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleSaveEdit(step.id)}
+                          disabled={isLoading}
+                          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition-colors disabled:opacity-50"
+                        >
+                          {isLoading ? 'Saving...' : 'Save'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Read-only view */
+                    <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 p-3">
+                      <div className="flex items-start justify-between">
+                        <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Subject</p>
+                        {(step.status === 'pending' || step.status === 'scheduled') && (
+                          <button
+                            onClick={() => startEditing(step)}
+                            className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
+                          >
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-200 light:text-gray-800 mb-3">{step.subject}</p>
+                      <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Body</p>
+                      <p className="text-sm text-gray-300 light:text-gray-700 whitespace-pre-wrap leading-relaxed">
+                        {step.body}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Engagement indicators */}
                   {step.status === 'sent' && (
