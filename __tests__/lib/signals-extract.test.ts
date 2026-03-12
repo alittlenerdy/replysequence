@@ -12,6 +12,23 @@ vi.mock('@/lib/context-store', () => ({
   insertSignals: vi.fn().mockResolvedValue([{ id: 'mock-signal-id' }]),
   getDealContext: vi.fn().mockResolvedValue(null),
   updateHealthScore: vi.fn().mockResolvedValue(null),
+  upsertDealContext: vi.fn().mockResolvedValue(null),
+  linkMeetingToDeal: vi.fn().mockResolvedValue(null),
+}));
+
+// Mock db (used by resolveDealContext)
+vi.mock('@/lib/db', () => ({
+  db: { select: vi.fn().mockReturnValue({ from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue({ limit: vi.fn().mockResolvedValue([]) }) }) }) },
+}));
+
+// Mock db schema (imported for table references)
+vi.mock('@/lib/db/schema', () => ({
+  meetings: { userId: 'user_id', hostEmail: 'host_email', dealContextId: 'deal_context_id' },
+}));
+
+// Mock drizzle-orm (used for eq())
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn(),
 }));
 
 // Mock downstream consumers

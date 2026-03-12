@@ -9,11 +9,14 @@
 
 import { callClaudeAPI, calculateCost, log } from '@/lib/claude-api';
 import { signalBatchSchema, type Signal } from '@/lib/signals/types';
-import { insertSignals, getDealContext, updateHealthScore } from '@/lib/context-store';
+import { insertSignals, getDealContext, updateHealthScore, upsertDealContext, linkMeetingToDeal } from '@/lib/context-store';
 import { generateNextSteps } from '@/lib/signals/next-steps';
 import { detectRisks } from '@/lib/signals/risk-detector';
 import { generateMap } from '@/lib/map/generate';
 import { calculateHealthScore } from '@/lib/health-score/calculate';
+import { db } from '@/lib/db';
+import { meetings } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 // ── Extraction Metrics ───────────────────────────────────────────────
 
@@ -88,7 +91,8 @@ export interface ExtractSignalsResult {
  * Validates the response with Zod and writes to the database.
  */
 export async function extractSignals(input: ExtractSignalsInput): Promise<ExtractSignalsResult> {
-  const { meetingId, transcript, meetingTopic, dealContextId } = input;
+  const { meetingId, transcript, meetingTopic } = input;
+  let { dealContextId } = input;
   const startTime = Date.now();
 
   if (!transcript || transcript.trim().length < 50) {
@@ -99,7 +103,12 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
     return { success: true, signals: [], signalCount: 0 };
   }
 
-  logMetric('extraction_started', { meetingId, transcriptLength: transcript.length });
+  // Auto-resolve deal context if not provided
+  if (!dealContextId) {
+    dealContextId = await resolveDealContext(meetingId);
+  }
+
+  logMetric('extraction_started', { meetingId, transcriptLength: transcript.length, dealContextId: dealContextId || 'none' });
 
   try {
     const userPrompt = buildUserPrompt(transcript, meetingTopic);
@@ -121,13 +130,19 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
     // Parse and validate the JSON response
     const signals = parseSignalResponse(response.content);
 
-    // Write to database
+    // Write to database and attach DB IDs back to signals for downstream attribution
     if (signals.length > 0) {
-      await insertSignals({
+      const insertedRows = await insertSignals({
         meetingId,
         dealContextId,
         signals,
       });
+
+      // Map DB IDs back onto signals so downstream consumers (MAP attribution) can reference them
+      // insertSignals preserves order: rows[i] corresponds to signals[i]
+      for (let i = 0; i < signals.length && i < insertedRows.length; i++) {
+        signals[i].id = insertedRows[i].id;
+      }
 
       // Run downstream consumers in parallel (fire-and-forget)
       // Next-step tracking, risk detection, and MAP generation use the extracted signals
@@ -267,4 +282,70 @@ function countByType(signals: Signal[]): Record<string, number> {
     counts[s.type] = (counts[s.type] || 0) + 1;
   }
   return counts;
+}
+
+// ── Deal Context Auto-Resolution ────────────────────────────────────
+
+/** Free email domains that shouldn't create deal contexts */
+const FREE_EMAIL_DOMAINS = new Set([
+  'gmail.com', 'googlemail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+  'aol.com', 'icloud.com', 'me.com', 'mac.com', 'live.com', 'msn.com',
+  'protonmail.com', 'proton.me', 'zoho.com', 'ymail.com',
+]);
+
+/**
+ * Auto-resolve a deal context for a meeting.
+ * Looks up the meeting's host email, extracts the company domain,
+ * and upserts a deal context. Links the meeting to the deal context.
+ * Returns the dealContextId or undefined if resolution fails.
+ */
+async function resolveDealContext(meetingId: string): Promise<string | undefined> {
+  try {
+    const [meeting] = await db
+      .select({ userId: meetings.userId, hostEmail: meetings.hostEmail, dealContextId: meetings.dealContextId })
+      .from(meetings)
+      .where(eq(meetings.id, meetingId))
+      .limit(1);
+
+    if (!meeting) return undefined;
+
+    // If meeting already has a deal context, use it
+    if (meeting.dealContextId) return meeting.dealContextId;
+
+    // Need userId to create a deal context (user-scoped)
+    if (!meeting.userId) {
+      logMetric('deal_context_skip_no_user', { meetingId });
+      return undefined;
+    }
+
+    const domain = meeting.hostEmail.split('@')[1]?.toLowerCase();
+    if (!domain || FREE_EMAIL_DOMAINS.has(domain)) {
+      logMetric('deal_context_skip_free_email', { meetingId, domain });
+      return undefined;
+    }
+
+    // Derive company name from domain (e.g., "acme.com" → "Acme")
+    const companyName = domain.split('.')[0].charAt(0).toUpperCase() + domain.split('.')[0].slice(1);
+
+    const dealContext = await upsertDealContext({
+      userId: meeting.userId,
+      companyName,
+      companyDomain: domain,
+    });
+
+    if (dealContext) {
+      // Link meeting to deal context
+      await linkMeetingToDeal({ meetingId, dealContextId: dealContext.id });
+      logMetric('deal_context_auto_resolved', { meetingId, dealContextId: dealContext.id, companyDomain: domain });
+      return dealContext.id;
+    }
+
+    return undefined;
+  } catch (err) {
+    logMetric('deal_context_auto_resolve_failed', {
+      meetingId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return undefined;
+  }
 }
