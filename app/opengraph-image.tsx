@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'ReplySequence - AI Follow-Up Emails from Meetings';
+export const alt = 'ReplySequence — The Follow-Up Layer for Sales';
 export const size = {
   width: 1200,
   height: 630,
@@ -83,8 +83,8 @@ export default async function Image() {
             marginBottom: 40,
           }}
         >
-          <span>Turn Zoom, Teams & Meet calls into</span>
-          <span>perfect follow-up emails in 8 seconds</span>
+          <span>Every tool records the meeting.</span>
+          <span>None of them send the follow-up.</span>
         </div>
 
         {/* Features */}
@@ -94,7 +94,7 @@ export default async function Image() {
             gap: 32,
           }}
         >
-          {['AI-Powered Drafts', 'CRM Integration', 'Save 10+ hrs/week'].map((feature) => (
+          {['Follow-Ups From Transcripts', 'Multi-Step Sequences', 'Automatic CRM Sync'].map((feature) => (
             <div
               key={feature}
               style={{

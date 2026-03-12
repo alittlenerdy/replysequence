@@ -63,72 +63,42 @@ const faqData = [
   {
     question: 'How does ReplySequence work?',
     answer:
-      'ReplySequence connects to your Zoom, Microsoft Teams, or Google Meet account. When your meeting ends and a transcript is available, our AI automatically analyzes the conversation, extracts key points, action items, and commitments, then generates a professional follow-up email draft. The entire process takes about 8 seconds from meeting end to draft ready.',
+      'After your Zoom, Teams, or Meet call ends, ReplySequence reads the transcript and drafts a personalized follow-up email — referencing what was actually discussed, in your writing style. You review, edit if needed, and send. Your CRM updates automatically with meeting notes, action items, and next steps.',
   },
   {
-    question: 'Which meeting platforms are supported?',
+    question: 'How is this different from Gong or Fathom?',
     answer:
-      'We currently support Zoom, Microsoft Teams, and Google Meet. All three platforms are fully integrated with automatic transcript retrieval. We are actively working on additional platform integrations based on user feedback.',
+      'Tools like Gong and Fathom record and summarize your meetings. ReplySequence goes further — it sends the follow-up. Those tools tell you what happened. ReplySequence does something about it.',
   },
   {
-    question: 'How fast are the email drafts generated?',
+    question: 'How is this different from Outreach or Apollo?',
     answer:
-      'Our AI generates follow-up email drafts in approximately 8 seconds after receiving the meeting transcript. This is roughly 10x faster than writing the email yourself, giving you back hours each week to focus on what matters most - closing deals.',
+      'Outreach and Apollo send sequences to cold prospects using pre-written templates. ReplySequence sends follow-ups to people you\'ve already spoken to, built from the actual conversation. Cold sequencers don\'t know what happened on the call. ReplySequence does.',
   },
   {
-    question: 'Is my meeting data secure?',
+    question: 'Will the emails sound like AI wrote them?',
     answer:
-      'Absolutely. Security is our top priority. We use AES-256 encryption for sensitive data and TLS for all data in transit. Our infrastructure runs on SOC 2 Type II certified providers (Vercel and Supabase). Meeting transcripts are processed securely and are never shared with third parties or used for AI training.',
+      'Not after a few uses. ReplySequence learns your writing style from every edit you make. The AI adapts to your tone, structure, and preferences. Most users stop editing drafts significantly within the first week.',
   },
   {
-    question: 'Can I edit the AI-generated drafts?',
+    question: 'What if the AI gets something wrong?',
     answer:
-      'Yes! Every draft is fully editable before sending. While our AI produces high-quality drafts that capture the key points from your meetings, you have complete control to adjust the tone, add personal touches, or modify any content before hitting send.',
+      'Every draft is a suggestion, not a sent email. You review and approve before anything leaves your inbox. Every point in the email links back to the transcript, so you can verify exactly where the AI pulled the information.',
   },
   {
-    question: 'What CRMs does ReplySequence integrate with?',
+    question: 'How much does it cost?',
     answer:
-      'We integrate with HubSpot, Salesforce, and Google Sheets for CRM logging. When you send a follow-up email, the activity is automatically logged to your CRM, keeping your records up to date without manual entry.',
-  },
-  {
-    question: 'How much does ReplySequence cost?',
-    answer:
-      'ReplySequence offers a free plan with 5 AI drafts per month. Our Pro plan is $19/month (or $15/month billed annually) for unlimited AI drafts and custom templates. For teams, the Team plan is $29/month with CRM sync, collaboration features, and API access. You can upgrade or downgrade at any time.',
+      'Free tier with 5 AI drafts per month. Pro is $19/month for unlimited drafts. Team is $29/month with CRM sync and team collaboration. No annual contracts, no platform fees, no minimum seats.',
   },
   {
     question: 'Do I need to install anything?',
     answer:
-      'No installation required. ReplySequence is a cloud-based web application. Simply sign up, connect your meeting platform through our secure OAuth integration, and you are ready to go. Your email drafts will be accessible from any device with a web browser.',
+      'No. ReplySequence works in your browser. Connect your meeting platform with one click, link your email, and you\'re ready. Setup takes under 2 minutes.',
   },
   {
-    question: 'How do I connect my meeting platform?',
+    question: 'Is my data secure?',
     answer:
-      'Connecting your meeting platform takes just one click. During setup, you will authorize ReplySequence to access your meeting transcripts through a secure OAuth connection. This grants read-only access to transcripts - we never have access to your meeting recordings or other account data.',
-  },
-  {
-    question: 'What happens if I miss a meeting or the transcript is unavailable?',
-    answer:
-      'ReplySequence only processes meetings where transcripts are available. If your meeting platform did not generate a transcript (for example, if transcription was disabled), we cannot generate a follow-up draft. We recommend ensuring transcription is enabled in your meeting platform settings for all meetings you want ReplySequence to process.',
-  },
-  {
-    question: 'What if the AI gets something wrong in a draft?',
-    answer:
-      'Every draft is a suggestion, not a sent email. You always review and approve before anything goes out. The AI pulls directly from your meeting transcript, so the content is grounded in what was actually said. If something needs adjusting, you can edit inline or regenerate with different parameters. Nothing sends without your explicit approval.',
-  },
-  {
-    question: 'Can I customize the emails to match my team\'s tone and templates?',
-    answer:
-      'Yes. ReplySequence supports custom email templates that reflect your brand voice, formatting preferences, and standard follow-up structure. The AI uses these templates as a foundation while adding call-specific details from the transcript. Your prospects will not be able to tell the difference between an AI-assisted draft and one your best rep wrote manually.',
-  },
-  {
-    question: 'Will this mess up our CRM data?',
-    answer:
-      'ReplySequence only writes to agreed-upon fields in your CRM. All activity logs are visible and auditable. We log the follow-up email, key action items, and meeting outcome — nothing more. If you use HubSpot or Salesforce, the integration maps to your existing properties. For Google Sheets, you choose exactly which columns to sync. You can review exactly what gets synced before enabling CRM logging.',
-  },
-  {
-    question: 'How accurate is the AI at capturing what happened in a meeting?',
-    answer:
-      'The AI works directly from your meeting transcript, not from summaries or notes. It identifies speakers, extracts commitments and action items, and references specific discussion points. Accuracy depends on transcript quality (clear audio helps), but most users find the drafts capture 90%+ of what they would have written manually — in a fraction of the time.',
+      'Yes. AES-256 encryption at rest, TLS in transit. Transcripts are processed to generate your draft and are not stored permanently. Privacy-first architecture — we never read your inbox or access existing emails.',
   },
 ];
 

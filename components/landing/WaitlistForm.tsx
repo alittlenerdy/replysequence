@@ -168,7 +168,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 Share on LinkedIn
               </a>
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Just joined the ReplySequence waitlist — AI follow-up emails from your Zoom/Teams/Meet calls in 8 seconds.')}&url=${encodeURIComponent(result.referralLink)}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Just joined @replysequence — the follow-up layer for sales. AI turns your meetings into personalized follow-ups, sequences, and CRM updates.')}&url=${encodeURIComponent(result.referralLink)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-gray-700/50 border border-gray-600 text-gray-300 light:text-gray-700 light:bg-gray-100 light:border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-700 light:hover:bg-gray-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"

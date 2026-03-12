@@ -11,17 +11,17 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
   const features = [
     {
       icon: Zap,
-      title: 'Instant Follow-ups',
+      title: 'Follow-ups from the transcript',
       description: 'AI generates drafts in seconds',
     },
     {
       icon: Clock,
-      title: 'Save 6+ Hours Weekly',
+      title: 'Sequences that keep deals warm',
       description: 'Never write follow-ups manually',
     },
     {
       icon: Mail,
-      title: 'One-Click Send',
+      title: 'CRM updates itself',
       description: 'Review and send with ease',
     },
   ];
@@ -46,10 +46,10 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         className="text-4xl md:text-5xl font-bold mb-4"
       >
         <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
-          Turn meetings into follow-ups
+          Every meeting gets a follow-up.
         </span>
         <br />
-        <span className="text-white">in 8 seconds</span>
+        <span className="text-white">Automatically.</span>
       </motion.h1>
 
       <motion.p
@@ -58,7 +58,7 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         transition={{ delay: 0.3 }}
         className="text-xl text-gray-400 max-w-2xl mx-auto mb-12"
       >
-        Let&apos;s get your first AI-generated email sent. It only takes a few steps.
+        Connect your meeting platform and let ReplySequence handle the rest. Setup takes 2 minutes.
       </motion.p>
 
       <motion.div

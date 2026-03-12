@@ -45,7 +45,7 @@ export function Footer() {
               <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
             </Link>
             <p className="text-sm text-gray-500 light:text-gray-600 mt-2">
-              Turn meetings into follow-ups in seconds.
+              The follow-up layer for sales.
             </p>
             <div className="flex items-center gap-3 mt-4">
               <a

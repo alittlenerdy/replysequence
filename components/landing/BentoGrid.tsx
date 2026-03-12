@@ -423,17 +423,17 @@ export function BentoGrid() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900">
-            Your <GradientText>Follow-up Command Center</GradientText>
+            The <GradientText>Follow-Up Layer</GradientText> Your Sales Stack Is Missing
           </h2>
           <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-            Everything you need to automate your post-meeting workflow
+            From meeting to follow-up to CRM — one workflow, no manual steps
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <BentoCard
-            title="Dashboard Overview"
-            description="See all meetings, drafts, and sent emails in one place"
+            title="Every Deal at a Glance"
+            description="Meetings, follow-ups, sequences, and CRM status — all in one view"
             className="lg:col-span-2 lg:row-span-2"
             delay={0}
           >
@@ -441,8 +441,8 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="AI-Generated Drafts"
-            description="Edit before sending or trust the AI"
+            title="Drafts From the Conversation"
+            description="Follow-ups that reference what was actually said on the call"
             icon={<Zap className="w-6 h-6 text-indigo-400" />}
             delay={0.1}
           >
@@ -450,8 +450,8 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="Every Meeting Captured"
-            description="Automatic transcript download from Zoom, Teams, Meet"
+            title="Zoom, Teams, and Meet"
+            description="Every call captured automatically — no bot, no extra app"
             icon={<Calendar className="w-6 h-6 text-indigo-400" />}
             delay={0.2}
           >
@@ -459,8 +459,8 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="Auto-logged to CRM"
-            description="HubSpot, Salesforce, and Google Sheets"
+            title="CRM Updates Itself"
+            description="Notes, next steps, and deal context synced to HubSpot, Salesforce, or Sheets"
             icon={<Users className="w-6 h-6 text-indigo-400" />}
             delay={0.3}
           >
@@ -468,8 +468,8 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="Track Performance"
-            description="Response rates, meeting stats, and insights"
+            title="See What's Working"
+            description="Open rates, reply rates, and follow-up coverage across your team"
             icon={<BarChart3 className="w-6 h-6 text-amber-400" />}
             delay={0.4}
           >
@@ -477,8 +477,8 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="Customize Your Style"
-            description="Set your tone, templates, and preferences"
+            title="Your Voice, Your Templates"
+            description="Set your tone and structure — the AI adapts to sound like you"
             icon={<Settings className="w-6 h-6 text-orange-400" />}
             delay={0.5}
           >

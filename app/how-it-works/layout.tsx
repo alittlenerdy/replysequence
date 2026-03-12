@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'How It Works',
   description:
-    'Learn how ReplySequence transforms your Zoom, Teams, and Google Meet calls into perfect follow-up emails in just 8 seconds. Connect, record, and send - it is that simple.',
+    'From meeting to follow-up in three steps. Connect your meeting platform, have a call, and let ReplySequence handle the rest — personalized emails, CRM updates, and follow-up sequences.',
   keywords: [
     'meeting follow-up automation',
     'AI email drafts',
@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     'CRM integration',
   ],
   openGraph: {
-    title: 'How ReplySequence Works - From Meeting to Follow-up in 8 Seconds',
+    title: 'How ReplySequence Works - From Meeting to Follow-Up in Three Steps',
     description:
-      'Connect your meeting platform, record with transcription, and get AI-drafted follow-up emails instantly. No more manual note-taking.',
+      'Connect your meeting platform, have a call, and let ReplySequence handle the rest — personalized emails, CRM updates, and follow-up sequences.',
     type: 'website',
     url: 'https://www.replysequence.com/how-it-works',
     images: [{ url: 'https://www.replysequence.com/opengraph-image', width: 1200, height: 630 }],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'How ReplySequence Works',
-    description: 'From meeting to perfect follow-up email in 8 seconds. See how it works.',
+    description: 'From meeting to follow-up in three steps. See how it works.',
   },
   alternates: {
     canonical: 'https://www.replysequence.com/how-it-works',

@@ -319,7 +319,7 @@ function StepCard({
       {children}
 
       {/* Arrow indicator for next step */}
-      {step < 4 && (
+      {step < 3 && (
         <motion.div
           className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-gray-600 hidden lg:block"
           animate={{ y: [0, 5, 0] }}
@@ -406,10 +406,10 @@ export default function HowItWorksPage() {
             </motion.div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-pretty">
-              How <GradientText>ReplySequence</GradientText> Works
+              From Meeting to <GradientText>Follow-Up</GradientText> in Three Steps
             </h1>
             <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
-              From meeting to follow-up email in 4 simple steps. No manual note-taking. No forgotten action items. Just perfect follow-ups, every time.
+              Connect your meeting platform. Have a call. Let the follow-up handle itself.
             </p>
           </motion.div>
 
@@ -426,7 +426,7 @@ export default function HowItWorksPage() {
             >
               <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
-                <AnimatedCounter value={8} /> seconds
+                Seconds
               </span>
               <span className="text-sm text-gray-400 light:text-gray-600">to draft</span>
             </motion.div>
@@ -436,9 +436,9 @@ export default function HowItWorksPage() {
             >
               <Clock className="w-5 h-5 text-amber-400" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
-                <AnimatedCounter value={10} />+ hours
+                <AnimatedCounter value={100} suffix="%" />
               </span>
-              <span className="text-sm text-gray-400 light:text-gray-600">saved weekly</span>
+              <span className="text-sm text-gray-400 light:text-gray-600">follow-up coverage</span>
             </motion.div>
             <motion.div
               className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20"
@@ -446,9 +446,9 @@ export default function HowItWorksPage() {
             >
               <CheckCircle className="w-5 h-5 text-indigo-400" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
-                <AnimatedCounter value={100} suffix="%" />
+                Zero
               </span>
-              <span className="text-sm text-gray-400 light:text-gray-600">accurate</span>
+              <span className="text-sm text-gray-400 light:text-gray-600">data entry</span>
             </motion.div>
           </motion.div>
         </div>
@@ -462,12 +462,12 @@ export default function HowItWorksPage() {
         </motion.div>
 
         <div className="max-w-4xl mx-auto space-y-16 lg:space-y-24">
-          {/* Step 1: Connect Your Platform */}
+          {/* Step 1: Have Your Meeting */}
           <StepCard
             step={1}
             icon={<Video className="w-8 h-8" />}
-            title="Connect Your Platform"
-            description="Link your Zoom, Microsoft Teams, or Google Meet account with one click. We use secure OAuth to access only what we need - your meeting transcripts."
+            title="Have Your Meeting"
+            description="Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically. No bot joins the call. No extra app to install."
             color="indigo"
           >
             <div className="mt-6 space-y-3">
@@ -500,8 +500,8 @@ export default function HowItWorksPage() {
               {/* Animated checklist */}
               {[
                 'One-click OAuth connection',
-                'Takes less than 30 seconds',
-                'Minimal permissions - only transcript access',
+                'Takes less than 30 seconds to set up',
+                'No bot joins the call - uses native transcription',
               ].map((text, i) => (
                 <motion.div
                   key={text}
@@ -525,83 +525,12 @@ export default function HowItWorksPage() {
             </div>
           </StepCard>
 
-          {/* Step 2: Record Your Meeting */}
+          {/* Step 2: AI Writes Your Follow-Up */}
           <StepCard
             step={2}
-            icon={<MessageSquare className="w-8 h-8" />}
-            title="Record Your Meeting"
-            description="Just enable transcription in your meeting settings and have your call as usual. ReplySequence automatically detects when a transcript is available."
-            color="indigo"
-          >
-            <div className="mt-6 space-y-3">
-              <Accordion
-                title="Zoom Tips"
-                icon={<ZoomIcon className="w-5 h-5" />}
-              >
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">1.</span>
-                    Enable &ldquo;Audio Transcript&rdquo; in your Zoom settings
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">2.</span>
-                    Record to cloud (not local) for automatic processing
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">3.</span>
-                    Transcript is ready within minutes of meeting end
-                  </li>
-                </ul>
-              </Accordion>
-
-              <Accordion
-                title="Microsoft Teams Tips"
-                icon={<TeamsIcon className="w-5 h-5" />}
-              >
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">1.</span>
-                    Start transcription from the meeting controls
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">2.</span>
-                    Ensure your admin has enabled transcription
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">3.</span>
-                    Transcript appears in Teams chat after meeting
-                  </li>
-                </ul>
-              </Accordion>
-
-              <Accordion
-                title="Google Meet Tips"
-                icon={<MeetIcon className="w-5 h-5" />}
-              >
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">1.</span>
-                    Click &ldquo;Activities&rdquo; then &ldquo;Transcripts&rdquo; to enable
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">2.</span>
-                    Requires Google Workspace Business Standard+
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-indigo-400 mt-0.5">3.</span>
-                    Transcript saves to Google Drive automatically
-                  </li>
-                </ul>
-              </Accordion>
-            </div>
-          </StepCard>
-
-          {/* Step 3: AI Analyzes Transcript */}
-          <StepCard
-            step={3}
             icon={<Sparkles className="w-8 h-8" />}
-            title="AI Analyzes Transcript"
-            description="Our AI (powered by Claude) reads the entire transcript and extracts everything that matters - key discussion points, commitments made, and action items."
+            title="AI Writes Your Follow-Up"
+            description="Within seconds, you get a personalized email that references what was actually discussed on the call — specific topics, commitments, and next steps — written in your voice. Plus a multi-step sequence to keep the deal moving."
             color="amber"
           >
             <div className="mt-6">
@@ -647,12 +576,12 @@ export default function HowItWorksPage() {
             </div>
           </StepCard>
 
-          {/* Step 4: Review & Send */}
+          {/* Step 3: Review, Send, Move On */}
           <StepCard
-            step={4}
+            step={3}
             icon={<Mail className="w-8 h-8" />}
-            title="Review & Send"
-            description="Your polished follow-up email draft appears in your dashboard within seconds. Make quick edits if needed, then send with one click."
+            title="Review, Send, Move On"
+            description="Edit if you want. Approve and send. Your CRM updates automatically with meeting notes, action items, and deal context. You're already on your next call."
             color="cyan"
           >
             <div className="mt-6 space-y-4">
@@ -744,10 +673,10 @@ export default function HowItWorksPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Ready to Save Hours on <GradientText>Follow-ups</GradientText>?
+              Your next meeting is coming. The <GradientText>follow-up</GradientText> should be automatic.
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8 max-w-xl mx-auto">
-              Join thousands of sales professionals who never write another follow-up email from scratch.
+              Start with 5 free AI drafts. No credit card required.
             </p>
 
             <motion.div

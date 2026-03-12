@@ -7,10 +7,10 @@ import type { JSX } from 'react';
 
 export const metadata: Metadata = {
   title: 'Integrations',
-  description: 'ReplySequence integrates with Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets. Connect your tools and automate meeting follow-ups.',
+  description: 'One workflow from meeting to CRM. Connect Zoom, Teams, Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets. ReplySequence handles everything in between.',
   openGraph: {
     title: 'Integrations | ReplySequence',
-    description: 'Connect Zoom, Teams, Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets for automated meeting follow-ups.',
+    description: 'One workflow from meeting to CRM. Connect your meeting platform, your email, and your CRM. ReplySequence handles everything in between.',
     url: 'https://www.replysequence.com/integrations',
   },
   alternates: {
@@ -199,9 +199,9 @@ const categoryLabels = {
 };
 
 const categoryDescriptions = {
-  meeting: 'Automatically capture every call so you never lose what was said, promised, or decided.',
-  email: 'Send follow-ups from the inbox your prospects already trust — no new tool for them to recognize.',
-  crm: 'Log every recap and next step to your CRM without touching a keyboard. Keep pipeline reviews honest.',
+  meeting: 'Every call captured automatically. Zoom, Teams, and Meet — no bot, no extra app.',
+  email: 'Follow-ups sent from your real inbox. Gmail or Outlook. Your prospects see you, not a tool.',
+  crm: 'Meeting notes, action items, and deal context synced to HubSpot, Salesforce, or Sheets — without touching a keyboard.',
 };
 
 // Stagger class lookup for card animations
@@ -224,14 +224,13 @@ export default function IntegrationsPage() {
       <section className="pt-32 pb-16 px-4">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6 text-pretty">
-            Connect Your{' '}
+            One Workflow From{' '}
             <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
-              Entire Stack
-            </span>{' '}
-            so You Never Copy-Paste Call Notes Again
+              Meeting to CRM
+            </span>
           </h1>
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
-            Plug into Zoom, Meet, Teams, Gmail, Outlook, and 3 CRMs so every call becomes a ready-to-send follow-up and a clean CRM update — in seconds.
+            Connect your meeting platform, your email, and your CRM. ReplySequence handles everything in between.
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500 light:text-gray-400 mb-6">
             <span className="flex items-center gap-1.5">
@@ -387,7 +386,7 @@ export default function IntegrationsPage() {
                 Zoom + Gmail + HubSpot
               </h3>
               <p className="text-sm text-gray-400 light:text-gray-600">
-                Run the call in Zoom. ReplySequence drafts your follow-up in Gmail. Recap + next steps are logged to the HubSpot deal — in under 10 seconds.
+                Finish a Zoom call. Follow-up drafted in Gmail. Deal logged to HubSpot. Under 60 seconds.
               </p>
             </div>
             <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
@@ -395,7 +394,7 @@ export default function IntegrationsPage() {
                 Teams + Outlook + Salesforce
               </h3>
               <p className="text-sm text-gray-400 light:text-gray-600">
-                Finish a Teams call. Get a ready-to-send Outlook email. Activity logged to the right Salesforce contact automatically.
+                Teams call wraps up. Outlook email ready. Salesforce updated. No alt-tabbing.
               </p>
             </div>
             <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
@@ -403,7 +402,7 @@ export default function IntegrationsPage() {
                 Meet + Gmail + Google Sheets
               </h3>
               <p className="text-sm text-gray-400 light:text-gray-600">
-                Google Meet call wraps up. AI drafts the follow-up in Gmail. Meeting data synced to your Sheets CRM — zero copy-paste.
+                Google Meet ends. Gmail draft waiting. Sheets row created. One workflow.
               </p>
             </div>
           </div>

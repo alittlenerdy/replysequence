@@ -82,7 +82,7 @@ import {
 import { FloatingToolbar } from '@/components/landing/FloatingToolbar';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
-import { Testimonials } from '@/components/landing/Testimonials';
+
 
 // Lazy load heavy components
 const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
@@ -103,19 +103,19 @@ export default function LandingPage() {
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
-              Your Meetings Write the{' '}
-              <GradientText variant="amber" className="font-extrabold">Follow-Up</GradientText>
+              Every Tool Records the Meeting.{' '}
+              <GradientText variant="amber" className="font-extrabold">None of Them Send the Follow-Up.</GradientText>
             </h1>
 
             <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
-              Turn every Zoom, Teams, or Meet call into a deal-moving email and CRM update — in 8 seconds, not 30 minutes.
+              ReplySequence reads your sales calls and writes the follow-up email — personalized from the actual conversation, in your voice, before your next meeting starts.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-6">
               {[
-                'Free up 10+ hours/week per rep',
-                'Never lose an action item from a call',
-                'Clean, consistent CRM notes — automatically',
+                'Follow-ups built from the actual conversation',
+                'Multi-step sequences that keep deals moving',
+                'CRM updates without touching a keyboard',
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
@@ -228,6 +228,183 @@ export default function LandingPage() {
       {/* Video Demo Section */}
       <VideoSection />
 
+      {/* Problem / Sales Stack Gap */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
+              Your Sales Stack Has a <GradientText variant="amber">Gap</GradientText>. This Is It.
+            </h2>
+            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
+              Deals die between meetings because the follow-up either never happens, happens too late, or has zero context from the actual conversation.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Clock,
+                before: '44% of reps never follow up at all',
+                process: 'AI drafts from the transcript',
+                after: 'Every call gets a personalized follow-up',
+              },
+              {
+                icon: FileX,
+                before: 'Generic "Great speaking with you" emails',
+                process: 'AI references the actual conversation',
+                after: 'Emails mention what the buyer said they care about',
+              },
+              {
+                icon: Zap,
+                before: 'One follow-up, then silence',
+                process: 'Multi-step sequences triggered automatically',
+                after: 'Deals stay warm until they close',
+              },
+              {
+                icon: Link2Off,
+                before: 'CRM shows "last activity: 3 weeks ago"',
+                process: 'Automatic CRM sync from meetings',
+                after: 'Pipeline reflects reality, not memory',
+              },
+              {
+                icon: BarChart3,
+                before: 'Manager asks "did you follow up?"',
+                process: 'Every follow-up visible to the team',
+                after: 'Coaching on quality, not existence',
+              },
+              {
+                icon: Users,
+                before: 'Gong costs $50K before the first rep logs in',
+                process: '$19/month, 2-minute setup',
+                after: 'Enterprise follow-up at startup pricing',
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 flex flex-col items-center text-center"
+              >
+                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
+                </div>
+
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 light:text-gray-500 mb-2">Before</span>
+                <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
+
+                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" aria-hidden="true" />
+                <p className="text-xs text-gray-400 light:text-gray-500 mb-1">{item.process}</p>
+                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" aria-hidden="true" />
+
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 light:text-amber-600 mb-2">After</span>
+                <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
+              From Call to <GradientText>Follow-Up</GradientText> in Three Steps
+            </h2>
+            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+              Connect once. Have your meetings. Let the follow-up handle itself.
+            </p>
+          </motion.div>
+
+          <div className="relative">
+            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 opacity-30" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  step: '01',
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
+                  title: 'Have Your Meeting',
+                  description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically.',
+                  color: 'blue',
+                },
+                {
+                  step: '02',
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
+                  title: 'AI Drafts Your Follow-Up',
+                  description: 'Within seconds, you get a personalized email that references what was actually discussed — action items, next steps, pain points — in your tone.',
+                  color: 'purple',
+                },
+                {
+                  step: '03',
+                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
+                  title: 'Review, Send, Move On',
+                  description: 'Edit if you want. Hit send. Your CRM updates automatically. The deal stays warm. You are already on your next call.',
+                  color: 'pink',
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15, duration: 0.5 }}
+                  className="relative"
+                >
+                  <div className="flex justify-center mb-6">
+                    <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-2 ${
+                      item.color === 'blue' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
+                      item.color === 'purple' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
+                      'border-amber-500/50 bg-amber-500/10 text-amber-400'
+                    }`}>
+                      {item.icon}
+                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg ${
+                        item.color === 'blue' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
+                        item.color === 'purple' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
+                        'bg-gradient-to-br from-amber-500 to-amber-600'
+                      }`}>
+                        {item.step}
+                      </span>
+                    </div>
+                  </div>
+
+                  {index < 2 && (
+                    <motion.div
+                      className="hidden md:block absolute top-10 -right-4 z-10"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <svg className="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </motion.div>
+                  )}
+
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">{item.title}</h3>
+                    <p className="text-gray-400 light:text-gray-600">{item.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Bento Grid Features */}
       <BentoGrid />
 
@@ -242,10 +419,10 @@ export default function LandingPage() {
             className="text-center mb-10"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              AI Speed, <GradientText variant="amber">Your Control</GradientText>
+              Your Deals, <GradientText variant="amber">Your Control</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Worried about AI sending the wrong thing? So were we. That is why you stay in the loop at every step.
+              Every draft is a suggestion, not a sent email. You review, edit, and approve before anything leaves your inbox.
             </p>
           </motion.div>
 
@@ -253,18 +430,18 @@ export default function LandingPage() {
             {[
               {
                 icon: Eye,
-                title: 'You approve every email',
-                description: 'Drafts never send automatically. Review, edit, and approve before anything leaves your inbox.',
+                title: 'Nothing sends without you',
+                description: 'Every draft waits for your approval. Edit, rewrite, or send as-is. You always have the final word.',
               },
               {
                 icon: Palette,
-                title: 'Keeps your tone',
-                description: 'Uses your templates and writing style — not a generic AI voice. Your prospects will not know the difference.',
+                title: 'Sounds like you, not like AI',
+                description: 'The AI learns your writing style from every edit. After a few uses, drafts sound like you wrote them from scratch.',
               },
               {
                 icon: Shield,
-                title: 'Auditable and transparent',
-                description: 'Every draft is tied to a transcript. Your team can see exactly what the AI pulled from the conversation.',
+                title: 'Every email traced to the transcript',
+                description: 'Your team can see exactly where the AI pulled each point from the conversation. Full auditability, zero guesswork.',
               },
             ].map((item, index) => (
               <motion.div
@@ -285,6 +462,59 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Social Proof Stats */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
+              Built for Teams That <GradientText variant="amber">Follow Up Fast</GradientText>
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                stat: '44%',
+                highlight: 'of reps never follow up.',
+                description: 'ReplySequence makes it automatic.',
+              },
+              {
+                stat: '5+',
+                highlight: 'touches needed to close 80% of deals.',
+                description: 'ReplySequence keeps the sequence going.',
+              },
+              {
+                stat: '7x',
+                highlight: 'higher close rate when you respond within 1 hour.',
+                description: 'ReplySequence drafts in seconds.',
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-8 text-center"
+              >
+                <span className="text-5xl font-extrabold text-amber-400 light:text-amber-500">{item.stat}</span>
+                <p className="text-sm text-gray-300 light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
+                <p className="text-sm text-gray-400 light:text-gray-500">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9 Non-Negotiables Carousel */}
+      <NonNegotiablesCarousel />
 
       {/* Ask Your Meetings Section */}
       <section className="py-20 px-4 relative z-10">
@@ -318,7 +548,6 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="rounded-2xl border border-orange-500/20 bg-gray-900/80 light:bg-white light:border-orange-200 overflow-hidden shadow-xl shadow-orange-500/5"
             >
-              {/* Chat header */}
               <div className="px-5 py-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-orange-500/20 light:border-orange-200">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
@@ -331,9 +560,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Chat messages */}
               <div className="p-5 space-y-4">
-                {/* User message */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -346,7 +573,6 @@ export default function LandingPage() {
                   </div>
                 </motion.div>
 
-                {/* AI response */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -359,7 +585,6 @@ export default function LandingPage() {
                     <p><span className="text-orange-400 font-semibold">Technical issues:</span> API rate limiting needs a fix before launch (Feb 18 standup)</p>
                     <p><span className="text-orange-400 font-semibold">Follow-ups due:</span> Send pricing proposal to Acme Corp by Friday (Feb 17 demo)</p>
                     <p><span className="text-orange-400 font-semibold">Risks flagged:</span> Onboarding timeline slipping — 3 users reported confusion</p>
-                    {/* Source badges */}
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Q1 Pipeline Review</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Product Demo Call</span>
@@ -368,7 +593,6 @@ export default function LandingPage() {
                 </motion.div>
               </div>
 
-              {/* Input area */}
               <div className="px-5 py-3 border-t border-gray-700 light:border-gray-200">
                 <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200">
                   <Search className="w-4 h-4 text-gray-500 shrink-0" aria-hidden="true" />
@@ -425,194 +649,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pain-to-Results Section */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              From <GradientText variant="amber">Before</GradientText> to <GradientText>After</GradientText>
-            </h2>
-            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
-              See exactly how ReplySequence transforms your post-meeting workflow
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Clock,
-                before: 'Reps follow up late or not at all',
-                process: 'Auto-drafted in 8 seconds',
-                after: 'Every call gets same-day follow-up',
-              },
-              {
-                icon: FileX,
-                before: 'Generic templates that ignore the call',
-                process: 'AI reads your transcript',
-                after: 'Emails reference what was actually said',
-              },
-              {
-                icon: Zap,
-                before: 'No playbook for no-shows',
-                process: 'Triggered recovery sequences',
-                after: 'Winnable deals stop falling through',
-              },
-              {
-                icon: Link2Off,
-                before: 'Manager has zero visibility',
-                process: 'Automatic activity logging',
-                after: 'See every follow-up without asking',
-              },
-              {
-                icon: BarChart3,
-                before: 'Every rep reinvents follow-up',
-                process: 'Standardized templates',
-                after: 'Top-rep quality across the whole team',
-              },
-              {
-                icon: Users,
-                before: 'CRM tasks scattered everywhere',
-                process: 'One unified system',
-                after: 'Same process, any team size',
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 flex flex-col items-center text-center"
-              >
-                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
-                </div>
-
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 light:text-gray-500 mb-2">Before</span>
-                <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
-
-                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" aria-hidden="true" />
-                <p className="text-xs text-gray-400 light:text-gray-500 mb-1">{item.process}</p>
-                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" aria-hidden="true" />
-
-                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 light:text-amber-600 mb-2">After</span>
-                <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* Testimonials */}
-      <Testimonials />
-
-      {/* 9 Non-Negotiables Carousel */}
-      <NonNegotiablesCarousel />
-
-      {/* How It Works */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              How <GradientText>ReplySequence</GradientText> Works
-            </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Connect once, automate forever. Three steps to transform your follow-up workflow.
-            </p>
-          </motion.div>
-
-          <div className="relative">
-            {/* Connecting line for desktop */}
-            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 opacity-30" />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  step: '01',
-                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
-                  title: 'Connect Your Platform',
-                  description: 'No more jumping between Zoom, email, and CRM. Link your platform once — we handle the rest.',
-                  color: 'blue',
-                },
-                {
-                  step: '02',
-                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
-                  title: 'AI Drafts in 8 Seconds',
-                  description: 'Skip the 30 minutes of note-reviewing and email-writing. AI captures what was said, who said it, and what to do next.',
-                  color: 'purple',
-                },
-                {
-                  step: '03',
-                  icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
-                  title: 'Review & Send',
-                  description: 'You approve every email before it sends. Add your own touch, then hit send — CRM updates itself.',
-                  color: 'pink',
-                },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.15, duration: 0.5 }}
-                  className="relative"
-                >
-                  {/* Step indicator circle */}
-                  <div className="flex justify-center mb-6">
-                    <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-2 ${
-                      item.color === 'blue' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
-                      item.color === 'purple' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
-                      'border-amber-500/50 bg-amber-500/10 text-amber-400'
-                    }`}>
-                      {item.icon}
-                      {/* Step number badge */}
-                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg ${
-                        item.color === 'blue' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
-                        item.color === 'purple' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
-                        'bg-gradient-to-br from-amber-500 to-amber-600'
-                      }`}>
-                        {item.step}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Arrow between steps on desktop */}
-                  {index < 2 && (
-                    <motion.div
-                      className="hidden md:block absolute top-10 -right-4 z-10"
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <svg className="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                    </motion.div>
-                  )}
-
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">{item.title}</h3>
-                    <p className="text-gray-400 light:text-gray-600">{item.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Data Flywheel Section */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
@@ -629,24 +665,24 @@ export default function LandingPage() {
               AI That Learns <GradientText variant="amber">Your Voice</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Every edit teaches the AI your writing style. The more you use ReplySequence,
-              the less editing you need.
+              Every edit teaches the AI how you write. The more you use ReplySequence,
+              the less editing you need — until drafts sound like you wrote them.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                title: 'Learns Your Style',
-                description: 'The AI notices when you soften language, add details, or restructure emails \u2014 and adapts.',
+                title: 'Adapts to Your Tone',
+                description: 'Soften language? Add more detail? Restructure the opening? The AI notices and adapts to how you actually write.',
               },
               {
-                title: 'Remembers Contacts',
-                description: 'References past meetings and emails with each contact for natural, contextual follow-ups.',
+                title: 'Knows Your Contacts',
+                description: 'References past meetings and conversations with each contact. Follow-ups feel like a continuation, not a cold start.',
               },
               {
-                title: 'Gets Better Over Time',
-                description: 'Every draft you send makes the next one more accurate. Your AI improves with you.',
+                title: 'Improves With Every Send',
+                description: 'Each draft you approve makes the next one more accurate. Your follow-ups get sharper without you trying.',
               },
             ].map((item, i) => (
               <motion.div
@@ -675,10 +711,10 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Ready to <GradientText variant="amber">Close the Gap</GradientText> After Every Meeting?
+              Your Next Meeting Is Coming. The <GradientText variant="amber">Follow-Up</GradientText> Should Be Automatic.
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
-              Join the waitlist for early access. Share your link to move up the list.
+              Start with 5 free AI drafts. No credit card. Connect your meeting platform and send your first follow-up in under 5 minutes.
             </p>
 
             <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-6 sm:p-12 mx-4 sm:mx-0">
@@ -705,13 +741,13 @@ export default function LandingPage() {
             "name": "ReplySequence",
             "applicationCategory": "BusinessApplication",
             "operatingSystem": "Web",
-            "description": "Turn Zoom, Teams, and Meet calls into perfect follow-up emails in seconds. AI-powered drafts with CRM integration.",
+            "description": "The follow-up layer for sales. Turns meeting transcripts into personalized follow-ups, sequences, and CRM updates automatically.",
             "url": "https://www.replysequence.com",
             "offers": {
               "@type": "Offer",
               "price": "0",
               "priceCurrency": "USD",
-              "description": "Free tier with 5 drafts per month",
+              "description": "Free tier with 5 AI follow-up drafts per month",
             },
             "creator": {
               "@type": "Organization",
@@ -736,7 +772,7 @@ export default function LandingPage() {
             "@type": "WebSite",
             "name": "ReplySequence",
             "url": "https://www.replysequence.com",
-            "description": "AI-powered meeting follow-up emails",
+            "description": "The follow-up layer for sales — AI-powered follow-ups, sequences, and CRM updates from meeting transcripts",
             "publisher": {
               "@type": "Organization",
               "name": "Playground Giants",

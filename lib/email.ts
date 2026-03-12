@@ -155,7 +155,7 @@ function generateHtmlFooter(utmContent?: string): string {
         Sent with <a href="${signatureUrl}" style="color: #2563eb; text-decoration: none; font-weight: 600;">ReplySequence</a>
       </p>
       <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 12px;">
-        Automatically generate follow-up emails from your meetings
+        The follow-up layer for sales
       </p>
       <a href="${signatureUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">
         Try it free →
@@ -175,7 +175,7 @@ function generatePlainTextFooter(utmContent?: string): string {
   return `
 ---
 Sent with ReplySequence
-Automatically generate follow-up emails from your meetings
+The follow-up layer for sales
 Try it free → ${signatureUrl}
 `.trim();
 }

@@ -14,16 +14,16 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Pricing',
-  description: 'Simple, transparent pricing for ReplySequence. Start free with 5 AI drafts/month, upgrade to Pro for unlimited drafts, or go Team for CRM sync and collaboration.',
+  description: 'Enterprise follow-up at startup pricing. Gong charges $50,000 before your first rep logs in. ReplySequence starts free.',
   openGraph: {
     title: 'Pricing | ReplySequence',
-    description: 'Simple, transparent pricing for ReplySequence. Start free, upgrade when you need more power.',
+    description: 'Enterprise follow-up at startup pricing. Gong charges $50,000 before your first rep logs in. ReplySequence starts free.',
     url: 'https://www.replysequence.com/pricing',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Pricing | ReplySequence',
-    description: 'Simple, transparent pricing for ReplySequence. Start free, upgrade when you need more power.',
+    description: 'Enterprise follow-up at startup pricing. Gong charges $50,000 before your first rep logs in. ReplySequence starts free.',
     creator: '@replysequence',
   },
   alternates: {
@@ -37,7 +37,7 @@ const pricingTiers = [
     tier: 'free' as const,
     monthlyPrice: 0,
     annualPrice: 0,
-    description: 'Test AI-powered follow-ups on a handful of real meetings each month.',
+    description: 'See how AI follow-ups work on your real meetings. Five drafts per month, unlimited meetings.',
     icon: 'zap' as const,
     features: [
       'Unlimited meetings',
@@ -52,7 +52,7 @@ const pricingTiers = [
     tier: 'pro' as const,
     monthlyPrice: 19,
     annualPrice: 15, // ~21% discount
-    description: 'For solo founders, AEs, and consultants who want every serious call followed up in seconds.',
+    description: 'For founders and AEs who want every call followed up in seconds — not hours.',
     icon: 'sparkles' as const,
     highlighted: true,
     monthlyPriceId: STRIPE_PRICES.pro,
@@ -72,7 +72,7 @@ const pricingTiers = [
     tier: 'team' as const,
     monthlyPrice: 29,
     annualPrice: 24, // ~17% discount
-    description: 'For sales and CS teams that need 100% follow-up coverage and clean CRM data across reps.',
+    description: 'For sales teams that need 100% follow-up coverage and clean CRM data across every rep.',
     icon: 'building' as const,
     monthlyPriceId: STRIPE_PRICES.team,
     annualPriceId: STRIPE_ANNUAL_PRICES.team,
@@ -122,7 +122,7 @@ async function PricingContent() {
           <h1 className={`font-display font-bold mb-6 text-white light:text-gray-900 text-pretty ${isLoggedIn ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl lg:text-6xl'}`}>
             {isLoggedIn ? 'Manage Your Plan' : (
               <>
-                Simple, Transparent{' '}
+                Enterprise Follow-Up at Startup{' '}
                 <span className="bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                   Pricing
                 </span>
@@ -132,7 +132,7 @@ async function PricingContent() {
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
             {isLoggedIn
               ? 'Upgrade, downgrade, or manage your subscription anytime.'
-              : 'Choose the plan that works for you. All plans include our core features. Upgrade or downgrade anytime.'}
+              : 'Gong charges $50,000 before your first rep logs in. ReplySequence starts free.'}
           </p>
 
           {isPaidUser && (
@@ -148,7 +148,7 @@ async function PricingContent() {
         <section className="pb-4 px-4">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-sm text-gray-400 light:text-gray-500 bg-gray-900/50 light:bg-indigo-50 border border-gray-800 light:border-indigo-100 rounded-full px-6 py-3 inline-block">
-              Teams using ReplySequence hit near-100% follow-up coverage, save hours per week on post-call emails, and can finally see ROI inside the product.
+              Every meeting gets a follow-up. Every follow-up references the actual conversation. Every CRM field updates itself.
             </p>
           </div>
         </section>
