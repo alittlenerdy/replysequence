@@ -3,6 +3,7 @@ import { DraftsView } from '@/components/dashboard/DraftsView';
 import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
 import { BriefingsSection } from '@/components/dashboard/BriefingsSection';
 import { NextStepTimeline } from '@/components/dashboard/NextStepTimeline';
+import { DealRiskAlerts } from '@/components/dashboard/DealRiskAlerts';
 import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
@@ -32,6 +33,7 @@ async function DashboardContent() {
       <NudgeBanner variant="ai-settings" />
       <BriefingsSection />
       <NextStepTimeline />
+      <DealRiskAlerts />
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">Follow-ups</h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">Review, edit, and send your meeting follow-ups</p>
