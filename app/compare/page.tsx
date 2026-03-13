@@ -24,63 +24,63 @@ const competitors = [
     slug: 'gong',
     name: 'Gong',
     tagline: 'Revenue intelligence platform',
-    differentiator: 'Gong analyzes conversations for deal intelligence. ReplySequence generates the follow-up email in 8 seconds at a fraction of the cost.',
+    differentiator: 'Gong analyzes conversations for deal intelligence. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds — at a fraction of the cost.',
     color: 'from-violet-500 to-purple-600',
   },
   {
     slug: 'otter',
     name: 'Otter.ai',
     tagline: 'Live transcription and meeting notes',
-    differentiator: 'Otter transcribes meetings in real time. ReplySequence turns those transcripts into ready-to-send emails.',
+    differentiator: 'Otter transcribes meetings in real time. ReplySequence turns transcripts into follow-ups, sequences, tracked next steps, and CRM updates.',
     color: 'from-blue-500 to-cyan-600',
   },
   {
     slug: 'fireflies',
     name: 'Fireflies.ai',
     tagline: 'Meeting transcription and search',
-    differentiator: 'Fireflies records and transcribes. ReplySequence drafts the follow-up email you actually need to send.',
+    differentiator: 'Fireflies records and transcribes. ReplySequence drafts the follow-up, triggers sequences, tracks next steps, and flags deal risks.',
     color: 'from-amber-500 to-orange-600',
   },
   {
     slug: 'chorus',
     name: 'Chorus (ZoomInfo)',
     tagline: 'Enterprise conversation intelligence',
-    differentiator: 'Chorus provides conversation analytics within the ZoomInfo ecosystem. ReplySequence generates follow-up emails independently at $19/mo.',
+    differentiator: 'Chorus provides conversation analytics within the ZoomInfo ecosystem. ReplySequence generates follow-ups, sequences, and deal intelligence independently at $19/mo.',
     color: 'from-sky-500 to-blue-600',
   },
   {
     slug: 'fathom',
     name: 'Fathom',
     tagline: 'AI notetaker with meeting summaries',
-    differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-up emails in 8 seconds.',
+    differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds.',
     color: 'from-purple-500 to-indigo-600',
   },
   {
     slug: 'avoma',
     name: 'Avoma',
     tagline: 'Meeting lifecycle assistant',
-    differentiator: 'Avoma covers the full meeting lifecycle. ReplySequence focuses on the part that drives revenue: sending follow-ups fast.',
+    differentiator: 'Avoma covers the full meeting lifecycle. ReplySequence focuses on the part that drives revenue: follow-ups, sequences, next-step tracking, and deal risk alerts.',
     color: 'from-teal-500 to-emerald-600',
   },
   {
     slug: 'tldv',
     name: 'tl;dv',
     tagline: 'Meeting recordings with AI summaries',
-    differentiator: 'tl;dv creates timestamped recordings. ReplySequence creates the email that closes the deal.',
+    differentiator: 'tl;dv creates timestamped recordings. ReplySequence creates the follow-up, sequence, and next-step tracking that closes the deal.',
     color: 'from-green-500 to-emerald-600',
   },
   {
     slug: 'grain',
     name: 'Grain',
     tagline: 'Video highlights from meetings',
-    differentiator: 'Grain clips meeting highlights. ReplySequence drafts follow-up emails from the full conversation.',
+    differentiator: 'Grain clips meeting highlights. ReplySequence drafts follow-ups, triggers sequences, and tracks next steps from the full conversation.',
     color: 'from-rose-500 to-pink-600',
   },
   {
     slug: 'manual',
     name: 'Manual Follow-Up',
     tagline: 'The DIY approach',
-    differentiator: 'Manual follow-ups take 23 minutes and 44% never get sent. ReplySequence does it in 8 seconds, every time.',
+    differentiator: 'Manual follow-ups take 23 minutes and 44% never get sent. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds — every time.',
     color: 'from-gray-500 to-slate-600',
   },
 ];
@@ -100,15 +100,15 @@ export default function ComparePage() {
             </span>
           </h1>
           <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-10">
-            Most AI meeting tools stop at transcription. ReplySequence goes further — turning every call into a follow-up email your prospect actually wants to open.
+            Most AI meeting tools stop at transcription. ReplySequence goes further — turning every call into follow-ups, multi-step sequences, tracked next steps, deal risk alerts, and CRM updates.
           </p>
 
           {/* Key differentiators */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
             {[
-              { icon: Clock, text: '8-second email drafts' },
-              { icon: Mail, text: 'Ready to send, not just read' },
-              { icon: Zap, text: 'Works with Zoom, Teams, Meet' },
+              { icon: Clock, text: 'Follow-ups + sequences in seconds' },
+              { icon: Mail, text: 'Next steps tracked, risks flagged' },
+              { icon: Zap, text: 'Zoom, Teams, Meet + CRM sync' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-gray-300 light:text-gray-600">
                 <item.icon className="w-5 h-5 text-indigo-400" />

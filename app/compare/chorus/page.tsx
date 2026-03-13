@@ -121,14 +121,18 @@ interface ComparisonRow {
 const comparisonData: ComparisonRow[] = [
   // Revenue & Follow-up
   { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', chorus: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Follow-up Sequences', replysequence: true, chorus: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Extraction & Reminders', replysequence: true, chorus: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Email Generation Speed', replysequence: '8 seconds', chorus: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'One-Click Send', replysequence: true, chorus: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'CRM Auto-Sync', replysequence: true, chorus: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, chorus: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'Custom Email Templates', replysequence: true, chorus: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   // Analytics & Intelligence
+  { feature: 'Deal Risk Alerts (MEDDIC)', replysequence: true, chorus: true, winner: 'tie', category: 'Analytics & Intelligence' },
+  { feature: 'Deal Health Scoring', replysequence: true, chorus: true, winner: 'tie', category: 'Analytics & Intelligence' },
   { feature: 'Conversation Analytics', replysequence: 'Basic', chorus: 'Enterprise-Grade', winner: 'chorus', category: 'Analytics & Intelligence' },
-  { feature: 'Deal Intelligence', replysequence: false, chorus: true, winner: 'chorus', category: 'Analytics & Intelligence' },
+  { feature: 'Deep Deal Intelligence', replysequence: false, chorus: true, winner: 'chorus', category: 'Analytics & Intelligence' },
   { feature: 'Competitive Mention Tracking', replysequence: false, chorus: true, winner: 'chorus', category: 'Analytics & Intelligence' },
   { feature: 'Relationship Mapping', replysequence: false, chorus: true, winner: 'chorus', category: 'Analytics & Intelligence' },
   { feature: 'Quality Scoring', replysequence: true, chorus: true, winner: 'tie', category: 'Analytics & Intelligence' },
@@ -148,18 +152,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI drafts/month', 'Next-step extraction', 'Unlimited meetings', 'Basic templates'] },
     chorus: { price: 'Not available', period: '', features: ['ZoomInfo subscription required', 'Contact sales'] },
   },
   {
     tier: 'Pro / Standard',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Next-step tracking', 'Custom templates'] },
     chorus: { price: '~$100-200+', period: '/user/mo', features: ['Part of ZoomInfo bundle', 'Annual contract required', 'Minimum seats typically 3-5+'] },
     highlighted: true,
   },
   {
     tier: 'Team / Enterprise',
-    replysequence: { price: '$29', period: '/mo per user', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
+    replysequence: { price: '$29', period: '/mo per user', features: ['Everything in Pro', 'CRM auto-sync', 'Deal health scoring', 'Team collaboration', 'API access'] },
     chorus: { price: 'Custom', period: 'enterprise pricing', features: ['Full ZoomInfo + Chorus', 'Custom integrations', 'Dedicated CSM'] },
   },
 ];
@@ -167,8 +171,8 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: 'Instant Follow-Up Emails',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Chorus gives you conversation analysis dashboards--ReplySequence gives you actual emails.',
+    title: 'Follow-Ups, Sequences & Next Steps',
+    description: 'ReplySequence generates personalized follow-ups in 8 seconds, schedules multi-step sequences, extracts next steps with due dates, and flags deal risks. Chorus gives you analytics dashboards--ReplySequence drives revenue action.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
@@ -266,7 +270,7 @@ export default function ChorusComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             Chorus delivers enterprise conversation intelligence powered by ZoomInfo data.{' '}
-            <span className="text-white light:text-gray-900 font-semibold">If you need meetings to produce follow-ups--not just analytics--ReplySequence is built for that.</span>
+            <span className="text-white light:text-gray-900 font-semibold">If you want meetings to trigger follow-up sequences, next-step tracking, and deal risk alerts--not just analytics--ReplySequence is built for that.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -284,7 +288,7 @@ export default function ChorusComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-up sequences, next-step tracking, deal risk alerts, and CRM updates automatically.</p>
               </div>
             </div>
           </motion.div>
@@ -318,9 +322,9 @@ export default function ChorusComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need affordable pricing without enterprise contracts</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You prefer a standalone tool that works in 2 minutes</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up sequences and next steps</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need deal risk alerts, deal health scoring, and overdue reminders</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want affordable pricing without enterprise contracts -- 2-minute setup</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
@@ -671,12 +675,12 @@ export default function ChorusComparisonPage() {
                   competitive mention tracking, and integration with ZoomInfo&apos;s B2B data, Chorus delivers enterprise-grade intelligence.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> solves a fundamentally different problem: getting
-                  follow-up emails sent fast. At $19/month with no contracts, no minimum seats, and 2-minute setup,
-                  it&apos;s built for teams who need meetings to produce emails--not analytics dashboards.
+                  <strong className="text-indigo-400">ReplySequence</strong> solves a fundamentally different problem: turning
+                  meetings into follow-up sequences, next-step tracking with due dates, deal risk alerts, and CRM updates--automatically. At $19/month with no contracts, no minimum seats, and 2-minute setup,
+                  it&apos;s built for teams who need meetings to drive revenue action--not analytics dashboards.
                 </p>
                 <p className="font-medium text-white light:text-gray-900">
-                  If your main problem is turning meetings into follow-ups, ReplySequence is likely the better fit.
+                  If your main problem is turning meetings into follow-ups, sequences, and deal intelligence, ReplySequence is likely the better fit.
                 </p>
               </div>
 
@@ -690,7 +694,7 @@ export default function ChorusComparisonPage() {
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">Pro tip:</strong> Chorus is deeply embedded in
                     the ZoomInfo ecosystem. If you&apos;re already a ZoomInfo customer, Chorus adds real value. If you&apos;re not,
-                    and your main pain is slow follow-ups, ReplySequence gets you there without the enterprise commitment.
+                    and your main pain is slow follow-ups and missed next steps, ReplySequence gets you there without the enterprise commitment.
                   </span>
                 </p>
               </motion.div>
@@ -723,8 +727,8 @@ export default function ChorusComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox
-            before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. See follow-ups, sequences, and next steps
+            appear before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -796,7 +800,7 @@ export default function ChorusComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Chorus?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Chorus (by ZoomInfo) is an enterprise conversation intelligence platform for analytics, coaching, and deal intelligence. ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds."
+                  "text": "Chorus (by ZoomInfo) is an enterprise conversation intelligence platform for analytics, coaching, and deal intelligence. ReplySequence is focused on turning meetings into personalized follow-ups, multi-step sequences, next-step tracking with due dates, deal risk alerts, and CRM updates--all within seconds."
                 }
               },
               {

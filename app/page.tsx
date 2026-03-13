@@ -38,7 +38,7 @@ function CountdownAnimation() {
             exit={{ opacity: 0, scale: 0.8 }}
             className="text-indigo-500 light:text-indigo-600 font-bold text-base"
           >
-            ✓ Your email is ready
+            ✓ Follow-up, sequence, and next steps ready
           </motion.span>
         ) : (
           <motion.div
@@ -323,10 +323,10 @@ export default function LandingPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              From Call to <GradientText>Follow-Up</GradientText> in Three Steps
+              From Call to <GradientText>Pipeline Automation</GradientText> in Three Steps
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Connect once. Have your meetings. Let the follow-up handle itself.
+              Connect once. Have your meetings. Follow-ups, sequences, next steps, and CRM updates handle themselves.
             </p>
           </motion.div>
 
@@ -339,21 +339,21 @@ export default function LandingPage() {
                   step: '01',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
                   title: 'Have Your Meeting',
-                  description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically.',
+                  description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically — no bot joins the call.',
                   color: 'blue',
                 },
                 {
                   step: '02',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
-                  title: 'AI Does the Work',
-                  description: 'Personalized follow-up email, multi-step sequence, extracted next steps with due dates, deal risk flags, and CRM updates — all from the transcript, in seconds.',
+                  title: 'AI Generates Everything',
+                  description: 'Personalized follow-up email. Multi-step sequence to keep the deal warm. Next steps with due dates. Deal risk flags. CRM updates. All from the transcript, in seconds.',
                   color: 'purple',
                 },
                 {
                   step: '03',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
-                  title: 'Review, Send, Move On',
-                  description: 'Edit and send the follow-up. The sequence keeps the deal warm. Next steps track themselves. Your CRM updates automatically. You are already on your next call.',
+                  title: 'Review, Approve, Automate',
+                  description: 'Send the follow-up. Activate the sequence. Confirm next steps. The pipeline runs itself — risks get flagged, CRM stays current, and you are already on your next call.',
                   color: 'pink',
                 },
               ].map((item, index) => (
@@ -422,7 +422,7 @@ export default function LandingPage() {
               Your Deals, <GradientText variant="amber">Your Control</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Every draft is a suggestion, not a sent email. You review, edit, and approve before anything leaves your inbox.
+              Every follow-up, sequence, and next step is a suggestion first. You review, edit, and approve before anything sends, schedules, or syncs.
             </p>
           </motion.div>
 
@@ -431,17 +431,17 @@ export default function LandingPage() {
               {
                 icon: Eye,
                 title: 'Nothing sends without you',
-                description: 'Every draft waits for your approval. Edit, rewrite, or send as-is. You always have the final word.',
+                description: 'Every follow-up, sequence step, and CRM update waits for your approval. Edit, rewrite, or send as-is. You always have the final word.',
               },
               {
                 icon: Palette,
                 title: 'Sounds like you, not like AI',
-                description: 'The AI learns your writing style from every edit. After a few uses, drafts sound like you wrote them from scratch.',
+                description: 'The AI learns your writing style from every edit. Follow-ups, sequences, and summaries sound like you wrote them from scratch.',
               },
               {
                 icon: Shield,
-                title: 'Every email traced to the transcript',
-                description: 'Your team can see exactly where the AI pulled each point from the conversation. Full auditability, zero guesswork.',
+                title: 'Every output traced to the transcript',
+                description: 'Follow-ups, next steps, risk alerts — your team can see exactly where the AI pulled each point. Full auditability, zero guesswork.',
               },
             ].map((item, index) => (
               <motion.div
@@ -535,7 +535,7 @@ export default function LandingPage() {
               <GradientText variant="amber">Ask Instead.</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Type a question about your meetings and get instant answers pulled from every transcript — action items, risks, follow-ups, trends.
+              Type a question and get instant answers pulled from every transcript — action items, next steps, deal risks, sequence status, follow-up history, and pipeline trends.
             </p>
           </motion.div>
 
@@ -583,7 +583,7 @@ export default function LandingPage() {
                   <div className="max-w-[90%] px-4 py-3 rounded-2xl rounded-bl-md bg-gray-800 light:bg-gray-100 text-sm text-gray-200 light:text-gray-700 space-y-2">
                     <p className="font-medium text-white light:text-gray-900">Based on 4 meetings this week:</p>
                     <p><span className="text-orange-400 font-semibold">Technical issues:</span> API rate limiting needs a fix before launch (Feb 18 standup)</p>
-                    <p><span className="text-orange-400 font-semibold">Follow-ups due:</span> Send pricing proposal to Acme Corp by Friday (Feb 17 demo)</p>
+                    <p><span className="text-orange-400 font-semibold">Next steps due:</span> Send pricing proposal to Acme Corp by Friday — sequence step 2 scheduled (Feb 17 demo)</p>
                     <p><span className="text-orange-400 font-semibold">Risks flagged:</span> Onboarding timeline slipping — 3 users reported confusion</p>
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Q1 Pipeline Review</span>
@@ -596,7 +596,7 @@ export default function LandingPage() {
               <div className="px-5 py-3 border-t border-gray-700 light:border-gray-200">
                 <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200">
                   <Search className="w-4 h-4 text-gray-500 shrink-0" aria-hidden="true" />
-                  <span className="text-sm text-gray-500">Ask about meetings, follow-ups, or risks...</span>
+                  <span className="text-sm text-gray-500">Ask about next steps, sequences, deal risks, or meetings...</span>
                 </div>
               </div>
             </motion.div>
@@ -612,19 +612,19 @@ export default function LandingPage() {
               {[
                 {
                   title: 'Search every transcript at once',
-                  description: 'No more clicking through individual meetings. Ask a question and get answers pulled from all your calls.',
+                  description: 'Ask about next steps, deal risks, sequence status, or action items — answers come from every call, not just one.',
                 },
                 {
-                  title: 'Action items, risks, and trends',
-                  description: 'Get grouped, scannable answers — not walls of text. See what needs attention right now.',
+                  title: 'Next steps, risks, and deal health',
+                  description: 'Surface overdue action items, flagged risks, and deal health changes across your pipeline. See what needs attention now.',
                 },
                 {
-                  title: 'Source-linked answers',
-                  description: 'Every response links back to the specific meeting it came from, so you can verify and dig deeper.',
+                  title: 'Source-linked to the conversation',
+                  description: 'Every answer links back to the exact meeting and transcript moment. Verify follow-ups, sequences, and commitments instantly.',
                 },
                 {
-                  title: 'Works per-meeting or across all',
-                  description: 'Open it from the dashboard to search everything, or from a specific meeting for focused questions.',
+                  title: 'Pre-meeting intelligence',
+                  description: 'Before your next call, ask what was discussed, what was promised, and what risks were flagged. Walk in fully briefed.',
                 },
               ].map((feature, i) => (
                 <motion.div

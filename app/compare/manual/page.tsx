@@ -149,28 +149,28 @@ const keyDifferences = [
   {
     icon: Timer,
     title: '8 Seconds vs 23 Minutes',
-    description: 'The average sales rep spends 23 minutes crafting a follow-up email after a meeting. Reviewing notes, recalling details, writing, editing, and formatting. ReplySequence reads the full transcript and generates a ready-to-send email in 8 seconds.',
+    description: 'The average sales rep spends 23 minutes crafting a follow-up after a meeting. Reviewing notes, recalling details, writing, editing, and formatting. ReplySequence reads the full transcript and generates a follow-up, triggers a multi-step sequence, extracts next steps with due dates, and flags deal risks -- all in 8 seconds.',
     stat: '172x faster',
     advantage: 'replysequence' as const,
   },
   {
     icon: AlertTriangle,
     title: '44% of Follow-Ups Never Happen',
-    description: 'Nearly half of sales reps never send a follow-up after a meeting. Not because they don\'t want to, but because they get pulled into the next call, the next meeting, the next fire. ReplySequence makes it automatic -- every meeting gets a follow-up.',
+    description: 'Nearly half of sales reps never send a follow-up after a meeting. Not because they don\'t want to, but because they get pulled into the next call, the next meeting, the next fire. ReplySequence makes it automatic -- every meeting gets a follow-up, a sequence, next-step reminders, and deal health tracking.',
     stat: '0% missed',
     advantage: 'replysequence' as const,
   },
   {
     icon: Brain,
     title: 'Transcript vs Memory',
-    description: 'Manual follow-ups rely on what you remember. After back-to-back calls, details blur together. ReplySequence reads the complete transcript -- every action item, every commitment, every name -- so nothing falls through the cracks.',
+    description: 'Manual follow-ups rely on what you remember. After back-to-back calls, details blur together. ReplySequence reads the complete transcript -- every action item, every commitment, every name -- and extracts next steps with due dates, scores deal health, and alerts you to risks so nothing falls through the cracks.',
     stat: '100% recall',
     advantage: 'replysequence' as const,
   },
   {
     icon: DollarSign,
     title: 'The Real Cost of "Free"',
-    description: 'Manual follow-ups cost $0 in tools but burn 7.6 hours per month on just 20 calls. At a $75/hr sales rep cost, that\'s $570/month in time -- 30x the cost of ReplySequence. Plus the deals lost to slow or missing follow-ups.',
+    description: 'Manual follow-ups cost $0 in tools but burn 7.6 hours per month on just 20 calls. At a $75/hr sales rep cost, that\'s $570/month in time -- 30x the cost of ReplySequence. Plus the deals lost to slow follow-ups, missed next steps, and risks you never saw coming.',
     stat: '$570 saved',
     advantage: 'replysequence' as const,
   },
@@ -183,15 +183,15 @@ const timelineSteps = [
   },
   {
     manual: { time: '0:05', action: 'Review notes', detail: 'Scan through messy meeting notes' },
-    replysequence: { time: '0:08', action: 'Email ready', detail: 'AI draft in your inbox, ready to review' },
+    replysequence: { time: '0:08', action: 'AI draft ready', detail: 'Follow-up, sequence, and next steps in your inbox' },
   },
   {
     manual: { time: '5:00', action: 'Start writing', detail: 'Open email, stare at blank compose window' },
-    replysequence: { time: '0:30', action: 'Review and send', detail: 'Quick edit if needed, one-click send' },
+    replysequence: { time: '0:30', action: 'Review and send', detail: 'Quick edit if needed, sequence auto-schedules' },
   },
   {
     manual: { time: '15:00', action: 'Still writing', detail: 'Trying to sound professional, recalling details' },
-    replysequence: { time: '1:00', action: 'Done', detail: 'Already on your next call' },
+    replysequence: { time: '1:00', action: 'Done', detail: 'Sequence running, next steps tracked, CRM synced' },
   },
   {
     manual: { time: '23:00', action: 'Finally sent', detail: 'Hope you didn\'t forget anything important' },
@@ -288,7 +288,7 @@ export default function ManualComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">8-second AI drafts from the full transcript. Every meeting, every time.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">8-second AI drafts, multi-step sequences, next-step extraction, deal risk alerts, and CRM sync. Every meeting, every time.</p>
               </div>
             </div>
           </motion.div>
@@ -323,8 +323,8 @@ export default function ManualComparisonPage() {
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Switch to ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You have more than 5 meetings a week</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Follow-ups sometimes slip through the cracks</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want every email personalized to the actual conversation</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Follow-ups, next steps, or deal risks slip through the cracks</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want personalized follow-ups, automated sequences, and deal intelligence</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
@@ -366,7 +366,7 @@ export default function ManualComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'vs 23 min per email', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '8 sec', label: 'vs 23 min per follow-up', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '44%', label: 'of manual follow-ups skipped', gradient: 'from-red-400 to-amber-400' },
               { value: '7.6 hrs', label: 'saved per month (20 calls)', gradient: 'from-amber-400 to-amber-500' },
               { value: '$570', label: 'monthly time cost saved', gradient: 'from-indigo-400 to-indigo-600' },
@@ -691,8 +691,9 @@ export default function ManualComparisonPage() {
                 </p>
                 <p>
                   <strong className="text-indigo-400">ReplySequence</strong> doesn&apos;t replace your judgment. You still
-                  review every email before it sends. It replaces the 23 minutes of staring at a blank compose
-                  window, trying to remember what was said, and hoping you didn&apos;t miss an action item.
+                  review every follow-up before it sends. It replaces the 23 minutes of staring at a blank compose
+                  window, trying to remember what was said, and hoping you didn&apos;t miss an action item -- while also
+                  scheduling multi-step sequences, extracting next steps with due dates, and alerting you to deal risks.
                 </p>
                 <p className="font-medium text-white light:text-gray-900">
                   Your time is better spent on the next conversation, not writing about the last one.
@@ -742,8 +743,8 @@ export default function ManualComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. Your next meeting&apos;s follow-up email
-            will be waiting before you close the tab.
+            Connect your Zoom, Teams, or Meet. Your next meeting&apos;s follow-up, sequence,
+            and next steps will be waiting before you close the tab.
           </motion.p>
 
           <motion.div
@@ -779,7 +780,7 @@ export default function ManualComparisonPage() {
             transition={{ delay: 0.4 }}
             className="text-gray-500 text-sm mt-8"
           >
-            5 free AI drafts included. No credit card required. 2-minute setup.
+            5 free AI drafts included. Sequences, next steps, and deal alerts built in. No credit card required.
           </motion.p>
         </AnimatedSection>
       </section>
@@ -815,7 +816,7 @@ export default function ManualComparisonPage() {
                 "name": "How long does it take to write a meeting follow-up email manually?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "The average sales rep spends 23 minutes writing a follow-up email after a meeting, including reviewing notes, drafting the email, and formatting. ReplySequence generates a ready-to-send follow-up in 8 seconds."
+                  "text": "The average sales rep spends 23 minutes writing a follow-up after a meeting, including reviewing notes, drafting, and formatting. ReplySequence generates a ready-to-send follow-up in 8 seconds and also triggers a multi-step sequence, extracts next steps with due dates, scores deal health, and flags risks -- all automatically."
                 }
               },
               {
@@ -831,7 +832,7 @@ export default function ManualComparisonPage() {
                 "name": "Does ReplySequence send emails automatically without review?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. ReplySequence generates AI-drafted follow-up emails from your meeting transcript, but you always review and approve before sending. You maintain full control over every email."
+                  "text": "No. ReplySequence generates AI-drafted follow-ups from your meeting transcript, but you always review and approve before sending. It also auto-generates multi-step sequences, extracts next steps with due dates, sends overdue reminders, and surfaces MEDDIC-based deal risk alerts -- all with full human review."
                 }
               },
               {
@@ -839,7 +840,7 @@ export default function ManualComparisonPage() {
                 "name": "How much does manual follow-up cost compared to ReplySequence?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "For 20 meetings per month, manual follow-ups cost approximately $570/month in rep time (at $75/hr). ReplySequence costs $19/month and saves 7.6 hours of writing time, plus eliminates missed follow-ups."
+                  "text": "For 20 meetings per month, manual follow-ups cost approximately $570/month in rep time (at $75/hr). ReplySequence costs $19/month and saves 7.6 hours of writing time, plus eliminates missed follow-ups. It also includes multi-step sequences, next-step tracking with overdue reminders, deal health scoring, and CRM auto-sync at no extra cost."
                 }
               }
             ]

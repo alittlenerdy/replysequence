@@ -81,11 +81,11 @@ const integrations: Integration[] = [
   {
     name: 'Zoom',
     category: 'meeting',
-    description: 'Automatically capture transcripts from Zoom meetings and generate follow-up emails.',
+    description: 'Capture Zoom transcripts and generate follow-ups, sequences, next steps, and deal risk alerts automatically.',
     features: [
       'Auto-capture transcripts from every call',
-      'Detect decisions, next steps, and commitments',
-      'Draft follow-ups in seconds after the call ends',
+      'Extract next steps with owners and due dates',
+      'Draft follow-ups and trigger sequences in seconds',
       'Speaker identification for accurate attribution',
     ],
     status: 'available',
@@ -95,10 +95,10 @@ const integrations: Integration[] = [
   {
     name: 'Microsoft Teams',
     category: 'meeting',
-    description: 'Process Teams meetings via Microsoft Graph API subscriptions for automatic follow-ups.',
+    description: 'Process Teams meetings via Graph API — follow-ups, sequences, next steps, and CRM updates happen automatically.',
     features: [
       'Process Teams calls automatically via subscriptions',
-      'Capture transcripts and recordings',
+      'Generate follow-ups, sequences, and risk alerts',
       'Calendar sync for scheduled meeting awareness',
       'Auto-renewing — set it and forget it',
     ],
@@ -109,10 +109,10 @@ const integrations: Integration[] = [
   {
     name: 'Google Meet',
     category: 'meeting',
-    description: 'Connect Google Meet via Calendar API to process meeting recordings and generate drafts.',
+    description: 'Connect Google Meet via Calendar API — transcripts become follow-ups, sequences, tracked next steps, and CRM updates.',
     features: [
       'Sync with Google Calendar for meeting awareness',
-      'Process recordings for transcript extraction',
+      'Extract next steps, risks, and action items',
       'Works across Google Workspace accounts',
       'Multi-account support for agencies',
     ],
@@ -123,9 +123,9 @@ const integrations: Integration[] = [
   {
     name: 'Gmail',
     category: 'email',
-    description: 'Send follow-up emails directly from your Gmail account for better deliverability.',
+    description: 'Send follow-ups and sequence emails directly from your Gmail for better deliverability.',
     features: [
-      'Send from your real Gmail address',
+      'Send follow-ups and sequence steps from your real address',
       'Keep your existing signature and sending domain',
       'No third-party branding on emails',
       'Secure OAuth — we never see your password',
@@ -137,9 +137,9 @@ const integrations: Integration[] = [
   {
     name: 'Outlook / Microsoft 365',
     category: 'email',
-    description: 'Connect your Outlook or Microsoft 365 account to send follow-ups from your business email.',
+    description: 'Send follow-ups and multi-step sequences from your Outlook or Microsoft 365 business email.',
     features: [
-      'Send from your Microsoft 365 business email',
+      'Send follow-ups and sequence steps from M365',
       'Enterprise-ready OAuth connection',
       'Works with all M365 Business accounts',
       'Your recipients see your name, not ours',
@@ -151,12 +151,12 @@ const integrations: Integration[] = [
   {
     name: 'HubSpot',
     category: 'crm',
-    description: 'Automatically log sent emails to HubSpot contacts and create engagement records.',
+    description: 'Sync follow-ups, sequences, next steps, deal risks, and health scores to HubSpot automatically.',
     features: [
-      'Push recaps and next steps to the right contact',
-      'Auto-log sent emails as engagement records',
-      'Keep pipeline reviews based on real conversations',
-      'Activity timeline stays up to date',
+      'Push follow-ups, next steps, and risk alerts to contacts',
+      'Auto-log sequence activity as engagement records',
+      'Deal health scores keep pipeline reviews honest',
+      'Activity timeline stays current without manual entry',
     ],
     status: 'available',
     logo: <HubSpotLogo />,
@@ -165,10 +165,10 @@ const integrations: Integration[] = [
   {
     name: 'Salesforce',
     category: 'crm',
-    description: 'Log meeting follow-ups directly into Salesforce contacts and opportunities.',
+    description: 'Log follow-ups, sequence activity, next steps, and deal intelligence directly into Salesforce.',
     features: [
-      'Log follow-ups to contacts and opportunities',
-      'Match activities to the right records',
+      'Log follow-ups, sequences, and next steps to opportunities',
+      'Sync deal risk alerts and health scores',
       'Automatic contact lookup via SOQL',
       'Token refresh with session expiry handling',
     ],
@@ -179,9 +179,9 @@ const integrations: Integration[] = [
   {
     name: 'Google Sheets',
     category: 'crm',
-    description: 'Sync meeting data and follow-ups to Google Sheets for lightweight, flexible CRM workflows.',
+    description: 'Sync follow-ups, sequences, next steps, and deal data to Google Sheets for lightweight CRM workflows.',
     features: [
-      'Auto-create headers and column structure',
+      'Auto-create headers for follow-ups, sequences, and next steps',
       'Contact deduplication by email',
       'Pick any spreadsheet from your Drive',
       'Configure which columns to sync',
@@ -200,8 +200,8 @@ const categoryLabels = {
 
 const categoryDescriptions = {
   meeting: 'Every call captured automatically. Zoom, Teams, and Meet — no bot, no extra app.',
-  email: 'Follow-ups sent from your real inbox. Gmail or Outlook. Your prospects see you, not a tool.',
-  crm: 'Meeting notes, action items, and deal context synced to HubSpot, Salesforce, or Sheets — without touching a keyboard.',
+  email: 'Follow-ups and sequence emails sent from your real inbox. Gmail or Outlook. Your prospects see you, not a tool.',
+  crm: 'Follow-ups, sequences, next steps, deal risks, and health scores synced to HubSpot, Salesforce, or Sheets — without touching a keyboard.',
 };
 
 // Stagger class lookup for card animations
@@ -353,8 +353,8 @@ export default function IntegrationsPage() {
               },
               {
                 step: '3',
-                title: 'Review, Send, Done',
-                description: 'AI-drafted follow-ups land in your dashboard. Edit if needed, hit send from your real inbox. CRM updates itself.',
+                title: 'Review, Approve, Automate',
+                description: 'Follow-ups, sequences, and next steps land in your dashboard. Approve what looks right. Sequences activate, CRM updates, risks get flagged — automatically.',
               },
             ].map((item, i) => (
               <div
@@ -386,7 +386,7 @@ export default function IntegrationsPage() {
                 Zoom + Gmail + HubSpot
               </h3>
               <p className="text-sm text-gray-400 light:text-gray-600">
-                Finish a Zoom call. Follow-up drafted in Gmail. Deal logged to HubSpot. Under 60 seconds.
+                Finish a Zoom call. Follow-up drafted, sequence triggered, next steps tracked in Gmail. Deal risks and health score synced to HubSpot.
               </p>
             </div>
             <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
@@ -394,7 +394,7 @@ export default function IntegrationsPage() {
                 Teams + Outlook + Salesforce
               </h3>
               <p className="text-sm text-gray-400 light:text-gray-600">
-                Teams call wraps up. Outlook email ready. Salesforce updated. No alt-tabbing.
+                Teams call wraps up. Follow-up and sequence ready in Outlook. Next steps, risk alerts, and deal health synced to Salesforce.
               </p>
             </div>
             <div className="rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6">
@@ -402,7 +402,7 @@ export default function IntegrationsPage() {
                 Meet + Gmail + Google Sheets
               </h3>
               <p className="text-sm text-gray-400 light:text-gray-600">
-                Google Meet ends. Gmail draft waiting. Sheets row created. One workflow.
+                Google Meet ends. Follow-up and sequence queued in Gmail. Next steps, deal data, and activity logged to Sheets.
               </p>
             </div>
           </div>
@@ -434,7 +434,7 @@ export default function IntegrationsPage() {
       <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
         <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
           <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
-            Connect your tools and send your first AI follow-up in 5 minutes
+            Connect your tools and automate your first meeting follow-up in 5 minutes
           </h2>
           <p className="text-gray-400 light:text-gray-600 mb-8">
             Get started free with 5 AI drafts per month. No credit card required.
@@ -460,7 +460,7 @@ export default function IntegrationsPage() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "ReplySequence Integrations",
-            "description": "Connect Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets for automated meeting follow-up emails.",
+            "description": "Connect Zoom, Microsoft Teams, Google Meet, Gmail, Outlook, HubSpot, Salesforce, and Google Sheets for automated follow-ups, sequences, next-step tracking, deal risk alerts, and CRM sync.",
             "url": "https://www.replysequence.com/integrations",
             "isPartOf": {
               "@type": "WebSite",

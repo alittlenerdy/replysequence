@@ -121,7 +121,11 @@ interface ComparisonRow {
 const comparisonData: ComparisonRow[] = [
   // Revenue & Follow-up
   { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', avoma: 'Basic Notes Only', winner: 'replysequence', category: 'Revenue & Follow-up' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', avoma: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Follow-up Sequences', replysequence: true, avoma: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Extraction & Reminders', replysequence: true, avoma: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts (MEDDIC)', replysequence: true, avoma: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Health Scoring', replysequence: true, avoma: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Output Speed', replysequence: '8 seconds', avoma: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'One-Click Send', replysequence: true, avoma: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'CRM Auto-Sync', replysequence: true, avoma: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, avoma: true, winner: 'tie', category: 'Revenue & Follow-up' },
@@ -148,18 +152,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI drafts/month', 'Next-step extraction', 'Sequence templates', 'Unlimited meetings'] },
     avoma: { price: '$0', period: '/mo', features: ['Limited recording', 'Basic notes', 'No AI features'] },
   },
   {
     tier: 'Pro / Plus',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Next-step tracking', 'Priority processing'] },
     avoma: { price: '$49', period: '/mo', features: ['AI-generated notes', 'Conversation intelligence', 'Custom topics', 'CRM sync'] },
     highlighted: true,
   },
   {
     tier: 'Team / Business',
-    replysequence: { price: '$29', period: '/mo per user', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
+    replysequence: { price: '$29', period: '/mo per user', features: ['Everything in Pro', 'Deal health scoring', 'CRM auto-sync', 'Team collaboration', 'API access'] },
     avoma: { price: '$79', period: '/mo per user', features: ['Advanced coaching', 'Scorecards', 'Deal intelligence', 'Priority support'] },
   },
 ];
@@ -167,8 +171,8 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: 'Focused Follow-Up Engine',
-    description: 'ReplySequence is purpose-built for turning meetings into emails. Not a Swiss Army knife\u2014a precision tool that does one job exceptionally well.',
+    title: 'Complete Post-Meeting Engine',
+    description: 'ReplySequence turns meetings into follow-ups, multi-step sequences, next steps with due dates, and deal risk alerts. Not a Swiss Army knife\u2014a precision engine for everything that happens after the call.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
@@ -266,7 +270,7 @@ export default function AvomaComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             Avoma manages the entire meeting lifecycle.{' '}
-            <span className="text-white light:text-gray-900 font-semibold">If you need meetings to produce follow-ups&mdash;not just notes&mdash;ReplySequence is built for that.</span>
+            <span className="text-white light:text-gray-900 font-semibold">If you need meetings to produce follow-ups, sequences, next steps, and deal intelligence&mdash;not just notes&mdash;ReplySequence is built for that.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -284,7 +288,7 @@ export default function AvomaComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-ups, sequences, next steps, and deal intelligence in minutes.</p>
               </div>
             </div>
           </motion.div>
@@ -318,9 +322,9 @@ export default function AvomaComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Meetings should auto-generate follow-up emails</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want all AI features without tier-climbing</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You prefer a focused tool over a Swiss Army knife</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Meetings should auto-generate follow-ups and multi-step sequences</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want next-step tracking, deal risk alerts, and health scoring</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want all AI features at $19/mo without tier-climbing</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
@@ -363,7 +367,7 @@ export default function AvomaComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '8 sec', label: 'Follow-up + sequence time', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-indigo-400 to-amber-400' },
               { value: '3', label: 'Platforms supported', gradient: 'from-amber-400 to-amber-500' },
               { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-600' },
@@ -671,12 +675,13 @@ export default function AvomaComparisonPage() {
                   every phase of every meeting, Avoma has breadth.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> does one thing exceptionally well: turning meetings
-                  into follow-up emails fast. Instead of spreading features across $49&ndash;$129/month tiers, ReplySequence
-                  gives you all AI features at $19/month&mdash;because follow-up speed is what actually moves deals forward.
+                  <strong className="text-indigo-400">ReplySequence</strong> turns meetings into personalized follow-ups,
+                  multi-step sequences, next steps with due dates and overdue reminders, deal risk alerts, and health
+                  scores&mdash;all in about 8 seconds. Instead of spreading features across $49&ndash;$129/month tiers,
+                  ReplySequence gives you all AI features at $19/month&mdash;because post-meeting execution is what actually moves deals forward.
                 </p>
                 <p className="font-medium text-white light:text-gray-900">
-                  If your bottleneck is what happens after meetings&mdash;actually sending the follow-up&mdash;ReplySequence is purpose-built for that.
+                  If your bottleneck is what happens after meetings&mdash;follow-ups, sequences, next steps, and deal visibility&mdash;ReplySequence is purpose-built for that.
                 </p>
               </div>
 
@@ -689,7 +694,7 @@ export default function AvomaComparisonPage() {
                   <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">Pro tip:</strong> If you need agenda prep and scheduling, Avoma handles that well.
-                    But if your bottleneck is what happens after meetings&mdash;actually sending the follow-up&mdash;ReplySequence is purpose-built for that.
+                    But if your bottleneck is what happens after meetings&mdash;follow-ups, sequences, next steps, and deal intelligence&mdash;ReplySequence is purpose-built for that.
                   </span>
                 </p>
               </motion.div>
@@ -722,8 +727,8 @@ export default function AvomaComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox
-            before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. See follow-ups, sequences, and next steps
+            appear before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -795,7 +800,7 @@ export default function AvomaComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Avoma?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Avoma is an all-in-one meeting lifecycle platform covering scheduling, agendas, recording, notes, and coaching. ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds."
+                  "text": "Avoma is an all-in-one meeting lifecycle platform covering scheduling, agendas, recording, notes, and coaching. ReplySequence is focused on turning meetings into personalized follow-ups, multi-step sequences, next steps with due dates, deal risk alerts, and deal health scores\u2014all generated in about 8 seconds."
                 }
               },
               {
@@ -811,7 +816,7 @@ export default function AvomaComparisonPage() {
                 "name": "Can I use ReplySequence and Avoma together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Some teams use Avoma for meeting scheduling and agenda prep, and ReplySequence specifically for generating follow-up emails faster after meetings."
+                  "text": "Yes. Some teams use Avoma for meeting scheduling and agenda prep, and ReplySequence for generating follow-ups, sequences, next steps, and deal intelligence after meetings."
                 }
               }
             ]

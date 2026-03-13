@@ -127,6 +127,10 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'One-Click Send', replysequence: true, otter: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'CRM Auto-Sync', replysequence: true, otter: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'Custom Email Templates', replysequence: true, otter: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Follow-Up Sequences', replysequence: true, otter: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Tracking & Reminders', replysequence: true, otter: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts', replysequence: true, otter: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Health Scoring', replysequence: true, otter: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   // Recording & Transcription
   { feature: 'Meeting Transcription', replysequence: true, otter: true, winner: 'tie', category: 'Recording & Transcription' },
   { feature: 'AI Meeting Notes', replysequence: true, otter: true, winner: 'tie', category: 'Recording & Transcription' },
@@ -144,18 +148,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Next-step extraction'] },
     otter: { price: '$0', period: '/mo', features: ['300 minutes/month', '30 min per conversation', 'Basic transcription'] },
   },
   {
     tier: 'Pro',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Next-step tracking'] },
     otter: { price: '$16.99', period: '/mo', features: ['1,200 minutes/month', 'OtterPilot', 'Advanced search', '$8.33/mo if annual'] },
     highlighted: true,
   },
   {
     tier: 'Team / Business',
-    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
+    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM auto-sync', 'Deal health scoring', 'Meeting intelligence'] },
     otter: { price: '$30', period: '/mo', features: ['6,000 minutes/month', 'Admin controls', 'Usage analytics', '$20/mo if annual'] },
   },
 ];
@@ -163,8 +167,8 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Not notes you have to turn into emails—actual emails ready to send or edit.',
+    title: 'Full Post-Meeting Automation',
+    description: 'ReplySequence generates follow-up emails in 8 seconds, then keeps deals warm with multi-step sequences, tracks next steps with due dates, and flags deal risks--all from the transcript.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
@@ -262,7 +266,7 @@ export default function OtterComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             If you need clean meeting notes, Otter is great.{' '}
-            <span className="text-white light:text-gray-900">If you care about turning calls into consistent replies and pipeline, ReplySequence is built for that.</span>
+            <span className="text-white light:text-gray-900">If you want calls to trigger follow-up sequences, next-step tracking, and deal risk alerts automatically, ReplySequence is built for that.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -280,7 +284,7 @@ export default function OtterComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-up sequences, next-step tracking, deal risk alerts, and CRM updates automatically.</p>
               </div>
             </div>
           </motion.div>
@@ -314,9 +318,9 @@ export default function OtterComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not just notes</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than word-perfect transcripts</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You&apos;re tired of exporting notes into a separate sequencer or CRM</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up sequences, not just notes</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need next-step tracking with due dates and deal risk alerts</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meeting intelligence, CRM auto-sync, and AI that learns your writing style</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
@@ -667,11 +671,11 @@ export default function OtterComparisonPage() {
                 </p>
                 <p>
                   <strong className="text-indigo-400">ReplySequence</strong> starts where Otter stops: turning
-                  notes into replies, not just searchable text. Ask your meetings anything, generate ready-to-send
-                  follow-ups in 8 seconds, and keep your pipeline moving without manual work.
+                  meetings into follow-up sequences, next-step tracking with due dates, deal risk alerts, and CRM updates.
+                  Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep deals warm automatically.
                 </p>
                 <p className="font-medium text-white light:text-gray-900">
-                  If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.
+                  If your main problem is turning meetings into follow-up sequences, tracked next steps, and pipeline visibility, ReplySequence is likely the better fit.
                 </p>
               </div>
 
@@ -684,8 +688,8 @@ export default function OtterComparisonPage() {
                   <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">Pro tip:</strong> Many teams use both—Otter for deep transcription
-                    and live collaboration, ReplySequence specifically for sending follow-ups faster. Different tools for
-                    different jobs.
+                    and live collaboration, ReplySequence for follow-up sequences, next-step tracking, and deal intelligence.
+                    Different tools for different jobs.
                   </span>
                 </p>
               </motion.div>
@@ -718,8 +722,8 @@ export default function OtterComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox
-            before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. Get follow-up sequences, next-step tracking,
+            and deal risk alerts before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -791,7 +795,7 @@ export default function OtterComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Otter.ai?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while Otter.ai is a broader transcription and note-taking platform."
+                  "text": "ReplySequence turns meetings into follow-up sequences, next-step tracking with due dates, deal risk alerts, and CRM auto-sync. Otter.ai is a broader transcription and note-taking platform. ReplySequence also offers meeting intelligence where you can ask questions across all your calls."
                 }
               },
               {
@@ -807,7 +811,7 @@ export default function OtterComparisonPage() {
                 "name": "Can I use both ReplySequence and Otter together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! Many teams use Otter for deep transcription and collaboration, and ReplySequence specifically for sending follow-up emails faster."
+                  "text": "Yes! Many teams use Otter for deep transcription and collaboration, and ReplySequence for automated follow-up sequences, next-step tracking, deal risk alerts, and CRM sync."
                 }
               }
             ]

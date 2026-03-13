@@ -125,8 +125,12 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'CRM Auto-Sync', replysequence: true, gong: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, gong: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'Custom Email Templates', replysequence: true, gong: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Sequences', replysequence: true, gong: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Tracking', replysequence: true, gong: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts', replysequence: true, gong: true, winner: 'tie', category: 'Revenue & Follow-up' },
   // Analytics & Intelligence
   { feature: 'Conversation Analytics', replysequence: 'Basic', gong: 'Deep Analytics', winner: 'gong', category: 'Analytics & Intelligence' },
+  { feature: 'Deal Health Scoring', replysequence: true, gong: true, winner: 'tie', category: 'Analytics & Intelligence' },
   { feature: 'Deal Intelligence', replysequence: false, gong: true, winner: 'gong', category: 'Analytics & Intelligence' },
   { feature: 'Pipeline Forecasting', replysequence: false, gong: true, winner: 'gong', category: 'Analytics & Intelligence' },
   { feature: 'Talk-to-Listen Ratios', replysequence: false, gong: true, winner: 'gong', category: 'Analytics & Intelligence' },
@@ -147,18 +151,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Next-step extraction'] },
     gong: { price: 'No free tier', period: '', features: ['Demo required', 'Annual contract only', 'Sales team consultation'] },
   },
   {
     tier: 'Pro / Growth',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts & sequences', 'Deal risk alerts & health scoring', 'Next-step tracking with reminders', 'AI learns your writing style'] },
     gong: { price: '$100+', period: '/user/mo', features: ['Full platform access', 'Minimum seats required', 'Annual commitment', 'Implementation fee'] },
     highlighted: true,
   },
   {
     tier: 'Team / Enterprise',
-    replysequence: { price: '$29', period: '/mo per user', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
+    replysequence: { price: '$29', period: '/mo per user', features: ['Everything in Pro', 'CRM auto-sync (summaries, next steps, deal health)', 'Meeting intelligence across all calls', 'API access'] },
     gong: { price: 'Custom', period: ' pricing', features: ['Advanced analytics', 'Custom integrations', 'Dedicated support', 'Enterprise security'] },
   },
 ];
@@ -166,9 +170,9 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: '8-Second Follow-Up Emails',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Not dashboards or analytics you have to interpret--actual emails ready to send or edit.',
-    stat: '8 sec',
+    title: 'Follow-Up Sequences in Seconds',
+    description: 'ReplySequence generates personalized multi-step follow-up sequences, extracts next steps with due dates, and flags deal risks--all within seconds of your meeting ending.',
+    stat: 'Auto',
     advantage: 'replysequence' as const,
   },
   {
@@ -265,7 +269,7 @@ export default function GongComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             Gong is the gold standard for revenue intelligence.{' '}
-            <span className="text-white light:text-gray-900">ReplySequence turns meetings into actual follow-up emails in 8 seconds--at a fraction of the cost.</span>
+            <span className="text-white light:text-gray-900">ReplySequence turns meetings into follow-up sequences, next steps, and deal risk alerts--at a fraction of the cost.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -283,7 +287,7 @@ export default function GongComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in seconds.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-up sequences, next steps, risk alerts, and CRM updates--automatically.</p>
               </div>
             </div>
           </motion.div>
@@ -317,9 +321,9 @@ export default function GongComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want auto follow-up emails, not just conversation analytics</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need affordable pricing for a small team or solo selling</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want 2-minute setup without enterprise onboarding</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want auto follow-up sequences and next-step tracking, not just analytics</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need deal risk alerts and health scoring without enterprise pricing</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want 2-minute setup with AI that learns your writing style</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
@@ -361,7 +365,7 @@ export default function GongComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '8 sec', label: 'Meeting to action', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '5x', label: 'Less expensive', gradient: 'from-indigo-400 to-amber-400' },
               { value: '2 min', label: 'Setup time', gradient: 'from-amber-400 to-amber-500' },
               { value: '$0', label: 'Minimum commitment', gradient: 'from-indigo-400 to-indigo-600' },
@@ -670,12 +674,13 @@ export default function GongComparisonPage() {
                 </p>
                 <p>
                   <strong className="text-indigo-400">ReplySequence</strong> solves a different problem: turning
-                  meetings into actual follow-up emails fast. At a fraction of the cost, with zero minimum
-                  seats and 2-minute setup, it&apos;s built for founders, solo sellers, and SMB teams who
-                  need meetings to produce replies--not dashboards.
+                  meetings into follow-up sequences, next steps with due dates, deal risk alerts, and CRM
+                  updates--automatically. At a fraction of the cost, with zero minimum seats and 2-minute
+                  setup, it&apos;s built for founders, solo sellers, and SMB teams who need meetings to
+                  produce action--not dashboards.
                 </p>
                 <p className="font-medium text-white light:text-gray-900">
-                  If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.
+                  If your main problem is turning meetings into sequences, tracked next steps, and deal intelligence without enterprise pricing, ReplySequence is likely the better fit.
                 </p>
               </div>
 
@@ -688,7 +693,7 @@ export default function GongComparisonPage() {
                   <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">Pro tip:</strong> Some teams use Gong for pipeline intelligence
-                    and ReplySequence specifically for follow-up speed. Enterprise analytics + instant emails = no deals left behind.
+                    and ReplySequence for automated sequences, next-step tracking, and deal alerts. Enterprise analytics + instant action = no deals left behind.
                   </span>
                 </p>
               </motion.div>
@@ -721,8 +726,8 @@ export default function GongComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox
-            before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. Get follow-up sequences, next steps,
+            and deal alerts before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -794,7 +799,7 @@ export default function GongComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Gong?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Gong is a revenue intelligence platform focused on conversation analytics, deal scoring, and pipeline forecasting. ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds."
+                  "text": "Gong is a revenue intelligence platform focused on conversation analytics, deal scoring, and pipeline forecasting. ReplySequence turns meetings into personalized follow-up sequences, extracts next steps with due dates, surfaces deal risk alerts, scores deal health, and auto-syncs everything to your CRM."
                 }
               },
               {
@@ -810,7 +815,7 @@ export default function GongComparisonPage() {
                 "name": "Can I use ReplySequence and Gong together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Many sales teams use Gong for conversation analytics and pipeline intelligence, and ReplySequence to generate follow-up emails faster. Different tools for different parts of the sales workflow."
+                  "text": "Yes. Many sales teams use Gong for conversation analytics and pipeline intelligence, and ReplySequence for automated follow-up sequences, next-step tracking, and deal risk alerts. Enterprise analytics plus instant action--no deals left behind."
                 }
               }
             ]

@@ -121,7 +121,11 @@ interface ComparisonRow {
 const comparisonData: ComparisonRow[] = [
   // Revenue & Follow-up (was Email Workflow + CRM from Core Features)
   { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', tldv: 'Manual Process', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Follow-up Sequences', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Email Generation Speed', replysequence: '8 seconds', tldv: 'Not available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Extraction & Reminders', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts (MEDDIC)', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Health Scoring', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Conversational Email Editing', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'One-Click Send', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Custom Email Templates', replysequence: true, tldv: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
@@ -150,18 +154,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI drafts/month', 'Unlimited meetings', 'Next-step extraction', 'Basic templates'] },
     tldv: { price: '$0', period: '/mo', features: ['Limited features', 'Unlimited recordings', 'Basic AI summaries'] },
   },
   {
     tier: 'Pro',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Custom templates'] },
     tldv: { price: '$18', period: '/mo (annual)', features: ['Advanced AI features', 'CRM integrations', 'Priority support'] },
     highlighted: true,
   },
   {
     tier: 'Business / Team',
-    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'Team features', 'CRM sync', 'API access'] },
+    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'Deal health scoring', 'Team features', 'CRM sync', 'API access'] },
     tldv: { price: '$59', period: '/mo (annual)', features: ['Everything in Pro', 'Team collaboration', 'Advanced integrations', '$98/mo if monthly'] },
   },
   {
@@ -175,14 +179,14 @@ const keyDifferences = [
   {
     icon: Timer,
     title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. No watching recordings, no scrubbing through timestamps—actual emails ready to send.',
+    description: 'ReplySequence generates ready-to-send follow-ups in 8 seconds, then auto-schedules multi-step sequences. No watching recordings, no scrubbing through timestamps—actual follow-ups, next steps, and risk alerts ready to act on.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
   {
     icon: Target,
     title: 'Ask Your Meetings Anything',
-    description: 'Query across all your meetings with conversational AI. Ask "what objections came up this week?" and get answers that turn into follow-ups\u2014no recordings to watch.',
+    description: 'Query across all your meetings with conversational AI. Ask "what objections came up this week?" and get answers that turn into follow-ups, sequences, and next-step reminders\u2014no recordings to watch.',
     stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
@@ -273,7 +277,7 @@ export default function TldvComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             If you need unlimited call recordings and a video archive, tl;dv delivers.{' '}
-            <span className="text-white light:text-gray-900">If you want every call to trigger ready-to-send follow-ups without watching anything, ReplySequence is built for that.</span>
+            <span className="text-white light:text-gray-900">If you want every call to trigger follow-ups, sequences, next-step reminders, and deal risk alerts without watching anything, ReplySequence is built for that.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -291,7 +295,7 @@ export default function TldvComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-ups, sequences, next steps, and deal intelligence in minutes.</p>
               </div>
             </div>
           </motion.div>
@@ -325,7 +329,8 @@ export default function TldvComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not recordings to scrub through</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-ups, sequences, and next-step reminders</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need deal risk alerts and health scoring to protect pipeline</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than timestamp bookmarks</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You never want to watch a call recording again</li>
               </ul>
@@ -369,7 +374,7 @@ export default function TldvComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-300 via-indigo-400 to-indigo-600' },
+              { value: '8 sec', label: 'AI draft time', gradient: 'from-indigo-300 via-indigo-400 to-indigo-600' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-amber-400 to-amber-500' },
               { value: '3', label: 'Platforms supported', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-600' },
@@ -677,9 +682,9 @@ export default function TldvComparisonPage() {
                   navigation—especially for training or reviewing sales calls—tl;dv delivers.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> starts where tl;dv stops: turning meetings into action, not archives. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep your pipeline moving—without watching a single recording.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where tl;dv stops: turning meetings into action, not archives. Generate follow-ups in 8 seconds, auto-schedule multi-step sequences, extract next steps with due dates and overdue reminders, surface deal risk alerts, and keep your pipeline moving—without watching a single recording.
                 </p>
-                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.</p>
+                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into follow-ups, sequences, next steps, and deal intelligence, ReplySequence is likely the better fit.</p>
               </div>
 
               <motion.div
@@ -691,8 +696,8 @@ export default function TldvComparisonPage() {
                   <Clock className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">Think about it:</strong> tl;dv saves your recordings.
-                    ReplySequence sends your follow-ups. If watching call recordings is your workflow, go with tl;dv.
-                    If you want emails sent in 8 seconds without watching anything, that&apos;s us.
+                    ReplySequence sends your follow-ups, schedules your sequences, tracks your next steps, and alerts you to deal risks. If watching call recordings is your workflow, go with tl;dv.
+                    If you want follow-ups, sequences, and deal intelligence without watching anything, that&apos;s us.
                   </span>
                 </p>
               </motion.div>
@@ -725,7 +730,7 @@ export default function TldvComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. See follow-ups, sequences, and next-step reminders appear before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -797,7 +802,7 @@ export default function TldvComparisonPage() {
                 "name": "What is the main difference between ReplySequence and tl;dv?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while tl;dv is a meeting recording platform with unlimited free recordings, timestamp bookmarks, and multi-language support for 30+ languages."
+                  "text": "ReplySequence turns meetings into personalized follow-ups, multi-step sequences, next-step reminders with due dates, deal risk alerts (MEDDIC-based), deal health scoring, and CRM auto-sync—all in seconds. tl;dv is a meeting recording platform with unlimited free recordings, timestamp bookmarks, and multi-language support for 30+ languages."
                 }
               },
               {
@@ -805,7 +810,7 @@ export default function TldvComparisonPage() {
                 "name": "Is tl;dv free to use?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, tl;dv offers a free plan with unlimited recordings and limited features. Their Pro plan is $18/month (annual billing), and Business is $59/month (annual) or $98/month (monthly). ReplySequence also has a free tier with 5 AI email drafts per month, Pro at $19/month, and Team at $29/month."
+                  "text": "Yes, tl;dv offers a free plan with unlimited recordings and limited features. Their Pro plan is $18/month (annual billing), and Business is $59/month (annual) or $98/month (monthly). ReplySequence also has a free tier with 5 AI drafts per month and next-step extraction, Pro at $19/month with multi-step sequences and deal risk alerts, and Team at $29/month with deal health scoring and CRM sync."
                 }
               },
               {
@@ -813,7 +818,7 @@ export default function TldvComparisonPage() {
                 "name": "Which tool is better for sales teams?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "If your priority is sending follow-up emails quickly after sales calls, ReplySequence is purpose-built for that workflow with 8-second email generation. If you need to review call recordings, create timestamp bookmarks, and share video clips with your team, tl;dv is a better fit."
+                  "text": "If your priority is sending follow-ups quickly, scheduling multi-step sequences, tracking next steps with overdue reminders, and getting MEDDIC-based deal risk alerts, ReplySequence is purpose-built for that workflow. If you need to review call recordings, create timestamp bookmarks, and share video clips with your team, tl;dv is a better fit."
                 }
               },
               {
@@ -829,7 +834,7 @@ export default function TldvComparisonPage() {
                 "name": "Can I use both ReplySequence and tl;dv together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! Many teams use tl;dv for unlimited call recordings, video clips, and multi-language support while using ReplySequence specifically for fast email follow-ups. They solve different problems and complement each other well."
+                  "text": "Yes! Many teams use tl;dv for unlimited call recordings, video clips, and multi-language support while using ReplySequence for fast follow-ups, multi-step sequences, next-step tracking, deal risk alerts, and CRM auto-sync. They solve different problems and complement each other well."
                 }
               }
             ]

@@ -124,8 +124,12 @@ interface ComparisonRow {
 
 const comparisonData: ComparisonRow[] = [
   // Revenue & Follow-up
-  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', grain: 'Not available', winner: 'replysequence', category: 'Revenue & Follow-up' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', grain: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'AI Follow-up Drafts', replysequence: 'Core Focus', grain: 'Not available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Follow-up Sequences', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Draft Generation Speed', replysequence: '8 seconds', grain: 'N/A', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Extraction & Reminders', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts (MEDDIC)', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Health Scoring', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Conversational Email Editing', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'One-Click Send', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, grain: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
@@ -151,18 +155,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI drafts/month', 'Next-step extraction', 'Unlimited meetings', 'Basic templates'] },
     grain: { price: '$0', period: '/mo', features: ['Limited features', 'Basic recordings', 'Watermarked exports'] },
   },
   {
     tier: 'Starter / Pro',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Priority processing', 'Custom templates'] },
     grain: { price: '$15', period: '/seat/mo', features: ['Unlimited recordings', 'AI summaries', 'Basic highlights', 'Standard support'] },
     highlighted: true,
   },
   {
     tier: 'Team / Business',
-    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
+    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'Deal health scoring', 'CRM auto-sync', 'Team collaboration', 'API access'] },
     grain: { price: '$29', period: '/seat/mo', features: ['Everything in Starter', 'Advanced integrations', 'Admin controls', 'Priority support'] },
   },
 ];
@@ -170,15 +174,15 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Grain focuses on clips and highlights you share with your team.',
+    title: '8-Second AI Drafts',
+    description: 'ReplySequence generates ready-to-send follow-ups, sequences, and next steps in 8 seconds. Grain focuses on clips and highlights you share with your team.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
   {
     icon: Mail,
     title: 'Ask Your Meetings Anything',
-    description: 'Query across all your meetings with conversational AI. Ask "what did the client say about budget?" and get answers that turn into follow-ups—not just clips to share.',
+    description: 'Query across all your meetings with conversational AI. Ask "what did the client say about budget?" and get answers that turn into follow-ups, sequences, and deal insights — not just clips to share.',
     stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
@@ -287,7 +291,7 @@ export default function GrainComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-ups, sequences, next steps, and deal intelligence.</p>
               </div>
             </div>
           </motion.div>
@@ -321,8 +325,9 @@ export default function GrainComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not video clips</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than shareable highlights</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-ups, sequences, and next steps</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need deal risk alerts and health scoring to protect pipeline</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want next-step tracking with due dates and overdue reminders</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You&apos;re tired of manually writing emails after every client call</li>
               </ul>
               <div className="mt-5 space-y-1">
@@ -365,7 +370,7 @@ export default function GrainComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '8 sec', label: 'AI draft time', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-indigo-400 to-amber-400' },
               { value: '3', label: 'Platforms supported', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-indigo-600' },
@@ -684,9 +689,9 @@ export default function GrainComparisonPage() {
                   with product teams, or build a library of meeting insights, Grain is purpose-built for that.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> starts where Grain stops: turning meetings into systematic follow-ups, not just shareable moments. Ask your meetings anything, generate ready-to-send emails in 8 seconds, and keep your pipeline moving.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where Grain stops: turning meetings into systematic follow-ups, multi-step sequences, next-step tracking with due dates, and deal risk alerts. Ask your meetings anything, generate ready-to-send drafts in 8 seconds, and keep your pipeline moving with deal health scoring and overdue reminders.
                 </p>
-                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.</p>
+                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies, sequences, next steps, and deal intelligence, ReplySequence is likely the better fit.</p>
               </div>
 
               <motion.div
@@ -698,7 +703,7 @@ export default function GrainComparisonPage() {
                   <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">The key question:</strong> After a meeting, do you need to share video clips with your team (Grain),
-                    or do you need to send follow-up emails to clients and prospects (ReplySequence)? Choose the tool that matches your primary workflow.
+                    or do you need follow-ups, sequences, next-step tracking, and deal risk alerts for clients and prospects (ReplySequence)? Choose the tool that matches your primary workflow.
                   </span>
                 </p>
               </motion.div>
@@ -731,7 +736,7 @@ export default function GrainComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. See follow-ups, next steps, and deal insights appear before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -803,7 +808,7 @@ export default function GrainComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Grain?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while Grain specializes in creating shareable video highlight clips and building a team library of meeting moments."
+                  "text": "ReplySequence turns meetings into AI-drafted follow-ups, multi-step sequences, next-step tracking with due dates, deal risk alerts, and deal health scoring — all in seconds. Grain specializes in creating shareable video highlight clips and building a team library of meeting moments."
                 }
               },
               {
@@ -819,15 +824,15 @@ export default function GrainComparisonPage() {
                 "name": "Can I use both ReplySequence and Grain together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! They solve different problems. Use Grain for sharing video clips with your team, and ReplySequence for sending follow-up emails to clients and prospects faster."
+                  "text": "Yes! They solve different problems. Use Grain for sharing video clips with your team, and ReplySequence for follow-ups, multi-step sequences, next-step tracking, deal risk alerts, and CRM auto-sync."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Does Grain have email follow-up features?",
+                "name": "Does Grain have follow-up and deal intelligence features?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Grain is primarily focused on video highlights and clip sharing. It does not have dedicated email follow-up generation like ReplySequence, which creates AI-drafted emails in 8 seconds."
+                  "text": "Grain is primarily focused on video highlights and clip sharing. It does not offer AI-drafted follow-ups, multi-step sequences, next-step extraction, deal risk alerts, or deal health scoring like ReplySequence does."
                 }
               }
             ]

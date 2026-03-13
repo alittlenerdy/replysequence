@@ -120,11 +120,15 @@ interface ComparisonRow {
 
 const comparisonData: ComparisonRow[] = [
   // Revenue & Follow-up
-  { feature: 'Auto Follow-up Emails', replysequence: 'Core Focus', fathom: 'Not Available', winner: 'replysequence', category: 'Revenue & Follow-up' },
-  { feature: 'Email Generation Speed', replysequence: '8 seconds', fathom: 'Manual copy-paste', winner: 'replysequence', category: 'Revenue & Follow-up' },
-  { feature: 'Conversational Email Editing', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Auto Follow-up Drafts', replysequence: 'Core Focus', fathom: 'Not Available', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Sequences', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Extraction', replysequence: 'With due dates', fathom: 'Action items only', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts (MEDDIC)', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Health Scoring', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'AI Draft Speed', replysequence: '8 seconds', fathom: 'Manual copy-paste', winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Conversational Draft Editing', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'One-Click Send', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
-  { feature: 'Custom Email Templates', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Custom Templates', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, fathom: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'CRM Auto-Sync', replysequence: true, fathom: true, winner: 'tie', category: 'Revenue & Follow-up' },
   // Recording & Transcription
@@ -150,12 +154,12 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI drafts/month', 'Next-step extraction', 'Unlimited meetings', 'Basic templates'] },
     fathom: { price: '$0', period: '/mo', features: ['Unlimited recordings', '5 AI-powered meetings/month', 'Basic transcription'] },
   },
   {
     tier: 'Pro / Premium',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'CRM sync'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Custom templates', 'CRM sync'] },
     fathom: { price: '$19', period: '/mo', features: ['Unlimited AI meetings', 'AI summaries', 'HubSpot/Salesforce sync', '~$15/mo billed annually'] },
     highlighted: true,
   },
@@ -174,15 +178,15 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Not summaries you copy-paste—actual personalized emails ready to send.',
+    title: '8-Second AI Drafts',
+    description: 'ReplySequence generates ready-to-send follow-ups in 8 seconds, then queues multi-step sequences with next-step reminders. Not summaries you copy-paste -- actual personalized drafts ready to send.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
   {
     icon: Target,
     title: 'Ask Your Meetings Anything',
-    description: 'Query across all your meetings with conversational AI. Ask "what pricing concerns came up this week?" and get answers that turn into follow-ups—not just meeting notes.',
+    description: 'Query across all your meetings with conversational AI. Ask "what pricing concerns came up this week?" and get answers that turn into follow-ups, sequences, and next steps -- not just meeting notes.',
     stat: 'AI Chat',
     advantage: 'replysequence' as const,
   },
@@ -273,7 +277,7 @@ export default function FathomComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             If you want free meeting notes with solid CRM sync, Fathom is great.{' '}
-            <span className="text-white light:text-gray-900">If you want every call to trigger ready-to-send follow-ups without extra steps, ReplySequence is built for that.</span>
+            <span className="text-white light:text-gray-900">If you want every call to trigger follow-ups, sequences, next-step tracking, and deal risk alerts without extra steps, ReplySequence is built for that.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -291,7 +295,7 @@ export default function FathomComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-ups, sequences, next steps, and deal intelligence in minutes.</p>
               </div>
             </div>
           </motion.div>
@@ -325,9 +329,9 @@ export default function FathomComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not just notes and summaries</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Your real bottleneck is writing emails after calls, not taking notes</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want one tool that goes from meeting to sent email in 8 seconds</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-ups, multi-step sequences, and next-step reminders</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need deal risk alerts and health scoring to keep pipeline on track</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want one tool that goes from meeting to sent follow-up in 8 seconds</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400 font-medium text-sm">
@@ -369,7 +373,7 @@ export default function FathomComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'Email draft time', gradient: 'from-indigo-400 to-amber-400' },
+              { value: '8 sec', label: 'AI draft time', gradient: 'from-indigo-400 to-amber-400' },
               { value: '10+ hrs', label: 'Saved per week', gradient: 'from-amber-400 to-indigo-400' },
               { value: '3', label: 'Platforms supported', gradient: 'from-indigo-400 to-indigo-600' },
               { value: '$19', label: 'Pro plan / month', gradient: 'from-indigo-400 to-amber-400' },
@@ -677,9 +681,9 @@ export default function FathomComparisonPage() {
                   notes and action items without paying, Fathom is a great choice.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> starts where Fathom stops: turning notes into replies, not just summaries. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep your pipeline moving without the manual email writing.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where Fathom stops: turning notes into follow-ups, multi-step sequences, next-step tracking with due dates, and MEDDIC-based deal risk alerts. Ask your meetings anything, generate ready-to-send drafts in 8 seconds, and keep your pipeline moving with deal health scoring and overdue reminders.
                 </p>
-                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.</p>
+                <p className="font-medium text-white light:text-gray-900">If your main problem is turning meetings into follow-ups, sequences, next steps, and pipeline intelligence, ReplySequence is likely the better fit.</p>
               </div>
 
               <motion.div
@@ -691,7 +695,7 @@ export default function FathomComparisonPage() {
                   <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">Pro tip:</strong> Start with Fathom&apos;s
-                    free tier for meeting notes. When you realize the real time sink is writing emails after calls,
+                    free tier for meeting notes. When you realize the real time sink is writing follow-ups, tracking next steps, and monitoring deal health,
                     add ReplySequence to close the loop in 8 seconds.
                   </span>
                 </p>
@@ -725,7 +729,7 @@ export default function FathomComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. See follow-ups, sequences, and next steps appear before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -797,7 +801,7 @@ export default function FathomComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Fathom?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence generates follow-up emails from meetings in 8 seconds, while Fathom is an AI notetaker with meeting summaries and CRM sync. ReplySequence is email-first; Fathom is notes-first with a generous free tier (5 AI meetings/month)."
+                  "text": "ReplySequence generates follow-up drafts, multi-step sequences, next-step tracking with due dates, and MEDDIC-based deal risk alerts from meetings in 8 seconds. Fathom is an AI notetaker with meeting summaries and CRM sync. ReplySequence is action-first; Fathom is notes-first with a generous free tier (5 AI meetings/month)."
                 }
               },
               {
@@ -805,7 +809,7 @@ export default function FathomComparisonPage() {
                 "name": "Is Fathom really free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Fathom offers a free tier with unlimited recordings and 5 AI-powered meetings per month. Premium plans start at $19/month ($15/month billed annually) for unlimited AI features. Team plans are $29/month and Team Pro is $39/month. ReplySequence's free tier includes 5 AI email drafts per month."
+                  "text": "Fathom offers a free tier with unlimited recordings and 5 AI-powered meetings per month. Premium plans start at $19/month ($15/month billed annually) for unlimited AI features. Team plans are $29/month and Team Pro is $39/month. ReplySequence's free tier includes 5 AI drafts per month plus next-step extraction."
                 }
               },
               {
@@ -813,7 +817,7 @@ export default function FathomComparisonPage() {
                 "name": "Which tool is better for sales teams?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "It depends on your bottleneck. If you struggle to write follow-up emails after calls, ReplySequence generates them in 8 seconds. If you need free meeting notes with HubSpot/Salesforce sync, Fathom is excellent. Many sales teams use both."
+                  "text": "It depends on your bottleneck. If you need follow-ups, multi-step sequences, next-step tracking, and deal risk alerts after calls, ReplySequence generates drafts in 8 seconds and keeps your pipeline healthy with deal scoring. If you need free meeting notes with HubSpot/Salesforce sync, Fathom is excellent. Many sales teams use both."
                 }
               },
               {
@@ -829,7 +833,7 @@ export default function FathomComparisonPage() {
                 "name": "Can I use ReplySequence and Fathom together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Absolutely! Many users use Fathom's free tier for meeting notes and CRM updates, then use ReplySequence specifically for generating and sending follow-up emails in 8 seconds. Different tools for different parts of the workflow."
+                  "text": "Absolutely! Many users use Fathom's free tier for meeting notes and CRM updates, then use ReplySequence for generating follow-ups, scheduling multi-step sequences, tracking next steps with due dates, and monitoring deal health. Different tools for different parts of the workflow."
                 }
               }
             ]

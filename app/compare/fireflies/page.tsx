@@ -126,6 +126,10 @@ const comparisonData: ComparisonRow[] = [
   { feature: 'Conversational Email Editing', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'One-Click Send', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Custom Email Templates', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Multi-Step Follow-Up Sequences', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Next-Step Tracking & Reminders', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Risk Alerts', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
+  { feature: 'Deal Health Scoring', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'Ask Your Meetings Anything', replysequence: true, fireflies: false, winner: 'replysequence', category: 'Revenue & Follow-up' },
   { feature: 'CRM Auto-Sync', replysequence: true, fireflies: true, winner: 'tie', category: 'Revenue & Follow-up' },
   { feature: 'CRM Integrations', replysequence: 'HubSpot, Salesforce, Sheets', fireflies: 'Salesforce, HubSpot +20', winner: 'fireflies', category: 'Revenue & Follow-up' },
@@ -148,18 +152,18 @@ const comparisonData: ComparisonRow[] = [
 const pricingComparison = [
   {
     tier: 'Free',
-    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Basic templates'] },
+    replysequence: { price: '$0', period: '/mo', features: ['5 AI email drafts/month', 'Unlimited meetings', 'Next-step extraction'] },
     fireflies: { price: '$0', period: '/mo', features: ['800 min/month transcription', 'Basic AI summaries', 'Limited features'] },
   },
   {
     tier: 'Pro',
-    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Priority processing', 'Custom templates', 'No branding'] },
+    replysequence: { price: '$19', period: '/mo', features: ['Unlimited AI drafts', 'Multi-step sequences', 'Deal risk alerts', 'Next-step tracking'] },
     fireflies: { price: '$18', period: '/user/mo', features: ['Unlimited transcription', 'Smart Search', 'CRM integrations', 'AI summaries'], note: '$10/mo billed annually' },
     highlighted: true,
   },
   {
     tier: 'Business / Team',
-    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM sync', 'Team collaboration', 'API access'] },
+    replysequence: { price: '$29', period: '/mo', features: ['Everything in Pro', 'CRM auto-sync', 'Deal health scoring', 'Meeting intelligence'] },
     fireflies: { price: '$29', period: '/user/mo', features: ['Conversation Intelligence', 'Topic Tracker', 'Team insights', 'Admin controls'], note: '$19/mo billed annually' },
   },
 ];
@@ -167,8 +171,8 @@ const pricingComparison = [
 const keyDifferences = [
   {
     icon: Timer,
-    title: '8-Second Email Drafts',
-    description: 'ReplySequence generates ready-to-send follow-up emails in 8 seconds. Fireflies gives you meeting notes; you still have to write the email yourself.',
+    title: 'Full Post-Meeting Automation',
+    description: 'ReplySequence generates follow-up emails in 8 seconds, then keeps deals warm with multi-step sequences, tracks next steps with due dates, and flags deal risks--all from the transcript.',
     stat: '8 sec',
     advantage: 'replysequence' as const,
   },
@@ -266,7 +270,7 @@ export default function FirefliesComparisonPage() {
             className="text-lg sm:text-xl md:text-2xl text-gray-400 light:text-gray-500 max-w-3xl mx-auto mb-8"
           >
             If you need searchable meeting archives, Fireflies delivers.{' '}
-            <span className="text-white light:text-gray-900">If you want every call to reliably trigger follow-ups without you thinking about it, ReplySequence wins.</span>
+            <span className="text-white light:text-gray-900">If you want every call to trigger follow-up sequences, next-step tracking, and deal risk alerts automatically, ReplySequence wins.</span>
           </motion.p>
 
           {/* Two Different Jobs */}
@@ -284,7 +288,7 @@ export default function FirefliesComparisonPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
-                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into revenue-driving follow-ups in minutes.</p>
+                <p className="text-sm text-gray-300 light:text-gray-600">Turn meetings into follow-up sequences, next-step tracking, deal risk alerts, and CRM updates automatically.</p>
               </div>
             </div>
           </motion.div>
@@ -318,9 +322,9 @@ export default function FirefliesComparisonPage() {
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Choose ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up emails, not just searchable transcripts</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You care more about replies and pipeline than topic tracking</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You don&apos;t want to live in 3 different tools (recorder + notes + sequencer)</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want meetings to auto-generate follow-up sequences with multi-step emails</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You need next-step tracking with due dates and deal risk alerts</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want one tool for follow-ups, deal health, meeting intelligence, and CRM sync</li>
               </ul>
               <div className="mt-5 space-y-1">
                 <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
@@ -683,10 +687,10 @@ export default function FirefliesComparisonPage() {
                   Fireflies delivers real value at a competitive price point.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> starts where Fireflies stops: turning notes into replies, not just searchable text. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep your pipeline moving without manual work.
+                  <strong className="text-indigo-400">ReplySequence</strong> starts where Fireflies stops: turning meetings into follow-up sequences, next-step tracking with due dates, deal risk alerts, and CRM updates. Ask your meetings anything, generate ready-to-send follow-ups in 8 seconds, and keep deals warm automatically.
                 </p>
                 <p className="font-medium text-white light:text-gray-900">
-                  If your main problem is turning meetings into replies and pipeline, ReplySequence is likely the better fit.
+                  If your main problem is turning meetings into follow-up sequences, tracked next steps, and pipeline visibility, ReplySequence is likely the better fit.
                 </p>
               </div>
 
@@ -734,7 +738,8 @@ export default function FirefliesComparisonPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-gray-400 light:text-gray-500 mb-10 max-w-2xl mx-auto"
           >
-            Connect your Zoom, Teams, or Meet. See follow-ups appear in your inbox before you&apos;ve even closed the meeting tab.
+            Connect your Zoom, Teams, or Meet. Get follow-up sequences, next-step tracking,
+            and deal risk alerts before you&apos;ve even closed the meeting tab.
           </motion.p>
 
           <motion.div
@@ -806,7 +811,7 @@ export default function FirefliesComparisonPage() {
                 "name": "What is the main difference between ReplySequence and Fireflies.ai?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "ReplySequence is focused specifically on generating follow-up emails from meetings in 8 seconds, while Fireflies.ai is a comprehensive AI meeting assistant with Smart Search, Topic Tracker, conversation intelligence, and extensive CRM integrations like Salesforce and HubSpot."
+                  "text": "ReplySequence turns meetings into follow-up sequences, next-step tracking with due dates, deal risk alerts, deal health scoring, and CRM auto-sync. It also offers meeting intelligence where you can ask questions across all your calls. Fireflies.ai is a comprehensive AI meeting assistant with Smart Search, Topic Tracker, conversation intelligence, and extensive CRM integrations."
                 }
               },
               {
@@ -822,7 +827,7 @@ export default function FirefliesComparisonPage() {
                 "name": "Can I use both ReplySequence and Fireflies together?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Absolutely! Many teams use Fireflies for searchable transcripts, Topic Tracker, and conversation intelligence, and ReplySequence specifically for sending follow-up emails faster. They solve different problems and complement each other well."
+                  "text": "Absolutely! Many teams use Fireflies for searchable transcripts, Topic Tracker, and conversation intelligence, and ReplySequence for automated follow-up sequences, next-step tracking, deal risk alerts, and CRM sync. They solve different problems and complement each other well."
                 }
               },
               {
