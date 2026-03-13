@@ -34,7 +34,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
     return (
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="w-5 h-5 text-gray-400 light:text-gray-500" />
+          <CreditCard className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
           <h3 className="text-lg font-semibold text-white light:text-gray-900">Payment & Billing</h3>
         </div>
         <div className="p-6 bg-gray-800/30 light:bg-gray-50 rounded-xl border border-dashed border-gray-600 light:border-gray-300">
@@ -63,7 +63,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-gray-400 light:text-gray-500" />
+            <CreditCard className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
             <h3 className="text-lg font-semibold text-white light:text-gray-900">Payment Method</h3>
           </div>
         </div>
@@ -97,7 +97,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-gray-400 light:text-gray-500" />
+            <FileText className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
             <h3 className="text-lg font-semibold text-white light:text-gray-900">Billing Details</h3>
           </div>
         </div>

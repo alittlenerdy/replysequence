@@ -42,7 +42,9 @@ async function DashboardContent() {
         {/* Main workspace (2/3) */}
         <div className="lg:col-span-2 min-w-0">
           <div className="mb-5">
-            <h2 className="text-2xl font-bold text-white light:text-gray-900">Follow-ups</h2>
+            <h2 className="text-2xl font-bold text-white light:text-gray-900">
+              <span className="bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">Follow-ups</span>
+            </h2>
             <p className="text-gray-400 light:text-gray-500 mt-1">Review, edit, and send your meeting follow-ups</p>
           </div>
           <DraftsView

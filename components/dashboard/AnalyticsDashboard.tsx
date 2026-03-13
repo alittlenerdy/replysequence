@@ -192,7 +192,9 @@ export function AnalyticsDashboard() {
       {/* 1. Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-white light:text-gray-900">Analytics</h2>
+          <h2 className="text-2xl font-bold text-white light:text-gray-900">
+            <span className="bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">Analytics</span>
+          </h2>
           {lastUpdated && (
             <p className="text-xs text-gray-500 mt-1">
               Last updated: {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -208,7 +210,7 @@ export function AnalyticsDashboard() {
                 onClick={() => setDateRange(range.value)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   dateRange === range.value
-                    ? 'bg-orange-500 text-white shadow-sm'
+                    ? 'bg-indigo-500 text-white shadow-sm'
                     : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
                 }`}
               >

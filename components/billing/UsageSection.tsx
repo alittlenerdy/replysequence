@@ -20,7 +20,12 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
 
   return (
     <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
-      <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-4">Usage This Month</h3>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+          <svg className="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        </div>
+        <h3 className="text-lg font-semibold text-white light:text-gray-900">Usage This Month</h3>
+      </div>
 
       <div>
         <div className="flex items-center justify-between mb-1.5">

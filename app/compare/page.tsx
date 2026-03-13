@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { WaitlistForm } from '@/components/landing/WaitlistForm';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Zap, Clock, Mail } from 'lucide-react';
@@ -87,11 +88,15 @@ const competitors = [
 
 export default function ComparePage() {
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative overflow-hidden">
+      {/* Ambient gradient orbs — match homepage */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.12)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-[40%] left-[20%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.06)_0%,transparent_70%)] pointer-events-none" />
+
       <Header />
 
       {/* Hero */}
-      <section className="pt-32 pb-16 px-4">
+      <section className="relative pt-32 pb-16 px-4 z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white light:text-gray-900 mb-6 leading-tight text-pretty">
             How ReplySequence{' '}
@@ -158,13 +163,9 @@ export default function ComparePage() {
           <p className="text-gray-400 light:text-gray-600 mb-6">
             Join the waitlist and see ReplySequence for yourself. No commitment needed.
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl text-sm font-semibold transition-[background,box-shadow] shadow-lg shadow-indigo-500/20"
-          >
-            Join the Waitlist
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="glass-border-accent rounded-2xl p-6 sm:p-10">
+            <WaitlistForm />
+          </div>
         </div>
       </section>
 

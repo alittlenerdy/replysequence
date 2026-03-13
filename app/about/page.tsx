@@ -1,7 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { WaitlistForm } from '@/components/landing/WaitlistForm';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -135,13 +134,9 @@ export default function AboutPage() {
           <p className="text-gray-400 light:text-gray-600 mb-8">
             Get started free with 5 AI drafts per month. No credit card required.
           </p>
-          <Link
-            href="/#waitlist"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
-          >
-            Join the Waitlist
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="glass-border-accent rounded-2xl p-6 sm:p-10 text-left">
+            <WaitlistForm />
+          </div>
         </div>
       </section>
 

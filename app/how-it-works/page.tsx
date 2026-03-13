@@ -21,6 +21,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
 import { GradientButton } from '@/components/ui/GradientButton';
+import { WaitlistForm } from '@/components/landing/WaitlistForm';
 
 // Animated flow line connecting steps
 function FlowLine({ progress }: { progress: number }) {
@@ -375,7 +376,7 @@ export default function HowItWorksPage() {
   const flowProgress = useTransform(scrollYProgress, [0.1, 0.8], [0, 1]);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900">
+    <div ref={containerRef} className="min-h-screen bg-gray-950 light:bg-gray-50 text-white light:text-gray-900">
       <Header />
 
       {/* Hero Section */}
@@ -693,31 +694,18 @@ export default function HowItWorksPage() {
               Start with 5 free AI drafts. No credit card required.
             </p>
 
-            <motion.div
-              className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-8 md:p-12"
-              whileHover={{ scale: 1.01 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            >
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-                <GradientButton
-                  href="/#waitlist"
-                  showArrow
-                  size="lg"
-                >
-                  Join the Waitlist
-                </GradientButton>
-                <GradientButton
-                  href="/pricing"
-                  variant="secondary"
-                  size="lg"
-                >
-                  View Pricing
-                </GradientButton>
-              </div>
-              <p className="text-gray-500 light:text-gray-600 text-sm">
-                Start with 5 free AI drafts • Cancel anytime
-              </p>
-            </motion.div>
+            <div className="glass-border-accent rounded-2xl p-6 sm:p-10 max-w-lg mx-auto">
+              <WaitlistForm />
+            </div>
+            <div className="flex justify-center mt-4">
+              <GradientButton
+                href="/pricing"
+                variant="secondary"
+                size="lg"
+              >
+                View Pricing
+              </GradientButton>
+            </div>
           </motion.div>
         </div>
       </section>

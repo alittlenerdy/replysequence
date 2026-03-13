@@ -79,7 +79,7 @@ import {
   Sparkles,
   Search,
 } from 'lucide-react';
-import { FloatingToolbar } from '@/components/landing/FloatingToolbar';
+// FloatingToolbar removed — Header handles all site navigation
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
@@ -94,15 +94,14 @@ const NonNegotiablesCarousel = dynamic(() => import('@/components/NonNegotiables
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
       {/* Header — consistent with all pages */}
       <Header />
 
-      {/* Floating Toolbar — secondary nav on homepage */}
-      <FloatingToolbar />
+      {/* FloatingToolbar removed — Header handles all navigation */}
 
       {/* Hero Section */}
-      <section id="hero" className="relative pt-28 pb-12 px-4 z-10">
+      <section id="hero" className="relative pt-32 pb-12 px-4 z-10">
         {/* Ambient gradient orbs */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] pointer-events-none" />
         <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,0.08)_0%,transparent_70%)] pointer-events-none" />
@@ -111,7 +110,7 @@ export default function LandingPage() {
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
               Every Tool Records the Meeting.{' '}
-              <span className="bg-gradient-to-r from-[#00F0FF] via-[#818CF8] to-[#A855F7] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
+              <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
             <p className="text-xl text-gray-300 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
@@ -125,7 +124,7 @@ export default function LandingPage() {
                 'Deal risks flagged before they cost you',
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+                  <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0" aria-hidden="true" />
                   <span className="text-sm text-gray-300 light:text-gray-600 font-medium">{bullet}</span>
                 </div>
               ))}
@@ -205,7 +204,7 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 text-base font-medium text-gray-400 light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] rounded-md group"
               >
                 See How It Works
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </a>
@@ -227,10 +226,10 @@ export default function LandingPage() {
               </a>
               <a
                 href="/privacy"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full hover:bg-amber-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
               >
-                <Shield className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
-                <span className="text-xs font-medium text-amber-400">Privacy First</span>
+                <Shield className="w-3.5 h-3.5 text-indigo-400" aria-hidden="true" />
+                <span className="text-xs font-medium text-indigo-400">Privacy First</span>
               </a>
             </motion.div>
 
@@ -257,7 +256,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Sales Stack Has a <GradientText variant="amber">Gap</GradientText>. This Is It.
+              Your Sales Stack Has a <GradientText variant="secondary">Gap</GradientText>. This Is It.
             </h2>
             <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up, the next steps, the risk alerts, or the CRM update.
@@ -318,11 +317,11 @@ export default function LandingPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 light:text-gray-500 mb-2">Before</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
 
-                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-1" aria-hidden="true" />
+                <ArrowDown className="w-4 h-4 text-indigo-400/60 mb-1" aria-hidden="true" />
                 <p className="text-xs text-gray-400 light:text-gray-500 mb-1">{item.process}</p>
-                <ArrowDown className="w-4 h-4 text-amber-400/60 mb-3" aria-hidden="true" />
+                <ArrowDown className="w-4 h-4 text-indigo-400/60 mb-3" aria-hidden="true" />
 
-                <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 light:text-amber-600 mb-2">After</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 light:text-indigo-600 mb-2">After</span>
                 <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
               </motion.div>
             ))}
@@ -390,13 +389,13 @@ export default function LandingPage() {
                     <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-2 ${
                       item.color === 'blue' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
                       item.color === 'purple' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
-                      'border-amber-500/50 bg-amber-500/10 text-amber-400'
+                      'border-indigo-500/50 bg-indigo-500/10 text-indigo-400'
                     }`}>
                       {item.icon}
                       <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg ${
                         item.color === 'blue' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
                         item.color === 'purple' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
-                        'bg-gradient-to-br from-amber-500 to-amber-600'
+                        'bg-gradient-to-br from-indigo-500 to-indigo-600'
                       }`}>
                         {item.step}
                       </span>
@@ -443,7 +442,7 @@ export default function LandingPage() {
             className="text-center mb-8"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Deals, <GradientText variant="amber">Your Control</GradientText>
+              Your Deals, <GradientText variant="secondary">Your Control</GradientText>
             </h2>
             <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Every follow-up, sequence, and next step is a suggestion first. You review, edit, and approve before anything sends, schedules, or syncs.
@@ -476,8 +475,8 @@ export default function LandingPage() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="glass-border rounded-2xl p-6 text-center"
               >
-                <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-6 h-6 text-amber-400 light:text-amber-600" aria-hidden="true" />
+                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
@@ -498,7 +497,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Built for Teams That <GradientText variant="amber">Follow Up Fast</GradientText>
+              Built for Teams That <GradientText variant="secondary">Follow Up Fast</GradientText>
             </h2>
           </motion.div>
 
@@ -550,13 +549,13 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-8 md:mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 mb-6">
-              <Sparkles className="w-4 h-4 text-orange-400" aria-hidden="true" />
-              <span className="text-sm font-medium text-orange-400">New Feature</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
+              <Sparkles className="w-4 h-4 text-indigo-400" aria-hidden="true" />
+              <span className="text-sm font-medium text-indigo-400">New Feature</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Stop Rereading Transcripts.{' '}
-              <GradientText variant="amber">Ask Instead.</GradientText>
+              <GradientText variant="secondary">Ask Instead.</GradientText>
             </h2>
             <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Type a question and get instant answers pulled from every transcript — action items, next steps, deal risks, sequence status, follow-up history, and pipeline trends.
@@ -570,11 +569,11 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="rounded-2xl border border-orange-500/20 bg-gray-900/80 light:bg-white light:border-orange-200 overflow-hidden shadow-xl shadow-orange-500/5"
+              className="rounded-2xl border border-indigo-500/20 bg-gray-900/80 light:bg-white light:border-indigo-200 overflow-hidden shadow-xl shadow-indigo-500/5"
             >
-              <div className="px-5 py-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-orange-500/20 light:border-orange-200">
+              <div className="px-5 py-4 bg-gradient-to-r from-indigo-500/10 to-indigo-600/10 border-b border-indigo-500/20 light:border-indigo-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
                     <MessageSquare className="w-5 h-5 text-white" aria-hidden="true" />
                   </div>
                   <div>
@@ -592,7 +591,7 @@ export default function LandingPage() {
                   transition={{ delay: 0.5 }}
                   className="flex justify-end"
                 >
-                  <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm">
+                  <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm">
                     What action items came up this week?
                   </div>
                 </motion.div>
@@ -606,12 +605,12 @@ export default function LandingPage() {
                 >
                   <div className="max-w-[90%] px-4 py-3 rounded-2xl rounded-bl-md bg-gray-800 light:bg-gray-100 text-sm text-gray-200 light:text-gray-700 space-y-2">
                     <p className="font-medium text-white light:text-gray-900">Based on 4 meetings this week:</p>
-                    <p><span className="text-orange-400 font-semibold">Technical issues:</span> API rate limiting needs a fix before launch (Feb 18 standup)</p>
-                    <p><span className="text-orange-400 font-semibold">Next steps due:</span> Send pricing proposal to Acme Corp by Friday — sequence step 2 scheduled (Feb 17 demo)</p>
-                    <p><span className="text-orange-400 font-semibold">Risks flagged:</span> Onboarding timeline slipping — 3 users reported confusion</p>
+                    <p><span className="text-indigo-400 font-semibold">Technical issues:</span> API rate limiting needs a fix before launch (Feb 18 standup)</p>
+                    <p><span className="text-indigo-400 font-semibold">Next steps due:</span> Send pricing proposal to Acme Corp by Friday — sequence step 2 scheduled (Feb 17 demo)</p>
+                    <p><span className="text-indigo-400 font-semibold">Risks flagged:</span> Onboarding timeline slipping — 3 users reported confusion</p>
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Q1 Pipeline Review</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Product Demo Call</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">Q1 Pipeline Review</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">Product Demo Call</span>
                     </div>
                   </div>
                 </motion.div>
@@ -659,8 +658,8 @@ export default function LandingPage() {
                   transition={{ delay: 0.4 + i * 0.1 }}
                   className="flex gap-4"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-orange-400" aria-hidden="true" />
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-4 h-4 text-indigo-400" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-white light:text-gray-900 mb-1">{feature.title}</h3>
@@ -686,7 +685,7 @@ export default function LandingPage() {
               <span className="text-sm font-medium text-indigo-400">Adaptive AI</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4 text-pretty">
-              Gets Smarter With <GradientText variant="amber">Every Meeting</GradientText>
+              Gets Smarter With <GradientText variant="secondary">Every Meeting</GradientText>
             </h2>
             <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Every call builds your deal intelligence. The AI learns your voice, tracks relationship history, and surfaces risks before they cost you a deal.
@@ -734,7 +733,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Next Meeting Is Coming. The <GradientText variant="amber">Follow-Up</GradientText> Should Be Automatic.
+              Your Next Meeting Is Coming. The <GradientText variant="secondary">Follow-Up</GradientText> Should Be Automatic.
             </h2>
             <p className="text-gray-300 light:text-gray-600 mb-6">
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.

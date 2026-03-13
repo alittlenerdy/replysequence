@@ -18,9 +18,9 @@ const tierConfig = {
   free: {
     name: 'Free',
     icon: Zap,
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-500/10',
-    borderColor: 'border-gray-500/20',
+    color: 'text-indigo-400',
+    bgColor: 'bg-indigo-500/10',
+    borderColor: 'border-indigo-500/20',
   },
   pro: {
     name: 'Pro',

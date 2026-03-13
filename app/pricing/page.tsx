@@ -3,6 +3,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { PricingCards } from '@/components/PricingCards';
+import { WaitlistForm } from '@/components/landing/WaitlistForm';
 import { ManageSubscriptionButton } from '@/components/ManageSubscriptionButton';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
@@ -237,12 +238,9 @@ async function PricingContent() {
             <p className="text-gray-400 light:text-gray-600 mb-8">
               Connect your meeting platform, run a call, and let ReplySequence handle the follow-ups, sequences, next steps, and CRM updates.
             </p>
-            <a
-              href="/#waitlist"
-              className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
-            >
-              Join the Waitlist
-            </a>
+            <div className="glass-border-accent rounded-2xl p-6 sm:p-10 text-left">
+              <WaitlistForm />
+            </div>
           </div>
         </section>
       )}
