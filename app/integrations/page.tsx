@@ -440,10 +440,10 @@ export default function IntegrationsPage() {
             Get started free with 5 AI drafts per month. No credit card required.
           </p>
           <Link
-            href="/sign-up"
+            href="/#waitlist"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
           >
-            Connect Your Tools Free
+            Join the Waitlist
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

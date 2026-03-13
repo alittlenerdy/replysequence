@@ -694,11 +694,11 @@ export default function HowItWorksPage() {
             >
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                 <GradientButton
-                  href="/sign-up"
+                  href="/#waitlist"
                   showArrow
                   size="lg"
                 >
-                  Get Started Free
+                  Join the Waitlist
                 </GradientButton>
                 <GradientButton
                   href="/pricing"

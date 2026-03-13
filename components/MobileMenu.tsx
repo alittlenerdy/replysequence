@@ -174,7 +174,7 @@ export default function MobileMenu() {
               Dashboard
             </a>
             <a
-              href="/sign-up"
+              href="/#waitlist"
               onClick={() => setIsOpen(false)}
               className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-[color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
               style={{
@@ -182,7 +182,7 @@ export default function MobileMenu() {
                 boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',
               }}
             >
-              Get Started Free
+              Join the Waitlist
             </a>
           </nav>
         </div>,
