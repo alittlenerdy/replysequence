@@ -80,7 +80,7 @@ function DraftStatusBadge({ status }: { status: AtRiskMeeting['draftStatus'] }) 
 export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
   if (meetings.length === 0) {
     return (
-      <div id="at-risk-meetings" className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+      <div id="at-risk-meetings" className="glass-border rounded-2xl p-5 light:shadow-sm">
         <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Meetings Needing Follow-up</h3>
         <div className="flex items-center justify-center gap-2 py-6 text-gray-500">
           <CheckCircle2 className="w-5 h-5 text-indigo-500" />
@@ -91,7 +91,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
   }
 
   return (
-    <div id="at-risk-meetings" className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+    <div id="at-risk-meetings" className="glass-border rounded-2xl p-5 light:shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-white light:text-gray-900">Meetings Needing Follow-up</h3>
         <span className="text-xs text-gray-500">{meetings.length} meeting{meetings.length !== 1 ? 's' : ''}</span>
@@ -103,7 +103,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
           <Link
             key={m.meetingId}
             href={`/dashboard/meetings/${m.meetingId}`}
-            className="block p-3 rounded-xl bg-[#1c2030] light:bg-gray-50 border border-white/[0.06] light:border-gray-200 hover:bg-[#1c2030] light:hover:bg-gray-100 transition-colors"
+            className="block p-3 rounded-xl glass-surface light:bg-gray-50 border border-white/[0.06] light:border-gray-200 hover:glass-surface light:hover:bg-gray-100 transition-colors"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="min-w-0">

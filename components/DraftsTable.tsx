@@ -505,9 +505,9 @@ export function DraftsTable({
 
   return (
     <>
-      <div id="drafts-table" className="bg-[#141720] light:bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/[0.06] light:border-gray-200 overflow-hidden">
+      <div id="drafts-table" className="glass-border rounded-2xl shadow-xl overflow-hidden">
         {/* Table Header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-white/[0.06] light:border-gray-200 bg-[#1c2030] light:bg-gray-50/80">
+        <div className="px-4 sm:px-6 py-4 border-b border-white/[0.06] light:border-gray-200 glass-surface">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white light:text-gray-900">Follow-ups</h2>
             <div className="flex items-center gap-3">
@@ -711,7 +711,7 @@ export function DraftsTable({
         {/* Desktop Table Layout - hidden on small screens, uses inline expansion */}
         <div className="hidden md:block">
           <table className="w-full table-fixed divide-y divide-white/[0.06] light:divide-gray-200">
-            <thead className="bg-[#1c2030] light:bg-gray-50/80">
+            <thead className="glass-surface">
               <tr>
                 <th className="w-[40px] px-3 py-3">
                   <label className="flex items-center">
@@ -746,7 +746,7 @@ export function DraftsTable({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-[#141720] light:bg-white/60 divide-y divide-white/[0.06] light:divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-white/[0.06] light:divide-gray-200">
               {drafts.map((draft, index) => {
                 const isExpanded = expandedDraftId === draft.id;
                 return (
@@ -866,7 +866,7 @@ export function DraftsTable({
 
         {/* Pagination - with proper touch targets */}
         {totalPages > 1 && (
-          <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] light:border-gray-200 bg-[#1c2030] light:bg-gray-50/80">
+          <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] light:border-gray-200 glass-surface">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400 light:text-gray-500 tabular-nums">
                 Page {page} of {totalPages}

@@ -83,7 +83,7 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
   }
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl overflow-hidden light:shadow-sm">
+    <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-2xl overflow-hidden light:shadow-sm">
       {/* Email header */}
       <div className="px-5 py-3 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/30 light:bg-gray-50">
         <div className="flex items-center justify-between mb-2">

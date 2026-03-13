@@ -49,26 +49,26 @@ export function SettingsTabs() {
       {/* Sticky tab bar */}
       <div className={`sticky top-16 z-30 transition-[background-color,border-color,padding] duration-200 ${
         isStuck
-          ? 'bg-[var(--bg-page,#0a0a0a)]/95 backdrop-blur-md border-b border-gray-700/50 light:border-gray-200 py-2'
+          ? 'bg-[#0c0e14]/90 backdrop-blur-xl border-b border-white/[0.06] light:border-gray-200 light:bg-gray-50/90 py-2'
           : 'py-0'
       }`}>
         <div className={`${activeTab === 'ai' ? 'max-w-6xl' : 'max-w-4xl'} mx-auto mb-6 transition-[max-width] duration-300`}>
-          <div className="relative flex gap-1 p-1 rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-200 overflow-x-auto">
+          <div className="relative flex gap-1 p-1 rounded-xl glass-surface overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex-1 min-w-fit px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                className={`relative flex-1 min-w-fit px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                   activeTab === tab.id
-                    ? 'text-orange-300 light:text-orange-700'
-                    : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-gray-700/50 light:hover:bg-gray-50'
+                    ? 'text-indigo-300 light:text-indigo-700'
+                    : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/[0.06] light:hover:bg-gray-50'
                 }`}
               >
                 {/* Animated background indicator */}
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="settings-tab-indicator"
-                    className="absolute inset-0 rounded-lg shadow-sm bg-orange-600/20 light:bg-orange-50 border border-orange-500/30 light:border-orange-300"
+                    className="absolute inset-0 rounded-lg shadow-sm bg-indigo-500/15 light:bg-indigo-50 border border-indigo-500/30 light:border-indigo-300"
                     transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
                   />
                 )}

@@ -29,14 +29,20 @@ export function IntelligenceSidebar() {
       <motion.div variants={sidebarItem}>
         <h3 className="text-xs font-medium uppercase tracking-wider text-gray-500 light:text-gray-400 mb-3 px-1">Intelligence</h3>
       </motion.div>
-      <motion.div variants={sidebarItem}>
-        <BriefingsSection />
+      <motion.div variants={sidebarItem} className="glass-border rounded-2xl">
+        <div className="p-0.5">
+          <BriefingsSection />
+        </div>
       </motion.div>
-      <motion.div variants={sidebarItem}>
-        <NextStepTimeline compact />
+      <motion.div variants={sidebarItem} className="glass-border rounded-2xl">
+        <div className="p-0.5">
+          <NextStepTimeline compact />
+        </div>
       </motion.div>
-      <motion.div variants={sidebarItem}>
-        <DealRiskAlerts compact />
+      <motion.div variants={sidebarItem} className="glass-border rounded-2xl">
+        <div className="p-0.5">
+          <DealRiskAlerts compact />
+        </div>
       </motion.div>
     </motion.aside>
   );

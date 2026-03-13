@@ -275,7 +275,7 @@ function PlatformCard({
               : statusColor === 'yellow'
               ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
               : 'border-indigo-500/30 bg-indigo-500/5 light:bg-indigo-50 light:border-indigo-200'
-            : 'border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
+            : 'border-white/[0.06] light:border-gray-200 glass-card hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
         }`}
         style={{ borderLeftColor: platform.color }}
       >
@@ -945,7 +945,7 @@ export function IntegrationSettings() {
           )}
 
           {/* Setup Progress */}
-          <div className="mb-6 bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+          <div className="mb-6 glass-card border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-white light:text-gray-900">Setup Progress</h3>
               <span className="text-sm font-medium text-gray-400 light:text-gray-500">
@@ -1084,7 +1084,7 @@ export function IntegrationSettings() {
           {/* HubSpot Field Mapping Modal */}
           {showHubspotFieldMapping && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain">
+              <div className="bg-gray-900 light:bg-white border border-white/[0.06] light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">HubSpot Field Mappings</h3>
                   <button onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Close">
@@ -1152,7 +1152,7 @@ export function IntegrationSettings() {
                   </div>
                 )}
 
-                <div className="flex gap-3 pt-4 mt-4 border-t border-gray-700 light:border-gray-200">
+                <div className="flex gap-3 pt-4 mt-4 border-t border-white/[0.06] light:border-gray-200">
                   <button
                     onClick={() => { setShowHubspotFieldMapping(false); setHubspotMappingError(null); }}
                     className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
@@ -1179,7 +1179,7 @@ export function IntegrationSettings() {
           {/* Google Sheets Configuration Modal */}
           {showSheetsConfig && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain">
+              <div className="bg-gray-900 light:bg-white border border-white/[0.06] light:border-gray-200 rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto overscroll-contain">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white light:text-gray-900">Google Sheets Configuration</h3>
                   <button onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }} className="text-gray-400 hover:text-white rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900" aria-label="Close">
@@ -1255,7 +1255,7 @@ export function IntegrationSettings() {
                   </div>
                 )}
 
-                <div className="flex gap-3 pt-4 mt-4 border-t border-gray-700 light:border-gray-200">
+                <div className="flex gap-3 pt-4 mt-4 border-t border-white/[0.06] light:border-gray-200">
                   <button
                     onClick={() => { setShowSheetsConfig(false); setSheetsError(null); }}
                     className="flex-1 px-4 py-2 text-sm text-gray-400 hover:text-white border border-gray-600 light:border-gray-300 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"

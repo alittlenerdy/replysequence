@@ -87,9 +87,11 @@ export function StatCard({
   hero = false,
 }: StatCardProps) {
   const card = (
-    <div className="relative group">
+    <div className={`relative group ${hero ? 'glass-border-accent' : 'glass-border'} rounded-2xl`}>
       {/* Card */}
-      <div className={`relative bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 hover:border-white/[0.12] light:hover:border-gray-300 rounded-2xl p-5 transition-all duration-300 overflow-hidden light:shadow-sm ${hero ? 'h-full' : ''}`}>
+      <div className={`relative backdrop-blur-xl rounded-2xl p-5 transition-all duration-300 overflow-hidden ${hero ? 'h-full' : ''}`}
+        style={{ background: hero ? 'rgba(12, 14, 20, 0.8)' : 'rgba(20, 23, 32, 0.6)' }}
+      >
 
         {/* Content */}
         <div className="relative">
@@ -154,14 +156,6 @@ export function StatCard({
       </div>
     </div>
   );
-
-  if (hero) {
-    return (
-      <div className="bg-gradient-to-br from-indigo-500/40 to-indigo-700/40 p-[1px] rounded-2xl">
-        {card}
-      </div>
-    );
-  }
 
   return card;
 }

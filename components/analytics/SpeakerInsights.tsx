@@ -62,7 +62,7 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
 
       {/* Stat cards row */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-xl p-4 light:shadow-sm">
+        <div className="glass-border rounded-xl p-4 light:shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <Users className="w-3.5 h-3.5 text-indigo-400" />
             <span className="text-xs text-gray-500">Speakers</span>
@@ -71,7 +71,7 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
           <p className="text-xs text-gray-500 mt-0.5">unique voices</p>
         </div>
 
-        <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-xl p-4 light:shadow-sm">
+        <div className="glass-border rounded-xl p-4 light:shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <Timer className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-xs text-gray-500">Monologues</span>
@@ -80,7 +80,7 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
           <p className="text-xs text-gray-500 mt-0.5">segments &gt; 60s</p>
         </div>
 
-        <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-xl p-4 light:shadow-sm">
+        <div className="glass-border rounded-xl p-4 light:shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
             <span className="text-xs text-gray-500">Talk Ratio</span>
@@ -93,11 +93,11 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
       </div>
 
       {/* Speaker breakdown — bar chart + table */}
-      <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+      <div className="glass-border rounded-2xl p-5 light:shadow-sm">
         <h4 className="text-sm font-medium text-gray-400 light:text-gray-500 mb-4">Talk Time Distribution</h4>
 
         {/* Stacked horizontal bar */}
-        <div className="h-6 rounded-full overflow-hidden flex bg-[#1c2030] light:bg-gray-200 mb-5">
+        <div className="h-6 rounded-full overflow-hidden flex glass-surface light:bg-gray-200 mb-5">
           {topSpeakers.map((speaker, i) => (
             <motion.div
               key={speaker.speaker}
@@ -128,7 +128,7 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.05 * i }}
-              className="grid grid-cols-[1fr_80px_70px_60px_80px] gap-2 items-center px-2 py-1.5 rounded-lg hover:bg-[#1c2030] light:hover:bg-gray-50 transition-colors"
+              className="grid grid-cols-[1fr_80px_70px_60px_80px] gap-2 items-center px-2 py-1.5 rounded-lg hover:glass-surface light:hover:bg-gray-50 transition-colors"
             >
               {/* Speaker name with color indicator */}
               <div className="flex items-center gap-2 min-w-0">

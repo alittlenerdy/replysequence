@@ -17,7 +17,7 @@ function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload as DailyCoverage;
   return (
-    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-lg px-3 py-2 shadow-xl text-xs">
+    <div className="glass-border rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="text-gray-400 light:text-gray-500 mb-1">{formatDate(label)}</p>
       <p className="text-white light:text-gray-900 font-medium">
         {d.coveragePercent}% coverage
@@ -37,7 +37,7 @@ export function CoverageChart({ data }: CoverageChartProps) {
   }));
 
   return (
-    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+    <div className="glass-border rounded-2xl p-5 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-white light:text-gray-900">Follow-up Coverage</h3>
         <span className="text-xs text-gray-500">Daily %</span>

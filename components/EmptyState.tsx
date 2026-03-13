@@ -37,7 +37,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
     }
   }
   return (
-    <div className="dashboard-fade-in bg-[#141720] light:bg-white rounded-lg shadow-sm border border-white/[0.06] light:border-gray-200 p-12 text-center">
+    <div className="dashboard-fade-in glass-card rounded-lg shadow-sm p-12 text-center">
       {/* Animated Icon */}
       <div className="relative mx-auto w-20 h-20 mb-6">
         {/* Pulse rings */}

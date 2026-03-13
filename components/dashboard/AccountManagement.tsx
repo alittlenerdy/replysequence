@@ -72,7 +72,7 @@ export function AccountManagement() {
       )}
 
       {/* Export Data */}
-      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-colors duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+      <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-colors duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
             <Download className="w-5 h-5 text-indigo-400" />
@@ -106,7 +106,7 @@ export function AccountManagement() {
       </div>
 
       {/* Delete Account */}
-      <div className="bg-gray-900/50 light:bg-white border border-red-500/20 light:border-red-200 rounded-xl p-5 transition-colors duration-200 hover:border-red-500/30 light:hover:border-red-300 light:shadow-sm">
+      <div className="glass-card border border-red-500/20 light:border-red-200 rounded-xl p-5 transition-colors duration-200 hover:border-red-500/30 light:hover:border-red-300 light:shadow-sm">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
             <Trash2 className="w-5 h-5 text-red-400" />

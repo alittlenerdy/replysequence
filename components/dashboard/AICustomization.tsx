@@ -197,7 +197,7 @@ export function AICustomization() {
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto mt-8">
-        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
+        <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
           <div className="h-6 w-40 bg-gray-700 light:bg-gray-200 rounded mb-4" />
           <div className="h-4 w-64 bg-gray-700 light:bg-gray-200 rounded" />
         </div>
@@ -267,7 +267,7 @@ export function AICustomization() {
         {/* Left column: Settings form */}
         <div className="flex-1 min-w-0 space-y-6">
           {/* Step 1: Tone Selection */}
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+          <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">1</span>
               <h4 className="text-sm font-medium text-white light:text-gray-900">Email Tone</h4>
@@ -283,7 +283,7 @@ export function AICustomization() {
                     className={`w-full p-3.5 rounded-xl border text-left transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-md outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                       isSelected
                         ? 'border-indigo-500 bg-indigo-500/10 shadow-lg shadow-indigo-500/20'
-                        : 'border-gray-700 light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400 bg-gray-900/30 light:bg-gray-50'
+                        : 'border-white/[0.06] light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400 bg-gray-900/30 light:bg-gray-50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -316,7 +316,7 @@ export function AICustomization() {
           </div>
 
           {/* Step 2: Custom Instructions + Signature */}
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+          <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">2</span>
               <h4 className="text-sm font-medium text-white light:text-gray-900">Custom Instructions & Signature</h4>
@@ -374,7 +374,7 @@ export function AICustomization() {
           </div>
 
           {/* Step 3: Hourly Rate */}
-          <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+          <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-1">
               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center">3</span>
               <DollarSign className="w-4 h-4 text-amber-400" />
@@ -412,7 +412,7 @@ export function AICustomization() {
                     className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                       preferences.hourlyRate === rate
                         ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-500 border border-gray-700 light:border-gray-200 hover:border-gray-500'
+                        : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-500 border border-white/[0.06] light:border-gray-200 hover:border-gray-500'
                     }`}
                   >
                     ${rate}
@@ -534,7 +534,7 @@ function TemplateManager() {
   const customTemplates = templates.filter((t) => !t.isSystem);
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+    <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
       <button
         onClick={handleExpand}
         className="w-full flex items-center justify-between group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-lg"

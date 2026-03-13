@@ -59,7 +59,7 @@ export function EmailPreferencesSettings() {
 
   if (loading) {
     return (
-      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
+      <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-6 animate-pulse light:shadow-sm">
         <div className="h-5 w-40 bg-gray-700 light:bg-gray-200 rounded mb-4" />
         <div className="space-y-3">
           <div className="h-20 bg-gray-800 light:bg-gray-100 rounded-lg" />
@@ -70,7 +70,7 @@ export function EmailPreferencesSettings() {
   }
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl p-6 transition-colors duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+    <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-6 transition-colors duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
@@ -110,7 +110,7 @@ export function EmailPreferencesSettings() {
             w-full text-left p-4 rounded-lg border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
             ${preference === 'review'
               ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
-              : 'border-gray-700 light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
+              : 'border-white/[0.06] light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
             }
             ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
@@ -142,7 +142,7 @@ export function EmailPreferencesSettings() {
             w-full text-left p-4 rounded-lg border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
             ${preference === 'auto_send'
               ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
-              : 'border-gray-700 light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
+              : 'border-white/[0.06] light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
             }
             ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}

@@ -100,11 +100,12 @@ export function DashboardFilters({
             autoComplete="off"
             className="
               block w-full pl-9 pr-3 py-2
-              border border-gray-700 light:border-gray-300
+              border border-white/[0.08] light:border-gray-300
               rounded-lg text-sm
               text-white light:text-gray-900
               placeholder-gray-500 light:placeholder-gray-400
-              bg-[#1c2030] light:bg-white
+              bg-white/[0.04] light:bg-white
+              backdrop-blur-sm
               focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/30
               transition-colors duration-200
             "
