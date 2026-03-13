@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       id: meetings.id,
       topic: meetings.topic,
       startTime: meetings.startTime,
-      hostName: meetings.hostName,
+      hostEmail: meetings.hostEmail,
       participants: meetings.participants,
     })
     .from(meetings)
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     meetingDate: meeting.startTime
       ? new Date(meeting.startTime).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
       : 'Unknown date',
-    hostName: meeting.hostName || 'Host',
+    hostName: meeting.hostEmail || 'Host',
     transcript: transcriptText,
     participants: participantNames,
     companyName,

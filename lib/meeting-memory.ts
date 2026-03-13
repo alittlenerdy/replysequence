@@ -60,7 +60,6 @@ export async function extractMeetingMemory(meetingId: string, userId: string): P
         id: meetings.id,
         topic: meetings.topic,
         startTime: meetings.startTime,
-        hostName: meetings.hostName,
         hostEmail: meetings.hostEmail,
         participants: meetings.participants,
         summary: meetings.summary,
@@ -104,7 +103,7 @@ export async function extractMeetingMemory(meetingId: string, userId: string): P
     const userPrompt = [
       `Meeting: ${meeting.topic || 'Untitled'}`,
       `Date: ${meeting.startTime ? new Date(meeting.startTime).toISOString() : 'Unknown'}`,
-      `Host: ${meeting.hostName || 'Unknown'}`,
+      `Host: ${meeting.hostEmail || 'Unknown'}`,
       `Contact: ${externalContact.user_name} (${externalContact.email})`,
       '',
       'Transcript:',
@@ -241,7 +240,7 @@ export async function getContactBriefing(
   userId: string,
   contactEmail: string
 ): Promise<{
-  contact: typeof contactMemories.$inferSelect | null;
+  contact: typeof contactMemories.$inferSelect;
   recentMeetings: (typeof meetingMemories.$inferSelect)[];
 } | null> {
   const [contact] = await db

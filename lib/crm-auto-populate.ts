@@ -74,7 +74,6 @@ export async function autoPopulateCRMFields(
       .select({
         topic: meetings.topic,
         startTime: meetings.startTime,
-        hostName: meetings.hostName,
         hostEmail: meetings.hostEmail,
         participants: meetings.participants,
         dealContextId: meetings.dealContextId,
@@ -104,7 +103,7 @@ export async function autoPopulateCRMFields(
     const userPrompt = [
       `Meeting: ${meeting.topic || 'Untitled'}`,
       `Date: ${meeting.startTime ? new Date(meeting.startTime).toISOString() : 'Unknown'}`,
-      `Host: ${meeting.hostName}`,
+      `Host: ${meeting.hostEmail}`,
       `Contact: ${externalContact.user_name} (${externalContact.email})`,
       '',
       'Transcript:',
