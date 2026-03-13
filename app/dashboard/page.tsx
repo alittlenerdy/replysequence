@@ -1,9 +1,8 @@
 import { Suspense } from 'react';
 import { DraftsView } from '@/components/dashboard/DraftsView';
 import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
-import { BriefingsSection } from '@/components/dashboard/BriefingsSection';
-import { NextStepTimeline } from '@/components/dashboard/NextStepTimeline';
-import { DealRiskAlerts } from '@/components/dashboard/DealRiskAlerts';
+import { DashboardStats } from '@/components/DashboardStats';
+import { IntelligenceSidebar } from '@/components/dashboard/IntelligenceSidebar';
 import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
@@ -13,8 +12,8 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
 export const metadata = {
-  title: 'Drafts | ReplySequence',
-  description: 'View and manage your AI-generated email drafts',
+  title: 'Dashboard | ReplySequence',
+  description: 'Your action-first sales dashboard',
 };
 
 async function DashboardContent() {
@@ -31,21 +30,34 @@ async function DashboardContent() {
   return (
     <>
       <NudgeBanner variant="ai-settings" />
-      <BriefingsSection />
-      <NextStepTimeline />
-      <DealRiskAlerts />
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white light:text-gray-900">Follow-ups</h2>
-        <p className="text-gray-400 light:text-gray-500 mt-1">Review, edit, and send your meeting follow-ups</p>
+
+      {/* Stats bar — full width */}
+      <DashboardStats stats={stats} />
+
+      {/* Two-column layout: action workspace + intelligence sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main workspace (2/3) */}
+        <div className="lg:col-span-2 min-w-0">
+          <div className="mb-5">
+            <h2 className="text-2xl font-bold text-white light:text-gray-900">Follow-ups</h2>
+            <p className="text-gray-400 light:text-gray-500 mt-1">Review, edit, and send your meeting follow-ups</p>
+          </div>
+          <DraftsView
+            initialDrafts={draftsResult.drafts}
+            initialTotal={draftsResult.total}
+            initialPage={draftsResult.page}
+            initialTotalPages={draftsResult.totalPages}
+            initialStats={stats}
+            initialHasConnectedPlatforms={hasConnectedPlatforms}
+            hideStats
+          />
+        </div>
+
+        {/* Intelligence sidebar (1/3) */}
+        <div className="lg:col-span-1 min-w-0">
+          <IntelligenceSidebar />
+        </div>
       </div>
-      <DraftsView
-        initialDrafts={draftsResult.drafts}
-        initialTotal={draftsResult.total}
-        initialPage={draftsResult.page}
-        initialTotalPages={draftsResult.totalPages}
-        initialStats={stats}
-        initialHasConnectedPlatforms={hasConnectedPlatforms}
-      />
     </>
   );
 }
@@ -53,24 +65,38 @@ async function DashboardContent() {
 function DraftsLoading() {
   return (
     <div className="animate-pulse">
-      <div className="mb-6">
-        <div className="h-8 w-40 bg-gray-700 light:bg-gray-200 rounded mb-2" />
-        <div className="h-4 w-72 bg-gray-700 light:bg-gray-200 rounded" />
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      {/* Stats skeleton */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-gray-900/50 light:bg-white rounded-2xl border border-gray-700/50 light:border-gray-200 p-5">
-            <div className="w-10 h-10 bg-gray-700 light:bg-gray-200 rounded-xl mb-3" />
-            <div className="h-8 w-16 bg-gray-700 light:bg-gray-200 rounded mb-2" />
-            <div className="h-4 w-20 bg-gray-700 light:bg-gray-200 rounded" />
+          <div key={i} className="bg-[#141720] rounded-2xl border border-white/[0.06] light:border-gray-200 p-5">
+            <div className="w-10 h-10 bg-gray-700/50 light:bg-gray-200 rounded-xl mb-3" />
+            <div className="h-8 w-16 bg-gray-700/50 light:bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-20 bg-gray-700/50 light:bg-gray-200 rounded" />
           </div>
         ))}
       </div>
-      <div className="bg-gray-900/50 light:bg-white rounded-2xl border border-gray-700/50 light:border-gray-200 p-6">
-        <div className="h-10 bg-gray-700 light:bg-gray-200 rounded mb-4" />
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="h-16 bg-gray-700 light:bg-gray-200 rounded mb-3" />
-        ))}
+      {/* Two-column skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <div className="mb-5">
+            <div className="h-8 w-40 bg-gray-700/50 light:bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-72 bg-gray-700/50 light:bg-gray-200 rounded" />
+          </div>
+          <div className="bg-[#141720] rounded-2xl border border-white/[0.06] light:border-gray-200 p-6">
+            <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded mb-4" />
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-16 bg-gray-700/50 light:bg-gray-200 rounded mb-3" />
+            ))}
+          </div>
+        </div>
+        <div className="lg:col-span-1 space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-[#141720] rounded-2xl border border-white/[0.06] light:border-gray-200 p-4">
+              <div className="h-5 w-32 bg-gray-700/50 light:bg-gray-200 rounded mb-3" />
+              <div className="h-16 bg-gray-700/30 light:bg-gray-100 rounded-xl" />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -7,14 +7,36 @@ export const SUBREDDITS = [
   'coldcalling',
   'B2Bsales',
   'startups',
+  'EntrepreneurRideAlong',
+  'SaaS',
+  'hubspot',
 ];
 
 export const SEARCH_TERMS = [
-  'follow-up email',
-  'meeting notes',
+  // Follow-up pain
+  'follow-up email after meeting',
+  'forget to follow up',
+  'generic follow up',
+  'hate writing follow-ups',
+  // CRM admin
   'CRM update after meeting',
+  'logging notes CRM',
+  'too much admin sales',
+  'manual data entry CRM',
+  // Meeting intelligence
+  'meeting notes useless',
+  'action items from calls',
   'sales call recap',
-  'post-meeting',
+  'meeting transcript',
+  // Deal momentum
+  'prospect ghosting',
+  'deal went cold no follow up',
+  'automated follow up sequence',
+  // Tool frustration
+  'salesloft alternative',
+  'outreach alternative',
+  'gong too expensive',
+  'fireflies not enough',
 ];
 
 /**

@@ -69,7 +69,7 @@ export function ProcessingLogs({
       ref={containerRef}
       className={`
         overflow-y-auto overflow-x-hidden
-        bg-gray-900/50 light:bg-gray-50 rounded-lg border border-gray-800 light:border-gray-200
+        bg-[#141720] light:bg-gray-50 rounded-lg border border-white/[0.06] light:border-gray-200
         font-mono text-xs
         ${className}
       `}

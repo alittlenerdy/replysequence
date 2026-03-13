@@ -35,7 +35,7 @@ export function ProcessingMeetingCard({
 
   if (isLoading || !data) {
     return (
-      <div className="animate-pulse bg-gray-900/50 light:bg-white rounded-xl p-6 border border-gray-800/50 light:border-gray-200">
+      <div className="animate-pulse bg-[#141720] light:bg-white rounded-xl p-6 border border-white/[0.06] light:border-gray-200">
         <div className="h-6 w-48 bg-gray-800 light:bg-gray-200 rounded mb-4" />
         <div className="h-2 w-full bg-gray-800 light:bg-gray-200 rounded mb-6" />
         <div className="flex gap-8">

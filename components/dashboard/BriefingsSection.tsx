@@ -43,10 +43,10 @@ export function BriefingsSection() {
 
   if (isLoading) {
     return (
-      <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
+      <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-4 light:shadow-sm">
         <div className="animate-pulse space-y-3">
-          <div className="h-5 w-48 bg-gray-700 light:bg-gray-200 rounded" />
-          <div className="h-20 bg-gray-700/50 light:bg-gray-100 rounded-xl" />
+          <div className="h-5 w-48 bg-gray-700/50 light:bg-gray-200 rounded" />
+          <div className="h-20 bg-gray-700/30 light:bg-gray-100 rounded-xl" />
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ export function BriefingsSection() {
   const recent = briefings.filter(b => new Date(b.meetingStartTime) <= now);
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
+    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-4 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-white light:text-gray-900 flex items-center gap-2">
           <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

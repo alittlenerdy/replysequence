@@ -31,6 +31,7 @@ interface DraftsViewProps {
     avgLatency: number;
   };
   initialHasConnectedPlatforms: boolean;
+  hideStats?: boolean;
 }
 
 export function DraftsView({
@@ -40,6 +41,7 @@ export function DraftsView({
   initialTotalPages,
   initialStats,
   initialHasConnectedPlatforms,
+  hideStats = false,
 }: DraftsViewProps) {
   const [drafts, setDrafts] = useState<DraftWithMeeting[]>(initialDrafts);
   const [total, setTotal] = useState(initialTotal);
@@ -208,10 +210,12 @@ export function DraftsView({
       <UsageLimitBanner />
 
       {/* Stats */}
-      {isLoading && drafts.length === 0 ? (
-        <SkeletonStats />
-      ) : (
-        <DashboardStats stats={stats} />
+      {!hideStats && (
+        isLoading && drafts.length === 0 ? (
+          <SkeletonStats />
+        ) : (
+          <DashboardStats stats={stats} />
+        )
       )}
 
       {/* Error State */}

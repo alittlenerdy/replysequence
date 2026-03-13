@@ -57,7 +57,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   const data = payload[0].payload;
   return (
-    <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 shadow-xl">
+    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-lg px-3 py-2 shadow-xl">
       <div className="flex items-center gap-2">
         <div
           className="w-3 h-3 rounded-full"
@@ -79,7 +79,7 @@ export function PlatformChart({ data }: PlatformChartProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
+      className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
       <div className="mb-4">
@@ -135,7 +135,7 @@ export function PlatformChart({ data }: PlatformChartProps) {
                       <span className="text-sm text-white light:text-gray-900 font-medium">{item.platform}</span>
                       <span className="text-sm text-gray-400 light:text-gray-500">{percentage}%</span>
                     </div>
-                    <div className="mt-1 h-1.5 bg-gray-800 light:bg-gray-200 rounded-full overflow-hidden">
+                    <div className="mt-1 h-1.5 bg-[#1c2030] light:bg-gray-200 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}

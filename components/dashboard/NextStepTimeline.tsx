@@ -77,12 +77,16 @@ function isOverdue(step: NextStepItem): boolean {
   return new Date(step.dueDate) < new Date();
 }
 
-export function NextStepTimeline() {
+interface NextStepTimelineProps {
+  compact?: boolean;
+}
+
+export function NextStepTimeline({ compact = false }: NextStepTimelineProps) {
   const [steps, setSteps] = useState<NextStepItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'pending' | 'completed' | 'all'>('pending');
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(!compact);
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
 
   const fetchSteps = useCallback(async () => {
@@ -133,13 +137,13 @@ export function NextStepTimeline() {
   const overdueCount = steps.filter(isOverdue).length;
 
   return (
-    <div className="mb-6">
+    <div className={`${compact ? 'bg-[#141720] border border-white/[0.06] rounded-2xl p-4' : 'mb-6'}`}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex items-center gap-2 w-full text-left mb-3"
       >
         {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
-        <h2 className="text-xl font-bold text-white light:text-gray-900">Next Steps</h2>
+        <h2 className={`${compact ? 'text-sm' : 'text-xl'} font-bold text-white light:text-gray-900`}>Next Steps</h2>
         {pendingCount > 0 && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
             {pendingCount} pending

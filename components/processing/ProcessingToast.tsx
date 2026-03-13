@@ -71,7 +71,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
         exit={{ opacity: 0, y: 100 }}
         className="fixed bottom-4 right-4 z-50"
       >
-        <div className="bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden" aria-live="polite" role="status">
+        <div className="bg-[#141720]/95 backdrop-blur-sm border border-white/[0.06] rounded-xl shadow-2xl overflow-hidden" aria-live="polite" role="status">
           {/* Header - always visible */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}

@@ -17,7 +17,7 @@ function formatDate(dateStr: string): string {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 shadow-xl text-xs">
+    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="text-gray-400 light:text-gray-500 mb-1">{formatDate(label)}</p>
       {payload.map((p: { name: string; value: number; color: string }) => (
         <p key={p.name} className="text-white light:text-gray-900">
@@ -38,7 +38,7 @@ export function DualSeriesChart({ meetings, followUps }: DualSeriesChartProps) {
   }));
 
   return (
-    <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
+    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-white light:text-gray-900">Meetings vs Follow-ups</h3>
       </div>

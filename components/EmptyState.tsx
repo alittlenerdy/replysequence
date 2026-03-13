@@ -37,7 +37,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
     }
   }
   return (
-    <div className="dashboard-fade-in bg-gray-800 light:bg-white rounded-lg shadow-sm border border-gray-700 light:border-gray-200 p-12 text-center">
+    <div className="dashboard-fade-in bg-[#141720] light:bg-white rounded-lg shadow-sm border border-white/[0.06] light:border-gray-200 p-12 text-center">
       {/* Animated Icon */}
       <div className="relative mx-auto w-20 h-20 mb-6">
         {/* Pulse rings */}
@@ -117,7 +117,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
 
       {/* How it works */}
       {!hasFilters && (
-        <div className="mt-10 pt-8 border-t border-gray-700 light:border-gray-200">
+        <div className="mt-10 pt-8 border-t border-white/[0.06] light:border-gray-200">
           <h4 className="text-sm font-medium text-white light:text-gray-900 mb-6">How it works</h4>
           <div className="flex flex-col md:flex-row gap-8 justify-center">
             {[

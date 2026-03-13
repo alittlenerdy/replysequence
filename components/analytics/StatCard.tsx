@@ -89,7 +89,7 @@ export function StatCard({
   const card = (
     <div className="relative group">
       {/* Card */}
-      <div className={`relative bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 rounded-2xl p-5 transition-colors duration-300 overflow-hidden light:shadow-sm ${hero ? 'h-full' : ''}`}>
+      <div className={`relative bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 hover:border-white/[0.12] light:hover:border-gray-300 rounded-2xl p-5 transition-all duration-300 overflow-hidden light:shadow-sm ${hero ? 'h-full' : ''}`}>
 
         {/* Content */}
         <div className="relative">

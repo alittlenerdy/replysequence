@@ -93,10 +93,14 @@ function HealthBadge({ score }: { score: number | null }) {
   );
 }
 
-export function DealRiskAlerts() {
+interface DealRiskAlertsProps {
+  compact?: boolean;
+}
+
+export function DealRiskAlerts({ compact = false }: DealRiskAlertsProps) {
   const [data, setData] = useState<RiskData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(!compact);
   const [severityFilter, setSeverityFilter] = useState<string | null>(null);
 
   const fetchRisks = useCallback(async () => {
@@ -129,13 +133,13 @@ export function DealRiskAlerts() {
   const highCount = data?.bySeverity.high || 0;
 
   return (
-    <div className="mb-6">
+    <div className={`${compact ? 'bg-[#141720] border border-white/[0.06] rounded-2xl p-4' : 'mb-6'}`}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex items-center gap-2 w-full text-left mb-3"
       >
         {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
-        <h2 className="text-xl font-bold text-white light:text-gray-900">Deal Risk Alerts</h2>
+        <h2 className={`${compact ? 'text-sm' : 'text-xl'} font-bold text-white light:text-gray-900`}>Deal Risk Alerts</h2>
         {criticalCount > 0 && (
           <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
             {criticalCount} critical

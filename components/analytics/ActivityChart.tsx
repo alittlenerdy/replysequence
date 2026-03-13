@@ -41,7 +41,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   });
 
   return (
-    <div className="bg-gray-900 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg px-3 py-2 shadow-xl">
+    <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-lg px-3 py-2 shadow-xl">
       <p className="text-xs text-gray-400 light:text-gray-500">{formattedDate}</p>
       <p className="text-lg font-bold text-white light:text-gray-900">{payload[0]?.value}</p>
     </div>
@@ -75,7 +75,7 @@ export function ActivityChart({ data, title, color, gradientId }: ActivityChartP
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
+      className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">

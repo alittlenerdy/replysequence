@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Clock, RefreshCw, BarChart3, DollarSign, Zap, Timer, ChevronDown, ChevronUp, Target, Shield } from 'lucide-react';
+import { Calendar, Mail, Clock, RefreshCw, BarChart3, DollarSign, Zap, Target, Shield } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
@@ -16,7 +16,7 @@ import type { AnalyticsData } from '@/lib/types/analytics';
 
 // Chart loading placeholder
 const ChartSkeleton = () => (
-  <div className="h-48 bg-gray-800/50 light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
+  <div className="h-48 bg-[#1c2030] light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
     <BarChart3 className="w-8 h-8 text-gray-600 light:text-gray-400" />
   </div>
 );
@@ -67,7 +67,6 @@ export function AnalyticsDashboard() {
     }
     return 14;
   });
-  const [showMoreInsights, setShowMoreInsights] = useState(false);
   const hasFetched = useRef(false);
 
   const fetchAnalytics = useCallback(async (showRefreshState = false) => {
@@ -131,25 +130,25 @@ export function AnalyticsDashboard() {
           <div className="h-8 w-64 bg-gray-700 light:bg-gray-200 rounded animate-pulse" />
         </div>
         {/* Banner skeleton */}
-        <div className="h-16 bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-xl animate-pulse" />
+        <div className="h-16 bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-xl animate-pulse" />
         {/* KPI row skeleton */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-5 animate-pulse">
-              <div className="w-10 h-10 rounded-xl bg-gray-700 light:bg-gray-200 mb-3" />
-              <div className="h-10 w-20 bg-gray-700 light:bg-gray-200 rounded mb-2" />
-              <div className="h-4 w-24 bg-gray-700 light:bg-gray-200 rounded" />
+            <div key={i} className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 animate-pulse">
+              <div className="w-10 h-10 rounded-xl bg-gray-700/50 light:bg-gray-200 mb-3" />
+              <div className="h-10 w-20 bg-gray-700/50 light:bg-gray-200 rounded mb-2" />
+              <div className="h-4 w-24 bg-gray-700/50 light:bg-gray-200 rounded" />
             </div>
           ))}
         </div>
         {/* At-risk skeleton */}
-        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 h-[160px] animate-pulse" />
+        <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-6 h-[160px] animate-pulse" />
         {/* Charts skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 h-[220px] animate-pulse">
-              <div className="h-4 w-32 bg-gray-700 light:bg-gray-200 rounded mb-4" />
-              <div className="h-[140px] bg-gray-800 light:bg-gray-100 rounded" />
+            <div key={i} className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-6 h-[220px] animate-pulse">
+              <div className="h-4 w-32 bg-gray-700/50 light:bg-gray-200 rounded mb-4" />
+              <div className="h-[140px] bg-[#1c2030] light:bg-gray-100 rounded" />
             </div>
           ))}
         </div>
@@ -202,7 +201,7 @@ export function AnalyticsDashboard() {
         </div>
         <div className="flex items-center gap-2">
           {/* Date range pills */}
-          <div className="flex items-center bg-gray-800/80 light:bg-gray-100 rounded-lg border border-gray-700 light:border-gray-200 p-0.5">
+          <div className="flex items-center bg-[#1c2030] light:bg-gray-100 rounded-lg border border-white/[0.06] light:border-gray-200 p-0.5">
             {DATE_RANGES.map((range) => (
               <button
                 key={range.value}
@@ -341,113 +340,100 @@ export function AnalyticsDashboard() {
         <SpeakerInsights data={analytics.speakerAnalytics} />
       )}
 
-      {/* 7. Collapsible "More Insights" */}
-      {hasData && (
-        <div>
-          <button
-            onClick={() => setShowMoreInsights(!showMoreInsights)}
-            className="w-full flex items-center justify-between px-5 py-3 text-sm text-gray-400 light:text-gray-500 hover:text-gray-300 light:hover:text-gray-600 transition-colors border border-gray-700/50 light:border-gray-200 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-          >
-            <span>More Insights</span>
-            {showMoreInsights ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-
-          {showMoreInsights && (
-            <div className="mt-4 space-y-4">
-              {/* ROI + Email Engagement */}
-              {analytics.emailsGenerated > 0 && (
-                <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
-                  <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
-                  {analytics.emailsSent > 0 && (
-                    <EmailEngagement engagement={analytics.engagement} />
-                  )}
-                </div>
-              )}
-
-              {/* Platform + Meeting Type */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <PlatformChart data={analytics.platformBreakdown} />
-                {analytics.meetingTypeBreakdown.length > 0 ? (
-                  <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
-                ) : (
-                  <EmailFunnel
-                    total={analytics.emailFunnel.total}
-                    ready={analytics.emailFunnel.ready}
-                    sent={analytics.emailFunnel.sent}
-                    conversionRate={analytics.emailFunnel.conversionRate}
-                  />
-                )}
-              </div>
-
-              {/* Email Funnel (when meeting type chart takes its spot) */}
-              {analytics.meetingTypeBreakdown.length > 0 && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <EmailFunnel
-                    total={analytics.emailFunnel.total}
-                    ready={analytics.emailFunnel.ready}
-                    sent={analytics.emailFunnel.sent}
-                    conversionRate={analytics.emailFunnel.conversionRate}
-                  />
-                </div>
-              )}
-
-              {/* AI Usage Stats */}
-              {analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
-                <div className="bg-gray-900/30 light:bg-gray-50 rounded-2xl p-5 border border-gray-700/50 light:border-gray-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Zap className="w-3.5 h-3.5 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-400 light:text-gray-500">Under the Hood</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <span className="text-xs text-gray-500">Total AI Cost</span>
-                      <p className="text-lg font-bold text-white light:text-gray-900">
-                        ${analytics.aiUsage.totalCost.toFixed(4)}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-xs text-gray-500">Avg Generation Time</span>
-                      <p className="text-lg font-bold text-white light:text-gray-900">
-                        {analytics.aiUsage.avgLatency > 0
-                          ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
-                          : '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-xs text-gray-500">Meeting Hours</span>
-                      <p className="text-lg font-bold text-white light:text-gray-900">
-                        {analytics.aiUsage.totalMeetingMinutes > 0
-                          ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
-                          : '-'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Activity Charts */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <ActivityChart
-                  data={analytics.dailyMeetings}
-                  title={`Meetings (Last ${dateRange} Days)`}
-                  color="#3B82F6"
-                  gradientId="meetingsGradient"
-                />
-                <ActivityChart
-                  data={analytics.dailyEmails}
-                  title={`Draft Volume (Last ${dateRange} Days)`}
-                  color="#6366F1"
-                  gradientId="emailsGradient"
-                />
-              </div>
-            </div>
+      {/* 7. ROI + Email Engagement */}
+      {hasData && analytics.emailsGenerated > 0 && (
+        <div className={`grid grid-cols-1 ${analytics.emailsSent > 0 ? 'lg:grid-cols-2' : ''} gap-4`}>
+          <ROICalculator roi={analytics.roi} emailsGenerated={analytics.emailsGenerated} />
+          {analytics.emailsSent > 0 && (
+            <EmailEngagement engagement={analytics.engagement} />
           )}
+        </div>
+      )}
+
+      {/* 8. Platform + Meeting Type */}
+      {hasData && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <PlatformChart data={analytics.platformBreakdown} />
+          {analytics.meetingTypeBreakdown.length > 0 ? (
+            <MeetingTypeChart data={analytics.meetingTypeBreakdown} />
+          ) : (
+            <EmailFunnel
+              total={analytics.emailFunnel.total}
+              ready={analytics.emailFunnel.ready}
+              sent={analytics.emailFunnel.sent}
+              conversionRate={analytics.emailFunnel.conversionRate}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Email Funnel (when meeting type chart takes its spot) */}
+      {hasData && analytics.meetingTypeBreakdown.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <EmailFunnel
+            total={analytics.emailFunnel.total}
+            ready={analytics.emailFunnel.ready}
+            sent={analytics.emailFunnel.sent}
+            conversionRate={analytics.emailFunnel.conversionRate}
+          />
+        </div>
+      )}
+
+      {/* 9. AI Usage Stats */}
+      {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
+        <div className="bg-[#141720] light:bg-gray-50 rounded-2xl p-5 border border-white/[0.06] light:border-gray-200">
+          <div className="flex items-center gap-2 mb-3">
+            <Zap className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-sm font-medium text-gray-400 light:text-gray-500">Under the Hood</span>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <span className="text-xs text-gray-500">Total AI Cost</span>
+              <p className="text-lg font-bold text-white light:text-gray-900">
+                ${analytics.aiUsage.totalCost.toFixed(4)}
+              </p>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">Avg Generation Time</span>
+              <p className="text-lg font-bold text-white light:text-gray-900">
+                {analytics.aiUsage.avgLatency > 0
+                  ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
+                  : '-'}
+              </p>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">Meeting Hours</span>
+              <p className="text-lg font-bold text-white light:text-gray-900">
+                {analytics.aiUsage.totalMeetingMinutes > 0
+                  ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
+                  : '-'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 10. Activity Charts */}
+      {hasData && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <ActivityChart
+            data={analytics.dailyMeetings}
+            title={`Meetings (Last ${dateRange} Days)`}
+            color="#3B82F6"
+            gradientId="meetingsGradient"
+          />
+          <ActivityChart
+            data={analytics.dailyEmails}
+            title={`Draft Volume (Last ${dateRange} Days)`}
+            color="#6366F1"
+            gradientId="emailsGradient"
+          />
         </div>
       )}
 
       {/* Empty state */}
       {!hasData && (
-        <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
+        <div className="bg-[#141720] light:bg-white border border-white/[0.06] light:border-gray-200 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative">
             <div className="relative mx-auto w-32 h-32 mb-6">
               <motion.div
@@ -514,7 +500,7 @@ export function AnalyticsDashboard() {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className="p-3 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-gray-700/50 light:border-gray-200"
+                    className="p-3 bg-[#1c2030] light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200"
                   >
                     <div className={`${item.color} mb-2`}>{item.icon}</div>
                     <p className="text-xs text-gray-400 light:text-gray-600">{item.label}</p>

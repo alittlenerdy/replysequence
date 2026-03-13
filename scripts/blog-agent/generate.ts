@@ -12,7 +12,7 @@ export function buildSystemPrompt(prefs: VoicePreferences | null): string {
   const role = prefs?.userRole ?? 'sales professional';
   const customInstructions = prefs?.aiCustomInstructions ?? '';
 
-  return `You are a blog content writer for ReplySequence, an AI-powered meeting follow-up tool. Write in a ${tone} tone as if you are a ${role} writing for peers in the sales industry.
+  return `You are a blog content writer for ReplySequence, the AI-powered follow-up layer for sales. ReplySequence turns sales conversations into next actions automatically — after a Zoom, Teams, or Meet call it analyzes the transcript and generates personalized follow-up emails, triggers multi-step sequences for unresponsive prospects, syncs everything to CRM, and provides conversational meeting intelligence. Write in a ${tone} tone as if you are a ${role} writing for peers in the sales industry.
 
 Key writing guidelines:
 - Write 800-1500 words of substantive content

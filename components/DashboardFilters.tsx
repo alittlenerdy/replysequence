@@ -104,7 +104,7 @@ export function DashboardFilters({
               rounded-lg text-sm
               text-white light:text-gray-900
               placeholder-gray-500 light:placeholder-gray-400
-              bg-gray-800/50 light:bg-white
+              bg-[#1c2030] light:bg-white
               focus-visible:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500/30
               transition-colors duration-200
             "

@@ -2,16 +2,37 @@
 import type { PainPoint } from './types';
 
 export const SEARCH_KEYWORDS = [
+  // Core follow-up pain
   'meeting follow-up email',
-  'sales meeting follow up',
-  'CRM after meeting',
-  'writing follow-up emails',
-  'sales call follow up pain',
-  'meeting notes to email',
-  'post-meeting email',
   'hate writing follow-ups',
-  'meeting recap email',
-  'sales follow up automation',
+  'forgot to follow up',
+  'never followed up',
+  'follow up fell through',
+  'generic follow-up email',
+  'great speaking with you email',
+  // Post-meeting admin burden
+  'updating CRM after meeting',
+  'logging meeting notes CRM',
+  'sales admin work',
+  'too much time on admin',
+  'manual CRM updates',
+  'sales reps wasting time',
+  // Meeting intelligence
+  'meeting transcript action items',
+  'sales call recap',
+  'what was discussed in meeting',
+  'meeting notes nobody reads',
+  // Sequence / deal momentum
+  'deal went cold',
+  'prospect ghosted',
+  'prospect stopped responding',
+  'sales follow up sequence',
+  'automated follow up sales',
+  // Competitor frustration
+  'gong alternative',
+  'fireflies alternative',
+  'salesloft follow up',
+  'outreach sequence pain',
 ];
 
 export function buildSearchQuery(keywords: string[]): string {

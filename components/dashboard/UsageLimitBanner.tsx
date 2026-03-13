@@ -44,7 +44,7 @@ export function UsageLimitBanner() {
         ? 'bg-red-500/10 border-red-500/30'
         : isNearLimit
           ? 'bg-amber-500/10 border-amber-500/30'
-          : 'bg-gray-800/50 border-gray-700'
+          : 'bg-[#1c2030] border-white/[0.06]'
     }`}>
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
