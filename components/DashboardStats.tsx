@@ -12,7 +12,7 @@ interface DashboardStatsProps {
     failed: number;
     avgCost: number;
     avgLatency: number;
-    meetingsProcessed: number;
+    meetingsProcessed?: number;
   };
 }
 
@@ -49,7 +49,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     {
       label: 'Meetings Processed',
       subtitle: 'Calls with transcripts',
-      value: stats.meetingsProcessed,
+      value: stats.meetingsProcessed ?? 0,
       Icon: Video,
       iconColor: '#22D3EE',
       textGradient: 'from-cyan-300 via-cyan-200 to-cyan-400',
