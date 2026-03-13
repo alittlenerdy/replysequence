@@ -54,7 +54,7 @@ const competitors = [
     name: 'Fathom',
     tagline: 'AI notetaker with meeting summaries',
     differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds.',
-    color: 'from-purple-500 to-indigo-600',
+    color: 'from-purple-500 to-[#4A5BEE]',
   },
   {
     slug: 'avoma',
@@ -88,10 +88,10 @@ const competitors = [
 
 export default function ComparePage() {
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative overflow-hidden">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50 relative overflow-hidden">
       {/* Ambient gradient orbs — match homepage */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.12)_0%,transparent_70%)] pointer-events-none" />
-      <div className="absolute top-[40%] left-[20%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.06)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(91,108,255,0.12)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-[40%] left-[20%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(91,108,255,0.06)_0%,transparent_70%)] pointer-events-none" />
 
       <Header />
 
@@ -100,7 +100,7 @@ export default function ComparePage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white light:text-gray-900 mb-6 leading-tight text-pretty">
             How ReplySequence{' '}
-            <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
               Compares
             </span>
           </h1>
@@ -116,7 +116,7 @@ export default function ComparePage() {
               { icon: Zap, text: 'Zoom, Teams, Meet + CRM sync' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-gray-300 light:text-gray-600">
-                <item.icon className="w-5 h-5 text-indigo-400" />
+                <item.icon className="w-5 h-5 text-[#5B6CFF]" />
                 <span className="text-sm font-medium">{item.text}</span>
               </div>
             ))}
@@ -131,7 +131,7 @@ export default function ComparePage() {
             <Link
               key={comp.slug}
               href={`/compare/${comp.slug}`}
-              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 hover:border-indigo-500/50 light:hover:border-indigo-400 p-6 transition-[background-color,border-color] hover:bg-gray-900/80 light:hover:bg-gray-50"
+              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 hover:border-[#5B6CFF]/50 light:hover:border-[#4A5BEE] p-6 transition-[background-color,border-color] hover:bg-gray-900/80 light:hover:bg-gray-50"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
@@ -147,7 +147,7 @@ export default function ComparePage() {
                     {comp.differentiator}
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-indigo-400 group-hover:translate-x-1 transition-[color,transform] shrink-0" />
+                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-[#5B6CFF] group-hover:translate-x-1 transition-[color,transform] shrink-0" />
               </div>
             </Link>
           ))}

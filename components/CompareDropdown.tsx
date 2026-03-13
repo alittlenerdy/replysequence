@@ -44,7 +44,7 @@ export default function CompareDropdown({ direction = 'down' }: { direction?: 'd
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -67,7 +67,7 @@ export default function CompareDropdown({ direction = 'down' }: { direction?: 'd
         }`}
       >
         {/* Gradient border wrapper */}
-        <div className="p-[1px] rounded-xl bg-gradient-to-br from-indigo-500/50 via-indigo-500/50 to-indigo-700/50">
+        <div className="p-[1px] rounded-xl bg-gradient-to-br from-[#5B6CFF]/50 via-[#5B6CFF]/50 to-[#3A4BDD]/50">
           <div className="bg-gray-900 light:bg-white rounded-xl overflow-hidden">
             <div className="p-2">
               <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -76,17 +76,17 @@ export default function CompareDropdown({ direction = 'down' }: { direction?: 'd
               <Link
                 href="/compare"
                 onClick={() => setIsOpen(false)}
-                className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 mb-1"
+                className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-[#5B6CFF]/10 hover:to-[#3A4BDD]/10 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] mb-1"
               >
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
+                  <div className="text-sm font-medium text-[#5B6CFF] group-hover:text-[#7A8BFF] transition-colors">
                     All Comparisons
                   </div>
                   <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
                     See the full overview
                   </div>
                 </div>
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500/50 group-hover:bg-indigo-400 transition-colors duration-200" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#5B6CFF]/50 group-hover:bg-[#5B6CFF] transition-colors duration-200" />
               </Link>
               <div className="border-t border-gray-800 light:border-gray-200 my-1" />
               {competitors.map((competitor, index) => (
@@ -94,18 +94,18 @@ export default function CompareDropdown({ direction = 'down' }: { direction?: 'd
                   key={competitor.slug}
                   href={`/compare/${competitor.slug}`}
                   onClick={() => setIsOpen(false)}
-                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-indigo-700/10 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gradient-to-r hover:from-[#5B6CFF]/10 hover:to-[#3A4BDD]/10 transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-white light:text-gray-900 group-hover:text-indigo-400 transition-colors">
+                    <div className="text-sm font-medium text-white light:text-gray-900 group-hover:text-[#5B6CFF] transition-colors">
                       {competitor.name}
                     </div>
                     <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
                       {competitor.tagline}
                     </div>
                   </div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-indigo-400 transition-colors duration-200" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-gradient-to-r group-hover:from-[#5B6CFF] group-hover:to-[#5B6CFF] transition-colors duration-200" />
                 </Link>
               ))}
             </div>

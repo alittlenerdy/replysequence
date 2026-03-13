@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
 
       const html = `
         <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #4F46E5, #7C3AED); padding: 24px; border-radius: 12px 12px 0 0;">
+          <div style="background: linear-gradient(135deg, #4A5BEE, #7A5CFF); padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="color: white; font-size: 20px; margin: 0;">Overdue Action Items</h1>
             <p style="color: rgba(255,255,255,0.8); margin: 4px 0 0; font-size: 14px;">
               You have ${steps.length} overdue next step${steps.length > 1 ? 's' : ''} from your meetings
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
             <ul style="list-style: none; padding: 0; margin: 0;">${stepsList}</ul>
             <div style="margin-top: 20px; text-align: center;">
               <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://www.replysequence.com'}/dashboard"
-                 style="display: inline-block; background: #4F46E5; color: white; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-size: 14px;">
+                 style="display: inline-block; background: #4A5BEE; color: white; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-size: 14px;">
                 View in Dashboard
               </a>
             </div>

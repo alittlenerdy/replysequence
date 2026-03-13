@@ -101,7 +101,7 @@ export function StepConnectPlatform({
               transition={{ delay: 0.2 + index * 0.1 }}
               className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
                 isConnected
-                  ? 'border-indigo-500/50 bg-indigo-500/5'
+                  ? 'border-[#5B6CFF]/50 bg-[#5B6CFF]/5'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
@@ -114,7 +114,7 @@ export function StepConnectPlatform({
                     {platform.icon}
                   </div>
                   {isConnected && (
-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#5B6CFF]/10 text-[#5B6CFF] text-xs font-medium">
                       <Check className="w-3.5 h-3.5" />
                       Connected
                     </div>
@@ -125,9 +125,9 @@ export function StepConnectPlatform({
                 <button
                   onClick={() => handleConnect(platform.id)}
                   disabled={isConnected || connecting !== null}
-                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                     isConnected
-                      ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
+                      ? 'bg-[#5B6CFF]/10 text-[#5B6CFF] cursor-default'
                       : isConnecting
                       ? 'bg-gray-800 text-gray-400'
                       : 'text-white hover:opacity-90'
@@ -167,7 +167,7 @@ export function StepConnectPlatform({
         >
           <button
             onClick={() => onPlatformConnected(connectedPlatform)}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] hover:from-[#4A5BEE] hover:to-[#2A3ACC] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-[#5B6CFF]/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Continue to Calendar
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -186,7 +186,7 @@ export function StepConnectPlatform({
         {!showSkipWarning ? (
           <button
             onClick={() => setShowSkipWarning(true)}
-            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             I&apos;ll do this later
           </button>
@@ -205,13 +205,13 @@ export function StepConnectPlatform({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSkipWarning(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Connect Now
               </button>
               <button
                 onClick={onSkip}
-                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Skip Anyway
               </button>

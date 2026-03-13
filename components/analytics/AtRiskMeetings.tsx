@@ -83,7 +83,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
       <div id="at-risk-meetings" className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
         <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Meetings Needing Follow-up</h3>
         <div className="flex items-center justify-center gap-2 py-6 text-gray-500">
-          <CheckCircle2 className="w-5 h-5 text-indigo-500" />
+          <CheckCircle2 className="w-5 h-5 text-[#5B6CFF]" />
           <span className="text-sm">All meetings followed up. Nice.</span>
         </div>
       </div>
@@ -103,7 +103,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
           <Link
             key={m.meetingId}
             href={`/dashboard/meetings/${m.meetingId}`}
-            className="block p-3 rounded-xl bg-gray-800/50 light:bg-gray-100 light:bg-gray-50 border border-white/[0.06] light:border-gray-200 hover:bg-gray-800/50 light:bg-gray-100 light:hover:bg-gray-100 transition-colors"
+            className="block p-3 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-white/[0.06] light:border-gray-200 hover:bg-gray-800/50 light:bg-gray-100 light:hover:bg-gray-100 transition-colors"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="min-w-0">
@@ -123,14 +123,14 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
               <span className="text-xs text-gray-500">Ended {formatRelativeTime(m.endTime)}</span>
               {m.draftStatus === 'generated' && m.draftId ? (
                 <span
-                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE]"
                 >
                   <FileText className="w-3 h-3" />
                   Open Draft
                 </span>
               ) : (
                 <span
-                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE]"
                 >
                   <Wand2 className="w-3 h-3" />
                   Generate Draft
@@ -161,7 +161,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                     href={`/dashboard/meetings/${m.meetingId}`}
                     className="block min-w-0 group/link"
                   >
-                    <p className="font-medium text-white light:text-gray-900 truncate max-w-[200px] group-hover/link:text-indigo-400 light:group-hover/link:text-indigo-600 transition-colors">
+                    <p className="font-medium text-white light:text-gray-900 truncate max-w-[200px] group-hover/link:text-[#5B6CFF] light:group-hover/link:text-[#4A5BEE] transition-colors">
                       {m.topic || 'Untitled Meeting'}
                     </p>
                     {m.contactName && (
@@ -182,7 +182,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                   {m.draftStatus === 'generated' && m.draftId ? (
                     <Link
                       href={`/dashboard?draft=${m.draftId}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300 whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] whitespace-nowrap"
                     >
                       <FileText className="w-3 h-3" />
                       Open Draft
@@ -190,7 +190,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                   ) : (
                     <Link
                       href={`/dashboard?meeting=${m.meetingId}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300 whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] whitespace-nowrap"
                     >
                       <Wand2 className="w-3 h-3" />
                       Generate Draft

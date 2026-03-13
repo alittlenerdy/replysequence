@@ -23,7 +23,7 @@ function SettingsLoadingSkeleton() {
             <div
               key={i}
               className={`flex-1 h-9 rounded-lg ${
-                i === 1 ? 'bg-indigo-600/20 light:bg-indigo-50' : 'bg-transparent'
+                i === 1 ? 'bg-[#4A5BEE]/20 light:bg-[#EEF0FF]' : 'bg-transparent'
               }`}
             />
           ))}

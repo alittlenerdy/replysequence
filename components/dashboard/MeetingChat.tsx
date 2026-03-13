@@ -217,7 +217,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-6 z-40 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="fixed bottom-24 right-6 z-40 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           title="Ask anything about your recent meetings — action items, follow-ups, risks, trends."
         >
           {/* Sparkle icon */}
@@ -254,7 +254,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 title="Conversation history"
                 aria-label="Conversation history"
               >
@@ -264,7 +264,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               </button>
               <button
                 onClick={startNewConversation}
-                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 title="New conversation"
                 aria-label="New conversation"
               >
@@ -274,7 +274,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="p-1.5 rounded-lg hover:bg-orange-500/10 text-gray-400 hover:text-orange-400 light:text-gray-500 light:hover:text-orange-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 title="Close"
                 aria-label="Close chat"
               >
@@ -299,7 +299,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                     <button
                       key={conv.id}
                       type="button"
-                      className={`flex items-center justify-between px-4 py-3 border-b border-gray-800/50 light:border-gray-100 hover:bg-orange-500/5 light:hover:bg-orange-50 cursor-pointer transition-colors w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500 ${
+                      className={`flex items-center justify-between px-4 py-3 border-b border-gray-800/50 light:border-gray-100 hover:bg-orange-500/5 light:hover:bg-orange-50 cursor-pointer transition-colors w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B6CFF] ${
                         conv.id === conversationId ? 'bg-orange-500/10 light:bg-orange-50' : ''
                       }`}
                       onClick={() => loadConversation(conv.id)}
@@ -313,7 +313,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                       </div>
                       <button
                         onClick={(e) => { e.stopPropagation(); if (window.confirm('Delete this conversation?')) deleteConversation(conv.id); }}
-                        className="p-1 rounded hover:bg-gray-800 light:hover:bg-gray-200 text-gray-600 hover:text-red-400 transition-colors shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="p-1 rounded hover:bg-gray-800 light:hover:bg-gray-200 text-gray-600 hover:text-red-400 transition-colors shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                         aria-label="Delete conversation"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -326,7 +326,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
               </div>
               <button
                 onClick={() => setShowHistory(false)}
-                className="px-4 py-3 text-sm text-orange-400 hover:text-orange-300 border-t border-gray-800 light:border-gray-200 light:text-orange-600 light:hover:text-orange-700 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="px-4 py-3 text-sm text-orange-400 hover:text-orange-300 border-t border-gray-800 light:border-gray-200 light:text-orange-600 light:hover:text-orange-700 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Back to chat
               </button>
@@ -371,7 +371,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                       <button
                         key={suggestion}
                         onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
-                        className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                       >
                         <span className="text-orange-400 light:text-orange-500 mr-1.5">→</span>
                         {suggestion}
@@ -419,7 +419,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                 onClick={sendMessage}
                 disabled={!input.trim() || isStreaming}
                 aria-label="Send message"
-                className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 {isStreaming ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">

@@ -79,8 +79,8 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
               label="Generated"
               value={total}
               percentage={100}
-              color="#6366F1"
-              gradient="from-indigo-500 to-indigo-600"
+              color="#5B6CFF"
+              gradient="from-[#5B6CFF] to-[#4A5BEE]"
               delay={0}
             />
 
@@ -93,7 +93,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
               label="Ready"
               value={ready}
               percentage={total > 0 ? (ready / total) * 100 : 0}
-              color="#F59E0B"
+              color="#FF9D2D"
               gradient="from-amber-500 to-orange-500"
               delay={0.1}
             />
@@ -107,8 +107,8 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
               label="Sent"
               value={sent}
               percentage={total > 0 ? (sent / total) * 100 : 0}
-              color="#6366F1"
-              gradient="from-indigo-500 to-indigo-600"
+              color="#5B6CFF"
+              gradient="from-[#5B6CFF] to-[#4A5BEE]"
               delay={0.2}
             />
           </div>
@@ -117,7 +117,7 @@ export function EmailFunnel({ total, ready, sent, conversionRate }: EmailFunnelP
           <div className="mt-6 pt-4 border-t border-gray-800 light:border-gray-200">
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <span>Draft generated</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/50 via-amber-500/50 to-indigo-500/50" />
+              <div className="flex-1 h-px bg-gradient-to-r from-[#5B6CFF]/50 via-amber-500/50 to-[#5B6CFF]/50" />
               <span>Reviewed & sent</span>
             </div>
           </div>

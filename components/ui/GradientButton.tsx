@@ -37,10 +37,10 @@ export function GradientButton({
   };
 
   const baseClasses = cn(
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-[color,background-color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
+    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-[color,background-color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]',
     sizeClasses[size],
     variant === 'primary'
-      ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40'
+      ? 'bg-[#4A5BEE] text-white hover:bg-[#5B6CFF] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-[#5B6CFF]/40'
       : 'bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 hover:border-gray-600',
     disabled && 'opacity-50 cursor-not-allowed',
     className

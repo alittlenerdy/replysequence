@@ -43,7 +43,7 @@ export function BlogNewsletterSignup() {
   }
 
   return (
-    <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-indigo-600/10 light:from-indigo-50 light:to-indigo-100/50 light:border-indigo-200 p-8 md:p-10">
+    <div className="rounded-2xl border border-[#5B6CFF]/20 bg-gradient-to-br from-[#5B6CFF]/5 to-[#4A5BEE]/10 light:from-[#EEF0FF] light:to-[#DDE1FF]/50 light:border-[#4A5BEE]/30 p-8 md:p-10">
       <AnimatePresence mode="wait">
         {success ? (
           <motion.div
@@ -72,7 +72,7 @@ export function BlogNewsletterSignup() {
             exit={{ opacity: 0 }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Mail className="w-5 h-5 text-indigo-400 light:text-indigo-600" />
+              <Mail className="w-5 h-5 text-[#5B6CFF] light:text-[#4A5BEE]" />
               <h3 className="text-lg font-bold text-white light:text-gray-900">
                 Get meeting productivity tips in your inbox
               </h3>
@@ -91,12 +91,12 @@ export function BlogNewsletterSignup() {
                 aria-label="Email address"
                 autoComplete="email"
                 spellCheck={false}
-                className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent text-sm"
+                className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:border-transparent text-sm"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || !email}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-indigo-500/20 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="px-6 py-3 bg-gradient-to-r from-[#4A5BEE] to-[#3A4BDD] hover:from-[#5B6CFF] hover:to-[#4A5BEE] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-[#5B6CFF]/20 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 {isSubmitting ? 'Subscribing\u2026' : 'Subscribe'}
               </button>

@@ -96,7 +96,7 @@ function renderPage(title: string, message: string): string {
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      background-color: #0a0a0f;
+      background-color: #060B18;
       color: #e5e7eb;
     }
     .container {

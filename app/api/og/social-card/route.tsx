@@ -6,7 +6,7 @@ export const runtime = 'edge';
 const CARD_SIZE = { width: 1080, height: 1080 };
 
 // Brand gradient matching NonNegotiablesCards + existing OG images
-const BRAND_GRADIENT = 'linear-gradient(135deg, #4338CA 0%, #6366F1 50%, #7C3AED 100%)';
+const BRAND_GRADIENT = 'linear-gradient(135deg, #4338CA 0%, #5B6CFF 50%, #7A5CFF 100%)';
 
 // Chat bubble icon SVG path (same as opengraph-image.tsx)
 const LOGO_ICON_PATH =

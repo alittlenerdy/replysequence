@@ -73,8 +73,8 @@ export function EmailPreferencesSettings() {
     <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-6 transition-colors duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
-            <Mail className="w-4 h-4 text-indigo-400" />
+          <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/10 flex items-center justify-center">
+            <Mail className="w-4 h-4 text-[#5B6CFF]" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white light:text-gray-900">Email Preferences</h3>
@@ -84,7 +84,7 @@ export function EmailPreferencesSettings() {
           </div>
         </div>
         {saveSuccess && (
-          <span className="flex items-center gap-1.5 text-sm text-indigo-400">
+          <span className="flex items-center gap-1.5 text-sm text-[#5B6CFF]">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
@@ -107,9 +107,9 @@ export function EmailPreferencesSettings() {
           onClick={() => handleSave('review')}
           disabled={saving}
           className={`
-            w-full text-left p-4 rounded-lg border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+            w-full text-left p-4 rounded-lg border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
             ${preference === 'review'
-              ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
+              ? 'border-[#5B6CFF] bg-[#5B6CFF]/10 ring-1 ring-[#5B6CFF]/50'
               : 'border-white/[0.06] light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
             }
             ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -117,7 +117,7 @@ export function EmailPreferencesSettings() {
         >
           <div className="flex items-start gap-3">
             <div className={`shrink-0 mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-              preference === 'review' ? 'border-indigo-500 bg-indigo-500' : 'border-gray-500 light:border-gray-300'
+              preference === 'review' ? 'border-[#5B6CFF] bg-[#5B6CFF]' : 'border-gray-500 light:border-gray-300'
             }`}>
               {preference === 'review' && (
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -139,9 +139,9 @@ export function EmailPreferencesSettings() {
           onClick={() => handleSave('auto_send')}
           disabled={saving}
           className={`
-            w-full text-left p-4 rounded-lg border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+            w-full text-left p-4 rounded-lg border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
             ${preference === 'auto_send'
-              ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
+              ? 'border-[#5B6CFF] bg-[#5B6CFF]/10 ring-1 ring-[#5B6CFF]/50'
               : 'border-white/[0.06] light:border-gray-200 bg-gray-800/50 light:bg-gray-50 hover:border-gray-600 light:hover:border-gray-300 hover:bg-gray-800 light:hover:bg-gray-100'
             }
             ${saving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -149,7 +149,7 @@ export function EmailPreferencesSettings() {
         >
           <div className="flex items-start gap-3">
             <div className={`shrink-0 mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-              preference === 'auto_send' ? 'border-indigo-500 bg-indigo-500' : 'border-gray-500 light:border-gray-300'
+              preference === 'auto_send' ? 'border-[#5B6CFF] bg-[#5B6CFF]' : 'border-gray-500 light:border-gray-300'
             }`}>
               {preference === 'auto_send' && (
                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

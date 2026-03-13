@@ -131,7 +131,7 @@ export function FloatingToolbar() {
       <div
         className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[140px] pointer-events-none z-40"
         style={{
-          background: 'radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, rgba(251,191,36,0.06) 40%, transparent 70%)',
+          background: 'radial-gradient(ellipse, rgba(91,108,255,0.18) 0%, rgba(251,191,36,0.06) 40%, transparent 70%)',
           filter: 'blur(25px)',
         }}
       />
@@ -141,7 +141,7 @@ export function FloatingToolbar() {
         ref={toolbarRef}
         aria-label="Main navigation"
         className="toolbar-noise fixed z-50 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/70 light:bg-white/80 backdrop-blur-2xl backdrop-saturate-200 border border-white/[0.12] light:border-gray-200/60 shadow-2xl bottom-4 left-4 right-4 md:bottom-6 md:left-1/2 md:right-auto md:-translate-x-1/2"
-        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))', boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(99,102,241,0.1), inset 0 1px 0 rgba(255,255,255,0.06)' }}
+        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))', boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(91,108,255,0.1), inset 0 1px 0 rgba(255,255,255,0.06)' }}
       >
         {/* Active indicator ring */}
         <ActiveIndicator left={indicatorPos.left} width={indicatorPos.width} />
@@ -152,7 +152,7 @@ export function FloatingToolbar() {
           className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors relative z-10"
         >
           <Image src="/logo.png" alt="" width={24} height={24} className="rounded-md" />
-          <span className="text-sm font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">
+          <span className="text-sm font-bold bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] light:from-[#4A5BEE] light:to-[#4A5BEE] bg-clip-text text-transparent">
             RS
           </span>
         </Link>
@@ -172,7 +172,7 @@ export function FloatingToolbar() {
                 <Icon
                   className={`w-[18px] h-[18px] transition-colors ${
                     isActive
-                      ? 'text-indigo-400 light:text-indigo-600'
+                      ? 'text-[#5B6CFF] light:text-[#4A5BEE]'
                       : 'text-gray-400 light:text-gray-500'
                   }`}
                   strokeWidth={1.5}

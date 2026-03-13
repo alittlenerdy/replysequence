@@ -3,8 +3,27 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import {
+  Clock,
+  Zap,
+  FileX,
+  Shield,
+  Lock,
+  ArrowDown,
+  CheckCircle2,
+  FileText,
+  Layers,
+  Brain,
+  TrendingUp,
+} from 'lucide-react';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
-// Countdown animation component
+// Lazy load heavy components
+const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
+const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
+const WaitlistForm = dynamic(() => import('@/components/landing/WaitlistForm').then(m => ({ default: m.WaitlistForm })), { ssr: false });
+
 function CountdownAnimation() {
   const [count, setCount] = useState(8);
   const [showMessage, setShowMessage] = useState(false);
@@ -36,7 +55,7 @@ function CountdownAnimation() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="text-indigo-500 light:text-indigo-600 font-bold text-base"
+            className="text-[#5B6CFF] light:text-[#4A5BEE] font-bold text-base"
           >
             ✓ Follow-up, sequence, and next steps ready
           </motion.span>
@@ -51,7 +70,7 @@ function CountdownAnimation() {
               initial={{ opacity: 0, y: -10, scale: 1.2 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.8 }}
-              className="text-indigo-400 light:text-indigo-600 font-bold text-lg w-5 text-center"
+              className="text-[#5B6CFF] light:text-[#4A5BEE] font-bold text-lg w-5 text-center"
             >
               {count}
             </motion.span>
@@ -62,58 +81,51 @@ function CountdownAnimation() {
     </div>
   );
 }
-import {
-  Clock,
-  Zap,
-  Link2Off,
-  BarChart3,
-  Users,
-  FileX,
-  Shield,
-  Lock,
-  ArrowDown,
-  CheckCircle2,
-  Eye,
-  Palette,
-  MessageSquare,
-  Sparkles,
-  Search,
-} from 'lucide-react';
-// FloatingToolbar removed — Header handles all site navigation
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { GradientText } from '@/components/ui/GradientText';
 
-
-// Lazy load heavy components
-const VideoSection = dynamic(() => import('@/components/landing/VideoSection').then(m => ({ default: m.VideoSection })), { ssr: false });
-const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
-const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
-const WaitlistForm = dynamic(() => import('@/components/landing/WaitlistForm').then(m => ({ default: m.WaitlistForm })), { ssr: false });
-const NonNegotiablesCarousel = dynamic(() => import('@/components/NonNegotiablesCarousel').then(m => ({ default: m.NonNegotiablesCarousel })), { ssr: false });
+const platformPillars = [
+  {
+    icon: FileText,
+    title: 'Follow-Ups',
+    description: 'AI-drafted emails that reference the real conversation. Every follow-up sounds like you wrote it.',
+    color: '#5B6CFF',
+  },
+  {
+    icon: Layers,
+    title: 'Sequences',
+    description: 'Multi-step nurture flows triggered by each meeting. Keep deals warm without manual effort.',
+    color: '#7A5CFF',
+  },
+  {
+    icon: Brain,
+    title: 'Meeting Intelligence',
+    description: 'Next steps extracted with due dates. Risk flags for budget, timeline, and champion gaps.',
+    color: '#22D3EE',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Pipeline Automation',
+    description: 'CRM updates, deal health scores, and pre-meeting briefings — all from your transcripts.',
+    color: '#37D67A',
+  },
+];
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
-      {/* Header — consistent with all pages */}
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
       <Header />
 
-      {/* FloatingToolbar removed — Header handles all navigation */}
-
-      {/* Hero Section */}
+      {/* ============ 1. HERO ============ */}
       <section id="hero" className="relative pt-32 pb-12 px-4 z-10">
-        {/* Ambient gradient orbs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] pointer-events-none" />
-        <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,0.08)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(91,108,255,0.15)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,157,45,0.08)_0%,transparent_70%)] pointer-events-none" />
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
               Every Tool Records the Meeting.{' '}
-              <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
+              <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
-            <p className="text-xl text-gray-300 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-[#9AA6C6] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates — automatically, before your next meeting starts.
             </p>
 
@@ -124,129 +136,115 @@ export default function LandingPage() {
                 'Deal risks flagged before they cost you',
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0" aria-hidden="true" />
-                  <span className="text-sm text-gray-300 light:text-gray-600 font-medium">{bullet}</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#5B6CFF] shrink-0" aria-hidden="true" />
+                  <span className="text-sm text-[#9AA6C6] light:text-gray-600 font-medium">{bullet}</span>
                 </div>
               ))}
             </div>
           </div>
 
-            {/* Countdown animation and speed comparison */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
-            >
-              <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 light:from-indigo-100 light:to-indigo-200 border-2 border-indigo-500/30 light:border-indigo-400/50 shadow-lg shadow-indigo-500/10 light:shadow-indigo-200/50">
-                <CountdownAnimation />
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-indigo-700/10 border border-indigo-500/20">
-                <Zap className="w-4 h-4 text-yellow-400" aria-hidden="true" />
-                <span className="text-sm font-semibold text-gray-300 light:text-gray-700">
-                  10x faster than typing it yourself
-                </span>
-              </div>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
+          >
+            <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#5B6CFF]/10 to-[#7A5CFF]/10 light:from-[#EEF0FF] light:to-[#DDE1FF] border-2 border-[#5B6CFF]/30 light:border-[#4A5BEE]/50 shadow-lg shadow-[#5B6CFF]/10 light:shadow-[#DDE1FF]/50">
+              <CountdownAnimation />
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#5B6CFF]/10 to-[#7A5CFF]/10 border border-[#5B6CFF]/20">
+              <Zap className="w-4 h-4 text-[#FF9D2D]" aria-hidden="true" />
+              <span className="text-sm font-semibold text-[#9AA6C6] light:text-gray-700">
+                10x faster than typing it yourself
+              </span>
+            </div>
+          </motion.div>
 
-            {/* Platform logos */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="flex items-center justify-center gap-2 mb-8 text-gray-500 light:text-gray-600 flex-wrap"
-            >
-              <span className="text-sm font-medium">Works with</span>
-              {/* Zoom logo */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10 border border-[#2D8CFF]/20">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#2D8CFF" aria-hidden="true">
-                  <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
-                </svg>
-                <span className="text-xs font-semibold text-[#2D8CFF]">Zoom</span>
-              </div>
-              {/* Teams logo */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#5B5FC7]/10 border border-[#5B5FC7]/20">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5B5FC7" aria-hidden="true">
-                  <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
-                </svg>
-                <span className="text-xs font-semibold text-[#5B5FC7]">Teams</span>
-              </div>
-              {/* Google Meet logo */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00897B]/10 border border-[#00897B]/20">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#00897B" aria-hidden="true">
-                  <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-                  <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z"/>
-                </svg>
-                <span className="text-xs font-semibold text-[#00897B]">Meet</span>
-              </div>
-            </motion.div>
+          {/* Platform logos */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="flex items-center justify-center gap-2 mb-8 text-[#6B7492] light:text-gray-600 flex-wrap"
+          >
+            <span className="text-sm font-medium">Works with</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10 border border-[#2D8CFF]/20">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#2D8CFF" aria-hidden="true">
+                <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z"/>
+              </svg>
+              <span className="text-xs font-semibold text-[#2D8CFF]">Zoom</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#5B5FC7]/10 border border-[#5B5FC7]/20">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#5B5FC7" aria-hidden="true">
+                <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z"/>
+              </svg>
+              <span className="text-xs font-semibold text-[#5B5FC7]">Teams</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00897B]/10 border border-[#00897B]/20">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#00897B" aria-hidden="true">
+                <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z"/>
+              </svg>
+              <span className="text-xs font-semibold text-[#00897B]">Meet</span>
+            </div>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="max-w-2xl mx-auto mb-6 px-4 sm:px-0"
-            >
-              <div className="glass-border-accent rounded-2xl p-6 sm:p-10">
-                <WaitlistForm />
-              </div>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="max-w-2xl mx-auto mb-6 px-4 sm:px-0"
+          >
+            <div className="glass-border-accent rounded-2xl p-6 sm:p-10">
+              <WaitlistForm />
+            </div>
+          </motion.div>
 
-            {/* Secondary link */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              className="flex items-center justify-center"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="flex items-center justify-center"
+          >
+            <a
+              href="/how-it-works"
+              className="inline-flex items-center gap-2 text-base font-medium text-[#6B7492] light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-md group"
             >
-              <a
-                href="/how-it-works"
-                className="inline-flex items-center gap-2 text-base font-medium text-gray-400 light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] rounded-md group"
-              >
-                See How It Works
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </a>
-            </motion.div>
+              See How It Works
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#5B6CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </motion.div>
 
-            {/* Security Trust Badges */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="flex flex-wrap items-center justify-center gap-3 mt-6"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="flex flex-wrap items-center justify-center gap-3 mt-6"
+          >
+            <a
+              href="/security"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-full hover:bg-[#5B6CFF]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
-              <a
-                href="/security"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
-              >
-                <Lock className="w-3.5 h-3.5 text-indigo-400" aria-hidden="true" />
-                <span className="text-xs font-medium text-indigo-400">AES-256 Encryption</span>
-              </a>
-              <a
-                href="/privacy"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f]"
-              >
-                <Shield className="w-3.5 h-3.5 text-indigo-400" aria-hidden="true" />
-                <span className="text-xs font-medium text-indigo-400">Privacy First</span>
-              </a>
-            </motion.div>
-
+              <Lock className="w-3.5 h-3.5 text-[#5B6CFF]" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#5B6CFF]">AES-256 Encryption</span>
+            </a>
+            <a
+              href="/privacy"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-full hover:bg-[#5B6CFF]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            >
+              <Shield className="w-3.5 h-3.5 text-[#5B6CFF]" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#5B6CFF]">Privacy First</span>
+            </a>
+          </motion.div>
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
 
-      {/* Video Demo Section */}
-      <VideoSection />
-
-      {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
-
-      {/* Problem / Sales Stack Gap */}
-      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(90deg, rgba(99,102,241,0.05) 0%, transparent 60%)' }}>
+      {/* ============ 2. THE FOLLOW-UP GAP ============ */}
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(90deg, rgba(91,108,255,0.05) 0%, transparent 60%)' }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -256,14 +254,14 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Sales Stack Has a <GradientText variant="secondary">Gap</GradientText>. This Is It.
+              Your Sales Stack Has a <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Gap</span>. This Is It.
             </h2>
-            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
-              Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up, the next steps, the risk alerts, or the CRM update.
+            <p className="text-[#9AA6C6] light:text-gray-600 max-w-2xl mx-auto">
+              Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[
               {
                 icon: Clock,
@@ -283,24 +281,6 @@ export default function LandingPage() {
                 process: 'AI extracts next steps with due dates',
                 after: 'Every commitment tracked, reminders sent when overdue',
               },
-              {
-                icon: Link2Off,
-                before: 'CRM shows "last activity: 3 weeks ago"',
-                process: 'Meeting notes + deal context synced automatically',
-                after: 'Pipeline reflects reality with health scores',
-              },
-              {
-                icon: BarChart3,
-                before: 'Deal risks surface too late to save',
-                process: 'AI flags budget, timeline, and champion risks',
-                after: 'Risk alerts before the deal goes cold',
-              },
-              {
-                icon: Users,
-                before: 'Walk into meetings with no prep',
-                process: 'Pre-meeting briefing with deal context',
-                after: 'Every call starts with full buyer intelligence',
-              },
             ].map((item, index) => (
               <motion.div
                 key={index}
@@ -308,20 +288,20 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="glass-border rounded-2xl p-6 flex flex-col items-center text-center"
+                className="rounded-2xl bg-[#141C34]/80 border border-[#273054] p-6 flex flex-col items-center text-center"
               >
-                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
+                <div className="w-12 h-12 rounded-lg bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-[#5B6CFF] light:text-[#4A5BEE]" aria-hidden="true" />
                 </div>
 
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 light:text-gray-500 mb-2">Before</span>
-                <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7492] light:text-gray-500 mb-2">Before</span>
+                <p className="text-sm text-[#9AA6C6] light:text-gray-700 mb-3">{item.before}</p>
 
-                <ArrowDown className="w-4 h-4 text-indigo-400/60 mb-1" aria-hidden="true" />
-                <p className="text-xs text-gray-400 light:text-gray-500 mb-1">{item.process}</p>
-                <ArrowDown className="w-4 h-4 text-indigo-400/60 mb-3" aria-hidden="true" />
+                <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-1" aria-hidden="true" />
+                <p className="text-xs text-[#6B7492] light:text-gray-500 mb-1">{item.process}</p>
+                <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-3" aria-hidden="true" />
 
-                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 light:text-indigo-600 mb-2">After</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#5B6CFF] light:text-[#4A5BEE] mb-2">After</span>
                 <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
               </motion.div>
             ))}
@@ -329,10 +309,56 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
 
-      {/* How It Works */}
+      {/* ============ 3. THE PLATFORM (4 Pillars) ============ */}
+      <section className="py-12 md:py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0.15, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 md:mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
+              One Platform. Four <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Pillars</span>.
+            </h2>
+            <p className="text-[#9AA6C6] light:text-gray-600 max-w-2xl mx-auto">
+              Everything between the call ending and the deal closing — automated.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {platformPillars.map((pillar, index) => {
+              const Icon = pillar.icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0.15, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="rounded-2xl bg-[#141C34]/80 border border-[#273054] p-6 hover:border-[#5B6CFF]/30 transition-colors"
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                    style={{ backgroundColor: `${pillar.color}15`, boxShadow: `0 4px 16px ${pillar.color}20` }}
+                  >
+                    <Icon className="w-6 h-6" style={{ color: pillar.color }} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{pillar.title}</h3>
+                  <p className="text-sm text-[#9AA6C6] light:text-gray-600">{pillar.description}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
+
+      {/* ============ 4. HOW IT WORKS ============ */}
       <section className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-6xl mx-auto bg-white/[0.02] backdrop-blur-sm border border-white/[0.05] rounded-3xl p-8 md:p-12">
           <motion.div
@@ -343,15 +369,15 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              From Call to <GradientText>Pipeline Automation</GradientText> in Three Steps
+              From Call to <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Pipeline Automation</span> in Three Steps
             </h2>
-            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-[#9AA6C6] light:text-gray-600 max-w-2xl mx-auto">
               Connect once. Have your meetings. Follow-ups, sequences, next steps, and CRM updates handle themselves.
             </p>
           </motion.div>
 
           <div className="relative">
-            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 opacity-30" />
+            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-[#5B6CFF] via-[#7A5CFF] to-[#FF9D2D] opacity-30" />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
@@ -360,21 +386,21 @@ export default function LandingPage() {
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
                   title: 'Have Your Meeting',
                   description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically — no bot joins the call.',
-                  color: 'blue',
+                  color: '#5B6CFF',
                 },
                 {
                   step: '02',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
                   title: 'AI Generates Everything',
-                  description: 'Personalized follow-up email. Multi-step sequence to keep the deal warm. Next steps with due dates. Deal risk flags. CRM updates. All from the transcript, in seconds.',
-                  color: 'purple',
+                  description: 'Personalized follow-up. Multi-step sequence. Next steps with due dates. Deal risk flags. CRM updates. All from the transcript, in seconds.',
+                  color: '#7A5CFF',
                 },
                 {
                   step: '03',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
                   title: 'Review, Approve, Automate',
-                  description: 'Send the follow-up. Activate the sequence. Confirm next steps. The pipeline runs itself — risks get flagged, CRM stays current, and you are already on your next call.',
-                  color: 'pink',
+                  description: 'Send the follow-up. Activate the sequence. Confirm next steps. The pipeline runs itself — you are already on your next call.',
+                  color: '#FF9D2D',
                 },
               ].map((item, index) => (
                 <motion.div
@@ -386,17 +412,15 @@ export default function LandingPage() {
                   className="relative"
                 >
                   <div className="flex justify-center mb-6">
-                    <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-2 ${
-                      item.color === 'blue' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
-                      item.color === 'purple' ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-400' :
-                      'border-indigo-500/50 bg-indigo-500/10 text-indigo-400'
-                    }`}>
+                    <div
+                      className="relative w-20 h-20 rounded-full flex items-center justify-center border-2"
+                      style={{ borderColor: `${item.color}50`, backgroundColor: `${item.color}10`, color: item.color }}
+                    >
                       {item.icon}
-                      <span className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg ${
-                        item.color === 'blue' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
-                        item.color === 'purple' ? 'bg-gradient-to-br from-indigo-500 to-indigo-700' :
-                        'bg-gradient-to-br from-indigo-500 to-indigo-600'
-                      }`}>
+                      <span
+                        className="absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg"
+                        style={{ background: `linear-gradient(135deg, ${item.color}, ${item.color}CC)` }}
+                      >
                         {item.step}
                       </span>
                     </div>
@@ -408,7 +432,7 @@ export default function LandingPage() {
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                     >
-                      <svg className="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <svg className="w-8 h-8 text-[#273054]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </motion.div>
@@ -416,7 +440,7 @@ export default function LandingPage() {
 
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">{item.title}</h3>
-                    <p className="text-gray-300 light:text-gray-600">{item.description}</p>
+                    <p className="text-[#9AA6C6] light:text-gray-600">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -425,69 +449,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
 
-      {/* Bento Grid Features */}
+      {/* ============ 5. FEATURE HIGHLIGHTS (Bento Grid) ============ */}
       <BentoGrid />
 
-      {/* Trust & Control Section */}
-      <section className="py-10 md:py-16 px-4 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0.15, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Deals, <GradientText variant="secondary">Your Control</GradientText>
-            </h2>
-            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
-              Every follow-up, sequence, and next step is a suggestion first. You review, edit, and approve before anything sends, schedules, or syncs.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {[
-              {
-                icon: Eye,
-                title: 'Nothing sends without you',
-                description: 'Every follow-up, sequence step, and CRM update waits for your approval. Edit, rewrite, or send as-is. You always have the final word.',
-              },
-              {
-                icon: Palette,
-                title: 'Sounds like you, not like AI',
-                description: 'The AI learns your writing style from every edit. Follow-ups, sequences, and summaries sound like you wrote them from scratch.',
-              },
-              {
-                icon: Shield,
-                title: 'Every output traced to the transcript',
-                description: 'Follow-ups, next steps, risk alerts — your team can see exactly where the AI pulled each point. Full auditability, zero guesswork.',
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0.15, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="glass-border rounded-2xl p-6 text-center"
-              >
-                <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
-                </div>
-                <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof Stats */}
-      <section className="py-12 md:py-20 px-4 relative z-10 border-t border-transparent" style={{ borderImage: 'linear-gradient(to right, transparent, rgba(99,102,241,0.3), transparent) 1' }}>
+      {/* ============ 6. SOCIAL PROOF STATS ============ */}
+      <section className="py-12 md:py-20 px-4 relative z-10 border-t border-transparent" style={{ borderImage: 'linear-gradient(to right, transparent, rgba(91,108,255,0.3), transparent) 1' }}>
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -497,7 +465,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Built for Teams That <GradientText variant="secondary">Follow Up Fast</GradientText>
+              Built for Teams That <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Follow Up Fast</span>
             </h2>
           </motion.div>
 
@@ -525,206 +493,19 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="glass-border rounded-2xl p-6 sm:p-8 text-center"
+                className="rounded-2xl bg-[#141C34]/80 border border-[#273054] p-6 sm:p-8 text-center"
               >
-                <span className="text-5xl font-extrabold neon-text neon-glow">{item.stat}</span>
-                <p className="text-sm text-gray-300 light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
-                <p className="text-sm text-gray-400 light:text-gray-500">{item.description}</p>
+                <span className="text-5xl font-extrabold bg-gradient-to-r from-[#FF9D2D] to-[#FDE047] bg-clip-text text-transparent">{item.stat}</span>
+                <p className="text-sm text-[#9AA6C6] light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
+                <p className="text-sm text-[#6B7492] light:text-gray-500">{item.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 9 Non-Negotiables Carousel */}
-      <NonNegotiablesCarousel />
-
-      {/* Ask Your Meetings Section */}
-      <section className="py-12 md:py-20 px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0.15, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
-              <Sparkles className="w-4 h-4 text-indigo-400" aria-hidden="true" />
-              <span className="text-sm font-medium text-indigo-400">New Feature</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Stop Rereading Transcripts.{' '}
-              <GradientText variant="secondary">Ask Instead.</GradientText>
-            </h2>
-            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
-              Type a question and get instant answers pulled from every transcript — action items, next steps, deal risks, sequence status, follow-up history, and pipeline trends.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-            {/* Chat Preview */}
-            <motion.div
-              initial={{ opacity: 0.15, x: -12 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="rounded-2xl border border-indigo-500/20 bg-gray-900/80 light:bg-white light:border-indigo-200 overflow-hidden shadow-xl shadow-indigo-500/5"
-            >
-              <div className="px-5 py-4 bg-gradient-to-r from-indigo-500/10 to-indigo-600/10 border-b border-indigo-500/20 light:border-indigo-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5 text-white" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-white light:text-gray-900">Ask your meetings</span>
-                    <p className="text-xs text-gray-400 light:text-gray-500">AI-powered meeting search</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-5 space-y-4">
-                <motion.div
-                  initial={{ opacity: 0.15, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 }}
-                  className="flex justify-end"
-                >
-                  <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm">
-                    What action items came up this week?
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0.15, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.8 }}
-                  className="flex justify-start"
-                >
-                  <div className="max-w-[90%] px-4 py-3 rounded-2xl rounded-bl-md bg-gray-800 light:bg-gray-100 text-sm text-gray-200 light:text-gray-700 space-y-2">
-                    <p className="font-medium text-white light:text-gray-900">Based on 4 meetings this week:</p>
-                    <p><span className="text-indigo-400 font-semibold">Technical issues:</span> API rate limiting needs a fix before launch (Feb 18 standup)</p>
-                    <p><span className="text-indigo-400 font-semibold">Next steps due:</span> Send pricing proposal to Acme Corp by Friday — sequence step 2 scheduled (Feb 17 demo)</p>
-                    <p><span className="text-indigo-400 font-semibold">Risks flagged:</span> Onboarding timeline slipping — 3 users reported confusion</p>
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">Q1 Pipeline Review</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">Product Demo Call</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              <div className="px-5 py-3 border-t border-gray-700 light:border-gray-200">
-                <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 light:bg-gray-100 border border-gray-700 light:border-gray-200">
-                  <Search className="w-4 h-4 text-gray-500 shrink-0" aria-hidden="true" />
-                  <span className="text-sm text-gray-500">Ask about next steps, sequences, deal risks, or meetings...</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Feature bullets */}
-            <motion.div
-              initial={{ opacity: 0.15, x: 12 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="space-y-5"
-            >
-              {[
-                {
-                  title: 'Search every transcript at once',
-                  description: 'Ask about next steps, deal risks, sequence status, or action items — answers come from every call, not just one.',
-                },
-                {
-                  title: 'Next steps, risks, and deal health',
-                  description: 'Surface overdue action items, flagged risks, and deal health changes across your pipeline. See what needs attention now.',
-                },
-                {
-                  title: 'Source-linked to the conversation',
-                  description: 'Every answer links back to the exact meeting and transcript moment. Verify follow-ups, sequences, and commitments instantly.',
-                },
-                {
-                  title: 'Pre-meeting intelligence',
-                  description: 'Before your next call, ask what was discussed, what was promised, and what risks were flagged. Walk in fully briefed.',
-                },
-              ].map((feature, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0.15, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.4 + i * 0.1 }}
-                  className="flex gap-4"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-indigo-400" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white light:text-gray-900 mb-1">{feature.title}</h3>
-                    <p className="text-sm text-gray-400 light:text-gray-600">{feature.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Data Flywheel Section */}
-      <section className="py-12 md:py-20 px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0.15, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
-              <span className="text-sm font-medium text-indigo-400">Adaptive AI</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4 text-pretty">
-              Gets Smarter With <GradientText variant="secondary">Every Meeting</GradientText>
-            </h2>
-            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
-              Every call builds your deal intelligence. The AI learns your voice, tracks relationship history, and surfaces risks before they cost you a deal.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {[
-              {
-                title: 'Learns Your Writing Style',
-                description: 'Every edit teaches the AI your tone. Follow-ups and sequences sound like you wrote them — not like AI.',
-              },
-              {
-                title: 'Builds Deal Context Over Time',
-                description: 'Each meeting adds to the deal record — stakeholders, objections, commitments, risks. Pre-meeting briefings get richer with every call.',
-              },
-              {
-                title: 'Flags Risks Before They Cost You',
-                description: 'Deal health scores update after every conversation. Risk alerts surface budget, timeline, and champion gaps so you can act early.',
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0.15, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass-border rounded-2xl p-6"
-              >
-                <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section id="waitlist" className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.1) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(251,191,36,0.06) 0%, transparent 50%)' }}>
+      {/* ============ 7. CTA ============ */}
+      <section id="waitlist" className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'radial-gradient(ellipse at center, rgba(91,108,255,0.1) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(255,157,45,0.06) 0%, transparent 50%)' }}>
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -733,9 +514,9 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Next Meeting Is Coming. The <GradientText variant="secondary">Follow-Up</GradientText> Should Be Automatic.
+              Your Next Meeting Is Coming. The <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Follow-Up</span> Should Be Automatic.
             </h2>
-            <p className="text-gray-300 light:text-gray-600 mb-6">
+            <p className="text-[#9AA6C6] light:text-gray-600 mb-6">
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.
             </p>
 
@@ -746,11 +527,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-
-      {/* FAQ Section */}
+      {/* ============ 8. FAQ + FOOTER ============ */}
       <FAQ />
-
-      {/* Footer */}
       <Footer />
 
       {/* JSON-LD Structured Data */}

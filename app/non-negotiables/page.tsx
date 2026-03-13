@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function NonNegotiablesPage() {
   return (
-    <main className="min-h-screen bg-gray-950 py-12 px-4">
+    <main className="min-h-screen bg-[#060B18] py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-white text-center mb-2">
           Social Media Cards

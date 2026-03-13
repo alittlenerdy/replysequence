@@ -27,9 +27,9 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-colors duration-300 ${
                   step.number < currentStep
-                    ? 'bg-indigo-500 text-white'
+                    ? 'bg-[#5B6CFF] text-white'
                     : step.number === currentStep
-                    ? 'bg-indigo-500 text-white ring-4 ring-indigo-500/20'
+                    ? 'bg-[#5B6CFF] text-white ring-4 ring-[#5B6CFF]/20'
                     : 'bg-gray-800 text-gray-500'
                 }`}
               >
@@ -50,7 +50,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
             {index < steps.length - 1 && (
               <div
                 className={`flex-1 h-0.5 mx-2 transition-colors duration-300 ${
-                  step.number < currentStep ? 'bg-indigo-500' : 'bg-gray-800'
+                  step.number < currentStep ? 'bg-[#5B6CFF]' : 'bg-gray-800'
                 }`}
               />
             )}
@@ -70,7 +70,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
         </div>
         <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-full transition-[width] duration-500"
+            className="h-full bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] rounded-full transition-[width] duration-500"
             style={{ width: `${(currentStep / totalSteps) * 100}%` }}
           />
         </div>

@@ -79,7 +79,7 @@ export function OnboardingGate({ children }: OnboardingGateProps) {
   // Show loading state
   if (checking || onboardingComplete === null) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+      <div className="min-h-screen bg-[#060B18] flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-blue-500/20 rounded-full" />

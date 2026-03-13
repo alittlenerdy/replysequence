@@ -118,7 +118,7 @@ export function ROICalculator({ roi, emailsGenerated }: ROICalculatorProps) {
           <div className="text-xs text-gray-400 light:text-gray-500 text-center pt-2 leading-relaxed">
             Based on your <strong className="text-white light:text-gray-900">${roi.hourlyRate}/hr</strong> rate,
             ReplySequence has saved you <strong className="text-amber-400">${roi.dollarValue.toLocaleString()}</strong> this
-            period ({roi.hoursSaved}h). <a href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">Update rate</a>
+            period ({roi.hoursSaved}h). <a href="/dashboard/settings" className="text-[#5B6CFF] hover:text-[#7A8BFF] underline underline-offset-2">Update rate</a>
           </div>
         </div>
       ) : (

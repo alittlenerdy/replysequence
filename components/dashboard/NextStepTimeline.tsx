@@ -145,7 +145,7 @@ export function NextStepTimeline({ compact = false }: NextStepTimelineProps) {
         {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
         <h2 className={`${compact ? 'text-sm' : 'text-xl'} font-bold text-white light:text-gray-900`}>Next Steps</h2>
         {pendingCount > 0 && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF] border border-[#5B6CFF]/30">
             {pendingCount} pending
           </span>
         )}
@@ -166,7 +166,7 @@ export function NextStepTimeline({ compact = false }: NextStepTimelineProps) {
                 onClick={() => { setFilter(f); setLoading(true); }}
                 className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                   filter === f
-                    ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/50'
+                    ? 'bg-[#5B6CFF]/20 text-[#5B6CFF] border-[#5B6CFF]/50'
                     : 'bg-gray-800/50 text-gray-400 border-gray-700/50 hover:bg-gray-700/50 light:bg-gray-100 light:text-gray-600 light:border-gray-200'
                 }`}
               >

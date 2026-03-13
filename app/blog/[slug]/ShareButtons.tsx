@@ -22,7 +22,7 @@ export function ShareButtons({ title, url }: { title: string; url: string }) {
         href={twitterUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200 hover:text-white light:hover:text-gray-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200 hover:text-white light:hover:text-gray-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label="Share on X"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -33,7 +33,7 @@ export function ShareButtons({ title, url }: { title: string; url: string }) {
         href={linkedinUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200 hover:text-white light:hover:text-gray-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200 hover:text-white light:hover:text-gray-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label="Share on LinkedIn"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -42,7 +42,7 @@ export function ShareButtons({ title, url }: { title: string; url: string }) {
       </a>
       <button
         onClick={handleCopy}
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200 hover:text-white light:hover:text-gray-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200 hover:text-white light:hover:text-gray-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label="Copy link"
       >
         {copied ? <Check className="w-4 h-4 text-green-400" /> : <Link2 className="w-4 h-4" />}

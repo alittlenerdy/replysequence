@@ -612,6 +612,7 @@ export async function getDraftStats(): Promise<{
   failed: number;
   avgCost: number;
   avgLatency: number;
+  meetingsProcessed: number;
 }> {
   // Get current user for filtering
   const userId = await getCurrentUserId();
@@ -624,23 +625,32 @@ export async function getDraftStats(): Promise<{
       failed: 0,
       avgCost: 0,
       avgLatency: 0,
+      meetingsProcessed: 0,
     };
   }
 
-  const stats = await db
-    .select({
-      total: sql<number>`count(*)`,
-      generated: sql<number>`count(*) filter (where ${drafts.status} = 'generated')`,
-      sent: sql<number>`count(*) filter (where ${drafts.status} = 'sent')`,
-      failed: sql<number>`count(*) filter (where ${drafts.status} = 'failed')`,
-      avgCost: sql<number>`avg(${drafts.costUsd}::numeric)`,
-      avgLatency: sql<number>`avg(${drafts.generationDurationMs})`,
-    })
-    .from(drafts)
-    .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
-    .where(eq(meetings.userId, userId));
+  const [draftStats, meetingStats] = await Promise.all([
+    db
+      .select({
+        total: sql<number>`count(*)`,
+        generated: sql<number>`count(*) filter (where ${drafts.status} = 'generated')`,
+        sent: sql<number>`count(*) filter (where ${drafts.status} = 'sent')`,
+        failed: sql<number>`count(*) filter (where ${drafts.status} = 'failed')`,
+        avgCost: sql<number>`avg(${drafts.costUsd}::numeric)`,
+        avgLatency: sql<number>`avg(${drafts.generationDurationMs})`,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(eq(meetings.userId, userId)),
+    db
+      .select({
+        count: sql<number>`count(*)`,
+      })
+      .from(meetings)
+      .where(and(eq(meetings.userId, userId), eq(meetings.status, 'completed'))),
+  ]);
 
-  const result = stats[0];
+  const result = draftStats[0];
   return {
     total: Number(result?.total || 0),
     generated: Number(result?.generated || 0),
@@ -648,6 +658,7 @@ export async function getDraftStats(): Promise<{
     failed: Number(result?.failed || 0),
     avgCost: Number(result?.avgCost || 0),
     avgLatency: Number(result?.avgLatency || 0),
+    meetingsProcessed: Number(meetingStats[0]?.count || 0),
   };
 }
 

@@ -18,29 +18,29 @@ const tierConfig = {
   free: {
     name: 'Free',
     icon: Zap,
-    color: 'text-indigo-400',
-    bgColor: 'bg-indigo-500/10',
-    borderColor: 'border-indigo-500/20',
+    color: 'text-[#5B6CFF]',
+    bgColor: 'bg-[#5B6CFF]/10',
+    borderColor: 'border-[#5B6CFF]/20',
   },
   pro: {
     name: 'Pro',
     icon: Sparkles,
-    color: 'text-indigo-400',
-    bgColor: 'bg-indigo-500/10',
-    borderColor: 'border-indigo-500/20',
+    color: 'text-[#5B6CFF]',
+    bgColor: 'bg-[#5B6CFF]/10',
+    borderColor: 'border-[#5B6CFF]/20',
   },
   team: {
     name: 'Team',
     icon: Building2,
-    color: 'text-indigo-400',
-    bgColor: 'bg-indigo-500/10',
-    borderColor: 'border-indigo-500/20',
+    color: 'text-[#5B6CFF]',
+    bgColor: 'bg-[#5B6CFF]/10',
+    borderColor: 'border-[#5B6CFF]/20',
   },
 };
 
 const statusBadges: Record<string, { color: string; bgColor: string; label: string }> = {
   active: { color: 'text-emerald-400', bgColor: 'bg-emerald-500/10 border-emerald-500/20', label: 'Active' },
-  trialing: { color: 'text-indigo-400', bgColor: 'bg-indigo-500/10 border-indigo-500/20', label: 'Trial' },
+  trialing: { color: 'text-[#5B6CFF]', bgColor: 'bg-[#5B6CFF]/10 border-[#5B6CFF]/20', label: 'Trial' },
   past_due: { color: 'text-red-400', bgColor: 'bg-red-500/10 border-red-500/20', label: 'Past Due' },
   canceled: { color: 'text-amber-400', bgColor: 'bg-amber-500/10 border-amber-500/20', label: 'Canceled' },
   unpaid: { color: 'text-red-400', bgColor: 'bg-red-500/10 border-red-500/20', label: 'Unpaid' },
@@ -61,7 +61,7 @@ function TrialCountdown({ trialEnd }: { trialEnd: string }) {
   if (daysRemaining === null) return null;
 
   return (
-    <div className="flex items-center gap-2 text-sm text-indigo-400">
+    <div className="flex items-center gap-2 text-sm text-[#5B6CFF]">
       <Clock className="w-4 h-4" />
       <span>
         <span className="tabular-nums">{daysRemaining > 0
@@ -152,8 +152,8 @@ export function PlanHeader({ billing, onScrollToPlans }: PlanHeaderProps) {
               <button
                 onClick={onScrollToPlans}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow]
-                  bg-gradient-to-r from-indigo-500 to-indigo-700 text-white
-                  hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white
+                  hover:from-[#4A5BEE] hover:to-[#2A3ACC] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-[#5B6CFF]/40 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 <Sparkles className="w-4 h-4" />
                 Upgrade Plan

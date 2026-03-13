@@ -38,14 +38,14 @@ function ChecklistItemRow({
       transition={{ delay: index * 0.1 }}
       className={`flex items-start gap-3 p-3 rounded-xl transition-colors ${
         item.completed
-          ? 'bg-indigo-500/10 light:bg-indigo-50'
+          ? 'bg-[#5B6CFF]/10 light:bg-[#EEF0FF]'
           : 'bg-gray-800/50 light:bg-gray-100 hover:bg-gray-800/70 light:hover:bg-gray-200'
       }`}
     >
       {/* Status icon */}
       <div className="shrink-0 mt-0.5">
         {item.completed ? (
-          <CheckCircle2 className="w-5 h-5 text-indigo-400" />
+          <CheckCircle2 className="w-5 h-5 text-[#5B6CFF]" />
         ) : (
           <Circle className="w-5 h-5 text-gray-500" />
         )}
@@ -56,7 +56,7 @@ function ChecklistItemRow({
         <h4
           className={`font-medium ${
             item.completed
-              ? 'text-indigo-400 line-through'
+              ? 'text-[#5B6CFF] line-through'
               : 'text-white light:text-gray-900'
           }`}
         >
@@ -79,7 +79,7 @@ function ChecklistItemRow({
         <button
           onClick={onSampleAction}
           disabled={sampleLoading}
-          className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 bg-[#5B6CFF]/20 text-[#5B6CFF] hover:bg-[#4A5BEE]/30 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {sampleLoading ? 'Generating\u2026' : (item.actionLabel || 'Try')}
           {!sampleLoading && <Sparkles className="w-3 h-3" />}
@@ -90,10 +90,10 @@ function ChecklistItemRow({
       {!item.completed && item.actionType !== 'sample' && item.actionUrl && (
         <Link
           href={item.actionUrl}
-          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+          className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             item.optional
               ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-700/70 light:bg-gray-200 light:text-gray-600 light:hover:bg-gray-300'
-              : 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30'
+              : 'bg-[#5B6CFF]/20 text-[#5B6CFF] hover:bg-[#4A5BEE]/30'
           }`}
         >
           {item.actionLabel || 'Go'}
@@ -129,7 +129,7 @@ function CelebrationParticle({ delay, x }: { delay: number; x: number }) {
       }}
       className="absolute"
     >
-      <Star className="w-4 h-4 text-indigo-400" fill="currentColor" />
+      <Star className="w-4 h-4 text-[#5B6CFF]" fill="currentColor" />
     </motion.div>
   );
 }
@@ -168,7 +168,7 @@ function CelebrationOverlay({ onClose }: { onClose: () => void }) {
           initial={{ scale: 0 }}
           animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
           transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-          className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center"
+          className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] rounded-full flex items-center justify-center"
         >
           <Sparkles className="w-10 h-10 text-white" />
         </motion.div>
@@ -311,8 +311,8 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
         {/* Header */}
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-              <Rocket className="w-6 h-6 text-indigo-400" />
+            <div className="w-12 h-12 rounded-xl bg-[#5B6CFF]/10 flex items-center justify-center">
+              <Rocket className="w-6 h-6 text-[#5B6CFF]" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white light:text-gray-900">
@@ -327,7 +327,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
           {/* Collapse toggle */}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-2 rounded-lg hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="p-2 rounded-lg hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             aria-label={collapsed ? 'Expand checklist' : 'Collapse checklist'}
           >
             {collapsed ? (
@@ -345,7 +345,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
               initial={{ width: 0 }}
               animate={{ width: `${data.percentComplete}%` }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="h-full bg-indigo-600 rounded-full"
+              className="h-full bg-[#4A5BEE] rounded-full"
             />
           </div>
           <span className="absolute right-0 -top-1 text-xs font-medium text-gray-400">

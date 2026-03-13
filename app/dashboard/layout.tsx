@@ -35,7 +35,7 @@ export default async function DashboardLayout({
         console.error('[ONBOARDING-GATE] Database error:', error);
         return [] as { completedAt: Date | null; currentStep: number }[];
       }),
-    getDraftStats().catch(() => ({ total: 0, generated: 0, sent: 0, failed: 0, avgCost: 0, avgLatency: 0 })),
+    getDraftStats().catch(() => ({ total: 0, generated: 0, sent: 0, failed: 0, avgCost: 0, avgLatency: 0, meetingsProcessed: 0 })),
   ]);
 
   const firstName = user?.firstName || 'there';

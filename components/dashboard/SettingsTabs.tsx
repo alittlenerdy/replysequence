@@ -58,9 +58,9 @@ export function SettingsTabs() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex-1 min-w-fit px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                className={`relative flex-1 min-w-fit px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                   activeTab === tab.id
-                    ? 'text-indigo-300 light:text-indigo-700'
+                    ? 'text-[#7A8BFF] light:text-[#3A4BDD]'
                     : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/[0.06] light:hover:bg-gray-50'
                 }`}
               >
@@ -68,7 +68,7 @@ export function SettingsTabs() {
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="settings-tab-indicator"
-                    className="absolute inset-0 rounded-lg shadow-sm bg-indigo-500/15 light:bg-indigo-50 border border-indigo-500/30 light:border-indigo-300"
+                    className="absolute inset-0 rounded-lg shadow-sm bg-[#5B6CFF]/15 light:bg-[#EEF0FF] border border-[#5B6CFF]/30 light:border-[#4A5BEE]/40"
                     transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
                   />
                 )}

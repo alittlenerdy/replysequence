@@ -75,9 +75,9 @@ export function StepEmailConnect({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Mail className="w-8 h-8 text-indigo-400" />
+          <Mail className="w-8 h-8 text-[#5B6CFF]" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -106,17 +106,17 @@ export function StepEmailConnect({
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">How it works</p>
         <div className="flex items-center gap-3 text-sm">
           <div className="flex items-center gap-2 text-gray-300">
-            <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span className="w-6 h-6 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF] text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
             <span>Choose your provider</span>
           </div>
           <ArrowRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
           <div className="flex items-center gap-2 text-gray-300">
-            <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span className="w-6 h-6 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF] text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
             <span>Approve on Google/Microsoft</span>
           </div>
           <ArrowRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
           <div className="flex items-center gap-2 text-gray-300">
-            <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span className="w-6 h-6 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF] text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
             <span>You&apos;re back here, done</span>
           </div>
         </div>
@@ -134,7 +134,7 @@ export function StepEmailConnect({
             <p className="text-sm text-red-300 font-medium">Connection failed</p>
             <p className="text-sm text-red-400/80 mt-0.5">{error}</p>
           </div>
-          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-300 text-xs rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-300 text-xs rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
             Dismiss
           </button>
         </motion.div>
@@ -154,17 +154,17 @@ export function StepEmailConnect({
               transition={{ delay: 0.2 + index * 0.1 }}
               className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
                 isThisProviderConnected
-                  ? 'border-indigo-500/50 bg-indigo-500/5'
+                  ? 'border-[#5B6CFF]/50 bg-[#5B6CFF]/5'
                   : emailConnected
                   ? 'border-gray-700/50 opacity-60'
                   : provider.recommended
-                  ? 'border-indigo-500/30 hover:border-indigo-500/50'
+                  ? 'border-[#5B6CFF]/30 hover:border-[#5B6CFF]/50'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
               {/* Recommended badge */}
               {provider.recommended && !emailConnected && (
-                <div className="absolute top-0 right-0 px-3 py-1 bg-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase tracking-wider rounded-bl-lg">
+                <div className="absolute top-0 right-0 px-3 py-1 bg-[#5B6CFF]/20 text-[#5B6CFF] text-[10px] font-bold uppercase tracking-wider rounded-bl-lg">
                   Most popular
                 </div>
               )}
@@ -177,7 +177,7 @@ export function StepEmailConnect({
                     {provider.icon}
                   </div>
                   {isThisProviderConnected && (
-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-medium">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#5B6CFF]/10 text-[#5B6CFF] text-xs font-medium">
                       <Check className="w-3.5 h-3.5" />
                       Connected
                     </div>
@@ -186,14 +186,14 @@ export function StepEmailConnect({
                 <h3 className="text-lg font-bold text-white mb-2">{provider.name}</h3>
                 <p className="text-sm text-gray-400 mb-4">{provider.description}</p>
                 {isThisProviderConnected && connectedEmail && (
-                  <p className="text-sm text-indigo-400 mb-4 truncate">{connectedEmail}</p>
+                  <p className="text-sm text-[#5B6CFF] mb-4 truncate">{connectedEmail}</p>
                 )}
                 <button
                   onClick={() => handleConnect(provider.id)}
                   disabled={emailConnected || connecting !== null}
-                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                  className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                     isThisProviderConnected
-                      ? 'bg-indigo-500/10 text-indigo-400 cursor-default'
+                      ? 'bg-[#5B6CFF]/10 text-[#5B6CFF] cursor-default'
                       : emailConnected
                       ? 'bg-gray-800/50 text-gray-500 cursor-default'
                       : isConnecting
@@ -259,7 +259,7 @@ export function StepEmailConnect({
         >
           <button
             onClick={onEmailConnected}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] hover:from-[#4A5BEE] hover:to-[#2A3ACC] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-[#5B6CFF]/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Continue to AI Voice
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -278,7 +278,7 @@ export function StepEmailConnect({
         {!showSkipWarning ? (
           <button
             onClick={() => setShowSkipWarning(true)}
-            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             I&apos;ll do this later
           </button>
@@ -297,13 +297,13 @@ export function StepEmailConnect({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSkipWarning(false)}
-                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Connect Now
               </button>
               <button
                 onClick={onSkip}
-                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Skip Anyway
               </button>

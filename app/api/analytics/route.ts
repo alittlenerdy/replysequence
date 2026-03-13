@@ -54,7 +54,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 
 // Meeting type colors
 const MEETING_TYPE_COLORS: Record<string, string> = {
-  sales_call: '#F59E0B',        // Amber
+  sales_call: '#FF9D2D',        // Amber
   internal_sync: '#3B82F6',     // Blue
   client_review: '#A855F7',     // Purple
   technical_discussion: '#10B981', // Green

@@ -244,7 +244,7 @@ async function sendHealthAlert(report: HealthReport): Promise<void> {
   if (!slackWebhookUrl) return;
 
   const statusEmoji = report.status === 'critical' ? ':rotating_light:' : ':warning:';
-  const statusColor = report.status === 'critical' ? '#dc2626' : '#f59e0b';
+  const statusColor = report.status === 'critical' ? '#dc2626' : '#FF9D2D';
 
   const platformLines = Object.entries(report.platforms)
     .filter(([, h]) => h.pending > 0 || h.stuck > 0 || h.recentDeadLetters > 0)

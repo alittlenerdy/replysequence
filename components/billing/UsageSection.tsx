@@ -21,8 +21,8 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
   return (
     <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
-          <svg className="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/10 flex items-center justify-center">
+          <svg className="w-4 h-4 text-[#5B6CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
         </div>
         <h3 className="text-lg font-semibold text-white light:text-gray-900">Usage This Month</h3>
       </div>
@@ -42,7 +42,7 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
           <div className="h-2.5 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-[width] duration-700 ${
-                isAtLimit ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-indigo-500'
+                isAtLimit ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-[#5B6CFF]'
               }`}
               style={{ width: `${pct}%` }}
             />
@@ -66,13 +66,13 @@ export function UsageSection({ billing, onScrollToPlans }: UsageSectionProps) {
       {tier === 'free' && isWarning && (
         <button
           onClick={onScrollToPlans}
-          className="mt-4 w-full flex items-center justify-between p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/10 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="mt-4 w-full flex items-center justify-between p-3 bg-[#5B6CFF]/5 border border-[#5B6CFF]/20 rounded-xl hover:bg-[#4A5BEE]/10 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            <span className="text-sm text-indigo-400 font-medium">Upgrade to Pro for unlimited drafts</span>
+            <Sparkles className="w-4 h-4 text-[#5B6CFF]" />
+            <span className="text-sm text-[#5B6CFF] font-medium">Upgrade to Pro for unlimited drafts</span>
           </div>
-          <span className="text-xs text-indigo-400/60 group-hover:text-indigo-400 transition-colors">
+          <span className="text-xs text-[#5B6CFF]/60 group-hover:text-[#5B6CFF] transition-colors">
             $19/mo &rarr;
           </span>
         </button>

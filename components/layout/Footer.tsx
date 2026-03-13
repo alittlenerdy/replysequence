@@ -41,7 +41,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+            <Link href="/" className="rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
               <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
             </Link>
             <p className="text-sm text-gray-500 light:text-gray-600 mt-2">
@@ -52,7 +52,7 @@ export function Footer() {
                 href="https://linkedin.com/in/jimmyhackett"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="text-gray-500 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" aria-hidden="true" />
@@ -61,7 +61,7 @@ export function Footer() {
                 href="https://x.com/replysequence"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="text-gray-500 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 aria-label="X (Twitter)"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
@@ -70,7 +70,7 @@ export function Footer() {
                 href="https://github.com/alittlenerdy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="text-gray-500 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5" aria-hidden="true" />
@@ -86,7 +86,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {link.label}
                   </Link>
@@ -103,7 +103,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {link.label}
                   </Link>
@@ -120,7 +120,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {link.label}
                   </Link>
@@ -137,7 +137,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-indigo-400 light:hover:text-indigo-500 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#5B6CFF] light:hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {link.label}
                   </Link>

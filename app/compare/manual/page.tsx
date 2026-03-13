@@ -48,7 +48,7 @@ function FloatingParticles() {
       {STATIC_PARTICLES.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 light:w-2 light:h-2 bg-indigo-400/30 light:bg-indigo-500/40 rounded-full"
+          className="absolute w-1 h-1 light:w-2 light:h-2 bg-[#5B6CFF]/30 light:bg-[#5B6CFF]/40 rounded-full"
           style={{
             left: `${particle.left}%`,
             top: `${particle.top}%`,
@@ -204,10 +204,10 @@ function FeatureValue({ value, isWinner }: { value: string | boolean; isWinner: 
   if (typeof value === 'boolean') {
     return value ? (
       <motion.div
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-indigo-500/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
+        className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${isWinner ? 'bg-[#5B6CFF]/20' : 'bg-gray-700/50 light:bg-gray-200'}`}
         whileHover={{ scale: 1.1 }}
       >
-        <Check className={`w-5 h-5 ${isWinner ? 'text-indigo-400' : 'text-gray-400 light:text-gray-500'}`} />
+        <Check className={`w-5 h-5 ${isWinner ? 'text-[#5B6CFF]' : 'text-gray-400 light:text-gray-500'}`} />
       </motion.div>
     ) : (
       <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-800/50 light:bg-gray-100">
@@ -226,14 +226,14 @@ export default function ManualComparisonPage() {
   const categories = [...new Set(comparisonData.map(row => row.category))];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] light:bg-white">
+    <div className="min-h-screen bg-[#060B18] light:bg-white">
       <Header />
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         {/* Background effects */}
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 light:from-indigo-400/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#5B6CFF]/5 light:from-[#5B6CFF]/10 via-transparent to-transparent" />
         <motion.div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-[120px]"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#5B6CFF]/10 light:bg-[#5B6CFF]/20 rounded-full blur-[120px]"
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -247,7 +247,7 @@ export default function ManualComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/20 to-indigo-700/20 border border-indigo-500/30 text-indigo-300 light:text-indigo-600 text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#5B6CFF]/20 to-[#3A4BDD]/20 border border-[#5B6CFF]/30 text-[#7A8BFF] light:text-[#4A5BEE] text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
             The Case for Automation
@@ -279,16 +279,16 @@ export default function ManualComparisonPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-indigo-50/80 border border-gray-700/50 light:border-indigo-200"
+            className="max-w-3xl mx-auto mb-12 p-5 rounded-2xl bg-gray-900/60 light:bg-[#EEF0FF]/80 border border-gray-700/50 light:border-[#4A5BEE]/30"
           >
-            <p className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider mb-3">The reality</p>
+            <p className="text-xs font-semibold text-gray-500 light:text-[#5B6CFF] uppercase tracking-wider mb-3">The reality</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-400 light:text-gray-500 mb-1">Manual Process</p>
                 <p className="text-sm text-gray-300 light:text-gray-600">23 minutes per email. 44% never sent. Details forgotten between calls.</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-indigo-400 light:text-indigo-600 mb-1">ReplySequence</p>
+                <p className="text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] mb-1">ReplySequence</p>
                 <p className="text-sm text-gray-300 light:text-gray-600">8-second AI drafts, multi-step sequences, next-step extraction, deal risk alerts, and CRM sync. Every meeting, every time.</p>
               </div>
             </div>
@@ -304,8 +304,8 @@ export default function ManualComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 border-2 border-indigo-500/50 overflow-hidden group shadow-xl shadow-indigo-500/20"
-              style={{ boxShadow: '0 0 40px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
+              className="relative p-8 rounded-2xl bg-gradient-to-br from-[#5B6CFF]/10 via-[#5B6CFF]/5 to-[#4A5BEE]/10 border-2 border-[#5B6CFF]/50 overflow-hidden group shadow-xl shadow-[#5B6CFF]/20"
+              style={{ boxShadow: '0 0 40px rgba(91, 108, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)' }}
             >
               {/* Shine effect on hover */}
               <motion.div
@@ -319,17 +319,17 @@ export default function ManualComparisonPage() {
                 animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               >
-                <Trophy className="w-6 h-6 text-indigo-400 drop-shadow-lg" />
+                <Trophy className="w-6 h-6 text-[#5B6CFF] drop-shadow-lg" />
               </motion.div>
               <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3">Switch to ReplySequence if...</h2>
               <ul className="text-gray-300 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You have more than 5 meetings a week</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> Follow-ups, next steps, or deal risks slip through the cracks</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" /> You want personalized follow-ups, automated sequences, and deal intelligence</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#5B6CFF] flex-shrink-0 mt-0.5" /> You have more than 5 meetings a week</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#5B6CFF] flex-shrink-0 mt-0.5" /> Follow-ups, next steps, or deal risks slip through the cracks</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#5B6CFF] flex-shrink-0 mt-0.5" /> You want personalized follow-ups, automated sequences, and deal intelligence</li>
               </ul>
               <div className="mt-5 space-y-1">
-                <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-500 font-medium text-sm">
-                  <Zap className="w-4 h-4 text-indigo-400" />
+                <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-[#5B6CFF] to-[#5B6CFF] font-medium text-sm">
+                  <Zap className="w-4 h-4 text-[#5B6CFF]" />
                   Anyone who takes sales calls
                 </div>
               </div>
@@ -338,14 +338,14 @@ export default function ManualComparisonPage() {
             <motion.div
               whileHover={{ scale: 1.02, y: -4 }}
               transition={{ type: 'spring', stiffness: 300 }}
-              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-indigo-200 overflow-hidden group"
+              className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-[#EEF0FF] border border-gray-700 light:border-[#4A5BEE]/30 overflow-hidden group"
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Keep manual follow-ups if...</h2>
               <p className="text-gray-400 light:text-gray-600 leading-relaxed">
-                You have <span className="text-gray-200 light:text-indigo-700 font-semibold">fewer than 2 meetings a week</span>{' '}
+                You have <span className="text-gray-200 light:text-[#3A4BDD] font-semibold">fewer than 2 meetings a week</span>{' '}
                 and enjoy the process of crafting each email from scratch. If follow-up speed isn&apos;t a competitive advantage in your role.
               </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium">
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-[#4A5BEE] font-medium">
                 <Clock className="w-4 h-4" />
                 Best for: Very low meeting volume, non-sales roles
               </div>
@@ -355,9 +355,9 @@ export default function ManualComparisonPage() {
       </section>
 
       {/* Stats Banner */}
-      <AnimatedSection className="py-10 px-4 border-y border-indigo-500/20 bg-gradient-to-r from-indigo-500/5 via-indigo-500/5 to-amber-500/5 relative">
+      <AnimatedSection className="py-10 px-4 border-y border-[#5B6CFF]/20 bg-gradient-to-r from-[#5B6CFF]/5 via-[#5B6CFF]/5 to-amber-500/5 relative">
         {/* Background glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-transparent to-indigo-500/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#5B6CFF]/10 via-transparent to-[#5B6CFF]/10 pointer-events-none" />
         <div className="max-w-5xl mx-auto relative">
           <motion.div
             variants={staggerContainer}
@@ -367,10 +367,10 @@ export default function ManualComparisonPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: '8 sec', label: 'vs 23 min per follow-up', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '8 sec', label: 'vs 23 min per follow-up', gradient: 'from-[#5B6CFF] to-[#4A5BEE]' },
               { value: '44%', label: 'of manual follow-ups skipped', gradient: 'from-red-400 to-amber-400' },
               { value: '7.6 hrs', label: 'saved per month (20 calls)', gradient: 'from-amber-400 to-amber-500' },
-              { value: '$570', label: 'monthly time cost saved', gradient: 'from-indigo-400 to-indigo-600' },
+              { value: '$570', label: 'monthly time cost saved', gradient: 'from-[#5B6CFF] to-[#4A5BEE]' },
             ].map((stat, i) => (
               <motion.div key={i} variants={staggerItem} className="relative">
                 <motion.div
@@ -409,7 +409,7 @@ export default function ManualComparisonPage() {
             {/* Timeline header */}
             <div className="grid grid-cols-[80px_1fr_1fr] gap-4 px-4 pb-2">
               <div />
-              <div className="text-center text-sm font-bold text-indigo-400 light:text-indigo-600">ReplySequence</div>
+              <div className="text-center text-sm font-bold text-[#5B6CFF] light:text-[#4A5BEE]">ReplySequence</div>
               <div className="text-center text-sm font-bold text-gray-400 light:text-gray-500">Manual Process</div>
             </div>
 
@@ -429,7 +429,7 @@ export default function ManualComparisonPage() {
                   whileHover={{ scale: 1.02 }}
                   className={`p-4 rounded-xl border ${
                     index <= 2
-                      ? 'bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-transparent border-indigo-500/30 light:from-indigo-50 light:border-indigo-200'
+                      ? 'bg-gradient-to-r from-[#5B6CFF]/10 via-[#5B6CFF]/5 to-transparent border-[#5B6CFF]/30 light:from-[#EEF0FF] light:border-[#4A5BEE]/30'
                       : 'bg-gray-900/20 light:bg-gray-50 border-gray-800/50 light:border-gray-200'
                   }`}
                 >
@@ -466,11 +466,11 @@ export default function ManualComparisonPage() {
           </AnimatedSection>
 
           {/* Comparison Header */}
-          <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 light:bg-gradient-to-r light:from-indigo-50/95 light:to-indigo-50/95 backdrop-blur-sm border-b border-gray-800 light:border-indigo-200 mb-4">
+          <div className="sticky top-0 z-10 bg-[#060B18]/95 light:bg-gradient-to-r light:from-[#EEF0FF]/95 light:to-[#EEF0FF]/95 backdrop-blur-sm border-b border-gray-800 light:border-[#4A5BEE]/30 mb-4">
             <div className="grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-3 py-3 sm:py-4">
-              <div className="text-gray-500 light:text-indigo-600 font-medium pl-4">Feature</div>
+              <div className="text-gray-500 light:text-[#4A5BEE] font-medium pl-4">Feature</div>
               <div className="text-center">
-                <span className="text-indigo-400 light:text-indigo-600 font-bold text-sm sm:text-lg">ReplySequence</span>
+                <span className="text-[#5B6CFF] light:text-[#4A5BEE] font-bold text-sm sm:text-lg">ReplySequence</span>
               </div>
               <div className="text-center">
                 <span className="text-gray-400 light:text-slate-600 font-bold text-sm sm:text-lg">Manual</span>
@@ -482,9 +482,9 @@ export default function ManualComparisonPage() {
           {categories.map((category, catIndex) => (
             <AnimatedSection key={category} delay={catIndex * 0.1} className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-indigo-200 to-transparent" />
-                <span className="text-xs font-semibold text-gray-500 light:text-indigo-500 uppercase tracking-wider">{category}</span>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-indigo-200 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-[#B3BFFF] to-transparent" />
+                <span className="text-xs font-semibold text-gray-500 light:text-[#5B6CFF] uppercase tracking-wider">{category}</span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 light:via-[#B3BFFF] to-transparent" />
               </div>
 
               <motion.div
@@ -503,10 +503,10 @@ export default function ManualComparisonPage() {
                       whileHover={{ scale: 1.01, x: 4 }}
                       className={`grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-3 items-center py-3 px-3 sm:py-4 sm:px-4 rounded-xl transition-colors duration-200 ${
                         row.winner === 'replysequence'
-                          ? 'bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-transparent hover:from-indigo-500/15 hover:via-indigo-400/10 light:from-indigo-100/80 light:via-indigo-50/60 light:to-transparent light:hover:from-indigo-100 light:hover:via-indigo-50/80 border-l-2 border-l-indigo-500 border border-indigo-500/30 light:border-indigo-300 shadow-lg shadow-indigo-500/5 light:shadow-indigo-200/30'
+                          ? 'bg-gradient-to-r from-[#5B6CFF]/10 via-[#5B6CFF]/5 to-transparent hover:from-[#5B6CFF]/15 hover:via-[#5B6CFF]/10 light:from-[#DDE1FF]/80 light:via-[#EEF0FF]/60 light:to-transparent light:hover:from-[#EEF0FF] light:hover:via-[#F5F6FF]/80 border-l-2 border-l-[#5B6CFF] border border-[#5B6CFF]/30 light:border-[#4A5BEE]/40 shadow-lg shadow-[#5B6CFF]/5 light:shadow-[#DDE1FF]/30'
                           : row.winner === 'manual'
                           ? 'bg-gray-800/30 light:bg-slate-50 hover:bg-gray-800/50 light:hover:bg-slate-100 border border-gray-700/50 light:border-slate-200'
-                          : 'bg-gray-900/30 light:bg-indigo-50/30 hover:bg-gray-800/30 light:hover:bg-indigo-50/60 border border-gray-700/30 light:border-indigo-100'
+                          : 'bg-gray-900/30 light:bg-[#EEF0FF]/30 hover:bg-gray-800/30 light:hover:bg-[#F5F6FF]/60 border border-gray-700/30 light:border-[#EEF0FF]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -515,7 +515,7 @@ export default function ManualComparisonPage() {
                           <motion.span
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white text-xs font-bold shadow-lg shadow-indigo-500/30"
+                            className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white text-xs font-bold shadow-lg shadow-[#5B6CFF]/30"
                           >
                             Winner
                           </motion.span>
@@ -536,7 +536,7 @@ export default function ManualComparisonPage() {
       </section>
 
       {/* Key Differences */}
-      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-indigo-50/50 to-transparent">
+      <section className="py-20 px-4 bg-gradient-to-b from-gray-900/50 light:from-[#EEF0FF]/50 to-transparent">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4">Why Reps Switch</h2>
@@ -557,20 +557,20 @@ export default function ManualComparisonPage() {
                 key={index}
                 variants={staggerItem}
                 whileHover={{ scale: 1.02, y: -4 }}
-                className="relative p-6 rounded-2xl border-2 overflow-hidden group bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 light:from-indigo-50 light:via-indigo-50/50 light:to-amber-50 border-indigo-500/40 light:border-indigo-300 shadow-xl shadow-indigo-500/10 light:shadow-indigo-200/40"
-                style={{ boxShadow: '0 0 30px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
+                className="relative p-6 rounded-2xl border-2 overflow-hidden group bg-gradient-to-br from-[#5B6CFF]/10 via-[#5B6CFF]/5 to-[#4A5BEE]/10 light:from-[#EEF0FF] light:via-[#EEF0FF]/50 light:to-amber-50 border-[#5B6CFF]/40 light:border-[#4A5BEE]/40 shadow-xl shadow-[#5B6CFF]/10 light:shadow-[#DDE1FF]/40"
+                style={{ boxShadow: '0 0 30px rgba(91, 108, 255, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
               >
                 {/* Stat badge */}
                 <motion.div
                   whileHover={{ scale: 1.1 }}
-                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold bg-indigo-500/20 light:bg-indigo-100 text-indigo-400 light:text-indigo-600"
+                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold bg-[#5B6CFF]/20 light:bg-[#DDE1FF] text-[#5B6CFF] light:text-[#4A5BEE]"
                 >
                   {diff.stat}
                 </motion.div>
 
                 <motion.div
                   whileHover={{ rotate: 5 }}
-                  className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 bg-indigo-500/20 light:bg-indigo-100 text-indigo-400 light:text-indigo-600"
+                  className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 bg-[#5B6CFF]/20 light:bg-[#DDE1FF] text-[#5B6CFF] light:text-[#4A5BEE]"
                 >
                   <diff.icon className="w-6 h-6" />
                 </motion.div>
@@ -599,7 +599,7 @@ export default function ManualComparisonPage() {
           <AnimatedSection>
             <motion.div
               whileHover={{ scale: 1.01 }}
-              className="p-8 md:p-10 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-indigo-50 light:to-amber-50 border border-gray-700 light:border-indigo-200"
+              className="p-8 md:p-10 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-[#EEF0FF] light:to-amber-50 border border-gray-700 light:border-[#4A5BEE]/30"
             >
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Manual side */}
@@ -628,8 +628,8 @@ export default function ManualComparisonPage() {
                 {/* RS side */}
                 <div>
                   <div className="flex items-center gap-2 mb-6">
-                    <Mail className="w-5 h-5 text-indigo-400" />
-                    <h3 className="text-lg font-bold text-indigo-400 light:text-indigo-600">ReplySequence Cost</h3>
+                    <Mail className="w-5 h-5 text-[#5B6CFF]" />
+                    <h3 className="text-lg font-bold text-[#5B6CFF] light:text-[#4A5BEE]">ReplySequence Cost</h3>
                   </div>
                   <div className="space-y-4">
                     {[
@@ -640,9 +640,9 @@ export default function ManualComparisonPage() {
                       { label: 'Follow-ups skipped', value: '0' },
                       { label: 'Net savings', value: '$551/month' },
                     ].map((item, i) => (
-                      <div key={i} className="flex justify-between items-center py-2 border-b border-indigo-500/20 light:border-indigo-200 last:border-0">
+                      <div key={i} className="flex justify-between items-center py-2 border-b border-[#5B6CFF]/20 light:border-[#4A5BEE]/30 last:border-0">
                         <span className="text-sm text-gray-400 light:text-gray-500">{item.label}</span>
-                        <span className="text-sm font-semibold text-indigo-300 light:text-indigo-600">{item.value}</span>
+                        <span className="text-sm font-semibold text-[#7A8BFF] light:text-[#4A5BEE]">{item.value}</span>
                       </div>
                     ))}
                   </div>
@@ -658,17 +658,17 @@ export default function ManualComparisonPage() {
         <div className="max-w-4xl mx-auto">
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-indigo-900/10 to-gray-900/50 light:from-white light:via-indigo-50 light:to-indigo-50 border-2 border-indigo-500/30 light:border-indigo-200 overflow-hidden shadow-2xl light:shadow-indigo-100/50"
-            style={{ boxShadow: '0 0 60px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
+            className="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-gray-900 via-[#1C2545]/10 to-gray-900/50 light:from-white light:via-[#EEF0FF] light:to-[#EEF0FF] border-2 border-[#5B6CFF]/30 light:border-[#4A5BEE]/30 overflow-hidden shadow-2xl light:shadow-[#EEF0FF]/50"
+            style={{ boxShadow: '0 0 60px rgba(91, 108, 255, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)' }}
           >
             {/* Decorative elements */}
             <motion.div
-              className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-3xl"
+              className="absolute top-0 right-0 w-64 h-64 bg-[#5B6CFF]/10 light:bg-[#5B6CFF]/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
             <motion.div
-              className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-3xl"
+              className="absolute bottom-0 left-0 w-48 h-48 bg-[#5B6CFF]/10 light:bg-[#5B6CFF]/20 rounded-full blur-3xl"
               animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
               transition={{ duration: 8, repeat: Infinity, delay: 1 }}
             />
@@ -677,9 +677,9 @@ export default function ManualComparisonPage() {
               <div className="flex items-center gap-3 mb-6">
                 <motion.div
                   whileHover={{ rotate: 10 }}
-                  className="p-3 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 light:from-indigo-100 light:to-indigo-100"
+                  className="p-3 rounded-xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 light:from-[#DDE1FF] light:to-[#DDE1FF]"
                 >
-                  <Shield className="w-6 h-6 text-indigo-400" />
+                  <Shield className="w-6 h-6 text-[#5B6CFF]" />
                 </motion.div>
                 <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900">The Bottom Line</h2>
               </div>
@@ -691,7 +691,7 @@ export default function ManualComparisonPage() {
                   back-to-back calls, multiple prospects, tight timelines -- the manual approach breaks down fast.
                 </p>
                 <p>
-                  <strong className="text-indigo-400">ReplySequence</strong> doesn&apos;t replace your judgment. You still
+                  <strong className="text-[#5B6CFF]">ReplySequence</strong> doesn&apos;t replace your judgment. You still
                   review every follow-up before it sends. It replaces the 23 minutes of staring at a blank compose
                   window, trying to remember what was said, and hoping you didn&apos;t miss an action item -- while also
                   scheduling multi-step sequences, extracting next steps with due dates, and alerting you to deal risks.
@@ -704,12 +704,12 @@ export default function ManualComparisonPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="p-5 rounded-xl bg-gradient-to-r from-indigo-500/10 via-indigo-400/5 to-indigo-600/10 border border-indigo-500/30 shadow-lg shadow-indigo-500/5"
+                className="p-5 rounded-xl bg-gradient-to-r from-[#5B6CFF]/10 via-[#5B6CFF]/5 to-[#4A5BEE]/10 border border-[#5B6CFF]/30 shadow-lg shadow-[#5B6CFF]/5"
               >
                 <p className="text-gray-300 light:text-gray-600 text-sm italic flex items-start gap-3">
-                  <Sparkles className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                  <Sparkles className="w-5 h-5 text-[#5B6CFF] flex-shrink-0 mt-0.5" />
                   <span>
-                    <strong className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-amber-400">The speed advantage:</strong> Research shows that
+                    <strong className="text-transparent bg-clip-text bg-gradient-to-r from-[#5B6CFF] to-amber-400">The speed advantage:</strong> Research shows that
                     responding within 5 minutes of a meeting makes you 21x more likely to qualify a lead than waiting 30 minutes.
                     ReplySequence puts you in that window every time.
                   </span>
@@ -721,10 +721,10 @@ export default function ManualComparisonPage() {
       </AnimatedSection>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-t from-indigo-500/10 via-indigo-500/5 light:from-indigo-50 light:via-indigo-50 to-transparent relative overflow-hidden">
+      <section className="py-20 px-4 bg-gradient-to-t from-[#5B6CFF]/10 via-[#5B6CFF]/5 light:from-[#EEF0FF] light:via-[#EEF0FF] to-transparent relative overflow-hidden">
         {/* Background glows */}
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 light:bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#5B6CFF]/10 light:bg-[#5B6CFF]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#5B6CFF]/10 light:bg-[#5B6CFF]/20 rounded-full blur-3xl pointer-events-none" />
         <AnimatedSection className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -733,7 +733,7 @@ export default function ManualComparisonPage() {
             className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-6"
           >
             Stop Writing Follow-Ups.{' '}
-            <span className="bg-gradient-to-r from-indigo-400 to-indigo-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#5B6CFF] to-[#5B6CFF] bg-clip-text text-transparent">
               Start Sending Them.
             </span>
           </motion.h2>

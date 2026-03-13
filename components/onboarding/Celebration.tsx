@@ -29,7 +29,7 @@ interface Sparkle {
   delay: number;
 }
 
-const COLORS = ['#6366f1', '#818cf8', '#a5b4fc', '#f59e0b', '#fbbf24', '#4f46e5'];
+const COLORS = ['#5B6CFF', '#7A8BFF', '#a5b4fc', '#FF9D2D', '#FF9D2D', '#4A5BEE'];
 
 export function Celebration({
   show,
@@ -185,8 +185,8 @@ export function Celebration({
               />
               <defs>
                 <linearGradient id="sparkle-gradient" x1="3" y1="2" x2="21" y2="22">
-                  <stop stopColor="#6366f1" />
-                  <stop offset="1" stopColor="#f59e0b" />
+                  <stop stopColor="#5B6CFF" />
+                  <stop offset="1" stopColor="#FF9D2D" />
                 </linearGradient>
               </defs>
             </svg>
@@ -215,7 +215,7 @@ export function Celebration({
                 duration: 0.4,
                 delay: 0.2,
               }}
-              className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/40"
+              className="w-20 h-20 rounded-full bg-gradient-to-br from-[#5B6CFF] to-[#4A5BEE] flex items-center justify-center shadow-2xl shadow-[#5B6CFF]/40"
             >
               <motion.div
                 initial={{ pathLength: 0, opacity: 0 }}
@@ -231,13 +231,13 @@ export function Celebration({
               initial={{ opacity: 0.6, scale: 1 }}
               animate={{ opacity: 0, scale: 2 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="absolute inset-0 rounded-full border-2 border-indigo-400"
+              className="absolute inset-0 rounded-full border-2 border-[#5B6CFF]"
             />
             <motion.div
               initial={{ opacity: 0.4, scale: 1 }}
               animate={{ opacity: 0, scale: 2.5 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="absolute inset-0 rounded-full border-2 border-indigo-400"
+              className="absolute inset-0 rounded-full border-2 border-[#5B6CFF]"
             />
           </motion.div>
         )}
@@ -312,7 +312,7 @@ export function MiniCelebration({
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" aria-hidden="true">
               <path
                 d="M12 2L13.09 8.26L18 6L14.74 10.91L21 12L14.74 13.09L18 18L13.09 15.74L12 22L10.91 15.74L6 18L9.26 13.09L3 12L9.26 10.91L6 6L10.91 8.26L12 2Z"
-                fill="#6366f1"
+                fill="#5B6CFF"
               />
             </svg>
           </motion.div>

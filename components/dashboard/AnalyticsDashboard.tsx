@@ -16,7 +16,7 @@ import type { AnalyticsData } from '@/lib/types/analytics';
 
 // Chart loading placeholder
 const ChartSkeleton = () => (
-  <div className="h-48 bg-gray-800/50 light:bg-gray-100 light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
+  <div className="h-48 bg-gray-800/50 light:bg-gray-100 rounded-xl animate-pulse flex items-center justify-center">
     <BarChart3 className="w-8 h-8 text-gray-600 light:text-gray-400" />
   </div>
 );
@@ -148,7 +148,7 @@ export function AnalyticsDashboard() {
           {[...Array(2)].map((_, i) => (
             <div key={i} className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-6 h-[220px] animate-pulse">
               <div className="h-4 w-32 bg-gray-700/50 light:bg-gray-200 rounded mb-4" />
-              <div className="h-[140px] bg-gray-800/50 light:bg-gray-100 light:bg-gray-100 rounded" />
+              <div className="h-[140px] bg-gray-800/50 light:bg-gray-100 rounded" />
             </div>
           ))}
         </div>
@@ -164,7 +164,7 @@ export function AnalyticsDashboard() {
         <p className="text-red-400 text-lg mb-2">{error}</p>
         <button
           onClick={() => fetchAnalytics()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           <RefreshCw className="w-4 h-4" />
           Try Again
@@ -193,7 +193,7 @@ export function AnalyticsDashboard() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-2xl font-bold text-white light:text-gray-900">
-            <span className="bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">Analytics</span>
+            <span className="bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">Analytics</span>
           </h2>
           {lastUpdated && (
             <p className="text-xs text-gray-500 mt-1">
@@ -208,9 +208,9 @@ export function AnalyticsDashboard() {
               <button
                 key={range.value}
                 onClick={() => setDateRange(range.value)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                   dateRange === range.value
-                    ? 'bg-indigo-500 text-white shadow-sm'
+                    ? 'bg-[#5B6CFF] text-white shadow-sm'
                     : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
                 }`}
               >
@@ -221,7 +221,7 @@ export function AnalyticsDashboard() {
           <button
             onClick={() => fetchAnalytics(true)}
             disabled={isRefreshing}
-            className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="p-2 text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-gray-800 light:hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             title="Refresh analytics"
             aria-label="Refresh data"
           >
@@ -255,8 +255,8 @@ export function AnalyticsDashboard() {
             value={coveragePercent}
             suffix="%"
             subtitle={`${analytics.emailsSent} of ${analytics.totalMeetings} meetings`}
-            gradient="from-indigo-500/20 to-indigo-600/20"
-            accentColor="#6366F1"
+            gradient="from-[#5B6CFF]/20 to-[#4A5BEE]/20"
+            accentColor="#5B6CFF"
             comparison={analytics.sentComparison}
             hero
           />
@@ -273,7 +273,7 @@ export function AnalyticsDashboard() {
             suffix={analytics.medianFollowUpTimeHours !== null ? 'h' : ''}
             subtitle={analytics.medianFollowUpTimeHours === null ? 'No sent emails yet' : 'After meeting ends'}
             gradient="from-amber-500/20 to-amber-600/20"
-            accentColor="#F59E0B"
+            accentColor="#FF9D2D"
           />
         </motion.div>
         <motion.div
@@ -287,7 +287,7 @@ export function AnalyticsDashboard() {
             value={analytics.emailsGenerated > 0 ? Math.round((analytics.emailsSent / analytics.emailsGenerated) * 100) : 0}
             suffix="%"
             subtitle={`${analytics.emailsSent} of ${analytics.emailsGenerated} sent`}
-            gradient="from-indigo-500/20 to-indigo-600/20"
+            gradient="from-[#5B6CFF]/20 to-[#4A5BEE]/20"
             accentColor="#3B82F6"
             comparison={analytics.emailsComparison}
           />
@@ -304,7 +304,7 @@ export function AnalyticsDashboard() {
             suffix="h"
             subtitle={`~$${Math.round(dollarsSaved).toLocaleString()} saved at $${analytics.hourlyRate}/hr`}
             gradient="from-amber-500/20 to-amber-600/20"
-            accentColor="#F59E0B"
+            accentColor="#FF9D2D"
           />
         </motion.div>
       </div>
@@ -427,7 +427,7 @@ export function AnalyticsDashboard() {
           <ActivityChart
             data={analytics.dailyEmails}
             title={`Draft Volume (Last ${dateRange} Days)`}
-            color="#6366F1"
+            color="#5B6CFF"
             gradientId="emailsGradient"
           />
         </div>
@@ -442,7 +442,7 @@ export function AnalyticsDashboard() {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative w-32 h-32 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-full flex items-center justify-center shadow-lg"
+                className="relative w-32 h-32 bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] rounded-full flex items-center justify-center shadow-lg"
               >
                 <div className="flex items-end gap-1.5">
                   <motion.div
@@ -484,7 +484,7 @@ export function AnalyticsDashboard() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <a
                 href="/dashboard/settings"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl hover:from-indigo-700 hover:to-indigo-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-[#4A5BEE] to-[#2A3ACC] rounded-xl hover:from-[#3A4BDD] hover:to-[#1C2545] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 <Calendar className="w-4 h-4" />
                 Connect a Platform
@@ -495,14 +495,14 @@ export function AnalyticsDashboard() {
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">What you will unlock</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { icon: <Shield className="w-5 h-5" />, label: 'Coverage Tracking', color: 'text-indigo-400' },
-                  { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-indigo-400' },
+                  { icon: <Shield className="w-5 h-5" />, label: 'Coverage Tracking', color: 'text-[#5B6CFF]' },
+                  { icon: <Mail className="w-5 h-5" />, label: 'Email Metrics', color: 'text-[#5B6CFF]' },
                   { icon: <Clock className="w-5 h-5" />, label: 'Response Times', color: 'text-amber-400' },
                   { icon: <DollarSign className="w-5 h-5" />, label: 'ROI Tracking', color: 'text-amber-400' },
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className="p-3 bg-gray-800/50 light:bg-gray-100 light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200"
+                    className="p-3 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200"
                   >
                     <div className={`${item.color} mb-2`}>{item.icon}</div>
                     <p className="text-xs text-gray-400 light:text-gray-600">{item.label}</p>

@@ -84,7 +84,7 @@ export function OnboardingComplete({
           recycle={false}
           numberOfPieces={200}
           gravity={0.2}
-          colors={['#4f46e5', '#6366f1', '#818cf8', '#f59e0b', '#fbbf24']}
+          colors={['#4A5BEE', '#5B6CFF', '#7A8BFF', '#FF9D2D', '#FF9D2D']}
         />
       )}
 
@@ -92,7 +92,7 @@ export function OnboardingComplete({
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', duration: 0.6 }}
-        className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-indigo-500/30"
+        className="w-24 h-24 rounded-full bg-gradient-to-br from-[#5B6CFF] to-[#4A5BEE] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-[#5B6CFF]/30"
       >
         <Check className="w-12 h-12 text-white" strokeWidth={3} />
       </motion.div>
@@ -103,7 +103,7 @@ export function OnboardingComplete({
         transition={{ delay: 0.2 }}
         className="text-4xl md:text-5xl font-bold mb-4"
       >
-        <span className="bg-gradient-to-r from-amber-400 via-indigo-400 to-indigo-500 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-amber-400 via-[#5B6CFF] to-[#5B6CFF] bg-clip-text text-transparent">
           You&apos;re all set!
         </span>
       </motion.h1>
@@ -140,12 +140,12 @@ export function OnboardingComplete({
                 >
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      stat.completed ? 'bg-indigo-500/20' : 'bg-gray-800'
+                      stat.completed ? 'bg-[#5B6CFF]/20' : 'bg-gray-800'
                     }`}
                   >
                     <Icon
                       className={`w-4 h-4 ${
-                        stat.completed ? 'text-indigo-400' : 'text-gray-500'
+                        stat.completed ? 'text-[#5B6CFF]' : 'text-gray-500'
                       }`}
                     />
                   </div>
@@ -172,7 +172,7 @@ export function OnboardingComplete({
       >
         <button
           onClick={onGoToDashboard}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#5B6CFF]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           <Mail className="w-5 h-5" />
           Go to Dashboard

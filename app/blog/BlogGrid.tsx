@@ -40,7 +40,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <button
             onClick={() => setSelectedTag(null)}
-            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
               selectedTag === null
                 ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                 : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
@@ -52,7 +52,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             <button
               key={tag}
               onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
-              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 selectedTag === tag
                   ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                   : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
@@ -64,7 +64,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
           {!showAllTags && hiddenCount > 0 && (
             <button
               onClick={() => setShowAllTags(true)}
-              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-indigo-400 light:text-indigo-600 hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-[#5B6CFF] light:text-[#4A5BEE] hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               +{hiddenCount} more
             </button>
@@ -72,7 +72,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
           {showAllTags && hiddenCount > 0 && (
             <button
               onClick={() => setShowAllTags(false)}
-              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-indigo-400 light:text-indigo-600 hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-[#5B6CFF] light:text-[#4A5BEE] hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Show less
             </button>
@@ -87,7 +87,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
               href={`/blog/${post.slug}`}
               className="group block"
             >
-              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-indigo-500/50 light:hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5 light:hover:shadow-indigo-400/10">
+              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-[#5B6CFF]/50 light:hover:border-[#5B6CFF]/50 hover:shadow-lg hover:shadow-[#5B6CFF]/5 light:hover:shadow-[#7A8BFF]/10">
                 {/* Hero Image */}
                 {post.heroImage && (
                   <div className="relative w-full aspect-[16/9]">
@@ -106,7 +106,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
                   {post.tags.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-500/10 light:bg-indigo-100 text-indigo-400 light:text-indigo-700"
+                      className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#5B6CFF]/10 light:bg-[#EEF0FF] text-[#5B6CFF] light:text-[#3A4BDD]"
                     >
                       {tag}
                     </span>
@@ -114,7 +114,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3 group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors line-clamp-2">
+                <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3 group-hover:text-[#5B6CFF] light:group-hover:text-[#4A5BEE] transition-colors line-clamp-2">
                   {post.title}
                 </h2>
 
@@ -139,7 +139,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
 
                 {/* Read More */}
                 <div className="mt-4 pt-4 border-t border-gray-800/50 light:border-gray-100">
-                  <span className="text-sm font-medium text-indigo-400 light:text-indigo-600 flex items-center gap-1.5 group-hover:gap-2.5 transition-[gap]">
+                  <span className="text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] flex items-center gap-1.5 group-hover:gap-2.5 transition-[gap]">
                     Read article
                     <ArrowRight className="w-4 h-4" />
                   </span>
@@ -158,7 +158,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             </p>
             <button
               onClick={() => setSelectedTag(null)}
-              className="mt-4 text-indigo-400 light:text-indigo-600 hover:underline rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="mt-4 text-[#5B6CFF] light:text-[#4A5BEE] hover:underline rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               View all articles
             </button>

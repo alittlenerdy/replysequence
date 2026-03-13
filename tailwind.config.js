@@ -9,6 +9,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-inter)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['var(--font-space-grotesk)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-jetbrains)', 'ui-monospace', 'monospace'],
       },
       colors: {
         // Background colors
@@ -17,20 +18,20 @@ module.exports = {
           alt: '#F5F5F5',
           pure: '#FFFFFF',
         },
-        // Primary Indigo (Brand)
+        // Primary (Neural Indigo)
         mint: {
-          DEFAULT: '#4F46E5',
-          hover: '#4338CA',
-          tint: '#EEF2FF',
+          DEFAULT: '#5B6CFF',
+          hover: '#4A5BEE',
+          tint: '#EEF0FF',
         },
-        // Indigo (CTAs)
+        // CTAs
         neon: {
-          DEFAULT: '#6366F1',
-          hover: '#4F46E5',
+          DEFAULT: '#5B6CFF',
+          hover: '#4A5BEE',
           yellow: '#FDE047',
-          amber: '#FBBF24',
-          emerald: '#34D399',
-          rose: '#FB7185',
+          amber: '#FF9D2D',
+          emerald: '#37D67A',
+          rose: '#FF5C7A',
           cyan: '#22D3EE',
         },
         // Text colors
@@ -41,16 +42,16 @@ module.exports = {
         },
         // Dark mode colors
         dark: {
-          bg: '#0A0A0F',
-          'bg-alt': '#12121A',
-          'bg-card': '#1A1A24',
-          border: '#2A2A3A',
+          bg: '#060B18',
+          'bg-alt': '#0F1629',
+          'bg-card': '#141C34',
+          border: '#273054',
         },
         // Surface colors
         surface: {
-          dark: '#0a0a0f',
-          'dark-card': '#0c0e14',
-          'dark-elevated': '#1c2030',
+          dark: '#060B18',
+          'dark-card': '#141C34',
+          'dark-elevated': '#1C2545',
           light: '#FAFBFC',
           'light-card': '#FFFFFF',
           'light-elevated': '#F3F4F6',
@@ -70,7 +71,6 @@ module.exports = {
         'bounce-slow': 'bounceSlow 3s ease-in-out infinite',
         'card-fade-in': 'cardFadeIn 0.5s ease-out forwards',
         'row-slide-in': 'rowSlideIn 0.3s ease-out forwards',
-        // Orbit animations for HeroAnimation - GPU accelerated
         'orbit-slow': 'orbitSlow 30s linear infinite',
         'orbit-reverse': 'orbitReverse 25s linear infinite',
         'orbit-fast': 'orbitFast 20s linear infinite',
@@ -120,7 +120,6 @@ module.exports = {
           '0%': { opacity: '0', transform: 'translateX(-10px)' },
           '100%': { opacity: '1', transform: 'translateX(0)' },
         },
-        // Orbit keyframes - GPU accelerated with transform only
         orbitSlow: {
           '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
           '100%': { transform: 'translate(-50%, -50%) rotate(360deg)' },
@@ -138,8 +137,8 @@ module.exports = {
           '100%': { transform: 'rotate(360deg)' },
         },
         glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 60px rgba(99, 102, 241, 0.5), 0 0 120px rgba(79, 70, 229, 0.3)' },
-          '50%': { boxShadow: '0 0 100px rgba(99, 102, 241, 0.8), 0 0 200px rgba(79, 70, 229, 0.5)' },
+          '0%, 100%': { boxShadow: '0 0 60px rgba(91, 108, 255, 0.5), 0 0 120px rgba(74, 91, 238, 0.3)' },
+          '50%': { boxShadow: '0 0 100px rgba(91, 108, 255, 0.8), 0 0 200px rgba(74, 91, 238, 0.5)' },
         },
       },
     },

@@ -77,14 +77,14 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                     isEmbedded ? 'p-4 lg:p-5' : 'p-6 lg:p-8'
                   } ${
                     tier.highlighted
-                      ? `glass-border-accent rounded-2xl shadow-xl shadow-indigo-500/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
+                      ? `glass-border-accent rounded-2xl shadow-xl shadow-[#5B6CFF]/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
                       : 'glass-border rounded-2xl'
                   }`}
                 >
                   {/* Most Popular Badge */}
                   {tier.highlighted && !isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white text-sm font-semibold shadow-lg">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white text-sm font-semibold shadow-lg">
                         <Sparkles className="w-4 h-4" />
                         Most Popular
                       </span>
@@ -94,7 +94,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                   {/* Current Plan Badge */}
                   {isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-500/20 text-indigo-400 text-sm font-semibold border border-indigo-500/30">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF] text-sm font-semibold border border-[#5B6CFF]/30">
                         <Check className="w-4 h-4" />
                         Current Plan
                       </span>
@@ -105,12 +105,12 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                   <div className="mb-6 mt-4">
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                       tier.highlighted
-                        ? 'bg-indigo-500/20'
+                        ? 'bg-[#5B6CFF]/20'
                         : 'bg-gray-800 light:bg-gray-100'
                     }`}>
                       <Icon className={`w-6 h-6 ${
                         tier.highlighted
-                          ? 'text-indigo-400'
+                          ? 'text-[#5B6CFF]'
                           : 'text-gray-400 light:text-gray-600'
                       }`} />
                     </div>
@@ -157,8 +157,8 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                       <li key={index} className="flex items-start gap-3">
                         <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                           tier.highlighted
-                            ? 'text-indigo-400'
-                            : 'text-indigo-400'
+                            ? 'text-[#5B6CFF]'
+                            : 'text-[#5B6CFF]'
                         }`} />
                         <span className="text-gray-300 light:text-gray-700 text-sm">
                           {feature}

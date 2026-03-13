@@ -12,15 +12,15 @@ export const contentType = 'image/png';
 // Color palette for tag-based accent colors
 const TAG_COLORS: Record<string, string> = {
   'sales productivity': '#3B82F6',
-  'email automation': '#6366F1',
-  'meeting follow-up': '#6366F1',
-  'ai email': '#F59E0B',
-  'crm integration': '#F59E0B',
+  'email automation': '#5B6CFF',
+  'meeting follow-up': '#5B6CFF',
+  'ai email': '#FF9D2D',
+  'crm integration': '#FF9D2D',
   'zoom meetings': '#2563EB',
-  'team management': '#6366F1',
-  'sales engagement': '#4F46E5',
+  'team management': '#5B6CFF',
+  'sales engagement': '#4A5BEE',
   'consulting': '#F97316',
-  'recruiting': '#4F46E5',
+  'recruiting': '#4A5BEE',
 };
 
 function getAccentColor(tags: string[]): string {
@@ -30,7 +30,7 @@ function getAccentColor(tags: string[]): string {
       if (lower.includes(key) || key.includes(lower)) return color;
     }
   }
-  return '#6366F1'; // default indigo
+  return '#5B6CFF'; // default indigo
 }
 
 export default async function Image({ params }: { params: { slug: string } }) {
@@ -76,7 +76,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '60px 70px',
-          background: 'linear-gradient(135deg, #0C0C18 0%, #111827 50%, #0f172a 100%)',
+          background: 'linear-gradient(135deg, #0C0C18 0%, #0F1629 50%, #0f172a 100%)',
           fontFamily: 'system-ui, sans-serif',
         }}
       >
@@ -88,7 +88,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
             left: 0,
             right: 0,
             height: 6,
-            background: `linear-gradient(90deg, ${accent}, #8B5CF6)`,
+            background: `linear-gradient(90deg, ${accent}, #7A5CFF)`,
           }}
         />
 
@@ -166,7 +166,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
                 width: 48,
                 height: 48,
                 borderRadius: 24,
-                background: `linear-gradient(135deg, ${accent}, #8B5CF6)`,
+                background: `linear-gradient(135deg, ${accent}, #7A5CFF)`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -193,7 +193,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
               style={{
                 width: 44,
                 height: 44,
-                background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+                background: 'linear-gradient(135deg, #7A5CFF 0%, #5B6CFF 100%)',
                 borderRadius: 12,
                 display: 'flex',
                 alignItems: 'center',
@@ -217,7 +217,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
               style={{
                 fontSize: 28,
                 fontWeight: 700,
-                background: 'linear-gradient(90deg, #ffffff 0%, #a78bfa 100%)',
+                background: 'linear-gradient(90deg, #ffffff 0%, #99A8FF 100%)',
                 backgroundClip: 'text',
                 color: 'transparent',
               }}

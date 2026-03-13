@@ -98,7 +98,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/25 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#5B6CFF]/15 text-[#5B6CFF] border border-[#5B6CFF]/20 hover:bg-[#4A5BEE]/25 transition-colors"
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -109,7 +109,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
   }
 
   return (
-    <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4 space-y-3">
+    <div className="rounded-xl border border-[#5B6CFF]/20 bg-[#5B6CFF]/5 p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-gray-200 light:text-gray-800">Create Follow-Up Sequence</h4>
         <button
@@ -133,7 +133,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
                 onClick={() => handleParticipantSelect(p.email!)}
                 className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
                   recipientEmail === p.email
-                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                    ? 'bg-[#5B6CFF]/20 text-[#7A8BFF] border-[#5B6CFF]/30'
                     : 'bg-gray-800/50 text-gray-400 border-gray-700/50 hover:border-gray-600'
                 }`}
               >
@@ -152,7 +152,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
             value={recipientName}
             onChange={(e) => setRecipientName(e.target.value)}
             placeholder="Jane Smith"
-            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 placeholder-gray-500 focus:outline-none focus:border-indigo-500/50"
+            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#5B6CFF]/50"
           />
         </div>
         <div>
@@ -162,7 +162,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
             value={recipientEmail}
             onChange={(e) => setRecipientEmail(e.target.value)}
             placeholder="jane@example.com"
-            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 placeholder-gray-500 focus:outline-none focus:border-indigo-500/50"
+            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 placeholder-gray-500 focus:outline-none focus:border-[#5B6CFF]/50"
           />
         </div>
       </div>
@@ -174,7 +174,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
           <select
             value={draftId}
             onChange={(e) => setDraftId(e.target.value)}
-            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-indigo-500/50"
+            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#5B6CFF]/50"
           >
             <option value="">None</option>
             {sentDrafts.map(d => (
@@ -198,7 +198,7 @@ function CreateSequenceForm({ meetingId, participants, drafts, onCreated }: Crea
         <button
           onClick={handleCreate}
           disabled={isCreating || !recipientEmail || !recipientName}
-          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#5B6CFF] text-white hover:bg-[#4A5BEE] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isCreating ? 'Creating...' : 'Generate Sequence'}
         </button>
@@ -253,7 +253,7 @@ export function SequencesSection({ meetingId, participants, drafts }: SequencesS
     <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-white light:text-gray-900 flex items-center gap-2">
-          <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <svg className="w-5 h-5 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
           Follow-Up Sequences {sequences.length > 0 && `(${sequences.length})`}

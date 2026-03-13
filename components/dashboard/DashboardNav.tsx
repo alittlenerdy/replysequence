@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings, CreditCard, Users, type LucideIcon } from 'lucide-react';
+import { FileText, BarChart3, Settings, Users, Home, Video, Layers, Contact, type LucideIcon } from 'lucide-react';
 import { useRef, useCallback } from 'react';
 
 interface Tab {
@@ -12,9 +12,12 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { name: 'Drafts', href: '/dashboard', icon: FileText },
+  { name: 'Home', href: '/dashboard', icon: Home },
+  { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
+  { name: 'Drafts', href: '/dashboard/drafts', icon: FileText },
+  { name: 'Sequences', href: '/dashboard/sequences', icon: Layers },
+  { name: 'Contacts', href: '/dashboard/contacts', icon: Contact },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { name: 'Plan & Billing', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Waitlist', href: '/dashboard/waitlist', icon: Users },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
@@ -95,9 +98,9 @@ export function DashboardNav({ pendingDrafts = 0, userEmail = '' }: DashboardNav
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
                 relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-colors duration-200
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white
                 ${isActive
-                  ? 'border-orange-500 text-white light:text-orange-600 bg-orange-500/10 light:bg-orange-50 font-semibold'
+                  ? 'border-[#5B6CFF] text-white light:text-[#4A5BEE] bg-[#5B6CFF]/10 light:bg-[#EEF0FF] font-semibold'
                   : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100 font-medium'
                 }
               `}
@@ -110,11 +113,9 @@ export function DashboardNav({ pendingDrafts = 0, userEmail = '' }: DashboardNav
               <span>{tab.name}</span>
               {badge !== undefined && badge > 0 && (
                 <span
-                  className="ml-2 inline-flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-bold rounded-full bg-red-500 text-white shadow-sm shadow-red-500/30"
+                  className="ml-1 w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50 animate-pulse"
                   aria-label={`${badge} pending drafts`}
-                >
-                  {badge > 99 ? '99+' : badge}
-                </span>
+                />
               )}
             </Link>
           );

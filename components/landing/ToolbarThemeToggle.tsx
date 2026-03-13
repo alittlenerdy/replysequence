@@ -43,7 +43,7 @@ export function ToolbarThemeToggle() {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/10 light:hover:bg-gray-900/10 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
+      className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-white/10 light:hover:bg-gray-900/10 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       whileTap={{ scale: 1.25 }}
       transition={{ type: 'spring', stiffness: 400, damping: 10 }}

@@ -9,7 +9,7 @@ const AGENT_COLORS: Record<string, string> = {
   'Token Health': '#3b82f6',      // blue
   'Webhook Health': '#ef4444',    // red
   'Conversion Nudge': '#8b5cf6',  // purple
-  'Waitlist Nudge': '#f59e0b',    // amber
+  'Waitlist Nudge': '#FF9D2D',    // amber
   'Blog Agent': '#10b981',        // green
 };
 
@@ -36,7 +36,7 @@ export async function notifyAgentSlack({
   if (!webhookUrl) return;
 
   const icon = status === 'error' ? ':red_circle:' : status === 'warning' ? ':large_yellow_circle:' : ':white_check_mark:';
-  const color = status === 'error' ? '#ef4444' : status === 'warning' ? '#f59e0b' : (AGENT_COLORS[agent] || '#6b7280');
+  const color = status === 'error' ? '#ef4444' : status === 'warning' ? '#FF9D2D' : (AGENT_COLORS[agent] || '#6b7280');
 
   const fields: { title: string; value: string; short: boolean }[] = [];
 

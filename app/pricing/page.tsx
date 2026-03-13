@@ -114,7 +114,7 @@ async function PricingContent() {
   const isLoggedIn = !!user;
 
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50">
       <Header />
 
       {/* Hero Section */}
@@ -124,7 +124,7 @@ async function PricingContent() {
             {isLoggedIn ? 'Manage Your Plan' : (
               <>
                 Enterprise Follow-Up at Startup{' '}
-                <span className="bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
                   Pricing
                 </span>
               </>
@@ -148,7 +148,7 @@ async function PricingContent() {
       {!isLoggedIn && (
         <section className="pb-4 px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-sm text-gray-400 light:text-gray-500 bg-gray-900/50 light:bg-indigo-50 border border-gray-800 light:border-indigo-100 rounded-full px-6 py-3 inline-block">
+            <p className="text-sm text-gray-400 light:text-gray-500 bg-gray-900/50 light:bg-[#EEF0FF] border border-gray-800 light:border-[#EEF0FF] rounded-full px-6 py-3 inline-block">
               Every meeting gets a follow-up. Every deal gets a sequence. Every next step gets tracked. Every CRM field updates itself.
             </p>
           </div>
@@ -307,7 +307,7 @@ async function PricingContent() {
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50">
       <div className="animate-pulse pt-32 pb-20 px-4">
         <div className="max-w-5xl mx-auto text-center mb-16">
           <div className="h-12 w-96 bg-gray-800 light:bg-gray-200 rounded mx-auto mb-4" />

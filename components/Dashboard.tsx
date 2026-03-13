@@ -14,10 +14,10 @@ import { AnalyticsDashboard } from './dashboard/AnalyticsDashboard';
 // Static bubble configuration - hoisted to module scope to avoid re-creation on every render
 const BUBBLE_CONFIG = [
   // Indigo bubbles (deep)
-  { size: 20, top: '10%', left: '5%', color: 'rgba(99, 102, 241, 0.4)', delay: 0, speed: 'fast' },
-  { size: 15, top: '25%', left: '15%', color: 'rgba(99, 102, 241, 0.3)', delay: -2, speed: 'medium' },
-  { size: 25, top: '60%', left: '8%', color: 'rgba(99, 102, 241, 0.35)', delay: -4, speed: 'slow' },
-  { size: 12, top: '80%', left: '20%', color: 'rgba(99, 102, 241, 0.25)', delay: -1, speed: 'fast' },
+  { size: 20, top: '10%', left: '5%', color: 'rgba(91, 108, 255, 0.4)', delay: 0, speed: 'fast' },
+  { size: 15, top: '25%', left: '15%', color: 'rgba(91, 108, 255, 0.3)', delay: -2, speed: 'medium' },
+  { size: 25, top: '60%', left: '8%', color: 'rgba(91, 108, 255, 0.35)', delay: -4, speed: 'slow' },
+  { size: 12, top: '80%', left: '20%', color: 'rgba(91, 108, 255, 0.25)', delay: -1, speed: 'fast' },
   // Indigo bubbles (light)
   { size: 18, top: '15%', left: '85%', color: 'rgba(129, 140, 248, 0.4)', delay: -3, speed: 'medium' },
   { size: 22, top: '40%', left: '90%', color: 'rgba(129, 140, 248, 0.35)', delay: -5, speed: 'slow' },
@@ -39,7 +39,7 @@ const BUBBLE_CONFIG = [
   { size: 12, top: '55%', left: '35%', color: 'rgba(251, 191, 36, 0.25)', delay: -5, speed: 'slow' },
   { size: 18, top: '8%', left: '40%', color: 'rgba(251, 191, 36, 0.4)', delay: 0, speed: 'medium' },
   // Extra scattered bubbles
-  { size: 10, top: '42%', left: '12%', color: 'rgba(99, 102, 241, 0.3)', delay: -2, speed: 'fast' },
+  { size: 10, top: '42%', left: '12%', color: 'rgba(91, 108, 255, 0.3)', delay: -2, speed: 'fast' },
   { size: 14, top: '68%', left: '95%', color: 'rgba(129, 140, 248, 0.35)', delay: -4, speed: 'medium' },
   { size: 16, top: '22%', left: '70%', color: 'rgba(245, 158, 11, 0.3)', delay: -1, speed: 'slow' },
   { size: 12, top: '88%', left: '15%', color: 'rgba(34, 211, 238, 0.35)', delay: -3, speed: 'fast' },
@@ -151,7 +151,7 @@ export function Dashboard({
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 relative overflow-hidden">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50 relative overflow-hidden">
       {/* ANIMATED FLOATING BUBBLES - Small particles */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         {/* Generate many small floating bubbles */}
@@ -181,7 +181,7 @@ export function Dashboard({
           <div className="flex items-center justify-between">
             <div className="animate-fade-in-up">
               <h1 className="text-2xl font-display font-bold">
-                <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
+                <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
                   Dashboard
                 </span>
               </h1>
@@ -191,11 +191,11 @@ export function Dashboard({
             </div>
             <a
               href="/"
-              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors duration-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors duration-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <span className="relative">
                 Back to Home
-                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-indigo-600 group-hover:w-full transition-[width] duration-300" />
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] group-hover:w-full transition-[width] duration-300" />
               </span>
             </a>
           </div>

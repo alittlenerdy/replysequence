@@ -47,7 +47,7 @@ export default function WeeklyFeedbackPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#060B18] flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-16 h-16 mx-auto mb-6 bg-green-500/10 rounded-full flex items-center justify-center">
             <CheckCircle2 className="w-8 h-8 text-green-400" />
@@ -62,7 +62,7 @@ export default function WeeklyFeedbackPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#060B18] flex items-center justify-center px-4 py-12">
       <div className="max-w-lg w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white mb-2">Weekly Check-in</h1>
@@ -80,7 +80,7 @@ export default function WeeklyFeedbackPage() {
               id="worked-well"
               value={worked}
               onChange={(e) => setWorked(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
               rows={3}
               placeholder="Draft quality, speed, integrations\u2026"
             />
@@ -94,7 +94,7 @@ export default function WeeklyFeedbackPage() {
               id="frustrated"
               value={frustrated}
               onChange={(e) => setFrustrated(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
               rows={3}
               placeholder="Bugs, missing features, confusing UI\u2026"
             />
@@ -108,7 +108,7 @@ export default function WeeklyFeedbackPage() {
               id="whats-missing"
               value={missing}
               onChange={(e) => setMissing(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
               rows={3}
               placeholder="Features you wish existed\u2026"
             />
@@ -121,7 +121,7 @@ export default function WeeklyFeedbackPage() {
           <button
             type="submit"
             disabled={submitting || (!worked && !frustrated && !missing)}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#4A5BEE] hover:bg-[#5B6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             {submitting ? 'Submitting\u2026' : 'Submit Feedback'}
             {!submitting && <Send className="w-4 h-4" />}

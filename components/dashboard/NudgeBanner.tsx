@@ -18,9 +18,9 @@ const NUDGE_CONFIG = {
     cta: 'Go to AI Settings',
     href: '/dashboard/settings?tab=ai',
     storageKey: 'rs-nudge-ai-settings-dismissed',
-    accentClass: 'text-indigo-400',
-    bgClass: 'bg-indigo-500/5 border-indigo-500/20',
-    iconBg: 'bg-indigo-500/10',
+    accentClass: 'text-[#5B6CFF]',
+    bgClass: 'bg-[#5B6CFF]/5 border-[#5B6CFF]/20',
+    iconBg: 'bg-[#5B6CFF]/10',
   },
   'hourly-rate': {
     icon: DollarSign,
@@ -64,13 +64,13 @@ export function NudgeBanner({ variant }: NudgeBannerProps) {
       </div>
       <Link
         href={config.href}
-        className={`shrink-0 px-3 py-1.5 text-xs font-medium ${config.accentClass} border border-current/20 rounded-lg hover:bg-white/5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900`}
+        className={`shrink-0 px-3 py-1.5 text-xs font-medium ${config.accentClass} border border-current/20 rounded-lg hover:bg-white/5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]`}
       >
         {config.cta}
       </Link>
       <button
         onClick={handleDismiss}
-        className="shrink-0 p-1 text-gray-500 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="shrink-0 p-1 text-gray-500 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

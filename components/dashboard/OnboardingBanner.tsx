@@ -45,7 +45,7 @@ export function OnboardingBanner({ currentStep }: OnboardingBannerProps) {
   };
 
   return (
-    <div className="relative bg-gradient-to-r from-indigo-600/90 to-indigo-800/90 dark:from-indigo-600/80 dark:to-indigo-800/80">
+    <div className="relative bg-gradient-to-r from-[#4A5BEE]/90 to-[#2A3ACC]/90 dark:from-[#4A5BEE]/80 dark:to-[#2A3ACC]/80">
       <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center flex-1 min-w-0">
@@ -65,14 +65,14 @@ export function OnboardingBanner({ currentStep }: OnboardingBannerProps) {
           <div className="flex items-center gap-3">
             <Link
               href="/onboarding"
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white font-medium text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Continue Setup
               <ArrowRight className="h-4 w-4" />
             </Link>
             <button
               onClick={handleDismiss}
-              className="p-1.5 rounded-lg hover:bg-white/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="p-1.5 rounded-lg hover:bg-white/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               aria-label="Dismiss banner"
             >
               <X className="h-5 w-5 text-white/80 hover:text-white" />

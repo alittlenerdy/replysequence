@@ -38,7 +38,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
     return (
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Receipt className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
+          <Receipt className="w-5 h-5 text-[#5B6CFF] light:text-[#5B6CFF]" />
           <h3 className="text-lg font-semibold text-white light:text-gray-900">Invoice History</h3>
         </div>
         <div className="text-center py-8">
@@ -55,7 +55,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
           {billing.tier === 'free' && (
             <button
               onClick={onScrollToPlans}
-              className="inline-flex items-center gap-2 mt-3 text-sm text-indigo-400 hover:text-indigo-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="inline-flex items-center gap-2 mt-3 text-sm text-[#5B6CFF] hover:text-[#7A8BFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <Sparkles className="w-4 h-4" />
               View available plans
@@ -69,7 +69,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
   return (
     <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-4">
-        <Receipt className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
+        <Receipt className="w-5 h-5 text-[#5B6CFF] light:text-[#5B6CFF]" />
         <h3 className="text-lg font-semibold text-white light:text-gray-900">Invoice History</h3>
       </div>
 
@@ -132,7 +132,7 @@ export function InvoiceHistory({ billing, onScrollToPlans }: InvoiceHistoryProps
                         href={invoice.pdfUrl || invoice.invoiceUrl!}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-sm text-indigo-400 hover:text-indigo-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="inline-flex items-center gap-1.5 text-sm text-[#5B6CFF] hover:text-[#7A8BFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                       >
                         <Download className="w-4 h-4" />
                         <span className="hidden sm:inline">PDF</span>

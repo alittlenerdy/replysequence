@@ -24,9 +24,9 @@ export function MeetingSummaryCard({
   const gridCols = compact ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3';
 
   return (
-    <div className={`bg-gradient-to-br from-indigo-500/10 to-indigo-500/10 border border-indigo-500/20 rounded-2xl ${padding} light:shadow-sm`}>
+    <div className={`bg-gradient-to-br from-[#5B6CFF]/10 to-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-2xl ${padding} light:shadow-sm`}>
       <h2 className={`${headingSize} font-semibold text-white light:text-gray-900 ${compact ? 'mb-2' : 'mb-4'} flex items-center gap-2`}>
-        <svg className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-indigo-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <svg className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-[#5B6CFF]`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
         Meeting Summary
@@ -44,11 +44,11 @@ export function MeetingSummaryCard({
               {keyTopics.map((item, i) => (
                 <div
                   key={i}
-                  className={`flex items-center gap-2 ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} bg-indigo-500/10 rounded-lg border border-indigo-500/15`}
+                  className={`flex items-center gap-2 ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} bg-[#5B6CFF]/10 rounded-lg border border-[#5B6CFF]/15`}
                 >
                   <span className={`${bodySize} text-gray-200 light:text-gray-700`}>{item.topic}</span>
                   {item.duration && (
-                    <span className="text-xs text-indigo-400/60 ml-auto shrink-0">{item.duration}</span>
+                    <span className="text-xs text-[#5B6CFF]/60 ml-auto shrink-0">{item.duration}</span>
                   )}
                 </div>
               ))}
@@ -65,7 +65,7 @@ export function MeetingSummaryCard({
             <ul className="space-y-2">
               {keyDecisions.map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <svg className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <svg className="w-4 h-4 text-[#5B6CFF] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>

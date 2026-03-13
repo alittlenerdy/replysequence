@@ -70,9 +70,9 @@ function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted
 
   const eventConfig: Record<string, { label: string; color: string; icon: string }> = {
     sent: { label: 'Sent', color: 'text-green-400', icon: 'M5 13l4 4L19 7' },
-    opened: { label: 'Opened', color: 'text-indigo-400', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+    opened: { label: 'Opened', color: 'text-[#5B6CFF]', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
     clicked: { label: 'Clicked', color: 'text-amber-400', icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' },
-    replied: { label: 'Replied', color: 'text-indigo-400', icon: 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6' },
+    replied: { label: 'Replied', color: 'text-[#5B6CFF]', icon: 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6' },
     bounced: { label: 'Bounced', color: 'text-red-400', icon: 'M12 9v2m0 4h.01' },
   };
 
@@ -80,7 +80,7 @@ function EmailEventTimeline({ draftId, isMounted }: { draftId: string; isMounted
     <div className="mt-3 pt-3 border-t border-white/[0.06]">
       <button
         onClick={handleToggle}
-        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-400 transition-colors w-full rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-400 transition-colors w-full rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
       >
         <svg className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -512,8 +512,8 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
         >
           {/* Ambient gradient orbs for depth */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-2xl">
-            <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-indigo-500/[0.04] blur-[100px]" />
-            <div className="absolute -bottom-[150px] -left-[150px] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.03] blur-[80px]" />
+            <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-[#5B6CFF]/[0.04] blur-[100px]" />
+            <div className="absolute -bottom-[150px] -left-[150px] w-[400px] h-[400px] rounded-full bg-[#5B6CFF]/[0.03] blur-[80px]" />
           </div>
           {/* Header - sticky on mobile for easy close access */}
           <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/[0.06] bg-[#16162A]/95 backdrop-blur-sm md:rounded-t-2xl">
@@ -550,7 +550,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                 {draft.status !== 'sent' && !isEditing && (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="p-2.5 sm:p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="p-2.5 sm:p-2 text-gray-400 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                     title="Delete draft"
                     aria-label="Delete draft"
                   >
@@ -562,7 +562,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                 {/* Desktop close button (X icon) - hidden on mobile where Back button is used */}
                 <button
                   onClick={handleModalClose}
-                  className="hidden md:flex p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  className="hidden md:flex p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 transition-colors min-h-[44px] min-w-[44px] items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   aria-label="Close preview"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -595,14 +595,14 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
                     disabled={isDeleting}
-                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {isDeleting ? (
                       <>
@@ -622,8 +622,8 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
           ) : showSendConfirm ? (
             <div className="px-6 py-8" aria-live="polite">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#5B6CFF]/20 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </div>
@@ -643,13 +643,13 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                 <div className="flex justify-center gap-3">
                   <button
                     onClick={() => setShowSendConfirm(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={confirmSend}
-                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#4A5BEE] rounded-lg hover:bg-[#3A4BDD] transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -711,7 +711,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         type="text"
                         value={editSubject}
                         onChange={(e) => setEditSubject(e.target.value)}
-                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent text-white placeholder:text-slate-500"
+                        className="w-full px-3 py-2 bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:border-transparent text-white placeholder:text-slate-500"
                         placeholder="Email subject"
                       />
                     </div>
@@ -734,14 +734,14 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       <button
                         onClick={() => setIsEditing(false)}
                         disabled={isSaving}
-                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleSave}
                         disabled={isSaving || !hasChanges}
-                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="px-4 py-2 text-sm font-medium text-white bg-[#4A5BEE] rounded-lg hover:bg-[#3A4BDD] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                       >
                         {isSaving ? (
                           <>
@@ -754,7 +754,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                         ) : (
                           <>
                             Save
-                            <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-indigo-700/50 rounded border border-indigo-500/30">
+                            <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-[#3A4BDD]/50 rounded border border-[#5B6CFF]/30">
                               {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'}+S
                             </kbd>
                           </>
@@ -790,7 +790,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             setCopied(true);
                             setTimeout(() => setCopied(false), 2000);
                           }}
-                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                           title="Copy email to clipboard"
                           aria-label="Copy email to clipboard"
                         >
@@ -828,12 +828,12 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
 
                       const iconColors: Record<string, string> = {
                         sales: 'text-amber-400',
-                        team: 'text-indigo-400',
-                        client: 'text-indigo-400',
-                        technical: 'text-indigo-400',
+                        team: 'text-[#5B6CFF]',
+                        client: 'text-[#5B6CFF]',
+                        technical: 'text-[#5B6CFF]',
                         general: 'text-gray-400',
                         onboarding: 'text-cyan-400',
-                        strategy: 'text-indigo-400',
+                        strategy: 'text-[#5B6CFF]',
                       };
 
                       return (
@@ -844,7 +844,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                               key={template.id}
                               onClick={() => handleRegenerate(template.id)}
                               disabled={isRegenerating}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] rounded-full hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-white transition-colors duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] rounded-full hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-white transition-colors duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed group outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                               title={template.description}
                             >
                               <span className={`w-1.5 h-1.5 rounded-full ${iconColors[template.icon] || 'text-gray-400'} bg-current shrink-0 group-hover:scale-125 transition-transform`} />
@@ -917,20 +917,20 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       <div className="pt-4 border-t border-white/[0.06]">
                         <button
                           onClick={() => setShowFlywheelDetails(!showFlywheelDetails)}
-                          className="flex items-center gap-2 text-sm w-full rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                          className="flex items-center gap-2 text-sm w-full rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                         >
-                          <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                          <svg className="w-4 h-4 text-[#5B6CFF]" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                             <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
                           </svg>
-                          <span className="font-medium text-indigo-300">
+                          <span className="font-medium text-[#7A8BFF]">
                             AI Context
                           </span>
-                          <span className="text-indigo-400/60 text-xs ml-auto">
+                          <span className="text-[#5B6CFF]/60 text-xs ml-auto">
                             {showFlywheelDetails ? 'Hide' : 'Show'} details
                           </span>
                         </button>
                         {showFlywheelDetails && (
-                          <div className="mt-2 space-y-1 text-xs text-indigo-300/80">
+                          <div className="mt-2 space-y-1 text-xs text-[#7A8BFF]/80">
                             {draft.flywheelMetadata.styleProfileUsed && (
                               <p>Writing style: Adapted to your preferences (based on {draft.flywheelMetadata.styleEditCount} past edits)</p>
                             )}
@@ -974,7 +974,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           <div className="grid grid-cols-3 gap-4">
                             {/* Opens */}
                             <div className="text-center">
-                              <div className={`text-2xl font-bold ${(draft.openCount ?? 0) > 0 ? 'text-indigo-400' : 'text-gray-500'}`}>
+                              <div className={`text-2xl font-bold ${(draft.openCount ?? 0) > 0 ? 'text-[#5B6CFF]' : 'text-gray-500'}`}>
                                 {draft.openCount ?? 0}
                               </div>
                               <div className="text-xs text-gray-500">Opens</div>
@@ -998,7 +998,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             </div>
                             {/* Reply Status */}
                             <div className="text-center">
-                              <div className={`text-2xl font-bold ${draft.repliedAt ? 'text-indigo-400' : 'text-gray-500'}`}>
+                              <div className={`text-2xl font-bold ${draft.repliedAt ? 'text-[#5B6CFF]' : 'text-gray-500'}`}>
                                 {draft.repliedAt ? (
                                   <svg className="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -1085,7 +1085,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                     <div className="flex justify-end">
                       <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                       >
                         Close
                       </button>
@@ -1112,9 +1112,9 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                               <button
                                 key={recipient.email}
                                 onClick={() => setRecipientEmail(recipient.email)}
-                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                                   recipientEmail === recipient.email
-                                    ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-500/50'
+                                    ? 'bg-[#5B6CFF]/30 text-[#7A8BFF] border border-[#5B6CFF]/50'
                                     : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:text-white'
                                 }`}
                                 title={recipient.name ? `${recipient.name} <${recipient.email}>` : recipient.email}
@@ -1156,7 +1156,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                       {/* Contextual AI settings link */}
                       <a
                         href="/dashboard/settings?tab=ai"
-                        className="inline-flex items-center gap-1.5 text-xs text-indigo-400/70 hover:text-indigo-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        className="inline-flex items-center gap-1.5 text-xs text-[#5B6CFF]/70 hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                       >
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -1173,14 +1173,14 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                             placeholder="Recipient email address"
                             value={recipientEmail}
                             onChange={(e) => setRecipientEmail(e.target.value)}
-                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-transparent placeholder:text-slate-500"
+                            className="w-full px-3 py-2 text-sm text-white bg-[#12121F] border border-white/[0.08] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:border-transparent placeholder:text-slate-500"
                             autoComplete="email"
                           />
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => setShowTemplatePicker(true)}
-                            className="px-4 py-2 text-sm font-medium text-amber-300 bg-amber-500/15 border border-amber-500/30 rounded-lg hover:bg-amber-500/25 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-[color,background-color,border-color,box-shadow] duration-300 flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                            className="px-4 py-2 text-sm font-medium text-amber-300 bg-amber-500/15 border border-amber-500/30 rounded-lg hover:bg-amber-500/25 hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-[color,background-color,border-color,box-shadow] duration-300 flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                             title="Choose a template and regenerate this draft"
                           >
                             <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -1190,7 +1190,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           </button>
                           <button
                             onClick={() => setIsRefining(true)}
-                            className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                            className="px-4 py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -1199,14 +1199,14 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                           </button>
                           <button
                             onClick={() => setIsEditing(true)}
-                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                           >
                             Edit
                           </button>
                           <button
                             onClick={handleSend}
                             disabled={isSending || !recipientEmail}
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                            className="px-4 py-2 text-sm font-medium text-white bg-[#4A5BEE] rounded-lg hover:bg-[#3A4BDD] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                             title="Send email (Cmd+Enter)"
                           >
                             {isSending ? (
@@ -1223,7 +1223,7 @@ export function DraftPreviewModal({ draft: initialDraft, onClose, onDraftUpdated
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                 </svg>
                                 Send
-                                <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-indigo-700/50 rounded border border-indigo-500/30">
+                                <kbd className="hidden sm:inline-block ml-1 px-1.5 py-0.5 text-[10px] font-mono bg-[#3A4BDD]/50 rounded border border-[#5B6CFF]/30">
                                   {typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent) ? 'Cmd' : 'Ctrl'}+Enter
                                 </kbd>
                               </>

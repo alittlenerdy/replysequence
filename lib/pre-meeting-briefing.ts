@@ -267,7 +267,7 @@ async function sendBriefingEmail(
 
   const html = `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; color: #1f2937;">
-  <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 24px; border-radius: 12px 12px 0 0;">
+  <div style="background: linear-gradient(135deg, #4f46e5, #7A5CFF); padding: 24px; border-radius: 12px 12px 0 0;">
     <h1 style="color: white; margin: 0; font-size: 20px;">Pre-Meeting Briefing</h1>
     <p style="color: #e0e7ff; margin: 8px 0 0;">
       <strong>${meetingTitle}</strong> at ${timeStr}
@@ -278,7 +278,7 @@ async function sendBriefingEmail(
 
     ${talkingPointsHtml ? `<h3 style="color: #4f46e5; margin-top: 20px;">Talking Points</h3><ul style="line-height: 1.8;">${talkingPointsHtml}</ul>` : ''}
     ${questionsHtml ? `<h3 style="color: #4f46e5; margin-top: 16px;">Discovery Questions</h3><ul style="line-height: 1.8;">${questionsHtml}</ul>` : ''}
-    ${actionItemsHtml ? `<h3 style="color: #f59e0b; margin-top: 16px;">Open Action Items</h3><ul style="line-height: 1.8;">${actionItemsHtml}</ul>` : ''}
+    ${actionItemsHtml ? `<h3 style="color: #FF9D2D; margin-top: 16px;">Open Action Items</h3><ul style="line-height: 1.8;">${actionItemsHtml}</ul>` : ''}
     ${risksHtml}
 
     <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />

@@ -162,7 +162,7 @@ export default function TourSpotlight({
 
       {/* Spotlight border glow around target */}
       <div
-        className="absolute rounded-xl border border-indigo-400/40 shadow-[0_0_20px_rgba(99,102,241,0.2)] pointer-events-none transition-all duration-300"
+        className="absolute rounded-xl border border-[#5B6CFF]/40 shadow-[0_0_20px_rgba(91,108,255,0.2)] pointer-events-none transition-all duration-300"
         style={{
           top: rect.top - PADDING,
           left: rect.left - PADDING,
@@ -206,9 +206,9 @@ export default function TourSpotlight({
                 key={i}
                 className={`w-1.5 h-1.5 rounded-full transition-colors ${
                   i === currentStep
-                    ? 'bg-indigo-400'
+                    ? 'bg-[#5B6CFF]'
                     : i < currentStep
-                      ? 'bg-indigo-400/40'
+                      ? 'bg-[#5B6CFF]/40'
                       : 'bg-gray-600'
                 }`}
               />
@@ -225,7 +225,7 @@ export default function TourSpotlight({
             </button>
             <button
               onClick={onNext}
-              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-indigo-500 text-white hover:bg-indigo-400 transition-colors"
+              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[#5B6CFF] text-white hover:bg-[#5B6CFF] transition-colors"
             >
               {isLastStep ? 'Done' : 'Next'}
             </button>

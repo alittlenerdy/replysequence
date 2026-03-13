@@ -6,9 +6,9 @@ import type { BillingData } from './billing-types';
 
 function CardBrandIcon({ brand }: { brand: string }) {
   const brandColors: Record<string, string> = {
-    visa: 'text-indigo-400',
+    visa: 'text-[#5B6CFF]',
     mastercard: 'text-orange-400',
-    amex: 'text-indigo-500',
+    amex: 'text-[#5B6CFF]',
     discover: 'text-orange-500',
   };
 
@@ -34,7 +34,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
     return (
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
+          <CreditCard className="w-5 h-5 text-[#5B6CFF] light:text-[#5B6CFF]" />
           <h3 className="text-lg font-semibold text-white light:text-gray-900">Payment & Billing</h3>
         </div>
         <div className="p-6 bg-gray-800/30 light:bg-gray-50 rounded-xl border border-dashed border-gray-600 light:border-gray-300">
@@ -46,7 +46,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
             <p className="text-sm text-gray-500 mb-4">Add a payment method when you upgrade to a paid plan.</p>
             <button
               onClick={onScrollToPlans}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4A5BEE] to-[#2A3ACC] rounded-lg hover:from-[#3A4BDD] hover:to-[#1C2545] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <Sparkles className="w-4 h-4" />
               Upgrade to Pro
@@ -63,7 +63,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
+            <CreditCard className="w-5 h-5 text-[#5B6CFF] light:text-[#5B6CFF]" />
             <h3 className="text-lg font-semibold text-white light:text-gray-900">Payment Method</h3>
           </div>
         </div>
@@ -97,7 +97,7 @@ export function PaymentAndBilling({ billing, onScrollToPlans }: PaymentAndBillin
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-indigo-400 light:text-indigo-500" />
+            <FileText className="w-5 h-5 text-[#5B6CFF] light:text-[#5B6CFF]" />
             <h3 className="text-lg font-semibold text-white light:text-gray-900">Billing Details</h3>
           </div>
         </div>

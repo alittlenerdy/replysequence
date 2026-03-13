@@ -106,7 +106,7 @@ export function AIWizard({ onSaved }: AIWizardProps) {
   if (isLoading) {
     return (
       <div className="py-8 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#5B6CFF] animate-spin" />
       </div>
     );
   }
@@ -118,9 +118,9 @@ export function AIWizard({ onSaved }: AIWizardProps) {
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Sparkles className="w-8 h-8 text-indigo-400" />
+          <Sparkles className="w-8 h-8 text-[#5B6CFF]" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -146,7 +146,7 @@ export function AIWizard({ onSaved }: AIWizardProps) {
             key={s}
             className={`h-1.5 rounded-full transition-[width,background-color] duration-300 ${
               i <= currentIndex
-                ? 'w-8 bg-indigo-500'
+                ? 'w-8 bg-[#5B6CFF]'
                 : 'w-4 bg-gray-700'
             }`}
           />

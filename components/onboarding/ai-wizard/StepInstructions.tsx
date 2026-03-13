@@ -37,7 +37,7 @@ export function StepInstructions({
           className="rounded-xl border border-gray-700/50 bg-gray-900/50 p-5"
         >
           <div className="flex items-center gap-2 mb-3">
-            <MessageSquare className="w-4 h-4 text-indigo-400" />
+            <MessageSquare className="w-4 h-4 text-[#5B6CFF]" />
             <label htmlFor="custom-instructions-wizard" className="text-sm font-semibold text-white">
               Custom Instructions
             </label>
@@ -50,7 +50,7 @@ export function StepInstructions({
             placeholder="E.g., Always include a specific next step with a date."
             rows={4}
             maxLength={500}
-            className="w-full px-4 py-3 text-sm bg-gray-800/80 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
+            className="w-full px-4 py-3 text-sm bg-gray-800/80 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B6CFF]"
           />
           <p className="text-xs text-gray-600 mt-2 mb-3">Quick add — click to append:</p>
           <div className="flex flex-wrap gap-2">
@@ -68,10 +68,10 @@ export function StepInstructions({
                     }
                   }}
                   disabled={isAdded}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                     isAdded
-                      ? 'text-indigo-400/60 bg-indigo-500/5 border border-indigo-500/10 cursor-default'
-                      : 'text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20'
+                      ? 'text-[#5B6CFF]/60 bg-[#5B6CFF]/5 border border-[#5B6CFF]/10 cursor-default'
+                      : 'text-[#7A8BFF] bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 hover:bg-[#4A5BEE]/20'
                   }`}
                 >
                   {isAdded ? (
@@ -96,7 +96,7 @@ export function StepInstructions({
           className="rounded-xl border border-gray-700/50 bg-gray-900/50 p-5"
         >
           <div className="flex items-center gap-2 mb-3">
-            <PenLine className="w-4 h-4 text-indigo-400" />
+            <PenLine className="w-4 h-4 text-[#5B6CFF]" />
             <label htmlFor="email-signature-wizard" className="text-sm font-semibold text-white">
               Email Signature
             </label>
@@ -109,7 +109,7 @@ export function StepInstructions({
             placeholder={"Best regards,\nJohn Smith\nAccount Executive, Acme Corp"}
             rows={4}
             maxLength={500}
-            className="w-full px-4 py-3 text-sm bg-gray-800/80 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500 font-mono"
+            className="w-full px-4 py-3 text-sm bg-gray-800/80 border border-gray-700 rounded-lg text-white placeholder-gray-600 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B6CFF] font-mono"
           />
         </motion.div>
       </div>
@@ -117,13 +117,13 @@ export function StepInstructions({
       <div className="mt-8 flex items-center gap-3">
         <button
           onClick={onBack}
-          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="px-6 py-3 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] shadow-lg shadow-[#5B6CFF]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Continue
         </button>

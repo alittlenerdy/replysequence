@@ -20,9 +20,9 @@ export function BillingToggle({ onIntervalChange, defaultInterval = 'monthly' }:
       <div className="inline-flex items-center rounded-full bg-gray-900 light:bg-gray-100 border border-gray-800 light:border-gray-200 p-1">
         <button
           onClick={() => handleToggle('monthly')}
-          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             interval === 'monthly'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25'
+              ? 'bg-[#4A5BEE] text-white shadow-md shadow-[#5B6CFF]/25'
               : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700'
           }`}
         >
@@ -30,7 +30,7 @@ export function BillingToggle({ onIntervalChange, defaultInterval = 'monthly' }:
         </button>
         <button
           onClick={() => handleToggle('annual')}
-          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-amber-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+          className={`relative text-sm font-medium px-5 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-amber-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             interval === 'annual'
               ? 'bg-amber-500 text-gray-900 shadow-md shadow-amber-500/25 font-semibold'
               : 'text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700'

@@ -51,7 +51,7 @@ export default function NPSSurveyPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#060B18] flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-16 h-16 mx-auto mb-6 bg-green-500/10 rounded-full flex items-center justify-center">
             <CheckCircle2 className="w-8 h-8 text-green-400" />
@@ -66,7 +66,7 @@ export default function NPSSurveyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#060B18] flex items-center justify-center px-4 py-12">
       <div className="max-w-lg w-full">
         <div className="text-center mb-10">
           <h1 className="text-2xl font-bold text-white mb-2">
@@ -81,7 +81,7 @@ export default function NPSSurveyPage() {
             <button
               key={i}
               onClick={() => setScore(i)}
-              className={`w-10 h-10 rounded-lg font-semibold text-sm transition-[color,background-color,transform] outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+              className={`w-10 h-10 rounded-lg font-semibold text-sm transition-[color,background-color,transform] outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 score === i
                   ? i >= 9
                     ? 'bg-green-500 text-white scale-110'
@@ -112,7 +112,7 @@ export default function NPSSurveyPage() {
               id="nps-feedback"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
               rows={3}
               placeholder="Your thoughts\u2026 (optional)"
             />
@@ -126,7 +126,7 @@ export default function NPSSurveyPage() {
         <button
           onClick={handleSubmit}
           disabled={score === null || submitting}
-          className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="w-full px-6 py-3 bg-[#4A5BEE] hover:bg-[#5B6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {submitting ? 'Submitting\u2026' : 'Submit'}
         </button>

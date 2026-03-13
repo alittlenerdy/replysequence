@@ -24,7 +24,7 @@ function FAQItem({ question, answer, isOpen, onToggle, index }: FAQItemProps) {
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-5 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 light:focus-visible:ring-offset-white rounded-lg"
+        className="w-full flex items-center justify-between py-5 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white rounded-lg"
         aria-expanded={isOpen}
         aria-controls={`faq-answer-${index}`}
       >
@@ -158,7 +158,7 @@ export function FAQ() {
             Still have questions?{' '}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-700 underline underline-offset-2 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-blue-400 light:text-blue-600 hover:text-blue-300 light:hover:text-blue-700 underline underline-offset-2 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Contact us
             </a>

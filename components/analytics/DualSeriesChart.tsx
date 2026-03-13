@@ -66,8 +66,8 @@ export function DualSeriesChart({ meetings, followUps }: DualSeriesChartProps) {
               iconType="circle"
               iconSize={8}
             />
-            <Bar dataKey="Meetings" fill="#6366F1" radius={[3, 3, 0, 0]} barSize={10} />
-            <Bar dataKey="Follow-ups" fill="#F59E0B" radius={[3, 3, 0, 0]} barSize={10} />
+            <Bar dataKey="Meetings" fill="#5B6CFF" radius={[3, 3, 0, 0]} barSize={10} />
+            <Bar dataKey="Follow-ups" fill="#FF9D2D" radius={[3, 3, 0, 0]} barSize={10} />
           </BarChart>
         </ResponsiveContainer>
       </div>

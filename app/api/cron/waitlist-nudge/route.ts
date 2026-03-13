@@ -182,7 +182,7 @@ function buildNudgeEmail(params: {
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb;">
   <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
     <div style="background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <h2 style="margin: 0 0 16px; color: #111827; font-size: 20px;">Hey ${firstName},</h2>
+      <h2 style="margin: 0 0 16px; color: #0F1629; font-size: 20px;">Hey ${firstName},</h2>
 
       <p style="color: #374151; line-height: 1.6;">
         Your <strong>${tierLabel}</strong> invite to ReplySequence is ready — you signed up for the waitlist and we've opened a spot for you.

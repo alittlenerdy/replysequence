@@ -46,13 +46,13 @@ export default function DashboardError({
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="px-5 py-2.5 text-sm font-medium rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white transition-[background,box-shadow] shadow-lg shadow-indigo-500/20 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="px-5 py-2.5 text-sm font-medium rounded-lg bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] hover:from-[#4A5BEE] hover:to-[#2A3ACC] text-white transition-[background,box-shadow] shadow-lg shadow-[#5B6CFF]/20 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Try again
           </button>
           <a
             href="/dashboard"
-            className="px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-700 light:border-gray-300 text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            className="px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-700 light:border-gray-300 text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Reload page
           </a>

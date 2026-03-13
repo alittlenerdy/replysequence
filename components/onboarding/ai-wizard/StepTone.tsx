@@ -26,18 +26,18 @@ export function StepTone({ value, onChange, onNext, onBack }: StepToneProps) {
             <button
               key={option.value}
               onClick={() => onChange(option.value)}
-              className={`relative p-4 rounded-xl border-2 text-left transition-[border-color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+              className={`relative p-4 rounded-xl border-2 text-left transition-[border-color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 isSelected
-                  ? 'border-indigo-500 bg-indigo-500/10'
+                  ? 'border-[#5B6CFF] bg-[#5B6CFF]/10'
                   : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className={`text-sm font-semibold ${isSelected ? 'text-indigo-400' : 'text-white'}`}>
+                <span className={`text-sm font-semibold ${isSelected ? 'text-[#5B6CFF]' : 'text-white'}`}>
                   {option.label}
                 </span>
                 {option.recommended && (
-                  <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded-full">
+                  <span className="text-[10px] font-medium text-[#5B6CFF] bg-[#5B6CFF]/10 px-1.5 py-0.5 rounded-full">
                     Rec
                   </span>
                 )}
@@ -50,7 +50,7 @@ export function StepTone({ value, onChange, onNext, onBack }: StepToneProps) {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute top-2 right-2 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center"
+                  className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#5B6CFF] flex items-center justify-center"
                 >
                   <Check className="w-3 h-3 text-white" />
                 </motion.div>
@@ -63,13 +63,13 @@ export function StepTone({ value, onChange, onNext, onBack }: StepToneProps) {
       <div className="mt-8 flex items-center gap-3">
         <button
           onClick={onBack}
-          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="px-6 py-3 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] shadow-lg shadow-[#5B6CFF]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Continue
         </button>

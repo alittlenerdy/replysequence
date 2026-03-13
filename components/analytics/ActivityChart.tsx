@@ -87,7 +87,7 @@ export function ActivityChart({ data, title, color, gradientId }: ActivityChartP
               <span
                 className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
                   trend.direction === 'up'
-                    ? 'bg-indigo-500/20 text-indigo-400'
+                    ? 'bg-[#5B6CFF]/20 text-[#5B6CFF]'
                     : trend.direction === 'down'
                     ? 'bg-red-500/20 text-red-400'
                     : 'bg-gray-500/20 text-gray-400'

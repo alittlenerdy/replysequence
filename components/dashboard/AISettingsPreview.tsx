@@ -88,10 +88,10 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
       <div className="px-5 py-3 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/30 light:bg-gray-50">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4 text-indigo-400" />
+            <Mail className="w-4 h-4 text-[#5B6CFF]" />
             <span className="text-xs font-medium text-gray-400 light:text-gray-500">Live Preview</span>
           </div>
-          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-indigo-500/15 text-indigo-400 light:bg-indigo-100 light:text-indigo-700">
+          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[#5B6CFF]/15 text-[#5B6CFF] light:bg-[#DDE1FF] light:text-[#3A4BDD]">
             {getToneLabel(tone)} tone
           </span>
         </div>
@@ -140,7 +140,7 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
         <button
           onClick={handleSendTest}
           disabled={sending || sent}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-60 bg-gray-800 light:bg-gray-100 hover:bg-gray-700 light:hover:bg-gray-200 text-gray-300 light:text-gray-700 border border-gray-600 light:border-gray-300 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-60 bg-gray-800 light:bg-gray-100 hover:bg-gray-700 light:hover:bg-gray-200 text-gray-300 light:text-gray-700 border border-gray-600 light:border-gray-300 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {sending ? (
             <>

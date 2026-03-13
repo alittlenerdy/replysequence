@@ -54,7 +54,7 @@ export default function ExitSurveyPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#060B18] flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-16 h-16 mx-auto mb-6 bg-green-500/10 rounded-full flex items-center justify-center">
             <CheckCircle2 className="w-8 h-8 text-green-400" />
@@ -69,7 +69,7 @@ export default function ExitSurveyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#060B18] flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white mb-2">We missed you this week</h1>
@@ -83,9 +83,9 @@ export default function ExitSurveyPage() {
             <button
               key={reason.id}
               onClick={() => setSelectedReason(reason.id)}
-              className={`w-full text-left px-4 py-3 rounded-xl border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+              className={`w-full text-left px-4 py-3 rounded-xl border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 selectedReason === reason.id
-                  ? 'border-indigo-500 bg-indigo-500/10 text-white'
+                  ? 'border-[#5B6CFF] bg-[#5B6CFF]/10 text-white'
                   : 'border-gray-700 bg-gray-900 text-gray-300 hover:border-gray-600'
               }`}
             >
@@ -100,7 +100,7 @@ export default function ExitSurveyPage() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               aria-label="Additional feedback"
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-indigo-500 resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
               rows={3}
               placeholder="Anything else you'd like to share? (optional)"
             />
@@ -114,7 +114,7 @@ export default function ExitSurveyPage() {
         <button
           onClick={handleSubmit}
           disabled={!selectedReason || submitting}
-          className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="w-full px-6 py-3 bg-[#4A5BEE] hover:bg-[#5B6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {submitting ? 'Submitting\u2026' : 'Submit'}
         </button>

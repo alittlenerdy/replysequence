@@ -35,7 +35,7 @@ export default async function Image() {
             style={{
               width: 80,
               height: 80,
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+              background: 'linear-gradient(135deg, #7A5CFF 0%, #5B6CFF 100%)',
               borderRadius: 20,
               display: 'flex',
               alignItems: 'center',
@@ -60,7 +60,7 @@ export default async function Image() {
             style={{
               fontSize: 56,
               fontWeight: 700,
-              background: 'linear-gradient(90deg, #ffffff 0%, #a78bfa 100%)',
+              background: 'linear-gradient(90deg, #ffffff 0%, #99A8FF 100%)',
               backgroundClip: 'text',
               color: 'transparent',
             }}
@@ -106,7 +106,7 @@ export default async function Image() {
                 border: '1px solid rgba(139, 92, 246, 0.3)',
               }}
             >
-              <span style={{ color: '#a78bfa', fontSize: 20 }}>{feature}</span>
+              <span style={{ color: '#99A8FF', fontSize: 20 }}>{feature}</span>
             </div>
           ))}
         </div>

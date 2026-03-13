@@ -72,7 +72,7 @@ export default function MobileMenu() {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={isOpen}
       >
@@ -117,7 +117,7 @@ export default function MobileMenu() {
             <a
               href="/how-it-works"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               How It Works
             </a>
@@ -126,7 +126,7 @@ export default function MobileMenu() {
             <div className="flex flex-col items-center">
               <button
                 onClick={() => setCompareOpen(!compareOpen)}
-                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Compare
                 <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
@@ -137,7 +137,7 @@ export default function MobileMenu() {
                     key={competitor.slug}
                     href={`/compare/${competitor.slug}`}
                     onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {competitor.name}
                   </a>
@@ -148,35 +148,35 @@ export default function MobileMenu() {
             <a
               href="/integrations"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Integrations
             </a>
             <a
               href="/pricing"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Pricing
             </a>
             <a
               href="/blog"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Blog
             </a>
             <a
               href="/dashboard"
               onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Dashboard
             </a>
             <a
               href="/#waitlist"
               onClick={() => setIsOpen(false)}
-              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-[color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-[color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               style={{
                 background: 'linear-gradient(135deg, #2563eb 0%, #9333ea 100%)',
                 boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',

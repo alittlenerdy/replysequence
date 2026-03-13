@@ -107,9 +107,9 @@ export function StepTestDraft({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Sparkles className="w-8 h-8 text-indigo-400" />
+          <Sparkles className="w-8 h-8 text-[#5B6CFF]" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -139,8 +139,8 @@ export function StepTestDraft({
           >
             <div className="p-4 border-b border-gray-700 bg-gray-800/50">
               <h3 className="font-semibold text-white flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
-                  <User className="w-4 h-4 text-indigo-400" />
+                <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/20 flex items-center justify-center">
+                  <User className="w-4 h-4 text-[#5B6CFF]" />
                 </div>
                 Sample Meeting
               </h3>
@@ -173,19 +173,19 @@ export function StepTestDraft({
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
             className={`bg-gray-900/50 border rounded-2xl overflow-hidden transition-colors duration-300 ${
-              showDraft ? 'border-indigo-500/50' : 'border-gray-700'
+              showDraft ? 'border-[#5B6CFF]/50' : 'border-gray-700'
             }`}
           >
             <div className="p-4 border-b border-gray-700 bg-gray-800/50">
               <h3 className="font-semibold text-white flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  showDraft ? 'bg-indigo-500/20' : 'bg-indigo-500/20'
+                  showDraft ? 'bg-[#5B6CFF]/20' : 'bg-[#5B6CFF]/20'
                 }`}>
-                  <Mail className={`w-4 h-4 ${showDraft ? 'text-indigo-400' : 'text-indigo-400'}`} />
+                  <Mail className={`w-4 h-4 ${showDraft ? 'text-[#5B6CFF]' : 'text-[#5B6CFF]'}`} />
                 </div>
                 Generated Draft
                 {showDraft && generationTime && (
-                  <span className="ml-auto text-xs text-indigo-400 flex items-center gap-1">
+                  <span className="ml-auto text-xs text-[#5B6CFF] flex items-center gap-1">
                     <Check className="w-3 h-3" />
                     Generated in {generationTime.toFixed(1)}s
                   </span>
@@ -208,7 +208,7 @@ export function StepTestDraft({
                     <p className="text-gray-500 mb-6">Click the button below to generate</p>
                     <button
                       onClick={handleGenerate}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#5B6CFF]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                     >
                       <Sparkles className="w-5 h-5" />
                       Generate Draft Email
@@ -225,10 +225,10 @@ export function StepTestDraft({
                     className="flex flex-col items-center justify-center py-12 text-center"
                   >
                     <div className="relative">
-                      <div className="w-16 h-16 border-4 border-indigo-500/20 rounded-full" />
-                      <div className="absolute top-0 left-0 w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-16 h-16 border-4 border-[#5B6CFF]/20 rounded-full" />
+                      <div className="absolute top-0 left-0 w-16 h-16 border-4 border-[#5B6CFF] border-t-transparent rounded-full animate-spin" />
                     </div>
-                    <p className="mt-4 text-indigo-400 font-medium">Generating your draft...</p>
+                    <p className="mt-4 text-[#5B6CFF] font-medium">Generating your draft...</p>
                     <p className="text-sm text-gray-500 mt-1">AI is analyzing the transcript</p>
                   </motion.div>
                 )}
@@ -251,8 +251,8 @@ export function StepTestDraft({
                     </div>
                     <div className="flex items-center justify-between pt-4">
                       <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-indigo-400" />
-                        <span className="text-sm text-indigo-400">Ready to send!</span>
+                        <Check className="w-4 h-4 text-[#5B6CFF]" />
+                        <span className="text-sm text-[#5B6CFF]">Ready to send!</span>
                       </div>
 
                       {/* Countdown and Continue button */}
@@ -278,7 +278,7 @@ export function StepTestDraft({
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             onClick={handleContinue}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-indigo-800 transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-indigo-500/25 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#5B6CFF]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                           >
                             Continue
                             <ArrowRight className="w-4 h-4" />

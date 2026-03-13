@@ -43,9 +43,9 @@ const TEMPLATE_ICONS: Record<string, JSX.Element> = {
 
 const ICON_COLORS: Record<string, string> = {
   sales: 'text-amber-400 bg-amber-500/20 border-amber-500/30',
-  team: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
-  client: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
-  technical: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30',
+  team: 'text-[#5B6CFF] bg-[#5B6CFF]/20 border-[#5B6CFF]/30',
+  client: 'text-[#5B6CFF] bg-[#5B6CFF]/20 border-[#5B6CFF]/30',
+  technical: 'text-[#5B6CFF] bg-[#5B6CFF]/20 border-[#5B6CFF]/30',
   general: 'text-gray-400 bg-gray-500/20 border-gray-500/30',
   onboarding: 'text-cyan-400 bg-cyan-500/20 border-cyan-500/30',
   strategy: 'text-rose-400 bg-rose-500/20 border-rose-500/30',
@@ -110,9 +110,9 @@ export function TemplatePicker({ onSelect, onCancel, isRegenerating }: TemplateP
               onClick={() => setSelectedId(template.id)}
               disabled={isRegenerating}
               className={`
-                text-left p-3 rounded-lg border transition-[border-color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                text-left p-3 rounded-lg border transition-[border-color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${isSelected
-                  ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500/50'
+                  ? 'border-[#5B6CFF] bg-[#5B6CFF]/10 ring-1 ring-[#5B6CFF]/50'
                   : 'border-gray-700 bg-gray-800/50 hover:border-gray-600 hover:bg-gray-800'
                 }
                 ${isRegenerating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -126,7 +126,7 @@ export function TemplatePicker({ onSelect, onCancel, isRegenerating }: TemplateP
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-white truncate">{template.name}</span>
                     {isSelected && (
-                      <svg className="w-4 h-4 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <svg className="w-4 h-4 text-[#5B6CFF] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
@@ -144,14 +144,14 @@ export function TemplatePicker({ onSelect, onCancel, isRegenerating }: TemplateP
         <button
           onClick={onCancel}
           disabled={isRegenerating}
-          className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Cancel
         </button>
         <button
           onClick={() => selectedId && onSelect(selectedId)}
           disabled={!selectedId || isRegenerating}
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="px-4 py-2 text-sm font-medium text-white bg-[#4A5BEE] rounded-lg hover:bg-[#3A4BDD] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {isRegenerating ? (
             <>

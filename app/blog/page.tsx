@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50">
       <Header />
 
       {/* Hero */}
@@ -34,7 +34,7 @@ export default function BlogPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
             Make Every Call Easier to{' '}
-            <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
               Follow Up On
             </span>
           </h1>

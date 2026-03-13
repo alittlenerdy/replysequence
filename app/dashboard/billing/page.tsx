@@ -60,7 +60,7 @@ export default function BillingPage() {
     <Suspense fallback={<BillingLoadingSkeleton />}>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white light:text-gray-900">
-          Plan <span className="bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">&</span> Billing
+          Plan <span className="bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">&</span> Billing
         </h2>
         <p className="text-gray-400 light:text-gray-500 mt-1">Manage your plan, track usage, and handle payments</p>
       </div>

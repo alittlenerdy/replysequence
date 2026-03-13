@@ -51,14 +51,14 @@ function getTimeSinceBadge(meetingStartTime: Date | null): { label: string; clas
   if (hours < 2) {
     return {
       label: '< 2h',
-      className: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
+      className: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/30',
       title: `Meeting started ${Math.round(hours * 60)}m ago`,
     };
   }
   if (hours < 24) {
     return {
       label: `${Math.round(hours)}h`,
-      className: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
+      className: 'bg-[#5B6CFF]/15 text-[#7A8BFF] border-[#5B6CFF]/30',
       title: `Meeting started ${Math.round(hours)}h ago`,
     };
   }
@@ -71,8 +71,8 @@ function getTimeSinceBadge(meetingStartTime: Date | null): { label: string; clas
 
 // Get quality badge styling based on star count
 function getQualityBadgeStyle(stars: number): { bg: string; text: string; label: string } {
-  if (stars >= 4) return { bg: 'bg-indigo-500/20 border-indigo-500/40', text: 'text-indigo-400', label: stars === 5 ? 'Excellent' : 'Good' };
-  if (stars === 3) return { bg: 'bg-indigo-500/20 border-indigo-500/40', text: 'text-indigo-300', label: 'Review' };
+  if (stars >= 4) return { bg: 'bg-[#5B6CFF]/20 border-[#5B6CFF]/40', text: 'text-[#5B6CFF]', label: stars === 5 ? 'Excellent' : 'Good' };
+  if (stars === 3) return { bg: 'bg-[#5B6CFF]/20 border-[#5B6CFF]/40', text: 'text-[#7A8BFF]', label: 'Review' };
   return { bg: 'bg-red-500/20 border-red-500/40', text: 'text-red-400', label: 'Needs Work' };
 }
 
@@ -320,8 +320,8 @@ export function DraftsTable({
       case 'zoom':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-colors duration-300" />
-            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30">
+            <div className="absolute inset-0 bg-[#5B6CFF]/30 rounded-lg blur-md group-hover/icon:bg-[#5B6CFF]/50 transition-colors duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-[#5B6CFF] to-[#4A5BEE] shadow-lg shadow-[#5B6CFF]/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="3" y="6" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <path d="M15 10L20 7V17L15 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -345,8 +345,8 @@ export function DraftsTable({
       case 'microsoft_teams':
         return (
           <div className="w-8 h-8 relative group/icon">
-            <div className="absolute inset-0 bg-indigo-500/30 rounded-lg blur-md group-hover/icon:bg-indigo-400/50 transition-colors duration-300" />
-            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/30">
+            <div className="absolute inset-0 bg-[#5B6CFF]/30 rounded-lg blur-md group-hover/icon:bg-[#5B6CFF]/50 transition-colors duration-300" />
+            <div className="relative p-1.5 rounded-lg bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] shadow-lg shadow-[#5B6CFF]/30">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="2" y="6" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="18" cy="7" r="3" stroke="currentColor" strokeWidth="2"/>
@@ -387,7 +387,7 @@ export function DraftsTable({
     return (
       <span
         className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
-          isUp ? 'bg-indigo-500/20 text-indigo-400' : 'bg-red-500/20 text-red-400'
+          isUp ? 'bg-[#5B6CFF]/20 text-[#5B6CFF]' : 'bg-red-500/20 text-red-400'
         }`}
         title={isUp ? 'Rated: Thumbs up' : 'Rated: Thumbs down'}
       >
@@ -416,7 +416,7 @@ export function DraftsTable({
           {[1, 2, 3, 4, 5].map((s) => (
             <svg
               key={s}
-              className={`${compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} ${s <= stars ? 'text-indigo-400' : 'text-gray-600/50'}`}
+              className={`${compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} ${s <= stars ? 'text-[#5B6CFF]' : 'text-gray-600/50'}`}
               fill="currentColor"
               viewBox="0 0 20 20"
               aria-hidden="true"
@@ -437,7 +437,7 @@ export function DraftsTable({
       <div className="flex items-center gap-1">
         {(draft.openCount ?? 0) > 0 && (
           <span
-            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF]"
             title={`${draft.openCount} open${(draft.openCount ?? 0) > 1 ? 's' : ''}`}
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -448,7 +448,7 @@ export function DraftsTable({
         )}
         {(draft.clickCount ?? 0) > 0 && (
           <span
-            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF]"
             title={`${draft.clickCount} click${(draft.clickCount ?? 0) > 1 ? 's' : ''}`}
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -458,7 +458,7 @@ export function DraftsTable({
         )}
         {draft.repliedAt && (
           <span
-            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF]"
             title="Replied"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -501,7 +501,7 @@ export function DraftsTable({
     <>
       <div id="drafts-table" className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl shadow-xl overflow-hidden">
         {/* Table Header */}
-        <div className="px-5 sm:px-6 py-5 border-b border-indigo-500/10 light:border-gray-200">
+        <div className="px-5 sm:px-6 py-5 border-b border-[#5B6CFF]/10 light:border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white light:text-gray-900">Follow-ups</h2>
             <div className="flex items-center gap-3">
@@ -510,7 +510,7 @@ export function DraftsTable({
                 <a
                   href="/api/drafts/export"
                   download
-                  className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors border border-gray-600/50 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-400 hover:text-white bg-gray-700/50 hover:bg-gray-700 rounded-md transition-colors border border-gray-600/50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   title="Export all drafts as CSV"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -525,7 +525,7 @@ export function DraftsTable({
 
         {/* Bulk Action Toolbar */}
         {selectedIds.size > 0 && (
-          <div className="px-4 sm:px-6 py-3 border-b border-indigo-500/30 bg-indigo-500/10">
+          <div className="px-4 sm:px-6 py-3 border-b border-[#5B6CFF]/30 bg-[#5B6CFF]/10">
             {showBulkDeleteConfirm ? (
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <span className="text-sm text-red-300">Delete {selectedIds.size} draft{selectedIds.size > 1 ? 's' : ''}? This cannot be undone.</span>
@@ -533,14 +533,14 @@ export function DraftsTable({
                   <button
                     onClick={() => setShowBulkDeleteConfirm(false)}
                     disabled={bulkDeleting}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => { setShowBulkDeleteConfirm(false); handleBulkDelete(); }}
                     disabled={bulkDeleting}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {bulkDeleting ? 'Deleting\u2026' : 'Confirm Delete'}
                   </button>
@@ -548,19 +548,19 @@ export function DraftsTable({
               </div>
             ) : showBulkSendConfirm ? (
               <div className="flex items-center justify-between gap-3 flex-wrap">
-                <span className="text-sm text-indigo-300">Send {unsentSelectedDrafts.length} email{unsentSelectedDrafts.length > 1 ? 's' : ''} to their meeting hosts?</span>
+                <span className="text-sm text-[#7A8BFF]">Send {unsentSelectedDrafts.length} email{unsentSelectedDrafts.length > 1 ? 's' : ''} to their meeting hosts?</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowBulkSendConfirm(false)}
                     disabled={bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-3 py-1.5 text-xs font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => { setShowBulkSendConfirm(false); handleBulkSend(); }}
                     disabled={bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-[#4A5BEE] rounded-lg hover:bg-[#3A4BDD] disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {bulkSending ? 'Sending\u2026' : 'Confirm Send'}
                   </button>
@@ -569,17 +569,17 @@ export function DraftsTable({
             ) : (
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-indigo-300 font-medium">{selectedIds.size} selected</span>
+                  <span className="text-[#7A8BFF] font-medium">{selectedIds.size} selected</span>
                   <button
                     onClick={() => setSelectedIds(new Set())}
-                    className="text-xs text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="text-xs text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Clear
                   </button>
                 </div>
                 <div className="flex items-center gap-2">
                   {bulkProgress && (
-                    <span className="text-xs text-indigo-300 tabular-nums">
+                    <span className="text-xs text-[#7A8BFF] tabular-nums">
                       {bulkProgress.done}/{bulkProgress.total}
                     </span>
                   )}
@@ -589,14 +589,14 @@ export function DraftsTable({
                   <button
                     onClick={() => setShowBulkDeleteConfirm(true)}
                     disabled={bulkDeleting || bulkSending}
-                    className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg hover:bg-red-500/20 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => setShowBulkSendConfirm(true)}
                     disabled={bulkSending || bulkDeleting || unsentSelectedDrafts.length === 0}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-[#4A5BEE] rounded-lg hover:bg-[#3A4BDD] disabled:opacity-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {bulkSending ? 'Sending\u2026' : `Send ${unsentSelectedDrafts.length}`}
                   </button>
@@ -615,9 +615,9 @@ export function DraftsTable({
               className={`
                 p-4 transition-[opacity,transform,background-color] duration-300 ease-out w-full text-left
                 ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
-                ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50'}
-                active:bg-gray-700/90 light:active:bg-indigo-100
-                cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
+                ${selectedIds.has(draft.id) ? 'bg-[#5B6CFF]/10' : 'hover:bg-gray-700/70 light:hover:bg-[#F5F6FF]'}
+                active:bg-gray-700/90 light:active:bg-[#EEF0FF]
+                cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B6CFF]
               `}
               onClick={() => setSelectedDraft(draft)}
             >
@@ -632,7 +632,7 @@ export function DraftsTable({
                       type="checkbox"
                       checked={selectedIds.has(draft.id)}
                       onChange={() => toggleSelect(draft.id)}
-                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-[#5B6CFF] focus:ring-[#5B6CFF] focus:ring-offset-0 cursor-pointer"
                     />
                     <span className="sr-only">Select draft</span>
                   </label>
@@ -651,7 +651,7 @@ export function DraftsTable({
                     <h3 className="text-sm font-medium text-white light:text-gray-900 truncate">
                       {draft.meetingTopic || 'Untitled Meeting'}
                       {draft.isDemo && (
-                        <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                        <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#5B6CFF]/20 text-[#5B6CFF] border border-[#5B6CFF]/30">
                           Sample
                         </span>
                       )}
@@ -686,13 +686,13 @@ export function DraftsTable({
                   }}
                   className="
                     shrink-0 px-4 py-2 rounded-lg min-h-[44px]
-                    text-indigo-400 light:text-indigo-600
-                    bg-indigo-500/10 light:bg-indigo-50
-                    hover:bg-indigo-500/20 light:hover:bg-indigo-100
+                    text-[#5B6CFF] light:text-[#4A5BEE]
+                    bg-[#5B6CFF]/10 light:bg-[#EEF0FF]
+                    hover:bg-[#4A5BEE]/20 light:hover:bg-[#EEF0FF]
                     active:scale-95
                     transition-[background-color,transform] duration-200
                     text-sm font-medium
-                    outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                    outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                   "
                 >
                   View
@@ -704,16 +704,16 @@ export function DraftsTable({
 
         {/* Desktop Table Layout - hidden on small screens, uses inline expansion */}
         <div className="hidden md:block">
-          <table className="w-full table-fixed divide-y divide-indigo-500/10 light:divide-gray-200">
+          <table className="w-full table-fixed divide-y divide-[#5B6CFF]/10 light:divide-gray-200">
             <thead>
-              <tr className="border-b border-indigo-500/10">
+              <tr className="border-b border-[#5B6CFF]/10">
                 <th className="w-[40px] px-3 py-4">
                   <label className="flex items-center">
                     <input
                       type="checkbox"
                       checked={sendableDrafts.length > 0 && selectedIds.size === sendableDrafts.length}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-indigo-500/30 bg-gray-800/50 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-[#5B6CFF]/30 bg-gray-800/50 text-[#5B6CFF] focus:ring-[#5B6CFF] focus:ring-offset-0 cursor-pointer"
                     />
                     <span className="sr-only">Select all drafts</span>
                   </label>
@@ -750,8 +750,8 @@ export function DraftsTable({
                       tabIndex={0}
                       className={`
                         group/row
-                        ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : isExpanded ? 'bg-indigo-500/[0.06] light:bg-indigo-50 border-l-2 border-l-indigo-500' : 'hover:bg-white/[0.03] light:hover:bg-indigo-50 border-l-2 border-l-transparent'}
-                        cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
+                        ${selectedIds.has(draft.id) ? 'bg-[#5B6CFF]/10' : isExpanded ? 'bg-[#5B6CFF]/[0.06] light:bg-[#EEF0FF] border-l-2 border-l-[#F5F6FF]0' : 'hover:bg-white/[0.03] light:hover:bg-[#F5F6FF] border-l-2 border-l-transparent'}
+                        cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B6CFF]
                         transition-all duration-150
                       `}
                       onClick={() => handleDesktopRowClick(draft)}
@@ -764,7 +764,7 @@ export function DraftsTable({
                               type="checkbox"
                               checked={selectedIds.has(draft.id)}
                               onChange={() => toggleSelect(draft.id)}
-                              className="w-4 h-4 rounded border-indigo-500/30 bg-gray-800/50 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                              className="w-4 h-4 rounded border-[#5B6CFF]/30 bg-gray-800/50 text-[#5B6CFF] focus:ring-[#5B6CFF] focus:ring-offset-0 cursor-pointer"
                             />
                             <span className="sr-only">Select draft</span>
                           </label>
@@ -779,7 +779,7 @@ export function DraftsTable({
                             <div className="text-sm font-medium text-white light:text-gray-900 truncate">
                               {draft.meetingTopic || 'Untitled Meeting'}
                               {draft.isDemo && (
-                                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#5B6CFF]/20 text-[#5B6CFF] border border-[#5B6CFF]/30">
                                   Sample
                                 </span>
                               )}
@@ -815,8 +815,8 @@ export function DraftsTable({
                         <div className="flex items-center gap-1.5">
                           {draft.qualityScore !== null ? (
                             <span className={`text-xs font-medium tabular-nums ${
-                              draft.qualityScore >= 80 ? 'text-indigo-400' :
-                              draft.qualityScore >= 60 ? 'text-indigo-300' : 'text-red-400'
+                              draft.qualityScore >= 80 ? 'text-[#5B6CFF]' :
+                              draft.qualityScore >= 60 ? 'text-[#7A8BFF]' : 'text-red-400'
                             }`}>
                               {draft.qualityScore}/100
                             </span>
@@ -835,7 +835,7 @@ export function DraftsTable({
                             e.stopPropagation();
                             handleDesktopRowClick(draft);
                           }}
-                          className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700/50 transition-all outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                          className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700/50 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                           title={isExpanded ? 'Collapse' : 'Expand draft'}
                         >
                           <svg
@@ -860,7 +860,7 @@ export function DraftsTable({
 
         {/* Pagination - with proper touch targets */}
         {totalPages > 1 && (
-          <div className="px-5 sm:px-6 py-4 border-t border-indigo-500/10 light:border-gray-200">
+          <div className="px-5 sm:px-6 py-4 border-t border-[#5B6CFF]/10 light:border-gray-200">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400 light:text-gray-500 tabular-nums">
                 Page {page} of {totalPages}
@@ -869,14 +869,14 @@ export function DraftsTable({
                 <button
                   onClick={() => onPageChange(page - 1)}
                   disabled={page <= 1}
-                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => onPageChange(page + 1)}
                   disabled={page >= totalPages}
-                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                  className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 >
                   Next
                 </button>

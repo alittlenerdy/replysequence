@@ -92,7 +92,7 @@ export function BlueprintGrid() {
       time += 0.02;
 
       // Draw grid lines
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
+      ctx.strokeStyle = 'rgba(91, 108, 255, 0.1)';
       ctx.lineWidth = 0.5;
 
       for (let x = gridSize; x < rect.width; x += gridSize) {
@@ -121,8 +121,8 @@ export function BlueprintGrid() {
           node.x, node.y, radius * 4
         );
         gradient.addColorStop(0, `rgba(79, 70, 229, ${opacity})`);
-        gradient.addColorStop(0.5, `rgba(99, 102, 241, ${opacity * 0.5})`);
-        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+        gradient.addColorStop(0.5, `rgba(91, 108, 255, ${opacity * 0.5})`);
+        gradient.addColorStop(1, 'rgba(91, 108, 255, 0)');
 
         ctx.beginPath();
         ctx.arc(node.x, node.y, radius * 4, 0, Math.PI * 2);
@@ -155,8 +155,8 @@ export function BlueprintGrid() {
 
         // Draw particle trail
         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8);
-        gradient.addColorStop(0, `rgba(99, 102, 241, ${p.life * 0.8})`);
-        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+        gradient.addColorStop(0, `rgba(91, 108, 255, ${p.life * 0.8})`);
+        gradient.addColorStop(1, 'rgba(91, 108, 255, 0)');
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
@@ -179,7 +179,7 @@ export function BlueprintGrid() {
     } else {
       // Draw static grid for reduced motion
       const rect = canvas.getBoundingClientRect();
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
+      ctx.strokeStyle = 'rgba(91, 108, 255, 0.1)';
       ctx.lineWidth = 0.5;
       for (let x = gridSize; x < rect.width; x += gridSize) {
         ctx.beginPath();
@@ -220,7 +220,7 @@ export function BlueprintGrid() {
         style={{ opacity: 0.6 }}
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-transparent to-[#0a0a0f] light:from-gray-50 light:via-transparent light:to-gray-50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#060B18] via-transparent to-[#060B18] light:from-gray-50 light:via-transparent light:to-gray-50" />
     </motion.div>
   );
 }

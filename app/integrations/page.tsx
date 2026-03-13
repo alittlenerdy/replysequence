@@ -218,7 +218,7 @@ export default function IntegrationsPage() {
   const categories = ['meeting', 'email', 'crm'] as const;
 
   return (
-    <div className="min-h-screen bg-gray-950 light:bg-gray-50">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50">
       <Header />
 
       {/* Hero */}
@@ -226,7 +226,7 @@ export default function IntegrationsPage() {
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6 text-pretty">
             One Workflow From{' '}
-            <span className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
               Meeting to CRM
             </span>
           </h1>
@@ -243,7 +243,7 @@ export default function IntegrationsPage() {
           </div>
           <Link
             href="/how-it-works"
-            className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 light:text-indigo-600 hover:text-indigo-300 light:hover:text-indigo-500 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] light:hover:text-[#5B6CFF] transition-colors"
           >
             See how it works
             <ArrowRight className="w-4 h-4" />
@@ -264,7 +264,7 @@ export default function IntegrationsPage() {
         return (
           <section key={category} className="py-12 px-4">
             {categoryIndex > 0 && (
-              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent mb-12 max-w-6xl mx-auto" />
+              <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent mb-12 max-w-6xl mx-auto" />
             )}
             <div className="max-w-6xl mx-auto">
               <div className="mb-8 animate-fade-in-up">

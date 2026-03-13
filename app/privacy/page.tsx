@@ -124,7 +124,7 @@ export default function PrivacyPage() {
             </ul>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed mt-4">
               To exercise these rights, use our{' '}
-              <Link href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 light:text-indigo-600 light:hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 rounded-sm">
+              <Link href="/dashboard/settings" className="text-[#5B6CFF] hover:text-[#7A8BFF] light:text-[#4A5BEE] light:hover:text-[#3A4BDD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 rounded-sm">
                 account settings
               </Link>{' '}
               or contact us at jimmy@replysequence.com.

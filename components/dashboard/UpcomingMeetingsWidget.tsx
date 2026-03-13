@@ -20,9 +20,9 @@ interface UpcomingMeetingsWidgetProps {
 
 // Platform icons and colors
 const platformConfig: Record<string, { icon: typeof Video; color: string; bgColor: string }> = {
-  zoom: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
-  google_meet: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
-  microsoft_teams: { icon: Video, color: 'text-indigo-400', bgColor: 'bg-indigo-500/20' },
+  zoom: { icon: Video, color: 'text-[#5B6CFF]', bgColor: 'bg-[#5B6CFF]/20' },
+  google_meet: { icon: Video, color: 'text-[#5B6CFF]', bgColor: 'bg-[#5B6CFF]/20' },
+  microsoft_teams: { icon: Video, color: 'text-[#5B6CFF]', bgColor: 'bg-[#5B6CFF]/20' },
 };
 
 // Format relative time - requires nowMs to be passed to avoid hydration mismatch
@@ -109,9 +109,9 @@ function MeetingCard({
         <button
           onClick={() => onToggleAutoProcess(event.id, autoProcessEnabled ? 'disabled' : 'enabled')}
           disabled={isUpdating}
-          className={`shrink-0 p-1.5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
+          className={`shrink-0 p-1.5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             autoProcessEnabled
-              ? 'text-indigo-400 hover:bg-indigo-500/20'
+              ? 'text-[#5B6CFF] hover:bg-[#4A5BEE]/20'
               : 'text-gray-500 hover:bg-gray-700'
           } disabled:opacity-50`}
           title={autoProcessEnabled ? 'Auto-process enabled' : 'Auto-process disabled'}
@@ -241,7 +241,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
     return (
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-4">
         <div className="flex items-center gap-3">
-          <Calendar className="w-5 h-5 text-indigo-400 shrink-0" />
+          <Calendar className="w-5 h-5 text-[#5B6CFF] shrink-0" />
           <h3 className="text-sm font-semibold text-white light:text-gray-900">Upcoming Meetings</h3>
         </div>
         <p className="text-gray-400 light:text-gray-500 text-sm mt-2 ml-8">
@@ -249,7 +249,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
             'No video meetings in the next 7 days'
           ) : (
             <>
-              <a href="/dashboard/settings" className="text-indigo-400 hover:text-indigo-300 underline rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+              <a href="/dashboard/settings" className="text-[#5B6CFF] hover:text-[#7A8BFF] underline rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
                 Connect your calendar
               </a>
               {' '}to see upcoming meetings
@@ -263,14 +263,14 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
   return (
     <div className="relative overflow-hidden rounded-2xl">
       {/* Gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-amber-500 to-amber-600 light:from-indigo-400 light:via-amber-300 light:to-amber-400 rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#5B6CFF] via-amber-500 to-amber-600 light:from-[#5B6CFF] light:via-amber-300 light:to-amber-400 rounded-2xl" />
 
       {/* Inner content */}
       <div className="relative m-[1px] bg-gray-900/95 light:bg-white/95 backdrop-blur-xl rounded-2xl p-6">
         {/* Header */}
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-indigo-400" />
+            <Calendar className="w-5 h-5 text-[#5B6CFF]" />
             <h3 className="text-lg font-bold text-white light:text-gray-900">
               Upcoming Meetings
             </h3>
@@ -301,7 +301,7 @@ export function UpcomingMeetingsWidget({ initialEvents }: UpcomingMeetingsWidget
         {/* Auto-process legend */}
         <div className="relative flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200 text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <ToggleRight className="w-4 h-4 text-indigo-400" />
+            <ToggleRight className="w-4 h-4 text-[#5B6CFF]" />
             Auto-process on
           </span>
           <span className="flex items-center gap-1">

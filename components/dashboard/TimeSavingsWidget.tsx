@@ -126,8 +126,8 @@ function SavingsSparkline({ data }: { data: number[] }) {
     <svg width={width} height={height} className="opacity-60" aria-hidden="true">
       <defs>
         <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#818CF8" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#818CF8" stopOpacity="0" />
+          <stop offset="0%" stopColor="#7A8BFF" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#7A8BFF" stopOpacity="0" />
         </linearGradient>
       </defs>
       <polygon
@@ -136,7 +136,7 @@ function SavingsSparkline({ data }: { data: number[] }) {
       />
       <polyline
         fill="none"
-        stroke="#818CF8"
+        stroke="#7A8BFF"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -221,8 +221,8 @@ export function TimeSavingsWidget({
         {/* Header */}
         <div className="relative flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-indigo-400" />
+            <div className="w-12 h-12 rounded-xl bg-[#5B6CFF]/10 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-[#5B6CFF]" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white light:text-gray-900">Time Saved</h3>
@@ -240,7 +240,7 @@ export function TimeSavingsWidget({
             <div className="text-center py-2">
               <div className="text-5xl md:text-6xl font-black mb-2">
                 <span
-                  className="text-indigo-400 light:text-indigo-600"
+                  className="text-[#5B6CFF] light:text-[#4A5BEE]"
                 >
                   <AnimatedNumber value={hoursSaved} decimals={1} />
                 </span>
@@ -251,7 +251,7 @@ export function TimeSavingsWidget({
 
             {/* Fun comparison */}
             <div
-              className="flex items-center justify-center gap-2 text-indigo-400 light:text-indigo-600 bg-indigo-500/10 rounded-lg py-2 px-4 mx-auto w-fit"
+              className="flex items-center justify-center gap-2 text-[#5B6CFF] light:text-[#4A5BEE] bg-[#5B6CFF]/10 rounded-lg py-2 px-4 mx-auto w-fit"
             >
               {comparison.icon}
               <span className="text-sm font-medium">{comparison.text}</span>
@@ -292,8 +292,8 @@ export function TimeSavingsWidget({
             <div
               className="space-y-4"
             >
-              <div className="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto">
-                <Sparkles className="w-8 h-8 text-indigo-400" />
+              <div className="w-16 h-16 bg-[#5B6CFF]/10 rounded-full flex items-center justify-center mx-auto">
+                <Sparkles className="w-8 h-8 text-[#5B6CFF]" />
               </div>
 
               <div>

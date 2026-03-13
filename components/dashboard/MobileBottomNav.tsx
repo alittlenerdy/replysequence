@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileText, BarChart3, Settings, CreditCard, type LucideIcon } from 'lucide-react';
+import { FileText, BarChart3, Settings, Home, Contact, type LucideIcon } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -11,9 +11,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: 'Drafts', href: '/dashboard', icon: FileText },
+  { name: 'Home', href: '/dashboard', icon: Home },
+  { name: 'Drafts', href: '/dashboard/drafts', icon: FileText },
+  { name: 'Contacts', href: '/dashboard/contacts', icon: Contact },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { name: 'Plan', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
@@ -45,9 +46,9 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
               href={item.href}
               className={`
                 relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] rounded-xl mx-1 transition-colors duration-200
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-inset
                 ${isActive
-                  ? 'text-orange-500 bg-orange-500/10 light:bg-orange-50'
+                  ? 'text-[#5B6CFF] bg-[#5B6CFF]/10 light:text-[#4A5BEE] light:bg-[#EEF0FF]'
                   : 'text-gray-400 light:text-gray-500 active:text-gray-200 light:active:text-gray-700 active:bg-white/5 light:active:bg-gray-100'
                 }
               `}
@@ -62,11 +63,9 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
                 />
                 {badge > 0 && (
                   <span
-                    className="absolute -top-1.5 -right-2.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white px-1 shadow-lg shadow-red-500/30 animate-pulse"
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50 animate-pulse"
                     aria-label={`${badge} pending`}
-                  >
-                    {badge > 9 ? '9+' : badge}
-                  </span>
+                  />
                 )}
               </div>
               <span

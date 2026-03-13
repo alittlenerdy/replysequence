@@ -50,7 +50,7 @@ function generateParticles(): Particle[] {
 // Avatar data for meeting participants
 const meetingParticipants = [
   { initials: 'JD', name: 'John Doe', color: '#2563EB' },
-  { initials: 'SK', name: 'Sarah Kim', color: '#8B5CF6' },
+  { initials: 'SK', name: 'Sarah Kim', color: '#7A5CFF' },
   { initials: 'AM', name: 'Alex Morgan', color: '#06B6D4' },
   { initials: 'RW', name: 'Rachel Wang', color: '#64748B' },
 ];
@@ -154,13 +154,13 @@ function CrmMockup() {
         {/* Contact card */}
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white font-bold text-sm shadow-md">
+            <div className="w-12 h-12 rounded-full bg-[#7A5CFF] flex items-center justify-center text-white font-bold text-sm shadow-md">
               SK
             </div>
             <div>
               <div className="font-bold text-gray-900 text-sm">Sarah Kim</div>
               <div className="text-gray-500 text-xs">VP of Engineering</div>
-              <div className="text-indigo-600 text-xs font-medium">Acme Corp</div>
+              <div className="text-[#4A5BEE] text-xs font-medium">Acme Corp</div>
             </div>
           </div>
         </div>
@@ -199,7 +199,7 @@ function CrmMockup() {
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#5B6CFF] mt-1.5" />
               <div>
                 <span className="text-xs text-gray-700">Contact record updated</span>
                 <span className="text-xs text-gray-400 ml-1">1s ago</span>
@@ -269,8 +269,8 @@ function EmailMockup() {
         {/* Email actions */}
         <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between bg-gray-50">
           <div className="flex gap-2">
-            <button className="btn-cta !px-4 !py-1.5 !text-xs !rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">Send</button>
-            <button className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">Edit</button>
+            <button className="btn-cta !px-4 !py-1.5 !text-xs !rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">Send</button>
+            <button className="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">Edit</button>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-5 h-5 rounded bg-gray-200 flex items-center justify-center">
@@ -479,9 +479,9 @@ export default function HeroAnimation() {
       >
         {/* Step dots */}
         <div className="flex items-center gap-1.5 mr-2">
-          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'zoom' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
-          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'crm' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
-          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'email' ? 'bg-indigo-500' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'zoom' ? 'bg-[#5B6CFF]' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'crm' ? 'bg-[#5B6CFF]' : 'bg-gray-300'}`} />
+          <div className={`w-2 h-2 rounded-full transition-colors ${phase === 'email' ? 'bg-[#5B6CFF]' : 'bg-gray-300'}`} />
         </div>
         {/* Step label */}
         <span className="text-text-caption">
