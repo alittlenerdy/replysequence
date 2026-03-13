@@ -63,22 +63,22 @@ const faqData = [
   {
     question: 'How does ReplySequence work?',
     answer:
-      'After your Zoom, Teams, or Meet call ends, ReplySequence reads the transcript and drafts a personalized follow-up email — referencing what was actually discussed, in your writing style. You review, edit if needed, and send. Your CRM updates automatically with meeting notes, action items, and next steps.',
+      'After your Zoom, Teams, or Meet call ends, ReplySequence reads the transcript and generates a personalized follow-up email, triggers a multi-step sequence to keep the deal warm, extracts next steps with due dates, flags deal risks, and syncs everything to your CRM — automatically. You review, edit if needed, and send.',
   },
   {
     question: 'How is this different from Gong or Fathom?',
     answer:
-      'Tools like Gong and Fathom record and summarize your meetings. ReplySequence goes further — it sends the follow-up. Those tools tell you what happened. ReplySequence does something about it.',
+      'Tools like Gong and Fathom record and summarize your meetings. ReplySequence goes further — it sends the follow-up, triggers sequences, tracks next steps, and flags deal risks. Those tools tell you what happened. ReplySequence does something about it.',
   },
   {
     question: 'How is this different from Outreach or Apollo?',
     answer:
-      'Outreach and Apollo send sequences to cold prospects using pre-written templates. ReplySequence sends follow-ups to people you\'ve already spoken to, built from the actual conversation. Cold sequencers don\'t know what happened on the call. ReplySequence does.',
+      'Outreach and Apollo send sequences to cold prospects using pre-written templates. ReplySequence sends context-aware sequences to people you\'ve already spoken to, built from the actual conversation. Cold sequencers don\'t know what happened on the call. ReplySequence references specific discussion points, tracks action items, and adapts each step based on deal context.',
   },
   {
     question: 'Will the emails sound like AI wrote them?',
     answer:
-      'Not after a few uses. ReplySequence learns your writing style from every edit you make. The AI adapts to your tone, structure, and preferences. Most users stop editing drafts significantly within the first week.',
+      'Not after a few uses. ReplySequence learns your writing style from every edit you make. Follow-ups, sequence steps, and meeting summaries all adapt to your tone, structure, and preferences. Most users stop editing significantly within the first week.',
   },
   {
     question: 'What if the AI gets something wrong?',
@@ -88,7 +88,7 @@ const faqData = [
   {
     question: 'How much does it cost?',
     answer:
-      'Free tier with 5 AI drafts per month. Pro is $19/month for unlimited drafts. Team is $29/month with CRM sync and team collaboration. No annual contracts, no platform fees, no minimum seats.',
+      'Free tier with 5 AI follow-ups per month and next-step extraction. Pro is $19/month for unlimited follow-ups, multi-step sequences, and deal risk alerts. Team is $29/month with CRM sync, deal health scoring, and meeting intelligence. No annual contracts, no platform fees, no minimum seats.',
   },
   {
     question: 'Do I need to install anything?',
@@ -98,7 +98,7 @@ const faqData = [
   {
     question: 'Is my data secure?',
     answer:
-      'Yes. AES-256 encryption at rest, TLS in transit. Transcripts are processed to generate your draft and are not stored permanently. Privacy-first architecture — we never read your inbox or access existing emails.',
+      'Yes. AES-256 encryption at rest, TLS in transit. Transcripts are processed to generate follow-ups, sequences, and deal intelligence, and are not stored permanently. Privacy-first architecture — we never read your inbox or access existing emails.',
   },
 ];
 

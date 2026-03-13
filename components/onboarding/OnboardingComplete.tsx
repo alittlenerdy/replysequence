@@ -64,7 +64,7 @@ export function OnboardingComplete({
     },
     {
       icon: Sparkles,
-      label: 'First draft generated',
+      label: 'AI outputs generated',
       completed: true,
     },
     {
@@ -114,7 +114,7 @@ export function OnboardingComplete({
         transition={{ delay: 0.3 }}
         className="text-xl text-gray-400 max-w-lg mx-auto mb-10"
       >
-        Your next meeting will automatically generate a follow-up draft. Time to reclaim your hours!
+        Your next meeting will automatically generate a follow-up, trigger a sequence, extract next steps, and update your CRM. Time to reclaim your hours!
       </motion.p>
 
       <motion.div

@@ -35,7 +35,7 @@ export function VideoSection({ videoUrl }: VideoSectionProps) {
             See It In <GradientText>Action</GradientText>
           </h2>
           <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-            From meeting transcript to polished follow-up email in seconds
+            From meeting transcript to follow-ups, sequences, next steps, and CRM updates — in seconds
           </p>
         </motion.div>
 
@@ -100,7 +100,7 @@ export function VideoSection({ videoUrl }: VideoSectionProps) {
                   Product demo dropping soon
                 </p>
                 <p className="text-sm text-gray-400 light:text-gray-600 max-w-md text-center">
-                  We&apos;re recording a walkthrough of the full meeting-to-email flow. Check back shortly.
+                  We&apos;re recording a walkthrough of the full meeting-to-follow-up workflow. Check back shortly.
                 </p>
               </div>
             )}
@@ -114,7 +114,7 @@ export function VideoSection({ videoUrl }: VideoSectionProps) {
             transition={{ delay: 0.5 }}
             className="text-center text-sm text-gray-500 light:text-gray-600 mt-4"
           >
-            Watch how ReplySequence transforms your meeting follow-ups
+            Watch how ReplySequence turns every meeting into follow-ups, sequences, and pipeline updates
           </motion.p>
         </motion.div>
       </div>

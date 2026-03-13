@@ -15,7 +15,7 @@ export function StepRole({ value, onChange, onNext }: StepRoleProps) {
     <div>
       <h3 className="text-2xl font-bold text-white mb-2">What best describes your role?</h3>
       <p className="text-gray-400 text-sm mb-6">
-        This helps us tailor your follow-up emails to your workflow.
+        This helps us tailor follow-ups, sequences, and deal intelligence to your workflow.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">

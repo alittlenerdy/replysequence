@@ -94,7 +94,7 @@ export default async function Image() {
             gap: 32,
           }}
         >
-          {['Follow-Ups From Transcripts', 'Multi-Step Sequences', 'Automatic CRM Sync'].map((feature) => (
+          {['Follow-Ups & Sequences', 'Next-Step Tracking', 'Deal Risk Alerts', 'CRM Sync'].map((feature) => (
             <div
               key={feature}
               style={{

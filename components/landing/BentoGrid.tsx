@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { BarChart3, Mail, Calendar, Users, Zap, Settings, Check } from 'lucide-react';
+import { AlertTriangle, Mail, Calendar, Users, ListChecks, MessageSquare, Check, Send } from 'lucide-react';
 import { GradientText } from '@/components/ui/GradientText';
 
 interface BentoCardProps {
@@ -53,14 +53,14 @@ function BentoCard({ title, description, icon, className = '', children, delay =
 }
 
 // Static data arrays hoisted to module scope
-const DASHBOARD_EMAILS = [
-  { name: 'Sarah Chen', subject: 'Re: Q4 Strategy Call', status: 'sent' },
-  { name: 'Mike Johnson', subject: 'Follow-up: Product Demo', status: 'draft' },
-  { name: 'Emily Davis', subject: 'Partnership Discussion', status: 'pending' },
-  { name: 'Alex Kim', subject: 'Budget Review Follow-up', status: 'sent' },
-  { name: 'Jordan Lee', subject: 'Re: Technical Integration', status: 'sent' },
-  { name: 'Maria Garcia', subject: 'Quarterly Planning Sync', status: 'draft' },
-  { name: 'David Park', subject: 'Follow-up: Contract Terms', status: 'pending' },
+const DASHBOARD_ITEMS = [
+  { name: 'Sarah Chen', type: 'sequence', detail: 'Step 2 of 3 — sending tomorrow', color: 'indigo' },
+  { name: 'Mike Johnson', type: 'follow-up', detail: 'Follow-up draft ready', color: 'green' },
+  { name: 'Emily Davis', type: 'risk', detail: 'Budget concern flagged', color: 'amber' },
+  { name: 'Alex Kim', type: 'next-step', detail: 'Send proposal — due Thu', color: 'blue' },
+  { name: 'Jordan Lee', type: 'sequence', detail: 'Step 3 of 3 — complete', color: 'green' },
+  { name: 'Maria Garcia', type: 'follow-up', detail: 'Follow-up sent 2h ago', color: 'green' },
+  { name: 'David Park', type: 'risk', detail: 'No response — 5 days', color: 'red' },
 ] as const;
 
 const MEETING_LIST_ITEMS = [
@@ -76,57 +76,88 @@ const CRM_PLATFORMS = [
 ] as const;
 
 const CRM_SYNC_EVENTS = [
-  { contact: 'Sarah C.', action: 'Contact updated', platform: 0 },
-  { contact: 'Mike J.', action: 'Deal created', platform: 1 },
-  { contact: 'Emily D.', action: 'Note added', platform: 2 },
-  { contact: 'Alex K.', action: 'Activity logged', platform: 0 },
+  { contact: 'Sarah C.', action: 'Summary + next steps synced', platform: 0 },
+  { contact: 'Mike J.', action: 'Deal health updated', platform: 1 },
+  { contact: 'Emily D.', action: 'Risk alert logged', platform: 2 },
+  { contact: 'Alex K.', action: 'Sequence activity synced', platform: 0 },
 ] as const;
 
-const CHART_BARS = [40, 65, 45, 80, 55, 70, 60] as const;
+const SEQUENCE_STEPS = [
+  { step: 1, label: 'Personalized follow-up', status: 'sent', delay: 'Same day' },
+  { step: 2, label: 'Value-add check-in', status: 'scheduled', delay: '+3 days' },
+  { step: 3, label: 'Decision nudge', status: 'pending', delay: '+7 days' },
+] as const;
 
-const SETTINGS_ITEMS = ['Tone: Professional', 'Auto-send: Off', 'Template: Default'] as const;
+const NEXT_STEPS = [
+  { task: 'Send revised proposal', contact: 'Sarah C.', due: 'Tomorrow', status: 'upcoming' },
+  { task: 'Share case study deck', contact: 'Mike J.', due: 'Thu', status: 'upcoming' },
+  { task: 'Schedule technical review', contact: 'Emily D.', due: 'Overdue', status: 'overdue' },
+  { task: 'Follow up on budget approval', contact: 'Alex K.', due: 'Fri', status: 'upcoming' },
+] as const;
 
-// Dashboard Preview — animations play once on scroll
+const RISK_ALERTS = [
+  { deal: 'Acme Corp', risk: 'Budget', detail: 'CFO pushing to next quarter', severity: 'high' },
+  { deal: 'TechStart Inc', risk: 'Champion', detail: 'Main contact went silent', severity: 'critical' },
+  { deal: 'GlobalCo', risk: 'Timeline', detail: 'Implementation deadline moved', severity: 'medium' },
+] as const;
+
+// Dashboard Preview — shows sequences, next steps, and risks at a glance
 function DashboardPreview() {
+  const colorMap: Record<string, string> = {
+    indigo: 'bg-indigo-400',
+    green: 'bg-green-400',
+    amber: 'bg-amber-400',
+    blue: 'bg-blue-400',
+    red: 'bg-red-400',
+  };
+
+  const typeIcon: Record<string, string> = {
+    sequence: '↻',
+    'follow-up': '✉',
+    risk: '⚠',
+    'next-step': '☐',
+  };
+
   return (
     <div className="w-full h-full min-h-[280px] bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-4">
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-indigo-700" />
-          <div className="h-3 w-20 bg-gray-700 light:bg-gray-200 rounded" />
+          <div className="h-3 w-24 bg-gray-700 light:bg-gray-200 rounded" />
         </div>
         <div className="h-6 w-16 bg-indigo-500/20 rounded border border-indigo-500/30" />
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-4 gap-2 mb-4">
         {[
+          { value: 12, label: 'Active Sequences' },
+          { value: 8, label: 'Next Steps' },
+          { value: 3, label: 'Risk Alerts' },
           { value: 24, label: 'Meetings' },
-          { value: 18, label: 'Drafts' },
-          { value: 12, label: 'Sent' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
-            className="bg-gray-900/50 light:bg-gray-100 rounded-lg p-3 text-center"
+            className="bg-gray-900/50 light:bg-gray-100 rounded-lg p-2 text-center"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
           >
-            <div className="text-xl font-bold tabular-nums bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+            <div className="text-lg font-bold tabular-nums bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 bg-clip-text text-transparent">
               {stat.value}
             </div>
-            <div className="text-xs text-gray-500 light:text-gray-600">{stat.label}</div>
+            <div className="text-[8px] text-gray-500 light:text-gray-600 leading-tight">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
-      {/* Email list */}
+      {/* Activity feed */}
       <div className="space-y-2">
-        {DASHBOARD_EMAILS.map((email, i) => (
+        {DASHBOARD_ITEMS.map((item, i) => (
           <motion.div
-            key={email.name}
+            key={item.name}
             className="flex items-center gap-2 p-1.5 bg-gray-900/30 light:bg-gray-100/80 rounded-lg"
             initial={{ x: -20, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
@@ -134,18 +165,14 @@ function DashboardPreview() {
             transition={{ delay: 0.3 + i * 0.1 }}
           >
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-[10px] font-medium text-white">
-              {email.name.split(' ').map(n => n[0]).join('')}
+              {item.name.split(' ').map(n => n[0]).join('')}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">{email.name}</div>
-              <div className="text-[9px] text-gray-500 truncate">{email.subject}</div>
+              <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">{item.name}</div>
+              <div className="text-[9px] text-gray-500 truncate">{item.detail}</div>
             </div>
-            <div
-              className={`w-2 h-2 rounded-full ${
-                email.status === 'sent' ? 'bg-green-400' :
-                email.status === 'draft' ? 'bg-yellow-400' : 'bg-indigo-400'
-              }`}
-            />
+            <span className="text-[9px] mr-1">{typeIcon[item.type]}</span>
+            <div className={`w-2 h-2 rounded-full ${colorMap[item.color]}`} />
           </motion.div>
         ))}
       </div>
@@ -153,20 +180,18 @@ function DashboardPreview() {
   );
 }
 
-// Draft Editor Preview — typing plays once, cursor blinks
-function DraftEditorPreview() {
-  const draftLines = [
-    "Hi Sarah,",
-    "Thanks for the great call today!",
-    "Key points we discussed:",
-    "\u2022 Q4 budget allocation",
-    "\u2022 Timeline for launch",
-  ];
+// Sequence Preview — shows multi-step follow-up sequence
+function SequencePreview() {
+  const statusStyles: Record<string, { dot: string; text: string }> = {
+    sent: { dot: 'bg-green-400', text: 'text-green-400' },
+    scheduled: { dot: 'bg-indigo-400', text: 'text-indigo-400' },
+    pending: { dot: 'bg-gray-500', text: 'text-gray-500' },
+  };
 
   return (
     <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
       <div className="flex items-center gap-2 mb-3">
-        <Mail className="w-4 h-4 text-indigo-400" />
+        <Send className="w-4 h-4 text-indigo-400" />
         <motion.span
           className="text-[10px] text-gray-400 light:text-gray-600"
           initial={{ opacity: 0 }}
@@ -174,38 +199,56 @@ function DraftEditorPreview() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          To: sarah.chen@company.com
+          Sequence: Sarah Chen — Q4 Strategy
         </motion.span>
       </div>
-      <div className="space-y-1">
-        {draftLines.map((line, i) => (
-          <motion.div
-            key={i}
-            className="text-[9px] text-gray-300 light:text-gray-700 font-mono overflow-hidden whitespace-nowrap"
-            initial={{ width: 0, opacity: 0 }}
-            whileInView={{ width: "100%", opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.5 + i * 0.6, ease: "easeOut" }}
-          >
-            {line}
-          </motion.div>
-        ))}
-        {/* Typing cursor — keep as infinite */}
-        <motion.span
-          className="inline-block w-1.5 h-3 bg-indigo-400 ml-0.5"
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
-        />
+      <div className="space-y-2">
+        {SEQUENCE_STEPS.map((step, i) => {
+          const styles = statusStyles[step.status];
+          return (
+            <motion.div
+              key={step.step}
+              className="flex items-center gap-2"
+              initial={{ x: -30, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 + i * 0.3, duration: 0.5 }}
+            >
+              {/* Timeline connector */}
+              <div className="flex flex-col items-center">
+                <div className={`w-2.5 h-2.5 rounded-full ${styles.dot}`} />
+                {i < SEQUENCE_STEPS.length - 1 && (
+                  <div className="w-px h-3 bg-gray-600 light:bg-gray-300 mt-0.5" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-medium text-white light:text-gray-900 truncate">
+                  Step {step.step}: {step.label}
+                </div>
+              </div>
+              <span className={`text-[8px] ${styles.text} font-medium`}>{step.delay}</span>
+            </motion.div>
+          );
+        })}
       </div>
-      {/* Send button appears after typing */}
+      {/* Progress indicator */}
       <motion.div
-        className="mt-2 h-5 w-16 bg-gradient-to-r from-indigo-500 to-indigo-700 rounded flex items-center justify-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
+        className="mt-3 flex items-center gap-2"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ delay: 4, duration: 0.3 }}
+        transition={{ delay: 1.5 }}
       >
-        <span className="text-[8px] text-white font-medium">Send Email</span>
+        <div className="flex-1 h-1 bg-gray-700 light:bg-gray-300 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-green-400 to-indigo-400 rounded-full"
+            initial={{ width: 0 }}
+            whileInView={{ width: '33%' }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.8, duration: 0.8 }}
+          />
+        </div>
+        <span className="text-[8px] text-gray-500">1/3 sent</span>
       </motion.div>
     </div>
   );
@@ -352,61 +395,88 @@ function CRMPreview() {
   );
 }
 
-// Chart Preview — bars grow once on scroll
-function ChartPreview() {
+// Next Steps Preview — shows tracked action items with due dates
+function NextStepsPreview() {
   return (
-    <div className="w-full h-20 flex items-end justify-between gap-1 px-2">
-      {CHART_BARS.map((height, i) => (
+    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 space-y-1.5 overflow-hidden">
+      {NEXT_STEPS.map((step, i) => (
         <motion.div
-          key={i}
-          className="flex-1 bg-gradient-to-t from-indigo-500 to-indigo-700 rounded-t"
-          initial={{ height: 0 }}
-          whileInView={{ height: `${height}%` }}
+          key={step.task}
+          className="flex items-center gap-2 p-1.5 rounded-md bg-gray-900/40 light:bg-gray-100/80"
+          initial={{ y: 20, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
-          whileHover={{ height: `${Math.min(height + 25, 100)}%`, transition: { duration: 0.2 } }}
-        />
+          transition={{ delay: 0.2 + i * 0.15 }}
+        >
+          <div className={`w-3 h-3 rounded border-2 flex-shrink-0 ${
+            step.status === 'overdue'
+              ? 'border-red-400 bg-red-400/20'
+              : 'border-indigo-400 bg-transparent'
+          }`} />
+          <div className="flex-1 min-w-0">
+            <div className="text-[9px] font-medium text-white light:text-gray-900 truncate">{step.task}</div>
+            <div className="text-[8px] text-gray-500 truncate">{step.contact}</div>
+          </div>
+          <span className={`text-[8px] font-medium px-1.5 py-0.5 rounded ${
+            step.status === 'overdue'
+              ? 'bg-red-500/20 text-red-400'
+              : 'bg-indigo-500/20 text-indigo-400'
+          }`}>
+            {step.due}
+          </span>
+        </motion.div>
       ))}
     </div>
   );
 }
 
-// Settings Preview — slides in once, static after
-function SettingsPreview() {
+// Risk Alerts Preview — shows MEDDIC-based deal risk flags
+function RiskAlertsPreview() {
+  const severityStyles: Record<string, { bg: string; border: string; text: string }> = {
+    critical: { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400' },
+    high: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400' },
+    medium: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' },
+  };
+
   return (
-    <div className="w-full h-28 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 space-y-2">
-      {SETTINGS_ITEMS.map((setting, i) => (
-        <motion.div
-          key={setting}
-          className="flex items-center justify-between"
-          initial={{ x: -20, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.15, duration: 0.4 }}
-        >
-          <span className="text-[10px] text-gray-400 light:text-gray-600">
-            {setting}
-          </span>
-          <div
-            className={`w-8 h-4 rounded-full ${i === 1 ? 'bg-gray-600 light:bg-gray-300' : 'bg-indigo-500'} flex items-center p-0.5`}
+    <div className="w-full h-32 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 space-y-1.5 overflow-hidden">
+      {RISK_ALERTS.map((alert, i) => {
+        const styles = severityStyles[alert.severity];
+        return (
+          <motion.div
+            key={alert.deal}
+            className={`flex items-start gap-2 p-1.5 rounded-md ${styles.bg} border ${styles.border}`}
+            initial={{ x: 30, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 + i * 0.2, duration: 0.4 }}
           >
-            <div
-              className="w-3 h-3 rounded-full bg-white light:bg-gray-100"
-              style={{ transform: i === 1 ? 'translateX(0px)' : 'translateX(12px)' }}
-            />
-          </div>
-        </motion.div>
-      ))}
-      {/* Color swatches — static */}
-      <div className="flex gap-1 mt-2">
-        {['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'].map((color) => (
-          <div
-            key={color}
-            className="w-4 h-4 rounded-full border-2 border-transparent hover:border-white transition-colors cursor-pointer"
-            style={{ backgroundColor: color }}
-          />
-        ))}
-      </div>
+            <AlertTriangle className={`w-3 h-3 mt-0.5 flex-shrink-0 ${styles.text}`} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] font-medium text-white light:text-gray-900 truncate">{alert.deal}</span>
+                <span className={`text-[7px] font-bold ${styles.text} uppercase`}>{alert.risk}</span>
+              </div>
+              <div className="text-[8px] text-gray-500 truncate">{alert.detail}</div>
+            </div>
+          </motion.div>
+        );
+      })}
+      {/* Pulsing alert indicator */}
+      <motion.div
+        className="flex items-center justify-center gap-1.5 mt-1"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 1.2 }}
+      >
+        <motion.div
+          className="w-1.5 h-1.5 rounded-full bg-amber-400"
+          animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        <span className="text-[8px] text-amber-400 font-medium">3 risks need attention</span>
+      </motion.div>
     </div>
   );
 }
@@ -426,14 +496,14 @@ export function BentoGrid() {
             The <GradientText>Follow-Up Layer</GradientText> Your Sales Stack Is Missing
           </h2>
           <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-            From meeting to follow-up to CRM — one workflow, no manual steps
+            Follow-ups, sequences, next-step tracking, deal risk alerts, and CRM sync — all from the transcript
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <BentoCard
             title="Every Deal at a Glance"
-            description="Meetings, follow-ups, sequences, and CRM status — all in one view"
+            description="Sequences, next steps, risk alerts, and follow-ups — one view for your entire pipeline"
             className="lg:col-span-2 lg:row-span-2"
             delay={0}
           >
@@ -441,12 +511,12 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="Drafts From the Conversation"
-            description="Follow-ups that reference what was actually said on the call"
-            icon={<Zap className="w-6 h-6 text-indigo-400" />}
+            title="Multi-Step Sequences"
+            description="Context-aware follow-up sequences that keep deals warm automatically"
+            icon={<Send className="w-6 h-6 text-indigo-400" />}
             delay={0.1}
           >
-            <DraftEditorPreview />
+            <SequencePreview />
           </BentoCard>
 
           <BentoCard
@@ -460,7 +530,7 @@ export function BentoGrid() {
 
           <BentoCard
             title="CRM Updates Itself"
-            description="Notes, next steps, and deal context synced to HubSpot, Salesforce, or Sheets"
+            description="Summaries, next steps, deal health, and sequence activity synced to your CRM"
             icon={<Users className="w-6 h-6 text-indigo-400" />}
             delay={0.3}
           >
@@ -468,21 +538,21 @@ export function BentoGrid() {
           </BentoCard>
 
           <BentoCard
-            title="See What's Working"
-            description="Open rates, reply rates, and follow-up coverage across your team"
-            icon={<BarChart3 className="w-6 h-6 text-amber-400" />}
+            title="Next Steps Tracked"
+            description="Action items extracted from every call with due dates and overdue reminders"
+            icon={<ListChecks className="w-6 h-6 text-blue-400" />}
             delay={0.4}
           >
-            <ChartPreview />
+            <NextStepsPreview />
           </BentoCard>
 
           <BentoCard
-            title="Your Voice, Your Templates"
-            description="Set your tone and structure — the AI adapts to sound like you"
-            icon={<Settings className="w-6 h-6 text-orange-400" />}
+            title="Deal Risk Alerts"
+            description="Budget, timeline, and champion risks flagged before they cost you the deal"
+            icon={<AlertTriangle className="w-6 h-6 text-amber-400" />}
             delay={0.5}
           >
-            <SettingsPreview />
+            <RiskAlertsPreview />
           </BentoCard>
         </div>
       </div>

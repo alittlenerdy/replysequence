@@ -16,7 +16,7 @@ export function StepTone({ value, onChange, onNext, onBack }: StepToneProps) {
     <div>
       <h3 className="text-2xl font-bold text-white mb-2">Pick your email tone</h3>
       <p className="text-gray-400 text-sm mb-6">
-        This sets the default voice for all your follow-up emails.
+        This sets the default voice for follow-ups, sequences, and meeting summaries.
       </p>
 
       <div className="grid grid-cols-2 gap-3 max-w-lg">

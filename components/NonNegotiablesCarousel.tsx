@@ -6,12 +6,12 @@ import {
   Mail,
   Sparkles,
   Send,
-  Monitor,
+  ListChecks,
   RefreshCw,
-  Shield,
-  Zap,
+  Monitor,
   Pencil,
-  BarChart3,
+  Shield,
+  DollarSign,
   type LucideIcon,
 } from 'lucide-react';
 import { GradientText } from '@/components/ui/GradientText';
@@ -208,48 +208,48 @@ const ILLUSTRATIONS: React.FC<{ className?: string }>[] = [
 export const NON_NEGOTIABLES: readonly { title: string; description: string; icon: LucideIcon }[] = [
   {
     title: 'Every meeting gets a follow-up',
-    description: 'No call falls through the cracks. The draft is ready before your next meeting starts.',
+    description: 'AI reads the transcript and drafts a personalized email before your next call starts. No meetings slip through.',
     icon: Mail,
   },
   {
     title: 'Built from the actual conversation',
-    description: 'Not a template. Not merge fields. The email references what was said on the call.',
+    description: 'Not a template. The email references specific topics, objections, and commitments from the call.',
     icon: Sparkles,
   },
   {
     title: 'You approve every email',
-    description: 'Nothing sends without your review. Edit, rewrite, or send as-is.',
+    description: 'Nothing sends without your review. Edit, rewrite, or send as-is. Full control, always.',
     icon: Send,
   },
   {
-    title: 'Sequences that keep deals moving',
-    description: 'One follow-up isn\'t enough. Multi-step sequences adapt based on engagement.',
-    icon: Monitor,
+    title: 'Auto follow-up sequences',
+    description: 'After the first email, multi-step sequences keep the deal warm — each step built from the original conversation.',
+    icon: ListChecks,
   },
   {
-    title: 'CRM updates without data entry',
-    description: 'Notes, next steps, and deal context flow to HubSpot, Salesforce, or Sheets automatically.',
+    title: 'Next steps tracked automatically',
+    description: 'Action items and commitments extracted from every call. Due dates set, reminders sent, nothing forgotten.',
     icon: RefreshCw,
   },
   {
     title: 'Zoom + Teams + Meet',
     description: 'All three platforms, one workflow. Connect once and forget about it.',
-    icon: Shield,
+    icon: Monitor,
   },
   {
     title: 'Learns your writing style',
-    description: 'Every edit teaches the AI your tone. Drafts get sharper with every send.',
-    icon: Zap,
+    description: 'Every edit teaches the AI your tone. Drafts get sharper with every send until they sound like you.',
+    icon: Pencil,
   },
   {
     title: 'Privacy-first',
     description: 'Transcripts processed, not stored. AES-256 encryption. Your data stays yours.',
-    icon: Pencil,
+    icon: Shield,
   },
   {
     title: '$19/month, not $19,000/year',
     description: 'Enterprise follow-up at startup pricing. No platform fees. No annual contracts.',
-    icon: BarChart3,
+    icon: DollarSign,
   },
 ];
 

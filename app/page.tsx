@@ -108,14 +108,14 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
-              ReplySequence reads your sales calls and writes the follow-up email — personalized from the actual conversation, in your voice, before your next meeting starts.
+              ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates — automatically, before your next meeting starts.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-6">
               {[
-                'Follow-ups built from the actual conversation',
-                'Multi-step sequences that keep deals moving',
-                'CRM updates without touching a keyboard',
+                'Follow-ups and sequences from the transcript',
+                'Next steps tracked with overdue reminders',
+                'Deal risks flagged before they cost you',
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
@@ -242,7 +242,7 @@ export default function LandingPage() {
               Your Sales Stack Has a <GradientText variant="amber">Gap</GradientText>. This Is It.
             </h2>
             <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
-              Deals die between meetings because the follow-up either never happens, happens too late, or has zero context from the actual conversation.
+              Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up, the next steps, the risk alerts, or the CRM update.
             </p>
           </motion.div>
 
@@ -251,38 +251,38 @@ export default function LandingPage() {
               {
                 icon: Clock,
                 before: '44% of reps never follow up at all',
-                process: 'AI drafts from the transcript',
-                after: 'Every call gets a personalized follow-up',
+                process: 'AI drafts follow-up + triggers a sequence',
+                after: 'Every call gets a multi-step follow-up plan',
               },
               {
                 icon: FileX,
                 before: 'Generic "Great speaking with you" emails',
-                process: 'AI references the actual conversation',
-                after: 'Emails mention what the buyer said they care about',
+                process: 'AI pulls specific topics from the transcript',
+                after: 'Each sequence step references the real conversation',
               },
               {
                 icon: Zap,
-                before: 'One follow-up, then silence',
-                process: 'Multi-step sequences triggered automatically',
-                after: 'Deals stay warm until they close',
+                before: 'Action items forgotten after the call',
+                process: 'AI extracts next steps with due dates',
+                after: 'Every commitment tracked, reminders sent when overdue',
               },
               {
                 icon: Link2Off,
                 before: 'CRM shows "last activity: 3 weeks ago"',
-                process: 'Automatic CRM sync from meetings',
-                after: 'Pipeline reflects reality, not memory',
+                process: 'Meeting notes + deal context synced automatically',
+                after: 'Pipeline reflects reality with health scores',
               },
               {
                 icon: BarChart3,
-                before: 'Manager asks "did you follow up?"',
-                process: 'Every follow-up visible to the team',
-                after: 'Coaching on quality, not existence',
+                before: 'Deal risks surface too late to save',
+                process: 'AI flags budget, timeline, and champion risks',
+                after: 'Risk alerts before the deal goes cold',
               },
               {
                 icon: Users,
-                before: 'Gong costs $50K before the first rep logs in',
-                process: '$19/month, 2-minute setup',
-                after: 'Enterprise follow-up at startup pricing',
+                before: 'Walk into meetings with no prep',
+                process: 'Pre-meeting briefing with deal context',
+                after: 'Every call starts with full buyer intelligence',
               },
             ].map((item, index) => (
               <motion.div
@@ -345,15 +345,15 @@ export default function LandingPage() {
                 {
                   step: '02',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" /></svg>,
-                  title: 'AI Drafts Your Follow-Up',
-                  description: 'Within seconds, you get a personalized email that references what was actually discussed — action items, next steps, pain points — in your tone.',
+                  title: 'AI Does the Work',
+                  description: 'Personalized follow-up email, multi-step sequence, extracted next steps with due dates, deal risk flags, and CRM updates — all from the transcript, in seconds.',
                   color: 'purple',
                 },
                 {
                   step: '03',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
                   title: 'Review, Send, Move On',
-                  description: 'Edit if you want. Hit send. Your CRM updates automatically. The deal stays warm. You are already on your next call.',
+                  description: 'Edit and send the follow-up. The sequence keeps the deal warm. Next steps track themselves. Your CRM updates automatically. You are already on your next call.',
                   color: 'pink',
                 },
               ].map((item, index) => (
@@ -662,27 +662,26 @@ export default function LandingPage() {
               <span className="text-sm font-medium text-indigo-400">Adaptive AI</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4 text-pretty">
-              AI That Learns <GradientText variant="amber">Your Voice</GradientText>
+              Gets Smarter With <GradientText variant="amber">Every Meeting</GradientText>
             </h2>
             <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
-              Every edit teaches the AI how you write. The more you use ReplySequence,
-              the less editing you need — until drafts sound like you wrote them.
+              Every call builds your deal intelligence. The AI learns your voice, tracks relationship history, and surfaces risks before they cost you a deal.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                title: 'Adapts to Your Tone',
-                description: 'Soften language? Add more detail? Restructure the opening? The AI notices and adapts to how you actually write.',
+                title: 'Learns Your Writing Style',
+                description: 'Every edit teaches the AI your tone. Follow-ups and sequences sound like you wrote them — not like AI.',
               },
               {
-                title: 'Knows Your Contacts',
-                description: 'References past meetings and conversations with each contact. Follow-ups feel like a continuation, not a cold start.',
+                title: 'Builds Deal Context Over Time',
+                description: 'Each meeting adds to the deal record — stakeholders, objections, commitments, risks. Pre-meeting briefings get richer with every call.',
               },
               {
-                title: 'Improves With Every Send',
-                description: 'Each draft you approve makes the next one more accurate. Your follow-ups get sharper without you trying.',
+                title: 'Flags Risks Before They Cost You',
+                description: 'Deal health scores update after every conversation. Risk alerts surface budget, timeline, and champion gaps so you can act early.',
               },
             ].map((item, i) => (
               <motion.div
@@ -714,7 +713,7 @@ export default function LandingPage() {
               Your Next Meeting Is Coming. The <GradientText variant="amber">Follow-Up</GradientText> Should Be Automatic.
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
-              Start with 5 free AI drafts. No credit card. Connect your meeting platform and send your first follow-up in under 5 minutes.
+              Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.
             </p>
 
             <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-6 sm:p-12 mx-4 sm:mx-0">
@@ -755,11 +754,14 @@ export default function LandingPage() {
               "url": "https://playgroundgiants.com",
             },
             "featureList": [
-              "AI-powered follow-up email generation",
+              "AI-powered follow-up email generation from transcripts",
+              "Multi-step follow-up sequences triggered by meetings",
+              "Automatic next-step extraction with due dates and reminders",
+              "Deal risk detection with MEDDIC-based categorization",
+              "Pre-meeting intelligence briefings with deal context",
+              "Deal health scoring across your pipeline",
               "Zoom, Microsoft Teams, and Google Meet integration",
               "CRM automation with HubSpot, Salesforce, and Google Sheets",
-              "Email tracking and analytics",
-              "Connected email account sending",
             ],
           }),
         }}

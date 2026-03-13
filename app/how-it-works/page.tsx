@@ -529,8 +529,8 @@ export default function HowItWorksPage() {
           <StepCard
             step={2}
             icon={<Sparkles className="w-8 h-8" />}
-            title="AI Writes Your Follow-Up"
-            description="Within seconds, you get a personalized email that references what was actually discussed on the call — specific topics, commitments, and next steps — written in your voice. Plus a multi-step sequence to keep the deal moving."
+            title="AI Does Everything After the Call"
+            description="Within seconds, you get a personalized follow-up email, a multi-step sequence to keep the deal warm, extracted next steps with due dates, deal risk flags, and CRM updates — all built from the actual transcript."
             color="amber"
           >
             <div className="mt-6">
@@ -542,33 +542,41 @@ export default function HowItWorksPage() {
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-indigo-400 mb-1">
-                      <FileText className="w-4 h-4" aria-hidden="true" />
-                      Key Points
+                      <Mail className="w-4 h-4" aria-hidden="true" />
+                      Follow-Up Email
                     </div>
-                    <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
-                      <li className="list-disc"><TypewriterText text="Discussed Q1 roadmap priorities" delay={0} /></li>
-                      <li className="list-disc"><TypewriterText text="Agreed on new pricing structure" delay={800} /></li>
-                      <li className="list-disc"><TypewriterText text="Reviewed competitor analysis" delay={1600} /></li>
-                    </ul>
+                    <div className="text-sm text-gray-400 light:text-gray-600 pl-6">
+                      <TypewriterText text="Personalized draft referencing pricing discussion and competitor concerns..." delay={0} />
+                    </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-amber-400 mb-1">
-                      <CheckCircle className="w-4 h-4" aria-hidden="true" />
-                      Action Items
+                      <MessageSquare className="w-4 h-4" aria-hidden="true" />
+                      3-Step Sequence Triggered
                     </div>
                     <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
-                      <li className="list-disc"><TypewriterText text="Send proposal by Friday (John)" delay={2400} /></li>
-                      <li className="list-disc"><TypewriterText text="Schedule follow-up demo (Sarah)" delay={3200} /></li>
-                      <li className="list-disc"><TypewriterText text="Share updated pricing deck (You)" delay={4000} /></li>
+                      <li className="list-disc"><TypewriterText text="Day 1: Follow-up with proposal attached" delay={800} /></li>
+                      <li className="list-disc"><TypewriterText text="Day 3: Check-in on timeline concerns" delay={1600} /></li>
+                      <li className="list-disc"><TypewriterText text="Day 7: Value recap with case study" delay={2400} /></li>
                     </ul>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-indigo-400 mb-1">
+                      <CheckCircle className="w-4 h-4" aria-hidden="true" />
+                      Next Steps Tracked
+                    </div>
+                    <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
+                      <li className="list-disc"><TypewriterText text="Send proposal by Friday (John) — due in 3 days" delay={3200} /></li>
+                      <li className="list-disc"><TypewriterText text="Schedule follow-up demo (Sarah) — due next week" delay={4000} /></li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-medium text-red-400 mb-1">
                       <Users className="w-4 h-4" aria-hidden="true" />
-                      Attendees Detected
+                      Risk Alert
                     </div>
                     <div className="text-sm text-gray-400 light:text-gray-600 pl-6">
-                      <TypewriterText text="John Smith, Sarah Johnson, + 2 others" delay={4800} />
+                      <TypewriterText text="Budget concern flagged — buyer mentioned Q2 freeze" delay={4800} />
                     </div>
                   </div>
                 </div>
@@ -581,17 +589,17 @@ export default function HowItWorksPage() {
             step={3}
             icon={<Mail className="w-8 h-8" />}
             title="Review, Send, Move On"
-            description="Edit if you want. Approve and send. Your CRM updates automatically with meeting notes, action items, and deal context. You're already on your next call."
+            description="Edit the follow-up and hit send. The sequence keeps the deal warm. Next steps track themselves with reminders. Risk alerts flag deals going cold. Your CRM updates automatically. You are already on your next call."
             color="cyan"
           >
             <div className="mt-6 space-y-4">
               {/* Animated features grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
-                  { icon: Edit3, text: 'One-click editing' },
-                  { icon: Shield, text: 'Review before sending' },
-                  { icon: Zap, text: 'Send instantly' },
-                  { icon: CheckCircle, text: 'CRM auto-update' },
+                  { icon: Edit3, text: 'Edit and send follow-ups' },
+                  { icon: MessageSquare, text: 'Multi-step sequences active' },
+                  { icon: CheckCircle, text: 'Next steps tracked with reminders' },
+                  { icon: Shield, text: 'Deal risks flagged automatically' },
                 ].map(({ icon: Icon, text }, i) => (
                   <motion.div
                     key={text}
@@ -633,28 +641,28 @@ export default function HowItWorksPage() {
           <div className="space-y-4">
             {[
               {
-                question: 'What platforms are supported?',
-                answer: 'ReplySequence currently supports Zoom, Microsoft Teams, and Google Meet. We\'re always working on adding more integrations based on user feedback. All three platforms are fully integrated with OAuth for secure, one-click connections.',
+                question: 'What happens after my meeting ends?',
+                answer: 'ReplySequence reads the transcript and generates a personalized follow-up email, triggers a multi-step sequence, extracts next steps with due dates, flags deal risks, and updates your CRM — all within seconds.',
               },
               {
-                question: 'How long does it take to generate a draft?',
-                answer: 'Most drafts are generated within 8 seconds of the transcript becoming available. The actual time depends on meeting length - a 30-minute call typically processes in under 10 seconds, while hour-long meetings may take 15-20 seconds.',
+                question: 'What are follow-up sequences?',
+                answer: 'After the initial follow-up email, ReplySequence generates a 3-step sequence to keep the deal warm — each step built from the actual conversation. You can edit timing and content, then schedule all steps with one click.',
+              },
+              {
+                question: 'How does next-step tracking work?',
+                answer: 'The AI extracts every commitment and action item from the call — who owns it, what it is, and when it is due. These appear in your dashboard timeline, and you get email reminders when items are overdue.',
+              },
+              {
+                question: 'What are deal risk alerts?',
+                answer: 'ReplySequence monitors your conversations for budget concerns, timeline risks, missing champions, competitive threats, and other deal-killing signals. Risks are categorized by severity and surfaced in your dashboard.',
+              },
+              {
+                question: 'Do I get briefings before meetings?',
+                answer: 'Yes. Before each call, ReplySequence compiles a briefing with deal history, past commitments, risk flags, and buyer signals from previous meetings — so you walk in fully prepared.',
               },
               {
                 question: 'Is my data secure?',
-                answer: 'Absolutely. We use AES-256 encryption for all data at rest and TLS 1.3 for data in transit. Your meeting transcripts are processed but never used to train AI models. OAuth tokens are encrypted, and we follow SOC 2 security practices. See our Security page for full details.',
-              },
-              {
-                question: 'Can I edit drafts before sending?',
-                answer: 'Yes! Every draft appears in your dashboard where you can review and edit it. Make changes directly in the editor, then send when you\'re satisfied. You maintain full control over what gets sent.',
-              },
-              {
-                question: 'Do I need to install anything?',
-                answer: 'No installation required. ReplySequence is a web-based application that connects to your meeting platforms via secure OAuth. Just sign up, connect your accounts, and you\'re ready to go.',
-              },
-              {
-                question: 'What if my meeting doesn\'t have transcription enabled?',
-                answer: 'ReplySequence requires meeting transcripts to generate follow-ups. If transcription wasn\'t enabled for a meeting, we won\'t be able to process it. Make sure to enable transcription before your meetings start - we provide platform-specific guides above!',
+                answer: 'AES-256 encryption at rest, TLS in transit. Transcripts are processed to generate your outputs and are not stored permanently. We never read your inbox or access existing emails.',
               },
             ].map((faq, index) => (
               <FAQItem key={faq.question} {...faq} index={index} />

@@ -18,19 +18,19 @@ const testimonials: Testimonial[] = [
     name: 'Sarah Chen',
     title: 'VP of Sales',
     company: 'TechCorp',
-    quote: 'I used to spend 30 minutes after every call writing follow-ups. Now it takes 30 seconds to review and hit send. My team closes faster because we follow up while the conversation is still fresh.',
+    quote: 'I used to spend 30 minutes after every call writing follow-ups and updating the CRM. Now the follow-up, the sequence, and the CRM update are all done before my next meeting starts. My team closes faster because nothing falls through the cracks.',
   },
   {
     name: 'Marcus Rivera',
     title: 'Account Executive',
     company: 'CloudScale',
-    quote: 'The meeting intelligence is what sold me. It doesn\'t just summarize — it pulls out the exact action items and next steps I committed to on the call. Nothing falls through the cracks.',
+    quote: 'The meeting intelligence is what sold me. It pulls out action items, tracks next steps with due dates, and flags deal risks I would have missed. I can ask it questions across all my calls and get instant answers.',
   },
   {
     name: 'Priya Patel',
     title: 'Sales Manager',
     company: 'DataFlow',
-    quote: 'My reps went from inconsistent follow-ups to same-day emails on every call. The quality is indistinguishable from hand-written. Our response rates jumped 40% in the first month.',
+    quote: 'My reps went from inconsistent follow-ups to automated sequences on every deal. The AI learns their writing style, the CRM stays accurate, and I can see deal risks across the whole pipeline. Response rates jumped 40% in the first month.',
   },
 ];
 

@@ -124,7 +124,7 @@ export function StepTestDraft({
           transition={{ delay: 0.1 }}
           className="text-gray-400 text-lg max-w-lg mx-auto"
         >
-          Watch how ReplySequence generates a follow-up email from a meeting transcript
+          Watch how ReplySequence generates a follow-up, sequence, and next steps from a meeting transcript
         </motion.p>
       </div>
 

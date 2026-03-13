@@ -37,13 +37,13 @@ const pricingTiers = [
     tier: 'free' as const,
     monthlyPrice: 0,
     annualPrice: 0,
-    description: 'See how AI follow-ups work on your real meetings. Five drafts per month, unlimited meetings.',
+    description: 'See how AI follow-ups and sequences work on your real meetings. Five drafts per month, unlimited meetings.',
     icon: 'zap' as const,
     features: [
       'Unlimited meetings',
+      '5 AI follow-ups per month',
+      'Next-step extraction',
       'Basic email templates',
-      'ReplySequence branding on emails',
-      '5 AI drafts per month',
       'Email support',
     ],
   },
@@ -52,18 +52,18 @@ const pricingTiers = [
     tier: 'pro' as const,
     monthlyPrice: 19,
     annualPrice: 15, // ~21% discount
-    description: 'For founders and AEs who want every call followed up in seconds — not hours.',
+    description: 'For founders and AEs who want every call followed up, sequenced, and tracked — automatically.',
     icon: 'sparkles' as const,
     highlighted: true,
     monthlyPriceId: STRIPE_PRICES.pro,
     annualPriceId: STRIPE_ANNUAL_PRICES.pro,
     features: [
       'Everything in Free',
-      'Unlimited AI drafts',
+      'Unlimited AI follow-ups',
+      'Multi-step sequences',
+      'Deal risk alerts',
       'Custom email templates',
       'No ReplySequence branding',
-      'Priority AI processing',
-      'Advanced editing tools',
       'Priority support',
     ],
   },
@@ -72,7 +72,7 @@ const pricingTiers = [
     tier: 'team' as const,
     monthlyPrice: 29,
     annualPrice: 24, // ~17% discount
-    description: 'For sales teams that need 100% follow-up coverage and clean CRM data across every rep.',
+    description: 'For sales teams that need 100% follow-up coverage, pipeline visibility, and clean CRM data across every rep.',
     icon: 'building' as const,
     monthlyPriceId: STRIPE_PRICES.team,
     annualPriceId: STRIPE_ANNUAL_PRICES.team,
@@ -80,10 +80,10 @@ const pricingTiers = [
       'Everything in Pro',
       'Unlimited team members',
       'CRM sync (HubSpot, Salesforce, Sheets)',
+      'Deal health scoring',
+      'Meeting intelligence queries',
       'Team sharing & collaboration',
-      'Analytics dashboard',
       'API access',
-      'White-label exports',
       'Dedicated account manager',
     ],
   },
@@ -148,7 +148,7 @@ async function PricingContent() {
         <section className="pb-4 px-4">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-sm text-gray-400 light:text-gray-500 bg-gray-900/50 light:bg-indigo-50 border border-gray-800 light:border-indigo-100 rounded-full px-6 py-3 inline-block">
-              Every meeting gets a follow-up. Every follow-up references the actual conversation. Every CRM field updates itself.
+              Every meeting gets a follow-up. Every deal gets a sequence. Every next step gets tracked. Every CRM field updates itself.
             </p>
           </div>
         </section>
@@ -170,7 +170,7 @@ async function PricingContent() {
                 The math is simple
               </h2>
               <p className="text-gray-300 light:text-gray-700 leading-relaxed max-w-2xl mx-auto">
-                If a rep spends 10 hours/month writing follow-ups and their time is worth $100/hr, that is $1,000/month in manual work. ReplySequence turns that into minutes and pays for itself after your first few meetings.
+                If a rep spends 10 hours/month writing follow-ups, updating the CRM, and tracking next steps — and their time is worth $100/hr — that is $1,000/month in manual work. ReplySequence turns that into minutes and pays for itself after your first few meetings.
               </p>
               <p className="text-sm text-amber-400 light:text-amber-600 font-medium mt-4">
                 See exactly how many hours and dollars you are saving — directly inside the product.
@@ -195,7 +195,7 @@ async function PricingContent() {
                 },
                 {
                   q: 'How accurate are the summaries and follow-ups?',
-                  a: 'Drafts are based on your actual call transcript — not generic templates. You keep full control to tweak language, add nuance, and decide what goes out. Most users find the drafts capture 90%+ of what they would have written manually.',
+                  a: 'Follow-ups and sequences are based on your actual call transcript — not generic templates. Next steps and risk alerts are pulled directly from the conversation. Most users find the output captures 90%+ of what they would have done manually.',
                 },
                 {
                   q: 'How do you handle call and email data?',
@@ -232,10 +232,10 @@ async function PricingContent() {
         <section className="py-16 px-4 bg-gradient-to-b from-gray-900 to-gray-950 light:from-white light:to-gray-50">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
-              Send your first AI follow-up in 5 minutes
+              From first meeting to full pipeline automation in 5 minutes
             </h2>
             <p className="text-gray-400 light:text-gray-600 mb-8">
-              Connect your meeting platform, run a call, and let ReplySequence handle the rest.
+              Connect your meeting platform, run a call, and let ReplySequence handle the follow-ups, sequences, next steps, and CRM updates.
             </p>
             <a
               href="/sign-up"
@@ -265,7 +265,7 @@ async function PricingContent() {
                 "name": "Free",
                 "price": "0",
                 "priceCurrency": "USD",
-                "description": "5 AI drafts per month, unlimited meetings",
+                "description": "5 AI follow-ups per month, next-step extraction, unlimited meetings",
               },
               {
                 "@type": "Offer",
@@ -273,7 +273,7 @@ async function PricingContent() {
                 "price": "19",
                 "priceCurrency": "USD",
                 "billingIncrement": "P1M",
-                "description": "Unlimited AI drafts, custom templates, priority processing",
+                "description": "Unlimited AI follow-ups, multi-step sequences, deal risk alerts, custom templates",
               },
               {
                 "@type": "Offer",
@@ -281,7 +281,7 @@ async function PricingContent() {
                 "price": "180",
                 "priceCurrency": "USD",
                 "billingIncrement": "P1Y",
-                "description": "Unlimited AI drafts, custom templates, priority processing - save 20%",
+                "description": "Unlimited AI follow-ups, multi-step sequences, deal risk alerts, custom templates - save 20%",
               },
               {
                 "@type": "Offer",
@@ -289,7 +289,7 @@ async function PricingContent() {
                 "price": "29",
                 "priceCurrency": "USD",
                 "billingIncrement": "P1M",
-                "description": "Everything in Pro plus CRM sync, team collaboration, API access",
+                "description": "Everything in Pro plus CRM sync, deal health scoring, meeting intelligence, team collaboration",
               },
               {
                 "@type": "Offer",
@@ -297,7 +297,7 @@ async function PricingContent() {
                 "price": "288",
                 "priceCurrency": "USD",
                 "billingIncrement": "P1Y",
-                "description": "Everything in Pro plus CRM sync, team collaboration, API access - save 17%",
+                "description": "Everything in Pro plus CRM sync, deal health scoring, meeting intelligence, team collaboration - save 17%",
               },
             ],
           }),
