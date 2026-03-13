@@ -7,7 +7,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db, users, meetings, drafts, emailSequences } from '@/lib/db';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, or } from 'drizzle-orm';
 import type { Participant } from '@/lib/db/schema';
 
 export const dynamic = 'force-dynamic';
@@ -43,7 +43,7 @@ export async function GET() {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
-  // Get all completed meetings with participants
+  // Get all processed meetings with participants ('ready' = transcript processed, 'completed' = legacy)
   const userMeetings = await db
     .select({
       id: meetings.id,
@@ -53,16 +53,20 @@ export async function GET() {
       hostEmail: meetings.hostEmail,
     })
     .from(meetings)
-    .where(and(eq(meetings.userId, userId), eq(meetings.status, 'completed')))
+    .where(and(
+      eq(meetings.userId, userId),
+      or(eq(meetings.status, 'ready'), eq(meetings.status, 'completed')),
+    ))
     .orderBy(desc(meetings.startTime));
 
-  // Get all drafts sent
+  // Get all drafts sent (drafts don't have userId — join through meetings)
   const sentDrafts = await db
     .select({
       sentTo: drafts.sentTo,
     })
     .from(drafts)
-    .where(and(eq(drafts.userId, userId), eq(drafts.status, 'sent')));
+    .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+    .where(and(eq(meetings.userId, userId), eq(drafts.status, 'sent')));
 
   // Get all sequences
   const userSequences = await db

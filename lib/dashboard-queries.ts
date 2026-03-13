@@ -613,6 +613,7 @@ export async function getDraftStats(): Promise<{
   avgCost: number;
   avgLatency: number;
   meetingsProcessed: number;
+  sequencesActive: number;
 }> {
   // Get current user for filtering
   const userId = await getCurrentUserId();
@@ -626,10 +627,11 @@ export async function getDraftStats(): Promise<{
       avgCost: 0,
       avgLatency: 0,
       meetingsProcessed: 0,
+      sequencesActive: 0,
     };
   }
 
-  const [draftStats, meetingStats] = await Promise.all([
+  const [draftStats, meetingStats, activeSeqStats] = await Promise.all([
     db
       .select({
         total: sql<number>`count(*)`,
@@ -647,7 +649,14 @@ export async function getDraftStats(): Promise<{
         count: sql<number>`count(*)`,
       })
       .from(meetings)
-      .where(and(eq(meetings.userId, userId), eq(meetings.status, 'completed'))),
+      .where(and(
+        eq(meetings.userId, userId),
+        or(eq(meetings.status, 'ready'), eq(meetings.status, 'completed')),
+      )),
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(emailSequences)
+      .where(and(eq(emailSequences.userId, userId), eq(emailSequences.status, 'active'))),
   ]);
 
   const result = draftStats[0];
@@ -659,6 +668,7 @@ export async function getDraftStats(): Promise<{
     avgCost: Number(result?.avgCost || 0),
     avgLatency: Number(result?.avgLatency || 0),
     meetingsProcessed: Number(meetingStats[0]?.count || 0),
+    sequencesActive: Number(activeSeqStats[0]?.count || 0),
   };
 }
 
@@ -832,7 +842,7 @@ export async function getMissionControlData(): Promise<MissionControlData> {
       .orderBy(desc(drafts.openCount))
       .limit(5),
 
-    // 6. Coverage: meetings with at least one sent draft vs total completed meetings
+    // 6. Coverage: meetings with at least one sent draft vs total processed meetings
     db
       .select({
         totalMeetings: sql<number>`count(distinct ${meetings.id})`,
@@ -842,7 +852,10 @@ export async function getMissionControlData(): Promise<MissionControlData> {
       })
       .from(meetings)
       .leftJoin(drafts, eq(drafts.meetingId, meetings.id))
-      .where(and(eq(meetings.userId, userId), eq(meetings.status, 'completed'))),
+      .where(and(
+        eq(meetings.userId, userId),
+        or(eq(meetings.status, 'ready'), eq(meetings.status, 'completed')),
+      )),
 
     // 7. Average follow-up time (hours from meeting start to first sent draft)
     db

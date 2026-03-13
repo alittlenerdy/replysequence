@@ -176,7 +176,7 @@ export default function SequencesPage() {
           </h2>
           <p className="text-sm text-gray-400 light:text-gray-500 max-w-sm">
             {filter === 'all'
-              ? 'Create a sequence from any meeting to automate follow-up emails. Go to a meeting and click "New Sequence" to get started.'
+              ? 'Sequences are multi-step follow-up flows created from meetings. Open a meeting detail page and click "New Sequence" to start one.'
               : `You don't have any ${filter} sequences. Change your filter to see other sequences.`}
           </p>
         </div>

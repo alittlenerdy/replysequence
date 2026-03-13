@@ -13,6 +13,7 @@ interface DashboardStatsProps {
     avgCost: number;
     avgLatency: number;
     meetingsProcessed?: number;
+    sequencesActive?: number;
   };
 }
 
@@ -60,7 +61,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     {
       label: 'Sequences Active',
       subtitle: 'Multi-step nurture flows',
-      value: 0,
+      value: stats.sequencesActive ?? 0,
       Icon: Layers,
       iconColor: '#7A5CFF',
       textGradient: 'from-[#9B7FFF] via-[#C4B5FF] to-[#7A5CFF]',
