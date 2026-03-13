@@ -259,19 +259,6 @@ export default function FathomComparisonPage() {
             Honest Comparison
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="inline-flex items-center gap-3 mb-6"
-          >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold text-white" style={{ backgroundColor: '#1D4ED8' }}>Fa</div>
-            <span className="text-lg font-medium text-gray-400">vs</span>
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
-              <span className="text-xl font-bold text-white">RS</span>
-            </div>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -360,12 +347,11 @@ export default function FathomComparisonPage() {
               className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-gray-200 overflow-hidden group"
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fathom if...</h2>
-              <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want a generous free tier for meeting notes and summaries</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need solid CRM integration for deal tracking</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want a lightweight AI notetaker with fast setup</li>
-              </ul>
-              <div className="mt-5 flex items-center gap-2 text-gray-400 light:text-gray-600 font-medium text-sm">
+              <p className="text-gray-400 light:text-gray-600 leading-relaxed">
+                You want a <span className="text-gray-200 light:text-gray-800 font-semibold">generous free tier</span> for meeting notes
+                and summaries, with solid CRM integration for deal tracking.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-gray-600 font-medium">
                 <Users className="w-4 h-4" />
                 Best for: Teams needing free note-taking, CRM-focused workflows
               </div>

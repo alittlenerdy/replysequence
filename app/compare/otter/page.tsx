@@ -248,19 +248,6 @@ export default function OtterComparisonPage() {
             Honest Comparison
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="inline-flex items-center gap-3 mb-6"
-          >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white" style={{ backgroundColor: '#3B82F6' }}>O</div>
-            <span className="text-lg font-medium text-gray-400">vs</span>
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
-              <span className="text-xl font-bold text-white">RS</span>
-            </div>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -349,12 +336,11 @@ export default function OtterComparisonPage() {
               className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-indigo-200 overflow-hidden group"
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Otter if...</h2>
-              <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need deep transcription features and live collaboration</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want real-time collaboration during meetings</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need a polished mobile app for on-the-go transcription</li>
-              </ul>
-              <div className="mt-5 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium text-sm">
+              <p className="text-gray-400 light:text-gray-600 leading-relaxed">
+                You need <span className="text-gray-200 light:text-indigo-700 font-semibold">deep transcription features</span>,
+                real-time collaboration during meetings, and a polished mobile app.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium">
                 <Globe className="w-4 h-4" />
                 Best for: Journalists, researchers, teams who need live transcription
               </div>

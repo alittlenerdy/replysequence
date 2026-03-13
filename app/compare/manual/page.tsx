@@ -252,19 +252,6 @@ export default function ManualComparisonPage() {
             The Case for Automation
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="inline-flex items-center gap-3 mb-6"
-          >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white" style={{ backgroundColor: '#6B7280' }}>M</div>
-            <span className="text-lg font-medium text-gray-400">vs</span>
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
-              <span className="text-xl font-bold text-white">RS</span>
-            </div>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -353,12 +340,11 @@ export default function ManualComparisonPage() {
               className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-indigo-50 border border-gray-700 light:border-indigo-200 overflow-hidden group"
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Keep manual follow-ups if...</h2>
-              <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You have fewer than 2 meetings a week</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You enjoy crafting each email from scratch</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> Follow-up speed isn&apos;t a competitive advantage in your role</li>
-              </ul>
-              <div className="mt-5 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium text-sm">
+              <p className="text-gray-400 light:text-gray-600 leading-relaxed">
+                You have <span className="text-gray-200 light:text-indigo-700 font-semibold">fewer than 2 meetings a week</span>{' '}
+                and enjoy the process of crafting each email from scratch. If follow-up speed isn&apos;t a competitive advantage in your role.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium">
                 <Clock className="w-4 h-4" />
                 Best for: Very low meeting volume, non-sales roles
               </div>

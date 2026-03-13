@@ -255,19 +255,6 @@ export default function GrainComparisonPage() {
             Honest Comparison
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="inline-flex items-center gap-3 mb-6"
-          >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold text-white" style={{ backgroundColor: '#F59E0B' }}>Gr</div>
-            <span className="text-lg font-medium text-gray-400">vs</span>
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
-              <span className="text-xl font-bold text-white">RS</span>
-            </div>
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -357,12 +344,11 @@ export default function GrainComparisonPage() {
               className="relative p-8 rounded-2xl bg-gradient-to-br from-gray-800/60 via-gray-800/30 to-transparent light:from-gray-50 light:via-gray-50/50 light:to-transparent border border-gray-600/30 light:border-gray-300 overflow-hidden group"
             >
               <h2 className="text-xl font-bold text-gray-100 light:text-gray-800 mb-3">Choose Grain if...</h2>
-              <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need to capture and share video moments with your team</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want shareable clips for product feedback and user interviews</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need a video-first approach to meeting insights</li>
-              </ul>
-              <div className="mt-5 flex items-center gap-2 text-gray-400 light:text-gray-600 font-medium text-sm">
+              <p className="text-gray-400 light:text-gray-600 leading-relaxed">
+                You need to <span className="text-gray-200 light:text-gray-700 font-semibold">capture and share video moments</span>
+                with your team. Great for product feedback, user interviews, and internal alignment.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-gray-600 font-medium">
                 <Video className="w-4 h-4" />
                 Best for: Product teams, UX researchers, teams that share meeting clips
               </div>
