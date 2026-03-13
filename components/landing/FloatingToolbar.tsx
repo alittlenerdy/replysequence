@@ -128,7 +128,7 @@ export function FloatingToolbar() {
       <nav
         ref={toolbarRef}
         aria-label="Main navigation"
-        className="toolbar-noise fixed z-50 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/60 light:bg-white/70 backdrop-blur-xl border border-white/[0.08] light:border-gray-200/50 shadow-2xl overflow-hidden bottom-4 left-4 right-4 md:bottom-6 md:left-1/2 md:right-auto md:-translate-x-1/2"
+        className="toolbar-noise fixed z-50 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/60 light:bg-white/70 backdrop-blur-xl border border-white/[0.08] light:border-gray-200/50 shadow-2xl bottom-4 left-4 right-4 md:bottom-6 md:left-1/2 md:right-auto md:-translate-x-1/2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
       >
         {/* Active indicator ring */}
@@ -148,64 +148,66 @@ export function FloatingToolbar() {
         {/* Divider */}
         <div className="hidden md:block h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1" />
 
-        {/* Nav buttons */}
-        {NAV_ITEMS.map((item, index) => {
-          const isLink = item.target.startsWith('/');
-          const Icon = item.icon;
-          const isActive = activeIndex === index;
+        {/* Nav buttons — scrollable on mobile */}
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+          {NAV_ITEMS.map((item, index) => {
+            const isLink = item.target.startsWith('/');
+            const Icon = item.icon;
+            const isActive = activeIndex === index;
 
-          const buttonContent = (
-            <>
-              <Icon
-                className={`w-[18px] h-[18px] transition-colors ${
-                  isActive
-                    ? 'text-indigo-400 light:text-indigo-600'
-                    : 'text-gray-400 light:text-gray-500'
-                }`}
-                strokeWidth={1.5}
-              />
-              <span
-                className={`hidden md:inline text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'text-white light:text-gray-900'
-                    : 'text-gray-400 light:text-gray-500'
-                }`}
-              >
-                {item.label}
-              </span>
-            </>
-          );
+            const buttonContent = (
+              <>
+                <Icon
+                  className={`w-[18px] h-[18px] transition-colors ${
+                    isActive
+                      ? 'text-indigo-400 light:text-indigo-600'
+                      : 'text-gray-400 light:text-gray-500'
+                  }`}
+                  strokeWidth={1.5}
+                />
+                <span
+                  className={`hidden md:inline text-xs font-medium transition-colors ${
+                    isActive
+                      ? 'text-white light:text-gray-900'
+                      : 'text-gray-400 light:text-gray-500'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </>
+            );
 
-          if (isLink) {
+            if (isLink) {
+              return (
+                <Link
+                  key={item.label}
+                  ref={(el: HTMLAnchorElement | null) => { buttonRefs.current[index] = el; }}
+                  href={item.target}
+                  className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors flex-shrink-0"
+                >
+                  {buttonContent}
+                </Link>
+              );
+            }
+
             return (
-              <Link
+              <button
                 key={item.label}
-                ref={(el: HTMLAnchorElement | null) => { buttonRefs.current[index] = el; }}
-                href={item.target}
-                className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors"
+                ref={(el) => { buttonRefs.current[index] = el; }}
+                onClick={() => handleNavClick(item.target, index)}
+                className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors flex-shrink-0"
               >
                 {buttonContent}
-              </Link>
+              </button>
             );
-          }
-
-          return (
-            <button
-              key={item.label}
-              ref={(el) => { buttonRefs.current[index] = el; }}
-              onClick={() => handleNavClick(item.target, index)}
-              className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors"
-            >
-              {buttonContent}
-            </button>
-          );
-        })}
+          })}
+        </div>
 
         {/* Divider */}
-        <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1" />
+        <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1 flex-shrink-0" />
 
         {/* Utility section */}
-        <div className="flex items-center gap-1 relative z-10">
+        <div className="flex items-center gap-1 relative z-10 flex-shrink-0">
           {/* Dashboard — signed in only */}
           {isLoaded && isSignedIn && (
             <Link
