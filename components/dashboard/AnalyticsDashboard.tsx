@@ -309,23 +309,12 @@ export function AnalyticsDashboard() {
         </motion.div>
       </div>
 
-      {/* 4. At-Risk Meetings */}
+      {/* 4. Trend Charts — Coverage + Dual series (above fold) */}
       {hasData && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.35 }}
-        >
-          <AtRiskMeetings meetings={analytics.atRiskMeetings} />
-        </motion.div>
-      )}
-
-      {/* 5. Trend Charts — Coverage + Dual series */}
-      {hasData && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.45 }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <CoverageChart data={analytics.dailyCoverage} />
@@ -334,6 +323,17 @@ export function AnalyticsDashboard() {
               followUps={dailySentApprox}
             />
           </div>
+        </motion.div>
+      )}
+
+      {/* 5. At-Risk Meetings */}
+      {hasData && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.45 }}
+        >
+          <AtRiskMeetings meetings={analytics.atRiskMeetings} />
         </motion.div>
       )}
 

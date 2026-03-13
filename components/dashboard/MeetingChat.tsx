@@ -97,9 +97,9 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
     } catch { /* Ignore */ }
   };
 
-  // Send a message
-  const sendMessage = async () => {
-    const trimmed = input.trim();
+  // Send a message (optionally pass a direct query to bypass stale state)
+  const sendMessage = async (directQuery?: string) => {
+    const trimmed = (directQuery || input).trim();
     if (!trimmed || isStreaming) return;
 
     setError(null);
@@ -248,7 +248,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                 <h3 className="text-sm font-bold text-white light:text-gray-900">
                   {meetingId ? 'Ask this meeting' : 'Ask your meetings'}
                 </h3>
-                <p className="text-[10px] text-orange-300/70 light:text-orange-600/70">Search every transcript for action items, follow-ups, and patterns</p>
+                <p className="text-[10px] text-orange-300/70 light:text-orange-600/70">AI insights from your transcripts</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -351,30 +351,30 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
                     : 'Type a question about your calls instead of digging through transcripts. We\'ll search your meetings and surface answers instantly.'}
                 </p>
                 <div className="w-full max-w-[320px]">
-                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-500 light:text-gray-400 mb-2">Examples</p>
+                  <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-500 light:text-gray-400 mb-2">Quick Insights</p>
                   <div className="space-y-2">
                     {(meetingId
                       ? [
-                          'What were the key decisions?',
-                          'List all action items',
-                          'What did each person say about next steps?',
-                          'Were there any risks or blockers mentioned?',
+                          { label: 'Action items', query: 'List all action items from this meeting', icon: 'check' },
+                          { label: 'Key decisions', query: 'What were the key decisions?', icon: 'target' },
+                          { label: 'Next steps', query: 'What did each person say about next steps?', icon: 'forward' },
+                          { label: 'Risks & blockers', query: 'Were there any risks or blockers mentioned?', icon: 'alert' },
                         ]
                       : [
-                          'What action items came up this week?',
-                          'Who do I owe a follow-up from this week\'s calls?',
-                          'Which meetings mentioned onboarding issues?',
-                          'Show meetings where next steps weren\'t confirmed',
-                          'What decisions were made about the budget?',
+                          { label: 'Follow-ups due', query: 'Who do I owe follow-ups to this week?', icon: 'mail' },
+                          { label: 'Deals at risk', query: 'Which deals haven\'t had follow-up in 14 days?', icon: 'alert' },
+                          { label: 'Customer objections', query: 'Which meetings mentioned pricing concerns or objections?', icon: 'flag' },
+                          { label: 'Missing next steps', query: 'Show meetings where next steps weren\'t confirmed', icon: 'check' },
+                          { label: 'Budget discussions', query: 'What decisions were made about budget or pricing?', icon: 'target' },
                         ]
-                    ).map(suggestion => (
+                    ).map(card => (
                       <button
-                        key={suggestion}
-                        onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
-                        className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                        key={card.label}
+                        onClick={() => sendMessage(card.query)}
+                        className="w-full text-left text-xs px-3.5 py-2.5 rounded-xl bg-orange-500/5 light:bg-orange-50 text-orange-200 light:text-orange-700 hover:bg-orange-500/15 light:hover:bg-orange-100 border border-orange-500/15 light:border-orange-200 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] group"
                       >
-                        <span className="text-orange-400 light:text-orange-500 mr-1.5">→</span>
-                        {suggestion}
+                        <span className="text-orange-400 light:text-orange-500 font-semibold mr-1.5">{card.label}</span>
+                        <span className="text-gray-500 light:text-gray-400 group-hover:text-gray-400 light:group-hover:text-gray-500 block mt-0.5">{card.query}</span>
                       </button>
                     ))}
                   </div>

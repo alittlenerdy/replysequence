@@ -1,9 +1,9 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
 import { DashboardToolbar } from './DashboardToolbar';
 import { CommandPalette } from './CommandPalette';
 import { MeetingChat } from './MeetingChat';
+import { UserAvatar } from './UserAvatar';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -27,14 +27,7 @@ export function DashboardShell({ children, firstName = 'there', pendingDrafts = 
         <span className="hidden sm:inline text-xs text-gray-400 light:text-gray-500">
           {firstName !== 'there' ? firstName : ''}
         </span>
-        <UserButton
-          afterSignOutUrl="/"
-          appearance={{
-            elements: {
-              avatarBox: 'h-8 w-8 ring-1 ring-white/10 light:ring-gray-200',
-            },
-          }}
-        />
+        <UserAvatar />
       </div>
 
       {/* Page Content */}

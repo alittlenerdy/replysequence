@@ -51,9 +51,9 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       subtitle: 'Calls with transcripts',
       value: stats.meetingsProcessed ?? 0,
       Icon: Video,
-      iconColor: '#22D3EE',
-      textGradient: 'from-cyan-300 via-cyan-200 to-cyan-400',
-      lightColor: 'light:text-cyan-600',
+      iconColor: '#38E8FF',
+      textGradient: 'from-[#38E8FF] via-[#7AF0FF] to-[#38E8FF]',
+      lightColor: 'light:text-[#0891B2]',
       hero: false,
       displayMode: 'number' as const,
     },
@@ -63,8 +63,8 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       value: 0,
       Icon: Layers,
       iconColor: '#7A5CFF',
-      textGradient: 'from-violet-300 via-purple-200 to-violet-400',
-      lightColor: 'light:text-violet-600',
+      textGradient: 'from-[#9B7FFF] via-[#C4B5FF] to-[#7A5CFF]',
+      lightColor: 'light:text-[#6D28D9]',
       hero: false,
       displayMode: 'number' as const,
     },
@@ -73,11 +73,11 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       subtitle: 'Missed follow-ups or overdue',
       value: stats.failed,
       Icon: AlertTriangle,
-      iconColor: stats.failed > 0 ? '#FF5C7A' : '#37D67A',
+      iconColor: stats.failed > 0 ? '#FF5D5D' : '#4DFFA3',
       textGradient: stats.failed > 0
-        ? 'from-red-300 via-rose-200 to-red-400'
-        : 'from-emerald-300 via-teal-200 to-emerald-400',
-      lightColor: stats.failed > 0 ? 'light:text-red-600' : 'light:text-emerald-600',
+        ? 'from-[#FF5D5D] via-[#FF8585] to-[#FF5D5D]'
+        : 'from-[#4DFFA3] via-[#7AFFBF] to-[#4DFFA3]',
+      lightColor: stats.failed > 0 ? 'light:text-[#DC2626]' : 'light:text-[#059669]',
       hero: false,
       displayMode: 'number' as const,
     },
@@ -86,9 +86,9 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       subtitle: 'vs. manual follow-ups',
       value: totalTimeSavedMinutes,
       Icon: Clock,
-      iconColor: '#FF9D2D',
-      textGradient: 'from-amber-300 via-amber-200 to-orange-300',
-      lightColor: 'light:text-amber-600',
+      iconColor: '#FFD75F',
+      textGradient: 'from-[#FFD75F] via-[#FFE799] to-[#FFD75F]',
+      lightColor: 'light:text-[#B45309]',
       hero: false,
       displayMode: 'time' as const,
     },
@@ -129,10 +129,11 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
               >
                 {stat.displayMode === 'time' ? (
                   <span>
-                    {totalTimeSavedMinutes >= 60
-                      ? `${Math.floor(totalTimeSavedMinutes / 60)}h ${totalTimeSavedMinutes % 60}m`
-                      : `${totalTimeSavedMinutes}m`
-                    }
+                    {totalTimeSavedMinutes >= 60 ? (
+                      <><CountUp end={Math.floor(totalTimeSavedMinutes / 60)} duration={1500} suffix="h" /> <CountUp end={totalTimeSavedMinutes % 60} duration={1500} suffix="m" /></>
+                    ) : (
+                      <CountUp end={totalTimeSavedMinutes} duration={1500} suffix="m" />
+                    )}
                   </span>
                 ) : (
                   <CountUp end={stat.value} duration={1500} />

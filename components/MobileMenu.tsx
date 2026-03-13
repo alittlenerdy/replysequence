@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, FileText, Layers, Brain, TrendingUp, ArrowRight } from 'lucide-react';
 
 const competitors = [
   { name: 'vs Gong', slug: 'gong' },
@@ -15,9 +15,41 @@ const competitors = [
   { name: 'vs tl;dv', slug: 'tldv' },
 ];
 
+const productItems = [
+  {
+    label: 'Follow-Ups',
+    description: 'AI-generated follow-ups after every meeting',
+    href: '/how-it-works#follow-ups',
+    icon: FileText,
+    color: '#5B6CFF',
+  },
+  {
+    label: 'Sequences',
+    description: 'Automated multi-step follow-up campaigns',
+    href: '/how-it-works#sequences',
+    icon: Layers,
+    color: '#7A5CFF',
+  },
+  {
+    label: 'Meeting Intelligence',
+    description: 'Analyze transcripts and extract next steps',
+    href: '/how-it-works#intelligence',
+    icon: Brain,
+    color: '#38E8FF',
+  },
+  {
+    label: 'Pipeline Automation',
+    description: 'Track deal momentum and risks',
+    href: '/how-it-works#pipeline',
+    icon: TrendingUp,
+    color: '#4DFFA3',
+  },
+];
+
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
 
   // Set portal target after mount (client-side only)
@@ -67,6 +99,9 @@ export default function MobileMenu() {
     };
   }, [isOpen]);
 
+  const linkClass =
+    'text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]';
+
   return (
     <>
       {/* Hamburger Button */}
@@ -108,17 +143,61 @@ export default function MobileMenu() {
           {/* Menu Content - padded to avoid header */}
           <nav
             ref={menuRef}
-            className={`flex flex-col items-center justify-center h-full gap-6 px-4 transition-[transform,opacity] duration-300 ${
+            className={`flex flex-col items-center justify-center h-full gap-6 px-4 overflow-y-auto transition-[transform,opacity] duration-300 ${
               isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}
             style={{ paddingTop: '80px', paddingBottom: '40px' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <a
-              href="/how-it-works"
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-            >
+            {/* Product Accordion */}
+            <div className="flex flex-col items-center w-full max-w-sm">
+              <button
+                onClick={() => setProductOpen(!productOpen)}
+                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                aria-expanded={productOpen}
+              >
+                Product
+                <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${productOpen ? 'rotate-180' : ''}`} />
+              </button>
+              <div
+                className={`w-full flex flex-col items-center gap-1 mt-3 overflow-hidden transition-[max-height,opacity] duration-300 ${
+                  productOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
+                {productItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="group flex items-start gap-3 w-full p-3 rounded-xl transition-colors hover:bg-white/[0.05] outline-none focus-visible:ring-1 focus-visible:ring-[#5B6CFF]/40"
+                    >
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                        style={{ backgroundColor: `${item.color}15` }}
+                      >
+                        <Icon className="w-4 h-4" style={{ color: item.color }} strokeWidth={1.5} />
+                      </div>
+                      <div>
+                        <div className="text-base font-medium text-white">{item.label}</div>
+                        <div className="text-xs text-gray-400 leading-relaxed">{item.description}</div>
+                      </div>
+                    </a>
+                  );
+                })}
+                <a
+                  href="/how-it-works"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-1.5 mt-1 text-xs font-medium text-gray-400 hover:text-[#5B6CFF] transition-colors"
+                >
+                  Explore the platform
+                  <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+
+            <a href="/how-it-works" onClick={() => setIsOpen(false)} className={linkClass}>
               How It Works
             </a>
 
@@ -127,6 +206,7 @@ export default function MobileMenu() {
               <button
                 onClick={() => setCompareOpen(!compareOpen)}
                 className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                aria-expanded={compareOpen}
               >
                 Compare
                 <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${compareOpen ? 'rotate-180' : ''}`} />
@@ -137,7 +217,7 @@ export default function MobileMenu() {
                     key={competitor.slug}
                     href={`/compare/${competitor.slug}`}
                     onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-gray-400 hover:text-blue-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                    className="text-lg font-medium text-gray-400 hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {competitor.name}
                   </a>
@@ -145,32 +225,16 @@ export default function MobileMenu() {
               </div>
             </div>
 
-            <a
-              href="/integrations"
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-            >
+            <a href="/integrations" onClick={() => setIsOpen(false)} className={linkClass}>
               Integrations
             </a>
-            <a
-              href="/pricing"
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-            >
+            <a href="/pricing" onClick={() => setIsOpen(false)} className={linkClass}>
               Pricing
             </a>
-            <a
-              href="/blog"
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-            >
+            <a href="/blog" onClick={() => setIsOpen(false)} className={linkClass}>
               Blog
             </a>
-            <a
-              href="/dashboard"
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-            >
+            <a href="/dashboard" onClick={() => setIsOpen(false)} className={linkClass}>
               Dashboard
             </a>
             <a

@@ -5,8 +5,8 @@
 
 import { cache } from 'react';
 import { db } from './db';
-import { drafts, meetings, transcripts, users, zoomConnections, teamsConnections, meetConnections } from './db/schema';
-import { eq, desc, sql, and, ilike, or, isNull } from 'drizzle-orm';
+import { drafts, meetings, transcripts, users, zoomConnections, teamsConnections, meetConnections, emailSequences, sequenceSteps } from './db/schema';
+import { eq, desc, sql, and, ilike, or, isNull, gt, lt, isNotNull } from 'drizzle-orm';
 import type { DraftStatus, MeetingStatus } from './db/schema';
 import { currentUser } from '@clerk/nextjs/server';
 
@@ -692,4 +692,557 @@ export async function getUserHasConnectedPlatforms(): Promise<boolean> {
   ]);
 
   return zoom.length > 0 || teams.length > 0 || meet.length > 0;
+}
+
+// ── Mission Control ──────────────────────────────────────────────────
+
+export interface PriorityItem {
+  id: string;
+  type: 'draft_review' | 'missing_followup' | 'deal_at_risk' | 'sequence_step_due' | 'high_engagement';
+  severity: 'critical' | 'warning' | 'info';
+  title: string;
+  description: string;
+  href: string;
+  actionLabel: string;
+  timestamp: Date | null;
+}
+
+export interface MomentumData {
+  score: number; // 0-100
+  followUpCoverage: number; // percentage of meetings with at least one sent draft
+  avgFollowUpHours: number; // average hours from meeting to first sent draft
+  sequencesActive: number;
+  dealsAtRisk: number;
+  draftsReviewed: number; // sent out of total
+  totalDrafts: number;
+}
+
+export interface MissionControlData {
+  priorities: PriorityItem[];
+  momentum: MomentumData;
+}
+
+/**
+ * Fetch priority inbox items and momentum metrics for the Mission Control panel.
+ */
+export async function getMissionControlData(): Promise<MissionControlData> {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return {
+      priorities: [],
+      momentum: { score: 0, followUpCoverage: 0, avgFollowUpHours: 0, sequencesActive: 0, dealsAtRisk: 0, draftsReviewed: 0, totalDrafts: 0 },
+    };
+  }
+
+  const [
+    pendingDrafts,
+    meetingsWithoutFollowups,
+    failedDrafts,
+    sequenceStepsDue,
+    highEngagementNoReply,
+    coverageStats,
+    avgFollowUpResult,
+    activeSequenceCount,
+  ] = await Promise.all([
+    // 1. Drafts awaiting review (generated but not sent)
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        meetingTopic: meetings.topic,
+        createdAt: drafts.createdAt,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(eq(meetings.userId, userId), eq(drafts.status, 'generated')))
+      .orderBy(desc(drafts.createdAt))
+      .limit(5),
+
+    // 2. Completed meetings with no drafts at all
+    db
+      .select({
+        id: meetings.id,
+        topic: meetings.topic,
+        startTime: meetings.startTime,
+      })
+      .from(meetings)
+      .leftJoin(drafts, eq(drafts.meetingId, meetings.id))
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(meetings.status, 'completed'),
+        isNull(drafts.id),
+      ))
+      .orderBy(desc(meetings.startTime))
+      .limit(5),
+
+    // 3. Failed drafts (deals at risk)
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        meetingTopic: meetings.topic,
+        createdAt: drafts.createdAt,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(eq(meetings.userId, userId), eq(drafts.status, 'failed')))
+      .orderBy(desc(drafts.createdAt))
+      .limit(5),
+
+    // 4. Sequence steps due soon (scheduled within next 24h, still pending)
+    db
+      .select({
+        id: sequenceSteps.id,
+        subject: sequenceSteps.subject,
+        scheduledAt: sequenceSteps.scheduledAt,
+        recipientEmail: emailSequences.recipientEmail,
+        recipientName: emailSequences.recipientName,
+        sequenceId: sequenceSteps.sequenceId,
+      })
+      .from(sequenceSteps)
+      .innerJoin(emailSequences, eq(sequenceSteps.sequenceId, emailSequences.id))
+      .where(and(
+        eq(emailSequences.userId, userId),
+        eq(sequenceSteps.status, 'pending'),
+        eq(emailSequences.status, 'active'),
+        isNotNull(sequenceSteps.scheduledAt),
+        lt(sequenceSteps.scheduledAt, sql`NOW() + INTERVAL '24 hours'`),
+      ))
+      .orderBy(sequenceSteps.scheduledAt)
+      .limit(5),
+
+    // 5. Emails opened/clicked but no reply (high engagement, no response)
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        sentTo: drafts.sentTo,
+        openCount: drafts.openCount,
+        clickCount: drafts.clickCount,
+        sentAt: drafts.sentAt,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(drafts.status, 'sent'),
+        isNull(drafts.repliedAt),
+        gt(drafts.openCount, 0),
+      ))
+      .orderBy(desc(drafts.openCount))
+      .limit(5),
+
+    // 6. Coverage: meetings with at least one sent draft vs total completed meetings
+    db
+      .select({
+        totalMeetings: sql<number>`count(distinct ${meetings.id})`,
+        coveredMeetings: sql<number>`count(distinct case when ${drafts.status} = 'sent' then ${meetings.id} end)`,
+        totalDrafts: sql<number>`count(${drafts.id})`,
+        sentDrafts: sql<number>`count(*) filter (where ${drafts.status} = 'sent')`,
+      })
+      .from(meetings)
+      .leftJoin(drafts, eq(drafts.meetingId, meetings.id))
+      .where(and(eq(meetings.userId, userId), eq(meetings.status, 'completed'))),
+
+    // 7. Average follow-up time (hours from meeting start to first sent draft)
+    db
+      .select({
+        avgHours: sql<number>`avg(extract(epoch from (${drafts.sentAt} - ${meetings.startTime})) / 3600)`,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(drafts.status, 'sent'),
+        isNotNull(drafts.sentAt),
+        isNotNull(meetings.startTime),
+      )),
+
+    // 8. Active sequences count
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(emailSequences)
+      .where(and(eq(emailSequences.userId, userId), eq(emailSequences.status, 'active'))),
+  ]);
+
+  // Build priority items
+  const priorities: PriorityItem[] = [];
+
+  for (const d of pendingDrafts) {
+    priorities.push({
+      id: d.id,
+      type: 'draft_review',
+      severity: 'warning',
+      title: d.subject || 'Untitled draft',
+      description: d.meetingTopic ? `From: ${d.meetingTopic}` : 'Follow-up draft ready',
+      href: `/dashboard/drafts`,
+      actionLabel: 'Review',
+      timestamp: d.createdAt,
+    });
+  }
+
+  for (const m of meetingsWithoutFollowups) {
+    priorities.push({
+      id: m.id,
+      type: 'missing_followup',
+      severity: 'critical',
+      title: m.topic || 'Untitled meeting',
+      description: 'No follow-up email generated yet',
+      href: `/dashboard/meetings`,
+      actionLabel: 'Generate',
+      timestamp: m.startTime,
+    });
+  }
+
+  for (const d of failedDrafts) {
+    priorities.push({
+      id: d.id,
+      type: 'deal_at_risk',
+      severity: 'critical',
+      title: d.subject || 'Failed draft',
+      description: d.meetingTopic ? `Failed for: ${d.meetingTopic}` : 'Draft generation failed',
+      href: `/dashboard/drafts`,
+      actionLabel: 'Retry',
+      timestamp: d.createdAt,
+    });
+  }
+
+  for (const s of sequenceStepsDue) {
+    priorities.push({
+      id: s.id,
+      type: 'sequence_step_due',
+      severity: 'info',
+      title: s.subject,
+      description: `To: ${s.recipientName || s.recipientEmail}`,
+      href: `/dashboard/sequences`,
+      actionLabel: 'View',
+      timestamp: s.scheduledAt,
+    });
+  }
+
+  for (const e of highEngagementNoReply) {
+    priorities.push({
+      id: e.id,
+      type: 'high_engagement',
+      severity: 'info',
+      title: e.subject || 'Opened email',
+      description: `${e.openCount} opens, ${e.clickCount || 0} clicks — no reply yet`,
+      href: `/dashboard/drafts`,
+      actionLabel: 'Follow up',
+      timestamp: e.sentAt,
+    });
+  }
+
+  // Sort: critical first, then warning, then info; within severity by timestamp desc
+  const severityOrder = { critical: 0, warning: 1, info: 2 };
+  priorities.sort((a, b) => {
+    const sev = severityOrder[a.severity] - severityOrder[b.severity];
+    if (sev !== 0) return sev;
+    const ta = a.timestamp?.getTime() ?? 0;
+    const tb = b.timestamp?.getTime() ?? 0;
+    return tb - ta;
+  });
+
+  // Compute momentum
+  const coverage = coverageStats[0];
+  const totalMeetings = Number(coverage?.totalMeetings || 0);
+  const coveredMeetings = Number(coverage?.coveredMeetings || 0);
+  const totalDrafts = Number(coverage?.totalDrafts || 0);
+  const sentDrafts = Number(coverage?.sentDrafts || 0);
+  const followUpCoverage = totalMeetings > 0 ? Math.round((coveredMeetings / totalMeetings) * 100) : 0;
+  const avgFollowUpHours = Math.round(Number(avgFollowUpResult[0]?.avgHours || 0) * 10) / 10;
+  const sequencesActive = Number(activeSequenceCount[0]?.count || 0);
+  const dealsAtRisk = failedDrafts.length;
+
+  // Momentum score: weighted blend of coverage(40%), follow-up speed(30%), low risk(30%)
+  const coverageScore = followUpCoverage; // 0-100
+  const speedScore = avgFollowUpHours <= 0 ? 0 : Math.max(0, 100 - (avgFollowUpHours / 48) * 100); // 0h=100, 48h+=0
+  const riskScore = totalDrafts > 0 ? Math.max(0, 100 - (dealsAtRisk / Math.max(totalDrafts, 1)) * 200) : 0;
+  const score = totalMeetings > 0 ? Math.round(coverageScore * 0.4 + speedScore * 0.3 + riskScore * 0.3) : 0;
+
+  return {
+    priorities: priorities.slice(0, 8),
+    momentum: {
+      score: Math.min(100, Math.max(0, score)),
+      followUpCoverage,
+      avgFollowUpHours,
+      sequencesActive,
+      dealsAtRisk,
+      draftsReviewed: sentDrafts,
+      totalDrafts,
+    },
+  };
+}
+
+// ── Recent AI Actions Feed ───────────────────────────────────────────
+
+export type AIActionType =
+  | 'draft_generated'
+  | 'draft_sent'
+  | 'sequence_created'
+  | 'sequence_paused'
+  | 'sequence_step_sent'
+  | 'meeting_processed'
+  | 'deal_flagged';
+
+export interface AIAction {
+  id: string;
+  type: AIActionType;
+  title: string;
+  description: string;
+  href: string;
+  actionLabel: string;
+  timestamp: Date;
+}
+
+/**
+ * Fetch recent AI-driven actions from the last 24 hours.
+ * Derives activity from drafts, sequences, sequence steps, and meetings.
+ */
+export async function getRecentAIActions(): Promise<AIAction[]> {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  const since = sql`NOW() - INTERVAL '24 hours'`;
+
+  const [
+    recentDraftsGenerated,
+    recentDraftsSent,
+    recentSequencesCreated,
+    recentSequencesPaused,
+    recentStepsSent,
+    recentMeetingsProcessed,
+    recentFailedDrafts,
+  ] = await Promise.all([
+    // Drafts generated in last 24h
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        meetingTopic: meetings.topic,
+        createdAt: drafts.createdAt,
+        sentTo: drafts.sentTo,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(drafts.status, 'generated'),
+        gt(drafts.createdAt, since),
+      ))
+      .orderBy(desc(drafts.createdAt))
+      .limit(10),
+
+    // Drafts sent in last 24h
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        sentTo: drafts.sentTo,
+        sentAt: drafts.sentAt,
+        meetingTopic: meetings.topic,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(drafts.status, 'sent'),
+        isNotNull(drafts.sentAt),
+        gt(drafts.sentAt, since),
+      ))
+      .orderBy(desc(drafts.sentAt))
+      .limit(10),
+
+    // Sequences created in last 24h
+    db
+      .select({
+        id: emailSequences.id,
+        recipientName: emailSequences.recipientName,
+        recipientEmail: emailSequences.recipientEmail,
+        meetingTopic: emailSequences.meetingTopic,
+        createdAt: emailSequences.createdAt,
+      })
+      .from(emailSequences)
+      .where(and(
+        eq(emailSequences.userId, userId),
+        gt(emailSequences.createdAt, since),
+      ))
+      .orderBy(desc(emailSequences.createdAt))
+      .limit(10),
+
+    // Sequences paused in last 24h
+    db
+      .select({
+        id: emailSequences.id,
+        recipientName: emailSequences.recipientName,
+        recipientEmail: emailSequences.recipientEmail,
+        pauseReason: emailSequences.pauseReason,
+        pausedAt: emailSequences.pausedAt,
+      })
+      .from(emailSequences)
+      .where(and(
+        eq(emailSequences.userId, userId),
+        eq(emailSequences.status, 'paused'),
+        isNotNull(emailSequences.pausedAt),
+        gt(emailSequences.pausedAt, since),
+      ))
+      .orderBy(desc(emailSequences.pausedAt))
+      .limit(10),
+
+    // Sequence steps sent in last 24h
+    db
+      .select({
+        id: sequenceSteps.id,
+        subject: sequenceSteps.subject,
+        sentAt: sequenceSteps.sentAt,
+        recipientName: emailSequences.recipientName,
+        recipientEmail: emailSequences.recipientEmail,
+        sequenceId: sequenceSteps.sequenceId,
+      })
+      .from(sequenceSteps)
+      .innerJoin(emailSequences, eq(sequenceSteps.sequenceId, emailSequences.id))
+      .where(and(
+        eq(emailSequences.userId, userId),
+        eq(sequenceSteps.status, 'sent'),
+        isNotNull(sequenceSteps.sentAt),
+        gt(sequenceSteps.sentAt, since),
+      ))
+      .orderBy(desc(sequenceSteps.sentAt))
+      .limit(10),
+
+    // Meetings processed (completed) in last 24h
+    db
+      .select({
+        id: meetings.id,
+        topic: meetings.topic,
+        startTime: meetings.startTime,
+        summaryGeneratedAt: meetings.summaryGeneratedAt,
+      })
+      .from(meetings)
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(meetings.status, 'completed'),
+        isNotNull(meetings.summaryGeneratedAt),
+        gt(meetings.summaryGeneratedAt, since),
+      ))
+      .orderBy(desc(meetings.summaryGeneratedAt))
+      .limit(10),
+
+    // Failed drafts (deal at risk) in last 24h
+    db
+      .select({
+        id: drafts.id,
+        subject: drafts.subject,
+        meetingTopic: meetings.topic,
+        createdAt: drafts.createdAt,
+      })
+      .from(drafts)
+      .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+      .where(and(
+        eq(meetings.userId, userId),
+        eq(drafts.status, 'failed'),
+        gt(drafts.createdAt, since),
+      ))
+      .orderBy(desc(drafts.createdAt))
+      .limit(5),
+  ]);
+
+  const actions: AIAction[] = [];
+
+  for (const d of recentDraftsGenerated) {
+    actions.push({
+      id: `gen-${d.id}`,
+      type: 'draft_generated',
+      title: `Generated follow-up${d.meetingTopic ? ` for ${d.meetingTopic}` : ''}`,
+      description: d.subject || 'Follow-up email draft',
+      href: '/dashboard/drafts',
+      actionLabel: 'Review',
+      timestamp: d.createdAt!,
+    });
+  }
+
+  for (const d of recentDraftsSent) {
+    actions.push({
+      id: `sent-${d.id}`,
+      type: 'draft_sent',
+      title: `Sent follow-up to ${d.sentTo || 'contact'}`,
+      description: d.subject || 'Follow-up email',
+      href: '/dashboard/drafts',
+      actionLabel: 'View',
+      timestamp: d.sentAt!,
+    });
+  }
+
+  for (const s of recentSequencesCreated) {
+    actions.push({
+      id: `seq-${s.id}`,
+      type: 'sequence_created',
+      title: `Created sequence for ${s.recipientName || s.recipientEmail}`,
+      description: s.meetingTopic ? `From: ${s.meetingTopic}` : 'Nurture sequence',
+      href: '/dashboard/sequences',
+      actionLabel: 'View',
+      timestamp: s.createdAt,
+    });
+  }
+
+  const pauseReasonLabels: Record<string, string> = {
+    recipient_replied: 'after reply received',
+    link_clicked: 'after link click',
+    manual: 'manually',
+    bounce: 'due to bounce',
+  };
+
+  for (const s of recentSequencesPaused) {
+    const reason = s.pauseReason ? pauseReasonLabels[s.pauseReason] || s.pauseReason : '';
+    actions.push({
+      id: `pause-${s.id}`,
+      type: 'sequence_paused',
+      title: `Paused sequence for ${s.recipientName || s.recipientEmail}`,
+      description: reason ? `Paused ${reason}` : 'Sequence paused',
+      href: '/dashboard/sequences',
+      actionLabel: 'View',
+      timestamp: s.pausedAt!,
+    });
+  }
+
+  for (const s of recentStepsSent) {
+    actions.push({
+      id: `step-${s.id}`,
+      type: 'sequence_step_sent',
+      title: `Sent sequence step to ${s.recipientName || s.recipientEmail}`,
+      description: s.subject,
+      href: '/dashboard/sequences',
+      actionLabel: 'View',
+      timestamp: s.sentAt!,
+    });
+  }
+
+  for (const m of recentMeetingsProcessed) {
+    actions.push({
+      id: `meet-${m.id}`,
+      type: 'meeting_processed',
+      title: `Processed ${m.topic || 'meeting'}`,
+      description: 'Transcript analyzed, summary generated',
+      href: `/dashboard/meetings`,
+      actionLabel: 'View',
+      timestamp: m.summaryGeneratedAt!,
+    });
+  }
+
+  for (const d of recentFailedDrafts) {
+    actions.push({
+      id: `risk-${d.id}`,
+      type: 'deal_flagged',
+      title: `Flagged deal at risk${d.meetingTopic ? ` — ${d.meetingTopic}` : ''}`,
+      description: 'Draft generation failed, follow-up overdue',
+      href: '/dashboard/drafts',
+      actionLabel: 'Retry',
+      timestamp: d.createdAt!,
+    });
+  }
+
+  // Sort all actions by timestamp descending
+  actions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+  return actions.slice(0, 15);
 }
