@@ -110,53 +110,55 @@ export function DashboardToolbar({ firstName = 'there', pendingDrafts = 0, userE
         {/* Divider */}
         <div className="hidden md:block h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1" />
 
-        {/* Nav items */}
-        {visibleItems.map((item, index) => {
-          const Icon = item.icon;
-          const isActive = activeIndex === index;
-          const badge = item.label === 'Drafts' ? pendingDrafts : 0;
+        {/* Nav items — scrollable on mobile */}
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+          {visibleItems.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = activeIndex === index;
+            const badge = item.label === 'Drafts' ? pendingDrafts : 0;
 
-          return (
-            <Link
-              key={item.href}
-              ref={(el: HTMLAnchorElement | null) => { buttonRefs.current[index] = el; }}
-              href={item.href}
-              className="relative z-10 flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors"
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <div className="relative">
-                <Icon
-                  className={`w-[18px] h-[18px] transition-colors ${
+            return (
+              <Link
+                key={item.href}
+                ref={(el: HTMLAnchorElement | null) => { buttonRefs.current[index] = el; }}
+                href={item.href}
+                className="relative z-10 flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors flex-shrink-0"
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <div className="relative">
+                  <Icon
+                    className={`w-[18px] h-[18px] transition-colors ${
+                      isActive
+                        ? 'text-indigo-400 light:text-indigo-600'
+                        : 'text-gray-400 light:text-gray-500'
+                    }`}
+                    strokeWidth={1.5}
+                  />
+                  {badge > 0 && (
+                    <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-0.5 shadow-lg shadow-red-500/30">
+                      {badge > 9 ? '9+' : badge}
+                    </span>
+                  )}
+                </div>
+                <span
+                  className={`hidden md:inline text-xs font-medium transition-colors ${
                     isActive
-                      ? 'text-indigo-400 light:text-indigo-600'
+                      ? 'text-white light:text-gray-900'
                       : 'text-gray-400 light:text-gray-500'
                   }`}
-                  strokeWidth={1.5}
-                />
-                {badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-0.5 shadow-lg shadow-red-500/30">
-                    {badge > 9 ? '9+' : badge}
-                  </span>
-                )}
-              </div>
-              <span
-                className={`hidden md:inline text-xs font-medium transition-colors ${
-                  isActive
-                    ? 'text-white light:text-gray-900'
-                    : 'text-gray-400 light:text-gray-500'
-                }`}
-              >
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
 
         {/* Divider */}
-        <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1" />
+        <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1 flex-shrink-0" />
 
         {/* Utility section */}
-        <div className="flex items-center gap-1 relative z-10">
+        <div className="flex items-center gap-1 relative z-10 flex-shrink-0">
           {/* Greeting — desktop only */}
           <span className="hidden lg:inline text-xs text-gray-400 light:text-gray-500 px-1">
             Hey, <span className="font-medium text-white light:text-gray-900">{firstName}</span>
