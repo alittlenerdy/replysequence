@@ -204,13 +204,16 @@ Return ONLY valid JSON, no markdown fences.`;
   // Haiku pricing: $1/MTok input, $5/MTok output
   const costUsd = (inputTokens * 1 + outputTokens * 5) / 1_000_000;
 
+  // Strip markdown fences if present (```json ... ```)
+  const cleaned = text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+
   let parsed: Partial<BriefingContent>;
   try {
-    parsed = JSON.parse(text);
+    parsed = JSON.parse(cleaned);
   } catch {
-    log('warn', 'Failed to parse briefing JSON, using raw text', { text: text.slice(0, 200) });
+    log('warn', 'Failed to parse briefing JSON, using raw text', { text: cleaned.slice(0, 200) });
     parsed = {
-      executiveSummary: text.slice(0, 500),
+      executiveSummary: cleaned.slice(0, 500),
       talkingPoints: [],
       discoveryQuestions: [],
       openActionItems: [],
