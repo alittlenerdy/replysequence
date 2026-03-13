@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { WaitlistForm } from '@/components/landing/WaitlistForm';
 import { Check, ArrowRight, Zap } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -229,7 +230,7 @@ export default function IntegrationsPage() {
               Meeting to CRM
             </span>
           </h1>
-          <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-gray-300 light:text-gray-600 max-w-2xl mx-auto mb-8">
             Connect your meeting platform, your email, and your CRM. ReplySequence handles everything in between.
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500 light:text-gray-400 mb-6">
@@ -262,12 +263,15 @@ export default function IntegrationsPage() {
 
         return (
           <section key={category} className="py-12 px-4">
+            {categoryIndex > 0 && (
+              <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent mb-12 max-w-6xl mx-auto" />
+            )}
             <div className="max-w-6xl mx-auto">
               <div className="mb-8 animate-fade-in-up">
-                <h2 className="text-2xl md:text-3xl font-bold text-white light:text-gray-900 mb-2">
+                <h2 className="text-2xl md:text-3xl font-bold neon-text mb-2">
                   {categoryLabels[category]}
                 </h2>
-                <p className="text-gray-400 light:text-gray-600">
+                <p className="text-gray-300 light:text-gray-600">
                   {categoryDescriptions[category]}
                 </p>
               </div>
@@ -276,7 +280,7 @@ export default function IntegrationsPage() {
                 {categoryIntegrations.map((integration, i) => (
                   <div
                     key={integration.name}
-                    className={`relative rounded-2xl p-6 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-gray-700 light:hover:border-gray-300 transition-[border-color,transform,box-shadow] hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
+                    className={`relative rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 transition-[border-color,transform,box-shadow] hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
                       staggerClasses[i] || staggerClasses[staggerClasses.length - 1]
                     } ${
                       integration.status === 'coming_soon' ? 'opacity-70' : ''
@@ -362,7 +366,7 @@ export default function IntegrationsPage() {
                 className={`text-center ${staggerClasses[i] || staggerClasses[staggerClasses.length - 1]}`}
                 style={{ animationDelay: `${i * 0.15}s` }}
               >
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-bold text-lg mb-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-lg mb-4">
                   {item.step}
                 </div>
                 <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
@@ -436,16 +440,12 @@ export default function IntegrationsPage() {
           <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">
             Connect your tools and automate your first meeting follow-up in 5 minutes
           </h2>
-          <p className="text-gray-400 light:text-gray-600 mb-8">
+          <p className="text-gray-400 light:text-gray-600 mb-6">
             Get started free with 5 AI drafts per month. No credit card required.
           </p>
-          <Link
-            href="/#waitlist"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
-          >
-            Join the Waitlist
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-10">
+            <WaitlistForm />
+          </div>
         </div>
       </section>
 

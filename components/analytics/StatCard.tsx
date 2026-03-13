@@ -87,7 +87,7 @@ export function StatCard({
   hero = false,
 }: StatCardProps) {
   const card = (
-    <div className={`relative group ${hero ? 'glass-border-accent' : 'glass-border'} rounded-2xl`}>
+    <div className={`relative group ${hero ? 'bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200' : 'bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200'} rounded-2xl`}>
       {/* Card */}
       <div className={`relative rounded-2xl p-5 transition-all duration-300 overflow-hidden ${hero ? 'h-full' : ''}`}
       >

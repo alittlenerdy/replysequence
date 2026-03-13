@@ -117,10 +117,10 @@ export function FloatingToolbar() {
     <>
       {/* Ambient glow behind toolbar */}
       <div
-        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[120px] pointer-events-none z-40"
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[140px] pointer-events-none z-40"
         style={{
-          background: 'radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)',
-          filter: 'blur(20px)',
+          background: 'radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, rgba(251,191,36,0.06) 40%, transparent 70%)',
+          filter: 'blur(25px)',
         }}
       />
 
@@ -128,8 +128,8 @@ export function FloatingToolbar() {
       <nav
         ref={toolbarRef}
         aria-label="Main navigation"
-        className="toolbar-noise fixed z-50 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/60 light:bg-white/70 backdrop-blur-xl border border-white/[0.08] light:border-gray-200/50 shadow-2xl bottom-4 left-4 right-4 md:bottom-6 md:left-1/2 md:right-auto md:-translate-x-1/2"
-        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+        className="toolbar-noise fixed z-50 flex items-center gap-1 px-2 py-2 rounded-2xl bg-gray-900/70 light:bg-white/80 backdrop-blur-2xl backdrop-saturate-200 border border-white/[0.12] light:border-gray-200/60 shadow-2xl bottom-4 left-4 right-4 md:bottom-6 md:left-1/2 md:right-auto md:-translate-x-1/2"
+        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))', boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(99,102,241,0.1), inset 0 1px 0 rgba(255,255,255,0.06)' }}
       >
         {/* Active indicator ring */}
         <ActiveIndicator left={indicatorPos.left} width={indicatorPos.width} />

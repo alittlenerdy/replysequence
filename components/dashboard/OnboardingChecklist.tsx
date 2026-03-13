@@ -268,7 +268,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
   // Loading skeleton
   if (loading) {
     return (
-      <div className="glass-card rounded-2xl p-6 animate-pulse">
+      <div className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-6 animate-pulse">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 rounded-xl bg-gray-700 light:bg-gray-200" />
           <div>
@@ -299,7 +299,7 @@ export function OnboardingChecklist({ onComplete }: OnboardingChecklistProps) {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="relative overflow-hidden rounded-2xl"
     >
-      <div className="relative glass-card rounded-2xl p-6">
+      <div className="relative bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-6">
 
         {/* Celebration overlay */}
         <AnimatePresence>

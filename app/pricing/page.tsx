@@ -212,7 +212,7 @@ async function PricingContent() {
               ].map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-gray-800/50 light:bg-gray-50 rounded-xl p-6 border border-gray-700 light:border-gray-200"
+                  className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6"
                 >
                   <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                     {faq.q}
@@ -239,7 +239,7 @@ async function PricingContent() {
             </p>
             <a
               href="/#waitlist"
-              className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg font-semibold bg-gradient-to-r from-indigo-500 to-indigo-700 text-white hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 transition-[background,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
               Join the Waitlist
             </a>

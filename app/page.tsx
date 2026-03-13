@@ -80,6 +80,7 @@ import {
   Search,
 } from 'lucide-react';
 import { FloatingToolbar } from '@/components/landing/FloatingToolbar';
+import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
 
@@ -94,20 +95,26 @@ const NonNegotiablesCarousel = dynamic(() => import('@/components/NonNegotiables
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
-      {/* Floating Toolbar */}
+      {/* Header — consistent with all pages */}
+      <Header />
+
+      {/* Floating Toolbar — secondary nav on homepage */}
       <FloatingToolbar />
 
       {/* Hero Section */}
       <section id="hero" className="relative pt-28 pb-12 px-4 z-10">
+        {/* Ambient gradient orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,0.08)_0%,transparent_70%)] pointer-events-none" />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
               Every Tool Records the Meeting.{' '}
-              <GradientText variant="amber" className="font-extrabold">None of Them Send the Follow-Up.</GradientText>
+              <span className="bg-gradient-to-r from-[#00F0FF] via-[#818CF8] to-[#A855F7] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
-            <p className="text-xl text-gray-400 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates — automatically, before your next meeting starts.
             </p>
 
@@ -181,7 +188,7 @@ export default function LandingPage() {
               transition={{ delay: 0.4, duration: 0.5 }}
               className="max-w-2xl mx-auto mb-6 px-4 sm:px-0"
             >
-              <div className="rounded-2xl bg-gray-900/50 light:bg-white/80 light:shadow-xl border border-gray-700 light:border-gray-200 backdrop-blur-sm p-6 sm:p-10">
+              <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-10">
                 <WaitlistForm />
               </div>
             </motion.div>
@@ -198,7 +205,7 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 text-base font-medium text-gray-400 light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] rounded-md group"
               >
                 See How It Works
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </a>
@@ -230,11 +237,17 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
       {/* Video Demo Section */}
       <VideoSection />
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
       {/* Problem / Sales Stack Gap */}
-      <section className="py-12 md:py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(90deg, rgba(99,102,241,0.05) 0%, transparent 60%)' }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -296,7 +309,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 flex flex-col items-center text-center"
+                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 flex flex-col items-center text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
@@ -317,9 +330,12 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
+
       {/* How It Works */}
       <section className="py-12 md:py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto bg-white/[0.02] backdrop-blur-sm border border-white/[0.05] rounded-3xl p-8 md:p-12">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -330,7 +346,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               From Call to <GradientText>Pipeline Automation</GradientText> in Three Steps
             </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Connect once. Have your meetings. Follow-ups, sequences, next steps, and CRM updates handle themselves.
             </p>
           </motion.div>
@@ -401,7 +417,7 @@ export default function LandingPage() {
 
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">{item.title}</h3>
-                    <p className="text-gray-400 light:text-gray-600">{item.description}</p>
+                    <p className="text-gray-300 light:text-gray-600">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -409,6 +425,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
 
       {/* Bento Grid Features */}
       <BentoGrid />
@@ -426,7 +445,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Deals, <GradientText variant="amber">Your Control</GradientText>
             </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Every follow-up, sequence, and next step is a suggestion first. You review, edit, and approve before anything sends, schedules, or syncs.
             </p>
           </motion.div>
@@ -455,7 +474,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-6 text-center"
+                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
                   <item.icon className="w-6 h-6 text-amber-400 light:text-amber-600" aria-hidden="true" />
@@ -469,7 +488,7 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof Stats */}
-      <section className="py-12 md:py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10 border-t border-transparent" style={{ borderImage: 'linear-gradient(to right, transparent, rgba(99,102,241,0.3), transparent) 1' }}>
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -507,9 +526,9 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 sm:p-8 text-center"
+                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-8 text-center"
               >
-                <span className="text-5xl font-extrabold text-amber-400 light:text-amber-500">{item.stat}</span>
+                <span className="text-5xl font-extrabold neon-text neon-glow">{item.stat}</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
                 <p className="text-sm text-gray-400 light:text-gray-500">{item.description}</p>
               </motion.div>
@@ -539,7 +558,7 @@ export default function LandingPage() {
               Stop Rereading Transcripts.{' '}
               <GradientText variant="amber">Ask Instead.</GradientText>
             </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Type a question and get instant answers pulled from every transcript — action items, next steps, deal risks, sequence status, follow-up history, and pipeline trends.
             </p>
           </motion.div>
@@ -669,7 +688,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-white light:text-gray-900 mb-4 text-pretty">
               Gets Smarter With <GradientText variant="amber">Every Meeting</GradientText>
             </h2>
-            <p className="text-gray-400 light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Every call builds your deal intelligence. The AI learns your voice, tracks relationship history, and surfaces risks before they cost you a deal.
             </p>
           </motion.div>
@@ -695,7 +714,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white"
+                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6"
               >
                 <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
@@ -706,7 +725,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section id="waitlist" className="py-12 md:py-20 px-4 relative z-10">
+      <section id="waitlist" className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.1) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(251,191,36,0.06) 0%, transparent 50%)' }}>
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -717,11 +736,11 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Next Meeting Is Coming. The <GradientText variant="amber">Follow-Up</GradientText> Should Be Automatic.
             </h2>
-            <p className="text-gray-400 light:text-gray-600 mb-6">
+            <p className="text-gray-300 light:text-gray-600 mb-6">
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.
             </p>
 
-            <div className="rounded-2xl bg-gray-900/50 light:bg-white/80 light:shadow-xl border border-gray-700 light:border-gray-200 backdrop-blur-sm p-6 sm:p-10 mx-4 sm:mx-0">
+            <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-10 mx-4 sm:mx-0">
               <WaitlistForm />
             </div>
           </motion.div>

@@ -284,11 +284,11 @@ function StepCard({
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative rounded-2xl bg-gray-900/50 light:bg-white light:shadow-lg border ${classes.border} p-6 md:p-8 transition-[border-color,box-shadow] duration-200 shadow-xl ${classes.glow} ${classes.hoverGlow}`}
+      className={`relative rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 md:p-8 transition-[border-color,box-shadow] duration-200 shadow-xl ${classes.glow} ${classes.hoverGlow}`}
     >
       {/* Animated step number badge */}
       <motion.div
-        className={`absolute -top-4 left-6 px-4 py-1.5 rounded-full ${classes.badge} text-white text-sm font-bold shadow-lg ${classes.glow}`}
+        className="absolute -top-4 left-6 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold shadow-lg shadow-amber-500/30 border border-amber-500/30"
         animate={{ y: [0, -3, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
       >
@@ -313,7 +313,7 @@ function StepCard({
 
       {/* Content */}
       <h2 className="text-xl md:text-2xl font-bold text-white light:text-gray-900 mb-3">{title}</h2>
-      <p className="text-gray-400 light:text-gray-600 mb-4">{description}</p>
+      <p className="text-gray-300 light:text-gray-600 mb-4">{description}</p>
 
       {/* Additional content */}
       {children}
@@ -408,7 +408,7 @@ export default function HowItWorksPage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-pretty">
               From Meeting to <GradientText>Follow-Up</GradientText> in Three Steps
             </h1>
-            <p className="text-xl text-gray-400 light:text-gray-600 max-w-2xl mx-auto mb-8">
+            <p className="text-xl text-gray-300 light:text-gray-600 max-w-2xl mx-auto mb-8">
               Connect your meeting platform. Have a call. Let the follow-up handle itself.
             </p>
           </motion.div>
@@ -620,6 +620,9 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
+      {/* Gradient divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent my-8" />
+
       {/* FAQ Section */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-3xl mx-auto">
@@ -633,7 +636,7 @@ export default function HowItWorksPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Frequently Asked <GradientText>Questions</GradientText>
             </h2>
-            <p className="text-gray-400 light:text-gray-600">
+            <p className="text-gray-300 light:text-gray-600">
               Everything you need to know about ReplySequence
             </p>
           </motion.div>
@@ -670,6 +673,9 @@ export default function HowItWorksPage() {
           </div>
         </div>
       </section>
+
+      {/* Gradient divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent my-8" />
 
       {/* Final CTA Section */}
       <section className="py-20 px-4 relative z-10">

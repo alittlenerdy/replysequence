@@ -53,7 +53,7 @@ export function SettingsTabs() {
           : 'py-0'
       }`}>
         <div className={`${activeTab === 'ai' ? 'max-w-6xl' : 'max-w-4xl'} mx-auto mb-6 transition-[max-width] duration-300`}>
-          <div className="relative flex gap-1 p-1 rounded-xl glass-surface overflow-x-auto">
+          <div className="relative flex gap-1 p-1 rounded-xl bg-gray-800/50 light:bg-gray-100 overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}

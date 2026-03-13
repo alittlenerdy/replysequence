@@ -70,7 +70,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
 
   return (
     <div
-      className="glass-border rounded-2xl p-6 light:shadow-sm"
+      className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-6 light:shadow-sm"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -124,7 +124,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
                 <span className="text-gray-400">Open Rate</span>
                 <span className="text-indigo-500 font-semibold">{engagement.openRate}%</span>
               </div>
-              <div className="h-2 glass-surface light:bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-800/50 light:bg-gray-100 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.openRate}%` }}
@@ -138,7 +138,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
                 <span className="text-gray-400">Click Rate (of opened)</span>
                 <span className="text-amber-500 font-semibold">{engagement.clickRate}%</span>
               </div>
-              <div className="h-2 glass-surface light:bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-800/50 light:bg-gray-100 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.clickRate}%` }}
@@ -152,7 +152,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
                 <span className="text-gray-400">Reply Rate</span>
                 <span className="text-indigo-400/60 font-semibold text-[10px]">Coming soon</span>
               </div>
-              <div className="h-2 glass-surface light:bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-800/50 light:bg-gray-100 light:bg-gray-200 rounded-full overflow-hidden">
                 <div className="h-full rounded-full bg-gray-700 light:bg-gray-300 w-0" />
               </div>
             </div>

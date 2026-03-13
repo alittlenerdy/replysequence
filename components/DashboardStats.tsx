@@ -114,7 +114,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         // Hero card gets the accent neon glass border
         if (stat.hero) {
           return (
-            <motion.div key={stat.label} variants={item} className="glass-border-accent rounded-2xl">
+            <motion.div key={stat.label} variants={item} className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200">
               <div className="group relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:bg-white/[0.04]"
               >
                 {/* Icon */}
@@ -149,7 +149,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
           <motion.div
             key={stat.label}
             variants={item}
-            className="glass-border rounded-2xl"
+            className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200"
           >
             <div
               className="group relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:bg-white/[0.04]"

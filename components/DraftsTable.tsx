@@ -505,7 +505,7 @@ export function DraftsTable({
 
   return (
     <>
-      <div id="drafts-table" className="glass-border rounded-2xl shadow-xl overflow-hidden">
+      <div id="drafts-table" className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl shadow-xl overflow-hidden">
         {/* Table Header */}
         <div className="px-5 sm:px-6 py-5 border-b border-indigo-500/10 light:border-gray-200">
           <div className="flex items-center justify-between">
