@@ -10,6 +10,7 @@ import { auth } from '@clerk/nextjs/server';
 import { db, nextStepsTable, users, meetings, dealContexts } from '@/lib/db';
 import { eq, and, desc, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { syncCompletedNextStepsToCRM } from '@/lib/crm-next-step-sync';
 
 export const dynamic = 'force-dynamic';
 
@@ -137,6 +138,8 @@ export async function PATCH(request: NextRequest) {
         .update(nextStepsTable)
         .set({ status: 'completed', completedAt: now, updatedAt: now })
         .where(inArray(nextStepsTable.id, ownedIds));
+      // Fire-and-forget CRM sync — don't block the response
+      syncCompletedNextStepsToCRM(userId, ownedIds).catch(() => {});
       break;
     case 'dismiss':
       await db

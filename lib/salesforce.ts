@@ -247,6 +247,98 @@ export interface SalesforceSyncResult {
   error?: string;
 }
 
+/**
+ * Next step task data for Salesforce
+ */
+export interface SalesforceNextStepData {
+  task: string;
+  type: 'email' | 'call' | 'document' | 'internal' | 'meeting';
+  urgency: 'immediate' | 'this_week' | 'next_week' | 'no_deadline';
+  owner: string;
+  dueDate?: Date;
+  contactEmail?: string;
+  meetingTitle?: string;
+  companyName?: string;
+}
+
+/**
+ * Sync a completed next step to Salesforce as a Task
+ * Creates a Task sObject associated with the matching contact/lead.
+ */
+export async function syncNextStepToSalesforce(
+  instanceUrl: string,
+  accessToken: string,
+  data: SalesforceNextStepData
+): Promise<{ success: boolean; taskId?: string; error?: string }> {
+  log('info', 'Syncing next step to Salesforce', {
+    task: data.task,
+    type: data.type,
+    contactEmail: data.contactEmail,
+  });
+
+  try {
+    // Find contact/lead if email provided
+    let whoId: string | undefined;
+    if (data.contactEmail) {
+      const contact = await findSalesforceContact(instanceUrl, accessToken, data.contactEmail);
+      whoId = contact?.id;
+    }
+
+    const priorityMap: Record<string, string> = {
+      immediate: 'High',
+      this_week: 'Normal',
+      next_week: 'Normal',
+      no_deadline: 'Low',
+    };
+
+    const typeMap: Record<string, string> = {
+      email: 'Email',
+      call: 'Call',
+      meeting: 'Meeting',
+      document: 'Other',
+      internal: 'Other',
+    };
+
+    const descriptionParts = [`Completed next step from ReplySequence.`];
+    if (data.meetingTitle) descriptionParts.push(`Meeting: ${data.meetingTitle}`);
+    if (data.companyName) descriptionParts.push(`Company: ${data.companyName}`);
+    descriptionParts.push(`Owner: ${data.owner}`);
+
+    const taskBody: Record<string, unknown> = {
+      Subject: data.task,
+      Description: descriptionParts.join('\n'),
+      Status: 'Completed',
+      Priority: priorityMap[data.urgency] || 'Normal',
+      Type: typeMap[data.type] || 'Other',
+      ActivityDate: (data.dueDate || new Date()).toISOString().split('T')[0],
+    };
+
+    if (whoId) {
+      taskBody.WhoId = whoId;
+    }
+
+    const response = await sfFetchWithRetry(instanceUrl, accessToken, '/sobjects/Task', {
+      method: 'POST',
+      body: JSON.stringify(taskBody),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      log('error', 'Salesforce task creation failed', { error, status: response.status });
+      return { success: false, error };
+    }
+
+    const result = await response.json();
+    log('info', 'Salesforce task created for next step', { taskId: result.id });
+
+    return { success: true, taskId: result.id };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    log('error', 'Salesforce next step sync error', { error: message });
+    return { success: false, error: message };
+  }
+}
+
 export async function syncSentEmailToSalesforce(
   instanceUrl: string,
   accessToken: string,

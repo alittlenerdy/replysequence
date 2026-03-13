@@ -28,6 +28,8 @@ import type { ActionItem } from './db/schema';
 import { analyzeSentiment } from './sentiment';
 // NOTE: CRM sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
+import { extractMeetingMemory } from './meeting-memory';
+import { autoPopulateCRMFields } from './crm-auto-populate';
 import { gradeDraft as gradeWithHaiku, type DraftGradingResult } from './grade-draft';
 import { getTemplateById, getDefaultTemplate, type MeetingTemplate } from './meeting-templates';
 import { checkDraftLimit, logUsage, getUserIdFromMeeting } from './usage-limits';
@@ -518,6 +520,23 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         }
       } catch {
         // Non-blocking — if transcript lookup fails, skip sentiment
+      }
+
+      // Extract meeting memory + auto-populate CRM fields (non-blocking, async)
+      const meetingUserId = await getUserIdFromMeeting(meetingId);
+      if (meetingUserId) {
+        extractMeetingMemory(meetingId, meetingUserId).catch((err) => {
+          log('error', 'Meeting memory extraction failed (non-blocking)', {
+            meetingId,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        });
+        autoPopulateCRMFields(meetingId, meetingUserId, context.transcript).catch((err) => {
+          log('error', 'CRM auto-population failed (non-blocking)', {
+            meetingId,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        });
       }
 
       return {

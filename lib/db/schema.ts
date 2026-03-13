@@ -212,6 +212,9 @@ export const rawEvents = pgTable(
 // Draft status enum values
 export type DraftStatus = 'pending' | 'generating' | 'generated' | 'sent' | 'failed';
 
+// Document type for multi-format drafts (email is default for backward compatibility)
+export type DraftType = 'email' | 'proposal' | 'recap' | 'crm_notes' | 'internal_summary';
+
 // Meeting type for context-aware drafts
 export type DetectedMeetingType = 'sales_call' | 'internal_sync' | 'client_review' | 'technical_discussion' | 'general';
 
@@ -244,6 +247,8 @@ export const drafts = pgTable(
     body: text('body').notNull(),
     // Status tracking
     status: text('status').$type<DraftStatus>().notNull(),
+    // Document type (email is default for backward compatibility)
+    draftType: text('draft_type').$type<DraftType>().default('email'),
     // Model and cost tracking
     model: text('model').notNull(),
     inputTokens: integer('input_tokens'),
@@ -1761,4 +1766,86 @@ export const nextStepsTable = pgTable(
 // Type exports for Next Steps
 export type NextStepRecord = typeof nextStepsTable.$inferSelect;
 export type NewNextStepRecord = typeof nextStepsTable.$inferInsert;
+
+// ── AI Meeting Memory ──────────────────────────────────────────────
+
+/** Per-contact memory — aggregates insights across all meetings with a specific contact */
+export const contactMemories = pgTable(
+  'contact_memories',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Contact identification (email is the primary key for matching)
+    contactEmail: varchar('contact_email', { length: 255 }).notNull(),
+    contactName: varchar('contact_name', { length: 255 }),
+    companyName: varchar('company_name', { length: 500 }),
+    companyDomain: varchar('company_domain', { length: 255 }),
+    // Accumulated context (updated after each meeting)
+    role: varchar('role', { length: 255 }),
+    topics: jsonb('topics').$type<string[]>().default([]),
+    preferences: jsonb('preferences').$type<string[]>().default([]),
+    objections: jsonb('objections').$type<string[]>().default([]),
+    commitments: jsonb('commitments').$type<string[]>().default([]),
+    personalNotes: jsonb('personal_notes').$type<string[]>().default([]),
+    communicationStyle: text('communication_style'),
+    // Stats
+    meetingCount: integer('meeting_count').notNull().default(0),
+    lastMeetingId: uuid('last_meeting_id').references(() => meetings.id, { onDelete: 'set null' }),
+    lastMeetingAt: timestamp('last_meeting_at', { withTimezone: true }),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('contact_memories_user_id_idx').on(table.userId),
+    index('contact_memories_contact_email_idx').on(table.contactEmail),
+    index('contact_memories_company_domain_idx').on(table.companyDomain),
+    index('contact_memories_last_meeting_at_idx').on(table.lastMeetingAt),
+    uniqueIndex('contact_memories_user_contact_idx').on(table.userId, table.contactEmail),
+  ]
+);
+
+export type ContactMemory = typeof contactMemories.$inferSelect;
+export type NewContactMemory = typeof contactMemories.$inferInsert;
+
+/** Per-meeting memory — extracted insights from a single meeting, linked to contact */
+export const meetingMemories = pgTable(
+  'meeting_memories',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    contactMemoryId: uuid('contact_memory_id')
+      .references(() => contactMemories.id, { onDelete: 'set null' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    // Memory content
+    summary: text('summary').notNull(),
+    keyInsights: jsonb('key_insights').$type<string[]>().default([]),
+    topicsDiscussed: jsonb('topics_discussed').$type<string[]>().default([]),
+    objectionsRaised: jsonb('objections_raised').$type<string[]>().default([]),
+    commitmentsGiven: jsonb('commitments_given').$type<string[]>().default([]),
+    questionsAsked: jsonb('questions_asked').$type<string[]>().default([]),
+    sentimentTrend: varchar('sentiment_trend', { length: 20 }).$type<'positive' | 'neutral' | 'negative' | 'mixed'>(),
+    // Contact context at time of meeting
+    contactEmail: varchar('contact_email', { length: 255 }),
+    contactName: varchar('contact_name', { length: 255 }),
+    // Timestamps
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('meeting_memories_meeting_id_idx').on(table.meetingId),
+    index('meeting_memories_contact_memory_id_idx').on(table.contactMemoryId),
+    index('meeting_memories_user_id_idx').on(table.userId),
+    index('meeting_memories_contact_email_idx').on(table.contactEmail),
+    index('meeting_memories_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type MeetingMemory = typeof meetingMemories.$inferSelect;
+export type NewMeetingMemory = typeof meetingMemories.$inferInsert;
 

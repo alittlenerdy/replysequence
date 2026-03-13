@@ -558,6 +558,116 @@ ${data.draftBody}`;
 }
 
 /**
+ * Next step task data for HubSpot
+ */
+export interface HubSpotNextStepData {
+  task: string;
+  type: 'email' | 'call' | 'document' | 'internal' | 'meeting';
+  urgency: 'immediate' | 'this_week' | 'next_week' | 'no_deadline';
+  owner: string;
+  dueDate?: Date;
+  contactEmail?: string;
+  meetingTitle?: string;
+  companyName?: string;
+}
+
+/**
+ * Sync a completed next step to HubSpot as a Task
+ * Creates a task engagement associated with the matching contact.
+ */
+export async function syncNextStepToHubSpot(
+  accessToken: string,
+  data: HubSpotNextStepData
+): Promise<{ success: boolean; taskId?: string; error?: string }> {
+  log('info', 'Syncing next step to HubSpot', {
+    task: data.task,
+    type: data.type,
+    contactEmail: data.contactEmail,
+  });
+
+  try {
+    // Find contact if email provided
+    let contactId: string | undefined;
+    if (data.contactEmail) {
+      const contact = await searchHubSpotContactByEmail(accessToken, data.contactEmail);
+      contactId = contact?.id;
+    }
+
+    const priorityMap: Record<string, string> = {
+      immediate: 'HIGH',
+      this_week: 'MEDIUM',
+      next_week: 'LOW',
+      no_deadline: 'LOW',
+    };
+
+    const typeMap: Record<string, string> = {
+      email: 'EMAIL',
+      call: 'CALL',
+      meeting: 'MEETING',
+      document: 'TODO',
+      internal: 'TODO',
+    };
+
+    const properties: Record<string, string> = {
+      hs_task_subject: data.task,
+      hs_task_status: 'COMPLETED',
+      hs_task_priority: priorityMap[data.urgency] || 'MEDIUM',
+      hs_task_type: typeMap[data.type] || 'TODO',
+      hs_timestamp: new Date().toISOString(),
+    };
+
+    if (data.dueDate) {
+      properties.hs_task_reminders = data.dueDate.getTime().toString();
+    }
+
+    const bodyParts = [`Completed next step from ReplySequence.`];
+    if (data.meetingTitle) bodyParts.push(`Meeting: ${data.meetingTitle}`);
+    if (data.companyName) bodyParts.push(`Company: ${data.companyName}`);
+    bodyParts.push(`Owner: ${data.owner}`);
+    properties.hs_task_body = bodyParts.join('\n');
+
+    const requestBody: Record<string, unknown> = { properties };
+
+    if (contactId) {
+      requestBody.associations = [
+        {
+          to: { id: contactId },
+          types: [
+            {
+              associationCategory: 'HUBSPOT_DEFINED',
+              associationTypeId: 204, // task_to_contact
+            },
+          ],
+        },
+      ];
+    }
+
+    const response = await hubspotFetch(accessToken, '/crm/v3/objects/tasks', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      log('error', 'HubSpot task creation failed', { error, status: response.status });
+      return { success: false, error };
+    }
+
+    const result = await response.json();
+    log('info', 'HubSpot task created for next step', {
+      taskId: result.id,
+      associatedContact: contactId || null,
+    });
+
+    return { success: true, taskId: result.id };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    log('error', 'HubSpot next step sync error', { error: message });
+    return { success: false, error: message };
+  }
+}
+
+/**
  * Sync a sent email to HubSpot CRM
  * This is the main entry point called after email is sent.
  * Non-blocking - failures are logged but don't throw.

@@ -288,7 +288,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-[#141C34]/80 border border-[#273054] p-6 flex flex-col items-center text-center"
+                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#273054] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
               >
                 <div className="w-12 h-12 rounded-lg bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-[#5B6CFF] light:text-[#4A5BEE]" aria-hidden="true" />
@@ -339,7 +339,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="rounded-2xl bg-[#141C34]/80 border border-[#273054] p-6 hover:border-[#5B6CFF]/30 transition-colors"
+                  className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#273054] light:border-gray-200 p-6 hover:border-[#5B6CFF]/30 transition-colors light:shadow-sm"
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -360,7 +360,7 @@ export default function LandingPage() {
 
       {/* ============ 4. HOW IT WORKS ============ */}
       <section className="py-12 md:py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto bg-white/[0.02] backdrop-blur-sm border border-white/[0.05] rounded-3xl p-8 md:p-12">
+        <div className="max-w-6xl mx-auto bg-white/[0.02] light:bg-white/60 backdrop-blur-sm border border-white/[0.05] light:border-gray-200 rounded-3xl p-8 md:p-12 light:shadow-sm">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -493,7 +493,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-[#141C34]/80 border border-[#273054] p-6 sm:p-8 text-center"
+                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#273054] light:border-gray-200 p-6 sm:p-8 text-center light:shadow-sm"
               >
                 <span className="text-5xl font-extrabold bg-gradient-to-r from-[#FF9D2D] to-[#FDE047] bg-clip-text text-transparent">{item.stat}</span>
                 <p className="text-sm text-[#9AA6C6] light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>

@@ -7,7 +7,7 @@ import { cache } from 'react';
 import { db } from './db';
 import { drafts, meetings, transcripts, users, zoomConnections, teamsConnections, meetConnections, emailSequences, sequenceSteps } from './db/schema';
 import { eq, desc, sql, and, ilike, or, isNull, gt, lt, isNotNull } from 'drizzle-orm';
-import type { DraftStatus, MeetingStatus } from './db/schema';
+import type { DraftStatus, DraftType, MeetingStatus } from './db/schema';
 import { currentUser } from '@clerk/nextjs/server';
 
 /**
@@ -68,6 +68,8 @@ export interface DraftWithMeeting {
   userFeedback: string | null;
   // Meeting type for template recommendations
   meetingType: string | null;
+  // Document type (email, proposal, recap, crm_notes, internal_summary)
+  draftType: DraftType | null;
   // Demo flag
   isDemo: boolean;
   // Data flywheel fields
@@ -89,6 +91,7 @@ export interface DraftsQueryParams {
   page?: number;
   limit?: number;
   status?: DraftStatus | 'all';
+  draftType?: DraftType | 'all';
   search?: string;
   dateRange?: 'week' | 'month' | 'all';
 }
@@ -107,7 +110,7 @@ export interface DraftsQueryResult {
 export async function getDraftsWithMeetings(
   params: DraftsQueryParams = {}
 ): Promise<DraftsQueryResult> {
-  const { page = 1, limit = 10, status = 'all', search = '', dateRange = 'all' } = params;
+  const { page = 1, limit = 10, status = 'all', draftType = 'all', search = '', dateRange = 'all' } = params;
   const offset = (page - 1) * limit;
 
   // Get current user for filtering
@@ -133,6 +136,11 @@ export async function getDraftsWithMeetings(
   // Status filter
   if (status !== 'all') {
     conditions.push(eq(drafts.status, status));
+  }
+
+  // Document type filter
+  if (draftType !== 'all') {
+    conditions.push(eq(drafts.draftType, draftType));
   }
 
   // Date range filter
@@ -205,6 +213,8 @@ export async function getDraftsWithMeetings(
       userFeedback: drafts.userFeedback,
       // Meeting type
       meetingType: drafts.meetingType,
+      // Document type
+      draftType: drafts.draftType,
       // Data flywheel fields
       flywheelContextUsed: drafts.flywheelContextUsed,
       flywheelMetadata: drafts.flywheelMetadata,
@@ -268,6 +278,8 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       userFeedback: drafts.userFeedback,
       // Meeting type
       meetingType: drafts.meetingType,
+      // Document type
+      draftType: drafts.draftType,
       // Data flywheel fields
       originalBody: drafts.originalBody,
       flywheelContextUsed: drafts.flywheelContextUsed,
