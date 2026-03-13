@@ -115,8 +115,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
         if (stat.hero) {
           return (
             <motion.div key={stat.label} variants={item} className="glass-border-accent rounded-2xl">
-              <div className="group relative overflow-hidden backdrop-blur-xl rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:bg-white/[0.04]"
-                style={{ background: 'rgba(12, 14, 20, 0.8)' }}
+              <div className="group relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:bg-white/[0.04]"
               >
                 {/* Icon */}
                 <div
@@ -153,8 +152,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             className="glass-border rounded-2xl"
           >
             <div
-              className="group relative overflow-hidden backdrop-blur-xl rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:bg-white/[0.04]"
-              style={{ background: 'rgba(20, 23, 32, 0.6)' }}
+              className="group relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:bg-white/[0.04]"
             >
               {/* Icon */}
               <div

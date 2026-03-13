@@ -133,7 +133,7 @@ export function DealRiskAlerts({ compact = false }: DealRiskAlertsProps) {
   const highCount = data?.bySeverity.high || 0;
 
   return (
-    <div className={`${compact ? 'rounded-2xl p-4' : 'mb-6'}`} style={compact ? { background: 'rgba(20, 23, 32, 0.6)' } : undefined}>
+    <div className={`${compact ? 'rounded-2xl p-4' : 'mb-6'}`}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex items-center gap-2 w-full text-left mb-3"

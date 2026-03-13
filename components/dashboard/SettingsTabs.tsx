@@ -6,7 +6,7 @@ import { Sparkles, Plug, Mail, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { IntegrationSettings } from './IntegrationSettings';
 import { EmailPreferencesSettings } from './EmailPreferencesSettings';
-import { AICustomization } from './AICustomization';
+import { AICustomization, TemplateManager } from './AICustomization';
 import { AccountManagement } from './AccountManagement';
 
 const tabs = [
@@ -87,8 +87,9 @@ export function SettingsTabs() {
         {activeTab === 'ai' && <AICustomization />}
         {activeTab === 'integrations' && <IntegrationSettings />}
         {activeTab === 'email' && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto space-y-6">
             <EmailPreferencesSettings />
+            <TemplateManager />
           </div>
         )}
         {activeTab === 'account' && <AccountManagement />}

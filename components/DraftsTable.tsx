@@ -507,7 +507,7 @@ export function DraftsTable({
     <>
       <div id="drafts-table" className="glass-border rounded-2xl shadow-xl overflow-hidden">
         {/* Table Header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-white/[0.06] light:border-gray-200 glass-surface">
+        <div className="px-5 sm:px-6 py-5 border-b border-indigo-500/10 light:border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white light:text-gray-900">Follow-ups</h2>
             <div className="flex items-center gap-3">
@@ -710,43 +710,43 @@ export function DraftsTable({
 
         {/* Desktop Table Layout - hidden on small screens, uses inline expansion */}
         <div className="hidden md:block">
-          <table className="w-full table-fixed divide-y divide-white/[0.06] light:divide-gray-200">
-            <thead className="glass-surface">
-              <tr>
-                <th className="w-[40px] px-3 py-3">
+          <table className="w-full table-fixed divide-y divide-indigo-500/10 light:divide-gray-200">
+            <thead>
+              <tr className="border-b border-indigo-500/10">
+                <th className="w-[40px] px-3 py-4">
                   <label className="flex items-center">
                     <input
                       type="checkbox"
                       checked={sendableDrafts.length > 0 && selectedIds.size === sendableDrafts.length}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-indigo-500/30 bg-gray-800/50 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                     />
                     <span className="sr-only">Select all drafts</span>
                   </label>
                 </th>
-                <th className="w-[28%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[28%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
                   Meeting
                 </th>
-                <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[30%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[10%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="hidden lg:table-cell w-[8%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[8%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
                   Age
                 </th>
-                <th className="w-[10%] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[10%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
                   Quality
                 </th>
-                <th className="hidden lg:table-cell w-[130px] px-4 py-3 text-left text-xs font-medium text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[130px] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="w-[70px] px-2 py-3">
+                <th className="w-[70px] px-2 py-4">
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-transparent divide-y divide-white/[0.06] light:divide-gray-200">
+            <tbody className="bg-transparent divide-y divide-white/[0.04] light:divide-gray-200">
               {drafts.map((draft, index) => {
                 const isExpanded = expandedDraftId === draft.id;
                 return (
@@ -756,21 +756,21 @@ export function DraftsTable({
                       tabIndex={0}
                       className={`
                         group/row
-                        ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : isExpanded ? 'bg-gray-800/60 light:bg-indigo-50 border-l-2 border-l-indigo-500' : 'hover:bg-gray-700/70 light:hover:bg-indigo-50 border-l-2 border-l-transparent'}
+                        ${selectedIds.has(draft.id) ? 'bg-indigo-500/10' : isExpanded ? 'bg-indigo-500/[0.06] light:bg-indigo-50 border-l-2 border-l-indigo-500' : 'hover:bg-white/[0.03] light:hover:bg-indigo-50 border-l-2 border-l-transparent'}
                         cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500
                         transition-all duration-150
                       `}
                       onClick={() => handleDesktopRowClick(draft)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDesktopRowClick(draft); } }}
                     >
-                      <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
                         {draft.status !== 'sent' ? (
                           <label className="flex items-center">
                             <input
                               type="checkbox"
                               checked={selectedIds.has(draft.id)}
                               onChange={() => toggleSelect(draft.id)}
-                              className="w-4 h-4 rounded border-gray-500 bg-gray-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
+                              className="w-4 h-4 rounded border-indigo-500/30 bg-gray-800/50 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer"
                             />
                             <span className="sr-only">Select draft</span>
                           </label>
@@ -778,8 +778,8 @@ export function DraftsTable({
                           <div className="w-4" />
                         )}
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2 min-w-0">
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3 min-w-0">
                           {getPlatformIcon(draft.meetingPlatform)}
                           <div className="min-w-0">
                             <div className="text-sm font-medium text-white light:text-gray-900 truncate">
@@ -790,24 +790,24 @@ export function DraftsTable({
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-gray-400 light:text-gray-500 truncate">
+                            <div className="text-xs text-gray-400 light:text-gray-500 truncate mt-0.5">
                               {draft.meetingHostEmail}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-5 py-4">
                         <div className="text-sm text-gray-200 light:text-gray-900 truncate">
                           {draft.subject}
                         </div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <StatusBadge status={draft.status} size="sm" />
                           {renderEngagementIndicators(draft)}
                         </div>
                       </td>
-                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
+                      <td className="hidden lg:table-cell px-5 py-4 whitespace-nowrap">
                         {isMounted && (() => {
                           const badge = getTimeSinceBadge(draft.meetingStartTime);
                           return badge ? (
@@ -817,7 +817,7 @@ export function DraftsTable({
                           ) : <span className="text-xs text-gray-500">-</span>;
                         })()}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           {draft.qualityScore !== null ? (
                             <span className={`text-xs font-medium tabular-nums ${
@@ -832,10 +832,10 @@ export function DraftsTable({
                           {renderUserRating(draft)}
                         </div>
                       </td>
-                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
+                      <td className="hidden lg:table-cell px-5 py-4 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
                         {formatDate(draft.createdAt)}
                       </td>
-                      <td className="px-3 py-3 whitespace-nowrap text-sm font-medium">
+                      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -866,7 +866,7 @@ export function DraftsTable({
 
         {/* Pagination - with proper touch targets */}
         {totalPages > 1 && (
-          <div className="px-4 sm:px-6 py-4 border-t border-white/[0.06] light:border-gray-200 glass-surface">
+          <div className="px-5 sm:px-6 py-4 border-t border-indigo-500/10 light:border-gray-200">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400 light:text-gray-500 tabular-nums">
                 Page {page} of {totalPages}

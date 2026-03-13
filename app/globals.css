@@ -929,30 +929,39 @@ html.light .light-solid-text {
 /* Glass card — the primary surface for dashboard cards */
 .glass-card {
   position: relative;
-  background: rgba(20, 23, 32, 0.6);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(15, 18, 28, 0.35);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(99, 102, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(99, 102, 241, 0.05);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(99, 102, 241, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Glass card with animated gradient border (logo-inspired neon) */
 .glass-border {
   position: relative;
-  background: rgba(20, 23, 32, 0.7);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(12, 15, 24, 0.4);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
   border-radius: 1rem;
   border: none;
   overflow: hidden;
   isolation: isolate;
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(99, 102, 241, 0.08);
 }
 
 .glass-border::before {
@@ -960,29 +969,35 @@ html.light .light-solid-text {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 2px;
   background: linear-gradient(
     135deg,
-    rgba(59, 130, 246, 0.5) 0%,
-    rgba(99, 102, 241, 0.3) 20%,
-    rgba(168, 85, 247, 0.2) 40%,
-    rgba(249, 115, 22, 0.3) 60%,
-    rgba(245, 158, 11, 0.4) 80%,
-    rgba(59, 130, 246, 0.5) 100%
+    #3B82F6 0%,
+    #6366F1 20%,
+    #8B5CF6 40%,
+    #F97316 60%,
+    #F59E0B 80%,
+    #3B82F6 100%
   );
   background-size: 200% 200%;
-  animation: glassShimmer 6s ease infinite;
+  animation: glassShimmer 3s ease infinite;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
   z-index: 1;
   transition: opacity 0.3s ease;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .glass-border:hover::before {
   opacity: 1;
+}
+
+.glass-border:hover {
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(99, 102, 241, 0.15);
 }
 
 /* Neon glass border — rotating conic gradient like the toolbar */
@@ -996,10 +1011,10 @@ html.light .light-solid-text {
 
 .glass-neon > .glass-neon-inner {
   position: relative;
-  background: rgba(20, 23, 32, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: calc(1rem - 1.5px);
+  background: rgba(12, 15, 24, 0.65);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border-radius: calc(1rem - 2px);
   z-index: 2;
   height: 100%;
 }
@@ -1027,9 +1042,9 @@ html.light .light-solid-text {
 .glass-neon::after {
   content: '';
   position: absolute;
-  inset: 1.5px;
-  border-radius: calc(1rem - 1.5px);
-  background: rgba(20, 23, 32, 0.92);
+  inset: 2px;
+  border-radius: calc(1rem - 2px);
+  background: rgba(12, 15, 24, 0.75);
   z-index: 1;
 }
 
@@ -1041,13 +1056,17 @@ html.light .light-solid-text {
 /* Accent glass border — for hero/highlighted cards */
 .glass-border-accent {
   position: relative;
-  background: rgba(20, 23, 32, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(12, 15, 24, 0.35);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
   border-radius: 1rem;
   border: none;
   overflow: hidden;
   isolation: isolate;
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(249, 115, 22, 0.12),
+    0 0 40px rgba(99, 102, 241, 0.06);
 }
 
 .glass-border-accent::before {
@@ -1055,17 +1074,17 @@ html.light .light-solid-text {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1.5px;
+  padding: 2px;
   background: linear-gradient(
     135deg,
-    rgba(249, 115, 22, 0.7) 0%,
-    rgba(245, 158, 11, 0.5) 20%,
-    rgba(99, 102, 241, 0.4) 50%,
-    rgba(59, 130, 246, 0.5) 80%,
-    rgba(249, 115, 22, 0.7) 100%
+    #F97316 0%,
+    #F59E0B 20%,
+    #6366F1 50%,
+    #3B82F6 80%,
+    #F97316 100%
   );
   background-size: 200% 200%;
-  animation: glassShimmer 4s ease infinite;
+  animation: glassShimmer 3s ease infinite;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1073,12 +1092,19 @@ html.light .light-solid-text {
   z-index: 1;
 }
 
+.glass-border-accent:hover {
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(249, 115, 22, 0.2),
+    0 0 60px rgba(99, 102, 241, 0.1);
+}
+
 /* Glass surface for inner containers */
 .glass-surface {
-  background: rgba(28, 32, 48, 0.5);
-  backdrop-filter: blur(8px) saturate(150%);
-  -webkit-backdrop-filter: blur(8px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(18, 22, 36, 0.45);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(99, 102, 241, 0.1);
   border-radius: 0.75rem;
 }
 

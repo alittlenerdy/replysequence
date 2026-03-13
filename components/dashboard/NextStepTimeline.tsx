@@ -137,7 +137,7 @@ export function NextStepTimeline({ compact = false }: NextStepTimelineProps) {
   const overdueCount = steps.filter(isOverdue).length;
 
   return (
-    <div className={`${compact ? 'rounded-2xl p-4' : 'mb-6'}`} style={compact ? { background: 'rgba(20, 23, 32, 0.6)' } : undefined}>
+    <div className={`${compact ? 'rounded-2xl p-4' : 'mb-6'}`}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex items-center gap-2 w-full text-left mb-3"

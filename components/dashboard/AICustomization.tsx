@@ -471,7 +471,7 @@ const MEETING_TYPE_LABELS: Record<string, string> = {
   general: 'General',
 };
 
-function TemplateManager() {
+export function TemplateManager() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
