@@ -212,7 +212,7 @@ async function PricingContent() {
               ].map((faq, index) => (
                 <div
                   key={index}
-                  className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6"
+                  className="glass-border rounded-2xl p-6"
                 >
                   <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                     {faq.q}

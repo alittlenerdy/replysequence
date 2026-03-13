@@ -188,7 +188,7 @@ export default function LandingPage() {
               transition={{ delay: 0.4, duration: 0.5 }}
               className="max-w-2xl mx-auto mb-6 px-4 sm:px-0"
             >
-              <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-10">
+              <div className="glass-border-accent rounded-2xl p-6 sm:p-10">
                 <WaitlistForm />
               </div>
             </motion.div>
@@ -309,7 +309,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 flex flex-col items-center text-center"
+                className="glass-border rounded-2xl p-6 flex flex-col items-center text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-indigo-400 light:text-indigo-600" aria-hidden="true" />
@@ -474,7 +474,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 text-center"
+                className="glass-border rounded-2xl p-6 text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
                   <item.icon className="w-6 h-6 text-amber-400 light:text-amber-600" aria-hidden="true" />
@@ -526,7 +526,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-8 text-center"
+                className="glass-border rounded-2xl p-6 sm:p-8 text-center"
               >
                 <span className="text-5xl font-extrabold neon-text neon-glow">{item.stat}</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
@@ -714,7 +714,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6"
+                className="glass-border rounded-2xl p-6"
               >
                 <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-sm text-gray-400 light:text-gray-600">{item.description}</p>
@@ -740,7 +740,7 @@ export default function LandingPage() {
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.
             </p>
 
-            <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 sm:p-10 mx-4 sm:mx-0">
+            <div className="glass-border-accent rounded-2xl p-6 sm:p-10 mx-4 sm:mx-0">
               <WaitlistForm />
             </div>
           </motion.div>

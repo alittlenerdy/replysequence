@@ -14,14 +14,20 @@ function formatDate(dateString: string): string {
   });
 }
 
+const VISIBLE_TAGS = 6;
+
 export function BlogGrid({ posts }: { posts: BlogPost[] }) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [showAllTags, setShowAllTags] = useState(false);
 
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     posts.forEach((post) => post.tags.forEach((tag) => tagSet.add(tag)));
     return Array.from(tagSet).sort();
   }, [posts]);
+
+  const visibleTags = showAllTags ? allTags : allTags.slice(0, VISIBLE_TAGS);
+  const hiddenCount = allTags.length - VISIBLE_TAGS;
 
   const filteredPosts = selectedTag
     ? posts.filter((post) => post.tags.includes(selectedTag))
@@ -42,7 +48,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
           >
             All
           </button>
-          {allTags.map((tag) => (
+          {visibleTags.map((tag) => (
             <button
               key={tag}
               onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
@@ -55,6 +61,22 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
               {tag}
             </button>
           ))}
+          {!showAllTags && hiddenCount > 0 && (
+            <button
+              onClick={() => setShowAllTags(true)}
+              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-indigo-400 light:text-indigo-600 hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            >
+              +{hiddenCount} more
+            </button>
+          )}
+          {showAllTags && hiddenCount > 0 && (
+            <button
+              onClick={() => setShowAllTags(false)}
+              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-indigo-400 light:text-indigo-600 hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            >
+              Show less
+            </button>
+          )}
         </div>
 
         {/* Posts Grid */}

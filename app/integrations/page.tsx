@@ -280,7 +280,7 @@ export default function IntegrationsPage() {
                 {categoryIntegrations.map((integration, i) => (
                   <div
                     key={integration.name}
-                    className={`relative rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 transition-[border-color,transform,box-shadow] hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
+                    className={`relative glass-border rounded-2xl p-6 transition-[transform,box-shadow] hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 ${
                       staggerClasses[i] || staggerClasses[staggerClasses.length - 1]
                     } ${
                       integration.status === 'coming_soon' ? 'opacity-70' : ''

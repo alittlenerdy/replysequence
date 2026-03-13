@@ -1026,7 +1026,7 @@ html.light .light-solid-text {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Glass card with animated gradient border (indigo + amber neon) */
+/* Glass card with subtle white shimmer border — matches navbar glass effect */
 .glass-border {
   position: relative;
   background: var(--glass-bg-strong);
@@ -1034,11 +1034,10 @@ html.light .light-solid-text {
   -webkit-backdrop-filter: blur(20px) saturate(200%);
   border-radius: 1rem;
   border: none;
-  overflow: hidden;
-  isolation: isolate;
   box-shadow:
     0 4px 30px var(--glass-shadow),
     0 0 15px rgba(99, 102, 241, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
 .glass-border::before {
@@ -1046,36 +1045,29 @@ html.light .light-solid-text {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 2px;
-  background: linear-gradient(
-    135deg,
-    #6366F1 0%,
-    #818CF8 20%,
-    #A5B4FC 35%,
-    #FBBF24 50%,
-    #F59E0B 65%,
-    #818CF8 80%,
-    #6366F1 100%
-  );
-  background-size: 200% 200%;
-  animation: glassShimmer 3s ease infinite;
+  padding: 1px;
+  background: linear-gradient(160deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.08) 30%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.08) 70%,
+    rgba(255,255,255,0.35) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   transition: opacity 0.3s ease;
-  opacity: 0.7;
 }
 
 .glass-border:hover::before {
-  opacity: 1;
+  opacity: 0.9;
 }
 
 .glass-border:hover {
   box-shadow:
     0 8px 40px var(--glass-shadow-hover),
-    0 0 30px rgba(99, 102, 241, 0.15);
+    0 0 20px rgba(99, 102, 241, 0.1);
 }
 
 /* Neon glass border — rotating conic gradient (indigo + amber) */
@@ -1131,7 +1123,7 @@ html.light .light-solid-text {
   to { transform: rotate(360deg); }
 }
 
-/* Accent glass border — for hero/highlighted cards (amber neon accent) */
+/* Accent glass border — slightly brighter shimmer for hero/highlighted cards */
 .glass-border-accent {
   position: relative;
   background: var(--glass-bg-strong);
@@ -1139,12 +1131,10 @@ html.light .light-solid-text {
   -webkit-backdrop-filter: blur(20px) saturate(200%);
   border-radius: 1rem;
   border: none;
-  overflow: hidden;
-  isolation: isolate;
   box-shadow:
     0 4px 30px var(--glass-shadow),
-    0 0 20px rgba(251, 191, 36, 0.12),
-    0 0 40px rgba(99, 102, 241, 0.06);
+    0 0 15px rgba(99, 102, 241, 0.1);
+  transition: box-shadow 0.3s ease;
 }
 
 .glass-border-accent::before {
@@ -1152,29 +1142,25 @@ html.light .light-solid-text {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 2px;
-  background: linear-gradient(
-    135deg,
-    #FBBF24 0%,
-    #F59E0B 20%,
-    #6366F1 50%,
-    #818CF8 80%,
-    #FBBF24 100%
-  );
-  background-size: 200% 200%;
-  animation: glassShimmer 3s ease infinite;
+  padding: 1px;
+  background: linear-gradient(160deg,
+    rgba(255,255,255,0.45) 0%,
+    rgba(255,255,255,0.12) 25%,
+    rgba(99,102,241,0.15) 50%,
+    rgba(255,255,255,0.12) 75%,
+    rgba(255,255,255,0.45) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
+  transition: opacity 0.3s ease;
 }
 
 .glass-border-accent:hover {
   box-shadow:
     0 8px 40px var(--glass-shadow-hover),
-    0 0 40px rgba(251, 191, 36, 0.2),
-    0 0 60px rgba(99, 102, 241, 0.1);
+    0 0 25px rgba(99, 102, 241, 0.12);
 }
 
 /* Glass surface for inner containers */
@@ -1212,49 +1198,40 @@ html.light .light-solid-text {
 }
 
 .light .glass-border::before {
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.3) 0%,
-    rgba(129, 140, 248, 0.2) 30%,
-    rgba(251, 191, 36, 0.25) 60%,
-    rgba(99, 102, 241, 0.3) 100%
-  );
-  background-size: 200% 200%;
-  animation: glassShimmer 6s ease infinite;
+  background: linear-gradient(160deg,
+    rgba(0,0,0,0.12) 0%,
+    rgba(0,0,0,0.04) 30%,
+    rgba(0,0,0,0) 50%,
+    rgba(0,0,0,0.04) 70%,
+    rgba(0,0,0,0.12) 100%);
 }
 
 .light .glass-border:hover {
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.1),
-    0 0 30px rgba(99, 102, 241, 0.08);
+    0 0 20px rgba(99, 102, 241, 0.06);
 }
 
 .light .glass-border-accent {
   background: rgba(255, 255, 255, 0.8);
   box-shadow:
     0 4px 30px rgba(0, 0, 0, 0.06),
-    0 0 20px rgba(251, 191, 36, 0.08),
-    0 0 40px rgba(99, 102, 241, 0.03);
+    0 0 15px rgba(99, 102, 241, 0.06);
 }
 
 .light .glass-border-accent::before {
-  background: linear-gradient(
-    135deg,
-    rgba(251, 191, 36, 0.4) 0%,
-    rgba(245, 158, 11, 0.3) 20%,
-    rgba(99, 102, 241, 0.25) 50%,
-    rgba(129, 140, 248, 0.3) 80%,
-    rgba(251, 191, 36, 0.4) 100%
-  );
-  background-size: 200% 200%;
-  animation: glassShimmer 4s ease infinite;
+  background: linear-gradient(160deg,
+    rgba(0,0,0,0.15) 0%,
+    rgba(0,0,0,0.05) 25%,
+    rgba(99,102,241,0.08) 50%,
+    rgba(0,0,0,0.05) 75%,
+    rgba(0,0,0,0.15) 100%);
 }
 
 .light .glass-border-accent:hover {
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.1),
-    0 0 40px rgba(251, 191, 36, 0.12),
-    0 0 60px rgba(99, 102, 241, 0.06);
+    0 0 25px rgba(99, 102, 241, 0.08);
 }
 
 .light .glass-neon::before {

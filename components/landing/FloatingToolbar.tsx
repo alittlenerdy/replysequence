@@ -1,12 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { SignInButton, UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Home, Sparkles, Scale, CreditCard, Mail, LayoutDashboard, PlayCircle, Plug, BookOpen } from 'lucide-react';
+import { Home, Sparkles, Scale, CreditCard, Mail, PlayCircle, Plug, BookOpen } from 'lucide-react';
 import { ActiveIndicator } from './ActiveIndicator';
-import { ToolbarThemeToggle } from './ToolbarThemeToggle';
 
 const OBSERVED_SECTIONS = [
   { id: 'hero', navIndex: 0 },
@@ -26,7 +24,6 @@ const NAV_ITEMS = [
 ] as const;
 
 export function FloatingToolbar() {
-  const { isSignedIn, isLoaded } = useUser();
   const [activeIndex, setActiveIndex] = useState(0);
   const [indicatorPos, setIndicatorPos] = useState({ left: 0, width: 0 });
   const buttonRefs = useRef<(HTMLElement | null)[]>([]);
@@ -62,37 +59,52 @@ export function FloatingToolbar() {
   }, [updateIndicatorPos]);
 
   // Intersection Observer for active section detection
+  // Uses a single observer and tracks all visible sections, picking the one
+  // furthest down the page to avoid multiple items appearing active.
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
+    const visibleSections = new Map<string, number>(); // id -> navIndex
 
-    // Small delay to let dynamic imports render their sections
     const timeout = setTimeout(() => {
-      OBSERVED_SECTIONS.forEach(({ id, navIndex }) => {
-        const el = document.getElementById(id);
-        if (!el) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const section = OBSERVED_SECTIONS.find((s) => s.id === entry.target.id);
+            if (!section) return;
 
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
-                setActiveIndex(navIndex);
-              }
+            if (entry.isIntersecting) {
+              visibleSections.set(section.id, section.navIndex);
+            } else {
+              visibleSections.delete(section.id);
+            }
+          });
+
+          // Pick the section that appears latest in the page (highest navIndex)
+          if (visibleSections.size > 0) {
+            let maxIndex = -1;
+            visibleSections.forEach((navIndex) => {
+              if (navIndex > maxIndex) maxIndex = navIndex;
             });
-          },
-          {
-            rootMargin: '-40% 0px -40% 0px',
-            threshold: [0, 0.25, 0.5],
+            setActiveIndex(maxIndex);
+          } else {
+            // Nothing visible — default to Home
+            setActiveIndex(0);
           }
-        );
-        observer.observe(el);
-        observers.push(observer);
+        },
+        {
+          rootMargin: '-30% 0px -30% 0px',
+          threshold: [0, 0.1],
+        }
+      );
+
+      OBSERVED_SECTIONS.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
       });
+
+      return () => observer.disconnect();
     }, 500);
 
-    return () => {
-      clearTimeout(timeout);
-      observers.forEach((o) => o.disconnect());
-    };
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleNavClick = (target: string, index: number) => {
@@ -203,54 +215,6 @@ export function FloatingToolbar() {
           })}
         </div>
 
-        {/* Divider */}
-        <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1 flex-shrink-0" />
-
-        {/* Utility section */}
-        <div className="flex items-center gap-1 relative z-10 flex-shrink-0">
-          {/* Dashboard — signed in only */}
-          {isLoaded && isSignedIn && (
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors"
-            >
-              <LayoutDashboard
-                className="w-[18px] h-[18px] text-gray-400 light:text-gray-500"
-                strokeWidth={1.5}
-              />
-              <span className="hidden md:inline text-xs font-medium text-gray-400 light:text-gray-500">
-                Dashboard
-              </span>
-            </Link>
-          )}
-
-          {/* Theme toggle */}
-          <ToolbarThemeToggle />
-
-          {/* Auth controls */}
-          {!isLoaded && (
-            <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse" />
-          )}
-
-          {isLoaded && !isSignedIn && (
-            <SignInButton mode="modal">
-              <button className="text-xs font-medium text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors">
-                Sign In
-              </button>
-            </SignInButton>
-          )}
-
-          {isLoaded && isSignedIn && (
-            <UserButton
-              afterSignOutUrl="/"
-              appearance={{
-                elements: {
-                  avatarBox: 'h-8 w-8',
-                },
-              }}
-            />
-          )}
-        </div>
       </nav>
     </>
   );

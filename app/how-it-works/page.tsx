@@ -284,7 +284,7 @@ function StepCard({
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 md:p-8 transition-[border-color,box-shadow] duration-200 shadow-xl ${classes.glow} ${classes.hoverGlow}`}
+      className={`relative glass-border rounded-2xl p-6 md:p-8 transition-[box-shadow] duration-200 shadow-xl ${classes.glow} ${classes.hoverGlow}`}
     >
       {/* Animated step number badge */}
       <motion.div
