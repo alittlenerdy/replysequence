@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { DraftsView } from '@/components/dashboard/DraftsView';
 import { NudgeBanner } from '@/components/dashboard/NudgeBanner';
 import { DashboardStats } from '@/components/DashboardStats';
-import { IntelligenceSidebar } from '@/components/dashboard/IntelligenceSidebar';
+import { IntelligenceSidebar, IntelligenceMobileStrip } from '@/components/dashboard/IntelligenceSidebar';
 import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
 
 // Force dynamic rendering for fresh data
@@ -34,6 +34,9 @@ async function DashboardContent() {
       {/* Stats bar — full width */}
       <DashboardStats stats={stats} />
 
+      {/* Mobile intelligence strip — collapsible, above drafts */}
+      <IntelligenceMobileStrip />
+
       {/* Two-column layout: action workspace + intelligence sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main workspace (2/3) */}
@@ -53,7 +56,7 @@ async function DashboardContent() {
           />
         </div>
 
-        {/* Intelligence sidebar (1/3) */}
+        {/* Intelligence sidebar (1/3) — desktop only, mobile uses strip above */}
         <div className="lg:col-span-1 min-w-0">
           <IntelligenceSidebar />
         </div>

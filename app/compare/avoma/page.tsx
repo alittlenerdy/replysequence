@@ -252,6 +252,19 @@ export default function AvomaComparisonPage() {
             Honest Comparison
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="inline-flex items-center gap-3 mb-6"
+          >
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white" style={{ backgroundColor: '#7C3AED' }}>A</div>
+            <span className="text-lg font-medium text-gray-400">vs</span>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
+              <span className="text-xl font-bold text-white">RS</span>
+            </div>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -341,9 +354,9 @@ export default function AvomaComparisonPage() {
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Avoma if...</h2>
               <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" /> You need meeting scheduling and agenda templates</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" /> You want coaching scorecards and conversation intelligence</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" /> You need one platform for the entire meeting lifecycle</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need meeting scheduling and agenda templates</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want coaching scorecards and conversation intelligence</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need one platform for the entire meeting lifecycle</li>
               </ul>
               <div className="mt-5 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium text-sm">
                 <Globe className="w-4 h-4" />

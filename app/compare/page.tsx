@@ -26,6 +26,8 @@ const competitors = [
     tagline: 'Revenue intelligence platform',
     differentiator: 'Gong analyzes conversations for deal intelligence. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds — at a fraction of the cost.',
     color: 'from-violet-500 to-purple-600',
+    brandColor: '#7C3AED',
+    initial: 'G',
   },
   {
     slug: 'otter',
@@ -33,6 +35,8 @@ const competitors = [
     tagline: 'Live transcription and meeting notes',
     differentiator: 'Otter transcribes meetings in real time. ReplySequence turns transcripts into follow-ups, sequences, tracked next steps, and CRM updates.',
     color: 'from-blue-500 to-cyan-600',
+    brandColor: '#3B82F6',
+    initial: 'O',
   },
   {
     slug: 'fireflies',
@@ -40,6 +44,8 @@ const competitors = [
     tagline: 'Meeting transcription and search',
     differentiator: 'Fireflies records and transcribes. ReplySequence drafts the follow-up, triggers sequences, tracks next steps, and flags deal risks.',
     color: 'from-amber-500 to-orange-600',
+    brandColor: '#8B5CF6',
+    initial: 'F',
   },
   {
     slug: 'chorus',
@@ -47,6 +53,8 @@ const competitors = [
     tagline: 'Enterprise conversation intelligence',
     differentiator: 'Chorus provides conversation analytics within the ZoomInfo ecosystem. ReplySequence generates follow-ups, sequences, and deal intelligence independently at $19/mo.',
     color: 'from-sky-500 to-blue-600',
+    brandColor: '#059669',
+    initial: 'C',
   },
   {
     slug: 'fathom',
@@ -54,6 +62,8 @@ const competitors = [
     tagline: 'AI notetaker with meeting summaries',
     differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds.',
     color: 'from-purple-500 to-indigo-600',
+    brandColor: '#1D4ED8',
+    initial: 'Fa',
   },
   {
     slug: 'avoma',
@@ -61,6 +71,8 @@ const competitors = [
     tagline: 'Meeting lifecycle assistant',
     differentiator: 'Avoma covers the full meeting lifecycle. ReplySequence focuses on the part that drives revenue: follow-ups, sequences, next-step tracking, and deal risk alerts.',
     color: 'from-teal-500 to-emerald-600',
+    brandColor: '#7C3AED',
+    initial: 'A',
   },
   {
     slug: 'tldv',
@@ -68,6 +80,8 @@ const competitors = [
     tagline: 'Meeting recordings with AI summaries',
     differentiator: 'tl;dv creates timestamped recordings. ReplySequence creates the follow-up, sequence, and next-step tracking that closes the deal.',
     color: 'from-green-500 to-emerald-600',
+    brandColor: '#EC4899',
+    initial: 'tl',
   },
   {
     slug: 'grain',
@@ -75,6 +89,8 @@ const competitors = [
     tagline: 'Video highlights from meetings',
     differentiator: 'Grain clips meeting highlights. ReplySequence drafts follow-ups, triggers sequences, and tracks next steps from the full conversation.',
     color: 'from-rose-500 to-pink-600',
+    brandColor: '#F59E0B',
+    initial: 'Gr',
   },
   {
     slug: 'manual',
@@ -82,6 +98,8 @@ const competitors = [
     tagline: 'The DIY approach',
     differentiator: 'Manual follow-ups take 23 minutes and 44% never get sent. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds — every time.',
     color: 'from-gray-500 to-slate-600',
+    brandColor: '#6B7280',
+    initial: 'M',
   },
 ];
 
@@ -131,10 +149,16 @@ export default function ComparePage() {
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-white shrink-0"
+                      style={{ backgroundColor: comp.brandColor }}
+                    >
+                      {comp.initial}
+                    </div>
                     <h2 className="text-lg font-bold text-white light:text-gray-900">
                       ReplySequence vs {comp.name}
                     </h2>
-                    <span className="text-xs text-gray-500 light:text-gray-400 font-medium">
+                    <span className="text-xs text-gray-500 light:text-gray-400 font-medium hidden sm:inline">
                       {comp.tagline}
                     </span>
                   </div>

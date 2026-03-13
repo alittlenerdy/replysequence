@@ -217,7 +217,7 @@ export function MeetingChat({ meetingId }: { meetingId?: string }) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 right-6 z-50 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+          className="fixed bottom-24 right-6 z-40 flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/30 transition-[transform,box-shadow] hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40 active:scale-95 md:bottom-8 md:right-8 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           title="Ask anything about your recent meetings — action items, follow-ups, risks, trends."
         >
           {/* Sparkle icon */}

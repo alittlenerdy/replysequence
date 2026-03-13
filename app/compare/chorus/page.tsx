@@ -252,6 +252,19 @@ export default function ChorusComparisonPage() {
             Honest Comparison
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="inline-flex items-center gap-3 mb-6"
+          >
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white" style={{ backgroundColor: '#059669' }}>C</div>
+            <span className="text-lg font-medium text-gray-400">vs</span>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
+              <span className="text-xl font-bold text-white">RS</span>
+            </div>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -341,9 +354,9 @@ export default function ChorusComparisonPage() {
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Chorus if...</h2>
               <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" /> You&apos;re already in the ZoomInfo ecosystem</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" /> You need enterprise-grade conversation analytics</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" /> You want competitive mention tracking and relationship mapping</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You&apos;re already in the ZoomInfo ecosystem</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need enterprise-grade conversation analytics</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want competitive mention tracking and relationship mapping</li>
               </ul>
               <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-indigo-600 font-medium">
                 <Building2 className="w-4 h-4" />

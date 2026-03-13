@@ -14,14 +14,15 @@ interface NavItem {
   href: string;
   icon: LucideIcon;
   adminOnly?: boolean;
+  mobileHidden?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Drafts', href: '/dashboard', icon: FileText },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+  { label: 'Billing', href: '/dashboard/billing', icon: CreditCard, mobileHidden: true },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
-  { label: 'Waitlist', href: '/dashboard/waitlist', icon: Users, adminOnly: true },
+  { label: 'Waitlist', href: '/dashboard/waitlist', icon: Users, adminOnly: true, mobileHidden: true },
 ];
 
 const ADMIN_EMAIL = 'jimmy@replysequence.com';
@@ -111,7 +112,7 @@ export function DashboardToolbar({ firstName = 'there', pendingDrafts = 0, userE
         <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1 flex-shrink-0" />
 
         {/* Nav items — scrollable on mobile */}
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2 sm:gap-1 overflow-x-auto scrollbar-hide">
           {visibleItems.map((item, index) => {
             const Icon = item.icon;
             const isActive = activeIndex === index;
@@ -122,7 +123,7 @@ export function DashboardToolbar({ firstName = 'there', pendingDrafts = 0, userE
                 key={item.href}
                 ref={(el: HTMLAnchorElement | null) => { buttonRefs.current[index] = el; }}
                 href={item.href}
-                className="relative z-10 flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors flex-shrink-0"
+                className={`relative z-10 flex items-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] justify-center rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors flex-shrink-0${item.mobileHidden ? ' hidden sm:flex' : ''}`}
                 aria-current={isActive ? 'page' : undefined}
               >
                 <div className="relative">

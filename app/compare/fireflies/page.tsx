@@ -252,6 +252,19 @@ export default function FirefliesComparisonPage() {
             Honest Comparison
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="inline-flex items-center gap-3 mb-6"
+          >
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white" style={{ backgroundColor: '#8B5CF6' }}>F</div>
+            <span className="text-lg font-medium text-gray-400">vs</span>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-indigo-600">
+              <span className="text-xl font-bold text-white">RS</span>
+            </div>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -340,11 +353,12 @@ export default function FirefliesComparisonPage() {
               className="relative p-8 rounded-2xl bg-gray-900/50 light:bg-gradient-to-br light:from-slate-50 light:to-orange-50 border border-gray-700 light:border-orange-200 overflow-hidden group"
             >
               <h2 className="text-xl font-bold text-gray-200 light:text-gray-800 mb-3">Choose Fireflies if...</h2>
-              <p className="text-gray-400 light:text-gray-600 leading-relaxed">
-                You need <span className="text-gray-200 light:text-orange-700 font-semibold">searchable meeting archives</span>,
-                extensive CRM integrations, and team collaboration features.
-              </p>
-              <div className="mt-6 flex items-center gap-2 text-gray-400 light:text-orange-600 font-medium">
+              <ul className="text-gray-400 light:text-gray-600 leading-relaxed space-y-2 text-sm">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need searchable meeting archives across your team</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You want extensive CRM and collaboration integrations</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" /> You need topic tracking and smart search across calls</li>
+              </ul>
+              <div className="mt-5 flex items-center gap-2 text-gray-400 light:text-orange-600 font-medium text-sm">
                 <Globe className="w-4 h-4" />
                 Best for: Revenue teams, customer success, product research
               </div>

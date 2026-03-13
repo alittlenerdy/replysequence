@@ -27,6 +27,11 @@ module.exports = {
         neon: {
           DEFAULT: '#6366F1',
           hover: '#4F46E5',
+          yellow: '#FDE047',
+          amber: '#FBBF24',
+          emerald: '#34D399',
+          rose: '#FB7185',
+          cyan: '#22D3EE',
         },
         // Text colors
         text: {
@@ -40,6 +45,15 @@ module.exports = {
           'bg-alt': '#12121A',
           'bg-card': '#1A1A24',
           border: '#2A2A3A',
+        },
+        // Surface colors
+        surface: {
+          dark: '#0a0a0f',
+          'dark-card': '#0c0e14',
+          'dark-elevated': '#1c2030',
+          light: '#FAFBFC',
+          'light-card': '#FFFFFF',
+          'light-elevated': '#F3F4F6',
         },
       },
       animation: {

@@ -98,7 +98,7 @@ export default function LandingPage() {
       <FloatingToolbar />
 
       {/* Hero Section */}
-      <section id="hero" className="relative pt-32 pb-20 px-4 z-10">
+      <section id="hero" className="relative pt-28 pb-12 px-4 z-10">
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* H1 and description visible immediately for fast LCP */}
           <div className="animate-fade-in-up">
@@ -181,7 +181,9 @@ export default function LandingPage() {
               transition={{ delay: 0.4, duration: 0.5 }}
               className="max-w-2xl mx-auto mb-6 px-4 sm:px-0"
             >
-              <WaitlistForm />
+              <div className="rounded-2xl bg-gray-900/50 light:bg-white/80 light:shadow-xl border border-gray-700 light:border-gray-200 backdrop-blur-sm p-6 sm:p-10">
+                <WaitlistForm />
+              </div>
             </motion.div>
 
             {/* Secondary link */}
@@ -193,9 +195,12 @@ export default function LandingPage() {
             >
               <a
                 href="/how-it-works"
-                className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 light:text-gray-600 hover:text-gray-300 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] rounded-md"
+                className="inline-flex items-center gap-2 text-base font-medium text-gray-400 light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0f] rounded-md group"
               >
                 See How It Works
+                <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
               </a>
             </motion.div>
 
@@ -229,14 +234,14 @@ export default function LandingPage() {
       <VideoSection />
 
       {/* Problem / Sales Stack Gap */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Sales Stack Has a <GradientText variant="amber">Gap</GradientText>. This Is It.
@@ -246,7 +251,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
                 icon: Clock,
@@ -287,7 +292,7 @@ export default function LandingPage() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.15, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
@@ -313,14 +318,14 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               From Call to <GradientText>Pipeline Automation</GradientText> in Three Steps
@@ -333,7 +338,7 @@ export default function LandingPage() {
           <div className="relative">
             <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 opacity-30" />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
                   step: '01',
@@ -359,7 +364,7 @@ export default function LandingPage() {
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0.15, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.15, duration: 0.5 }}
@@ -409,14 +414,14 @@ export default function LandingPage() {
       <BentoGrid />
 
       {/* Trust & Control Section */}
-      <section className="py-16 px-4 relative z-10">
+      <section className="py-10 md:py-16 px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-10"
+            className="text-center mb-8"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Deals, <GradientText variant="amber">Your Control</GradientText>
@@ -426,7 +431,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[
               {
                 icon: Eye,
@@ -446,7 +451,7 @@ export default function LandingPage() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.15, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
@@ -464,21 +469,21 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof Stats */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Built for Teams That <GradientText variant="amber">Follow Up Fast</GradientText>
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[
               {
                 stat: '44%',
@@ -498,11 +503,11 @@ export default function LandingPage() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.15, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-8 text-center"
+                className="rounded-xl border border-gray-700 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 sm:p-8 text-center"
               >
                 <span className="text-5xl font-extrabold text-amber-400 light:text-amber-500">{item.stat}</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
@@ -517,14 +522,14 @@ export default function LandingPage() {
       <NonNegotiablesCarousel />
 
       {/* Ask Your Meetings Section */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 mb-6">
               <Sparkles className="w-4 h-4 text-orange-400" aria-hidden="true" />
@@ -539,10 +544,10 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
             {/* Chat Preview */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0.15, x: -12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -562,7 +567,7 @@ export default function LandingPage() {
 
               <div className="p-5 space-y-4">
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0.15, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.5 }}
@@ -574,7 +579,7 @@ export default function LandingPage() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0.15, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.8 }}
@@ -603,11 +608,11 @@ export default function LandingPage() {
 
             {/* Feature bullets */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0.15, x: 12 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="space-y-6"
+              className="space-y-5"
             >
               {[
                 {
@@ -629,7 +634,7 @@ export default function LandingPage() {
               ].map((feature, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0.15, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 + i * 0.1 }}
@@ -650,13 +655,13 @@ export default function LandingPage() {
       </section>
 
       {/* Data Flywheel Section */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-8 md:mb-12"
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
               <span className="text-sm font-medium text-indigo-400">Adaptive AI</span>
@@ -669,7 +674,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[
               {
                 title: 'Learns Your Writing Style',
@@ -686,7 +691,7 @@ export default function LandingPage() {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.15, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
@@ -701,10 +706,10 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section id="waitlist" className="py-20 px-4 relative z-10">
+      <section id="waitlist" className="py-12 md:py-20 px-4 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
@@ -712,11 +717,11 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Next Meeting Is Coming. The <GradientText variant="amber">Follow-Up</GradientText> Should Be Automatic.
             </h2>
-            <p className="text-gray-400 light:text-gray-600 mb-8">
+            <p className="text-gray-400 light:text-gray-600 mb-6">
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.
             </p>
 
-            <div className="rounded-2xl bg-gray-900/50 light:bg-white light:shadow-xl border border-gray-700 light:border-gray-200 p-6 sm:p-12 mx-4 sm:mx-0">
+            <div className="rounded-2xl bg-gray-900/50 light:bg-white/80 light:shadow-xl border border-gray-700 light:border-gray-200 backdrop-blur-sm p-6 sm:p-10 mx-4 sm:mx-0">
               <WaitlistForm />
             </div>
           </motion.div>
