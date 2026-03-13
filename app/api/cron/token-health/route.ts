@@ -49,14 +49,15 @@ function log(
   );
 }
 
-async function refreshGoogleToken(refreshToken: string): Promise<{
-  access_token: string;
-  expires_in: number;
-  refresh_token?: string;
-} | null> {
+interface TokenRefreshResult {
+  tokens: { access_token: string; expires_in: number; refresh_token?: string } | null;
+  revoked: boolean;
+}
+
+async function refreshGoogleToken(refreshToken: string): Promise<TokenRefreshResult> {
   const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
-  if (!clientId || !clientSecret) return null;
+  if (!clientId || !clientSecret) return { tokens: null, revoked: false };
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -72,9 +73,11 @@ async function refreshGoogleToken(refreshToken: string): Promise<{
   if (!response.ok) {
     const errorBody = await response.text().catch(() => 'unable to read body');
     log('error', 'Google token refresh failed', { status: response.status, error: errorBody });
-    return null;
+    // Google returns 400 with "invalid_grant" when the refresh token is revoked or expired
+    const revoked = response.status === 400 && errorBody.includes('invalid_grant');
+    return { tokens: null, revoked };
   }
-  return response.json();
+  return { tokens: await response.json(), revoked: false };
 }
 
 async function refreshTeamsToken(refreshToken: string): Promise<{
@@ -183,7 +186,7 @@ async function checkAndRefreshTokens(expiryThreshold: Date): Promise<TokenCheckR
   for (const conn of expiringMeet) {
     try {
       const refreshToken = decrypt(conn.refreshTokenEncrypted);
-      const tokens = await refreshGoogleToken(refreshToken);
+      const { tokens, revoked } = await refreshGoogleToken(refreshToken);
       if (tokens) {
         await db.update(meetConnections).set({
           accessTokenEncrypted: encrypt(tokens.access_token),
@@ -193,6 +196,16 @@ async function checkAndRefreshTokens(expiryThreshold: Date): Promise<TokenCheckR
           updatedAt: new Date(),
         }).where(eq(meetConnections.id, conn.id));
         results.push({ platform: 'meet', userId: conn.userId, connectionId: conn.id, status: 'refreshed' });
+      } else if (revoked) {
+        // Token permanently invalid — clean up the stale record
+        await db.delete(meetConnections).where(eq(meetConnections.id, conn.id));
+        const remainingMeet = await db.select({ id: meetConnections.id }).from(meetConnections).where(eq(meetConnections.userId, conn.userId));
+        if (remainingMeet.length === 0) {
+          await db.update(users).set({ meetConnected: false, updatedAt: new Date() }).where(eq(users.id, conn.userId));
+        }
+        log('info', 'Deleted revoked Meet connection', { connectionId: conn.id, userId: conn.userId });
+        trackFailure(conn.userId, 'Google Meet (auto-removed — please reconnect)');
+        results.push({ platform: 'meet', userId: conn.userId, connectionId: conn.id, status: 'failed', error: 'Token revoked, connection deleted' });
       } else {
         trackFailure(conn.userId, 'Google Meet');
         results.push({ platform: 'meet', userId: conn.userId, connectionId: conn.id, status: 'failed' });
@@ -353,8 +366,16 @@ async function checkAndRefreshTokens(expiryThreshold: Date): Promise<TokenCheckR
         results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'refreshed' });
       }
     } catch (error) {
-      trackFailure(conn.userId, `Email (${conn.provider})`);
-      results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'failed', error: error instanceof Error ? error.message : String(error) });
+      const errMsg = error instanceof Error ? error.message : String(error);
+      const isRevoked = errMsg.includes('invalid_grant') || errMsg.includes('Token has been expired or revoked');
+      if (isRevoked) {
+        await db.delete(emailConnections).where(eq(emailConnections.id, conn.id));
+        log('info', 'Deleted revoked email connection', { connectionId: conn.id, userId: conn.userId, provider: conn.provider });
+        trackFailure(conn.userId, `Email ${conn.provider} (auto-removed — please reconnect)`);
+      } else {
+        trackFailure(conn.userId, `Email (${conn.provider})`);
+      }
+      results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'failed', error: errMsg });
     }
   }
 
