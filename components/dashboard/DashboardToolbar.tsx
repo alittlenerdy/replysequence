@@ -95,20 +95,20 @@ export function DashboardToolbar({ firstName = 'there', pendingDrafts = 0, userE
           <ActiveIndicator left={indicatorPos.left} width={indicatorPos.width} />
         )}
 
-        {/* Logo — desktop only */}
+        {/* Logo — always visible */}
         <Link
           href="/"
-          className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors relative z-10"
+          className="flex items-center gap-1.5 px-2 py-1 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors relative z-10 flex-shrink-0"
           title="Back to home"
         >
           <Image src="/logo.png" alt="" width={24} height={24} className="rounded-md" />
-          <span className="text-sm font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">
+          <span className="hidden md:inline text-sm font-bold bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-600 light:from-indigo-600 light:to-indigo-600 bg-clip-text text-transparent">
             RS
           </span>
         </Link>
 
         {/* Divider */}
-        <div className="hidden md:block h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1" />
+        <div className="h-5 w-px bg-white/10 light:bg-gray-300/50 mx-1 flex-shrink-0" />
 
         {/* Nav items — scrollable on mobile */}
         <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
