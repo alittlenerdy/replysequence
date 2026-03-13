@@ -49,7 +49,7 @@ export function DashboardFilters({
               className={`
                 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                 ${status === chip.value
-                  ? 'bg-orange-500/15 text-orange-400 border-orange-500/30 light:bg-orange-50 light:text-orange-600 light:border-orange-200'
+                  ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
                 }
               `}
@@ -71,7 +71,7 @@ export function DashboardFilters({
               className={`
                 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                 ${dateRange === chip.value
-                  ? 'bg-orange-500/15 text-orange-400 border-orange-500/30 light:bg-orange-50 light:text-orange-600 light:border-orange-200'
+                  ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30 light:bg-indigo-50 light:text-indigo-600 light:border-indigo-200'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
                 }
               `}

@@ -13,17 +13,12 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0, userEmail = '' }: DashboardShellProps) {
   return (
-    <div className="min-h-screen bg-[#0c0e14] light:bg-gray-50 relative overflow-hidden">
-      {/* Ambient neon mesh — subtle fixed glow accents */}
+    <div className="min-h-screen bg-gray-950 light:bg-gray-50 relative overflow-hidden">
+      {/* Ambient glow — subtle indigo accents */}
       <div className="pointer-events-none fixed inset-0 light:hidden" aria-hidden="true">
-        {/* Top-left blue/indigo accent */}
-        <div className="absolute top-[-5%] left-[-2%] w-[30%] h-[30%] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%)' }} />
-        {/* Top-right orange accent */}
-        <div className="absolute top-[5%] right-[-3%] w-[25%] h-[25%] rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%)' }} />
-        {/* Center-left violet accent */}
-        <div className="absolute top-[40%] left-[10%] w-[20%] h-[20%] rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.07) 0%, transparent 70%)' }} />
-        {/* Bottom subtle cyan */}
-        <div className="absolute bottom-[5%] right-[15%] w-[18%] h-[18%] rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%)' }} />
+        <div className="absolute top-[-5%] left-[-2%] w-[30%] h-[30%] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, transparent 70%)' }} />
+        <div className="absolute top-[5%] right-[-3%] w-[25%] h-[25%] rounded-full blur-[100px]" style={{ background: 'radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%)' }} />
+        <div className="absolute top-[40%] left-[10%] w-[20%] h-[20%] rounded-full blur-[80px]" style={{ background: 'radial-gradient(circle, rgba(129, 140, 248, 0.05) 0%, transparent 70%)' }} />
       </div>
 
       {/* Page Content */}

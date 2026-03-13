@@ -58,21 +58,21 @@ function getTimeSinceBadge(meetingStartTime: Date | null): { label: string; clas
   if (hours < 24) {
     return {
       label: `${Math.round(hours)}h`,
-      className: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+      className: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
       title: `Meeting started ${Math.round(hours)}h ago`,
     };
   }
   return {
     label: `${days}d`,
-    className: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+    className: 'bg-gray-500/15 text-gray-400 border-gray-500/30',
     title: `Meeting started ${days} day${days !== 1 ? 's' : ''} ago`,
   };
 }
 
 // Get quality badge styling based on star count
 function getQualityBadgeStyle(stars: number): { bg: string; text: string; label: string } {
-  if (stars >= 4) return { bg: 'bg-amber-500/20 border-amber-500/40', text: 'text-amber-400', label: stars === 5 ? 'Excellent' : 'Good' };
-  if (stars === 3) return { bg: 'bg-amber-500/20 border-amber-500/40', text: 'text-amber-400', label: 'Review' };
+  if (stars >= 4) return { bg: 'bg-indigo-500/20 border-indigo-500/40', text: 'text-indigo-400', label: stars === 5 ? 'Excellent' : 'Good' };
+  if (stars === 3) return { bg: 'bg-indigo-500/20 border-indigo-500/40', text: 'text-indigo-300', label: 'Review' };
   return { bg: 'bg-red-500/20 border-red-500/40', text: 'text-red-400', label: 'Needs Work' };
 }
 
@@ -140,19 +140,13 @@ export function DraftsTable({
     [drafts]
   );
 
-  // Auto-expand first draft on load so users see the inline panel immediately
+  // Reset selection when drafts change — don't auto-expand
   const hasAutoExpanded = useRef(false);
   useEffect(() => {
     setSelectedIds(new Set());
     setBodyExpanded(false);
-    if (!hasAutoExpanded.current && drafts.length > 0) {
-      hasAutoExpanded.current = true;
-      setExpandedDraftId(drafts[0].id);
-      fetchMeetingIntel(drafts[0].meetingId);
-    } else {
-      setExpandedDraftId(null);
-    }
-  }, [drafts]); // eslint-disable-line react-hooks/exhaustive-deps
+    setExpandedDraftId(null);
+  }, [drafts]);
 
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -393,7 +387,7 @@ export function DraftsTable({
     return (
       <span
         className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${
-          isUp ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'
+          isUp ? 'bg-indigo-500/20 text-indigo-400' : 'bg-red-500/20 text-red-400'
         }`}
         title={isUp ? 'Rated: Thumbs up' : 'Rated: Thumbs down'}
       >
@@ -422,7 +416,7 @@ export function DraftsTable({
           {[1, 2, 3, 4, 5].map((s) => (
             <svg
               key={s}
-              className={`${compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} ${s <= stars ? 'text-yellow-400' : 'text-gray-600/50'}`}
+              className={`${compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} ${s <= stars ? 'text-indigo-400' : 'text-gray-600/50'}`}
               fill="currentColor"
               viewBox="0 0 20 20"
               aria-hidden="true"
@@ -454,7 +448,7 @@ export function DraftsTable({
         )}
         {(draft.clickCount ?? 0) > 0 && (
           <span
-            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/20 text-amber-400"
+            className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400"
             title={`${draft.clickCount} click${(draft.clickCount ?? 0) > 1 ? 's' : ''}`}
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -590,7 +584,7 @@ export function DraftsTable({
                     </span>
                   )}
                   {bulkError && (
-                    <span className="text-xs text-amber-400">{bulkError}</span>
+                    <span className="text-xs text-red-400">{bulkError}</span>
                   )}
                   <button
                     onClick={() => setShowBulkDeleteConfirm(true)}
@@ -724,25 +718,25 @@ export function DraftsTable({
                     <span className="sr-only">Select all drafts</span>
                   </label>
                 </th>
-                <th className="w-[28%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[25%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Meeting
                 </th>
-                <th className="w-[30%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[30%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="w-[10%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[9%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="hidden lg:table-cell w-[8%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[7%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Age
                 </th>
-                <th className="w-[10%] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[9%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Quality
                 </th>
-                <th className="hidden lg:table-cell w-[130px] px-5 py-4 text-left text-xs font-semibold text-indigo-300/70 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[140px] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
-                <th className="w-[70px] px-2 py-4">
+                <th className="w-[44px] px-2 py-3">
                 </th>
               </tr>
             </thead>
@@ -763,7 +757,7 @@ export function DraftsTable({
                       onClick={() => handleDesktopRowClick(draft)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDesktopRowClick(draft); } }}
                     >
-                      <td className="px-3 py-4" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                         {draft.status !== 'sent' ? (
                           <label className="flex items-center">
                             <input
@@ -778,7 +772,7 @@ export function DraftsTable({
                           <div className="w-4" />
                         )}
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-3 min-w-0">
                           {getPlatformIcon(draft.meetingPlatform)}
                           <div className="min-w-0">
@@ -796,18 +790,18 @@ export function DraftsTable({
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-4 py-3">
                         <div className="text-sm text-gray-200 light:text-gray-900 truncate">
                           {draft.subject}
                         </div>
                       </td>
-                      <td className="px-5 py-4 whitespace-nowrap">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <StatusBadge status={draft.status} size="sm" />
                           {renderEngagementIndicators(draft)}
                         </div>
                       </td>
-                      <td className="hidden lg:table-cell px-5 py-4 whitespace-nowrap">
+                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap">
                         {isMounted && (() => {
                           const badge = getTimeSinceBadge(draft.meetingStartTime);
                           return badge ? (
@@ -817,12 +811,12 @@ export function DraftsTable({
                           ) : <span className="text-xs text-gray-500">-</span>;
                         })()}
                       </td>
-                      <td className="px-5 py-4 whitespace-nowrap">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           {draft.qualityScore !== null ? (
                             <span className={`text-xs font-medium tabular-nums ${
-                              draft.qualityScore >= 80 ? 'text-amber-400' :
-                              draft.qualityScore >= 60 ? 'text-amber-400' : 'text-red-400'
+                              draft.qualityScore >= 80 ? 'text-indigo-400' :
+                              draft.qualityScore >= 60 ? 'text-indigo-300' : 'text-red-400'
                             }`}>
                               {draft.qualityScore}/100
                             </span>
@@ -832,10 +826,10 @@ export function DraftsTable({
                           {renderUserRating(draft)}
                         </div>
                       </td>
-                      <td className="hidden lg:table-cell px-5 py-4 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
+                      <td className="hidden lg:table-cell px-4 py-3 whitespace-nowrap text-xs text-gray-400 light:text-gray-500">
                         {formatDate(draft.createdAt)}
                       </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-2 py-3 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

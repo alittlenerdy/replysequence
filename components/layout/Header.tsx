@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 
 const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: false });
 const MobileMenu = dynamic(() => import('@/components/MobileMenu'), { ssr: false });
-const CompareDropdown = dynamic(() => import('@/components/CompareDropdown'), { ssr: false });
 
 export function Header() {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -22,31 +21,18 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-5">
           <Link
             href="/how-it-works"
             className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             How It Works
           </Link>
-          <CompareDropdown />
-          <Link
-            href="/integrations"
-            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-          >
-            Integrations
-          </Link>
           <Link
             href="/pricing"
             className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             Pricing
-          </Link>
-          <Link
-            href="/blog"
-            className="text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-          >
-            Blog
           </Link>
 
           {isLoaded && isSignedIn && (

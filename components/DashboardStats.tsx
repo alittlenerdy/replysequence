@@ -44,10 +44,10 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
           <path d="M17.586 3.58601C17.7705 3.39499 17.9912 3.24262 18.2352 3.13781C18.4792 3.03299 18.7416 2.97782 19.0072 2.97551C19.2728 2.9732 19.5361 3.0238 19.7819 3.12437C20.0277 3.22493 20.251 3.37343 20.4388 3.56122C20.6266 3.74901 20.7751 3.97231 20.8756 4.2181C20.9762 4.46389 21.0268 4.72725 21.0245 4.99281C21.0222 5.25837 20.967 5.52081 20.8622 5.76482C20.7574 6.00883 20.605 6.22952 20.414 6.41401L11.828 15H9V12.172L17.586 3.58601Z"/>
         </svg>
       ),
-      iconColor: '#F59E0B',
-      gradient: 'from-amber-400 via-yellow-400 to-orange-400',
-      textGradient: 'from-amber-300 via-yellow-200 to-orange-300',
-      lightColor: 'light:text-amber-600',
+      iconColor: '#6366F1',
+      gradient: 'from-indigo-400 via-indigo-500 to-indigo-600',
+      textGradient: 'from-indigo-300 via-indigo-200 to-indigo-400',
+      lightColor: 'light:text-indigo-600',
       hero: true,
       displayMode: 'number' as const,
     },
