@@ -1,9 +1,10 @@
 /**
  * Typefully REST API client
  *
- * Minimal client for the auto-retweet cron job:
- * - Fetch published drafts from @replysequence
- * - Create quote-tweet drafts on @j1mmyhackett
+ * Used by:
+ * - Auto-retweet cron (quote-tweet @replysequence → @atinylittlenerd)
+ * - Blog distribution (create thread + LinkedIn drafts)
+ * - Daily content cron (NewsAPI → drafts with images)
  */
 
 const TYPEFULLY_BASE_URL = 'https://api.typefully.com/v2';
@@ -117,6 +118,92 @@ export async function createLinkedInDraft(
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`Typefully create LinkedIn draft error ${res.status}: ${body}`);
+  }
+
+  return res.json();
+}
+
+/**
+ * Upload an image to Typefully and get back a media_id.
+ * Takes raw image bytes (Buffer), uploads to S3 presigned URL.
+ */
+export async function uploadImage(
+  socialSetId: number,
+  imageBuffer: Buffer,
+  fileName: string
+): Promise<string> {
+  // Step 1: Get presigned upload URL
+  const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/media-uploads`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({ file_name: fileName }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Typefully media upload error ${res.status}: ${body}`);
+  }
+
+  const { media_id, upload_url } = await res.json();
+
+  // Step 2: PUT image bytes to presigned URL (no extra headers)
+  const uploadRes = await fetch(upload_url, {
+    method: 'PUT',
+    body: imageBuffer,
+  });
+
+  if (!uploadRes.ok) {
+    throw new Error(`S3 upload failed ${uploadRes.status}`);
+  }
+
+  return media_id;
+}
+
+/**
+ * Create a draft with image on both X and optionally LinkedIn.
+ * Saves as draft (not scheduled) so user can review first.
+ */
+export async function createDraftWithImage(
+  socialSetId: number,
+  params: {
+    title: string;
+    xText: string;
+    linkedInText?: string;
+    mediaId: string;
+    scratchpadText?: string;
+  }
+): Promise<{ id: number }> {
+  const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/drafts`;
+
+  const platforms: Record<string, unknown> = {
+    x: {
+      enabled: true,
+      posts: [{ text: params.xText, media_ids: [params.mediaId] }],
+    },
+  };
+
+  if (params.linkedInText) {
+    platforms.linkedin = {
+      enabled: true,
+      posts: [{ text: params.linkedInText, media_ids: [params.mediaId] }],
+    };
+  }
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({
+      draft_title: params.title,
+      platforms,
+      scratchpad_text: params.scratchpadText || null,
+      // Intentionally NOT setting publish_at — saved as draft for review
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Typefully create draft error ${res.status}: ${body}`);
   }
 
   return res.json();
