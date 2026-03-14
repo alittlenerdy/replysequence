@@ -1,7 +1,7 @@
 // scripts/blog-agent/types.ts
 
 export interface PainPoint {
-  source: 'twitter' | 'reddit';
+  source: 'twitter' | 'reddit' | 'newsapi';
   text: string;
   author: string;
   url: string;

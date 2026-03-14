@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { FileText, BarChart3, Video, Layers, ArrowRight, Upload, Calendar, Zap } from 'lucide-react';
 import { DashboardStats } from '@/components/DashboardStats';
 import { MissionControl } from '@/components/dashboard/MissionControl';
+import { OpportunityHealth } from '@/components/dashboard/OpportunityHealth';
 import { RecentAIActions } from '@/components/dashboard/RecentAIActions';
 import { getDraftStats, getMissionControlData, getRecentAIActions } from '@/lib/dashboard-queries';
 
@@ -142,6 +143,9 @@ async function CommandCenterContent() {
           momentum={missionControl.momentum}
         />
       )}
+
+      {/* Opportunity Health Dashboard */}
+      {hasActivity && <OpportunityHealth />}
 
       {/* Stats */}
       <DashboardStats stats={stats} />

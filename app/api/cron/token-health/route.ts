@@ -23,6 +23,10 @@ export const maxDuration = 60;
 // Check tokens expiring within 24 hours
 const EXPIRY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
+// Don't send more than 1 notification email per user per 24 hours
+const NOTIFICATION_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const notifiedUsers = new Map<string, number>(); // userId -> timestamp of last notification
+
 type Platform = 'zoom' | 'meet' | 'teams' | 'hubspot' | 'salesforce' | 'email';
 
 interface TokenCheckResult {
@@ -346,14 +350,26 @@ async function checkAndRefreshTokens(expiryThreshold: Date): Promise<TokenCheckR
     try {
       const refreshToken = decrypt(conn.refreshTokenEncrypted);
       if (conn.provider === 'gmail') {
-        const tokens = await refreshGmailToken(refreshToken);
-        await db.update(emailConnections).set({
-          accessTokenEncrypted: encrypt(tokens.accessToken),
-          accessTokenExpiresAt: new Date(Date.now() + tokens.expiresIn * 1000),
-          lastRefreshedAt: new Date(),
-          updatedAt: new Date(),
-        }).where(eq(emailConnections.id, conn.id));
-        results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'refreshed' });
+        // Use the same Google token refresh helper as Meet — handles revocation cleanly
+        const { tokens, revoked } = await refreshGoogleToken(refreshToken);
+        if (tokens) {
+          await db.update(emailConnections).set({
+            accessTokenEncrypted: encrypt(tokens.access_token),
+            accessTokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
+            lastRefreshedAt: new Date(),
+            updatedAt: new Date(),
+          }).where(eq(emailConnections.id, conn.id));
+          results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'refreshed' });
+        } else if (revoked) {
+          // Token permanently invalid — clean up the stale record
+          await db.delete(emailConnections).where(eq(emailConnections.id, conn.id));
+          log('info', 'Deleted revoked Gmail email connection', { connectionId: conn.id, userId: conn.userId });
+          trackFailure(conn.userId, 'Email gmail (auto-removed — please reconnect)');
+          results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'failed', error: 'Token revoked, connection deleted' });
+        } else {
+          trackFailure(conn.userId, 'Email (gmail)');
+          results.push({ platform: 'email', userId: conn.userId, connectionId: conn.id, status: 'failed', error: 'Refresh returned null' });
+        }
       } else if (conn.provider === 'outlook') {
         const tokens = await refreshOutlookToken(refreshToken);
         await db.update(emailConnections).set({
@@ -379,10 +395,16 @@ async function checkAndRefreshTokens(expiryThreshold: Date): Promise<TokenCheckR
     }
   }
 
-  // Send notification emails for failed refreshes
+  // Send notification emails for failed refreshes (with cooldown)
   for (const [userId, platforms] of failedByUser) {
+    const lastNotified = notifiedUsers.get(userId) || 0;
+    if (Date.now() - lastNotified < NOTIFICATION_COOLDOWN_MS) {
+      log('info', 'Skipping notification (cooldown active)', { userId, platforms, lastNotifiedAgo: Date.now() - lastNotified });
+      continue;
+    }
     try {
       await notifyUser(userId, platforms);
+      notifiedUsers.set(userId, Date.now());
       log('info', 'Sent reconnection email to user', { userId, platforms });
     } catch (error) {
       log('error', 'Failed to send reconnection email', { userId, error: error instanceof Error ? error.message : String(error) });
