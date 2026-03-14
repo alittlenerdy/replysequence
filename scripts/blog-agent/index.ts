@@ -1,5 +1,6 @@
 import { scrapePainPoints as scrapeTwitter } from './scrape-twitter';
 import { scrapePainPoints as scrapeReddit } from './scrape-reddit';
+import { scrapePainPoints as scrapeNewsAPI } from './scrape-newsapi';
 import { analyzePainPoints, deduplicateAgainstExisting } from './analyze';
 import { generateBlogPost } from './generate';
 import { publishDraft, getExistingSlugs } from './publish';
@@ -48,17 +49,19 @@ export async function main() {
   const startTime = Date.now();
 
   // Step 1: Scrape pain points from all sources
-  const [twitterPainPoints, redditPainPoints] = await Promise.all([
+  const [twitterPainPoints, redditPainPoints, newsPainPoints] = await Promise.all([
     scrapeTwitter(),
     scrapeReddit(),
+    scrapeNewsAPI(),
   ]);
 
-  const allPainPoints = [...twitterPainPoints, ...redditPainPoints];
+  const allPainPoints = [...twitterPainPoints, ...redditPainPoints, ...newsPainPoints];
   console.log(JSON.stringify({
     level: 'info',
     message: 'Scraping complete',
     twitter: twitterPainPoints.length,
     reddit: redditPainPoints.length,
+    newsapi: newsPainPoints.length,
     total: allPainPoints.length,
   }));
 
