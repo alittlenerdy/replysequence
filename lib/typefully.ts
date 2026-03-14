@@ -133,7 +133,7 @@ export async function uploadImage(
   fileName: string
 ): Promise<string> {
   // Step 1: Get presigned upload URL
-  const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/media-uploads`;
+  const url = `${TYPEFULLY_BASE_URL}/social-sets/${socialSetId}/media/upload`;
   const res = await fetch(url, {
     method: 'POST',
     headers: headers(),

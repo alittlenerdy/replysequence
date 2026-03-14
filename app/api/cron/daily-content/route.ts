@@ -1,11 +1,12 @@
 /**
  * Cron Job: Daily Content Pipeline
  *
- * NewsAPI → Claude (generate posts) → Gemini (generate images) → Typefully (drafts)
+ * NewsAPI → Claude (generate posts) → Gemini (generate images) → Slack approval
+ * On approve → Typefully draft published immediately
  *
  * Runs daily at 7 AM CT. Pulls trending articles about sales/AI,
- * generates 3 social posts with branded images, saves as Typefully drafts
- * for Jimmy to review and schedule.
+ * generates 3 social posts with branded images, sends to Slack
+ * with Approve/Skip buttons. Approved posts go to Typefully immediately.
  *
  * Schedule: 0 12 * * * (7 AM CT = 12:00 UTC)
  */
@@ -14,27 +15,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import { callClaudeAPI, log } from '@/lib/claude-api';
 import {
   uploadImage,
-  createDraftWithImage,
   SOCIAL_SET_REPLYSEQUENCE,
   SOCIAL_SET_JIMMY,
 } from '@/lib/typefully';
-import { notifyAgentSlack } from '@/lib/slack-agents';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 120; // Image generation can be slow
+export const maxDuration = 120;
 
 const TAG = '[DAILY-CONTENT]';
+const SLACK_CHANNEL = 'C0AL6K62Q23';
+
+// Pending posts stored in memory for approval callback
+// In production, use a database table — but for MVP this works with Vercel's
+// function lifecycle (approval must happen before the function cold-starts again)
+// We'll persist to a simple JSON structure that the webhook handler reads.
 
 // ── Weekly color rotation ────────────────────────────────────────────
 
 const DAY_THEMES: Record<number, { name: string; primary: string; accent: string }> = {
-  0: { name: 'Teal Cyan', primary: '#0891B2', accent: '#22D3EE' },    // Sunday
-  1: { name: 'Electric Blue', primary: '#2563EB', accent: '#60A5FA' }, // Monday
-  2: { name: 'Indigo Purple', primary: '#5B6CFF', accent: '#818CF8' }, // Tuesday
-  3: { name: 'Emerald Green', primary: '#059669', accent: '#34D399' }, // Wednesday
-  4: { name: 'Warm Amber', primary: '#D97706', accent: '#FBBF24' },   // Thursday
-  5: { name: 'Teal Cyan', primary: '#0891B2', accent: '#22D3EE' },    // Friday
-  6: { name: 'Warm Amber', primary: '#D97706', accent: '#FBBF24' },   // Saturday
+  0: { name: 'Teal Cyan', primary: '#0891B2', accent: '#22D3EE' },
+  1: { name: 'Electric Blue', primary: '#2563EB', accent: '#60A5FA' },
+  2: { name: 'Indigo Purple', primary: '#5B6CFF', accent: '#818CF8' },
+  3: { name: 'Emerald Green', primary: '#059669', accent: '#34D399' },
+  4: { name: 'Warm Amber', primary: '#D97706', accent: '#FBBF24' },
+  5: { name: 'Teal Cyan', primary: '#0891B2', accent: '#22D3EE' },
+  6: { name: 'Warm Amber', primary: '#D97706', accent: '#FBBF24' },
 };
 
 // ── NewsAPI fetch ────────────────────────────────────────────────────
@@ -84,13 +89,12 @@ async function fetchTrendingArticles(): Promise<NewsArticle[]> {
     }
   }
 
-  // Deduplicate by URL
   const seen = new Set<string>();
   return articles.filter((a) => {
     if (seen.has(a.url)) return false;
     seen.add(a.url);
     return true;
-  }).slice(0, 10); // Top 10 for Claude to pick from
+  }).slice(0, 10);
 }
 
 // ── Claude post generation ───────────────────────────────────────────
@@ -136,7 +140,6 @@ Respond with JSON only:
     maxTokens: 2048,
   });
 
-  // Parse JSON response
   let jsonStr = response.content.trim();
   if (jsonStr.startsWith('```')) {
     jsonStr = jsonStr.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '');
@@ -155,12 +158,8 @@ Respond with JSON only:
 
 async function generateImage(prompt: string, theme: { name: string; primary: string; accent: string }): Promise<Buffer | null> {
   const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-  if (!apiKey) {
-    log('warn', `${TAG} GOOGLE_GENAI_API_KEY not set, skipping image`);
-    return null;
-  }
+  if (!apiKey) return null;
 
-  // Dynamic import to avoid bundling issues
   const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey });
 
@@ -183,10 +182,103 @@ async function generateImage(prompt: string, theme: { name: string; primary: str
     }
     return null;
   } catch (err) {
-    log('error', `${TAG} Gemini image generation failed`, {
-      error: err instanceof Error ? err.message : String(err),
-    });
+    log('error', `${TAG} Gemini failed`, { error: err instanceof Error ? err.message : String(err) });
     return null;
+  }
+}
+
+// ── Slack notification with approval buttons ─────────────────────────
+
+async function sendToSlackForApproval(post: GeneratedPost, mediaId: string | null, socialSetId: number): Promise<boolean> {
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) {
+    log('warn', `${TAG} SLACK_BOT_TOKEN not set`);
+    return false;
+  }
+
+  const accountLabel = post.account === 'personal' ? '@atinylittlenerd (personal)' : '@replysequence';
+  const platforms = post.linkedInText ? 'X + LinkedIn' : 'X only';
+
+  // Build approval value — JSON payload the webhook handler will parse
+  const approvalData = JSON.stringify({
+    socialSetId,
+    xText: post.xText,
+    linkedInText: post.linkedInText || null,
+    mediaId: mediaId || null,
+    title: post.title,
+  });
+
+  const blocks = [
+    {
+      type: 'header',
+      text: { type: 'plain_text', text: `Content Draft: ${post.title}` },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*Account:* ${accountLabel} | *Platforms:* ${platforms}`,
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*Tweet:*\n>${post.xText.split('\n').join('\n>')}`,
+      },
+    },
+    ...(post.linkedInText ? [{
+      type: 'section' as const,
+      text: {
+        type: 'mrkdwn' as const,
+        text: `*LinkedIn:*\n${post.linkedInText.slice(0, 500)}${post.linkedInText.length > 500 ? '...' : ''}`,
+      },
+    }] : []),
+    {
+      type: 'actions',
+      block_id: `content_approve_${Date.now()}`,
+      elements: [
+        {
+          type: 'button',
+          text: { type: 'plain_text', text: 'Approve & Post' },
+          style: 'primary',
+          action_id: 'content_approve',
+          value: approvalData,
+        },
+        {
+          type: 'button',
+          text: { type: 'plain_text', text: 'Skip' },
+          style: 'danger',
+          action_id: 'content_skip',
+          value: post.title,
+        },
+      ],
+    },
+  ];
+
+  try {
+    const res = await fetch('https://slack.com/api/chat.postMessage', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        channel: SLACK_CHANNEL,
+        blocks,
+        text: `Content draft: ${post.title}`,
+      }),
+    });
+
+    const data = await res.json();
+    if (!data.ok) {
+      log('error', `${TAG} Slack post failed`, { error: data.error });
+      return false;
+    }
+    return true;
+  } catch (err) {
+    log('error', `${TAG} Slack post error`, { error: err instanceof Error ? err.message : String(err) });
+    return false;
   }
 }
 
@@ -195,7 +287,6 @@ async function generateImage(prompt: string, theme: { name: string; primary: str
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
 
-  // Auth check
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
@@ -207,104 +298,73 @@ export async function GET(request: NextRequest) {
   try {
     // Step 1: Fetch trending articles
     const articles = await fetchTrendingArticles();
-    if (articles.length === 0) {
-      log('info', `${TAG} No articles found, using fallback topics`);
-      // Even without articles, generate posts from RS knowledge
-    }
-
     log('info', `${TAG} Fetched ${articles.length} trending articles`);
 
     // Step 2: Generate posts via Claude
-    const posts = await generatePosts(articles.length > 0 ? articles : [{
+    const postsInput = articles.length > 0 ? articles : [{
       title: 'Sales teams continue to struggle with post-meeting follow-ups',
       description: 'Studies show 40% of follow-ups are sent late, costing teams deal momentum.',
       url: 'https://replysequence.com',
       source: { name: 'Industry Report' },
       publishedAt: new Date().toISOString(),
-    }]);
+    }];
 
+    const posts = await generatePosts(postsInput);
     if (posts.length === 0) {
-      log('warn', `${TAG} No posts generated`);
       return NextResponse.json({ success: false, error: 'No posts generated' });
     }
 
     log('info', `${TAG} Generated ${posts.length} posts`);
 
-    // Step 3: Generate images + create Typefully drafts
+    // Step 3: Generate images, upload to Typefully, send to Slack for approval
     const today = new Date();
     const theme = DAY_THEMES[today.getDay()];
-    const results: { title: string; draftId?: number; error?: string }[] = [];
+    let sentToSlack = 0;
 
     for (const post of posts) {
-      try {
-        // Generate image
-        const imageBuffer = await generateImage(post.imagePrompt, theme);
+      const socialSetId = post.account === 'personal'
+        ? SOCIAL_SET_JIMMY
+        : SOCIAL_SET_REPLYSEQUENCE;
 
-        const socialSetId = post.account === 'personal'
-          ? SOCIAL_SET_JIMMY
-          : SOCIAL_SET_REPLYSEQUENCE;
+      // Generate image
+      const imageBuffer = await generateImage(post.imagePrompt, theme);
 
-        let mediaId: string | undefined;
-        if (imageBuffer) {
+      // Upload image to Typefully (pre-upload so it's ready for instant publish on approve)
+      let mediaId: string | null = null;
+      if (imageBuffer) {
+        try {
           const fileName = `content-${Date.now()}-${Math.random().toString(36).slice(2, 6)}.png`;
           mediaId = await uploadImage(socialSetId, imageBuffer, fileName);
+        } catch (err) {
+          log('warn', `${TAG} Image upload failed, posting without image`, {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
-
-        // Create draft (NOT scheduled — sits in drafts for review)
-        const draft = await createDraftWithImage(socialSetId, {
-          title: `[Daily] ${post.title}`,
-          xText: post.xText,
-          linkedInText: post.linkedInText || undefined,
-          mediaId: mediaId || '',
-        });
-
-        results.push({ title: post.title, draftId: draft.id });
-        log('info', `${TAG} Created draft: ${post.title}`, { draftId: draft.id });
-      } catch (err) {
-        const errMsg = err instanceof Error ? err.message : String(err);
-        results.push({ title: post.title, error: errMsg });
-        log('error', `${TAG} Failed to create draft: ${post.title}`, { error: errMsg });
       }
+
+      // Send to Slack with Approve/Skip buttons
+      const sent = await sendToSlackForApproval(post, mediaId, socialSetId);
+      if (sent) sentToSlack++;
     }
 
     const durationMs = Date.now() - startTime;
-    const created = results.filter((r) => r.draftId).length;
-    const failed = results.filter((r) => r.error).length;
-
-    // Step 4: Notify Slack
-    await notifyAgentSlack({
-      agent: 'Daily Content',
-      status: failed > 0 ? 'warning' : 'success',
-      summary: `${created} content drafts ready for review in Typefully`,
-      details: {
-        'Articles scanned': articles.length,
-        'Drafts created': created,
-        'Failed': failed,
-        'Color theme': theme.name,
-      },
+    log('info', `${TAG} Pipeline complete`, {
+      articlesScanned: articles.length,
+      postsGenerated: posts.length,
+      sentToSlack,
       durationMs,
     });
 
     return NextResponse.json({
       success: true,
       articlesScanned: articles.length,
-      draftsCreated: created,
-      failed,
-      results,
+      postsGenerated: posts.length,
+      sentToSlack,
       durationMs,
     });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     log('error', `${TAG} Pipeline crashed`, { error: errMsg });
-
-    await notifyAgentSlack({
-      agent: 'Daily Content',
-      status: 'error',
-      summary: 'Pipeline crashed',
-      details: { Error: errMsg },
-      durationMs: Date.now() - startTime,
-    });
-
     return NextResponse.json({ error: errMsg }, { status: 500 });
   }
 }
