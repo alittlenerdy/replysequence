@@ -105,9 +105,20 @@ export async function GET(request: NextRequest) {
       sheetsConnectedFlag = !!sheetsConnRows[0];
     }
 
+    // Recalculate currentStep based on actual DB connections to prevent
+    // auto-advancing past steps whose connections have been removed.
+    // Step 2 = connect platform, Step 3 = connect email, Steps 4-6 = optional/skippable
+    let adjustedStep = onboarding.currentStep;
+    const hasPlatformConnected = connectedPlatforms.length > 0;
+    if (adjustedStep > 2 && !hasPlatformConnected && !onboarding.completedAt) {
+      adjustedStep = 2;
+    }
+
     return NextResponse.json({
       ...onboarding,
+      currentStep: adjustedStep,
       connectedPlatforms,
+      platformConnected: hasPlatformConnected ? (connectedPlatforms[0] as string) : null,
       googleCalendarConnected,
       outlookCalendarConnected,
       emailConnected,

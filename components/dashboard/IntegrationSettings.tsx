@@ -839,6 +839,8 @@ export function IntegrationSettings() {
         setConnectionStatus(prev => ({ ...prev, [platform.id]: false }));
         setSuccessBanner(`${platform.name} disconnected successfully`);
         setTimeout(() => setSuccessBanner(null), 3000);
+        // Refresh connection status from server to ensure UI is in sync with DB
+        fetchConnectionStatus();
       } else {
         setErrorBanner(`Failed to disconnect ${platform.name}. Please try again.`);
       }

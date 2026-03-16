@@ -12,6 +12,7 @@ const companyLinks = [
   { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' },
   { href: '/blog/rss.xml', label: 'RSS Feed' },
+  { href: '/newsletter', label: 'Newsletter' },
   { href: '/contact', label: 'Contact' },
 ];
 

@@ -104,9 +104,22 @@ function OnboardingContent() {
           connectedCRM: data.hubspotConnected ? 'hubspot' : data.salesforceConnected ? 'salesforce' : data.sheetsConnected ? 'sheets' : null,
           emailPreference: data.emailPreference || 'review',
           isLoading: false,
-          isReturningUser: data.currentStep > 1 && data.createdAt
-            ? (Date.now() - new Date(data.createdAt).getTime()) > 5 * 60 * 1000
-            : false,
+          // Only show "welcome back" if the user is returning from a previous browser session.
+          // We use sessionStorage to track the current session — if the flag isn't set,
+          // the user closed their browser/tab and came back.
+          isReturningUser: (() => {
+            const isCurrentSession = sessionStorage.getItem('onboarding_session_active');
+            if (!isCurrentSession) {
+              // Mark this session as active
+              sessionStorage.setItem('onboarding_session_active', 'true');
+              // Only show "welcome back" if they were past step 1 and record is old enough
+              return data.currentStep > 1 && data.createdAt
+                ? (Date.now() - new Date(data.createdAt).getTime()) > 5 * 60 * 1000
+                : false;
+            }
+            // Same session — never show "welcome back"
+            return false;
+          })(),
         }));
       } else {
         setState(prev => ({ ...prev, isLoading: false }));

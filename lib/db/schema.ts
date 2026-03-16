@@ -1849,3 +1849,23 @@ export const meetingMemories = pgTable(
 export type MeetingMemory = typeof meetingMemories.$inferSelect;
 export type NewMeetingMemory = typeof meetingMemories.$inferInsert;
 
+// Newsletter subscribers table - "Close the Loop" newsletter
+export const newsletterSubscribers = pgTable(
+  'newsletter_subscribers',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    name: varchar('name', { length: 255 }),
+    subscribedAt: timestamp('subscribed_at', { withTimezone: true }).notNull().defaultNow(),
+    unsubscribedAt: timestamp('unsubscribed_at', { withTimezone: true }),
+    source: varchar('source', { length: 50 }).notNull().default('website'),
+  },
+  (table) => [
+    index('newsletter_subscribers_email_idx').on(table.email),
+    index('newsletter_subscribers_subscribed_at_idx').on(table.subscribedAt),
+  ]
+);
+
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
+export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;
+

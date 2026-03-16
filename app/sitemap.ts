@@ -128,6 +128,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    // Newsletter
+    {
+      url: `${baseUrl}/newsletter`,
+      lastModified: new Date(today),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     // Blog
     {
       url: `${baseUrl}/blog`,

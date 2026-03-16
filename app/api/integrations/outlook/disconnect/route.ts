@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db, emailConnections, users } from '@/lib/db';
+import { userOnboarding } from '@/lib/db/schema';
 
 export async function DELETE() {
   try {
@@ -28,6 +29,21 @@ export async function DELETE() {
           eq(emailConnections.provider, 'outlook')
         )
       );
+
+    // Check if any email connections remain for this user
+    const remainingEmail = await db
+      .select({ id: emailConnections.id })
+      .from(emailConnections)
+      .where(eq(emailConnections.userId, dbUser.id))
+      .limit(1);
+
+    // If no email connections remain, reset the onboarding emailConnected flag
+    if (remainingEmail.length === 0) {
+      await db
+        .update(userOnboarding)
+        .set({ emailConnected: false, updatedAt: new Date() })
+        .where(eq(userOnboarding.clerkId, userId));
+    }
 
     console.log(JSON.stringify({
       level: 'info',
