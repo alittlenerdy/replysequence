@@ -14,7 +14,7 @@ export const maxDuration = 30;
 
 const DEMO_RATE_LIMIT = { limit: 5, window: 60 }; // 5 per minute per IP
 
-const DEMO_SYSTEM_PROMPT = `You are a sales follow-up assistant. Generate a professional follow-up email based on the meeting transcript provided.
+const DEMO_SYSTEM_PROMPT = `You are a sales follow-up assistant. Generate a professional follow-up email AND a meeting recap based on the meeting transcript provided.
 
 The email should:
 1. Have a hook-driven subject line under 60 characters
@@ -24,11 +24,22 @@ The email should:
 5. Be 150-250 words — concise but thorough
 6. Use a confident, professional tone
 
+The recap should:
+1. Summarize the meeting in 3-5 bullet points
+2. Highlight key decisions made
+3. Note any concerns or risks raised
+4. Be factual and concise
+
 Respond with JSON only:
 {
   "subject": "Subject line here",
   "body": "Email body here",
-  "actionItems": ["Action 1", "Action 2"]
+  "actionItems": ["Action 1", "Action 2"],
+  "recap": {
+    "summary": ["Bullet 1", "Bullet 2", "Bullet 3"],
+    "decisions": ["Decision 1", "Decision 2"],
+    "risks": ["Risk or concern 1"]
+  }
 }`;
 
 export async function POST(request: NextRequest) {
@@ -44,28 +55,51 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const sampleId = body.sampleId || 'sample-sales-discovery';
+    const { sampleId, customTranscript } = body;
 
-    const sample = SAMPLE_MEETINGS.find((s) => s.id === sampleId);
-    if (!sample) {
-      return NextResponse.json({ error: 'Invalid sample' }, { status: 400 });
+    let topic: string;
+    let attendees: string[];
+    let duration: number;
+    let transcript: string;
+
+    if (customTranscript && typeof customTranscript === 'string' && customTranscript.trim().length > 50) {
+      // Custom transcript uploaded by visitor
+      if (customTranscript.length > 15000) {
+        return NextResponse.json({ error: 'Transcript too long. Please keep it under 15,000 characters.' }, { status: 400 });
+      }
+      topic = 'Your Meeting';
+      attendees = ['Participants from transcript'];
+      duration = 0;
+      transcript = customTranscript.trim();
+    } else if (customTranscript) {
+      return NextResponse.json({ error: 'Transcript must be at least 50 characters.' }, { status: 400 });
+    } else {
+      const resolvedSampleId = sampleId || 'sample-sales-discovery';
+      const sample = SAMPLE_MEETINGS.find((s) => s.id === resolvedSampleId);
+      if (!sample) {
+        return NextResponse.json({ error: 'Invalid sample' }, { status: 400 });
+      }
+      topic = sample.topic;
+      attendees = sample.attendees;
+      duration = sample.duration;
+      transcript = sample.transcript;
     }
 
     const startTime = Date.now();
 
     // Generate with Claude if API key exists, otherwise return mock
     if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json(mockResponse(sample.topic, startTime));
+      return NextResponse.json(mockResponse(topic, startTime));
     }
 
     const client = new Anthropic();
 
-    const userPrompt = `Meeting Topic: ${sample.topic}
-Attendees: ${sample.attendees.join(', ')}
-Duration: ${sample.duration} minutes
+    const userPrompt = `Meeting Topic: ${topic}
+Attendees: ${attendees.join(', ')}
+${duration ? `Duration: ${duration} minutes` : ''}
 
 Transcript:
-${sample.transcript}`;
+${transcript}`;
 
     const response = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
@@ -79,7 +113,12 @@ ${sample.transcript}`;
     const text = content.type === 'text' ? content.text : '';
 
     // Parse JSON response
-    let parsed: { subject: string; body: string; actionItems: string[] };
+    let parsed: {
+      subject: string;
+      body: string;
+      actionItems: string[];
+      recap?: { summary: string[]; decisions: string[]; risks: string[] };
+    };
     try {
       let jsonStr = text.trim();
       if (jsonStr.startsWith('```')) {
@@ -89,7 +128,7 @@ ${sample.transcript}`;
     } catch {
       // Fallback: treat entire response as email body
       parsed = {
-        subject: `Following up on ${sample.topic}`,
+        subject: `Following up on ${topic}`,
         body: text,
         actionItems: [],
       };
@@ -100,9 +139,9 @@ ${sample.transcript}`;
       subject: parsed.subject,
       body: parsed.body,
       actionItems: parsed.actionItems,
+      recap: parsed.recap || null,
       generationMs,
-      sampleId: sample.id,
-      sampleTopic: sample.topic,
+      topic,
     });
   } catch (error) {
     console.error('[DEMO] Generation error:', error);
@@ -123,8 +162,23 @@ function mockResponse(topic: string, startTime: number) {
       'Sarah to send pilot participant email addresses',
       'Reconvene after pilot to review results',
     ],
+    recap: {
+      summary: [
+        'Acme Corp evaluating follow-up automation for 12-person sales team',
+        'Current pain: reps spend 20-30 min per call on manual follow-ups, CRM data goes stale',
+        'Demo of ReplySequence\'s 8-second follow-up generation and HubSpot auto-sync',
+        'Agreed to a 14-day pilot with 3-4 reps',
+      ],
+      decisions: [
+        'Proceed with 14-day pilot program',
+        'Team plan pricing at $39/user/month confirmed',
+      ],
+      risks: [
+        'Pilot success depends on reps actually connecting their Zoom accounts',
+      ],
+    },
     generationMs: Date.now() - startTime,
-    sampleTopic: topic,
+    topic,
     mock: true,
   };
 }

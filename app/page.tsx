@@ -241,6 +241,23 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ============ ARCADE DEMO ============ */}
+      <section className="relative z-10" style={{ paddingTop: 80, paddingBottom: 80 }}>
+        <div className="max-w-[1100px] mx-auto px-4">
+          <div style={{ position: 'relative', paddingBottom: 'calc(54.3186% + 41px)', height: 0, width: '100%' }}>
+            <iframe
+              src="https://demo.arcade.software/jnhppwrWFILT2IToZjcn?embed&embed_mobile=inline&embed_desktop=inline&show_copy_link=true"
+              title="Turn Meetings Into Follow-Ups Automatically"
+              frameBorder="0"
+              loading="lazy"
+              allowFullScreen
+              allow="clipboard-write"
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', colorScheme: 'light', borderRadius: 16 }}
+            />
+          </div>
+        </div>
+      </section>
+
       <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
 
       {/* ============ 2. THE FOLLOW-UP GAP ============ */}
