@@ -150,7 +150,7 @@ export async function uploadImage(
   // Step 2: PUT image bytes to presigned URL (no extra headers)
   const uploadRes = await fetch(upload_url, {
     method: 'PUT',
-    body: imageBuffer,
+    body: new Uint8Array(imageBuffer),
   });
 
   if (!uploadRes.ok) {
