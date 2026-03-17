@@ -6,8 +6,11 @@
 import { eq, and, gte, lte, isNull, inArray } from 'drizzle-orm';
 import { db, recallBots, calendarConnections, calendarEvents, users, type MeetingPlatform } from '@/lib/db';
 import { getRecallClient } from './client';
-import { decrypt } from '@/lib/encryption';
+import { decrypt, encrypt } from '@/lib/encryption';
 import type { RecallPlatform } from './types';
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
 // How far in advance to schedule bots (in minutes)
 const SCHEDULE_AHEAD_MINUTES = 30;
@@ -50,6 +53,68 @@ export function mapRecallPlatformToMeetingPlatform(recallPlatform: RecallPlatfor
     case 'zoom':
     default:
       return 'zoom';
+  }
+}
+
+/**
+ * Refresh a Google access token using the refresh token
+ */
+async function refreshGoogleAccessToken(
+  connectionId: string,
+  refreshTokenEncrypted: string
+): Promise<string | null> {
+  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+    console.error('[RECALL-SCHEDULER] Google credentials not configured');
+    return null;
+  }
+
+  try {
+    const refreshToken = decrypt(refreshTokenEncrypted);
+
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('[RECALL-SCHEDULER] Token refresh failed:', { connectionId, error });
+      // If invalid_grant, the token is permanently revoked
+      if (error.includes('invalid_grant')) {
+        await db.delete(calendarConnections).where(eq(calendarConnections.id, connectionId));
+        console.warn('[RECALL-SCHEDULER] Deleted revoked calendar connection:', { connectionId });
+      }
+      return null;
+    }
+
+    const data = await response.json();
+    const newAccessToken = data.access_token;
+    const expiresIn = data.expires_in || 3600;
+
+    // Update the stored access token and expiry
+    await db
+      .update(calendarConnections)
+      .set({
+        accessTokenEncrypted: encrypt(newAccessToken),
+        accessTokenExpiresAt: new Date(Date.now() + expiresIn * 1000),
+        lastRefreshedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(calendarConnections.id, connectionId));
+
+    return newAccessToken;
+  } catch (error) {
+    console.error('[RECALL-SCHEDULER] Error refreshing token:', {
+      connectionId,
+      error: error instanceof Error ? error.message : error,
+    });
+    return null;
   }
 }
 
@@ -337,8 +402,10 @@ export async function scanAndScheduleBots(): Promise<{
     // Get all users with active calendar connections
     const connections = await db
       .select({
+        id: calendarConnections.id,
         userId: calendarConnections.userId,
         accessToken: calendarConnections.accessTokenEncrypted,
+        refreshToken: calendarConnections.refreshTokenEncrypted,
         expiresAt: calendarConnections.accessTokenExpiresAt,
       })
       .from(calendarConnections);
@@ -346,16 +413,26 @@ export async function scanAndScheduleBots(): Promise<{
     for (const connection of connections) {
       usersScanned++;
 
-      // Skip if token is expired
-      if (connection.expiresAt < new Date()) {
-        console.log('[RECALL-SCHEDULER] Skipping user with expired token:', {
+      let accessToken: string;
+
+      // Refresh token if expired (or expiring within 5 minutes)
+      const fiveMinutesFromNow = new Date(Date.now() + 5 * 60 * 1000);
+      if (connection.expiresAt < fiveMinutesFromNow) {
+        console.log('[RECALL-SCHEDULER] Refreshing expired token:', {
           userId: connection.userId,
+          expiredAt: connection.expiresAt,
         });
-        continue;
+        const refreshed = await refreshGoogleAccessToken(connection.id, connection.refreshToken);
+        if (!refreshed) {
+          errors++;
+          continue;
+        }
+        accessToken = refreshed;
+      } else {
+        accessToken = decrypt(connection.accessToken);
       }
 
       try {
-        const accessToken = decrypt(connection.accessToken);
         const events = await fetchUpcomingCalendarEvents(
           connection.userId,
           accessToken,
