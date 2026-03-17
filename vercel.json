@@ -62,6 +62,9 @@
     },
     "app/api/cron/next-step-reminders/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cron/daily-content/route.ts": {
+      "maxDuration": 120
     }
   },
   "crons": [
@@ -128,6 +131,10 @@
     {
       "path": "/api/cron/next-step-reminders",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/daily-content",
+      "schedule": "0 12 * * *"
     }
   ]
 }
