@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { eq, and, isNull } from 'drizzle-orm';
+import { eq, and, isNull, sql } from 'drizzle-orm';
 import { db, recallBots, meetings, transcripts as transcriptsTable, users, calendarEvents } from '@/lib/db';
 import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
@@ -445,6 +445,37 @@ async function processTranscriptAndGenerateDraft(
   // Determine platform from bot record
   const platform = botRecord.platform || 'zoom';
 
+  // Resolve meeting title — try bot record, then calendar event, then Recall API
+  let meetingTitle = botRecord.meetingTitle;
+  if (!meetingTitle || meetingTitle === 'Meeting' || meetingTitle === 'E2E Test Meeting') {
+    // Try to get title from calendar events table by matching meeting URL
+    if (botRecord.meetingUrl) {
+      const [calEvent] = await db
+        .select({ title: calendarEvents.title })
+        .from(calendarEvents)
+        .where(and(
+          eq(calendarEvents.userId, botRecord.userId),
+          sql`${calendarEvents.meetingUrl} = ${botRecord.meetingUrl}`
+        ))
+        .limit(1);
+      if (calEvent?.title) {
+        meetingTitle = calEvent.title;
+      }
+    }
+    // If still no title, try fetching from Recall bot details
+    if (!meetingTitle || meetingTitle === 'Meeting') {
+      try {
+        const botDetails = await getRecallClient().getBot(botRecord.recallBotId!);
+        const metaTitle = botDetails.meeting_metadata?.title
+          || botDetails.metadata?.meetingTitle;
+        if (metaTitle) meetingTitle = metaTitle;
+      } catch {
+        // Ignore - use fallback
+      }
+    }
+  }
+  if (!meetingTitle) meetingTitle = 'Meeting';
+
   // Create or update meeting record
   let meeting = botRecord.meetingId ? await db.query.meetings.findFirst({
     where: eq(meetings.id, botRecord.meetingId),
@@ -460,7 +491,7 @@ async function processTranscriptAndGenerateDraft(
         zoomMeetingId: botRecord.recallBotId!, // Use recall bot ID as external ID
         platformMeetingId: botRecord.calendarEventId || botRecord.recallBotId,
         hostEmail: user.email,
-        topic: botRecord.meetingTitle || 'Meeting',
+        topic: meetingTitle,
         startTime: botRecord.actualJoinAt || botRecord.scheduledJoinAt,
         endTime: botRecord.endedAt,
         status: 'processing',
