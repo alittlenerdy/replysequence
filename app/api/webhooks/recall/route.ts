@@ -9,7 +9,7 @@ import { db, recallBots, meetings, transcripts as transcriptsTable, users, calen
 import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
-import type { BotStatus, TranscriptWord, TranscriptSpeaker } from '@/lib/recall/types';
+// Types from @/lib/recall/types are available if needed for future extensions
 import crypto from 'crypto';
 
 // Verify webhook signature (Recall uses Svix-style webhook signing)
@@ -122,8 +122,8 @@ export async function POST(request: NextRequest) {
 
     console.log('[RECALL-WEBHOOK] Received event:', {
       event: payload.event,
-      botId: payload.data?.bot_id,
-      status: payload.data?.status?.code,
+      botId: payload.data?.bot?.id,
+      status: payload.data?.data?.code,
     });
 
     // Verify webhook signature if configured
@@ -279,23 +279,8 @@ async function handleBotStatusChange(
 /**
  * Handle real-time transcript events (if enabled)
  */
-async function handleRealTimeTranscript(
-  botRecord: typeof recallBots.$inferSelect,
-  data: RecallWebhookPayload['data']
-) {
-  const transcriptData = data.transcript;
-  if (!transcriptData) return;
-
-  console.log('[RECALL-WEBHOOK] Real-time transcript:', {
-    botId: botRecord.recallBotId,
-    isFinal: transcriptData.is_final,
-    wordCount: transcriptData.words?.length || 0,
-  });
-
-  // For now, we'll just log real-time transcripts
-  // Full transcript processing happens when bot is done
-  // Could be extended to show live transcription in UI
-}
+// Real-time transcription is handled by the bot.done/transcript.done events
+// Could be extended to show live transcription in UI via the transcript webhook
 
 /**
  * Handle bot completion - fetch full transcript and create meeting record
