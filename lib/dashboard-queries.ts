@@ -1271,3 +1271,337 @@ export async function getRecentAIActions(): Promise<AIAction[]> {
 
   return actions.slice(0, 15);
 }
+
+// ── Dashboard Component Data ─────────────────────────────────────────
+
+/**
+ * Get recent meetings for MeetingJobsTable component.
+ * Returns the 5 most recent meetings with status and platform info.
+ */
+export async function getRecentMeetingsForDashboard(): Promise<Array<{
+  id: string;
+  name: string;
+  source: 'zoom' | 'meet' | 'teams';
+  time: string;
+  status: 'processing' | 'completed' | 'failed' | 'pending';
+  duration?: string;
+}>> {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  const recentMeetings = await db
+    .select({
+      id: meetings.id,
+      topic: meetings.topic,
+      platform: meetings.platform,
+      status: meetings.status,
+      startTime: meetings.startTime,
+      duration: meetings.duration,
+      createdAt: meetings.createdAt,
+      processingStep: meetings.processingStep,
+    })
+    .from(meetings)
+    .where(eq(meetings.userId, userId))
+    .orderBy(desc(meetings.createdAt))
+    .limit(5);
+
+  return recentMeetings.map((m) => {
+    // Map platform to source
+    const source = m.platform === 'google_meet' ? 'meet' as const
+      : m.platform === 'microsoft_teams' ? 'teams' as const
+      : 'zoom' as const;
+
+    // Map meeting status to component status
+    let status: 'processing' | 'completed' | 'failed' | 'pending';
+    if (m.status === 'failed') status = 'failed';
+    else if (m.status === 'ready' || m.status === 'completed') status = 'completed';
+    else if (m.status === 'processing') status = 'processing';
+    else status = 'pending';
+
+    // Format relative time
+    const now = new Date();
+    const created = m.createdAt;
+    const diffMs = now.getTime() - created.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    let time: string;
+    if (diffMin < 1) time = 'just now';
+    else if (diffMin < 60) time = `${diffMin}m ago`;
+    else if (diffHours < 24) time = `${diffHours}h ago`;
+    else time = `${diffDays}d ago`;
+
+    // Format duration
+    const duration = m.duration ? `${m.duration}m` : undefined;
+
+    return {
+      id: m.id,
+      name: m.topic || 'Untitled Meeting',
+      source,
+      time,
+      status,
+      duration,
+    };
+  });
+}
+
+/**
+ * Get the most recent processing meeting for ProcessingStatusCard.
+ * Returns the latest meeting that is still being processed, or the most recent completed one.
+ */
+export async function getProcessingStatus(): Promise<{
+  status: 'idle' | 'uploading' | 'transcribing' | 'analyzing' | 'generating_sequence' | 'draft_ready' | 'failed';
+  meetingName: string;
+  lastUpdated: string;
+  error?: string;
+} | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  // First try to find a currently processing meeting
+  let [meeting] = await db
+    .select({
+      id: meetings.id,
+      topic: meetings.topic,
+      status: meetings.status,
+      processingStep: meetings.processingStep,
+      processingError: meetings.processingError,
+      updatedAt: meetings.updatedAt,
+    })
+    .from(meetings)
+    .where(and(eq(meetings.userId, userId), eq(meetings.status, 'processing')))
+    .orderBy(desc(meetings.updatedAt))
+    .limit(1);
+
+  // If no processing meeting, get the most recent one
+  if (!meeting) {
+    [meeting] = await db
+      .select({
+        id: meetings.id,
+        topic: meetings.topic,
+        status: meetings.status,
+        processingStep: meetings.processingStep,
+        processingError: meetings.processingError,
+        updatedAt: meetings.updatedAt,
+      })
+      .from(meetings)
+      .where(eq(meetings.userId, userId))
+      .orderBy(desc(meetings.updatedAt))
+      .limit(1);
+  }
+
+  if (!meeting) return null;
+
+  // Map processing step to pipeline status
+  type PipelineStatus = 'idle' | 'uploading' | 'transcribing' | 'analyzing' | 'generating_sequence' | 'draft_ready' | 'failed';
+  let pipelineStatus: PipelineStatus;
+
+  if (meeting.status === 'failed') {
+    pipelineStatus = 'failed';
+  } else if (meeting.status === 'ready' || meeting.status === 'completed') {
+    // Check if draft exists
+    const [draft] = await db
+      .select({ id: drafts.id })
+      .from(drafts)
+      .where(eq(drafts.meetingId, meeting.id))
+      .limit(1);
+    pipelineStatus = draft ? 'draft_ready' : 'analyzing';
+  } else {
+    // Map processingStep
+    const step = meeting.processingStep;
+    if (step === 'transcript_stored' || step === 'transcribing') pipelineStatus = 'transcribing';
+    else if (step === 'analyzing' || step === 'sentiment_analysis' || step === 'summary') pipelineStatus = 'analyzing';
+    else if (step === 'draft_generation') pipelineStatus = 'generating_sequence';
+    else if (step === 'completed') pipelineStatus = 'draft_ready';
+    else pipelineStatus = 'uploading';
+  }
+
+  // Format relative time
+  const now = new Date();
+  const diffMs = now.getTime() - meeting.updatedAt.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  let lastUpdated: string;
+  if (diffMin < 1) lastUpdated = 'just now';
+  else if (diffMin < 60) lastUpdated = `${diffMin} min ago`;
+  else lastUpdated = `${diffHours}h ago`;
+
+  return {
+    status: pipelineStatus,
+    meetingName: meeting.topic || 'Untitled Meeting',
+    lastUpdated,
+    error: meeting.processingError || undefined,
+  };
+}
+
+/**
+ * Get activity feed events for the ActivityFeed component.
+ * Converts AIActions to the simpler FeedEvent format.
+ */
+export async function getActivityFeedEvents(): Promise<Array<{
+  id: string;
+  description: string;
+  time: string;
+  color: string;
+}>> {
+  const actions = await getRecentAIActions();
+
+  const typeColors: Record<string, string> = {
+    draft_generated: '#5B6CFF',
+    draft_sent: '#4DFFA3',
+    sequence_created: '#7A5CFF',
+    sequence_paused: '#FFD75F',
+    sequence_step_sent: '#4DFFA3',
+    meeting_processed: '#38E8FF',
+    deal_flagged: '#FF5D5D',
+  };
+
+  return actions.map((action) => {
+    const now = new Date();
+    const diffMs = now.getTime() - action.timestamp.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    let time: string;
+    if (diffMin < 1) time = 'just now';
+    else if (diffMin < 60) time = `${diffMin}m ago`;
+    else if (diffHours < 24) time = `${diffHours}h ago`;
+    else time = `${diffDays}d ago`;
+
+    return {
+      id: action.id,
+      description: `${action.title}${action.description ? ` — ${action.description}` : ''}`,
+      time,
+      color: typeColors[action.type] || '#5B6CFF',
+    };
+  });
+}
+
+/**
+ * Get AI insights for the most recent meeting with a summary.
+ * Returns data formatted for the AIInsightsPanel component.
+ */
+export async function getLatestMeetingInsights(): Promise<{
+  meetingName: string;
+  summary: string;
+  nextSteps: string[];
+  decisionMaker?: { name: string; title: string };
+  timeline?: string;
+  painPoints: string[];
+  objections: string[];
+  followUpPriority: 'high' | 'medium' | 'low';
+} | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  // Find the most recent meeting with a summary
+  const [meeting] = await db
+    .select({
+      id: meetings.id,
+      topic: meetings.topic,
+      summary: meetings.summary,
+      keyDecisions: meetings.keyDecisions,
+      keyTopics: meetings.keyTopics,
+      actionItems: meetings.actionItems,
+      sentimentAnalysis: meetings.sentimentAnalysis,
+    })
+    .from(meetings)
+    .where(and(
+      eq(meetings.userId, userId),
+      isNotNull(meetings.summary),
+    ))
+    .orderBy(desc(meetings.createdAt))
+    .limit(1);
+
+  if (!meeting || !meeting.summary) return null;
+
+  const actionItems = (meeting.actionItems as Array<{ owner: string; task: string; deadline: string }>) || [];
+  const keyTopics = (meeting.keyTopics as Array<{ topic: string; duration?: string }>) || [];
+  const keyDecisions = (meeting.keyDecisions as Array<{ decision: string; context?: string }>) || [];
+  const sentiment = meeting.sentimentAnalysis as { overall?: { score?: number } } | null;
+
+  // Extract next steps from action items
+  const nextSteps = actionItems.map((item) => `${item.task}${item.deadline ? ` (by ${item.deadline})` : ''}`);
+
+  // Extract pain points from key topics
+  const painPoints = keyTopics.slice(0, 4).map((t) => t.topic);
+
+  // Map sentiment to priority
+  let followUpPriority: 'high' | 'medium' | 'low' = 'medium';
+  if (sentiment?.overall?.score !== undefined) {
+    if (sentiment.overall.score >= 70) followUpPriority = 'high';
+    else if (sentiment.overall.score <= 40) followUpPriority = 'low';
+  }
+
+  return {
+    meetingName: meeting.topic || 'Recent Meeting',
+    summary: meeting.summary,
+    nextSteps,
+    painPoints,
+    objections: keyDecisions.slice(0, 3).map((d) => d.decision),
+    followUpPriority,
+  };
+}
+
+/**
+ * Get the latest email sequence for SequencePreviewCard.
+ */
+export async function getLatestSequencePreview(): Promise<{
+  meetingName: string;
+  emails: Array<{
+    step: number;
+    subject: string;
+    preview: string;
+    body: string;
+    timing: string;
+    purpose: 'recap' | 'value' | 'nudge';
+  }>;
+} | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  // Find the most recent email sequence
+  const [sequence] = await db
+    .select({
+      id: emailSequences.id,
+      meetingTopic: emailSequences.meetingTopic,
+      recipientName: emailSequences.recipientName,
+    })
+    .from(emailSequences)
+    .where(eq(emailSequences.userId, userId))
+    .orderBy(desc(emailSequences.createdAt))
+    .limit(1);
+
+  if (!sequence) return null;
+
+  // Get steps for this sequence
+  const steps = await db
+    .select({
+      stepNumber: sequenceSteps.stepNumber,
+      subject: sequenceSteps.subject,
+      body: sequenceSteps.body,
+      scheduledAt: sequenceSteps.scheduledAt,
+      status: sequenceSteps.status,
+    })
+    .from(sequenceSteps)
+    .where(eq(sequenceSteps.sequenceId, sequence.id))
+    .orderBy(sequenceSteps.stepNumber);
+
+  if (steps.length === 0) return null;
+
+  const purposeMap: Array<'recap' | 'value' | 'nudge'> = ['recap', 'value', 'nudge'];
+
+  return {
+    meetingName: sequence.meetingTopic || sequence.recipientName || 'Recent Sequence',
+    emails: steps.map((step, i) => ({
+      step: step.stepNumber,
+      subject: step.subject,
+      preview: step.body.slice(0, 200),
+      body: step.body,
+      timing: step.status === 'sent' ? 'Sent' : step.scheduledAt
+        ? `Scheduled ${step.scheduledAt.toLocaleDateString()}`
+        : `Step ${step.stepNumber}`,
+      purpose: purposeMap[Math.min(i, purposeMap.length - 1)],
+    })),
+  };
+}

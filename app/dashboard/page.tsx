@@ -12,7 +12,16 @@ import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState'
 import { MissionControl } from '@/components/dashboard/MissionControl';
 import { OpportunityHealth } from '@/components/dashboard/OpportunityHealth';
 import { RecentAIActions } from '@/components/dashboard/RecentAIActions';
-import { getDraftStats, getMissionControlData, getRecentAIActions } from '@/lib/dashboard-queries';
+import {
+  getDraftStats,
+  getMissionControlData,
+  getRecentAIActions,
+  getRecentMeetingsForDashboard,
+  getProcessingStatus,
+  getActivityFeedEvents,
+  getLatestMeetingInsights,
+  getLatestSequencePreview,
+} from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -54,10 +63,15 @@ const quickLinks = [
 ];
 
 async function CommandCenterContent() {
-  const [stats, missionControl, recentActions] = await Promise.all([
+  const [stats, missionControl, recentActions, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview] = await Promise.all([
     getDraftStats(),
     getMissionControlData(),
     getRecentAIActions(),
+    getRecentMeetingsForDashboard(),
+    getProcessingStatus(),
+    getActivityFeedEvents(),
+    getLatestMeetingInsights(),
+    getLatestSequencePreview(),
   ]);
   const hasActivity = stats.total > 0 || (stats.meetingsProcessed ?? 0) > 0;
 
@@ -98,18 +112,34 @@ async function CommandCenterContent() {
           {/* Main grid: Processing + Meetings | Activity + Insights */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2 space-y-6">
-              <ProcessingStatusCard />
-              <MeetingJobsTable />
+              {processingStatus && (
+                <ProcessingStatusCard
+                  status={processingStatus.status}
+                  meetingName={processingStatus.meetingName}
+                  lastUpdated={processingStatus.lastUpdated}
+                  error={processingStatus.error}
+                />
+              )}
+              <MeetingJobsTable
+                meetings={recentMeetings.length > 0 ? recentMeetings : undefined}
+              />
             </div>
             <div className="space-y-6">
-              <ActivityFeed />
-              <AIInsightsPanel />
+              <ActivityFeed
+                events={activityEvents.length > 0 ? activityEvents : undefined}
+              />
+              <AIInsightsPanel
+                insights={meetingInsights || undefined}
+              />
             </div>
           </div>
 
           {/* Sequence + Transcript row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <SequencePreviewCard />
+            <SequencePreviewCard
+              meetingName={sequencePreview?.meetingName}
+              emails={sequencePreview?.emails}
+            />
             <TranscriptViewer />
           </div>
 
