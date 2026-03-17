@@ -70,24 +70,26 @@ export const maxDuration = 60; // Allow up to 60 seconds for processing
 interface RecallWebhookPayload {
   event: string;
   data: {
-    bot_id: string;
-    status?: {
-      code: BotStatus;
-      message?: string;
-      created_at: string;
+    bot: {
+      id: string;
+      metadata?: Record<string, string>;
+    };
+    data?: {
+      code: string;
+      sub_code?: string | null;
+      updated_at: string;
     };
     transcript?: {
-      words: TranscriptWord[];
-      is_final: boolean;
-      speaker?: TranscriptSpeaker;
+      id: string;
+      metadata?: Record<string, string>;
     };
     recording?: {
       id: string;
-      status: string;
-      media_shortcuts?: {
-        video_mixed?: string;
-        audio_mixed?: string;
-      };
+      metadata?: Record<string, string>;
+    };
+    video_mixed?: {
+      id: string;
+      metadata?: Record<string, string>;
     };
   };
 }
@@ -150,10 +152,10 @@ export async function POST(request: NextRequest) {
     }
 
     const { event, data } = payload;
-    const botId = data.bot_id;
+    const botId = data.bot?.id;
 
     if (!botId) {
-      console.error('[RECALL-WEBHOOK] Missing bot_id in payload');
+      console.error('[RECALL-WEBHOOK] Missing bot.id in payload');
       return NextResponse.json({ error: 'Missing bot_id' }, { status: 400 });
     }
 
@@ -171,17 +173,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle different event types
+    // Recall sends events like: bot.joining_call, bot.in_call_recording, bot.done,
+    // transcript.done, recording.done, video_mixed.done, etc.
+    if (event.startsWith('bot.') && event !== 'bot.done') {
+      await handleBotStatusChange(botRecord, data);
+    }
+
     switch (event) {
-      case 'bot.status_change':
-        await handleBotStatusChange(botRecord, data);
-        break;
-
-      case 'bot.transcription':
-        await handleRealTimeTranscript(botRecord, data);
-        break;
-
       case 'bot.done':
       case 'recording.done':
+      case 'video_mixed.done':
         await handleBotComplete(botRecord, data);
         break;
 
@@ -189,8 +190,15 @@ export async function POST(request: NextRequest) {
         await handleTranscriptComplete(botRecord, data);
         break;
 
+      case 'transcript.failed':
+        console.error('[RECALL-WEBHOOK] Transcript failed:', { botId, data: data.data });
+        break;
+
       default:
-        console.log('[RECALL-WEBHOOK] Unhandled event type:', { event });
+        // Bot status events already handled above
+        if (!event.startsWith('bot.')) {
+          console.log('[RECALL-WEBHOOK] Unhandled event type:', { event });
+        }
     }
 
     console.log('[RECALL-WEBHOOK] Event processed:', {
@@ -216,24 +224,25 @@ async function handleBotStatusChange(
   botRecord: typeof recallBots.$inferSelect,
   data: RecallWebhookPayload['data']
 ) {
-  const status = data.status;
-  if (!status) return;
+  const statusCode = data.data?.code;
+  if (!statusCode) return;
 
   console.log('[RECALL-WEBHOOK] Bot status change:', {
     botId: botRecord.recallBotId,
     oldStatus: botRecord.status,
-    newStatus: status.code,
+    newStatus: statusCode,
+    subCode: data.data?.sub_code,
   });
 
   // Map Recall status to our status
   let ourStatus: typeof botRecord.status = botRecord.status;
   const updates: Partial<typeof recallBots.$inferInsert> = {
-    lastStatusCode: status.code,
-    lastStatusMessage: status.message,
+    lastStatusCode: statusCode,
+    lastStatusMessage: data.data?.sub_code || undefined,
     updatedAt: new Date(),
   };
 
-  switch (status.code) {
+  switch (statusCode) {
     case 'joining_call':
       ourStatus = 'joining';
       break;
@@ -255,7 +264,7 @@ async function handleBotStatusChange(
       break;
     case 'fatal':
       ourStatus = 'failed';
-      updates.errorMessage = status.message || 'Bot encountered a fatal error';
+      updates.errorMessage = data.data?.sub_code || 'Bot encountered a fatal error';
       break;
   }
 
@@ -306,8 +315,6 @@ async function handleBotComplete(
       .update(recallBots)
       .set({
         recordingId: data.recording.id,
-        recordingUrl: data.recording.media_shortcuts?.video_mixed ||
-                      data.recording.media_shortcuts?.audio_mixed,
         updatedAt: new Date(),
       })
       .where(eq(recallBots.id, botRecord.id));
