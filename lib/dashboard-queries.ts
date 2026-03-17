@@ -1407,13 +1407,16 @@ export async function getProcessingStatus(): Promise<{
       .limit(1);
     pipelineStatus = draft ? 'draft_ready' : 'analyzing';
   } else {
-    // Map processingStep
+    // Map processingStep to pipeline status
+    // Valid ProcessingStep values: webhook_received, meeting_fetched, meeting_created,
+    // transcript_download, transcript_pending, transcript_parse, transcript_stored,
+    // draft_generation, completed, failed
     const step = meeting.processingStep;
-    if (step === 'transcript_stored' || step === 'transcribing') pipelineStatus = 'transcribing';
-    else if (step === 'analyzing' || step === 'sentiment_analysis' || step === 'summary') pipelineStatus = 'analyzing';
+    if (step === 'transcript_stored' || step === 'transcript_parse' || step === 'transcript_pending' || step === 'transcript_download') pipelineStatus = 'transcribing';
     else if (step === 'draft_generation') pipelineStatus = 'generating_sequence';
     else if (step === 'completed') pipelineStatus = 'draft_ready';
-    else pipelineStatus = 'uploading';
+    else if (step === 'webhook_received' || step === 'meeting_fetched' || step === 'meeting_created') pipelineStatus = 'uploading';
+    else pipelineStatus = 'analyzing';
   }
 
   // Format relative time
