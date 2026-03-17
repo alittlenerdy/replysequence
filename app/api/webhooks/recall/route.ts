@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { db, recallBots, meetings, transcripts as transcriptsTable, users, calendarEvents } from '@/lib/db';
 import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
@@ -159,12 +159,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing bot_id' }, { status: 400 });
     }
 
-    // Find our bot record
-    const [botRecord] = await db
+    // Find our bot record by Recall bot ID
+    let [botRecord] = await db
       .select()
       .from(recallBots)
       .where(eq(recallBots.recallBotId, botId))
       .limit(1);
+
+    // If not found, try to claim an unclaimed record (created without a recall bot ID)
+    if (!botRecord) {
+      const [unclaimed] = await db
+        .select()
+        .from(recallBots)
+        .where(and(
+          eq(recallBots.status, 'pending'),
+          isNull(recallBots.recallBotId)
+        ))
+        .limit(1);
+
+      if (unclaimed) {
+        // Claim this record by setting the recall bot ID
+        await db
+          .update(recallBots)
+          .set({ recallBotId: botId, updatedAt: new Date() })
+          .where(eq(recallBots.id, unclaimed.id));
+        botRecord = { ...unclaimed, recallBotId: botId };
+        console.log('[RECALL-WEBHOOK] Claimed unclaimed bot record:', { botId, recordId: unclaimed.id });
+      }
+    }
 
     if (!botRecord) {
       console.warn('[RECALL-WEBHOOK] Unknown bot ID:', { botId });
