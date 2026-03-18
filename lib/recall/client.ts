@@ -173,11 +173,7 @@ class RecallClient {
       meeting_url: meetingUrl,
       bot_name: options?.botName || 'ReplySequence',
       join_at: joinAt.toISOString(),
-      // Let Recall use its default transcription provider
-      real_time_transcription: options?.transcriptionWebhookUrl ? {
-        destination_url: options.transcriptionWebhookUrl,
-        partial_results: false,
-      } : undefined,
+      // Recall no longer accepts real_time_transcription field
       automatic_leave: {
         waiting_room_timeout: 600, // 10 minutes in waiting room
         noone_joined_timeout: 300, // 5 minutes if no one joins
