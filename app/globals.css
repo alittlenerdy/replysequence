@@ -75,6 +75,41 @@
   --glass-inner-surface: rgba(249, 250, 251, 0.6);
   --glass-inner-border: rgba(0, 0, 0, 0.06);
   --glass-neon-fill: rgba(255, 255, 255, 0.95);
+
+  /* === Phase 1 Design Tokens === */
+
+  /* Surfaces - Dark (default) */
+  --surface-page: #060B18;
+  --surface-section: #0A1020;
+  --surface-card: #111827;
+  --surface-card-border: rgba(255, 255, 255, 0.06);
+
+  /* Text - Dark */
+  --text-heading: #E8ECF4;
+  --text-body: #C0C8E0;
+  --text-muted: #8892B0;
+
+  /* Accents */
+  --accent-indigo: #5B6CFF;
+  --accent-indigo-hover: #4A5BEE;
+  --accent-indigo-subtle: rgba(91, 108, 255, 0.10);
+  --accent-purple: #7A5CFF;
+  --accent-amber: #F59E0B;
+  --accent-amber-hover: #D97706;
+  --accent-amber-subtle: rgba(245, 158, 11, 0.10);
+  --accent-teal: #06B6D4;
+
+  /* Divider */
+  --divider: #1E2A4A;
+
+  /* Backward compat aliases */
+  --background: var(--surface-page);
+  --mint: var(--accent-indigo);
+  --neon: var(--accent-indigo);
+  --text-primary: var(--text-heading);
+  --text-secondary: var(--text-body);
+  --color-primary: var(--accent-indigo);
+  --color-accent: var(--accent-amber);
 }
 
 body {
@@ -572,6 +607,16 @@ body {
   --glass-inner-surface: rgba(249, 250, 251, 0.6);
   --glass-inner-border: rgba(0, 0, 0, 0.06);
   --glass-neon-fill: rgba(255, 255, 255, 0.95);
+
+  /* Phase 1 light mode overrides */
+  --surface-page: #F8FAFC;
+  --surface-section: #F1F5F9;
+  --surface-card: #FFFFFF;
+  --surface-card-border: rgba(0, 0, 0, 0.08);
+  --text-heading: #0F172A;
+  --text-body: #334155;
+  --text-muted: #64748B;
+  --divider: #E2E8F0;
 }
 
 .light .animated-gradient-bg {
