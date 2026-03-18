@@ -17,6 +17,7 @@ import {
   TrendingUp,
   X,
 } from 'lucide-react';
+import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -89,24 +90,28 @@ const platformPillars = [
     title: 'Follow-Ups',
     description: 'AI-drafted emails that reference the real conversation. Every follow-up sounds like you wrote it.',
     color: '#5B6CFF',
+    href: '/product/follow-ups',
   },
   {
     icon: Layers,
     title: 'Sequences',
     description: 'Multi-step nurture flows triggered by each meeting. Keep deals warm without manual effort.',
     color: '#7A5CFF',
+    href: '/product/sequences',
   },
   {
     icon: Brain,
     title: 'Meeting Intelligence',
     description: 'Next steps extracted with due dates. Risk flags for budget, timeline, and champion gaps.',
-    color: '#22D3EE',
+    color: '#06B6D4',
+    href: '/product/meeting-intelligence',
   },
   {
     icon: TrendingUp,
     title: 'Pipeline Automation',
     description: 'CRM updates, deal health scores, and pre-meeting briefings — all from your transcripts.',
-    color: '#37D67A',
+    color: '#F59E0B',
+    href: '/product/pipeline-automation',
   },
 ];
 
@@ -392,7 +397,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
+                className="rounded-2xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
               >
                 <div className="w-12 h-12 rounded-lg bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-[#5B6CFF] light:text-[#4A5BEE]" aria-hidden="true" />
@@ -405,7 +410,7 @@ export default function LandingPage() {
                 <p className="text-xs text-[#8892B0] light:text-gray-500 mb-1">{item.process}</p>
                 <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-3" aria-hidden="true" />
 
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#5B6CFF] light:text-[#4A5BEE] mb-2">After</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#F59E0B] light:text-amber-600 mb-2">After</span>
                 <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
               </motion.div>
             ))}
@@ -443,16 +448,23 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 hover:border-[#5B6CFF]/30 transition-colors light:shadow-sm"
                 >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                    style={{ backgroundColor: `${pillar.color}15`, boxShadow: `0 4px 16px ${pillar.color}20` }}
+                  <Link
+                    href={pillar.href}
+                    className="block rounded-2xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 hover:border-opacity-60 hover:-translate-y-1 hover:shadow-lg transition-all duration-200 cursor-pointer light:shadow-sm group"
                   >
-                    <Icon className="w-6 h-6" style={{ color: pillar.color }} strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{pillar.title}</h3>
-                  <p className="text-sm text-[#C0C8E0] light:text-gray-600">{pillar.description}</p>
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                      style={{ backgroundColor: `${pillar.color}15`, boxShadow: `0 4px 16px ${pillar.color}20` }}
+                    >
+                      <Icon className="w-6 h-6" style={{ color: pillar.color }} strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{pillar.title}</h3>
+                    <p className="text-sm text-[#C0C8E0] light:text-gray-600 mb-4">{pillar.description}</p>
+                    <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: pillar.color }}>
+                      Learn more →
+                    </span>
+                  </Link>
                 </motion.div>
               );
             })}
