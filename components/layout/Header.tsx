@@ -14,30 +14,30 @@ const productItems = [
   {
     label: 'Follow-Ups',
     description: 'AI-generated follow-ups after every meeting',
-    href: '/how-it-works#follow-ups',
+    href: '/product/follow-ups',
     icon: FileText,
     color: '#5B6CFF',
   },
   {
     label: 'Sequences',
     description: 'Automated multi-step follow-up campaigns',
-    href: '/how-it-works#sequences',
+    href: '/product/sequences',
     icon: Layers,
     color: '#7A5CFF',
   },
   {
     label: 'Meeting Intelligence',
     description: 'Analyze transcripts and extract next steps',
-    href: '/how-it-works#intelligence',
+    href: '/product/meeting-intelligence',
     icon: Brain,
-    color: '#38E8FF',
+    color: '#06B6D4',
   },
   {
     label: 'Pipeline Automation',
     description: 'Track deal momentum and risks',
-    href: '/how-it-works#pipeline',
+    href: '/product/pipeline-automation',
     icon: TrendingUp,
-    color: '#4DFFA3',
+    color: '#F59E0B',
   },
 ];
 
