@@ -10,7 +10,7 @@ export const STRIPE_PRICES = {
 
 // Annual price IDs (production defaults)
 export const STRIPE_ANNUAL_PRICES = {
-  pro: process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1T6yfKS20m94FbvlJ0v0F2Ur',   // $15/mo billed annually ($180/yr)
+  pro: process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1TCRNfS20m94FbvlmXWwoBlL',   // $15/mo billed annually ($180/yr)
   team: process.env.STRIPE_TEAM_ANNUAL_PRICE_ID || 'price_1T6yfvS20m94FbvlkZY3xg3Z', // $24/mo billed annually ($288/yr)
 } as const;
 
