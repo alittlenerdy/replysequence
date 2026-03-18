@@ -125,14 +125,14 @@ export function CheckoutButton({
     );
   }
 
-  // Free tier for non-logged-in users - link to signup
+  // Free tier for non-logged-in users - link to waitlist
   if (tier === 'free' && !currentTier) {
     return (
       <a
-        href="/sign-up"
+        href="/#waitlist"
         className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] bg-gray-700 text-white hover:bg-gray-600 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${className}`}
       >
-        {children || 'Get Started'}
+        {children || 'Join Waitlist'}
       </a>
     );
   }

@@ -306,10 +306,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               ReplySequence connects to your Zoom, Teams, or Meet calls, reads the transcript, and drafts a context-rich follow-up email in about 8 seconds. You review it, make any edits, and send from your real inbox. Your CRM updates automatically.
             </p>
             <a
-              href="/sign-up"
+              href="/#waitlist"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 mt-3 transition-colors"
             >
-              Try it free
+              Join the waitlist
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
             </a>
           </div>

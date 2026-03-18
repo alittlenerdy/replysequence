@@ -447,7 +447,8 @@ async function processTranscriptAndGenerateDraft(
 
   // Resolve meeting title — try bot record, then calendar event, then Recall API
   let meetingTitle = botRecord.meetingTitle;
-  if (!meetingTitle || meetingTitle === 'Meeting' || meetingTitle === 'E2E Test Meeting') {
+  const genericTitles = ['Meeting', 'E2E Test Meeting', 'Google Meet', 'Zoom Meeting', 'Microsoft Teams Meeting', 'Teams Meeting'];
+  if (!meetingTitle || genericTitles.includes(meetingTitle)) {
     // Try to get title from calendar events table by matching meeting URL
     if (botRecord.meetingUrl) {
       const [calEvent] = await db
@@ -463,18 +464,18 @@ async function processTranscriptAndGenerateDraft(
       }
     }
     // If still no title, try fetching from Recall bot details
-    if (!meetingTitle || meetingTitle === 'Meeting') {
+    if (!meetingTitle || genericTitles.includes(meetingTitle)) {
       try {
         const botDetails = await getRecallClient().getBot(botRecord.recallBotId!);
         const metaTitle = botDetails.meeting_metadata?.title
           || botDetails.metadata?.meetingTitle;
-        if (metaTitle) meetingTitle = metaTitle;
+        if (metaTitle && !genericTitles.includes(metaTitle)) meetingTitle = metaTitle;
       } catch {
         // Ignore - use fallback
       }
     }
   }
-  if (!meetingTitle) meetingTitle = 'Meeting';
+  if (!meetingTitle || genericTitles.includes(meetingTitle)) meetingTitle = 'Untitled Meeting';
 
   // Create or update meeting record
   let meeting = botRecord.meetingId ? await db.query.meetings.findFirst({
