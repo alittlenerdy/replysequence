@@ -173,10 +173,7 @@ class RecallClient {
       meeting_url: meetingUrl,
       bot_name: options?.botName || 'ReplySequence',
       join_at: joinAt.toISOString(),
-      transcription_options: {
-        provider: 'recall',
-        language: 'en',
-      },
+      // Let Recall use its default transcription provider
       real_time_transcription: options?.transcriptionWebhookUrl ? {
         destination_url: options.transcriptionWebhookUrl,
         partial_results: false,
