@@ -211,12 +211,12 @@ export default function LandingPage() {
         <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,157,45,0.08)_0%,transparent_70%)] pointer-events-none" />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty text-[#E8ECF4]">
               Every Tool Records the Meeting.{' '}
               <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
-            <p className="text-xl text-[#9AA6C6] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-[#C0C8E0] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates — automatically, before your next meeting starts.
             </p>
 
@@ -228,7 +228,7 @@ export default function LandingPage() {
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#5B6CFF] shrink-0" aria-hidden="true" />
-                  <span className="text-sm text-[#9AA6C6] light:text-gray-600 font-medium">{bullet}</span>
+                  <span className="text-sm text-[#C0C8E0] light:text-gray-600 font-medium">{bullet}</span>
                 </div>
               ))}
             </div>
@@ -240,12 +240,12 @@ export default function LandingPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
           >
-            <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#5B6CFF]/10 to-[#7A5CFF]/10 light:from-[#EEF0FF] light:to-[#DDE1FF] border-2 border-[#5B6CFF]/30 light:border-[#4A5BEE]/50 shadow-lg shadow-[#5B6CFF]/10 light:shadow-[#DDE1FF]/50">
+            <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF9D2D]/10 to-[#5B6CFF]/10 light:from-[#FFF5EB] light:to-[#EEF0FF] border-2 border-[#FF9D2D]/40 light:border-[#FF9D2D]/50 shadow-lg shadow-[#FF9D2D]/10 light:shadow-[#FFE4C4]/50">
               <CountdownAnimation />
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#5B6CFF]/10 to-[#7A5CFF]/10 border border-[#5B6CFF]/20">
               <Zap className="w-4 h-4 text-[#FF9D2D]" aria-hidden="true" />
-              <span className="text-sm font-semibold text-[#9AA6C6] light:text-gray-700">
+              <span className="text-sm font-semibold text-[#C0C8E0] light:text-gray-700">
                 10x faster than typing it yourself
               </span>
             </div>
@@ -256,7 +256,7 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex items-center justify-center gap-2 mb-8 text-[#6B7492] light:text-gray-600 flex-wrap"
+            className="flex items-center justify-center gap-2 mb-8 text-[#8892B0] light:text-gray-600 flex-wrap"
           >
             <span className="text-sm font-medium">Works with</span>
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2D8CFF]/10 border border-[#2D8CFF]/20">
@@ -306,10 +306,13 @@ export default function LandingPage() {
                   document.dispatchEvent(new CustomEvent('open-arcade-demo'));
                 }
               }}
-              className="inline-flex items-center gap-2 text-base font-medium text-[#6B7492] light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-md group"
+              className="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold text-white border-2 border-[#FF9D2D]/40 rounded-full bg-[#FF9D2D]/10 hover:bg-[#FF9D2D]/20 hover:border-[#FF9D2D]/60 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF9D2D] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] group"
             >
+              <svg className="w-5 h-5 text-[#FF9D2D]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
               See How It Works
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#5B6CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#FF9D2D]/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </button>
@@ -323,17 +326,17 @@ export default function LandingPage() {
           >
             <a
               href="/security"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-full hover:bg-[#5B6CFF]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.05] border border-white/10 rounded-full hover:bg-white/[0.08] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
-              <Lock className="w-3.5 h-3.5 text-[#5B6CFF]" aria-hidden="true" />
-              <span className="text-xs font-medium text-[#5B6CFF]">AES-256 Encryption</span>
+              <Lock className="w-3.5 h-3.5 text-[#8892B0]" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#C0C8E0]">AES-256 Encryption</span>
             </a>
             <a
               href="/privacy"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-full hover:bg-[#5B6CFF]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.05] border border-white/10 rounded-full hover:bg-white/[0.08] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
-              <Shield className="w-3.5 h-3.5 text-[#5B6CFF]" aria-hidden="true" />
-              <span className="text-xs font-medium text-[#5B6CFF]">Privacy First</span>
+              <Shield className="w-3.5 h-3.5 text-[#8892B0]" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#C0C8E0]">Privacy First</span>
             </a>
           </motion.div>
         </div>
@@ -342,10 +345,10 @@ export default function LandingPage() {
       {/* ============ ARCADE DEMO MODAL ============ */}
       <ArcadeDemoModal />
 
-      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 
       {/* ============ 2. THE FOLLOW-UP GAP ============ */}
-      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(90deg, rgba(91,108,255,0.05) 0%, transparent 60%)' }}>
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(180deg, rgba(91,108,255,0.04) 0%, rgba(15,22,41,0.6) 50%, transparent 100%)' }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -357,7 +360,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Sales Stack Has a <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Gap</span>. This Is It.
             </h2>
-            <p className="text-[#9AA6C6] light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up.
             </p>
           </motion.div>
@@ -389,17 +392,17 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#273054] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
+                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
               >
                 <div className="w-12 h-12 rounded-lg bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-[#5B6CFF] light:text-[#4A5BEE]" aria-hidden="true" />
                 </div>
 
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7492] light:text-gray-500 mb-2">Before</span>
-                <p className="text-sm text-[#9AA6C6] light:text-gray-700 mb-3">{item.before}</p>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#8892B0] light:text-gray-500 mb-2">Before</span>
+                <p className="text-sm text-[#C0C8E0] light:text-gray-700 mb-3">{item.before}</p>
 
                 <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-1" aria-hidden="true" />
-                <p className="text-xs text-[#6B7492] light:text-gray-500 mb-1">{item.process}</p>
+                <p className="text-xs text-[#8892B0] light:text-gray-500 mb-1">{item.process}</p>
                 <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-3" aria-hidden="true" />
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#5B6CFF] light:text-[#4A5BEE] mb-2">After</span>
@@ -410,10 +413,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 
       {/* ============ 3. THE PLATFORM (4 Pillars) ============ */}
-      <section className="py-12 md:py-20 px-4 relative z-10">
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(10,16,32,0.5) 50%, transparent 100%)' }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -425,7 +428,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               One Platform. Four <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Pillars</span>.
             </h2>
-            <p className="text-[#9AA6C6] light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Everything between the call ending and the deal closing — automated.
             </p>
           </motion.div>
@@ -440,7 +443,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#273054] light:border-gray-200 p-6 hover:border-[#5B6CFF]/30 transition-colors light:shadow-sm"
+                  className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 hover:border-[#5B6CFF]/30 transition-colors light:shadow-sm"
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -449,7 +452,7 @@ export default function LandingPage() {
                     <Icon className="w-6 h-6" style={{ color: pillar.color }} strokeWidth={1.5} />
                   </div>
                   <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{pillar.title}</h3>
-                  <p className="text-sm text-[#9AA6C6] light:text-gray-600">{pillar.description}</p>
+                  <p className="text-sm text-[#C0C8E0] light:text-gray-600">{pillar.description}</p>
                 </motion.div>
               );
             })}
@@ -457,7 +460,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 
       {/* ============ 4. HOW IT WORKS ============ */}
       <section className="py-12 md:py-20 px-4 relative z-10">
@@ -472,7 +475,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               From Call to <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Pipeline Automation</span> in Three Steps
             </h2>
-            <p className="text-[#9AA6C6] light:text-gray-600 max-w-2xl mx-auto">
+            <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Connect once. Have your meetings. Follow-ups, sequences, next steps, and CRM updates handle themselves.
             </p>
           </motion.div>
@@ -515,7 +518,7 @@ export default function LandingPage() {
                   <div className="flex justify-center mb-6">
                     <div
                       className="relative w-20 h-20 rounded-full flex items-center justify-center border-2"
-                      style={{ borderColor: `${item.color}50`, backgroundColor: `${item.color}10`, color: item.color }}
+                      style={{ borderColor: `${item.color}50`, backgroundColor: `${item.color}10`, color: item.color, boxShadow: `0 0 30px ${item.color}20, 0 0 60px ${item.color}10` }}
                     >
                       {item.icon}
                       <span
@@ -533,7 +536,7 @@ export default function LandingPage() {
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                     >
-                      <svg className="w-8 h-8 text-[#273054]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <svg className="w-8 h-8 text-[#1E2A4A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </motion.div>
@@ -541,7 +544,7 @@ export default function LandingPage() {
 
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-white light:text-gray-900 mb-3">{item.title}</h3>
-                    <p className="text-[#9AA6C6] light:text-gray-600">{item.description}</p>
+                    <p className="text-[#C0C8E0] light:text-gray-600">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -550,13 +553,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 
       {/* ============ 5. FEATURE HIGHLIGHTS (Bento Grid) ============ */}
       <BentoGrid />
 
       {/* ============ 6. SOCIAL PROOF STATS ============ */}
-      <section className="py-12 md:py-20 px-4 relative z-10 border-t border-transparent" style={{ borderImage: 'linear-gradient(to right, transparent, rgba(91,108,255,0.3), transparent) 1' }}>
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(180deg, rgba(91,108,255,0.04) 0%, rgba(15,22,41,0.6) 50%, transparent 100%)' }}>
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -594,11 +597,11 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#273054] light:border-gray-200 p-6 sm:p-8 text-center light:shadow-sm"
+                className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 sm:p-8 text-center light:shadow-sm"
               >
-                <span className="text-5xl font-extrabold bg-gradient-to-r from-[#FF9D2D] to-[#FDE047] bg-clip-text text-transparent">{item.stat}</span>
-                <p className="text-sm text-[#9AA6C6] light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
-                <p className="text-sm text-[#6B7492] light:text-gray-500">{item.description}</p>
+                <span className="text-6xl font-extrabold bg-gradient-to-r from-[#FF9D2D] to-[#FDE047] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,157,45,0.3)]">{item.stat}</span>
+                <p className="text-sm text-[#C0C8E0] light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
+                <p className="text-sm text-[#8892B0] light:text-gray-500">{item.description}</p>
               </motion.div>
             ))}
           </div>
@@ -617,7 +620,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
               Your Next Meeting Is Coming. The <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Follow-Up</span> Should Be Automatic.
             </h2>
-            <p className="text-[#9AA6C6] light:text-gray-600 mb-6">
+            <p className="text-[#C0C8E0] light:text-gray-600 mb-6">
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.
             </p>
 
