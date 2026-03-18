@@ -115,12 +115,7 @@ export function AICustomization() {
   });
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [completionDismissed, setCompletionDismissed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('rs-ai-setup-complete-dismissed') === '1';
-    }
-    return false;
-  });
+  const [completionDismissed, setCompletionDismissed] = useState(true);
 
   // Compute completion state — all 3 steps done
   const isComplete =

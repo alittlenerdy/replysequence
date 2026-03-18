@@ -381,39 +381,7 @@ export function AnalyticsDashboard() {
         </div>
       )}
 
-      {/* 9. AI Usage Stats */}
-      {hasData && analytics.aiUsage && (analytics.aiUsage.totalCost > 0 || analytics.aiUsage.totalMeetingMinutes > 0) && (
-        <div className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-3.5 h-3.5 text-gray-500" />
-            <span className="text-sm font-medium text-gray-400 light:text-gray-500">Under the Hood</span>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <span className="text-xs text-gray-500">Total AI Cost</span>
-              <p className="text-lg font-bold text-white light:text-gray-900">
-                ${analytics.aiUsage.totalCost.toFixed(4)}
-              </p>
-            </div>
-            <div>
-              <span className="text-xs text-gray-500">Avg Generation Time</span>
-              <p className="text-lg font-bold text-white light:text-gray-900">
-                {analytics.aiUsage.avgLatency > 0
-                  ? `${(analytics.aiUsage.avgLatency / 1000).toFixed(1)}s`
-                  : '-'}
-              </p>
-            </div>
-            <div>
-              <span className="text-xs text-gray-500">Meeting Hours</span>
-              <p className="text-lg font-bold text-white light:text-gray-900">
-                {analytics.aiUsage.totalMeetingMinutes > 0
-                  ? `${(analytics.aiUsage.totalMeetingMinutes / 60).toFixed(1)}h`
-                  : '-'}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 9. AI Usage Stats — hidden until admin role is implemented */}
 
       {/* 10. Activity Charts */}
       {hasData && (

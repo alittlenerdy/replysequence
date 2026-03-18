@@ -110,10 +110,9 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
               <div className="text-xs text-gray-500 mt-1">Clicked</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
-            <div className="text-center flex-1 opacity-50">
-              <div className="text-3xl font-black text-[#5B6CFF]">--</div>
+            <div className="text-center flex-1">
+              <div className="text-3xl font-black text-[#5B6CFF] tabular-nums">{engagement.replied ?? '--'}</div>
               <div className="text-xs text-gray-500 mt-1">Replied</div>
-              <div className="text-[10px] text-[#5B6CFF]/60 mt-0.5">Coming soon</div>
             </div>
           </div>
 
@@ -147,13 +146,18 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
                 />
               </div>
             </div>
-            <div className="opacity-50">
+            <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Reply Rate</span>
-                <span className="text-[#5B6CFF]/60 font-semibold text-[10px]">Coming soon</span>
+                <span className="text-[#5B6CFF] font-semibold">{engagement.replyRate ?? 0}%</span>
               </div>
               <div className="h-2 bg-gray-800/50 light:bg-gray-100 light:bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-gray-700 light:bg-gray-300 w-0" />
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${engagement.replyRate ?? 0}%` }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                  className="h-full rounded-full bg-[#4A5BEE]"
+                />
               </div>
             </div>
           </div>

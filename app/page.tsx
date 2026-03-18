@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
@@ -15,6 +15,7 @@ import {
   Layers,
   Brain,
   TrendingUp,
+  X,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -108,6 +109,96 @@ const platformPillars = [
     color: '#37D67A',
   },
 ];
+
+function ArcadeDemoModal() {
+  const [open, setOpen] = useState(false);
+
+  const close = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    document.addEventListener('open-arcade-demo', handler);
+    return () => document.removeEventListener('open-arcade-demo', handler);
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    document.addEventListener('keydown', onKey);
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [open, close]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-8"
+          onClick={close}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Product demo"
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+
+          {/* Modal content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="relative w-full max-w-5xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={close}
+              className="absolute -top-12 right-0 p-2 text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]"
+              aria-label="Close demo"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Arcade iframe */}
+            <div
+              className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50"
+              style={{ paddingBottom: 'calc(54.28% + 41px)' }}
+            >
+              <iframe
+                src="https://demo.arcade.software/vgH8BUFUeiIHapleaNQ8?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true"
+                title="ReplySequence Product Demo"
+                frameBorder="0"
+                loading="lazy"
+                allowFullScreen
+                allow="clipboard-write"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  colorScheme: 'light',
+                }}
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default function LandingPage() {
   return (
@@ -206,15 +297,22 @@ export default function LandingPage() {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="flex items-center justify-center"
           >
-            <a
-              href="/how-it-works"
+            <button
+              onClick={() => {
+                const isMobile = window.innerWidth < 768;
+                if (isMobile) {
+                  window.open('https://demo.arcade.software/vgH8BUFUeiIHapleaNQ8', '_blank', 'noopener');
+                } else {
+                  document.dispatchEvent(new CustomEvent('open-arcade-demo'));
+                }
+              }}
               className="inline-flex items-center gap-2 text-base font-medium text-[#6B7492] light:text-gray-600 hover:text-gray-200 light:hover:text-gray-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-md group"
             >
               See How It Works
               <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#5B6CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
-            </a>
+            </button>
           </motion.div>
 
           <motion.div
@@ -241,22 +339,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ ARCADE DEMO ============ */}
-      <section className="relative z-10" style={{ paddingTop: 80, paddingBottom: 80 }}>
-        <div className="max-w-[1100px] mx-auto px-4">
-          <div style={{ position: 'relative', paddingBottom: 'calc(54.3186% + 41px)', height: 0, width: '100%' }}>
-            <iframe
-              src="https://demo.arcade.software/jnhppwrWFILT2IToZjcn?embed&embed_mobile=inline&embed_desktop=inline&show_copy_link=true"
-              title="Turn Meetings Into Follow-Ups Automatically"
-              frameBorder="0"
-              loading="lazy"
-              allowFullScreen
-              allow="clipboard-write"
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', colorScheme: 'light', borderRadius: 16 }}
-            />
-          </div>
-        </div>
-      </section>
+      {/* ============ ARCADE DEMO MODAL ============ */}
+      <ArcadeDemoModal />
 
       <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent" />
 
@@ -402,7 +486,7 @@ export default function LandingPage() {
                   step: '01',
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
                   title: 'Have Your Meeting',
-                  description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically — no bot joins the call.',
+                  description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically — no separate app to install.',
                   color: '#5B6CFF',
                 },
                 {
