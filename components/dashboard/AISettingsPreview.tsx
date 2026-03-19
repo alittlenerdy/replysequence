@@ -110,6 +110,15 @@ function getToneLabel(tone: ToneValue): string {
   return toneOption?.label || 'Professional';
 }
 
+const BASELINE_SUBJECT = 'Following up from our meeting';
+const BASELINE_BODY = `Hi Sarah,
+
+Thanks for your time today. I wanted to follow up on what we discussed.
+
+Let me know if you have any questions.
+
+Thanks`;
+
 export function AISettingsPreview({ tone, customInstructions, signature }: AISettingsPreviewProps) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -117,7 +126,10 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
   const [isUpdating, setIsUpdating] = useState(false);
   const [displayBody, setDisplayBody] = useState('');
   const [displaySubject, setDisplaySubject] = useState('');
+  const [showBefore, setShowBefore] = useState(false);
   const prevInputRef = useRef('');
+
+  const hasCustomization = tone !== 'professional' || customInstructions.length > 0;
 
   const subject = getSubjectLine(tone);
   const body = getPreviewBody(tone, customInstructions);
@@ -203,6 +215,37 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
           </div>
         </div>
       </div>
+
+      {/* Before / After toggle */}
+      {hasCustomization && (
+        <div className="px-5 pt-3 pb-0">
+          <button
+            onClick={() => setShowBefore(!showBefore)}
+            className="text-[10px] font-medium text-[#8892B0] hover:text-white light:hover:text-gray-900 transition-colors flex items-center gap-1"
+          >
+            {showBefore ? 'Hide' : 'Show'} before vs after
+            <svg className={`w-3 h-3 transition-transform ${showBefore ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </button>
+        </div>
+      )}
+
+      {/* Before (baseline) — collapsed by default */}
+      {showBefore && (
+        <div className="mx-5 mt-2 mb-0 rounded-lg bg-gray-800/40 light:bg-gray-100 border border-[#1E2A4A] light:border-gray-200 p-3 opacity-50">
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-[9px] font-bold text-[#8892B0] uppercase tracking-wider">Before (default)</span>
+          </div>
+          <p className="text-[10px] text-[#8892B0]/80 light:text-gray-400 mb-1 font-medium">Subj: {BASELINE_SUBJECT}</p>
+          <p className="text-[10px] text-[#8892B0]/60 light:text-gray-400 leading-relaxed whitespace-pre-line line-clamp-4">{BASELINE_BODY}</p>
+        </div>
+      )}
+
+      {/* After label */}
+      {showBefore && (
+        <div className="px-5 pt-2">
+          <span className="text-[9px] font-bold text-[#06B6D4] uppercase tracking-wider">After (your settings)</span>
+        </div>
+      )}
 
       {/* Email body — live reactive */}
       <div className="px-5 py-4">
