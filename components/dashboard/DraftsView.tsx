@@ -5,17 +5,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
 import { DraftsTable } from '../DraftsTable';
-import { DashboardFilters } from '../DashboardFilters';
-import { DashboardStats } from '../DashboardStats';
 import { EmptyState } from '../EmptyState';
-import { SkeletonStats } from '../ui/SkeletonCard';
 import { SkeletonTable } from '../ui/SkeletonTable';
 import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
-import { OnboardingChecklist } from './OnboardingChecklist';
 import { UsageLimitBanner } from './UsageLimitBanner';
 import DraftTour from '@/components/tour/DraftTour';
-import { HelpCircle } from 'lucide-react';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -186,37 +181,8 @@ export function DraftsView({
         )}
       </AnimatePresence>
 
-      {/* Nudge banner when drafts await review */}
-      {stats.generated > 0 && (
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-[#6366F1]/20 bg-[#6366F1]/5 light:bg-[#EEF0FF] light:border-[#4F46E5]/30">
-          <span className="text-sm text-[#818CF8] light:text-[#3A4BDD]">
-            You have <strong>{stats.generated}</strong> draft{stats.generated !== 1 ? 's' : ''} awaiting your review
-          </span>
-          <button
-            onClick={() => {
-              document.getElementById('drafts-table')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="text-sm font-medium text-[#6366F1] light:text-[#4F46E5] hover:text-[#818CF8] light:hover:text-[#6366F1] transition-colors whitespace-nowrap ml-4 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-          >
-            Review Now &rarr;
-          </button>
-        </div>
-      )}
-
-      {/* Onboarding Checklist - shows until completed */}
-      <OnboardingChecklist />
-
       {/* Free tier usage limit indicator */}
       <UsageLimitBanner />
-
-      {/* Stats */}
-      {!hideStats && (
-        isLoading && drafts.length === 0 ? (
-          <SkeletonStats />
-        ) : (
-          <DashboardStats stats={stats} />
-        )
-      )}
 
       {/* Error State */}
       {fetchError && (
@@ -236,27 +202,31 @@ export function DraftsView({
         </div>
       )}
 
-      {/* Filters + Retake Tour */}
-      <div className="flex items-end justify-between gap-4">
-        <div className="flex-1">
-          <DashboardFilters
-            status={status}
-            search={search}
-            dateRange={dateRange}
-            onStatusChange={handleStatusChange}
-            onSearchChange={setSearch}
-            onDateRangeChange={handleDateRangeChange}
-            onClearFilters={handleClearFilters}
-          />
-        </div>
-        {drafts.length > 0 && (
+      {/* Simplified filters */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {([
+          { value: 'all' as const, label: 'All' },
+          { value: 'generated' as const, label: 'Ready' },
+          { value: 'sent' as const, label: 'Sent' },
+        ]).map((f) => (
           <button
-            onClick={handleRetakeTour}
-            className="text-xs text-gray-400 hover:text-gray-200 flex items-center gap-1 whitespace-nowrap pb-1 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-            title="Restart the guided tour of draft features"
+            key={f.value}
+            onClick={() => handleStatusChange(f.value)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 ${
+              status === f.value
+                ? 'bg-[#F59E0B] text-black border-[#F59E0B] shadow-sm shadow-[#F59E0B]/25'
+                : 'bg-transparent text-[#8892B0] light:text-gray-500 border-[#1E2A4A] light:border-gray-200 hover:border-white/20 light:hover:border-gray-300 hover:text-white light:hover:text-gray-900'
+            }`}
           >
-            <HelpCircle className="w-3.5 h-3.5" />
-            Take a tour
+            {f.label}
+          </button>
+        ))}
+        {search && (
+          <button
+            onClick={() => { setSearch(''); setPage(1); }}
+            className="text-xs text-[#8892B0] hover:text-white light:hover:text-gray-900 transition-colors ml-1"
+          >
+            Clear search
           </button>
         )}
       </div>
