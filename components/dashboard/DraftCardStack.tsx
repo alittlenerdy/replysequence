@@ -129,8 +129,10 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
                     <div className="rounded-xl border border-[#1E2A4A] light:border-gray-200 bg-[#0A1020] light:bg-gray-50 p-4 -mt-1">
                       <DraftInlinePanel
                         draft={draft}
+                        meetingIntel={null}
+                        meetingIntelLoading={false}
                         onClose={() => setExpandedId(null)}
-                        onUpdated={onDraftUpdated}
+                        onDraftUpdated={onDraftUpdated}
                       />
                     </div>
                   </motion.div>
