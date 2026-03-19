@@ -275,7 +275,7 @@ function PlatformCard({
               : statusColor === 'yellow'
               ? 'border-yellow-500/30 bg-yellow-500/5 light:bg-yellow-50 light:border-yellow-200'
               : 'border-[#6366F1]/30 bg-[#6366F1]/5 light:bg-[#EEF0FF] light:border-[#4F46E5]/30'
-            : 'border-white/[0.06] light:border-gray-200 glass-card hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
+            : 'border-white/[0.06] light:border-gray-200 glass-card hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm opacity-75 hover:opacity-100'
         }`}
         style={{ borderLeftColor: platform.color }}
       >
@@ -295,7 +295,7 @@ function PlatformCard({
                     ? 'bg-red-500/20 text-red-400'
                     : statusColor === 'yellow'
                     ? 'bg-yellow-500/20 text-yellow-400'
-                    : 'bg-[#6366F1]/20 text-[#6366F1]'
+                    : 'bg-green-500/20 text-green-400 light:bg-green-50 light:text-green-600'
                 }`}>
                   {statusColor === 'red' ? (
                     <>
@@ -310,7 +310,7 @@ function PlatformCard({
                   ) : (
                     <>
                       <Check className="w-3 h-3" />
-                      Connected
+                      Active
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6366F1] opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6366F1]" />
@@ -866,10 +866,10 @@ export function IntegrationSettings() {
   const allPlatformCards = (() => {
     let globalIndex = 0;
     const categories: { key: string; label: string; description?: string; category: PlatformConfig['category'] }[] = [
-      { key: 'meeting', label: 'Meeting Platforms', category: 'meeting' },
-      { key: 'calendar', label: 'Calendar Integrations', category: 'calendar', description: 'Sync upcoming meetings for proactive follow-up preparation.' },
-      { key: 'email', label: 'Email Accounts', category: 'email', description: 'Send follow-ups from your real address instead of noreply.' },
-      { key: 'crm', label: 'CRM Integrations', category: 'crm', description: 'Auto-sync sent emails and meeting summaries.' },
+      { key: 'meeting', label: 'Meeting Platforms', category: 'meeting', description: 'Capture and transcribe your calls automatically.' },
+      { key: 'calendar', label: 'Calendar', category: 'calendar', description: 'Track meetings and trigger follow-ups.' },
+      { key: 'email', label: 'Email', category: 'email', description: 'Send follow-ups from your real inbox.' },
+      { key: 'crm', label: 'CRM', category: 'crm', description: 'Sync activity and keep deals updated.' },
     ];
     return categories.map(cat => ({
       ...cat,
@@ -948,12 +948,17 @@ export function IntegrationSettings() {
 
           {/* Setup Progress */}
           <div className="mb-6 glass-card border border-white/[0.06] light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-white light:text-gray-900">Setup Progress</h3>
               <span className="text-sm font-medium text-gray-400 light:text-gray-500">
                 {progressConnected} of {progressTotal} connected
               </span>
             </div>
+            {progressConnected < progressTotal && (
+              <p className="text-xs text-[#8892B0] light:text-gray-500 mb-3">
+                {progressTotal - progressConnected} step{progressTotal - progressConnected !== 1 ? 's' : ''} remaining to fully automate your follow-ups
+              </p>
+            )}
             <div className="h-2.5 bg-gray-800 light:bg-gray-100 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
@@ -962,6 +967,56 @@ export function IntegrationSettings() {
                 className="h-full bg-gradient-to-r from-[#6366F1] via-[#4F46E5] to-[#3A4BDD] rounded-full"
               />
             </div>
+
+            {/* Dynamic next step */}
+            {(() => {
+              const meetingPlatforms = platforms.filter(p => p.category === 'meeting');
+              const calendarPlatforms = platforms.filter(p => p.category === 'calendar');
+              const emailPlatforms = platforms.filter(p => p.category === 'email');
+              const hasMeeting = meetingPlatforms.some(p => connectionStatus[p.id]);
+              const hasCalendar = calendarPlatforms.some(p => connectionStatus[p.id]);
+              const hasEmail = emailPlatforms.some(p => connectionStatus[p.id]);
+
+              let nextLabel = '';
+              let nextAction = '';
+              let nextUrl = '';
+
+              if (!hasMeeting) {
+                nextLabel = 'Connect a meeting platform to capture call transcripts';
+                nextAction = 'Connect Zoom';
+                nextUrl = '/api/auth/zoom';
+              } else if (!hasCalendar) {
+                nextLabel = 'Connect your calendar to track meetings automatically';
+                nextAction = 'Connect Calendar';
+                nextUrl = '/api/auth/google-calendar';
+              } else if (!hasEmail) {
+                nextLabel = 'Connect your email to send follow-ups from your inbox';
+                nextAction = 'Connect Gmail';
+                nextUrl = '/api/auth/gmail';
+              } else if (!anyCrmConnected) {
+                nextLabel = 'Connect a CRM to sync activity and keep deals updated';
+                nextAction = 'Connect CRM';
+                nextUrl = '/api/auth/hubspot';
+              }
+
+              if (!nextLabel) return null;
+
+              return (
+                <div className="mt-4 flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-[#06B6D4]/8 border border-[#06B6D4]/20">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-[#06B6D4] uppercase">Next</span>
+                    <span className="text-xs text-white light:text-gray-900">{nextLabel}</span>
+                  </div>
+                  <a
+                    href={nextUrl}
+                    className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold text-black hover:scale-[1.02] transition-transform"
+                    style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)' }}
+                  >
+                    {nextAction}
+                  </a>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Platform Sections */}
