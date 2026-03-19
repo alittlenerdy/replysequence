@@ -475,7 +475,7 @@ function PlatformCard({
             <button
                 onClick={() => handleConnect(platform)}
                 disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 style={{ backgroundColor: platform.color }}
               >
                 {isLoading ? (
@@ -490,7 +490,7 @@ function PlatformCard({
 
         {/* Meet Multi-Connection List */}
         {platform.id === 'meet' && isConnected && details?.connections && details.connections.length > 1 && (
-          <div className="mt-4 pt-4 border-t border-gray-700/50 light:border-gray-200">
+          <div className="mt-4 pt-4 border-t border-[#1E2A4A] light:border-gray-200">
             <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-3">Connected Google Accounts</p>
             <div className="space-y-2">
               {details.connections.map((conn: MeetConnectionInfo) => (
