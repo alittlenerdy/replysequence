@@ -260,7 +260,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                 {statusConfig.label}
               </span>
               <span className="text-xs text-[#8892B0] light:text-gray-500">
-                {sequence.status === 'active' ? 'Follow-up sequence in progress' : sequence.status === 'completed' ? 'Sequence completed' : sequence.status === 'paused' ? 'Sequence paused' : 'Sequence cancelled'}
+                {sequence.status === 'active' ? 'Following up after your last call' : sequence.status === 'completed' ? 'Sequence completed' : sequence.status === 'paused' ? 'Sequence paused' : 'Sequence cancelled'}
               </span>
             </div>
             {sequence.recipientName && (
@@ -336,12 +336,12 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
           if (!nextStep || sequence.status !== 'active') return null;
           const timing = nextStep.scheduledAt ? formatRelativeTime(nextStep.scheduledAt) : `+${nextStep.delayHours}h`;
           return (
-            <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-[#06B6D4]/8 border border-[#06B6D4]/15">
-              <span className="text-[10px] font-bold text-[#06B6D4] uppercase">Next</span>
-              <span className="text-xs font-medium text-white light:text-gray-900">
+            <div className="mt-3 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/25">
+              <span className="text-[10px] font-bold text-[#06B6D4] uppercase tracking-wider flex items-center gap-1">→ Next</span>
+              <span className="text-sm font-semibold text-white light:text-gray-900">
                 {STEP_TYPE_LABELS[nextStep.stepType] || nextStep.subject}
               </span>
-              <span className="text-xs text-[#06B6D4] ml-auto font-medium">{timing}</span>
+              <span className="text-xs text-[#06B6D4] ml-auto font-bold">{timing}</span>
             </div>
           );
         })()}
@@ -362,7 +362,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
               <button
                 onClick={() => setExpandedStep(isExpanded ? null : step.id)}
                 className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/[0.03] light:hover:bg-gray-50 transition-colors ${
-                  step.status === 'sent' ? 'opacity-50' : step.status === 'scheduled' ? '' : step.status === 'pending' ? 'opacity-75' : ''
+                  step.status === 'sent' ? 'opacity-40' : step.status === 'scheduled' ? '' : step.status === 'pending' ? 'opacity-60' : ''
                 }`}
               >
                 {/* Step number circle */}
