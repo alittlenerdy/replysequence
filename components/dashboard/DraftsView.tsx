@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import type { DraftStatus } from '@/lib/db/schema';
-import { DraftsTable } from '../DraftsTable';
+import { DraftCardStack } from './DraftCardStack';
 import { EmptyState } from '../EmptyState';
 import { SkeletonTable } from '../ui/SkeletonTable';
 import { ProcessingMeetingCard } from '../processing';
 import { useProcessingMeetings } from '@/hooks/useProcessingMeetings';
 import { UsageLimitBanner } from './UsageLimitBanner';
-import DraftTour from '@/components/tour/DraftTour';
 
 interface DraftsViewProps {
   initialDrafts: DraftWithMeeting[];
@@ -131,17 +130,6 @@ export function DraftsView({
 
   const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
 
-  // Tour integration: expose DraftsTable expansion control to DraftTour
-  const tourExpandRef = useRef<{
-    expandedDraftId: string | null;
-    expandFirst: () => void;
-  } | null>(null);
-
-  const handleRetakeTour = () => {
-    localStorage.removeItem('replysequence-draft-tour-completed');
-    window.location.reload();
-  };
-
   // Track processing meetings for live updates
   const { meetings: processingMeetings, refresh: refreshProcessing } = useProcessingMeetings();
 
@@ -247,22 +235,14 @@ export function DraftsView({
               onDraftGenerated={() => fetchDrafts()}
             />
           ) : (
-            <>
-              <DraftsTable
-                drafts={drafts}
-                total={total}
-                page={page}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                onDraftUpdated={handleDraftUpdated}
-                tourExpandRef={tourExpandRef}
-              />
-              <DraftTour
-                hasDrafts={drafts.length > 0}
-                expandedDraftId={tourExpandRef.current?.expandedDraftId ?? null}
-                onExpandFirstDraft={() => tourExpandRef.current?.expandFirst()}
-              />
-            </>
+            <DraftCardStack
+              drafts={drafts}
+              total={total}
+              page={page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onDraftUpdated={handleDraftUpdated}
+            />
           )}
         </>
       )}
