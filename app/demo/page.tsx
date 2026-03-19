@@ -306,7 +306,7 @@ export default function DemoPage() {
             <button
               onClick={handleGenerate}
               disabled={loading || !canGenerate}
-              className="group btn-cta w-full !py-4 !text-base !rounded-xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
+              className="group w-full py-4 text-base rounded-xl flex items-center justify-center gap-3 font-semibold text-white bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#818CF8] hover:to-[#6366F1] shadow-lg shadow-[#6366F1]/25 hover:shadow-xl hover:shadow-[#6366F1]/30 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-lg"
             >
               {loading ? (
                 <>

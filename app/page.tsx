@@ -24,6 +24,7 @@ import { Footer } from '@/components/layout/Footer';
 const BentoGrid = dynamic(() => import('@/components/landing/BentoGrid').then(m => ({ default: m.BentoGrid })), { ssr: false });
 const FAQ = dynamic(() => import('@/components/landing/FAQ').then(m => ({ default: m.FAQ })), { ssr: false });
 const WaitlistForm = dynamic(() => import('@/components/landing/WaitlistForm').then(m => ({ default: m.WaitlistForm })), { ssr: false });
+const FollowUpDemo = dynamic(() => import('@/components/product/FollowUpDemo').then(m => ({ default: m.FollowUpDemo })), { ssr: false });
 
 function CountdownAnimation() {
   const [count, setCount] = useState(8);
@@ -255,6 +256,25 @@ export default function LandingPage() {
           >
             Built by a founder who has been on 1,000+ sales calls
           </motion.p>
+        </div>
+      </section>
+
+      {/* ============ PRODUCT DEMO PREVIEW ============ */}
+      <section className="relative z-10 pb-8 px-4">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-center text-lg font-medium text-[#8892B0] light:text-gray-500 mb-6">
+              See what happens after your next call
+            </h2>
+            <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 md:p-10 shadow-2xl shadow-black/20 light:shadow-gray-300/30">
+              <FollowUpDemo />
+            </div>
+          </motion.div>
         </div>
       </section>
 
