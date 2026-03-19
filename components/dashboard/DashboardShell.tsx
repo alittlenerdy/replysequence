@@ -14,7 +14,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children, firstName = 'there', pendingDrafts = 0, userEmail = '' }: DashboardShellProps) {
   return (
-    <div className="min-h-screen bg-[#060B18] light:bg-gray-50 relative overflow-hidden">
+    <div className="min-h-screen bg-[#060B18] light:bg-[#F1F5F9] relative overflow-hidden">
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 light:hidden" aria-hidden="true">
         <div className="absolute top-[-5%] left-[-2%] w-[30%] h-[30%] rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(91, 108, 255, 0.10) 0%, transparent 70%)' }} />

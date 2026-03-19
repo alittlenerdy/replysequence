@@ -123,9 +123,9 @@ export function KPIStrip({ data = defaultData }: KPIStripProps) {
           <motion.div
             key={card.label}
             variants={item}
-            className={`rounded-2xl p-4 group hover:-translate-y-0.5 hover:bg-white/[0.04] transition-all duration-200 ${
+            className={`rounded-2xl p-4 group hover:-translate-y-0.5 hover:bg-white/[0.04] transition-all duration-200 shadow-md light:shadow-md ${
               card.highlighted
-                ? 'bg-[#6366F1]/[0.06] border border-[#6366F1]/25 light:bg-indigo-50/60 light:border-indigo-200'
+                ? 'bg-[#6366F1]/[0.12] border border-[#6366F1]/25 light:bg-indigo-50 light:border-indigo-200'
                 : 'bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200'
             }`}
           >
