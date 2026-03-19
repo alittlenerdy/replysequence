@@ -211,7 +211,8 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
               <button
                 type="submit"
                 disabled={isSubmitting || !email}
-                className="btn-cta !px-6 !py-3 !rounded-xl !text-sm disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="px-6 py-3 rounded-xl text-sm font-semibold text-white whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:-translate-y-0.5 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}
               >
                 {isSubmitting ? 'Joining\u2026' : 'Join Waitlist'}
               </button>

@@ -126,8 +126,8 @@ export default function LandingPage() {
         <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,157,45,0.08)_0%,transparent_70%)] pointer-events-none" />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-pretty">
-              <span className="font-medium text-[#C0C8E0] light:text-gray-500">Every Tool Records the Meeting.</span>{' '}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty text-white light:text-gray-900">
+              Every Tool Records the Meeting.{' '}
               <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
@@ -214,13 +214,13 @@ export default function LandingPage() {
           >
             <Link
               href="/demo"
-              className="btn-secondary-cta inline-flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white group"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold text-white border-2 border-white/20 hover:border-white/40 hover:bg-white/10 transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:text-gray-900 light:border-gray-300 light:hover:border-gray-500 light:hover:bg-gray-100 group"
             >
-              <svg className="w-4 h-4 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg className="w-5 h-5 text-[#F59E0B]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5v14l11-7z" />
               </svg>
               Watch Demo
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </Link>

@@ -131,7 +131,8 @@ export default function ComparePage() {
             <Link
               key={comp.slug}
               href={`/compare/${comp.slug}`}
-              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 border-l-2 border-l-[#6366F1]/30 hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/40 hover:-translate-y-0.5 hover:shadow-lg p-6 transition-all duration-200 cursor-pointer hover:bg-gray-900/80 light:hover:bg-gray-50"
+              className={`group block rounded-2xl border border-gray-700/50 light:border-gray-200 p-6 transition-all duration-200 cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 overflow-hidden relative bg-gradient-to-r ${comp.color} bg-[length:4px_100%] bg-no-repeat bg-left`}
+              style={{ backgroundColor: 'rgba(15,23,42,0.8)' }}
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
@@ -139,15 +140,17 @@ export default function ComparePage() {
                     <h2 className="text-lg font-bold text-white light:text-gray-900">
                       ReplySequence vs {comp.name}
                     </h2>
-                    <span className="text-xs text-gray-500 light:text-gray-400 font-medium">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full bg-gradient-to-r ${comp.color} text-white`}>
                       {comp.tagline}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400 light:text-gray-600">
+                  <p className="text-sm text-gray-300 light:text-gray-600">
                     {comp.differentiator}
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-[#6366F1] group-hover:translate-x-1 transition-[color,transform] shrink-0" />
+                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${comp.color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                  <ArrowRight className="w-5 h-5 text-white group-hover:translate-x-0.5 transition-transform" />
+                </div>
               </div>
             </Link>
           ))}
