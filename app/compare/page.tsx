@@ -100,7 +100,7 @@ export default function ComparePage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white light:text-gray-900 mb-6 leading-tight text-pretty">
             How ReplySequence{' '}
-            <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#6366F1] to-[#818CF8] bg-clip-text text-transparent">
               Compares
             </span>
           </h1>
@@ -116,7 +116,7 @@ export default function ComparePage() {
               { icon: Zap, text: 'Zoom, Teams, Meet + CRM sync' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-gray-300 light:text-gray-600">
-                <item.icon className="w-5 h-5 text-[#5B6CFF]" />
+                <item.icon className="w-5 h-5 text-[#6366F1]" />
                 <span className="text-sm font-medium">{item.text}</span>
               </div>
             ))}
@@ -131,7 +131,7 @@ export default function ComparePage() {
             <Link
               key={comp.slug}
               href={`/compare/${comp.slug}`}
-              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 hover:border-[#5B6CFF]/50 light:hover:border-[#4A5BEE] p-6 transition-[background-color,border-color] hover:bg-gray-900/80 light:hover:bg-gray-50"
+              className="group block rounded-2xl bg-gray-900/50 light:bg-white border border-gray-800 light:border-gray-200 border-l-2 border-l-[#6366F1]/30 hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/40 hover:-translate-y-0.5 hover:shadow-lg p-6 transition-all duration-200 cursor-pointer hover:bg-gray-900/80 light:hover:bg-gray-50"
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
@@ -147,10 +147,21 @@ export default function ComparePage() {
                     {comp.differentiator}
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-[#5B6CFF] group-hover:translate-x-1 transition-[color,transform] shrink-0" />
+                <ArrowRight className="w-5 h-5 text-gray-600 light:text-gray-400 group-hover:text-[#6366F1] group-hover:translate-x-1 transition-[color,transform] shrink-0" />
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Demo CTA */}
+      <section className="px-4">
+        <div className="max-w-4xl mx-auto text-center mt-12">
+          <p className="text-[#8892B0] light:text-gray-500 mb-4">See how ReplySequence handles all of this automatically.</p>
+          <Link href="/demo" className="btn-secondary-cta inline-flex items-center gap-2 rounded-xl">
+            Watch Demo
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+          </Link>
         </div>
       </section>
 
