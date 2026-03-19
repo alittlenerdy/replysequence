@@ -482,7 +482,45 @@ async function processTranscriptAndGenerateDraft(
     where: eq(meetings.id, botRecord.meetingId),
   }) : null;
 
-  if (!meeting) {
+  // If no linked meeting, try to find one by meeting URL (may have been created by Meet webhook)
+  if (!meeting && botRecord.meetingUrl) {
+    const recentMeetings = await db
+      .select()
+      .from(meetings)
+      .where(and(
+        eq(meetings.userId, botRecord.userId),
+        sql`${meetings.createdAt} > NOW() - INTERVAL '2 hours'`
+      ))
+      .orderBy(sql`${meetings.createdAt} DESC`)
+      .limit(10);
+
+    // Match by URL pattern (meet.google.com/xxx-xxxx-xxx)
+    const meetUrl = botRecord.meetingUrl.replace('https://', '').replace('http://', '');
+    meeting = recentMeetings.find(m =>
+      m.platformMeetingId?.includes(meetUrl.split('/').pop() || '') ||
+      m.zoomMeetingId?.includes('meet-')
+    ) || null;
+  }
+
+  if (meeting) {
+    // Update existing meeting with better title if current one is generic
+    const genericMeetingTitles = ['Google Meet', 'Zoom Meeting', 'Teams Meeting', 'Meeting', 'Untitled Meeting'];
+    if (genericMeetingTitles.includes(meeting.topic || '') && meetingTitle && !genericMeetingTitles.includes(meetingTitle)) {
+      await db
+        .update(meetings)
+        .set({ topic: meetingTitle, status: 'processing', processingStep: 'transcript_stored', processingProgress: 60 })
+        .where(eq(meetings.id, meeting.id));
+      meeting = { ...meeting, topic: meetingTitle };
+    }
+
+    // Link meeting to bot record if not already linked
+    if (!botRecord.meetingId) {
+      await db
+        .update(recallBots)
+        .set({ meetingId: meeting.id, updatedAt: new Date() })
+        .where(eq(recallBots.id, botRecord.id));
+    }
+  } else {
     // Create new meeting record
     const [newMeeting] = await db
       .insert(meetings)
