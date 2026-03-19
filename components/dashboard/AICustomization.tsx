@@ -260,7 +260,7 @@ export function AICustomization() {
       {/* Two-column layout */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left column: Settings form */}
-        <div className="flex-1 min-w-0 space-y-6">
+        <div className="flex-1 min-w-0 space-y-6 lg:pr-6 lg:border-r lg:border-white/[0.08] light:lg:border-gray-200">
           {/* Step 1: Tone Selection */}
           <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
@@ -346,7 +346,7 @@ export function AICustomization() {
                         : chip,
                     }));
                   }}
-                  className="px-3 py-1.5 text-xs font-medium text-[#818CF8] light:text-[#4F46E5] bg-[#6366F1]/10 light:bg-[#EEF0FF] border border-[#6366F1]/20 light:border-[#4F46E5]/30 rounded-full hover:bg-[#4F46E5]/20 light:hover:bg-[#EEF0FF] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                  className="px-3 py-1.5 text-xs font-medium text-[#818CF8] light:text-[#4F46E5] bg-[#6366F1]/15 light:bg-[#EEF0FF] border border-[#6366F1]/40 light:border-[#4F46E5]/50 rounded-full hover:bg-[#4F46E5]/25 light:hover:bg-[#DDE1FF] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 >
                   + {chip}
                 </button>

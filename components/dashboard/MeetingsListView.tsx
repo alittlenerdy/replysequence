@@ -46,7 +46,7 @@ function FollowUpBadge({ status }: { status: FollowUpStatus }) {
     },
     processing: {
       label: 'Processing\u2026',
-      classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+      classes: 'bg-amber-500/20 text-amber-300 border-amber-500/40 light:bg-amber-50 light:text-amber-700 light:border-amber-300',
       icon: <Clock className="w-3 h-3 animate-spin" />,
     },
     no_draft: {
@@ -56,17 +56,17 @@ function FollowUpBadge({ status }: { status: FollowUpStatus }) {
     },
     draft_ready: {
       label: 'Draft ready',
-      classes: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20',
+      classes: 'bg-[#6366F1]/20 text-[#818CF8] border-[#6366F1]/40 light:bg-indigo-50 light:text-indigo-700 light:border-indigo-300',
       icon: <FileText className="w-3 h-3" />,
     },
     overdue: {
       label: 'Overdue',
-      classes: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+      classes: 'bg-amber-500/20 text-amber-300 border-amber-500/40 light:bg-amber-50 light:text-amber-700 light:border-amber-300',
       icon: <AlertTriangle className="w-3 h-3" />,
     },
     sent: {
       label: 'Follow-up sent',
-      classes: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20',
+      classes: 'bg-green-500/20 text-green-300 border-green-500/40 light:bg-green-50 light:text-green-700 light:border-green-300',
       icon: <CheckCircle className="w-3 h-3" />,
     },
   };
@@ -185,7 +185,7 @@ export function MeetingsListView() {
   }, [meetings, followUpFilter]);
 
   return (
-    <div>
+    <div className="bg-gray-900/30 light:bg-white border border-gray-700/30 light:border-gray-200 rounded-2xl p-6 shadow-md light:shadow-md">
       {/* Header — safety-net framing */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -227,8 +227,8 @@ export function MeetingsListView() {
               className={`
                 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${followUpFilter === key
-                  ? 'ring-2 ring-[#6366F1]/40 ' + color
-                  : color + ' opacity-70 hover:opacity-100'
+                  ? 'ring-2 ring-[#6366F1]/50 ' + color + ' opacity-100'
+                  : color + ' opacity-60 hover:opacity-100'
                 }
               `}
             >
@@ -255,7 +255,7 @@ export function MeetingsListView() {
             className={`
               px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
               ${platform === chip.value
-                ? 'bg-orange-500/15 text-orange-400 border-orange-500/30 light:bg-orange-50 light:text-orange-600 light:border-orange-200'
+                ? 'bg-[#6366F1] text-white border-[#6366F1] shadow-sm shadow-[#6366F1]/25 light:bg-[#4F46E5] light:border-[#4F46E5]'
                 : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
               }
             `}
@@ -333,7 +333,7 @@ export function MeetingsListView() {
               <Link
                 key={meeting.id}
                 href={`/dashboard/meetings/${meeting.id}`}
-                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-[#6366F1]/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group light:shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-[#6366F1]/40 hover:bg-white/[0.04] light:hover:bg-gray-50 transition-colors group light:shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 <div className="flex items-start gap-4">
                   <PlatformIcon platform={meeting.platform} />
