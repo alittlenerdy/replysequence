@@ -186,16 +186,14 @@ export function MeetingsListView() {
 
   return (
     <div className="bg-gray-900/30 light:bg-white border border-gray-700/30 light:border-gray-200 rounded-2xl p-6 shadow-md light:shadow-md">
-      {/* Header — safety-net framing */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
         <div>
-          <h2 className="text-2xl font-bold text-white light:text-gray-900">Your Safety Net</h2>
-          <p className="text-gray-400 light:text-gray-500 text-sm mt-1">
-            Every meeting is captured. No follow-up falls through the cracks.
+          <h2 className="text-2xl font-bold tracking-tight text-white light:text-gray-900">Meeting Inbox</h2>
+          <p className="text-[#8892B0] light:text-gray-500 text-sm mt-0.5">
+            Every meeting captured. Every follow-up tracked.
           </p>
         </div>
-
-        {/* Search */}
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
@@ -210,37 +208,34 @@ export function MeetingsListView() {
         </div>
       </div>
 
-      {/* Status summary band */}
+      {/* Focus Strip — priority tiles */}
       {!loading && meetings.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap mb-4">
-          {([
-            ...(statusCounts.failed > 0 ? [{ key: 'failed' as const, label: 'Failed', color: 'text-red-400 bg-red-500/10 border-red-500/30' }] : []),
-            ...(statusCounts.processing > 0 ? [{ key: 'processing' as const, label: 'Processing', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' }] : []),
-            { key: 'no_draft' as const, label: 'No draft', color: 'text-gray-400 bg-gray-500/10 border-gray-600' },
-            { key: 'draft_ready' as const, label: 'Draft ready', color: 'text-[#6366F1] bg-[#6366F1]/10 border-[#6366F1]/30' },
-            { key: 'overdue' as const, label: 'Overdue', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
-            { key: 'sent' as const, label: 'Sent', color: 'text-[#6366F1] bg-[#6366F1]/10 border-[#6366F1]/30' },
-          ]).map(({ key, label, color }) => (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          {[
+            { key: 'overdue' as const, label: 'Overdue', sublabel: 'needs attention', color: '#EF4444', bg: 'bg-red-500/8', border: 'border-red-500/20', hoverBorder: 'hover:border-red-500/40' },
+            { key: 'draft_ready' as const, label: 'Ready to Send', sublabel: 'drafts waiting', color: '#F59E0B', bg: 'bg-[#F59E0B]/8', border: 'border-[#F59E0B]/20', hoverBorder: 'hover:border-[#F59E0B]/40' },
+            { key: 'sent' as const, label: 'Sent', sublabel: 'follow-ups delivered', color: '#22C55E', bg: 'bg-green-500/8', border: 'border-green-500/20', hoverBorder: 'hover:border-green-500/40' },
+            { key: 'processing' as const, label: 'Processing', sublabel: 'in progress', color: '#06B6D4', bg: 'bg-[#06B6D4]/8', border: 'border-[#06B6D4]/20', hoverBorder: 'hover:border-[#06B6D4]/40' },
+          ].map((tile) => (
             <button
-              key={key}
-              onClick={() => setFollowUpFilter(followUpFilter === key ? 'all' : key)}
-              className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
-                ${followUpFilter === key
-                  ? 'ring-2 ring-[#6366F1]/50 ' + color + ' opacity-100'
-                  : color + ' opacity-60 hover:opacity-100'
-                }
-              `}
+              key={tile.key}
+              onClick={() => setFollowUpFilter(followUpFilter === tile.key ? 'all' : tile.key)}
+              className={`rounded-xl ${tile.bg} border ${tile.border} ${tile.hoverBorder} p-3 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 ${
+                followUpFilter === tile.key ? 'ring-2 ring-offset-1 ring-offset-[#060B18] light:ring-offset-white' : ''
+              }`}
+              style={followUpFilter === tile.key ? { ringColor: tile.color } : undefined}
             >
-              {statusCounts[key]} {label}
+              <p className="text-2xl font-bold tabular-nums" style={{ color: tile.color }}>{statusCounts[tile.key]}</p>
+              <p className="text-xs font-medium text-white light:text-gray-900">{tile.label}</p>
+              <p className="text-[10px] text-[#8892B0] light:text-gray-500">{tile.sublabel}</p>
             </button>
           ))}
           {followUpFilter !== 'all' && (
             <button
               onClick={() => setFollowUpFilter('all')}
-              className="text-xs text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors ml-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="sm:col-span-4 text-xs text-[#8892B0] hover:text-white light:hover:text-gray-900 transition-colors text-center py-1"
             >
-              Clear
+              Clear filter
             </button>
           )}
         </div>
@@ -326,53 +321,76 @@ export function MeetingsListView() {
           )}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {filteredMeetings.map((meeting) => {
             const followUp = getFollowUpStatus(meeting);
+            const isOverdue = followUp === 'overdue';
+            const isProcessingItem = followUp === 'processing';
             return (
               <Link
                 key={meeting.id}
                 href={`/dashboard/meetings/${meeting.id}`}
-                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-[#6366F1]/40 hover:bg-white/[0.04] light:hover:bg-gray-50 transition-colors group light:shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className={`block rounded-xl p-4 transition-all duration-200 group outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                  isOverdue
+                    ? 'bg-red-500/5 border border-red-500/15 hover:border-red-500/30 light:bg-red-50/50 light:border-red-200'
+                    : isProcessingItem
+                      ? 'bg-[#06B6D4]/5 border border-[#06B6D4]/15 hover:border-[#06B6D4]/30 light:bg-teal-50/50 light:border-teal-200 animate-pulse'
+                      : 'bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 hover:border-[#6366F1]/30 hover:bg-white/[0.04] light:hover:bg-gray-50 light:shadow-sm'
+                }`}
               >
-                <div className="flex items-start gap-4">
+                <div className="flex items-center gap-4">
+                  {/* Left: platform + name + time */}
                   <PlatformIcon platform={meeting.platform} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors truncate">
+                      <h3 className="text-sm font-semibold text-white light:text-gray-900 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors truncate">
                         {meeting.topic || 'Untitled Meeting'}
                       </h3>
                       <FollowUpBadge status={followUp} />
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-400 light:text-gray-500">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-[11px] text-[#8892B0] light:text-gray-500">
                       <span suppressHydrationWarning>{formatDate(meeting.startTime)}</span>
-                      {meeting.startTime && (
-                        <span suppressHydrationWarning>{formatTime(meeting.startTime)}</span>
-                      )}
-                      {meeting.duration && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {formatDuration(meeting.duration)}
-                        </span>
-                      )}
-                      {meeting.hostEmail && (
-                        <span className="truncate max-w-[200px]">{meeting.hostEmail}</span>
-                      )}
+                      {meeting.startTime && <span suppressHydrationWarning>{formatTime(meeting.startTime)}</span>}
+                      {meeting.duration && <span>{formatDuration(meeting.duration)}</span>}
                     </div>
                   </div>
 
-                  {/* Draft stats */}
-                  <div className="shrink-0 flex items-center gap-3 text-xs">
+                  {/* Center: system output */}
+                  <div className="hidden md:flex flex-col items-end gap-1 shrink-0 text-[11px]">
                     {meeting.draftCount > 0 && (
-                      <span className="flex items-center gap-1 text-gray-400 light:text-gray-500">
-                        <FileText className="w-3.5 h-3.5" />
-                        <span className="tabular-nums">{meeting.draftCount}</span> draft{meeting.draftCount !== 1 ? 's' : ''}
+                      <span className="flex items-center gap-1 text-[#06B6D4]">
+                        <FileText className="w-3 h-3" />
+                        {followUp === 'sent' ? 'Follow-up sent' : 'Follow-up ready'}
                       </span>
                     )}
-                    {meeting.sentCount > 0 && (
-                      <span className="flex items-center gap-1 text-[#6366F1]">
-                        <Send className="w-3.5 h-3.5" />
-                        <span className="tabular-nums">{meeting.sentCount}</span> sent
+                    {meeting.sentCount > 0 && meeting.sentCount > 1 && (
+                      <span className="flex items-center gap-1 text-[#22C55E]">
+                        <Send className="w-3 h-3" />
+                        {meeting.sentCount} sent
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Right: action hint */}
+                  <div className="shrink-0">
+                    {followUp === 'draft_ready' && (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold text-black" style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)' }}>
+                        Send
+                      </span>
+                    )}
+                    {followUp === 'overdue' && (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold text-black" style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)' }}>
+                        Review
+                      </span>
+                    )}
+                    {followUp === 'sent' && (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-medium text-[#8892B0] light:text-gray-500 border border-[#1E2A4A] light:border-gray-200">
+                        View
+                      </span>
+                    )}
+                    {followUp === 'processing' && (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-medium text-[#06B6D4] border border-[#06B6D4]/20">
+                        <Clock className="w-3 h-3 animate-spin" />
                       </span>
                     )}
                   </div>
@@ -381,6 +399,13 @@ export function MeetingsListView() {
             );
           })}
         </div>
+      )}
+
+      {/* System hint */}
+      {!loading && filteredMeetings.length > 0 && filteredMeetings.length < 10 && (
+        <p className="text-center text-[11px] text-[#8892B0]/60 light:text-gray-400 mt-6">
+          New meetings will appear here automatically once captured.
+        </p>
       )}
 
       {/* Pagination */}

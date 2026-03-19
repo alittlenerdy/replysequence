@@ -4,7 +4,7 @@ import { MeetingsListView } from '@/components/dashboard/MeetingsListView';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Your Safety Net | ReplySequence',
+  title: 'Meeting Inbox | ReplySequence',
   description: 'Every meeting is captured — no follow-up falls through the cracks',
 };
 
