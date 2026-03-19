@@ -191,7 +191,7 @@ export function MeetingsListView() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-white light:text-gray-900">Meeting Inbox</h2>
           <p className="text-[#8892B0] light:text-gray-500 text-sm mt-0.5">
-            Every meeting captured. Every follow-up tracked.
+            Every call → follow-up → sequence. Automatically.
           </p>
         </div>
         <div className="relative w-full sm:w-72">
@@ -215,7 +215,7 @@ export function MeetingsListView() {
             { key: 'overdue' as const, label: 'Overdue', sublabel: 'needs attention', color: '#EF4444', bg: 'bg-red-500/8', border: 'border-red-500/20', hoverBorder: 'hover:border-red-500/40' },
             { key: 'draft_ready' as const, label: 'Ready to Send', sublabel: 'drafts waiting', color: '#F59E0B', bg: 'bg-[#F59E0B]/8', border: 'border-[#F59E0B]/20', hoverBorder: 'hover:border-[#F59E0B]/40' },
             { key: 'sent' as const, label: 'Sent', sublabel: 'follow-ups delivered', color: '#22C55E', bg: 'bg-green-500/8', border: 'border-green-500/20', hoverBorder: 'hover:border-green-500/40' },
-            { key: 'processing' as const, label: 'Processing', sublabel: 'in progress', color: '#06B6D4', bg: 'bg-[#06B6D4]/8', border: 'border-[#06B6D4]/20', hoverBorder: 'hover:border-[#06B6D4]/40' },
+            { key: 'processing' as const, label: 'Processing', sublabel: statusCounts.processing === 0 ? 'waiting for next call' : 'in progress', color: '#06B6D4', bg: 'bg-[#06B6D4]/8', border: 'border-[#06B6D4]/20', hoverBorder: 'hover:border-[#06B6D4]/40' },
           ].map((tile) => (
             <button
               key={tile.key}
@@ -332,10 +332,10 @@ export function MeetingsListView() {
                 href={`/dashboard/meetings/${meeting.id}`}
                 className={`block rounded-xl p-4 transition-all duration-200 group outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                   isOverdue
-                    ? 'bg-red-500/5 border border-red-500/15 hover:border-red-500/30 light:bg-red-50/50 light:border-red-200'
+                    ? 'bg-red-500/5 border-l-2 border border-red-500/15 border-l-red-500/60 hover:border-red-500/30 light:bg-red-50/50 light:border-red-200 light:border-l-red-400'
                     : isProcessingItem
                       ? 'bg-[#06B6D4]/5 border border-[#06B6D4]/15 hover:border-[#06B6D4]/30 light:bg-teal-50/50 light:border-teal-200 animate-pulse'
-                      : 'bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 hover:border-[#6366F1]/30 hover:bg-white/[0.04] light:hover:bg-gray-50 light:shadow-sm'
+                      : 'bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 hover:border-white/20 light:hover:border-gray-300 hover:bg-white/[0.03] light:hover:bg-gray-50 light:shadow-sm'
                 }`}
               >
                 <div className="flex items-center gap-4">
@@ -358,7 +358,13 @@ export function MeetingsListView() {
                   {/* Center: system output */}
                   <div className="hidden md:flex flex-col items-end gap-1 shrink-0 text-[11px]">
                     {meeting.draftCount > 0 && (
-                      <span className="flex items-center gap-1 text-[#06B6D4]">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold ${
+                        followUp === 'sent'
+                          ? 'text-[#22C55E] bg-green-500/10'
+                          : followUp === 'overdue'
+                            ? 'text-[#F59E0B] bg-[#F59E0B]/10'
+                            : 'text-[#06B6D4] bg-[#06B6D4]/10'
+                      }`}>
                         <FileText className="w-3 h-3" />
                         {followUp === 'sent' ? 'Follow-up sent' : 'Follow-up ready'}
                       </span>
