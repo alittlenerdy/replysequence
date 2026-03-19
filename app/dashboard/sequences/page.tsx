@@ -117,8 +117,8 @@ export default function SequencesPage() {
             </div>
             Sequences
           </h1>
-          <p className="text-sm text-gray-400 light:text-gray-500 mt-1">
-            Automated multi-step follow-up sequences
+          <p className="text-sm text-[#8892B0] light:text-gray-500 mt-1">
+            Keeping your conversations warm, automatically.
           </p>
         </div>
         <button
@@ -181,7 +181,7 @@ export default function SequencesPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {filtered.map(seq => (
             <SequenceCard
               key={seq.id}

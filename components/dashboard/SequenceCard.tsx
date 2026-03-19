@@ -248,20 +248,23 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
 
   return (
     <div className="border border-[#1E2A4A] light:border-gray-200 light:shadow-sm rounded-xl overflow-hidden">
-      {/* Header */}
+      {/* Header — human-first */}
       <div className="p-4 bg-gray-800/30 light:bg-gray-50">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full border ${statusConfig.color}`}>
+            <h3 className="text-base font-bold text-white light:text-gray-900 truncate">
+              {sequence.recipientName || sequence.recipientEmail}
+            </h3>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusConfig.color}`}>
                 {statusConfig.label}
               </span>
-              <span className="text-sm text-gray-300 light:text-gray-700 font-medium truncate">
-                {sequence.recipientName || sequence.recipientEmail}
+              <span className="text-xs text-[#8892B0] light:text-gray-500">
+                {sequence.status === 'active' ? 'Follow-up sequence in progress' : sequence.status === 'completed' ? 'Sequence completed' : sequence.status === 'paused' ? 'Sequence paused' : 'Sequence cancelled'}
               </span>
             </div>
             {sequence.recipientName && (
-              <p className="text-xs text-gray-500 mt-1">{sequence.recipientEmail}</p>
+              <p className="text-[11px] text-[#8892B0]/60 light:text-gray-400 mt-0.5">{sequence.recipientEmail}</p>
             )}
             {sequence.pauseReason && (
               <p className="text-xs text-amber-400/80 mt-1">
@@ -314,18 +317,34 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
         {/* Progress bar */}
         {sequence.totalSteps > 0 && (
           <div className="mt-3">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>{sequence.completedSteps} of {sequence.totalSteps} steps sent</span>
+            <div className="flex justify-between text-xs text-[#8892B0] light:text-gray-500 mb-1">
+              <span className="font-medium">{sequence.completedSteps} of {sequence.totalSteps} steps sent</span>
               <span>{progress}%</span>
             </div>
             <div className="h-1.5 bg-gray-700/50 light:bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] rounded-full transition-[width] duration-500"
+                className="h-full bg-gradient-to-r from-[#06B6D4] to-[#6366F1] rounded-full transition-[width] duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
         )}
+
+        {/* Next Step callout */}
+        {(() => {
+          const nextStep = sequence.steps.find(s => s.status === 'scheduled' || s.status === 'pending');
+          if (!nextStep || sequence.status !== 'active') return null;
+          const timing = nextStep.scheduledAt ? formatRelativeTime(nextStep.scheduledAt) : `+${nextStep.delayHours}h`;
+          return (
+            <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-[#06B6D4]/8 border border-[#06B6D4]/15">
+              <span className="text-[10px] font-bold text-[#06B6D4] uppercase">Next</span>
+              <span className="text-xs font-medium text-white light:text-gray-900">
+                {STEP_TYPE_LABELS[nextStep.stepType] || nextStep.subject}
+              </span>
+              <span className="text-xs text-[#06B6D4] ml-auto font-medium">{timing}</span>
+            </div>
+          );
+        })()}
 
         {error && (
           <p className="text-xs text-red-400 mt-2">{error}</p>
@@ -342,7 +361,9 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
             <div key={step.id}>
               <button
                 onClick={() => setExpandedStep(isExpanded ? null : step.id)}
-                className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/[0.03] light:hover:bg-gray-50 transition-colors"
+                className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/[0.03] light:hover:bg-gray-50 transition-colors ${
+                  step.status === 'sent' ? 'opacity-50' : step.status === 'scheduled' ? '' : step.status === 'pending' ? 'opacity-75' : ''
+                }`}
               >
                 {/* Step number circle */}
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 border ${
