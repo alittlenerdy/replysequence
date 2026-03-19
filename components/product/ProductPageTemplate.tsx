@@ -56,7 +56,7 @@ export function ProductPageTemplate({
       {/* Hero */}
       <section className="relative pt-32 pb-16 px-4">
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none light:hidden"
           style={{
             background: `radial-gradient(ellipse at 50% 30%, ${accent}15 0%, transparent 60%)`,
           }}
@@ -92,7 +92,7 @@ export function ProductPageTemplate({
       </section>
 
       {/* Interactive Demo */}
-      <section className="py-12 px-4" style={{ background: '#0C1425' }}>
+      <section className="py-12 px-4 bg-[#0C1425] light:bg-white">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -113,7 +113,7 @@ export function ProductPageTemplate({
       </section>
 
       {/* Features */}
-      <section className="py-16 px-4" style={{ background: 'linear-gradient(180deg, rgba(10,16,32,0.5) 0%, transparent 100%)' }}>
+      <section className="py-16 px-4 bg-[#060B18] light:bg-gray-50">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-[#E8ECF4] light:text-gray-900">
             How It Works
@@ -146,7 +146,7 @@ export function ProductPageTemplate({
       </section>
 
       {/* Use Cases */}
-      <section className="py-16 px-4" style={{ background: '#0C1425' }}>
+      <section className="py-16 px-4 bg-[#0C1425] light:bg-white">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-[#E8ECF4] light:text-gray-900">
             Built For
@@ -182,8 +182,8 @@ export function ProductPageTemplate({
           <div className="flex flex-col items-center gap-6">
             <Link
               href="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
-              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-black transition-all duration-200 hover:-translate-y-0.5"
+              style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', boxShadow: '0 4px 14px rgba(245,158,11,0.3)' }}
             >
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
               Watch Demo
@@ -207,7 +207,7 @@ export function ProductPageTemplate({
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-4" style={{ background: `radial-gradient(ellipse at center, ${accent}18 0%, transparent 55%)` }}>
+      <section className="py-16 px-4 bg-[#060B18] light:bg-gray-50">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900">
             Ready to See It In Action?
@@ -215,7 +215,7 @@ export function ProductPageTemplate({
           <p className="text-[#C0C8E0] light:text-gray-600 mb-8">
             Start with 5 free AI drafts. No credit card required.
           </p>
-          <div className="glass-border-accent rounded-2xl p-6 sm:p-10">
+          <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 sm:p-10 shadow-lg shadow-black/20 light:shadow-gray-200/30">
             <WaitlistForm />
           </div>
         </div>

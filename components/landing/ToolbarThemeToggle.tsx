@@ -11,8 +11,16 @@ export function ToolbarThemeToggle() {
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem('rs-theme');
+    const html = document.documentElement;
+
     if (stored === 'light') {
+      html.classList.remove('dark');
+      html.classList.add('light');
       setIsDark(false);
+    } else {
+      html.classList.add('dark');
+      html.classList.remove('light');
+      setIsDark(true);
     }
   }, []);
 

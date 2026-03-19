@@ -19,7 +19,7 @@ export function ForceDarkMode() {
     return () => {
       observer.disconnect();
       // Restore theme from localStorage when leaving the page
-      const theme = localStorage.getItem('theme');
+      const theme = localStorage.getItem('rs-theme');
       if (theme === 'light') {
         html.classList.add('light');
       }
