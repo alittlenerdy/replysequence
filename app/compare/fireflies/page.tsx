@@ -435,12 +435,12 @@ export default function FirefliesComparisonPage() {
                       key={index}
                       variants={staggerItem}
                       whileHover={{ scale: 1.01, x: 4 }}
-                      className={`grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-3 items-center py-3 px-3 sm:py-4 sm:px-4 rounded-xl transition-colors duration-200 ${
+                      className={`grid grid-cols-[2fr_1fr_1fr] sm:grid-cols-3 items-center py-3 px-3 sm:py-4 sm:px-4 rounded-xl transition-all duration-200 ${
                         row.winner === 'replysequence'
-                          ? 'bg-gradient-to-r from-[#6366F1]/10 via-[#6366F1]/5 to-transparent hover:from-[#6366F1]/15 hover:via-[#6366F1]/10 light:from-[#DDE1FF]/80 light:via-[#EEF0FF]/60 light:to-transparent light:hover:from-[#EEF0FF] light:hover:via-[#F5F6FF]/80 border-l-2 border-l-[#6366F1] border border-[#6366F1]/30 light:border-[#4F46E5]/40 shadow-lg shadow-[#6366F1]/5 light:shadow-[#DDE1FF]/30'
+                          ? 'bg-gradient-to-r from-[#6366F1]/10 via-[#6366F1]/5 to-transparent hover:from-[#6366F1]/15 hover:via-[#6366F1]/10 hover:-translate-y-0.5 hover:shadow-lg light:from-[#DDE1FF]/80 light:via-[#EEF0FF]/60 light:to-transparent light:hover:from-[#EEF0FF] light:hover:via-[#F5F6FF]/80 border-l-2 border-l-[#6366F1] border border-[#6366F1]/30 light:border-[#4F46E5]/40 shadow-lg shadow-[#6366F1]/5 light:shadow-[#DDE1FF]/30'
                           : row.winner === 'fireflies'
-                          ? 'bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent hover:from-orange-500/15 hover:via-amber-500/10 light:from-orange-100/80 light:via-amber-50/60 light:to-transparent light:hover:from-orange-100 light:hover:via-amber-50/80 border-l-2 border-l-orange-500 border border-orange-500/30 light:border-orange-300'
-                          : 'bg-gray-900/30 light:bg-[#EEF0FF]/30 hover:bg-gray-800/30 light:hover:bg-[#F5F6FF]/60 border border-gray-700/30 light:border-[#EEF0FF]'
+                          ? 'bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent hover:from-orange-500/15 hover:via-amber-500/10 hover:-translate-y-0.5 hover:shadow-lg hover:border-[#6366F1]/30 light:from-orange-100/80 light:via-amber-50/60 light:to-transparent light:hover:from-orange-100 light:hover:via-amber-50/80 border-l-2 border-l-orange-500 border border-orange-500/30 light:border-orange-300'
+                          : 'bg-gray-900/30 light:bg-[#EEF0FF]/30 hover:bg-gray-800/30 hover:-translate-y-0.5 hover:shadow-lg hover:border-[#6366F1]/30 light:hover:bg-[#F5F6FF]/60 border border-gray-700/30 light:border-[#EEF0FF]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -756,6 +756,18 @@ export default function FirefliesComparisonPage() {
           >
             5 free AI drafts included. No credit card required.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-4"
+          >
+            <Link href="/demo" className="btn-secondary-cta inline-flex items-center gap-2">
+              Watch Demo <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
         </AnimatedSection>
       </section>
 
