@@ -128,17 +128,18 @@ export default function DemoPage() {
     inputMode === 'sample' || (inputMode === 'paste' && customTranscript.trim().length >= 50);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white">
+    <div className="min-h-screen bg-[#0A0A0F] light:bg-gray-50 text-white light:text-gray-900">
       <Header />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-20">
         {/* Hero */}
         <motion.div
-          className="text-center mb-12"
+          className="text-center mb-12 relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.12) 0%, transparent 60%)' }} />
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 text-[#6366F1] text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             Live Demo — No Signup Required
@@ -153,18 +154,18 @@ export default function DemoPage() {
 
         {/* Demo Card */}
         <motion.div
-          className="rounded-3xl bg-gray-900/60 border border-gray-700/50 overflow-hidden"
+          className="rounded-3xl bg-[#0F172A]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 light:shadow-lg overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           {/* Step 1: Select input mode + meeting */}
-          <div className="p-6 sm:p-8 border-b border-gray-800/50">
+          <div className="p-6 sm:p-8 border-b border-gray-800/50 light:border-gray-200">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-7 h-7 rounded-lg bg-[#6366F1]/15 flex items-center justify-center text-sm font-bold text-[#6366F1]">
                 1
               </div>
-              <h2 className="text-lg font-semibold">Choose a meeting</h2>
+              <h2 className="text-lg font-semibold light:text-gray-900">Choose a meeting</h2>
             </div>
 
             {/* Input mode tabs */}
@@ -174,7 +175,7 @@ export default function DemoPage() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   inputMode === 'sample'
                     ? 'bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/30'
-                    : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:border-gray-600/50'
+                    : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-500 border border-gray-700/50 light:border-gray-200 hover:border-gray-600/50 light:hover:border-gray-300'
                 }`}
               >
                 <Video className="w-4 h-4" />
@@ -185,7 +186,7 @@ export default function DemoPage() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   inputMode === 'paste'
                     ? 'bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/30'
-                    : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:border-gray-600/50'
+                    : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-500 border border-gray-700/50 light:border-gray-200 hover:border-gray-600/50 light:hover:border-gray-300'
                 }`}
               >
                 <ClipboardPaste className="w-4 h-4" />
@@ -204,7 +205,7 @@ export default function DemoPage() {
                 >
                   <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-[#6366F1]/30 transition-colors text-left"
+                    className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200 hover:border-[#6366F1]/30 transition-colors text-left"
                   >
                     <div
                       className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
@@ -213,8 +214,8 @@ export default function DemoPage() {
                       <selected.icon className="w-4.5 h-4.5" style={{ color: selected.color }} />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium">{selected.label}</div>
-                      <div className="text-xs text-gray-500">{selected.description}</div>
+                      <div className="text-sm font-medium light:text-gray-900">{selected.label}</div>
+                      <div className="text-xs text-gray-500 light:text-gray-400">{selected.description}</div>
                     </div>
                     <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
                   </button>
@@ -222,7 +223,7 @@ export default function DemoPage() {
                   <AnimatePresence>
                     {showDropdown && (
                       <motion.div
-                        className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-gray-800 border border-gray-700/50 overflow-hidden z-10"
+                        className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-gray-800 light:bg-white border border-gray-700/50 light:border-gray-200 overflow-hidden z-10 light:shadow-lg"
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
@@ -271,10 +272,10 @@ export default function DemoPage() {
                     onChange={(e) => setCustomTranscript(e.target.value)}
                     placeholder="Paste your meeting transcript here... (minimum 50 characters)"
                     rows={8}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-700/50 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#6366F1]/50 focus:border-transparent resize-y leading-relaxed"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 light:bg-gray-50 border border-gray-700/50 light:border-gray-200 text-sm text-gray-200 light:text-gray-800 placeholder-gray-500 light:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6366F1]/50 focus:border-transparent resize-y leading-relaxed"
                   />
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50 transition-colors cursor-pointer text-sm text-gray-400">
+                    <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-200 hover:border-gray-600/50 light:hover:border-gray-300 transition-colors cursor-pointer text-sm text-gray-400 light:text-gray-500">
                       <Upload className="w-4 h-4" />
                       Upload .txt file
                       <input
@@ -294,18 +295,18 @@ export default function DemoPage() {
           </div>
 
           {/* Step 2: Generate */}
-          <div className="p-6 sm:p-8 border-b border-gray-800/50">
+          <div className="p-6 sm:p-8 border-b border-gray-800/50 light:border-gray-200">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-7 h-7 rounded-lg bg-[#38E8FF]/15 flex items-center justify-center text-sm font-bold text-[#38E8FF]">
                 2
               </div>
-              <h2 className="text-lg font-semibold">Generate follow-up</h2>
+              <h2 className="text-lg font-semibold light:text-gray-900">Generate follow-up</h2>
             </div>
 
             <button
               onClick={handleGenerate}
               disabled={loading || !canGenerate}
-              className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] hover:from-[#6B7CFF] hover:to-[#8A6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-all"
+              className="group btn-cta w-full !py-4 !text-base !rounded-xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
             >
               {loading ? (
                 <>
@@ -338,7 +339,7 @@ export default function DemoPage() {
                   <div className="w-7 h-7 rounded-lg bg-[#4DFFA3]/15 flex items-center justify-center text-sm font-bold text-[#4DFFA3]">
                     3
                   </div>
-                  <h2 className="text-lg font-semibold">Your AI-generated results</h2>
+                  <h2 className="text-lg font-semibold light:text-gray-900">Your AI-generated results</h2>
                   <div className="flex items-center gap-1.5 ml-auto text-[11px] text-gray-500">
                     <Clock className="w-3 h-3" />
                     {(result.generationMs / 1000).toFixed(1)}s
@@ -346,7 +347,7 @@ export default function DemoPage() {
                 </div>
 
                 {/* Tab switcher */}
-                <div className="flex gap-1 mb-4 p-1 rounded-xl bg-gray-800/40 border border-gray-700/30">
+                <div className="flex gap-1 mb-4 p-1 rounded-xl bg-gray-800/40 light:bg-gray-100 border border-gray-700/30 light:border-gray-200">
                   <button
                     onClick={() => setActiveTab('email')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
@@ -378,33 +379,33 @@ export default function DemoPage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 10 }}
-                      className="rounded-xl bg-gray-800/40 border border-gray-700/30 overflow-hidden"
+                      className="rounded-xl bg-gray-800/40 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 overflow-hidden"
                     >
                       {/* Email header */}
-                      <div className="px-5 py-3 border-b border-gray-700/30 bg-gray-800/30">
+                      <div className="px-5 py-3 border-b border-gray-700/30 light:border-gray-200 bg-gray-800/30 light:bg-gray-100/50">
                         <div className="flex items-center gap-2 mb-1">
                           <Mail className="w-3.5 h-3.5 text-[#6366F1]" />
                           <span className="text-xs text-gray-400">Subject:</span>
                         </div>
-                        <div className="text-sm font-medium text-white">{result.subject}</div>
+                        <div className="text-sm font-medium text-white light:text-gray-900">{result.subject}</div>
                       </div>
 
                       {/* Email body */}
                       <div className="px-5 py-4">
-                        <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+                        <div className="text-sm text-gray-300 light:text-gray-700 leading-relaxed whitespace-pre-wrap">
                           {result.body}
                         </div>
                       </div>
 
                       {/* Action items */}
                       {result.actionItems.length > 0 && (
-                        <div className="px-5 py-3 border-t border-gray-700/30 bg-gray-800/20">
+                        <div className="px-5 py-3 border-t border-gray-700/30 light:border-gray-200 bg-gray-800/20 light:bg-gray-100/30">
                           <div className="text-[11px] uppercase tracking-wider text-gray-500 mb-2 font-medium">
                             Action Items
                           </div>
                           <ul className="space-y-1.5">
                             {result.actionItems.map((item, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                              <li key={i} className="flex items-start gap-2 text-sm text-gray-400 light:text-gray-600">
                                 <CheckCircle2 className="w-3.5 h-3.5 text-[#4DFFA3] mt-0.5 shrink-0" />
                                 {item}
                               </li>
@@ -419,12 +420,12 @@ export default function DemoPage() {
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
-                      className="rounded-xl bg-gray-800/40 border border-gray-700/30 overflow-hidden"
+                      className="rounded-xl bg-gray-800/40 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 overflow-hidden"
                     >
                       {result.recap ? (
                         <>
                           {/* Summary */}
-                          <div className="px-5 py-4 border-b border-gray-700/30">
+                          <div className="px-5 py-4 border-b border-gray-700/30 light:border-gray-200">
                             <div className="flex items-center gap-2 mb-3">
                               <FileText className="w-3.5 h-3.5 text-[#38E8FF]" />
                               <span className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
@@ -433,7 +434,7 @@ export default function DemoPage() {
                             </div>
                             <ul className="space-y-2">
                               {result.recap.summary.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                                <li key={i} className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-700">
                                   <span className="text-[#38E8FF] mt-1 shrink-0">&#8226;</span>
                                   {item}
                                 </li>
@@ -443,7 +444,7 @@ export default function DemoPage() {
 
                           {/* Decisions */}
                           {result.recap.decisions.length > 0 && (
-                            <div className="px-5 py-4 border-b border-gray-700/30">
+                            <div className="px-5 py-4 border-b border-gray-700/30 light:border-gray-200">
                               <div className="flex items-center gap-2 mb-3">
                                 <Target className="w-3.5 h-3.5 text-[#4DFFA3]" />
                                 <span className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
@@ -452,7 +453,7 @@ export default function DemoPage() {
                               </div>
                               <ul className="space-y-2">
                                 {result.recap.decisions.map((item, i) => (
-                                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-700">
                                     <CheckCircle2 className="w-3.5 h-3.5 text-[#4DFFA3] mt-0.5 shrink-0" />
                                     {item}
                                   </li>
@@ -472,7 +473,7 @@ export default function DemoPage() {
                               </div>
                               <ul className="space-y-2">
                                 {result.recap.risks.map((item, i) => (
-                                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-700">
                                     <span className="text-amber-400 mt-1 shrink-0">&#8226;</span>
                                     {item}
                                   </li>
@@ -491,9 +492,9 @@ export default function DemoPage() {
                 </AnimatePresence>
 
                 {/* Inline Waitlist CTA */}
-                <div className="mt-8 rounded-2xl bg-gradient-to-b from-[#6366F1]/5 to-transparent border border-[#6366F1]/15 p-6">
+                <div className="mt-8 rounded-2xl bg-gradient-to-b from-[#6366F1]/5 to-transparent light:from-[#6366F1]/[0.03] border border-[#6366F1]/15 p-6">
                   <div className="text-center mb-4">
-                    <p className="text-sm font-medium text-white mb-1">
+                    <p className="text-sm font-medium text-white light:text-gray-900 mb-1">
                       This is what ReplySequence generates after every meeting — automatically.
                     </p>
                     <p className="text-xs text-gray-500">
@@ -552,7 +553,7 @@ export default function DemoPage() {
           ].map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl bg-gray-900/40 border border-gray-800/50 p-5"
+              className="rounded-2xl bg-gray-900/40 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 hover:-translate-y-0.5 transition-all duration-200 light:shadow-sm"
             >
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
@@ -560,8 +561,8 @@ export default function DemoPage() {
               >
                 <item.icon className="w-4.5 h-4.5" style={{ color: item.color }} />
               </div>
-              <h3 className="text-sm font-semibold text-white mb-1">{item.title}</h3>
-              <p className="text-xs text-gray-500 leading-relaxed">{item.description}</p>
+              <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-1">{item.title}</h3>
+              <p className="text-xs text-gray-500 light:text-gray-500 leading-relaxed">{item.description}</p>
             </div>
           ))}
         </motion.div>
