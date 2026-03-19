@@ -137,7 +137,7 @@ export function MissionControl({ priorities, momentum }: MissionControlProps) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
       {/* Priority Inbox — takes 2 columns */}
       <motion.div
-        className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 overflow-hidden"
+        className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 overflow-hidden"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -221,7 +221,7 @@ export function MissionControl({ priorities, momentum }: MissionControlProps) {
 
       {/* Momentum Panel — 1 column */}
       <motion.div
-        className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5"
+        className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}

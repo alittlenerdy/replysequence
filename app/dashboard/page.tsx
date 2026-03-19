@@ -158,7 +158,7 @@ async function CommandCenterContent() {
             <Link
               key={link.href}
               href={link.href}
-              className="group relative rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5 hover:border-[#6366F1]/30 light:hover:border-[#4F46E5]/30 transition-all duration-300 hover:bg-white/[0.04]"
+              className="group relative rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 hover:border-[#6366F1]/30 light:hover:border-indigo-300 hover:-translate-y-0.5 transition-all duration-200 hover:bg-white/[0.04]"
             >
               <div
                 className="inline-flex rounded-xl p-2.5 mb-3 transition-transform duration-300 group-hover:scale-110"
@@ -172,7 +172,7 @@ async function CommandCenterContent() {
               <div className="text-xs text-gray-500 light:text-gray-400">
                 {link.description}
               </div>
-              <ArrowRight className="absolute top-5 right-5 w-4 h-4 text-gray-600 light:text-gray-300 group-hover:text-[#6366F1] transition-colors" />
+              <ArrowRight className="absolute top-5 right-5 w-4 h-4 text-gray-600 light:text-gray-300 group-hover:text-[#6366F1] group-hover:translate-x-0.5 transition-all duration-200" />
             </Link>
           );
         })}
@@ -191,7 +191,7 @@ function CommandCenterLoading() {
       {/* KPI strip skeleton */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-4">
+          <div key={i} className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-4">
             <div className="w-8 h-8 bg-gray-700/50 light:bg-gray-200 rounded-xl mb-2" />
             <div className="h-7 w-12 bg-gray-700/50 light:bg-gray-200 rounded mb-1" />
             <div className="h-3 w-20 bg-gray-700/50 light:bg-gray-200 rounded" />
@@ -200,7 +200,7 @@ function CommandCenterLoading() {
       </div>
       {/* Mission Control skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5">
+        <div className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5">
           <div className="h-5 w-32 bg-gray-700/50 light:bg-gray-200 rounded mb-4" />
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-center gap-3 mb-3">
@@ -212,7 +212,7 @@ function CommandCenterLoading() {
             </div>
           ))}
         </div>
-        <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5">
+        <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5">
           <div className="h-5 w-32 bg-gray-700/50 light:bg-gray-200 rounded mb-4" />
           <div className="w-[140px] h-[140px] rounded-full bg-gray-700/50 light:bg-gray-200 mx-auto" />
         </div>
@@ -220,18 +220,18 @@ function CommandCenterLoading() {
       {/* Content skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5 h-48" />
-          <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5 h-64" />
+          <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-48" />
+          <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-64" />
         </div>
         <div className="space-y-6">
-          <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5 h-64" />
-          <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5 h-48" />
+          <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-64" />
+          <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-48" />
         </div>
       </div>
       {/* Quick links skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5">
+          <div key={i} className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5">
             <div className="w-10 h-10 bg-gray-700/50 light:bg-gray-200 rounded-xl mb-3" />
             <div className="h-5 w-24 bg-gray-700/50 light:bg-gray-200 rounded mb-1" />
             <div className="h-4 w-32 bg-gray-700/50 light:bg-gray-200 rounded" />
