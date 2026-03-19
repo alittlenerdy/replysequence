@@ -1608,3 +1608,35 @@ export async function getLatestSequencePreview(): Promise<{
     })),
   };
 }
+
+/** Get the most recent generated (ready-to-send) draft for the current user. */
+export async function getLatestReadyDraft(): Promise<{
+  id: string;
+  subject: string;
+  body: string;
+  meetingTopic: string | null;
+  meetingPlatform: string;
+  generationMs: number | null;
+  createdAt: Date | null;
+} | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  const [row] = await db
+    .select({
+      id: drafts.id,
+      subject: drafts.subject,
+      body: drafts.body,
+      meetingTopic: meetings.topic,
+      meetingPlatform: meetings.platform,
+      generationMs: drafts.generationDurationMs,
+      createdAt: drafts.createdAt,
+    })
+    .from(drafts)
+    .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
+    .where(and(eq(meetings.userId, userId), eq(drafts.status, 'generated')))
+    .orderBy(desc(drafts.createdAt))
+    .limit(1);
+
+  return row || null;
+}

@@ -12,6 +12,7 @@ import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState'
 import { MissionControl } from '@/components/dashboard/MissionControl';
 import { OpportunityHealth } from '@/components/dashboard/OpportunityHealth';
 import { RecentAIActions } from '@/components/dashboard/RecentAIActions';
+import { FollowUpReadyCard } from '@/components/dashboard/FollowUpReadyCard';
 import {
   getDraftStats,
   getMissionControlData,
@@ -21,6 +22,7 @@ import {
   getActivityFeedEvents,
   getLatestMeetingInsights,
   getLatestSequencePreview,
+  getLatestReadyDraft,
 } from '@/lib/dashboard-queries';
 
 export const dynamic = 'force-dynamic';
@@ -63,7 +65,7 @@ const quickLinks = [
 ];
 
 async function CommandCenterContent() {
-  const [stats, missionControl, recentActions, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview] = await Promise.all([
+  const [stats, missionControl, recentActions, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview, latestDraft] = await Promise.all([
     getDraftStats(),
     getMissionControlData(),
     getRecentAIActions(),
@@ -72,83 +74,100 @@ async function CommandCenterContent() {
     getActivityFeedEvents(),
     getLatestMeetingInsights(),
     getLatestSequencePreview(),
+    getLatestReadyDraft(),
   ]);
-  const hasActivity = stats.total > 0 || (stats.meetingsProcessed ?? 0) > 0;
 
   return (
     <>
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white light:text-gray-900">
+      {/* Header — minimal, not dominant */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white light:text-gray-900">
           Command Center
         </h1>
-        <p className="text-gray-400 light:text-gray-500 mt-1">
-          Your sales follow-up pipeline at a glance
+        <p className="text-sm text-gray-400 light:text-gray-500 mt-0.5">
+          After every call, everything is handled.
         </p>
       </div>
 
-      {/* KPI Strip */}
-      <KPIStrip
-        data={{
-          meetingsProcessed: stats.meetingsProcessed ?? 0,
-          sequencesGenerated: stats.sequencesActive ?? 0,
-          avgTimeSaved: stats.avgLatency > 0 ? Math.round(Math.max(0, 15 - stats.avgLatency / 60000)) : 0,
-          draftsReady: stats.generated,
-          followUpsSent: stats.sent,
-        }}
-      />
+      {/* ═══════ 1. PRIMARY: Follow-Up Ready Card ═══════ */}
+      <FollowUpReadyCard draft={latestDraft} />
 
-      {hasActivity ? (
-        <>
-          {/* Mission Control */}
+      {/* ═══════ 2. EXECUTION LAYER: What Happens Next ═══════ */}
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-4">
+          What Happens Next
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SequencePreviewCard
+            meetingName={sequencePreview?.meetingName}
+            emails={sequencePreview?.emails}
+          />
           <MissionControl
             priorities={missionControl.priorities}
             momentum={missionControl.momentum}
           />
+        </div>
+      </div>
 
-          {/* Opportunity Health */}
-          <OpportunityHealth />
-
-          {/* Main grid: Processing + Meetings | Activity + Insights */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-2 space-y-6">
-              {processingStatus && (
-                <ProcessingStatusCard
-                  status={processingStatus.status}
-                  meetingName={processingStatus.meetingName}
-                  lastUpdated={processingStatus.lastUpdated}
-                  error={processingStatus.error}
-                />
-              )}
-              <MeetingJobsTable
-                meetings={recentMeetings.length > 0 ? recentMeetings : undefined}
-              />
-            </div>
-            <div className="space-y-6">
-              <ActivityFeed
-                events={activityEvents.length > 0 ? activityEvents : undefined}
-              />
-              <AIInsightsPanel
-                insights={meetingInsights || undefined}
-              />
-            </div>
+      {/* ═══════ 3. CONTEXT LAYER: Intelligence ═══════ */}
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-4">
+          Pipeline Intelligence
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <OpportunityHealth />
           </div>
+          <div>
+            <AIInsightsPanel
+              insights={meetingInsights || undefined}
+            />
+          </div>
+        </div>
+      </div>
 
-          {/* Sequence + Transcript row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <SequencePreviewCard
-              meetingName={sequencePreview?.meetingName}
-              emails={sequencePreview?.emails}
+      {/* ═══════ 4. SECONDARY: Activity + Processing ═══════ */}
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-4">
+          Recent Activity
+        </h2>
+
+        {/* KPI Strip — compact, secondary */}
+        <KPIStrip
+          data={{
+            meetingsProcessed: stats.meetingsProcessed ?? 0,
+            sequencesGenerated: stats.sequencesActive ?? 0,
+            avgTimeSaved: stats.avgLatency > 0 ? Math.round(Math.max(0, 15 - stats.avgLatency / 60000)) : 0,
+            draftsReady: stats.generated,
+            followUpsSent: stats.sent,
+          }}
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {processingStatus && (
+              <ProcessingStatusCard
+                status={processingStatus.status}
+                meetingName={processingStatus.meetingName}
+                lastUpdated={processingStatus.lastUpdated}
+                error={processingStatus.error}
+              />
+            )}
+            <MeetingJobsTable
+              meetings={recentMeetings.length > 0 ? recentMeetings : undefined}
+            />
+          </div>
+          <div className="space-y-6">
+            <ActivityFeed
+              events={activityEvents.length > 0 ? activityEvents : undefined}
             />
             <TranscriptViewer />
           </div>
+        </div>
+      </div>
 
-          {/* Recent AI Actions */}
-          {recentActions.length > 0 && <RecentAIActions actions={recentActions} />}
-        </>
-      ) : (
-        <DashboardEmptyState />
-      )}
+      {/* Recent AI Actions */}
+      {recentActions.length > 0 && <RecentAIActions actions={recentActions} />}
 
       {/* Quick Links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
