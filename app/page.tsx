@@ -131,7 +131,7 @@ export default function LandingPage() {
               <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
-            <p className="text-lg font-light text-[#C0C8E0] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates — automatically, before your next meeting starts.
             </p>
 
@@ -143,7 +143,7 @@ export default function LandingPage() {
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#6366F1] shrink-0" aria-hidden="true" />
-                  <span className="text-sm text-[#C0C8E0] light:text-gray-600 font-medium">{bullet}</span>
+                  <span className="text-sm text-gray-300 light:text-gray-600 font-medium">{bullet}</span>
                 </div>
               ))}
             </div>
@@ -214,7 +214,7 @@ export default function LandingPage() {
           >
             <Link
               href="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-base font-semibold text-white border-2 border-white/20 hover:border-white/40 hover:bg-white/10 transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:text-gray-900 light:border-gray-300 light:hover:border-gray-500 light:hover:bg-gray-100 group"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-base font-bold text-white border-2 border-white/30 hover:border-white/40 hover:bg-white/10 transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:text-gray-900 light:border-gray-300 light:hover:border-gray-500 light:hover:bg-gray-100 group"
             >
               <svg className="w-5 h-5 text-[#F59E0B]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5v14l11-7z" />
@@ -236,15 +236,15 @@ export default function LandingPage() {
               href="/security"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] light:bg-gray-50 border border-white/[0.08] light:border-gray-200 rounded-full hover:bg-white/[0.07] light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
-              <Lock className="w-3.5 h-3.5 text-[#8892B0] light:text-gray-400" aria-hidden="true" />
-              <span className="text-xs font-medium text-[#9CA3BF] light:text-gray-500">AES-256 Encryption</span>
+              <Lock className="w-3.5 h-3.5 text-gray-400 light:text-gray-400" aria-hidden="true" />
+              <span className="text-xs font-medium text-gray-300 light:text-gray-500">AES-256 Encryption</span>
             </a>
             <a
               href="/privacy"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] light:bg-gray-50 border border-white/[0.08] light:border-gray-200 rounded-full hover:bg-white/[0.07] light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
-              <Shield className="w-3.5 h-3.5 text-[#8892B0] light:text-gray-400" aria-hidden="true" />
-              <span className="text-xs font-medium text-[#9CA3BF] light:text-gray-500">Privacy First</span>
+              <Shield className="w-3.5 h-3.5 text-gray-400 light:text-gray-400" aria-hidden="true" />
+              <span className="text-xs font-medium text-gray-300 light:text-gray-500">Privacy First</span>
             </a>
           </motion.div>
 
@@ -281,7 +281,7 @@ export default function LandingPage() {
       <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 
       {/* ============ 2. THE FOLLOW-UP GAP ============ */}
-      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(180deg, rgba(91,108,255,0.04) 0%, rgba(15,22,41,0.6) 50%, transparent 100%)' }}>
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: '#0C1425' }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -325,7 +325,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="rounded-2xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
+                className="rounded-2xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 shadow-lg shadow-black/10 light:shadow-gray-200/50 flex flex-col items-center text-center"
               >
                 <div className="w-12 h-12 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-[#6366F1] light:text-[#4F46E5]" aria-hidden="true" />
@@ -380,6 +380,7 @@ export default function LandingPage() {
                   <Link
                     href={pillar.href}
                     className="block rounded-2xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 hover:border-opacity-60 hover:-translate-y-1 hover:shadow-lg transition-all duration-200 cursor-pointer light:shadow-sm group"
+                    style={{ borderTop: `3px solid ${pillar.color}` }}
                   >
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -389,7 +390,7 @@ export default function LandingPage() {
                     </div>
                     <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2">{pillar.title}</h3>
                     <p className="text-sm text-[#C0C8E0] light:text-gray-600 mb-4">{pillar.description}</p>
-                    <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: pillar.color }}>
+                    <span className="text-xs font-medium opacity-60 group-hover:opacity-100 transition-opacity duration-200" style={{ color: pillar.color }}>
                       Learn more →
                     </span>
                   </Link>
@@ -404,7 +405,7 @@ export default function LandingPage() {
 
       {/* ============ 4. HOW IT WORKS ============ */}
       <section className="py-12 md:py-20 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto bg-white/[0.02] light:bg-white/60 backdrop-blur-sm border border-white/[0.05] light:border-gray-200 rounded-3xl p-8 md:p-12 light:shadow-sm">
+        <div className="max-w-6xl mx-auto bg-[#0C1425] light:bg-white/60 backdrop-blur-sm border border-[#1E2A4A] light:border-gray-200 rounded-3xl p-8 md:p-12 light:shadow-sm">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -499,7 +500,7 @@ export default function LandingPage() {
       <BentoGrid />
 
       {/* ============ 6. SOCIAL PROOF STATS ============ */}
-      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: 'linear-gradient(180deg, rgba(91,108,255,0.04) 0%, rgba(15,22,41,0.6) 50%, transparent 100%)' }}>
+      <section className="py-12 md:py-20 px-4 relative z-10" style={{ background: '#0C1425' }}>
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0.15, y: 15 }}
@@ -539,7 +540,7 @@ export default function LandingPage() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="rounded-2xl bg-[#141C34]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 sm:p-8 text-center light:shadow-sm"
               >
-                <span className="text-6xl font-extrabold bg-gradient-to-r from-[#FF9D2D] to-[#FDE047] light:to-[#F59E0B] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,157,45,0.3)] light:drop-shadow-none">{item.stat}</span>
+                <span className="text-6xl font-extrabold bg-gradient-to-r from-[#FF9D2D] to-[#FDE047] light:to-[#F59E0B] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,157,45,0.3)] light:drop-shadow-none" style={{ textShadow: '0 0 30px rgba(245,158,11,0.3)' }}>{item.stat}</span>
                 <p className="text-sm text-[#C0C8E0] light:text-gray-700 mt-3 mb-1 font-medium">{item.highlight}</p>
                 <p className="text-sm text-[#8892B0] light:text-gray-500">{item.description}</p>
               </motion.div>
@@ -557,7 +558,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-white light:text-gray-900 text-pretty">
               Your Next Meeting Is Coming. The <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Follow-Up</span> Should Be Automatic.
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 mb-6">
