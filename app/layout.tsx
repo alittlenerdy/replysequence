@@ -140,12 +140,14 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `
           try {
             var t = localStorage.getItem('rs-theme');
+            var d = document.documentElement;
             if (t === 'light') {
-              document.documentElement.classList.add('light');
-              document.documentElement.classList.remove('dark');
+              d.classList.add('light');
+              d.classList.remove('dark');
             } else {
-              document.documentElement.classList.add('dark');
-              document.documentElement.classList.remove('light');
+              d.classList.add('dark');
+              d.classList.remove('light');
+              if (!t) localStorage.setItem('rs-theme', 'dark');
             }
           } catch(e) {}
         ` }} />
