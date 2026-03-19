@@ -64,19 +64,19 @@ export function PipelineAutomationDemo() {
     animate: isInView
       ? { opacity: 1, y: 0, scale: 1 }
       : { opacity: 0, y: 15, scale: 0.97 },
-    transition: { delay: index * 0.8, duration: 0.5, ease: 'easeOut' },
+    transition: { delay: index * 0.8, duration: 0.5, ease: 'easeOut' as const },
   });
 
   const slideLeft = (index: number) => ({
     initial: { opacity: 0, x: -30 },
     animate: isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 },
-    transition: { delay: index * 0.8, duration: 0.5, ease: 'easeOut' },
+    transition: { delay: index * 0.8, duration: 0.5, ease: 'easeOut' as const },
   });
 
   const slideRight = (index: number) => ({
     initial: { opacity: 0, x: 30 },
     animate: isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 },
-    transition: { delay: index * 0.8, duration: 0.5, ease: 'easeOut' },
+    transition: { delay: index * 0.8, duration: 0.5, ease: 'easeOut' as const },
   });
 
   return (
