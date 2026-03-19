@@ -92,7 +92,7 @@ export function ProductPageTemplate({
       </section>
 
       {/* Interactive Demo */}
-      <section className="py-12 px-4">
+      <section className="py-12 px-4" style={{ background: '#0C1425' }}>
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -105,7 +105,7 @@ export function ProductPageTemplate({
             {demo}
           </motion.div>
           <p className="text-center mt-4">
-            <Link href="/demo" className="text-sm text-[#8892B0] light:text-gray-500 hover:text-[#6366F1] transition-colors">
+            <Link href="/demo" className="text-sm text-gray-400 hover:text-white light:text-gray-500 light:hover:text-gray-900 transition-colors">
               Try it yourself with the interactive demo →
             </Link>
           </p>
@@ -128,7 +128,7 @@ export function ProductPageTemplate({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.4 }}
-                  className="rounded-xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 light:shadow-sm"
+                  className="rounded-xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 light:shadow-sm shadow-lg shadow-black/10 hover:-translate-y-1 hover:shadow-xl transition-all duration-200"
                 >
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
@@ -146,7 +146,7 @@ export function ProductPageTemplate({
       </section>
 
       {/* Use Cases */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4" style={{ background: '#0C1425' }}>
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-[#E8ECF4] light:text-gray-900">
             Built For
@@ -159,7 +159,8 @@ export function ProductPageTemplate({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="rounded-xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 text-center light:shadow-sm"
+                className="rounded-xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 text-center light:shadow-sm shadow-lg shadow-black/10 hover:-translate-y-1 hover:shadow-xl transition-all duration-200"
+                style={{ borderTop: `3px solid ${accent}` }}
               >
                 <span
                   className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-4"
@@ -181,9 +182,10 @@ export function ProductPageTemplate({
           <div className="flex flex-col items-center gap-6">
             <Link
               href="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[#1E2A4A] light:border-gray-200 bg-[#0F1629] light:bg-white text-white light:text-gray-900 hover:border-[#6366F1] transition-colors font-medium"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
+              style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}
             >
-              <svg className="w-4 h-4 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
               Watch Demo
             </Link>
             <div className="flex flex-wrap justify-center gap-3">
@@ -193,8 +195,8 @@ export function ProductPageTemplate({
                   <Link
                     key={p.href}
                     href={p.href}
-                    className="px-4 py-2 rounded-lg text-sm border border-[#1E2A4A] light:border-gray-200 bg-[#0F1629]/50 light:bg-gray-50 text-[#8892B0] light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:border-opacity-60 transition-colors"
-                    style={{ ['--hover-color' as string]: p.color }}
+                    className="px-4 py-2 rounded-full text-sm font-medium border border-[#2A3558] light:border-gray-200 bg-[#0F1629]/80 light:bg-gray-50 text-[#C0C8E0] light:text-gray-600 hover:text-white light:hover:text-gray-900 hover:bg-[#1A2340] transition-all duration-200"
+                    style={{ ['--hover-color' as string]: p.color, borderColor: `${p.color}30` }}
                   >
                     {p.title} →
                   </Link>
@@ -205,9 +207,9 @@ export function ProductPageTemplate({
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-4" style={{ background: `radial-gradient(ellipse at center, ${accent}08 0%, transparent 50%)` }}>
+      <section className="py-16 px-4" style={{ background: `radial-gradient(ellipse at center, ${accent}18 0%, transparent 55%)` }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900">
             Ready to See It In Action?
           </h2>
           <p className="text-[#C0C8E0] light:text-gray-600 mb-8">
