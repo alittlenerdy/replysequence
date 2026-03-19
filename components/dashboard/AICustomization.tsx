@@ -244,7 +244,7 @@ export function AICustomization() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white light:text-gray-900">Your AI Writing Assistant</h3>
-                <p className="text-sm text-[#B3BFFF]/80 light:text-gray-500 mt-0.5">Customize how your follow-up emails sound</p>
+                <p className="text-sm text-[#B3BFFF]/80 light:text-gray-500 mt-0.5">Shape how ReplySequence writes for you</p>
               </div>
             </div>
             <div aria-live="polite">
@@ -266,6 +266,7 @@ export function AICustomization() {
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-5 rounded-full bg-[#6366F1]/20 text-[#6366F1] text-xs font-bold flex items-center justify-center">1</span>
               <h4 className="text-sm font-medium text-white light:text-gray-900">Email Tone</h4>
+              <p className="text-[10px] text-[#8892B0] light:text-gray-400 ml-auto">Applies to all future follow-ups</p>
             </div>
             <div className="space-y-2.5">
               {TONE_OPTIONS.map((option) => {
@@ -314,7 +315,8 @@ export function AICustomization() {
           <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-5 rounded-full bg-[#6366F1]/20 text-[#6366F1] text-xs font-bold flex items-center justify-center">2</span>
-              <h4 className="text-sm font-medium text-white light:text-gray-900">Custom Instructions & Signature</h4>
+              <h4 className="text-sm font-medium text-white light:text-gray-900">Your AI Instructions</h4>
+              <p className="text-[10px] text-[#8892B0] light:text-gray-400 ml-auto">Active across all sequences</p>
             </div>
 
             {/* Instructions */}
@@ -434,9 +436,12 @@ export function AICustomization() {
           <TemplateManager />
         </div>
 
-        {/* Right column: Sticky preview */}
+        {/* Right column: Sticky preview — shows the result of your choices */}
         <div className="w-full lg:w-[380px] shrink-0">
           <div className="lg:sticky lg:top-36">
+            <p className="text-[10px] text-[#06B6D4] light:text-teal-600 font-medium uppercase tracking-wider mb-2">
+              This is how your emails will sound
+            </p>
             <AISettingsPreview
               tone={preferences.aiTone}
               customInstructions={preferences.aiCustomInstructions}

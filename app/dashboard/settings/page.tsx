@@ -78,8 +78,8 @@ export default function SettingsPage() {
   return (
     <Suspense fallback={<SettingsLoadingSkeleton />}>
       <div className="max-w-6xl mx-auto mb-6">
-        <h2 className="text-2xl font-bold text-white light:text-gray-900">Settings</h2>
-        <p className="text-gray-400 light:text-gray-500 mt-1">Tune ReplySequence to match your tone, stack, and team.</p>
+        <h2 className="text-2xl font-bold tracking-tight text-white light:text-gray-900">Settings</h2>
+        <p className="text-sm text-[#8892B0] light:text-gray-500 mt-0.5">Control how your follow-ups are written.</p>
       </div>
       <SettingsTabs />
     </Suspense>
