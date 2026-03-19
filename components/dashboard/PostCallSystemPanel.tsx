@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Edit3, Layers, Clock, CheckCircle2, AlertTriangle, Loader2, ArrowRight, User, Calendar } from 'lucide-react';
@@ -57,25 +56,8 @@ const processingSteps = [
   { key: 'generating_sequence', label: 'Generating follow-up, sequence, and next steps' },
 ];
 
-function ProcessingPanel({ status, meetingName, simulated }: ProcessingState & { simulated?: boolean }) {
-  const [visibleStep, setVisibleStep] = useState(0);
-  const targetIndex = processingSteps.findIndex(s => s.key === status);
-
-  // Animate through steps when simulated
-  useEffect(() => {
-    if (!simulated) {
-      setVisibleStep(targetIndex);
-      return;
-    }
-    setVisibleStep(0);
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    for (let i = 1; i <= 3; i++) {
-      timers.push(setTimeout(() => setVisibleStep(i), i * 700));
-    }
-    return () => timers.forEach(clearTimeout);
-  }, [simulated, targetIndex]);
-
-  const currentIndex = simulated ? visibleStep : targetIndex;
+function ProcessingPanel({ status, meetingName }: ProcessingState) {
+  const currentIndex = processingSteps.findIndex(s => s.key === status);
 
   return (
     <motion.div
@@ -100,12 +82,9 @@ function ProcessingPanel({ status, meetingName, simulated }: ProcessingState & {
           const isDone = i < currentIndex;
           const isCurrent = i === currentIndex;
           return (
-            <motion.div
+            <div
               key={step.key}
               className="flex items-center gap-3"
-              initial={simulated ? { opacity: 0, x: -10 } : false}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: simulated ? i * 0.15 : 0, duration: 0.2 }}
             >
               {isDone ? (
                 <CheckCircle2 className="w-4 h-4 text-[#06B6D4] flex-shrink-0" />
@@ -114,10 +93,10 @@ function ProcessingPanel({ status, meetingName, simulated }: ProcessingState & {
               ) : (
                 <div className="w-4 h-4 rounded-full border border-[#1E2A4A] light:border-gray-300 flex-shrink-0" />
               )}
-              <span className={`text-sm transition-colors duration-200 ${isDone ? 'text-[#06B6D4]' : isCurrent ? 'text-white light:text-gray-900 font-medium' : 'text-[#8892B0]/60 light:text-gray-400'}`}>
+              <span className={`text-sm ${isDone ? 'text-[#06B6D4]' : isCurrent ? 'text-white light:text-gray-900 font-medium' : 'text-[#8892B0]/60 light:text-gray-400'}`}>
                 {step.label}
               </span>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -336,43 +315,32 @@ function IdlePanel() {
 }
 
 /* ──────────────────────────────────────────────
-   MAIN EXPORT — 3 states: processing / output / idle
+   MAIN EXPORT — persistent panel, 3 states
+   Priority: Processing > Output > Idle
    ────────────────────────────────────────────── */
 export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, riskFlag }: PostCallSystemPanelProps) {
-  const isRealProcessing = processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status);
+  const isProcessing = processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status);
   const hasResults = !!draft || !!sequence || nextSteps.length > 0;
 
-  // Simulate processing on first load if we have recent results
-  const [simulating, setSimulating] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    if (!isRealProcessing && hasResults) {
-      setSimulating(true);
-      const timer = setTimeout(() => setSimulating(false), 2800);
-      return () => clearTimeout(timer);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const showProcessing = isRealProcessing || (simulating && mounted);
-  const showIdle = !showProcessing && !hasResults;
+  // State priority: Processing > Output > Idle
+  const state: 'processing' | 'output' | 'idle' = isProcessing ? 'processing' : hasResults ? 'output' : 'idle';
   const meetingName = processing?.meetingName || draft?.meetingTopic || 'your meeting';
 
   return (
     <div className="mb-4">
       <AnimatePresence mode="wait">
-        {showProcessing ? (
+        {state === 'processing' && (
           <ProcessingPanel
             key="processing"
-            status={isRealProcessing ? processing!.status : 'generating_sequence'}
+            status={processing!.status}
             meetingName={meetingName}
-            simulated={simulating}
           />
-        ) : showIdle ? (
-          <IdlePanel key="idle" />
-        ) : (
+        )}
+        {state === 'output' && (
           <OutputPanel key="output" draft={draft} sequence={sequence} nextSteps={nextSteps} riskFlag={riskFlag} />
+        )}
+        {state === 'idle' && (
+          <IdlePanel key="idle" />
         )}
       </AnimatePresence>
     </div>

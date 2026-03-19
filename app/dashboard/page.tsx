@@ -85,8 +85,21 @@ async function CommandCenterContent() {
           Pipeline Intelligence
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-4">
             <OpportunityHealth />
+            {/* Compact pipeline stats to fill left column */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: 'Meetings', value: stats.meetingsProcessed ?? 0, color: '#06B6D4' },
+                { label: 'Sequences', value: stats.sequencesActive ?? 0, color: '#6366F1' },
+                { label: 'Follow-Ups Sent', value: stats.sent, color: '#22C55E' },
+              ].map((stat) => (
+                <div key={stat.label} className="rounded-xl bg-gray-900/60 light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-3 text-center">
+                  <p className="text-lg font-bold tabular-nums" style={{ color: stat.color }}>{stat.value}</p>
+                  <p className="text-[10px] text-[#8892B0] light:text-gray-500">{stat.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
           <div>
             <AIInsightsPanel insights={meetingInsights || undefined} />
