@@ -155,12 +155,12 @@ export default function LandingPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
           >
-            <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF9D2D]/10 to-[#6366F1]/10 light:from-[#FFF5EB] light:to-[#EEF0FF] border-2 border-[#FF9D2D]/40 light:border-[#FF9D2D]/40 shadow-lg shadow-[#FF9D2D]/10 light:shadow-[#FFE4C4]/30">
+            <div className="px-4 py-2 rounded-full bg-white/[0.05] light:bg-gray-100 border border-white/10 light:border-gray-200">
               <CountdownAnimation />
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#6366F1]/10 to-[#7A5CFF]/10 border border-[#6366F1]/20">
-              <Zap className="w-4 h-4 text-[#FF9D2D]" aria-hidden="true" />
-              <span className="text-sm font-semibold text-[#C0C8E0] light:text-gray-700">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.05] light:bg-gray-100 border border-white/10 light:border-gray-200">
+              <Zap className="w-4 h-4 text-[#F59E0B]" aria-hidden="true" />
+              <span className="text-sm font-medium text-gray-300 light:text-gray-600">
                 10x faster than typing it yourself
               </span>
             </div>

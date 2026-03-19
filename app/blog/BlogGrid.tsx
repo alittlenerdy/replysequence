@@ -14,22 +14,9 @@ function formatDate(dateString: string): string {
   });
 }
 
-/** Map the first tag to a gradient for the placeholder image area. */
-function getGradient(tags: string[]): string {
-  const tag = (tags[0] ?? '').toLowerCase();
-  if (tag.includes('sales'))
-    return 'bg-gradient-to-br from-indigo-500/30 via-indigo-600/20 to-indigo-900/10';
-  if (tag.includes('ai') || tag.includes('automation'))
-    return 'bg-gradient-to-br from-violet-500/30 via-purple-600/25 to-purple-900/15';
-  if (tag.includes('email') || tag.includes('follow'))
-    return 'bg-gradient-to-br from-amber-500/30 via-orange-600/25 to-orange-900/15';
-  if (tag.includes('crm') || tag.includes('integration'))
-    return 'bg-gradient-to-br from-emerald-500/30 via-teal-600/25 to-teal-900/15';
-  if (tag.includes('productivity') || tag.includes('workflow'))
-    return 'bg-gradient-to-br from-sky-500/30 via-cyan-600/25 to-cyan-900/15';
-  if (tag.includes('meeting') || tag.includes('call'))
-    return 'bg-gradient-to-br from-rose-500/30 via-pink-600/25 to-pink-900/15';
-  return 'bg-gradient-to-br from-indigo-500/30 via-indigo-600/20 to-indigo-900/10';
+/** All blog cards use a single consistent branded gradient — no random per-tag colors. */
+function getGradient(): string {
+  return 'bg-gradient-to-br from-[#6366F1]/15 to-[#4F46E5]/5';
 }
 
 const VISIBLE_TAGS = 6;
@@ -130,7 +117,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
                     </div>
                   ) : (
                     <div
-                      className={`shrink-0 ${getGradient(post.tags)} ${isFeatured ? 'md:w-1/2 h-48 md:h-auto md:max-h-48 md:min-h-[12rem]' : 'h-32'}`}
+                      className={`shrink-0 ${getGradient()} ${isFeatured ? 'md:w-1/2 h-40 md:h-auto' : 'h-36'}`}
                     />
                   )}
 
