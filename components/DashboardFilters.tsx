@@ -50,7 +50,7 @@ export function DashboardFilters({
                 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${status === chip.value
                   ? 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/30 light:bg-[#EEF0FF] light:text-[#4F46E5] light:border-[#4F46E5]/30'
-                  : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
+                  : 'bg-transparent text-[#8892B0] border-[#1E2A4A] hover:border-gray-500 hover:text-white light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
                 }
               `}
             >
@@ -60,7 +60,7 @@ export function DashboardFilters({
         </div>
 
         {/* Divider */}
-        <div className="hidden lg:block w-px h-5 bg-gray-700 light:bg-gray-300" />
+        <div className="hidden lg:block w-px h-5 bg-[#1E2A4A] light:bg-gray-300" />
 
         {/* Date range chips */}
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -72,7 +72,7 @@ export function DashboardFilters({
                 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${dateRange === chip.value
                   ? 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/30 light:bg-[#EEF0FF] light:text-[#4F46E5] light:border-[#4F46E5]/30'
-                  : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
+                  : 'bg-transparent text-[#8892B0] border-[#1E2A4A] hover:border-gray-500 hover:text-white light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
                 }
               `}
             >

@@ -57,7 +57,7 @@ function DraftsLoading() {
     <div className="animate-pulse">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5">
+          <div key={i} className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 light:shadow-sm p-5">
             <div className="w-10 h-10 bg-gray-700/50 light:bg-gray-200 rounded-xl mb-3" />
             <div className="h-8 w-16 bg-gray-700/50 light:bg-gray-200 rounded mb-2" />
             <div className="h-4 w-20 bg-gray-700/50 light:bg-gray-200 rounded" />
@@ -70,7 +70,7 @@ function DraftsLoading() {
             <div className="h-8 w-40 bg-gray-700/50 light:bg-gray-200 rounded mb-2" />
             <div className="h-4 w-72 bg-gray-700/50 light:bg-gray-200 rounded" />
           </div>
-          <div className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6">
+          <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 light:shadow-sm p-6">
             <div className="h-10 bg-gray-700/50 light:bg-gray-200 rounded mb-4" />
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-16 bg-gray-700/50 light:bg-gray-200 rounded mb-3" />
@@ -79,7 +79,7 @@ function DraftsLoading() {
         </div>
         <div className="lg:col-span-1 space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-4">
+            <div key={i} className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 light:shadow-sm p-4">
               <div className="h-5 w-32 bg-gray-700/50 light:bg-gray-200 rounded mb-3" />
               <div className="h-16 bg-gray-700/30 light:bg-gray-100 rounded-xl" />
             </div>

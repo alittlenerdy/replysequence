@@ -247,7 +247,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
     : 0;
 
   return (
-    <div className="border border-gray-700/50 light:border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-[#1E2A4A] light:border-gray-200 light:shadow-sm rounded-xl overflow-hidden">
       {/* Header */}
       <div className="p-4 bg-gray-800/30 light:bg-gray-50">
         <div className="flex items-start justify-between gap-3">
@@ -333,7 +333,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
       </div>
 
       {/* Steps timeline */}
-      <div className="divide-y divide-gray-700/30 light:divide-gray-100">
+      <div className="divide-y divide-[#1E2A4A]/60 light:divide-gray-100">
         {sequence.steps.map((step) => {
           const isExpanded = expandedStep === step.id;
           const stepConfig = STEP_STATUS_CONFIG[step.status];
@@ -342,7 +342,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
             <div key={step.id}>
               <button
                 onClick={() => setExpandedStep(isExpanded ? null : step.id)}
-                className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-800/20 light:hover:bg-gray-50 transition-colors"
+                className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/[0.03] light:hover:bg-gray-50 transition-colors"
               >
                 {/* Step number circle */}
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 border ${
@@ -426,7 +426,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                           type="text"
                           value={editSubject}
                           onChange={(e) => setEditSubject(e.target.value)}
-                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#6366F1]/50"
+                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-[#1E2A4A] light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#6366F1]/50"
                         />
                       </div>
                       <div>
@@ -435,7 +435,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                           value={editBody}
                           onChange={(e) => setEditBody(e.target.value)}
                           rows={6}
-                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#6366F1]/50 resize-y"
+                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-[#1E2A4A] light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#6366F1]/50 resize-y"
                         />
                       </div>
                       <div className="flex justify-end gap-2">
@@ -456,7 +456,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                     </div>
                   ) : (
                     /* Read-only view */
-                    <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 p-3">
+                    <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-[#1E2A4A]/60 light:border-gray-200 p-3">
                       <div className="flex items-start justify-between">
                         <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Subject</p>
                         {(step.status === 'pending' || step.status === 'scheduled') && (
@@ -524,7 +524,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 bg-gray-800/20 light:bg-gray-50 border-t border-gray-700/30 light:border-gray-200">
+      <div className="px-4 py-2 bg-gray-800/20 light:bg-gray-50 border-t border-[#1E2A4A]/60 light:border-gray-200">
         <span className="text-xs text-gray-500" suppressHydrationWarning>
           Created {formatDate(sequence.createdAt)}
         </span>

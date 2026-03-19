@@ -499,7 +499,7 @@ export function DraftsTable({
 
   return (
     <>
-      <div id="drafts-table" className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+      <div id="drafts-table" className="bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 light:shadow-sm rounded-2xl shadow-xl overflow-hidden">
         {/* Table Header */}
         <div className="px-5 sm:px-6 py-5 border-b border-[#6366F1]/10 light:border-gray-200">
           <div className="flex items-center justify-between">
@@ -615,8 +615,8 @@ export function DraftsTable({
               className={`
                 p-4 transition-[opacity,transform,background-color] duration-300 ease-out w-full text-left
                 ${index < visibleRows ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}
-                ${selectedIds.has(draft.id) ? 'bg-[#6366F1]/10' : 'hover:bg-gray-700/70 light:hover:bg-[#F5F6FF]'}
-                active:bg-gray-700/90 light:active:bg-[#EEF0FF]
+                ${selectedIds.has(draft.id) ? 'bg-[#6366F1]/10' : 'hover:bg-white/[0.03] light:hover:bg-[#F5F6FF]'}
+                active:bg-white/[0.06] light:active:bg-[#EEF0FF]
                 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#6366F1]
               `}
               onClick={() => setSelectedDraft(draft)}
@@ -718,22 +718,22 @@ export function DraftsTable({
                     <span className="sr-only">Select all drafts</span>
                   </label>
                 </th>
-                <th className="w-[25%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[25%] px-4 py-3 text-left text-xs font-semibold text-[#64748B] light:text-gray-500 uppercase tracking-wider">
                   Meeting
                 </th>
-                <th className="w-[30%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[30%] px-4 py-3 text-left text-xs font-semibold text-[#64748B] light:text-gray-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="w-[9%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[9%] px-4 py-3 text-left text-xs font-semibold text-[#64748B] light:text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="hidden lg:table-cell w-[7%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[7%] px-4 py-3 text-left text-xs font-semibold text-[#64748B] light:text-gray-500 uppercase tracking-wider">
                   Age
                 </th>
-                <th className="w-[9%] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="w-[9%] px-4 py-3 text-left text-xs font-semibold text-[#64748B] light:text-gray-500 uppercase tracking-wider">
                   Quality
                 </th>
-                <th className="hidden lg:table-cell w-[140px] px-4 py-3 text-left text-xs font-semibold text-gray-400 light:text-gray-500 uppercase tracking-wider">
+                <th className="hidden lg:table-cell w-[140px] px-4 py-3 text-left text-xs font-semibold text-[#64748B] light:text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
                 <th className="w-[44px] px-2 py-3">

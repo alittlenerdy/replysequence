@@ -93,7 +93,7 @@ export default function SequencesPage() {
         </div>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-6 animate-pulse">
+            <div key={i} className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 light:shadow-sm p-6 animate-pulse">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-6 w-20 bg-gray-700/50 light:bg-gray-200 rounded-full" />
                 <div className="h-5 w-40 bg-gray-700/50 light:bg-gray-200 rounded" />
@@ -141,7 +141,7 @@ export default function SequencesPage() {
             className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
               filter === tab.key
                 ? 'bg-[#6366F1] text-white shadow-sm'
-                : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
+                : 'text-[#8892B0] hover:text-white light:text-gray-500 light:hover:text-gray-900'
             }`}
           >
             {tab.label}
