@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Mail, Send, Loader2, Check } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Mail, Send, Loader2, Check, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TONE_OPTIONS, type ToneValue } from '@/lib/constants/ai-settings';
 
@@ -55,9 +55,37 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [displayBody, setDisplayBody] = useState('');
+  const [displaySubject, setDisplaySubject] = useState('');
+  const prevInputRef = useRef('');
 
   const subject = getSubjectLine(tone);
   const body = getPreviewBody(tone, customInstructions);
+
+  // Reactive update: debounce instructions, instant for tone
+  useEffect(() => {
+    const inputKey = `${tone}|${customInstructions}`;
+    if (inputKey === prevInputRef.current) return;
+
+    setIsUpdating(true);
+    const delay = prevInputRef.current.split('|')[0] !== tone ? 150 : 400;
+    const timer = setTimeout(() => {
+      setDisplaySubject(subject);
+      setDisplayBody(body);
+      setIsUpdating(false);
+      prevInputRef.current = inputKey;
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [tone, customInstructions, subject, body]);
+
+  // Initialize
+  useEffect(() => {
+    setDisplaySubject(subject);
+    setDisplayBody(body);
+    prevInputRef.current = `${tone}|${customInstructions}`;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSendTest() {
     setSending(true);
@@ -83,13 +111,23 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
   }
 
   return (
-    <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-2xl overflow-hidden light:shadow-sm">
+    <div className={`glass-card rounded-2xl overflow-hidden light:shadow-sm transition-[border-color,box-shadow] duration-300 ${
+      isUpdating
+        ? 'border border-[#06B6D4]/30 shadow-lg shadow-[#06B6D4]/5'
+        : 'border border-white/[0.06] light:border-gray-200'
+    }`}>
       {/* Email header */}
       <div className="px-5 py-3 border-b border-gray-700/50 light:border-gray-200 bg-gray-800/30 light:bg-gray-50">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-[#6366F1]" />
             <span className="text-xs font-medium text-gray-400 light:text-gray-500">Live Preview</span>
+            {isUpdating && (
+              <span className="flex items-center gap-1 text-[10px] text-[#06B6D4]">
+                <Sparkles className="w-3 h-3 animate-pulse" />
+                Updating...
+              </span>
+            )}
           </div>
           <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[#6366F1]/15 text-[#6366F1] light:bg-[#DDE1FF] light:text-[#3A4BDD]">
             {getToneLabel(tone)} tone
@@ -102,23 +140,23 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
           </div>
           <div className="flex gap-2">
             <span className="text-gray-500 w-10 shrink-0">Subj:</span>
-            <span className="text-white light:text-gray-900 font-medium">{subject}</span>
+            <span className="text-white light:text-gray-900 font-medium">{displaySubject}</span>
           </div>
         </div>
       </div>
 
-      {/* Email body with fade transition */}
+      {/* Email body — live reactive */}
       <div className="px-5 py-4">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${tone}-${customInstructions.length > 0 ? 'has-instructions' : 'no-instructions'}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            key={displayBody}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: isUpdating ? 0.4 : 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.2 }}
             className="text-sm text-gray-300 light:text-gray-600 leading-relaxed whitespace-pre-line"
           >
-            {body}
+            {displayBody}
           </motion.div>
         </AnimatePresence>
 

@@ -275,8 +275,10 @@ export function AICustomization() {
                   <motion.button
                     key={option.value}
                     layout
+                    animate={isSelected ? { scale: 1.02 } : { scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                     onClick={() => setPreferences(p => ({ ...p, aiTone: option.value }))}
-                    className={`w-full p-3.5 rounded-xl border text-left transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:shadow-md outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                    className={`w-full p-3.5 rounded-xl border text-left transition-[box-shadow,border-color,background-color] duration-200 hover:shadow-md outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                       isSelected
                         ? 'border-[#6366F1] bg-[#6366F1]/10 shadow-lg shadow-[#6366F1]/20'
                         : 'border-white/[0.06] light:border-gray-200 hover:border-gray-500 light:hover:border-gray-400 bg-gray-900/30 light:bg-gray-50'
