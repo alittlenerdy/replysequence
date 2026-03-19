@@ -10,7 +10,7 @@ export function ToolbarThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem('theme');
+    const stored = localStorage.getItem('rs-theme');
     if (stored === 'light') {
       setIsDark(false);
     }
@@ -24,11 +24,11 @@ export function ToolbarThemeToggle() {
     if (newIsDark) {
       html.classList.add('dark');
       html.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
+      localStorage.setItem('rs-theme', 'dark');
     } else {
       html.classList.remove('dark');
       html.classList.add('light');
-      localStorage.setItem('theme', 'light');
+      localStorage.setItem('rs-theme', 'light');
     }
   };
 
