@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown, FileText, Layers, Brain, TrendingUp, ArrowRight } from 'lucide-react';
+import { ChevronDown, FileText, Layers, Brain, TrendingUp, ArrowRight, Play } from 'lucide-react';
 
 const competitors = [
   { name: 'vs Gong', slug: 'gong' },
@@ -196,6 +196,16 @@ export default function MobileMenu() {
                 </a>
               </div>
             </div>
+
+            {/* Demo Link */}
+            <a
+              href="/demo"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            >
+              <Play className="w-5 h-5 text-[#6366F1]" fill="#6366F1" strokeWidth={0} />
+              Demo
+            </a>
 
             <a href="/how-it-works" onClick={() => setIsOpen(false)} className={linkClass}>
               How It Works

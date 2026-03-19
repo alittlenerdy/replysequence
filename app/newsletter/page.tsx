@@ -119,7 +119,7 @@ export default function NewsletterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <div className="rounded-2xl bg-gray-900/60 light:bg-gray-50 border border-gray-700/50 light:border-gray-200 p-6 sm:p-8">
+          <div className="rounded-2xl bg-gray-900/60 light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-6 sm:p-8">
             <AnimatePresence mode="wait">
               {success ? (
                 <motion.div
@@ -176,7 +176,7 @@ export default function NewsletterPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !email}
-                      className="px-6 py-3 bg-gradient-to-r from-[#4F46E5] to-[#3A4BDD] hover:from-[#6366F1] hover:to-[#4F46E5] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-[#6366F1]/25 hover:shadow-xl hover:shadow-[#6366F1]/30 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                      className="btn-cta px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-semibold whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
                     >
                       {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                     </button>
@@ -217,7 +217,7 @@ export default function NewsletterPage() {
             {benefits.map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl bg-gray-900/40 light:bg-gray-50 border border-gray-800/50 light:border-gray-200 p-6"
+                className="rounded-2xl bg-gray-900/40 light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-6"
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
@@ -250,7 +250,7 @@ export default function NewsletterPage() {
             {sampleTopics.map((topic, i) => (
               <div
                 key={i}
-                className="flex items-start gap-3 rounded-xl bg-gray-900/30 light:bg-gray-50 border border-gray-800/40 light:border-gray-200 px-5 py-4"
+                className="flex items-start gap-3 rounded-xl bg-gray-900/30 light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 px-5 py-4"
               >
                 <Mail className="w-4 h-4 text-[#6366F1] mt-0.5 shrink-0" />
                 <span className="text-sm text-gray-300 light:text-gray-700">{topic}</span>
@@ -271,7 +271,7 @@ export default function NewsletterPage() {
           </p>
           <Link
             href="/demo"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-300 rounded-xl text-sm font-medium text-white light:text-gray-900 hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/50 light:bg-gray-100 border border-[#1E2A4A] light:border-gray-300 rounded-xl text-sm font-medium text-white light:text-gray-900 hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
           >
             Try the live demo
             <ArrowRight className="w-4 h-4" />
