@@ -15,18 +15,22 @@ export function DashboardLayoutClient({
   onboardingIncomplete = false,
   onboardingStep = 1,
 }: DashboardLayoutClientProps) {
-  // Sync theme from localStorage on mount
+  // Sync theme from localStorage on mount — use rs-theme key
   useEffect(() => {
-    const theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem('rs-theme');
     const html = document.documentElement;
 
     if (theme === 'light') {
       html.classList.remove('dark');
       html.classList.add('light');
     } else {
-      // Default to dark
       html.classList.add('dark');
       html.classList.remove('light');
+    }
+
+    // Clean up legacy key if it exists
+    if (localStorage.getItem('theme')) {
+      localStorage.removeItem('theme');
     }
   }, []);
 
