@@ -156,7 +156,7 @@ export default function LandingPage() {
             <div className="rounded-2xl overflow-hidden border border-white/10 light:border-gray-200 light:bg-white bg-gradient-to-b from-white/[0.03] to-transparent light:from-transparent backdrop-blur-sm shadow-[0_0_60px_rgba(99,102,241,0.15),0_25px_50px_rgba(0,0,0,0.3)] light:shadow-xl light:shadow-gray-300/40">
               <div style={{ position: 'relative', paddingBottom: 'calc(54.28% + 41px)', height: 0, width: '100%' }}>
                 <iframe
-                  src="https://demo.arcade.software/vgH8BUFUeiIHapleaNQ8?embed&embed_mobile=modal&embed_desktop=tab&show_copy_link=true"
+                  src="https://demo.arcade.software/vgH8BUFUeiIHapleaNQ8?embed&embed_mobile=inline&embed_desktop=inline&show_copy_link=true"
                   title="ReplySequence Demo"
                   frameBorder="0"
                   loading="lazy"
