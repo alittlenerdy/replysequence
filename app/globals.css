@@ -121,7 +121,7 @@ body {
 
 /* Visible focus indicators for dark theme */
 *:focus-visible {
-  outline: 2px solid #f97316;
+  outline: 2px solid #6366F1;
   outline-offset: 2px;
 }
 
@@ -150,28 +150,49 @@ body {
     background: radial-gradient(circle, var(--mint) 0%, transparent 70%);
   }
 
-  /* CTA Button with Gradient */
+  /* Primary CTA — high contrast monochrome */
   .btn-cta {
-    @apply px-6 sm:px-10 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg text-white transition-[background,transform,box-shadow] duration-300;
-    background: linear-gradient(135deg, #5B6CFF 0%, #4A5BEE 50%, #7A5CFF 100%);
+    @apply px-8 py-3.5 rounded-xl font-semibold text-base transition-all duration-200;
+    background: #F8FAFC;
+    color: #030712;
     border: none;
-    box-shadow: 0 8px 30px rgba(91, 108, 255, 0.4);
-    max-width: 100%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.1);
   }
 
   .btn-cta:hover {
-    background: linear-gradient(135deg, #7A8BFF 0%, #5B6CFF 50%, #7A5CFF 100%);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 12px 40px rgba(91, 108, 255, 0.5);
+    background: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.15);
   }
 
-  .btn-cta-pulse {
-    animation: ctaPulse 2s ease-in-out infinite;
+  .btn-cta:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
 
-  @keyframes ctaPulse {
-    0%, 100% { box-shadow: 0 8px 30px rgba(91, 108, 255, 0.4); }
-    50% { box-shadow: 0 8px 40px rgba(91, 108, 255, 0.6), 0 0 0 8px rgba(91, 108, 255, 0.1); }
+  /* Secondary CTA — ghost outline */
+  .btn-secondary-cta {
+    @apply px-6 py-3 rounded-xl font-semibold text-base transition-all duration-200;
+    background: transparent;
+    color: #C0C8E0;
+    border: 1.5px solid rgba(255,255,255,0.15);
+  }
+
+  .btn-secondary-cta:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.25);
+    color: #F8FAFC;
+    transform: translateY(-1px);
+  }
+
+  /* Interactive card hover utility */
+  .card-interactive {
+    @apply transition-all duration-200;
+  }
+
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   }
 
   .btn-secondary {
@@ -656,6 +677,29 @@ body {
 
 .light .theme-toggle:hover {
   background: var(--background-pure);
+}
+
+/* Light mode CTA overrides */
+html.light .btn-cta {
+  background: #030712;
+  color: #F8FAFC;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+}
+
+html.light .btn-cta:hover {
+  background: #1E293B;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+html.light .btn-secondary-cta {
+  color: #475569;
+  border-color: rgba(0,0,0,0.12);
+}
+
+html.light .btn-secondary-cta:hover {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.2);
+  color: #0F172A;
 }
 
 /* Light mode: override gradient text to solid readable colors */
