@@ -11,13 +11,16 @@ interface PricingTier {
   name: string;
   tier: 'free' | 'pro' | 'team';
   monthlyPrice: number;
-  annualPrice: number; // per month when billed annually
+  annualPrice: number;
+  tagline?: string;
   description: string;
   features: string[];
   monthlyPriceId?: string;
   annualPriceId?: string;
   highlighted?: boolean;
   icon: 'zap' | 'sparkles' | 'building';
+  ctaText?: string;
+  valueJustification?: string;
 }
 
 const icons = {
@@ -33,10 +36,21 @@ const tierRank: Record<string, number> = {
   team: 2,
 };
 
-function getButtonText(targetTier: string, currentTier: string): string {
+function getButtonText(targetTier: string, currentTier: string, ctaText?: string): string {
   if (targetTier === currentTier) return 'Current Plan';
   if (tierRank[targetTier] < tierRank[currentTier]) return 'Downgrade';
-  return 'Upgrade';
+  return ctaText || 'Upgrade';
+}
+
+function renderFeature(feature: string) {
+  // Handle **bold** markdown in feature text
+  const parts = feature.split(/(\*\*.*?\*\*)/);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <span key={i} className="font-semibold text-white light:text-gray-900">{part.slice(2, -2)}</span>;
+    }
+    return part;
+  });
 }
 
 interface PricingCardsProps {
@@ -74,12 +88,14 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
               return (
                 <div
                   key={tier.name}
-                  className={`relative transition-[border-color,box-shadow] duration-300 ${
+                  className={`relative transition-[border-color,box-shadow,transform] duration-300 ${
                     isEmbedded ? 'p-4 lg:p-5' : tier.highlighted ? 'p-7 lg:p-9' : 'p-6 lg:p-8'
                   } ${
                     tier.highlighted
-                      ? `rounded-2xl border border-[#6366F1]/40 ring-1 ring-[#6366F1]/20 bg-gray-900/80 light:bg-white shadow-xl shadow-[#6366F1]/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
-                      : 'glass-border rounded-2xl'
+                      ? `rounded-2xl border-2 border-[#6366F1]/50 ring-1 ring-[#6366F1]/20 bg-[#0F172A] light:bg-white shadow-2xl shadow-[#6366F1]/15 ${isEmbedded ? '' : 'md:scale-[1.04]'} z-10`
+                      : tier.tier === 'free'
+                        ? 'glass-border rounded-2xl opacity-90'
+                        : 'glass-border rounded-2xl'
                   }`}
                 >
                   {/* Most Popular Badge */}
@@ -115,9 +131,14 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                           : 'text-gray-400 light:text-gray-600'
                       }`} />
                     </div>
-                    <h3 className="text-xl font-bold text-white light:text-gray-900 mb-2">
+                    <h3 className="text-xl font-bold text-white light:text-gray-900 mb-1">
                       {tier.name}
                     </h3>
+                    {tier.tagline && (
+                      <p className="text-sm text-white/70 light:text-gray-500 mb-2">
+                        {tier.tagline}
+                      </p>
+                    )}
                     <p className="text-gray-400 light:text-gray-600 text-sm">
                       {tier.description}
                     </p>
@@ -138,6 +159,11 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                         billed annually at ${annualTotal}
                       </div>
                     )}
+                    {tier.valueJustification && (
+                      <p className="mt-2 text-xs text-[#06B6D4] light:text-teal-600 font-medium">
+                        {tier.valueJustification}
+                      </p>
+                    )}
                   </div>
 
                   {/* CTA Button */}
@@ -149,7 +175,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                       className="w-full"
                       variant={tier.tier === 'free' ? 'secondary' : 'primary'}
                     >
-                      {getButtonText(tier.tier, currentTier)}
+                      {getButtonText(tier.tier, currentTier, tier.ctaText)}
                     </CheckoutButton>
                   </div>
 
@@ -163,7 +189,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                             : 'text-[#6366F1]'
                         }`} />
                         <span className="text-gray-300 light:text-gray-700 text-sm">
-                          {feature}
+                          {renderFeature(feature)}
                         </span>
                       </li>
                     ))}

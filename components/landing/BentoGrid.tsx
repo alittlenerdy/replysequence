@@ -24,10 +24,10 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
-      className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700/60 light:border-gray-200 overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 light:shadow-md ${href ? 'cursor-pointer' : ''} ${className}`}
+      className={`group relative rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 hover:border-[#F59E0B]/20 light:hover:border-[#6366F1]/30 light:shadow-md ${href ? 'cursor-pointer' : ''} ${className}`}
     >
       {/* Gradient border on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#6366F1]/20 via-[#6366F1]/20 to-[#3A4BDD]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#F59E0B]/5 via-transparent to-[#06B6D4]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Content */}
       <div className="relative p-5 h-full flex flex-col">
@@ -48,7 +48,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       </div>
 
       {/* Glow effect */}
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-[#6366F1] via-[#6366F1] to-[#3A4BDD] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-[#F59E0B] via-[#06B6D4] to-[#6366F1] opacity-0 group-hover:opacity-[0.07] blur-xl transition-opacity duration-500" />
     </motion.div>
   );
 

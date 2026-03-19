@@ -132,7 +132,7 @@ export function MeetingIntelligenceDemo() {
   const show = phase === 'animating' || phase === 'holding';
 
   return (
-    <div ref={containerRef} className="space-y-6" key={cycle}>
+    <div ref={containerRef} className="space-y-6">
       {/* Meeting Title */}
       <motion.div
         variants={fadeUp}

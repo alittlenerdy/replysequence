@@ -52,7 +52,7 @@ const SAMPLE_OPTIONS = [
     label: 'Team Standup',
     description: 'Weekly product & engineering sync',
     icon: Video,
-    color: '#38E8FF',
+    color: '#06B6D4',
   },
 ];
 
@@ -128,39 +128,39 @@ export default function DemoPage() {
     inputMode === 'sample' || (inputMode === 'paste' && customTranscript.trim().length >= 50);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] light:bg-gray-50 text-white light:text-gray-900">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50 text-white light:text-gray-900">
       <Header />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-20">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-32 pb-24">
         {/* Hero */}
         <motion.div
-          className="text-center mb-12 relative"
+          className="text-center mb-14 relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.12) 0%, transparent 60%)' }} />
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 text-[#6366F1] text-sm font-medium mb-6">
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(6,182,212,0.1) 0%, transparent 60%)' }} />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20 text-[#06B6D4] text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             Live Demo — No Signup Required
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900">
-            See How ReplySequence Works
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-5 text-white light:text-gray-900 leading-tight">
+            See It Work. <span className="bg-gradient-to-r from-[#06B6D4] to-[#22D3EE] bg-clip-text text-transparent">In Real Time.</span>
           </h1>
-          <p className="text-lg text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
-            From meeting to follow-up in seconds. Pick a sample meeting or paste your own transcript and watch AI generate a personalized follow-up, action items, and meeting recap.
+          <p className="text-lg text-gray-300 light:text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Pick a sample meeting or paste your own transcript. Watch AI generate a personalized follow-up, action items, and meeting recap — in seconds.
           </p>
         </motion.div>
 
         {/* Demo Card */}
         <motion.div
-          className="rounded-3xl bg-[#0F172A]/80 light:bg-white border border-[#1E2A4A] light:border-gray-200 light:shadow-lg overflow-hidden"
+          className="rounded-3xl bg-[#0F172A] light:bg-white border border-[#06B6D4]/15 light:border-gray-200 light:shadow-lg overflow-hidden shadow-2xl shadow-[#06B6D4]/5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           {/* Step 1: Select input mode + meeting */}
-          <div className="p-6 sm:p-8 border-b border-gray-800/50 light:border-gray-200">
+          <div className="p-6 sm:p-10 border-b border-gray-800/50 light:border-gray-200">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-7 h-7 rounded-lg bg-[#6366F1]/15 flex items-center justify-center text-sm font-bold text-[#6366F1]">
                 1
@@ -295,9 +295,9 @@ export default function DemoPage() {
           </div>
 
           {/* Step 2: Generate */}
-          <div className="p-6 sm:p-8 border-b border-gray-800/50 light:border-gray-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-[#38E8FF]/15 flex items-center justify-center text-sm font-bold text-[#38E8FF]">
+          <div className="p-6 sm:p-10 border-b border-gray-800/50 light:border-gray-200">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 flex items-center justify-center text-sm font-bold text-[#06B6D4]">
                 2
               </div>
               <h2 className="text-lg font-semibold light:text-gray-900">Generate follow-up</h2>
@@ -306,7 +306,13 @@ export default function DemoPage() {
             <button
               onClick={handleGenerate}
               disabled={loading || !canGenerate}
-              className="group w-full py-4 text-base rounded-xl flex items-center justify-center gap-3 font-semibold text-white bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#818CF8] hover:to-[#6366F1] shadow-lg shadow-[#6366F1]/25 hover:shadow-xl hover:shadow-[#6366F1]/30 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-lg"
+              className="group w-full py-4 text-base rounded-xl flex items-center justify-center gap-3 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-lg"
+              style={{
+                background: loading
+                  ? 'linear-gradient(135deg, #0891B2, #06B6D4)'
+                  : 'linear-gradient(135deg, #06B6D4, #0891B2)',
+                boxShadow: '0 4px 20px rgba(6,182,212,0.3)',
+              }}
             >
               {loading ? (
                 <>
@@ -330,24 +336,24 @@ export default function DemoPage() {
           <AnimatePresence>
             {result && (
               <motion.div
-                className="p-6 sm:p-8"
+                className="p-6 sm:p-10"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-7 h-7 rounded-lg bg-[#4DFFA3]/15 flex items-center justify-center text-sm font-bold text-[#4DFFA3]">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-7 h-7 rounded-lg bg-[#06B6D4]/15 flex items-center justify-center text-sm font-bold text-[#06B6D4]">
                     3
                   </div>
                   <h2 className="text-lg font-semibold light:text-gray-900">Your AI-generated results</h2>
-                  <div className="flex items-center gap-1.5 ml-auto text-[11px] text-gray-500">
-                    <Clock className="w-3 h-3" />
-                    {(result.generationMs / 1000).toFixed(1)}s
+                  <div className="flex items-center gap-1.5 ml-auto px-2.5 py-1 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20">
+                    <Clock className="w-3 h-3 text-[#06B6D4]" />
+                    <span className="text-[11px] text-[#06B6D4] font-medium">{(result.generationMs / 1000).toFixed(1)}s</span>
                   </div>
                 </div>
 
                 {/* Tab switcher */}
-                <div className="flex gap-1 mb-4 p-1 rounded-xl bg-gray-800/40 light:bg-gray-100 border border-gray-700/30 light:border-gray-200">
+                <div className="flex gap-1 mb-5 p-1 rounded-xl bg-gray-800/40 light:bg-gray-100 border border-gray-700/30 light:border-gray-200">
                   <button
                     onClick={() => setActiveTab('email')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
@@ -363,7 +369,7 @@ export default function DemoPage() {
                     onClick={() => setActiveTab('recap')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                       activeTab === 'recap'
-                        ? 'bg-[#38E8FF]/15 text-[#38E8FF]'
+                        ? 'bg-[#06B6D4]/15 text-[#06B6D4]'
                         : 'text-gray-400 hover:text-gray-300'
                     }`}
                   >
@@ -406,7 +412,7 @@ export default function DemoPage() {
                           <ul className="space-y-1.5">
                             {result.actionItems.map((item, i) => (
                               <li key={i} className="flex items-start gap-2 text-sm text-gray-400 light:text-gray-600">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-[#4DFFA3] mt-0.5 shrink-0" />
+                                <CheckCircle2 className="w-3.5 h-3.5 text-[#06B6D4] mt-0.5 shrink-0" />
                                 {item}
                               </li>
                             ))}
@@ -427,7 +433,7 @@ export default function DemoPage() {
                           {/* Summary */}
                           <div className="px-5 py-4 border-b border-gray-700/30 light:border-gray-200">
                             <div className="flex items-center gap-2 mb-3">
-                              <FileText className="w-3.5 h-3.5 text-[#38E8FF]" />
+                              <FileText className="w-3.5 h-3.5 text-[#06B6D4]" />
                               <span className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
                                 Summary
                               </span>
@@ -435,7 +441,7 @@ export default function DemoPage() {
                             <ul className="space-y-2">
                               {result.recap.summary.map((item, i) => (
                                 <li key={i} className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-700">
-                                  <span className="text-[#38E8FF] mt-1 shrink-0">&#8226;</span>
+                                  <span className="text-[#06B6D4] mt-1 shrink-0">&#8226;</span>
                                   {item}
                                 </li>
                               ))}
@@ -446,7 +452,7 @@ export default function DemoPage() {
                           {result.recap.decisions.length > 0 && (
                             <div className="px-5 py-4 border-b border-gray-700/30 light:border-gray-200">
                               <div className="flex items-center gap-2 mb-3">
-                                <Target className="w-3.5 h-3.5 text-[#4DFFA3]" />
+                                <Target className="w-3.5 h-3.5 text-[#06B6D4]" />
                                 <span className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">
                                   Key Decisions
                                 </span>
@@ -454,7 +460,7 @@ export default function DemoPage() {
                               <ul className="space-y-2">
                                 {result.recap.decisions.map((item, i) => (
                                   <li key={i} className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-700">
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#4DFFA3] mt-0.5 shrink-0" />
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#06B6D4] mt-0.5 shrink-0" />
                                     {item}
                                   </li>
                                 ))}
@@ -492,17 +498,17 @@ export default function DemoPage() {
                 </AnimatePresence>
 
                 {/* Inline Waitlist CTA */}
-                <div className="mt-8 rounded-2xl bg-gradient-to-b from-[#6366F1]/5 to-transparent light:from-[#6366F1]/[0.03] border border-[#6366F1]/15 p-6">
-                  <div className="text-center mb-4">
-                    <p className="text-sm font-medium text-white light:text-gray-900 mb-1">
+                <div className="mt-10 rounded-2xl bg-[#111827] border border-[#F59E0B]/20 p-8 shadow-lg shadow-[#F59E0B]/5">
+                  <div className="text-center mb-5">
+                    <p className="text-base font-semibold text-white light:text-gray-900 mb-1.5">
                       This is what ReplySequence generates after every meeting — automatically.
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-gray-400 light:text-gray-500">
                       Join the waitlist to get this for your own meetings.
                     </p>
                   </div>
                   <WaitlistForm />
-                  <div className="mt-4 text-center">
+                  <div className="mt-5 text-center">
                     <button
                       onClick={() => {
                         setResult(null);
@@ -512,7 +518,7 @@ export default function DemoPage() {
                           if (next) setSelectedSample(next.id);
                         }
                       }}
-                      className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-300 transition-colors"
+                      className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors font-medium"
                     >
                       <ArrowRight className="w-3.5 h-3.5" />
                       Try another meeting
@@ -526,7 +532,7 @@ export default function DemoPage() {
 
         {/* Trust signals */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-14"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -536,7 +542,7 @@ export default function DemoPage() {
               icon: Clock,
               title: '8-second follow-ups',
               description: 'AI drafts are ready before you close the meeting tab',
-              color: '#38E8FF',
+              color: '#06B6D4',
             },
             {
               icon: FileText,
@@ -548,21 +554,21 @@ export default function DemoPage() {
               icon: Sparkles,
               title: 'Learns your voice',
               description: 'Gets better with every edit. Your tone, your structure.',
-              color: '#4DFFA3',
+              color: '#F59E0B',
             },
           ].map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl bg-gray-900/40 light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 hover:-translate-y-0.5 transition-all duration-200 light:shadow-sm"
+              className="rounded-2xl bg-[#111827] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 hover:-translate-y-1 transition-all duration-200 light:shadow-sm flex flex-col h-full"
             >
               <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                style={{ backgroundColor: `${item.color}10` }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: `${item.color}15` }}
               >
-                <item.icon className="w-4.5 h-4.5" style={{ color: item.color }} />
+                <item.icon className="w-5 h-5" style={{ color: item.color }} />
               </div>
-              <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-1">{item.title}</h3>
-              <p className="text-xs text-gray-500 light:text-gray-500 leading-relaxed">{item.description}</p>
+              <h3 className="text-base font-bold text-white light:text-gray-900 mb-1.5">{item.title}</h3>
+              <p className="text-sm text-gray-400 light:text-gray-500 leading-relaxed">{item.description}</p>
             </div>
           ))}
         </motion.div>

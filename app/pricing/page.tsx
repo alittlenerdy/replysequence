@@ -38,8 +38,10 @@ const pricingTiers = [
     tier: 'free' as const,
     monthlyPrice: 0,
     annualPrice: 0,
+    tagline: 'For solo reps trying their first automated follow-ups',
     description: 'See how AI follow-ups and sequences work on your real meetings. Five drafts per month, unlimited meetings.',
     icon: 'zap' as const,
+    ctaText: 'Start Free',
     features: [
       'Unlimited meetings',
       '5 AI follow-ups per month',
@@ -52,17 +54,20 @@ const pricingTiers = [
     name: 'Pro',
     tier: 'pro' as const,
     monthlyPrice: 19,
-    annualPrice: 15, // ~21% discount
+    annualPrice: 15,
+    tagline: 'For individual sellers closing deals every week',
     description: 'For founders and AEs who want every call followed up, sequenced, and tracked — automatically.',
     icon: 'sparkles' as const,
     highlighted: true,
     monthlyPriceId: STRIPE_PRICES.pro,
     annualPriceId: STRIPE_ANNUAL_PRICES.pro,
+    ctaText: 'Start Automating My Follow-Ups',
+    valueJustification: 'Pays for itself with one extra closed deal a month',
     features: [
       'Everything in Free',
-      'Unlimited AI follow-ups',
-      'Multi-step sequences',
-      'Deal risk alerts',
+      '**Unlimited** AI follow-ups',
+      '**Multi-step** sequences',
+      '**Deal risk** alerts',
       'Custom email templates',
       'No ReplySequence branding',
       'Priority support',
@@ -72,17 +77,20 @@ const pricingTiers = [
     name: 'Team',
     tier: 'team' as const,
     monthlyPrice: 29,
-    annualPrice: 24, // ~17% discount
+    annualPrice: 24,
+    tagline: 'For teams that need pipeline visibility and follow-up consistency',
     description: 'For sales teams that need 100% follow-up coverage, pipeline visibility, and clean CRM data across every rep.',
     icon: 'building' as const,
     monthlyPriceId: STRIPE_PRICES.team,
     annualPriceId: STRIPE_ANNUAL_PRICES.team,
+    ctaText: 'Set Up My Team',
+    valueJustification: 'Saves hours of manual follow-up and CRM work every week',
     features: [
       'Everything in Pro',
       'Unlimited team members',
-      'CRM sync (HubSpot, Salesforce, Sheets)',
-      'Deal health scoring',
-      'Meeting intelligence queries',
+      '**CRM sync** (HubSpot, Salesforce, Sheets)',
+      '**Deal health** scoring',
+      '**Meeting intelligence** queries',
       'Team sharing & collaboration',
       'API access',
       'Dedicated account manager',
@@ -144,12 +152,15 @@ async function PricingContent() {
         </div>
       </section>
 
-      {/* Credibility Strip */}
+      {/* Demo bridge + risk reversal */}
       {!isLoggedIn && (
-        <section className="pb-4 px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-sm text-gray-400 light:text-gray-500 bg-gray-900/50 light:bg-[#EEF0FF] border border-gray-800 light:border-[#EEF0FF] rounded-full px-6 py-3 inline-block">
-              Every meeting gets a follow-up. Every deal gets a sequence. Every next step gets tracked. Every CRM field updates itself.
+        <section className="pb-2 px-4 pt-4">
+          <div className="max-w-3xl mx-auto text-center space-y-3">
+            <p className="text-base text-[#C0C8E0] light:text-gray-600">
+              Everything you saw in the demo — priced simply.
+            </p>
+            <p className="text-sm text-[#06B6D4] light:text-teal-600 font-medium">
+              Start free. No credit card. Cancel anytime.
             </p>
           </div>
         </section>

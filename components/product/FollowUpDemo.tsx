@@ -162,7 +162,7 @@ export function FollowUpDemo() {
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
-                    className="w-2.5 h-2.5 rounded-full bg-indigo-500"
+                    className="w-2.5 h-2.5 rounded-full bg-[#06B6D4]"
                     animate={{
                       scale: [1, 1.4, 1],
                       opacity: [0.5, 1, 0.5],
@@ -176,7 +176,7 @@ export function FollowUpDemo() {
                   />
                 ))}
               </div>
-              <span className="text-xs text-indigo-400 font-medium">Drafting email...</span>
+              <span className="text-xs text-[#06B6D4] font-medium">Drafting email...</span>
             </motion.div>
           )}
         </AnimatePresence>
