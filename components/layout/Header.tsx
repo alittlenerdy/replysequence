@@ -164,11 +164,25 @@ function ProductDropdown() {
             );
           })}
 
-          {/* Footer link */}
-          <div className="mt-1 pt-2 border-t border-gray-800/60 light:border-gray-100">
+          {/* Footer links */}
+          <div className="mt-1 pt-2 border-t border-gray-800/60 light:border-gray-100 space-y-0.5">
+            <Link
+              href="/demo"
+              ref={(el) => { itemsRef.current[productItems.length] = el; }}
+              role="menuitem"
+              tabIndex={open ? 0 : -1}
+              onClick={() => setOpen(false)}
+              className="group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#F59E0B] light:text-[#D97706] hover:text-[#FDE047] light:hover:text-[#B45309] hover:bg-[#F59E0B]/5 transition-colors outline-none focus-visible:ring-1 focus-visible:ring-[#F59E0B]/40"
+            >
+              <span className="flex items-center gap-1.5">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                Interactive Demo
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
             <Link
               href="/how-it-works"
-              ref={(el) => { itemsRef.current[productItems.length] = el; }}
+              ref={(el) => { itemsRef.current[productItems.length + 1] = el; }}
               role="menuitem"
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
@@ -202,8 +216,11 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-5">
           <ProductDropdown />
+          <Link href="/demo" className="flex items-center gap-1.5 text-sm font-medium text-[#F59E0B] light:text-[#D97706] hover:text-[#FDE047] light:hover:text-[#B45309] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            Demo
+          </Link>
           <Link href="/compare" className={navLinkClass}>Compare</Link>
-          <Link href="/integrations" className={navLinkClass}>Integrations</Link>
           <Link href="/pricing" className={navLinkClass}>Pricing</Link>
           <Link href="/blog" className={navLinkClass}>Blog</Link>
 

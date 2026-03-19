@@ -143,12 +143,11 @@ export default function DemoPage() {
             <Sparkles className="w-4 h-4" />
             Live Demo — No Signup Required
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            See ReplySequence in action
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900">
+            See How ReplySequence Works
           </h1>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Pick a sample meeting or paste your own transcript, hit generate, and watch AI turn it
-            into a ready-to-send follow-up email and meeting recap in seconds.
+          <p className="text-lg text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
+            From meeting to follow-up in seconds. Pick a sample meeting or paste your own transcript and watch AI generate a personalized follow-up, action items, and meeting recap.
           </p>
         </motion.div>
 

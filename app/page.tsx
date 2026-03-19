@@ -302,25 +302,18 @@ export default function LandingPage() {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="flex items-center justify-center"
           >
-            <button
-              onClick={() => {
-                const isMobile = window.innerWidth < 768;
-                if (isMobile) {
-                  window.open('https://demo.arcade.software/vgH8BUFUeiIHapleaNQ8', '_blank', 'noopener');
-                } else {
-                  document.dispatchEvent(new CustomEvent('open-arcade-demo'));
-                }
-              }}
+            <Link
+              href="/demo"
               className="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold text-white light:text-[#B87A1A] border-2 border-[#FF9D2D]/40 light:border-[#FF9D2D]/60 rounded-full bg-[#FF9D2D]/10 light:bg-[#FF9D2D]/10 hover:bg-[#FF9D2D]/20 hover:border-[#FF9D2D]/60 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF9D2D] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white group"
             >
               <svg className="w-5 h-5 text-[#FF9D2D] light:text-[#E08A1E]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5v14l11-7z" />
               </svg>
-              See How It Works
+              Watch Demo
               <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#FF9D2D]/60 light:text-[#E08A1E]/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
-            </button>
+            </Link>
           </motion.div>
 
           <motion.div
@@ -347,8 +340,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============ ARCADE DEMO MODAL ============ */}
-      <ArcadeDemoModal />
+      {/* Demo link is now /demo — no inline modal needed */}
 
       <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 
