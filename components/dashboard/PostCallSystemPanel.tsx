@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Edit3, Layers, Clock, CheckCircle2, AlertTriangle, Loader2, ArrowRight, User, Calendar } from 'lucide-react';
 
@@ -319,7 +320,10 @@ function IdlePanel() {
    Priority: Processing > Output > Idle
    ────────────────────────────────────────────── */
 export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, riskFlag }: PostCallSystemPanelProps) {
-  const isProcessing = processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status);
+  const searchParams = useSearchParams();
+  const debugProcessing = searchParams.get('debugProcessing') === '1';
+
+  const isProcessing = debugProcessing || (processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status));
   const hasResults = !!draft || !!sequence || nextSteps.length > 0;
 
   // State priority: Processing > Output > Idle
@@ -332,7 +336,7 @@ export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, ri
         {state === 'processing' && (
           <ProcessingPanel
             key="processing"
-            status={processing!.status}
+            status={processing?.status || 'analyzing'}
             meetingName={meetingName}
           />
         )}
