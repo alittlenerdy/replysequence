@@ -346,14 +346,41 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <Link
                   key={related.slug}
                   href={`/blog/${related.slug}`}
-                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-[border-color] duration-300 hover:border-[#6366F1]/50 light:hover:border-[#6366F1]/50"
+                  className="group block rounded-2xl border border-[#1E2A4A] light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 hover:shadow-[#6366F1]/5 light:hover:shadow-[#6366F1]/10"
                 >
-                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors line-clamp-2">
-                    {related.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 light:text-gray-600 line-clamp-2">
-                    {related.excerpt}
-                  </p>
+                  {/* Gradient placeholder */}
+                  {related.heroImage ? (
+                    <div className="relative w-full aspect-[16/9]">
+                      <Image
+                        src={related.heroImage}
+                        alt={related.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-32 bg-gradient-to-br from-[#6366F1]/20 to-[#818CF8]/10 light:from-indigo-100 light:to-purple-50" />
+                  )}
+                  <div className="p-6">
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {related.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#6366F1]/10 light:bg-indigo-50 text-[#6366F1] light:text-[#4F46E5]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors line-clamp-2">
+                      {related.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 light:text-gray-600 line-clamp-2 leading-relaxed">
+                      {related.excerpt}
+                    </p>
+                  </div>
                 </Link>
               ))}
             </div>
