@@ -34,7 +34,7 @@ const jetbrainsMono = JetBrains_Mono({
 const siteUrl = "https://www.replysequence.com";
 
 export const viewport: Viewport = {
-  themeColor: '#5B6CFF',
+  themeColor: '#6366F1',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -136,6 +136,13 @@ export default function RootLayout({
     >
       <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            if (localStorage.getItem('rs-theme') === 'light') {
+              document.documentElement.classList.add('light');
+            }
+          } catch(e) {}
+        ` }} />
         {process.env.NODE_ENV === "development" && (
           <Script
             src="//unpkg.com/react-grab/dist/index.global.js"
@@ -151,7 +158,7 @@ export default function RootLayout({
         )}
       </head>
         <body className="antialiased bg-[#060B18] light:bg-gray-50" suppressHydrationWarning>
-          <a href="#main-content" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-[9999] focus-visible:px-4 focus-visible:py-2 focus-visible:bg-[#4A5BEE] focus-visible:text-white focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]">
+          <a href="#main-content" className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-[9999] focus-visible:px-4 focus-visible:py-2 focus-visible:bg-[#4F46E5] focus-visible:text-white focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]">
             Skip to main content
           </a>
           {/* PostHog temporarily disabled to debug hydration issues */}

@@ -8,7 +8,7 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem('theme');
+    const stored = localStorage.getItem('rs-theme');
     const html = document.documentElement;
 
     // Dark mode is default
@@ -22,7 +22,7 @@ export default function ThemeToggle() {
       html.classList.remove('light');
       setIsDark(true);
       if (!stored) {
-        localStorage.setItem('theme', 'dark');
+        localStorage.setItem('rs-theme', 'dark');
       }
     }
   }, []);
@@ -36,12 +36,12 @@ export default function ThemeToggle() {
       // Switch to dark mode
       html.classList.add('dark');
       html.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
+      localStorage.setItem('rs-theme', 'dark');
     } else {
       // Switch to light mode
       html.classList.remove('dark');
       html.classList.add('light');
-      localStorage.setItem('theme', 'light');
+      localStorage.setItem('rs-theme', 'light');
     }
   };
 
@@ -50,7 +50,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="theme-toggle rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+      className="theme-toggle rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       suppressHydrationWarning
     >
