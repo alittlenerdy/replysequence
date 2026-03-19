@@ -17,6 +17,7 @@ interface CheckoutButtonProps {
   currentTier?: SubscriptionTier;
   className?: string;
   children?: React.ReactNode;
+  variant?: 'primary' | 'secondary';
 }
 
 export function CheckoutButton({
@@ -25,6 +26,7 @@ export function CheckoutButton({
   currentTier,
   className = '',
   children,
+  variant = 'primary',
 }: CheckoutButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -107,7 +109,7 @@ export function CheckoutButton({
         <button
           onClick={handleManageSubscription}
           disabled={loading}
-          className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] bg-gray-700 text-white hover:bg-gray-600 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+          className={`btn-secondary-cta inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         >
           {loading ? (
             <>
@@ -130,7 +132,7 @@ export function CheckoutButton({
     return (
       <a
         href="/#waitlist"
-        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] bg-gray-700 text-white hover:bg-gray-600 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${className}`}
+        className={`btn-secondary-cta inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold ${className}`}
       >
         {children || 'Join Waitlist'}
       </a>
@@ -138,16 +140,14 @@ export function CheckoutButton({
   }
 
   // Upgrade button - proceed to checkout
+  const btnClass = variant === 'secondary' ? 'btn-secondary-cta' : 'btn-cta';
+
   return (
     <div className="flex flex-col">
       <button
         onClick={handleCheckout}
         disabled={loading || !priceId}
-        className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-[color,background-color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
-          tier === 'pro'
-            ? 'bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white hover:from-[#4A5BEE] hover:to-[#2A3ACC] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-xl hover:shadow-[#5B6CFF]/40'
-            : 'bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white hover:from-[#4A5BEE] hover:to-[#2A3ACC] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-xl hover:shadow-[#5B6CFF]/40'
-        } ${loading || !priceId ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        className={`${btnClass} inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold ${loading || !priceId ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       >
         {loading ? (
           <>

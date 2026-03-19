@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Check, Sparkles, Building2, Zap } from 'lucide-react';
+import Link from 'next/link';
 import { BillingToggle } from './BillingToggle';
 import { CheckoutButton } from './CheckoutButton';
 import type { SubscriptionTier } from '@/lib/db/schema';
@@ -74,17 +75,17 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                 <div
                   key={tier.name}
                   className={`relative transition-[border-color,box-shadow] duration-300 ${
-                    isEmbedded ? 'p-4 lg:p-5' : 'p-6 lg:p-8'
+                    isEmbedded ? 'p-4 lg:p-5' : tier.highlighted ? 'p-7 lg:p-9' : 'p-6 lg:p-8'
                   } ${
                     tier.highlighted
-                      ? `glass-border-accent rounded-2xl shadow-xl shadow-[#5B6CFF]/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
+                      ? `rounded-2xl border border-[#6366F1]/40 ring-1 ring-[#6366F1]/20 bg-gray-900/80 light:bg-white shadow-xl shadow-[#5B6CFF]/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
                       : 'glass-border rounded-2xl'
                   }`}
                 >
                   {/* Most Popular Badge */}
                   {tier.highlighted && !isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white text-sm font-semibold shadow-lg">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#6366F1] text-white text-sm font-semibold shadow-lg shadow-[#6366F1]/30">
                         <Sparkles className="w-4 h-4" />
                         Most Popular
                       </span>
@@ -146,6 +147,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                       priceId={priceId}
                       currentTier={currentTier}
                       className="w-full"
+                      variant={tier.tier === 'free' ? 'secondary' : 'primary'}
                     >
                       {getButtonText(tier.tier, currentTier)}
                     </CheckoutButton>
@@ -171,6 +173,14 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
             })}
           </div>
         </div>
+
+        {!isLoggedIn && !isEmbedded && (
+          <p className="text-center text-sm text-[#8892B0] light:text-gray-500 mt-8">
+            Not sure yet?{' '}
+            <Link href="/demo" className="text-[#6366F1] hover:underline font-medium">Watch the demo</Link>
+            {' '}to see ReplySequence in action.
+          </p>
+        )}
       </section>
     </>
   );
