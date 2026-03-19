@@ -18,18 +18,18 @@ function formatDate(dateString: string): string {
 function getGradient(tags: string[]): string {
   const tag = (tags[0] ?? '').toLowerCase();
   if (tag.includes('sales'))
-    return 'bg-gradient-to-br from-[#6366F1]/20 to-[#818CF8]/5';
+    return 'bg-gradient-to-br from-indigo-500/30 via-indigo-600/20 to-indigo-900/10';
   if (tag.includes('ai') || tag.includes('automation'))
-    return 'bg-gradient-to-br from-violet-500/20 to-purple-500/5';
+    return 'bg-gradient-to-br from-violet-500/30 via-purple-600/25 to-purple-900/15';
   if (tag.includes('email') || tag.includes('follow'))
-    return 'bg-gradient-to-br from-amber-500/20 to-orange-500/5';
+    return 'bg-gradient-to-br from-amber-500/30 via-orange-600/25 to-orange-900/15';
   if (tag.includes('crm') || tag.includes('integration'))
-    return 'bg-gradient-to-br from-emerald-500/20 to-teal-500/5';
+    return 'bg-gradient-to-br from-emerald-500/30 via-teal-600/25 to-teal-900/15';
   if (tag.includes('productivity') || tag.includes('workflow'))
-    return 'bg-gradient-to-br from-sky-500/20 to-cyan-500/5';
+    return 'bg-gradient-to-br from-sky-500/30 via-cyan-600/25 to-cyan-900/15';
   if (tag.includes('meeting') || tag.includes('call'))
-    return 'bg-gradient-to-br from-rose-500/20 to-pink-500/5';
-  return 'bg-gradient-to-br from-[#6366F1]/20 to-[#6366F1]/5';
+    return 'bg-gradient-to-br from-rose-500/30 via-pink-600/25 to-pink-900/15';
+  return 'bg-gradient-to-br from-indigo-500/30 via-indigo-600/20 to-indigo-900/10';
 }
 
 const VISIBLE_TAGS = 6;
@@ -109,7 +109,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
                 className={`group block ${isFeatured ? 'md:col-span-2 lg:col-span-2' : ''}`}
               >
                 <article
-                  className={`h-full rounded-2xl border border-gray-800/60 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 hover:shadow-[#6366F1]/5 light:hover:shadow-[#6366F1]/10 ${isFeatured ? 'md:flex md:flex-row' : 'flex flex-col'}`}
+                  className={`h-full rounded-2xl border border-gray-800/60 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 hover:shadow-[#6366F1]/5 light:hover:shadow-[#6366F1]/10 ${isFeatured ? 'md:flex md:flex-row' : 'flex flex-col'}`}
                 >
                   {/* Hero Image or Gradient Placeholder */}
                   {post.heroImage ? (
@@ -130,7 +130,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
                     </div>
                   ) : (
                     <div
-                      className={`shrink-0 ${getGradient(post.tags)} ${isFeatured ? 'md:w-1/2 h-48 md:h-auto md:min-h-[16rem]' : 'h-32'}`}
+                      className={`shrink-0 ${getGradient(post.tags)} ${isFeatured ? 'md:w-1/2 h-48 md:h-auto md:max-h-48 md:min-h-[12rem]' : 'h-32'}`}
                     />
                   )}
 

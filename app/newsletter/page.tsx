@@ -160,7 +160,7 @@ export default function NewsletterPage() {
                       placeholder="Name (optional)"
                       aria-label="Name"
                       autoComplete="name"
-                      className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm sm:w-[180px]"
+                      className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-600 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm sm:w-[180px]"
                     />
                     <input
                       type="email"
@@ -171,12 +171,13 @@ export default function NewsletterPage() {
                       aria-label="Email address"
                       autoComplete="email"
                       spellCheck={false}
-                      className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm"
+                      className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-600 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm"
                     />
                     <button
                       type="submit"
                       disabled={isSubmitting || !email}
-                      className="btn-cta px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-semibold whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
+                      className="px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-semibold text-white whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-amber-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white hover:brightness-110 transition-[filter]"
+                      style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', boxShadow: '0 4px 14px rgba(245,158,11,0.4)' }}
                     >
                       {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                     </button>
