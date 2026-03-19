@@ -172,10 +172,10 @@ function ProductDropdown() {
               role="menuitem"
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
-              className="group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#F59E0B] light:text-[#D97706] hover:text-[#FDE047] light:hover:text-[#B45309] hover:bg-[#F59E0B]/5 transition-colors outline-none focus-visible:ring-1 focus-visible:ring-[#F59E0B]/40"
+              className="group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#C0C8E0] light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:bg-white/5 light:hover:bg-gray-50 transition-colors outline-none focus-visible:ring-1 focus-visible:ring-[#6366F1]/40"
             >
               <span className="flex items-center gap-1.5">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                <svg className="w-3 h-3 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                 Interactive Demo
               </span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -205,7 +205,7 @@ export function Header() {
   const { isSignedIn, isLoaded, user } = useUser();
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-gray-900/80 light:bg-white/80 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
+    <header className="fixed top-0 w-full z-50 bg-[#030712]/90 light:bg-white/90 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-xl sm:text-2xl font-display font-bold bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] light:from-[#4A5BEE] light:via-[#4A5BEE] light:to-[#4A5BEE] bg-clip-text text-transparent rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
@@ -216,8 +216,8 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-5">
           <ProductDropdown />
-          <Link href="/demo" className="flex items-center gap-1.5 text-sm font-medium text-[#F59E0B] light:text-[#D97706] hover:text-[#FDE047] light:hover:text-[#B45309] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          <Link href="/demo" className="flex items-center gap-1.5 text-sm font-medium text-[#C0C8E0] light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
+            <svg className="w-3.5 h-3.5 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
             Demo
           </Link>
           <Link href="/compare" className={navLinkClass}>Compare</Link>
@@ -242,7 +242,7 @@ export function Header() {
               </SignInButton>
               <a
                 href="/#waitlist"
-                className="btn-cta !px-6 !py-2 !text-base outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="btn-cta !px-5 !py-2 !text-sm !rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Join Waitlist
               </a>
