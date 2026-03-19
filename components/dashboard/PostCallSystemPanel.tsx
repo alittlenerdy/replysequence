@@ -1,6 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Edit3, Layers, Clock, CheckCircle2, AlertTriangle, Loader2, ArrowRight, User, Calendar } from 'lucide-react';
 
 /* ──────────────────────────────────────────────
@@ -17,6 +19,7 @@ interface DraftData {
   body: string;
   meetingTopic: string | null;
   generationMs: number | null;
+  createdAt: Date | null;
 }
 
 interface SequenceData {
@@ -45,58 +48,85 @@ interface PostCallSystemPanelProps {
 }
 
 /* ──────────────────────────────────────────────
-   PROCESSING STATE
+   PROCESSING STATE — animated steps
    ────────────────────────────────────────────── */
 const processingSteps = [
   { key: 'uploading', label: 'Recording received' },
-  { key: 'transcribing', label: 'Transcript imported' },
+  { key: 'transcribing', label: 'Transcript generated' },
   { key: 'analyzing', label: 'Analyzing conversation' },
-  { key: 'generating_sequence', label: 'Generating follow-up + sequence + next steps' },
+  { key: 'generating_sequence', label: 'Generating follow-up, sequence, and next steps' },
 ];
 
-function ProcessingPanel({ status, meetingName }: ProcessingState) {
-  const currentIndex = processingSteps.findIndex(s => s.key === status);
+function ProcessingPanel({ status, meetingName, simulated }: ProcessingState & { simulated?: boolean }) {
+  const [visibleStep, setVisibleStep] = useState(0);
+  const targetIndex = processingSteps.findIndex(s => s.key === status);
+
+  // Animate through steps when simulated
+  useEffect(() => {
+    if (!simulated) {
+      setVisibleStep(targetIndex);
+      return;
+    }
+    setVisibleStep(0);
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    for (let i = 1; i <= 3; i++) {
+      timers.push(setTimeout(() => setVisibleStep(i), i * 700));
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [simulated, targetIndex]);
+
+  const currentIndex = simulated ? visibleStep : targetIndex;
 
   return (
-    <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#06B6D4]/20 light:border-gray-200 p-8 shadow-lg shadow-[#06B6D4]/5 light:shadow-gray-200/50">
-      <div className="flex items-center gap-3 mb-6">
-        <Loader2 className="w-5 h-5 text-[#06B6D4] animate-spin" />
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#06B6D4]/20 light:border-gray-200 p-6 md:p-8"
+    >
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/10 flex items-center justify-center">
+          <Loader2 className="w-4 h-4 text-[#06B6D4] animate-spin" />
+        </div>
         <div>
-          <h2 className="text-lg font-bold text-white light:text-gray-900">Processing your call...</h2>
-          <p className="text-sm text-[#8892B0] light:text-gray-500">{meetingName}</p>
+          <h2 className="text-base font-bold text-white light:text-gray-900">Processing your call...</h2>
+          <p className="text-xs text-[#8892B0] light:text-gray-500">We&apos;re turning {meetingName} into follow-up actions</p>
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {processingSteps.map((step, i) => {
           const isDone = i < currentIndex;
           const isCurrent = i === currentIndex;
           return (
-            <div key={step.key} className="flex items-center gap-3">
+            <motion.div
+              key={step.key}
+              className="flex items-center gap-3"
+              initial={simulated ? { opacity: 0, x: -10 } : false}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: simulated ? i * 0.15 : 0, duration: 0.2 }}
+            >
               {isDone ? (
                 <CheckCircle2 className="w-4 h-4 text-[#06B6D4] flex-shrink-0" />
               ) : isCurrent ? (
-                <Loader2 className="w-4 h-4 text-[#06B6D4] animate-spin flex-shrink-0" />
+                <div className="w-4 h-4 rounded-full border-2 border-[#06B6D4] border-t-transparent animate-spin flex-shrink-0" />
               ) : (
                 <div className="w-4 h-4 rounded-full border border-[#1E2A4A] light:border-gray-300 flex-shrink-0" />
               )}
-              <span className={`text-sm ${isDone ? 'text-[#06B6D4]' : isCurrent ? 'text-white light:text-gray-900 font-medium' : 'text-[#8892B0] light:text-gray-400'}`}>
+              <span className={`text-sm transition-colors duration-200 ${isDone ? 'text-[#06B6D4]' : isCurrent ? 'text-white light:text-gray-900 font-medium' : 'text-[#8892B0]/60 light:text-gray-400'}`}>
                 {step.label}
               </span>
-            </div>
+            </motion.div>
           );
         })}
       </div>
-
-      <p className="text-xs text-[#8892B0] light:text-gray-500 mt-6">
-        We&apos;re turning your meeting into follow-up actions. This usually takes under 30 seconds.
-      </p>
-    </div>
+    </motion.div>
   );
 }
 
 /* ──────────────────────────────────────────────
-   OUTPUT STATE — 3 EQUAL CARDS
+   OUTPUT STATE — 3 CARDS with hierarchy
    ────────────────────────────────────────────── */
 function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
   draft: DraftData | null;
@@ -104,9 +134,8 @@ function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
   nextSteps: NextStepItem[];
   riskFlag?: string | null;
 }) {
-  // Fallback demo content
   const subject = draft?.subject || 'Great connecting — proposal and next steps';
-  const bodyPreview = (draft?.body || 'Hi Sarah,\nGreat speaking with you today. I wanted to follow up on the key points we discussed...').split('\n').filter(Boolean).slice(0, 3).join('\n');
+  const bodyPreview = (draft?.body || 'Hi Sarah,\nGreat speaking with you today. I wanted to follow up on the key points we discussed and outline the next steps.').split('\n').filter(Boolean).slice(0, 3).join('\n');
   const draftId = draft?.id;
   const isDemo = !draft && !sequence;
 
@@ -125,33 +154,39 @@ function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
   const stepColors: Record<string, string> = { recap: '#22C55E', value: '#6366F1', nudge: '#8892B0' };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {/* A: Follow-Up Ready */}
-      <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 flex flex-col">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.1 }}
+      className="grid grid-cols-1 md:grid-cols-3 gap-4"
+    >
+      {/* A: Follow-Up Ready — slightly elevated */}
+      <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#06B6D4]/25 light:border-gray-200 p-5 flex flex-col hover:border-[#06B6D4]/40 transition-colors duration-200">
         <div className="flex items-center gap-2 mb-3">
           <Mail className="w-4 h-4 text-[#06B6D4]" />
           <span className="text-xs font-semibold text-[#06B6D4] uppercase tracking-wider">Follow-Up Ready</span>
         </div>
 
-        <p className="text-sm font-bold text-white light:text-gray-900 mb-2 line-clamp-1">{subject}</p>
-        <p className="text-xs text-[#C0C8E0] light:text-gray-600 leading-relaxed line-clamp-3 mb-3 flex-1">{bodyPreview}</p>
+        <p className="text-base font-bold text-white light:text-gray-900 mb-1 line-clamp-2">{subject}</p>
+        <div className="border-t border-[#1E2A4A] light:border-gray-100 my-2" />
+        <p className="text-xs text-[#C0C8E0] light:text-gray-600 leading-[1.6] line-clamp-3 mb-3 flex-1">{bodyPreview}</p>
 
         <p className="text-[10px] text-[#8892B0] light:text-gray-500 mb-3 flex items-center gap-1">
           <Clock className="w-3 h-3 text-[#06B6D4]" />
-          Ready to send {draft?.generationMs ? `· ${(draft.generationMs / 1000).toFixed(0)}s` : ''}
+          Generated from your last call {draft?.generationMs ? `· ${(draft.generationMs / 1000).toFixed(0)}s` : ''}
         </p>
 
         <div className="flex gap-2">
           <Link
             href={draftId ? `/dashboard/drafts?id=${draftId}` : '/dashboard/drafts'}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-bold text-black"
-            style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)' }}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-bold text-black hover:scale-[1.02] transition-transform duration-150"
+            style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', boxShadow: '0 2px 12px rgba(245,158,11,0.25)' }}
           >
             Send
           </Link>
           <Link
             href={draftId ? `/dashboard/drafts?id=${draftId}&edit=true` : '/dashboard/drafts'}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-[#C0C8E0] light:text-gray-600 border border-[#1E2A4A] light:border-gray-200 hover:border-white/20 light:hover:border-gray-300 transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-[#C0C8E0] light:text-gray-600 border border-[#1E2A4A] light:border-gray-200 hover:border-white/20 light:hover:border-gray-300 transition-colors duration-150"
           >
             <Edit3 className="w-3 h-3" />
             Edit
@@ -160,7 +195,7 @@ function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
       </div>
 
       {/* B: Sequence Started */}
-      <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 flex flex-col">
+      <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 flex flex-col hover:border-white/15 light:hover:border-gray-300 transition-colors duration-200">
         <div className="flex items-center gap-2 mb-3">
           <Layers className="w-4 h-4 text-[#6366F1]" />
           <span className="text-xs font-semibold text-[#6366F1] uppercase tracking-wider">Sequence Started</span>
@@ -190,7 +225,7 @@ function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
       </div>
 
       {/* C: Next Steps Tracked */}
-      <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 flex flex-col">
+      <div className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-5 flex flex-col hover:border-white/15 light:hover:border-gray-300 transition-colors duration-200">
         <div className="flex items-center gap-2 mb-3">
           <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" />
           <span className="text-xs font-semibold text-[#06B6D4] uppercase tracking-wider">Next Steps Tracked</span>
@@ -231,23 +266,108 @@ function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
           Sample data — connect a meeting platform to see your real post-call outputs
         </p>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 /* ──────────────────────────────────────────────
-   MAIN EXPORT
+   IDLE STATE — waiting for next meeting
+   ────────────────────────────────────────────── */
+const idleSteps = [
+  { icon: '01', label: 'Recording received', color: '#06B6D4' },
+  { icon: '02', label: 'Transcript generated', color: '#06B6D4' },
+  { icon: '03', label: 'Follow-up drafted', color: '#F59E0B' },
+  { icon: '04', label: 'Sequence prepared', color: '#6366F1' },
+  { icon: '05', label: 'Next steps tracked', color: '#06B6D4' },
+];
+
+function IdlePanel() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 md:p-8"
+    >
+      <div className="flex items-start gap-4">
+        {/* Left: copy */}
+        <div className="flex-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20 mb-4">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#06B6D4]/60" />
+            <span className="text-[10px] font-medium text-[#06B6D4]">Waiting for next meeting</span>
+          </div>
+
+          <h2 className="text-base font-bold text-white light:text-gray-900 mb-2">
+            When your next meeting is captured, it will appear here.
+          </h2>
+          <p className="text-sm text-[#8892B0] light:text-gray-500 leading-relaxed max-w-md">
+            ReplySequence will process the recording, generate your follow-up, start the sequence, and extract next steps — automatically.
+          </p>
+        </div>
+
+        {/* Right: flow preview */}
+        <div className="hidden md:flex flex-col gap-2 flex-shrink-0">
+          {idleSteps.map((step, i) => (
+            <div key={step.label} className="flex items-center gap-2.5">
+              <div
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold"
+                style={{ backgroundColor: `${step.color}12`, color: `${step.color}80`, border: `1px solid ${step.color}20` }}
+              >
+                {step.icon}
+              </div>
+              <span className="text-[11px] text-[#8892B0]/70 light:text-gray-400">{step.label}</span>
+              {i < idleSteps.length - 1 && (
+                <span className="text-[#1E2A4A] light:text-gray-200 text-[10px] ml-auto">→</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   MAIN EXPORT — 3 states: processing / output / idle
    ────────────────────────────────────────────── */
 export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, riskFlag }: PostCallSystemPanelProps) {
-  const isProcessing = processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status);
+  const isRealProcessing = processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status);
+  const hasResults = !!draft || !!sequence || nextSteps.length > 0;
+
+  // Simulate processing on first load if we have recent results
+  const [simulating, setSimulating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (!isRealProcessing && hasResults) {
+      setSimulating(true);
+      const timer = setTimeout(() => setSimulating(false), 2800);
+      return () => clearTimeout(timer);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const showProcessing = isRealProcessing || (simulating && mounted);
+  const showIdle = !showProcessing && !hasResults;
+  const meetingName = processing?.meetingName || draft?.meetingTopic || 'your meeting';
 
   return (
     <div className="mb-4">
-      {isProcessing ? (
-        <ProcessingPanel status={processing!.status} meetingName={processing!.meetingName} />
-      ) : (
-        <OutputPanel draft={draft} sequence={sequence} nextSteps={nextSteps} riskFlag={riskFlag} />
-      )}
+      <AnimatePresence mode="wait">
+        {showProcessing ? (
+          <ProcessingPanel
+            key="processing"
+            status={isRealProcessing ? processing!.status : 'generating_sequence'}
+            meetingName={meetingName}
+            simulated={simulating}
+          />
+        ) : showIdle ? (
+          <IdlePanel key="idle" />
+        ) : (
+          <OutputPanel key="output" draft={draft} sequence={sequence} nextSteps={nextSteps} riskFlag={riskFlag} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

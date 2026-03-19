@@ -81,7 +81,7 @@ async function CommandCenterContent() {
 
       {/* ═══════ 2. PIPELINE INTELLIGENCE ═══════ */}
       <div className="mb-4">
-        <h2 className="text-xs font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-3">
+        <h2 className="text-[10px] font-medium text-[#8892B0]/70 light:text-gray-400 uppercase tracking-wider mb-3">
           Pipeline Intelligence
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -96,7 +96,7 @@ async function CommandCenterContent() {
 
       {/* ═══════ 3. WORK QUEUE ═══════ */}
       <div>
-        <h2 className="text-xs font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-3">
+        <h2 className="text-[10px] font-medium text-[#8892B0]/70 light:text-gray-400 uppercase tracking-wider mb-3">
           Work Queue
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
