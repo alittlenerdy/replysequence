@@ -135,7 +135,7 @@ export default function RootLayout({
       signInFallbackRedirectUrl="/dashboard"
       signUpFallbackRedirectUrl="/dashboard"
     >
-      <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+      <html lang="en" className={`dark ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `
           try {
