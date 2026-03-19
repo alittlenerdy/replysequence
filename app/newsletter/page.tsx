@@ -19,7 +19,7 @@ const benefits = [
     icon: Target,
     title: 'Actionable Tactics',
     description: 'One specific follow-up technique each week that you can use in your next meeting.',
-    color: '#5B6CFF',
+    color: '#6366F1',
   },
   {
     icon: Eye,
@@ -100,7 +100,7 @@ export default function NewsletterPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 text-[#5B6CFF] text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 text-[#6366F1] text-sm font-medium mb-6">
             <Mail className="w-4 h-4" />
             Every Tuesday
           </div>
@@ -160,7 +160,7 @@ export default function NewsletterPage() {
                       placeholder="Name (optional)"
                       aria-label="Name"
                       autoComplete="name"
-                      className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:border-transparent text-sm sm:w-[180px]"
+                      className="px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm sm:w-[180px]"
                     />
                     <input
                       type="email"
@@ -171,12 +171,12 @@ export default function NewsletterPage() {
                       aria-label="Email address"
                       autoComplete="email"
                       spellCheck={false}
-                      className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:border-transparent text-sm"
+                      className="flex-1 px-4 py-3 bg-gray-800/80 light:bg-white border border-gray-700 light:border-gray-300 rounded-xl text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm"
                     />
                     <button
                       type="submit"
                       disabled={isSubmitting || !email}
-                      className="px-6 py-3 bg-gradient-to-r from-[#4A5BEE] to-[#3A4BDD] hover:from-[#5B6CFF] hover:to-[#4A5BEE] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-xl hover:shadow-[#5B6CFF]/30 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                      className="px-6 py-3 bg-gradient-to-r from-[#4F46E5] to-[#3A4BDD] hover:from-[#6366F1] hover:to-[#4F46E5] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-semibold transition-[background,box-shadow,opacity] shadow-lg shadow-[#6366F1]/25 hover:shadow-xl hover:shadow-[#6366F1]/30 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                     >
                       {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                     </button>
@@ -252,7 +252,7 @@ export default function NewsletterPage() {
                 key={i}
                 className="flex items-start gap-3 rounded-xl bg-gray-900/30 light:bg-gray-50 border border-gray-800/40 light:border-gray-200 px-5 py-4"
               >
-                <Mail className="w-4 h-4 text-[#5B6CFF] mt-0.5 shrink-0" />
+                <Mail className="w-4 h-4 text-[#6366F1] mt-0.5 shrink-0" />
                 <span className="text-sm text-gray-300 light:text-gray-700">{topic}</span>
               </div>
             ))}
@@ -271,7 +271,7 @@ export default function NewsletterPage() {
           </p>
           <Link
             href="/demo"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-300 rounded-xl text-sm font-medium text-white light:text-gray-900 hover:border-[#5B6CFF]/30 light:hover:border-[#5B6CFF]/30 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 light:border-gray-300 rounded-xl text-sm font-medium text-white light:text-gray-900 hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Try the live demo
             <ArrowRight className="w-4 h-4" />

@@ -81,7 +81,7 @@ export default function NPSSurveyPage() {
             <button
               key={i}
               onClick={() => setScore(i)}
-              className={`w-10 h-10 rounded-lg font-semibold text-sm transition-[color,background-color,transform] outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`w-10 h-10 rounded-lg font-semibold text-sm transition-[color,background-color,transform] outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 score === i
                   ? i >= 9
                     ? 'bg-green-500 text-white scale-110'
@@ -112,7 +112,7 @@ export default function NPSSurveyPage() {
               id="nps-feedback"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#6366F1] resize-none"
               rows={3}
               placeholder="Your thoughts\u2026 (optional)"
             />
@@ -126,7 +126,7 @@ export default function NPSSurveyPage() {
         <button
           onClick={handleSubmit}
           disabled={score === null || submitting}
-          className="w-full px-6 py-3 bg-[#4A5BEE] hover:bg-[#5B6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="w-full px-6 py-3 bg-[#4F46E5] hover:bg-[#6366F1] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {submitting ? 'Submitting\u2026' : 'Submit'}
         </button>

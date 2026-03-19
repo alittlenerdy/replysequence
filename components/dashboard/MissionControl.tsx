@@ -246,7 +246,7 @@ export function MissionControl({ priorities, momentum }: MissionControlProps) {
             value={momentum.followUpCoverage}
             suffix="%"
             icon={Shield}
-            color="#5B6CFF"
+            color="#6366F1"
           />
           <MomentumMetric
             label="Avg Response Time"
@@ -278,7 +278,7 @@ export function MissionControl({ priorities, momentum }: MissionControlProps) {
             <div className="h-1.5 rounded-full bg-gray-800 light:bg-gray-100 overflow-hidden">
               <motion.div
                 className="h-full rounded-full"
-                style={{ backgroundColor: '#5B6CFF' }}
+                style={{ backgroundColor: '#6366F1' }}
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.round((momentum.draftsReviewed / momentum.totalDrafts) * 100)}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}

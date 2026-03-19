@@ -57,13 +57,13 @@ export function MeetingSummaryPanel({ meetingId }: MeetingSummaryPanelProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#5B6CFF]/10 to-[#3A4BDD]/10 rounded-lg border border-[#5B6CFF]/20 overflow-hidden">
+    <div className="bg-gradient-to-br from-[#6366F1]/10 to-[#3A4BDD]/10 rounded-lg border border-[#6366F1]/20 overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-white/5 transition-colors rounded-t-lg outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-white/5 transition-colors rounded-t-lg outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
       >
-        <h3 className="text-sm font-medium text-[#7A8BFF] flex items-center gap-2">
+        <h3 className="text-sm font-medium text-[#818CF8] flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
@@ -93,11 +93,11 @@ export function MeetingSummaryPanel({ meetingId }: MeetingSummaryPanelProps) {
                 {data.keyTopics.map((item, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full bg-[#5B6CFF]/15 text-[#7A8BFF] border border-[#5B6CFF]/20"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full bg-[#6366F1]/15 text-[#818CF8] border border-[#6366F1]/20"
                   >
                     <span>{item.topic}</span>
                     {item.duration && (
-                      <span className="text-[#5B6CFF]/60">({item.duration})</span>
+                      <span className="text-[#6366F1]/60">({item.duration})</span>
                     )}
                   </span>
                 ))}
@@ -112,7 +112,7 @@ export function MeetingSummaryPanel({ meetingId }: MeetingSummaryPanelProps) {
               <ul className="space-y-2">
                 {data.keyDecisions.map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <svg className="w-4 h-4 text-[#5B6CFF] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg className="w-4 h-4 text-[#6366F1] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>

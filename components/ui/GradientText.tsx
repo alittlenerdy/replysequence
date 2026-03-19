@@ -7,8 +7,8 @@ interface GradientTextProps {
 }
 
 const variantClasses = {
-  primary: 'bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE]',
-  secondary: 'bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE]',
+  primary: 'bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5]',
+  secondary: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
   amber: 'bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500',
 } as const;
 

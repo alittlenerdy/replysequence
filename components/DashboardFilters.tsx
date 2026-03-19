@@ -47,9 +47,9 @@ export function DashboardFilters({
               key={chip.value}
               onClick={() => onStatusChange(chip.value)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${status === chip.value
-                  ? 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/30 light:bg-[#EEF0FF] light:text-[#4A5BEE] light:border-[#4A5BEE]/30'
+                  ? 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/30 light:bg-[#EEF0FF] light:text-[#4F46E5] light:border-[#4F46E5]/30'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
                 }
               `}
@@ -69,9 +69,9 @@ export function DashboardFilters({
               key={chip.value}
               onClick={() => onDateRangeChange(chip.value)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${dateRange === chip.value
-                  ? 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/30 light:bg-[#EEF0FF] light:text-[#4A5BEE] light:border-[#4A5BEE]/30'
+                  ? 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/30 light:bg-[#EEF0FF] light:text-[#4F46E5] light:border-[#4F46E5]/30'
                   : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
                 }
               `}
@@ -106,14 +106,14 @@ export function DashboardFilters({
               placeholder-gray-500 light:placeholder-gray-400
               bg-white/[0.04] light:bg-white
               backdrop-blur-sm
-              focus-visible:outline-none focus-visible:border-[#5B6CFF] focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/30
+              focus-visible:outline-none focus-visible:border-[#6366F1] focus-visible:ring-2 focus-visible:ring-[#6366F1]/30
               transition-colors duration-200
             "
           />
           {search && (
             <button
               onClick={() => onSearchChange('')}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 light:hover:text-gray-700 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 light:hover:text-gray-700 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               aria-label="Clear search"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -127,7 +127,7 @@ export function DashboardFilters({
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Clear all
           </button>

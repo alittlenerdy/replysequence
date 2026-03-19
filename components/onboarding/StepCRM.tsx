@@ -43,7 +43,7 @@ export function StepCRM({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-[#5B6CFF]/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-[#6366F1]/20 flex items-center justify-center mx-auto mb-6"
         >
           <Database className="w-8 h-8 text-orange-400" />
         </motion.div>
@@ -72,7 +72,7 @@ export function StepCRM({
           transition={{ delay: 0.2 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             hubspotConnected
-              ? 'border-[#5B6CFF]/50 bg-[#5B6CFF]/5'
+              ? 'border-[#6366F1]/50 bg-[#6366F1]/5'
               : 'border-gray-700 hover:border-gray-600'
           }`}
         >
@@ -84,7 +84,7 @@ export function StepCRM({
                 </svg>
               </div>
               {hubspotConnected && (
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#5B6CFF]/10 text-[#5B6CFF] text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#6366F1]/10 text-[#6366F1] text-xs font-medium">
                   <Check className="w-3.5 h-3.5" />
                   Connected
                 </div>
@@ -95,9 +95,9 @@ export function StepCRM({
             <button
               onClick={handleHubSpotConnect}
               disabled={hubspotConnected || connecting !== null}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 hubspotConnected
-                  ? 'bg-[#5B6CFF]/10 text-[#5B6CFF] cursor-default'
+                  ? 'bg-[#6366F1]/10 text-[#6366F1] cursor-default'
                   : connecting === 'hubspot'
                   ? 'bg-gray-800 text-gray-400'
                   : 'text-white hover:opacity-90 bg-[#FF7A59]'
@@ -127,7 +127,7 @@ export function StepCRM({
           transition={{ delay: 0.25 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             salesforceConnected
-              ? 'border-[#5B6CFF]/50 bg-[#5B6CFF]/5'
+              ? 'border-[#6366F1]/50 bg-[#6366F1]/5'
               : 'border-gray-700 hover:border-gray-600'
           }`}
         >
@@ -139,7 +139,7 @@ export function StepCRM({
                 </svg>
               </div>
               {salesforceConnected && (
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#5B6CFF]/10 text-[#5B6CFF] text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#6366F1]/10 text-[#6366F1] text-xs font-medium">
                   <Check className="w-3.5 h-3.5" />
                   Connected
                 </div>
@@ -150,9 +150,9 @@ export function StepCRM({
             <button
               onClick={handleSalesforceConnect}
               disabled={salesforceConnected || connecting !== null}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 salesforceConnected
-                  ? 'bg-[#5B6CFF]/10 text-[#5B6CFF] cursor-default'
+                  ? 'bg-[#6366F1]/10 text-[#6366F1] cursor-default'
                   : connecting === 'salesforce'
                   ? 'bg-gray-800 text-gray-400'
                   : 'text-white hover:opacity-90 bg-[#00A1E0]'
@@ -182,7 +182,7 @@ export function StepCRM({
           transition={{ delay: 0.3 }}
           className={`relative rounded-2xl bg-gray-900/50 border transition-[border-color,background-color] duration-300 overflow-hidden ${
             sheetsConnected
-              ? 'border-[#5B6CFF]/50 bg-[#5B6CFF]/5'
+              ? 'border-[#6366F1]/50 bg-[#6366F1]/5'
               : 'border-gray-700 hover:border-gray-600'
           }`}
         >
@@ -194,7 +194,7 @@ export function StepCRM({
                 </svg>
               </div>
               {sheetsConnected && (
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#5B6CFF]/10 text-[#5B6CFF] text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#6366F1]/10 text-[#6366F1] text-xs font-medium">
                   <Check className="w-3.5 h-3.5" />
                   Connected
                 </div>
@@ -210,9 +210,9 @@ export function StepCRM({
                 window.location.href = `/api/auth/sheets?redirect=${encodeURIComponent(returnUrl)}`;
               }}
               disabled={sheetsConnected || connecting !== null}
-              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-[color,background-color,opacity] duration-200 flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 sheetsConnected
-                  ? 'bg-[#5B6CFF]/10 text-[#5B6CFF] cursor-default'
+                  ? 'bg-[#6366F1]/10 text-[#6366F1] cursor-default'
                   : connecting === 'sheets'
                   ? 'bg-gray-800 text-gray-400'
                   : 'text-white hover:opacity-90 bg-[#34A853]'
@@ -245,7 +245,7 @@ export function StepCRM({
         >
           <button
             onClick={() => onCRMConnected()}
-            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] hover:from-[#4A5BEE] hover:to-[#2A3ACC] shadow-lg shadow-[#5B6CFF]/25 hover:shadow-[#5B6CFF]/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#6366F1] to-[#3A4BDD] hover:from-[#4F46E5] hover:to-[#2A3ACC] shadow-lg shadow-[#6366F1]/25 hover:shadow-[#6366F1]/40 transition-[color,background-color,box-shadow] duration-300 flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Continue
             <ArrowRight className="w-5 h-5" />
@@ -261,7 +261,7 @@ export function StepCRM({
       >
         <button
           onClick={onSkip}
-          className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="text-sm text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Skip for now
         </button>

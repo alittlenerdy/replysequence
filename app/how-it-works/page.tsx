@@ -29,12 +29,12 @@ function FlowLine({ progress }: { progress: number }) {
     <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden lg:block">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-700/50 to-transparent" />
       <motion.div
-        className="absolute top-0 left-0 w-full bg-gradient-to-b from-[#5B6CFF] via-[#5B6CFF] to-[#3A4BDD]"
+        className="absolute top-0 left-0 w-full bg-gradient-to-b from-[#6366F1] via-[#6366F1] to-[#3A4BDD]"
         style={{ height: `${progress * 100}%` }}
       />
       {/* Glowing dot at the end */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-lg shadow-[#5B6CFF]/50"
+        className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-lg shadow-[#6366F1]/50"
         style={{ top: `${progress * 100}%` }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
         transition={{ duration: 1.5, repeat: Infinity }}
@@ -76,7 +76,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
         <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.5, repeat: Infinity }}
-          className="text-[#5B6CFF]"
+          className="text-[#6366F1]"
         >
           |
         </motion.span>
@@ -131,7 +131,7 @@ function Accordion({
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-800/50 light:bg-gray-50 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="w-full flex items-center justify-between p-4 bg-gray-800/50 light:bg-gray-50 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
       >
         <div className="flex items-center gap-3">
           {icon}
@@ -177,7 +177,7 @@ function FAQItem({ question, answer, index }: { question: string; answer: string
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-5 bg-gray-900/50 light:bg-white hover:bg-gray-800/50 light:hover:bg-gray-50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="w-full flex items-center justify-between p-5 bg-gray-900/50 light:bg-white hover:bg-gray-800/50 light:hover:bg-gray-50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
       >
         <span className="font-semibold text-white light:text-gray-900 pr-4">{question}</span>
         <motion.div
@@ -245,12 +245,12 @@ function StepCard({
 
   const colorClasses = {
     indigo: {
-      border: 'border-[#5B6CFF]/50',
-      bg: 'bg-[#5B6CFF]/10',
-      text: 'text-[#5B6CFF]',
-      badge: 'bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE]',
-      glow: 'shadow-[#5B6CFF]/30',
-      hoverGlow: 'hover:shadow-[#5B6CFF]/40',
+      border: 'border-[#6366F1]/50',
+      bg: 'bg-[#6366F1]/10',
+      text: 'text-[#6366F1]',
+      badge: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
+      glow: 'shadow-[#6366F1]/30',
+      hoverGlow: 'hover:shadow-[#6366F1]/40',
     },
     amber: {
       border: 'border-amber-500/50',
@@ -261,12 +261,12 @@ function StepCard({
       hoverGlow: 'hover:shadow-amber-500/40',
     },
     cyan: {
-      border: 'border-[#5B6CFF]/50',
-      bg: 'bg-[#5B6CFF]/10',
-      text: 'text-[#5B6CFF]',
-      badge: 'bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE]',
-      glow: 'shadow-[#5B6CFF]/30',
-      hoverGlow: 'hover:shadow-[#5B6CFF]/40',
+      border: 'border-[#6366F1]/50',
+      bg: 'bg-[#6366F1]/10',
+      text: 'text-[#6366F1]',
+      badge: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
+      glow: 'shadow-[#6366F1]/30',
+      hoverGlow: 'hover:shadow-[#6366F1]/40',
     },
   };
 
@@ -393,13 +393,13 @@ export default function HowItWorksPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#5B6CFF]/10 to-[#3A4BDD]/10 border border-[#5B6CFF]/20 mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 border border-[#6366F1]/20 mb-6"
             >
               <motion.span
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               >
-                <Sparkles className="w-4 h-4 text-[#5B6CFF]" aria-hidden="true" />
+                <Sparkles className="w-4 h-4 text-[#6366F1]" aria-hidden="true" />
               </motion.span>
               <span className="text-sm font-medium text-gray-300 light:text-gray-700">
                 Powered by Claude AI
@@ -422,7 +422,7 @@ export default function HowItWorksPage() {
             className="flex flex-wrap justify-center gap-6"
           >
             <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#5B6CFF]/10 to-[#3A4BDD]/10 border border-[#5B6CFF]/20"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 border border-[#6366F1]/20"
               whileHover={{ scale: 1.05, borderColor: 'rgba(91, 108, 255, 0.5)' }}
             >
               <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
@@ -442,10 +442,10 @@ export default function HowItWorksPage() {
               <span className="text-sm text-gray-400 light:text-gray-600">follow-up coverage</span>
             </motion.div>
             <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#5B6CFF]/10 to-[#3A4BDD]/10 border border-[#5B6CFF]/20"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 border border-[#6366F1]/20"
               whileHover={{ scale: 1.05, borderColor: 'rgba(91, 108, 255, 0.5)' }}
             >
-              <CheckCircle className="w-5 h-5 text-[#5B6CFF]" aria-hidden="true" />
+              <CheckCircle className="w-5 h-5 text-[#6366F1]" aria-hidden="true" />
               <span className="text-lg font-bold text-white light:text-gray-900">
                 Zero
               </span>
@@ -518,7 +518,7 @@ export default function HowItWorksPage() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + i * 0.1, type: 'spring' }}
                   >
-                    <CheckCircle className="w-4 h-4 text-[#5B6CFF] flex-shrink-0" aria-hidden="true" />
+                    <CheckCircle className="w-4 h-4 text-[#6366F1] flex-shrink-0" aria-hidden="true" />
                   </motion.div>
                   <span>{text}</span>
                 </motion.div>
@@ -542,7 +542,7 @@ export default function HowItWorksPage() {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-[#5B6CFF] mb-1">
+                    <div className="flex items-center gap-2 text-sm font-medium text-[#6366F1] mb-1">
                       <Mail className="w-4 h-4" aria-hidden="true" />
                       Follow-Up Email
                     </div>
@@ -562,7 +562,7 @@ export default function HowItWorksPage() {
                     </ul>
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-[#5B6CFF] mb-1">
+                    <div className="flex items-center gap-2 text-sm font-medium text-[#6366F1] mb-1">
                       <CheckCircle className="w-4 h-4" aria-hidden="true" />
                       Next Steps Tracked
                     </div>
@@ -611,7 +611,7 @@ export default function HowItWorksPage() {
                     whileHover={{ scale: 1.03, backgroundColor: 'rgba(91, 108, 255, 0.1)' }}
                     className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 transition-colors"
                   >
-                    <Icon className="w-5 h-5 text-[#5B6CFF]" aria-hidden="true" />
+                    <Icon className="w-5 h-5 text-[#6366F1]" aria-hidden="true" />
                     <span className="text-sm text-gray-300 light:text-gray-700">{text}</span>
                   </motion.div>
                 ))}
@@ -622,7 +622,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Gradient divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent my-8" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-8" />
 
       {/* FAQ Section */}
       <section className="py-20 px-4 relative z-10">
@@ -676,7 +676,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Gradient divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#5B6CFF]/20 to-transparent my-8" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-8" />
 
       {/* Final CTA Section */}
       <section className="py-20 px-4 relative z-10">

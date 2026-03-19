@@ -20,7 +20,7 @@ const useCases = [
 export function FollowUpsContent() {
   return (
     <ProductPageTemplate
-      accent="#5B6CFF"
+      accent="#6366F1"
       icon={FileText}
       title="Every Meeting Deserves a Follow-Up That Sounds Like You Wrote It"
       subtitle="ReplySequence generates personalized follow-up emails from your meeting transcript — referencing real topics, action items, and next steps."

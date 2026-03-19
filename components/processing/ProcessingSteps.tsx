@@ -58,7 +58,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     isComplete
                       ? 'bg-green-500/20 border-2 border-green-500'
                       : isCurrent
-                      ? 'bg-[#5B6CFF]/20 border-2 border-[#5B6CFF]'
+                      ? 'bg-[#6366F1]/20 border-2 border-[#6366F1]'
                       : isFailed && step.step === 'completed'
                       ? 'bg-red-500/20 border-2 border-red-500'
                       : 'bg-gray-800/50 light:bg-gray-100 border-2 border-gray-600 light:border-gray-300'
@@ -83,7 +83,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     <Check className="w-4 h-4 text-green-500" />
                   </motion.div>
                 ) : isCurrent ? (
-                  <Loader2 className="w-4 h-4 text-[#5B6CFF] animate-spin" />
+                  <Loader2 className="w-4 h-4 text-[#6366F1] animate-spin" />
                 ) : isFailed && step.step === 'completed' ? (
                   <AlertCircle className="w-4 h-4 text-red-500" />
                 ) : (
@@ -93,7 +93,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                 {/* Pulse effect for current step */}
                 {isCurrent && (
                   <motion.div
-                    className="absolute inset-0 rounded-full bg-[#5B6CFF]/30"
+                    className="absolute inset-0 rounded-full bg-[#6366F1]/30"
                     animate={{
                       scale: [1, 1.5, 1],
                       opacity: [0.5, 0, 0.5],
@@ -115,7 +115,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     isComplete
                       ? 'text-green-400'
                       : isCurrent
-                      ? 'text-[#5B6CFF]'
+                      ? 'text-[#6366F1]'
                       : 'text-gray-500'
                   }
                 `}
@@ -164,7 +164,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                         isComplete
                           ? 'bg-green-500/20 border-2 border-green-500'
                           : isCurrent
-                          ? 'bg-[#5B6CFF]/20 border-2 border-[#5B6CFF]'
+                          ? 'bg-[#6366F1]/20 border-2 border-[#6366F1]'
                           : isFailed && step.step === 'completed'
                           ? 'bg-red-500/20 border-2 border-red-500'
                           : 'bg-gray-800/50 border-2 border-gray-600'
@@ -181,7 +181,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                     {isComplete && step.step !== currentStep ? (
                       <Check className="w-3 h-3 text-green-500" />
                     ) : isCurrent ? (
-                      <Loader2 className="w-3 h-3 text-[#5B6CFF] animate-spin" />
+                      <Loader2 className="w-3 h-3 text-[#6366F1] animate-spin" />
                     ) : isFailed && step.step === 'completed' ? (
                       <AlertCircle className="w-3 h-3 text-red-500" />
                     ) : (
@@ -195,7 +195,7 @@ export function ProcessingSteps({ currentStep, className = '' }: ProcessingSteps
                         isComplete
                           ? 'text-green-400'
                           : isCurrent
-                          ? 'text-[#5B6CFF]'
+                          ? 'text-[#6366F1]'
                           : 'text-gray-500'
                       }
                     `}

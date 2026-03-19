@@ -16,7 +16,7 @@ const productItems = [
     description: 'AI-generated follow-ups after every meeting',
     href: '/product/follow-ups',
     icon: FileText,
-    color: '#5B6CFF',
+    color: '#6366F1',
   },
   {
     label: 'Sequences',
@@ -112,7 +112,7 @@ function ProductDropdown() {
     >
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -144,7 +144,7 @@ function ProductDropdown() {
                 role="menuitem"
                 tabIndex={open ? 0 : -1}
                 onClick={() => setOpen(false)}
-                className="group flex items-start gap-3 p-3 rounded-xl transition-colors duration-150 hover:bg-[#5B6CFF]/10 light:hover:bg-[#5B6CFF]/5 outline-none focus-visible:bg-[#5B6CFF]/10 focus-visible:ring-1 focus-visible:ring-[#5B6CFF]/40"
+                className="group flex items-start gap-3 p-3 rounded-xl transition-colors duration-150 hover:bg-[#6366F1]/10 light:hover:bg-[#6366F1]/5 outline-none focus-visible:bg-[#6366F1]/10 focus-visible:ring-1 focus-visible:ring-[#6366F1]/40"
               >
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110"
@@ -186,7 +186,7 @@ function ProductDropdown() {
               role="menuitem"
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
-              className="group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-gray-400 light:text-gray-500 hover:text-[#5B6CFF] light:hover:text-[#4A5BEE] transition-colors outline-none focus-visible:text-[#5B6CFF] focus-visible:ring-1 focus-visible:ring-[#5B6CFF]/40"
+              className="group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-gray-400 light:text-gray-500 hover:text-[#6366F1] light:hover:text-[#4F46E5] transition-colors outline-none focus-visible:text-[#6366F1] focus-visible:ring-1 focus-visible:ring-[#6366F1]/40"
             >
               Explore the platform
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -199,7 +199,7 @@ function ProductDropdown() {
 }
 
 const navLinkClass =
-  'text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]';
+  'text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]';
 
 export function Header() {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -208,7 +208,7 @@ export function Header() {
     <header className="fixed top-0 w-full z-50 bg-[#030712]/90 light:bg-white/90 backdrop-blur-md border-b border-gray-700 light:border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 text-xl sm:text-2xl font-display font-bold bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] light:from-[#4A5BEE] light:via-[#4A5BEE] light:to-[#4A5BEE] bg-clip-text text-transparent rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
+        <Link href="/" className="flex items-center gap-2 text-xl sm:text-2xl font-display font-bold bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5] light:from-[#4F46E5] light:via-[#4F46E5] light:to-[#4F46E5] bg-clip-text text-transparent rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
           <Image src="/logo.png" alt="" width={36} height={36} className="rounded-md drop-shadow-lg light:drop-shadow-md" />
           ReplySequence
         </Link>
@@ -277,7 +277,7 @@ export function Header() {
 
           {isLoaded && !isSignedIn && (
             <SignInButton mode="modal">
-              <button className="text-sm font-medium text-gray-300 light:text-gray-600 px-3 py-1.5 rounded-md hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
+              <button className="text-sm font-medium text-gray-300 light:text-gray-600 px-3 py-1.5 rounded-md hover:bg-gray-800 light:hover:bg-gray-100 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
                 Sign In
               </button>
             </SignInButton>

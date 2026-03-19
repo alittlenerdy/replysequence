@@ -12,9 +12,9 @@ import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 
 function PlatformBadge({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string }> = {
-    zoom: { label: 'Zoom', color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
-    google_meet: { label: 'Google Meet', color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
-    microsoft_teams: { label: 'Teams', color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
+    zoom: { label: 'Zoom', color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
+    google_meet: { label: 'Google Meet', color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
+    microsoft_teams: { label: 'Teams', color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
   };
   const { label, color } = config[platform] || { label: platform, color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' };
 
@@ -27,10 +27,10 @@ function PlatformBadge({ platform }: { platform: string }) {
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { label: string; color: string }> = {
-    completed: { label: 'Completed', color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
+    completed: { label: 'Completed', color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
     processing: { label: 'Processing', color: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
     pending: { label: 'Pending', color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
-    ready: { label: 'Ready', color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
+    ready: { label: 'Ready', color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
     failed: { label: 'Failed', color: 'bg-red-500/15 text-red-400 border-red-500/20' },
   };
   const { label, color } = config[status] || { label: status, color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' };
@@ -44,8 +44,8 @@ function StatusBadge({ status }: { status: string }) {
 
 function DraftStatusBadge({ status }: { status: string }) {
   const config: Record<string, { color: string }> = {
-    generated: { color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
-    sent: { color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
+    generated: { color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
+    sent: { color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
     failed: { color: 'bg-red-500/15 text-red-400 border-red-500/20' },
     pending: { color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
     generating: { color: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
@@ -157,7 +157,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
       {/* Back link */}
       <Link
         href="/dashboard/meetings"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -200,7 +200,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                   key={i}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full bg-gray-800 light:bg-gray-100 text-gray-300 light:text-gray-600 border border-gray-700 light:border-gray-200"
                 >
-                  <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
                     {p.user_name?.[0]?.toUpperCase() || '?'}
                   </span>
                   {p.user_name}
@@ -241,7 +241,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
       {meeting.sentimentAnalysis && (
         <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
           <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <svg className="w-5 h-5 text-[#6366F1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Meeting Sentiment
@@ -276,7 +276,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
               {meeting.sentimentAnalysis.overall.tones.map((tone: string, i: number) => (
                 <span
                   key={i}
-                  className="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[#5B6CFF]/10 text-[#7A8BFF] light:text-[#4A5BEE] border border-[#5B6CFF]/15"
+                  className="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[#6366F1]/10 text-[#818CF8] light:text-[#4F46E5] border border-[#6366F1]/15"
                 >
                   {tone}
                 </span>
@@ -332,7 +332,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
               </div>
               <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] rounded-full transition-[width] duration-500"
+                  className="h-full bg-gradient-to-r from-[#6366F1] to-[#3A4BDD] rounded-full transition-[width] duration-500"
                   style={{ width: `${meeting.processingProgress}%` }}
                 />
               </div>
@@ -341,7 +341,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           <div className="space-y-1">
             {meeting.processingLogs.map((log, i) => (
               <div key={i} className="flex items-center gap-2 text-xs text-gray-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#5B6CFF] shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#6366F1] shrink-0" />
                 <span className="text-gray-500" suppressHydrationWarning>{new Date(log.timestamp).toLocaleTimeString()}</span>
                 <span>{log.message}</span>
                 {log.duration_ms && <span className="text-gray-600">({log.duration_ms}ms)</span>}
@@ -379,7 +379,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           <button
             onClick={handleReprocess}
             disabled={isReprocessing}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-red-500/15 text-red-400 border border-red-500/20 hover:bg-red-500/25 transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             <svg className={`w-4 h-4 ${isReprocessing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -417,7 +417,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
         </div>
       )}
       {regenerateSuccess && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 text-sm text-[#5B6CFF]">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#6366F1]/10 border border-[#6366F1]/20 text-sm text-[#6366F1]">
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -429,7 +429,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
       <div className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl p-6 light:shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white light:text-gray-900 flex items-center gap-2">
-            <svg className="w-5 h-5 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <svg className="w-5 h-5 text-[#6366F1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
             Email Drafts ({meeting.drafts.length})
@@ -438,7 +438,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             <button
               onClick={handleRegenerate}
               disabled={isRegenerating}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#5B6CFF]/15 text-[#5B6CFF] border border-[#5B6CFF]/20 hover:bg-[#4A5BEE]/25 transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/20 hover:bg-[#4F46E5]/25 transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <svg className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -464,11 +464,11 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
               <button
                 key={draft.id}
                 onClick={() => setSelectedDraft(draft)}
-                className="w-full text-left p-4 rounded-xl border border-gray-700/50 light:border-gray-200 hover:border-[#5B6CFF]/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="w-full text-left p-4 rounded-xl border border-gray-700/50 light:border-gray-200 hover:border-[#6366F1]/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-[#5B6CFF] light:group-hover:text-[#4A5BEE] transition-colors truncate">
+                    <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors truncate">
                       {draft.subject || 'Untitled Draft'}
                     </h3>
                     <p className="text-xs text-gray-400 light:text-gray-500 mt-1 line-clamp-2">
@@ -498,7 +498,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                     />
                   )}
                   {draft.sentAt && draft.sentTo && (
-                    <span className="text-xs text-[#5B6CFF] flex items-center gap-1">
+                    <span className="text-xs text-[#6366F1] flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
@@ -506,7 +506,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                     </span>
                   )}
                   {(draft.openCount ?? 0) > 0 && (
-                    <span className="text-xs text-[#5B6CFF] flex items-center gap-1">
+                    <span className="text-xs text-[#6366F1] flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -515,7 +515,7 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
                     </span>
                   )}
                   {draft.repliedAt && (
-                    <span className="text-xs text-[#5B6CFF] flex items-center gap-1">
+                    <span className="text-xs text-[#6366F1] flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                       </svg>

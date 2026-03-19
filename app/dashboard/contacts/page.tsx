@@ -139,8 +139,8 @@ export default function ContactsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-white light:text-gray-900 flex items-center gap-3">
-            <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#5B6CFF]/15">
-              <Contact className="w-5 h-5 text-[#5B6CFF]" strokeWidth={1.5} />
+            <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#6366F1]/15">
+              <Contact className="w-5 h-5 text-[#6366F1]" strokeWidth={1.5} />
             </div>
             Contacts
           </h1>
@@ -165,7 +165,7 @@ export default function ContactsPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search by name or email..."
-          className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-[#5B6CFF]/50"
+          className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-[#6366F1]/50"
         />
       </div>
 
@@ -178,8 +178,8 @@ export default function ContactsPage() {
       {/* Contacts table */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#5B6CFF]/10 mb-6">
-            <Contact className="w-8 h-8 text-[#5B6CFF]" strokeWidth={1.5} />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#6366F1]/10 mb-6">
+            <Contact className="w-8 h-8 text-[#6366F1]" strokeWidth={1.5} />
           </div>
           <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
             {search ? 'No contacts match your search' : 'No contacts yet'}
@@ -220,7 +220,7 @@ export default function ContactsPage() {
               <div className="flex items-center gap-3 min-w-0">
                 <div
                   className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                  style={{ background: 'linear-gradient(135deg, #5B6CFF, #7A5CFF)' }}
+                  style={{ background: 'linear-gradient(135deg, #6366F1, #7A5CFF)' }}
                 >
                   {getInitials(contact.name)}
                 </div>
@@ -246,7 +246,7 @@ export default function ContactsPage() {
 
               {/* Emails sent */}
               <div className="flex items-center gap-1.5 text-sm text-gray-300 light:text-gray-600">
-                <Mail className="w-3.5 h-3.5 text-[#5B6CFF] md:hidden" />
+                <Mail className="w-3.5 h-3.5 text-[#6366F1] md:hidden" />
                 <span>{contact.emailsSent}</span>
               </div>
 
@@ -258,7 +258,7 @@ export default function ContactsPage() {
                   </span>
                 )}
                 {contact.completedSequences > 0 && (
-                  <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full bg-[#5B6CFF]/15 text-[#5B6CFF] border border-[#5B6CFF]/20">
+                  <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/20">
                     {contact.completedSequences} done
                   </span>
                 )}
@@ -296,7 +296,7 @@ function ContactDetail({ contact, onClose }: { contact: ContactData; onClose: ()
             <div className="flex items-center gap-3">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                style={{ background: 'linear-gradient(135deg, #5B6CFF, #7A5CFF)' }}
+                style={{ background: 'linear-gradient(135deg, #6366F1, #7A5CFF)' }}
               >
                 {getInitials(contact.name)}
               </div>
@@ -351,8 +351,8 @@ function ContactDetail({ contact, onClose }: { contact: ContactData; onClose: ()
 
             {contact.emailsSent > 0 && (
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/15 flex items-center justify-center shrink-0 mt-0.5">
-                  <Mail className="w-4 h-4 text-[#5B6CFF]" />
+                <div className="w-8 h-8 rounded-lg bg-[#6366F1]/15 flex items-center justify-center shrink-0 mt-0.5">
+                  <Mail className="w-4 h-4 text-[#6366F1]" />
                 </div>
                 <div>
                   <p className="text-sm text-white light:text-gray-900">

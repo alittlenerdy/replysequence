@@ -36,7 +36,7 @@ interface MeetingIntelligence {
 
 const TEMPLATE_ICON_COLORS: Record<string, string> = {
   sales: 'text-amber-400 bg-amber-500/20 border-amber-500/30',
-  team: 'text-[#5B6CFF] bg-[#5B6CFF]/20 border-[#5B6CFF]/30',
+  team: 'text-[#6366F1] bg-[#6366F1]/20 border-[#6366F1]/30',
   client: 'text-teal-400 bg-teal-500/20 border-teal-500/30',
   technical: 'text-cyan-400 bg-cyan-500/20 border-cyan-500/30',
   general: 'text-gray-400 bg-gray-500/20 border-gray-500/30',
@@ -291,7 +291,7 @@ export function DraftInlinePanel({
   };
 
   return (
-    <div className="px-6 py-6 bg-gradient-to-b from-gray-800/60 to-gray-800/30 light:from-gray-50 light:to-white border-t-2 border-[#5B6CFF]/40 light:border-[#5B6CFF]/30">
+    <div className="px-6 py-6 bg-gradient-to-b from-gray-800/60 to-gray-800/30 light:from-gray-50 light:to-white border-t-2 border-[#6366F1]/40 light:border-[#6366F1]/30">
       {/* Error/Success feedback */}
       {error && (
         <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400">
@@ -343,7 +343,7 @@ export function DraftInlinePanel({
               {/* Header with actions */}
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-base font-semibold text-white light:text-gray-900 flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-[#5B6CFF] to-violet-600 shadow-sm shadow-[#5B6CFF]/30">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-[#6366F1] to-violet-600 shadow-sm shadow-[#6366F1]/30">
                     <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -358,7 +358,7 @@ export function DraftInlinePanel({
                     title="Copy to clipboard"
                   >
                     {copied ? (
-                      <svg className="w-4 h-4 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      <svg className="w-4 h-4 text-[#6366F1]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     ) : (
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
                     )}
@@ -383,7 +383,7 @@ export function DraftInlinePanel({
                   value={editSubject}
                   onChange={(e) => setEditSubject(e.target.value)}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full px-3 py-2 text-sm font-medium text-white light:text-gray-900 bg-gray-800/80 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-[#5B6CFF] focus:ring-1 focus:ring-[#5B6CFF] outline-none"
+                  className="w-full px-3 py-2 text-sm font-medium text-white light:text-gray-900 bg-gray-800/80 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] outline-none"
                   placeholder="Subject"
                 />
               ) : (
@@ -494,7 +494,7 @@ export function DraftInlinePanel({
                             onClick={() => setRecipientEmail(r.email)}
                             className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded-full transition-colors ${
                               recipientEmail === r.email
-                                ? 'bg-[#5B6CFF]/30 text-[#7A8BFF] border border-[#5B6CFF]/50'
+                                ? 'bg-[#6366F1]/30 text-[#818CF8] border border-[#6366F1]/50'
                                 : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:bg-gray-700 hover:text-white'
                             }`}
                             title={r.name ? `${r.name} <${r.email}>` : r.email}
@@ -536,13 +536,13 @@ export function DraftInlinePanel({
                       placeholder="Recipient email address"
                       value={recipientEmail}
                       onChange={(e) => setRecipientEmail(e.target.value)}
-                      className="flex-1 px-3 py-2 text-sm text-white light:text-gray-900 bg-gray-900/60 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-[#5B6CFF] focus:ring-1 focus:ring-[#5B6CFF] outline-none placeholder:text-gray-500"
+                      className="flex-1 px-3 py-2 text-sm text-white light:text-gray-900 bg-gray-900/60 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] outline-none placeholder:text-gray-500"
                       autoComplete="email"
                     />
                     <button
                       onClick={handleSend}
                       disabled={isSending || !recipientEmail}
-                      className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] hover:from-[#4A5BEE] hover:to-[#3A4BDD] shadow-sm shadow-[#5B6CFF]/25 disabled:opacity-50 transition-all"
+                      className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#3A4BDD] shadow-sm shadow-[#6366F1]/25 disabled:opacity-50 transition-all"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                       {isSending ? 'Sending\u2026' : 'Send'}
@@ -591,10 +591,10 @@ export function DraftInlinePanel({
         {/* Right: Meeting Intelligence context panel */}
         <div className="col-span-5 space-y-4">
           {meetingIntelLoading ? (
-            <div className="bg-gradient-to-br from-[#5B6CFF]/10 to-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-2xl p-6">
+            <div className="bg-gradient-to-br from-[#6366F1]/10 to-[#6366F1]/10 border border-[#6366F1]/20 rounded-2xl p-6">
               <div className="space-y-4 animate-pulse">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-5 h-5 bg-[#5B6CFF]/30 rounded" />
+                  <div className="w-5 h-5 bg-[#6366F1]/30 rounded" />
                   <div className="h-5 w-40 bg-gray-700 rounded" />
                 </div>
                 <div className="h-4 w-full bg-gray-700 rounded" />

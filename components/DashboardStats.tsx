@@ -41,9 +41,9 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
       subtitle: 'Follow-ups ready to send',
       value: stats.generated,
       Icon: FileText,
-      iconColor: '#5B6CFF',
-      textGradient: 'from-[#7A8BFF] via-[#B3BFFF] to-[#5B6CFF]',
-      lightColor: 'light:text-[#4A5BEE]',
+      iconColor: '#6366F1',
+      textGradient: 'from-[#818CF8] via-[#B3BFFF] to-[#6366F1]',
+      lightColor: 'light:text-[#4F46E5]',
       hero: true,
       displayMode: 'number' as const,
     },
@@ -110,7 +110,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
             variants={item}
             className={`rounded-2xl bg-gray-900/60 border light:bg-white ${
               stat.hero
-                ? 'border-[#5B6CFF]/30 light:border-[#4A5BEE]/20 col-span-2 md:col-span-1'
+                ? 'border-[#6366F1]/30 light:border-[#4F46E5]/20 col-span-2 md:col-span-1'
                 : 'border-gray-700/50 light:border-gray-200'
             }`}
           >

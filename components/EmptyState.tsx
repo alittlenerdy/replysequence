@@ -41,12 +41,12 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
       {/* Animated Icon */}
       <div className="relative mx-auto w-20 h-20 mb-6">
         {/* Pulse rings */}
-        <div className="pulse-ring absolute inset-0 text-[#5B6CFF] light:text-[#5B6CFF]" />
-        <div className="pulse-ring absolute inset-0 text-[#5B6CFF] light:text-[#5B6CFF]" style={{ animationDelay: '0.5s' }} />
-        <div className="pulse-ring absolute inset-0 text-[#5B6CFF] light:text-[#5B6CFF]" style={{ animationDelay: '1s' }} />
+        <div className="pulse-ring absolute inset-0 text-[#6366F1] light:text-[#6366F1]" />
+        <div className="pulse-ring absolute inset-0 text-[#6366F1] light:text-[#6366F1]" style={{ animationDelay: '0.5s' }} />
+        <div className="pulse-ring absolute inset-0 text-[#6366F1] light:text-[#6366F1]" style={{ animationDelay: '1s' }} />
 
         {/* Main icon container */}
-        <div className="empty-state-icon relative w-20 h-20 bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] rounded-full flex items-center justify-center">
+        <div className="empty-state-icon relative w-20 h-20 bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] rounded-full flex items-center justify-center">
           <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path
               strokeLinecap="round"
@@ -66,7 +66,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
           </p>
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] bg-[#1C2545]/30 light:bg-[#EEF0FF] rounded-lg hover:bg-[#1C2545]/50 light:hover:bg-[#EEF0FF] transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-[#6366F1] light:text-[#4F46E5] bg-[#1C2545]/30 light:bg-[#EEF0FF] rounded-lg hover:bg-[#1C2545]/50 light:hover:bg-[#EEF0FF] transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Clear Filters
           </button>
@@ -83,7 +83,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
             <button
               onClick={handleTrySample}
               disabled={isGenerating}
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4A5BEE] to-[#2A3ACC] rounded-lg hover:from-[#3A4BDD] hover:to-[#1C2545] disabled:opacity-60 disabled:cursor-not-allowed transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#5B6CFF]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4F46E5] to-[#2A3ACC] rounded-lg hover:from-[#3A4BDD] hover:to-[#1C2545] disabled:opacity-60 disabled:cursor-not-allowed transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#6366F1]/25 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               {isGenerating ? (
                 <>
@@ -100,7 +100,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
             {!hasConnectedPlatforms && (
               <a
                 href="/dashboard/settings"
-                className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-300 light:text-gray-700 bg-gray-700 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg hover:bg-gray-600 light:hover:bg-gray-50 transition-[color,background-color,transform,box-shadow] duration-300 hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M4.5 4.5h15c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2h-15c-1.1 0-2-.9-2-2v-11c0-1.1.9-2 2-2zm.5 3v8h8v-8h-8zm10 0v4l3-2v4l-3-2v4h4v-8h-4z"/>
@@ -148,7 +148,7 @@ export function EmptyState({ hasFilters, hasConnectedPlatforms, onClearFilters, 
                   animationDelay: item.delay,
                 }}
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-[#5B6CFF]/20">
+                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-[#6366F1]/20">
                   {item.step}
                 </div>
                 <div>

@@ -19,10 +19,10 @@ interface TranscriptViewerProps {
 }
 
 const speakerColors: Record<string, string> = {
-  'Jimmy': '#5B6CFF',
+  'Jimmy': '#6366F1',
   'Sarah Chen': '#38E8FF',
   'Mike Rodriguez': '#7A5CFF',
-  'You': '#5B6CFF',
+  'You': '#6366F1',
 };
 
 function getSpeakerColor(speaker: string): string {
@@ -102,7 +102,7 @@ export function TranscriptViewer({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search transcript..."
-          className="w-full pl-8 pr-3 py-2 text-xs bg-gray-800/60 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 rounded-lg text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-[#5B6CFF]/40 transition-colors"
+          className="w-full pl-8 pr-3 py-2 text-xs bg-gray-800/60 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 rounded-lg text-white light:text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-[#6366F1]/40 transition-colors"
         />
       </div>
 

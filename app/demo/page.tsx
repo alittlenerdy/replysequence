@@ -45,7 +45,7 @@ const SAMPLE_OPTIONS = [
     label: 'Sales Discovery Call',
     description: 'Discovery call with VP Sales at Acme Corp',
     icon: Users,
-    color: '#5B6CFF',
+    color: '#6366F1',
   },
   {
     id: 'sample-team-standup',
@@ -139,7 +139,7 @@ export default function DemoPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 text-[#5B6CFF] text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 text-[#6366F1] text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             Live Demo — No Signup Required
           </div>
@@ -161,7 +161,7 @@ export default function DemoPage() {
           {/* Step 1: Select input mode + meeting */}
           <div className="p-6 sm:p-8 border-b border-gray-800/50">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-[#5B6CFF]/15 flex items-center justify-center text-sm font-bold text-[#5B6CFF]">
+              <div className="w-7 h-7 rounded-lg bg-[#6366F1]/15 flex items-center justify-center text-sm font-bold text-[#6366F1]">
                 1
               </div>
               <h2 className="text-lg font-semibold">Choose a meeting</h2>
@@ -173,7 +173,7 @@ export default function DemoPage() {
                 onClick={() => { setInputMode('sample'); setResult(null); setError(null); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   inputMode === 'sample'
-                    ? 'bg-[#5B6CFF]/15 text-[#5B6CFF] border border-[#5B6CFF]/30'
+                    ? 'bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/30'
                     : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:border-gray-600/50'
                 }`}
               >
@@ -184,7 +184,7 @@ export default function DemoPage() {
                 onClick={() => { setInputMode('paste'); setResult(null); setError(null); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   inputMode === 'paste'
-                    ? 'bg-[#5B6CFF]/15 text-[#5B6CFF] border border-[#5B6CFF]/30'
+                    ? 'bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/30'
                     : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:border-gray-600/50'
                 }`}
               >
@@ -204,7 +204,7 @@ export default function DemoPage() {
                 >
                   <button
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-[#5B6CFF]/30 transition-colors text-left"
+                    className="w-full flex items-center gap-3 p-4 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-[#6366F1]/30 transition-colors text-left"
                   >
                     <div
                       className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
@@ -236,7 +236,7 @@ export default function DemoPage() {
                               setResult(null);
                             }}
                             className={`w-full flex items-center gap-3 p-3 text-left hover:bg-white/[0.04] transition-colors ${
-                              opt.id === selectedSample ? 'bg-[#5B6CFF]/5' : ''
+                              opt.id === selectedSample ? 'bg-[#6366F1]/5' : ''
                             }`}
                           >
                             <div
@@ -250,7 +250,7 @@ export default function DemoPage() {
                               <div className="text-xs text-gray-500">{opt.description}</div>
                             </div>
                             {opt.id === selectedSample && (
-                              <CheckCircle2 className="w-4 h-4 text-[#5B6CFF] ml-auto" />
+                              <CheckCircle2 className="w-4 h-4 text-[#6366F1] ml-auto" />
                             )}
                           </button>
                         ))}
@@ -271,7 +271,7 @@ export default function DemoPage() {
                     onChange={(e) => setCustomTranscript(e.target.value)}
                     placeholder="Paste your meeting transcript here... (minimum 50 characters)"
                     rows={8}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-700/50 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#5B6CFF]/50 focus:border-transparent resize-y leading-relaxed"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-700/50 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#6366F1]/50 focus:border-transparent resize-y leading-relaxed"
                   />
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700/50 hover:border-gray-600/50 transition-colors cursor-pointer text-sm text-gray-400">
@@ -305,7 +305,7 @@ export default function DemoPage() {
             <button
               onClick={handleGenerate}
               disabled={loading || !canGenerate}
-              className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] hover:from-[#6B7CFF] hover:to-[#8A6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-all"
+              className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] hover:from-[#6B7CFF] hover:to-[#8A6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-all"
             >
               {loading ? (
                 <>
@@ -351,7 +351,7 @@ export default function DemoPage() {
                     onClick={() => setActiveTab('email')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                       activeTab === 'email'
-                        ? 'bg-[#5B6CFF]/15 text-[#5B6CFF]'
+                        ? 'bg-[#6366F1]/15 text-[#6366F1]'
                         : 'text-gray-400 hover:text-gray-300'
                     }`}
                   >
@@ -383,7 +383,7 @@ export default function DemoPage() {
                       {/* Email header */}
                       <div className="px-5 py-3 border-b border-gray-700/30 bg-gray-800/30">
                         <div className="flex items-center gap-2 mb-1">
-                          <Mail className="w-3.5 h-3.5 text-[#5B6CFF]" />
+                          <Mail className="w-3.5 h-3.5 text-[#6366F1]" />
                           <span className="text-xs text-gray-400">Subject:</span>
                         </div>
                         <div className="text-sm font-medium text-white">{result.subject}</div>
@@ -491,7 +491,7 @@ export default function DemoPage() {
                 </AnimatePresence>
 
                 {/* Inline Waitlist CTA */}
-                <div className="mt-8 rounded-2xl bg-gradient-to-b from-[#5B6CFF]/5 to-transparent border border-[#5B6CFF]/15 p-6">
+                <div className="mt-8 rounded-2xl bg-gradient-to-b from-[#6366F1]/5 to-transparent border border-[#6366F1]/15 p-6">
                   <div className="text-center mb-4">
                     <p className="text-sm font-medium text-white mb-1">
                       This is what ReplySequence generates after every meeting — automatically.
@@ -541,7 +541,7 @@ export default function DemoPage() {
               icon: FileText,
               title: 'Not a summary — an email',
               description: 'Ready to review, tweak, and send. Action items included.',
-              color: '#5B6CFF',
+              color: '#6366F1',
             },
             {
               icon: Sparkles,

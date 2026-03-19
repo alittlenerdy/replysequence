@@ -17,11 +17,11 @@ export default function VideoDemo() {
           </p>
         </div>
 
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#5B6CFF]/10 to-[#3A4BDD]/10 border border-gray-700 light:border-gray-200">
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#6366F1]/10 to-[#3A4BDD]/10 border border-gray-700 light:border-gray-200">
           {!isPlaying ? (
             <div className="aspect-video flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 light:from-gray-100 light:to-white relative group">
               {/* Thumbnail placeholder */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#5B6CFF]/5 to-[#3A4BDD]/5" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/5 to-[#3A4BDD]/5" aria-hidden="true" />
 
               {/* Fake UI Preview */}
               <div className="absolute inset-6 md:inset-8 lg:inset-10 rounded-2xl bg-gray-800 light:bg-white shadow-2xl border border-gray-700 light:border-gray-200 overflow-hidden scale-100 md:scale-105" aria-hidden="true">
@@ -33,11 +33,11 @@ export default function VideoDemo() {
                 </div>
                 <div className="p-6 grid grid-cols-3 gap-4">
                   <div className="col-span-2 space-y-3">
-                    <div className="h-4 bg-[#5B6CFF]/20 rounded w-3/4" />
+                    <div className="h-4 bg-[#6366F1]/20 rounded w-3/4" />
                     <div className="h-3 bg-gray-600 light:bg-gray-200 rounded w-full" />
                     <div className="h-3 bg-gray-600 light:bg-gray-200 rounded w-5/6" />
                     <div className="h-3 bg-gray-600 light:bg-gray-200 rounded w-4/6" />
-                    <div className="mt-6 h-24 bg-gradient-to-r from-[#5B6CFF]/10 to-[#3A4BDD]/10 rounded-xl" />
+                    <div className="mt-6 h-24 bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 rounded-xl" />
                   </div>
                   <div className="space-y-3">
                     <div className="h-20 bg-gray-600 light:bg-gray-200 rounded-xl" />
@@ -48,7 +48,7 @@ export default function VideoDemo() {
 
               {/* Play Button */}
               <button
-                className="video-play-btn relative z-10 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2"
+                className="video-play-btn relative z-10 group-hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2"
                 onClick={() => setIsPlaying(true)}
                 aria-label="Play demo video"
               >
@@ -70,7 +70,7 @@ export default function VideoDemo() {
                 <p className="text-white/60 text-sm">Add your Loom embed code here</p>
                 <button
                   onClick={() => setIsPlaying(false)}
-                  className="mt-4 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2"
+                  className="mt-4 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2"
                   aria-label="Close video"
                 >
                   Close
@@ -83,15 +83,15 @@ export default function VideoDemo() {
         {/* Video Stats */}
         <div className="flex justify-center gap-8 md:gap-12 mt-8 text-center">
           <div>
-            <div className="text-2xl md:text-3xl font-display font-bold text-[#5B6CFF] light:text-[#4A5BEE]">30 sec</div>
+            <div className="text-2xl md:text-3xl font-display font-bold text-[#6366F1] light:text-[#4F46E5]">30 sec</div>
             <div className="text-sm text-gray-400 light:text-gray-600">Meeting to Draft</div>
           </div>
           <div>
-            <div className="text-2xl md:text-3xl font-display font-bold text-[#5B6CFF] light:text-[#4A5BEE]">98%</div>
+            <div className="text-2xl md:text-3xl font-display font-bold text-[#6366F1] light:text-[#4F46E5]">98%</div>
             <div className="text-sm text-gray-400 light:text-gray-600">Accuracy Rate</div>
           </div>
           <div>
-            <div className="text-2xl md:text-3xl font-display font-bold text-[#5B6CFF] light:text-[#4A5BEE]">5+ hrs</div>
+            <div className="text-2xl md:text-3xl font-display font-bold text-[#6366F1] light:text-[#4F46E5]">5+ hrs</div>
             <div className="text-sm text-gray-400 light:text-gray-600">Saved Weekly</div>
           </div>
         </div>

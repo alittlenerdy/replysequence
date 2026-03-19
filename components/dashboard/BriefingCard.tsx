@@ -20,7 +20,7 @@ function StatusBadge({ status }: { status: BriefingStatus }) {
   const styles: Record<BriefingStatus, string> = {
     generating: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
     ready: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
-    sent: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20',
+    sent: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20',
     failed: 'bg-red-500/15 text-red-400 border-red-500/20',
   };
 
@@ -69,8 +69,8 @@ export function BriefingCard({ briefing }: { briefing: BriefingData }) {
         className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-800/50 light:hover:bg-gray-100 transition-colors"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/15 flex items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4 text-[#5B6CFF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <div className="w-8 h-8 rounded-lg bg-[#6366F1]/15 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-[#6366F1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
@@ -150,12 +150,12 @@ export function BriefingCard({ briefing }: { briefing: BriefingData }) {
               <ul className="space-y-2">
                 {content.talkingPoints.map((tp, i) => (
                   <li key={i} className="flex gap-2">
-                    <span className="text-[#5B6CFF] text-xs font-bold mt-0.5">{i + 1}.</span>
+                    <span className="text-[#6366F1] text-xs font-bold mt-0.5">{i + 1}.</span>
                     <div>
                       <span className="text-sm text-gray-200 light:text-gray-800 font-medium">{tp.topic}</span>
                       <p className="text-xs text-gray-400 light:text-gray-500 mt-0.5">{tp.context}</p>
                       {tp.suggestedApproach && (
-                        <p className="text-xs text-[#7A8BFF] light:text-[#4A5BEE] mt-0.5 italic">{tp.suggestedApproach}</p>
+                        <p className="text-xs text-[#818CF8] light:text-[#4F46E5] mt-0.5 italic">{tp.suggestedApproach}</p>
                       )}
                     </div>
                   </li>
@@ -173,7 +173,7 @@ export function BriefingCard({ briefing }: { briefing: BriefingData }) {
               <ul className="space-y-1.5">
                 {content.discoveryQuestions.map((q, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-gray-300 light:text-gray-700">
-                    <span className="text-[#5B6CFF] mt-0.5">?</span>
+                    <span className="text-[#6366F1] mt-0.5">?</span>
                     {q}
                   </li>
                 ))}
@@ -238,7 +238,7 @@ export function BriefingCard({ briefing }: { briefing: BriefingData }) {
                 href={briefing.meetingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg bg-[#5B6CFF]/15 text-[#5B6CFF] border border-[#5B6CFF]/20 hover:bg-[#4A5BEE]/25 transition-colors"
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/20 hover:bg-[#4F46E5]/25 transition-colors"
               >
                 Join Meeting
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

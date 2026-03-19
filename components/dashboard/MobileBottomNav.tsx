@@ -46,9 +46,9 @@ export function MobileBottomNav({ pendingDrafts = 0 }: MobileBottomNavProps) {
               href={item.href}
               className={`
                 relative flex flex-col items-center justify-center py-2.5 px-4 min-w-[72px] min-h-[56px] rounded-xl mx-1 transition-colors duration-200
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-inset
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-inset
                 ${isActive
-                  ? 'text-[#5B6CFF] bg-[#5B6CFF]/10 light:text-[#4A5BEE] light:bg-[#EEF0FF]'
+                  ? 'text-[#6366F1] bg-[#6366F1]/10 light:text-[#4F46E5] light:bg-[#EEF0FF]'
                   : 'text-gray-400 light:text-gray-500 active:text-gray-200 light:active:text-gray-700 active:bg-white/5 light:active:bg-gray-100'
                 }
               `}

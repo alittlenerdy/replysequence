@@ -47,8 +47,8 @@ export function CoverageChart({ data }: CoverageChartProps) {
           <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
             <defs>
               <linearGradient id="coverageGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#5B6CFF" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#5B6CFF" stopOpacity={0} />
+                <stop offset="5%" stopColor="#6366F1" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.3} />
@@ -84,12 +84,12 @@ export function CoverageChart({ data }: CoverageChartProps) {
             <Area
               type="monotone"
               dataKey="displayCoverage"
-              stroke="#5B6CFF"
+              stroke="#6366F1"
               strokeWidth={2}
               fill="url(#coverageGradient)"
               connectNulls
               dot={false}
-              activeDot={{ r: 4, fill: '#5B6CFF' }}
+              activeDot={{ r: 4, fill: '#6366F1' }}
             />
           </AreaChart>
         </ResponsiveContainer>

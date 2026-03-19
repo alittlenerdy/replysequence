@@ -53,8 +53,8 @@ export function AccountManagement() {
   return (
     <div className="max-w-4xl mx-auto mt-8 space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/10 flex items-center justify-center">
-          <User className="w-4 h-4 text-[#5B6CFF]" />
+        <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 flex items-center justify-center">
+          <User className="w-4 h-4 text-[#6366F1]" />
         </div>
         <h3 className="text-lg font-semibold text-white light:text-gray-900">Account & Privacy</h3>
       </div>
@@ -65,7 +65,7 @@ export function AccountManagement() {
             <AlertTriangle className="w-4 h-4 shrink-0" />
             {error}
           </div>
-          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]" aria-label="Dismiss error">
+          <button onClick={() => setError(null)} className="text-red-400/60 hover:text-red-400 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]" aria-label="Dismiss error">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -74,8 +74,8 @@ export function AccountManagement() {
       {/* Export Data */}
       <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-colors duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-[#5B6CFF]/10 flex items-center justify-center shrink-0">
-            <Download className="w-5 h-5 text-[#5B6CFF]" />
+          <div className="w-10 h-10 rounded-lg bg-[#6366F1]/10 flex items-center justify-center shrink-0">
+            <Download className="w-5 h-5 text-[#6366F1]" />
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-medium text-white light:text-gray-900">Export Your Data</h4>
@@ -86,7 +86,7 @@ export function AccountManagement() {
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className="shrink-0 px-4 py-2 text-sm font-medium text-[#5B6CFF] bg-[#5B6CFF]/10 hover:bg-[#4A5BEE]/20 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="shrink-0 px-4 py-2 text-sm font-medium text-[#6366F1] bg-[#6366F1]/10 hover:bg-[#4F46E5]/20 rounded-lg transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             {isExporting ? (
               <span className="flex items-center gap-2">
@@ -94,7 +94,7 @@ export function AccountManagement() {
                 Exporting...
               </span>
             ) : exportSuccess ? (
-              <span className="flex items-center gap-2 text-[#5B6CFF]">
+              <span className="flex items-center gap-2 text-[#6366F1]">
                 <Check className="w-4 h-4" />
                 Downloaded
               </span>
@@ -119,7 +119,7 @@ export function AccountManagement() {
             {!showDeleteConfirm ? (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="mt-3 px-4 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="mt-3 px-4 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Delete Account
               </button>
@@ -150,7 +150,7 @@ export function AccountManagement() {
                   <button
                     onClick={handleDelete}
                     disabled={deleteConfirmText !== 'DELETE' || isDeleting}
-                    className="px-4 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                    className="px-4 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {isDeleting ? (
                       <span className="flex items-center gap-2">
@@ -163,7 +163,7 @@ export function AccountManagement() {
                   </button>
                   <button
                     onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
-                    className="px-4 py-1.5 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                    className="px-4 py-1.5 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     Cancel
                   </button>

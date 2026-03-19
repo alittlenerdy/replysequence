@@ -70,9 +70,9 @@ export function RichTextEditor({
         disabled={disabled}
         title={title}
         className={`
-          p-1.5 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
+          p-1.5 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
           ${isActive
-            ? 'bg-[#5B6CFF]/20 text-[#5B6CFF]'
+            ? 'bg-[#6366F1]/20 text-[#6366F1]'
             : 'text-gray-400 hover:text-white hover:bg-gray-700/50'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}

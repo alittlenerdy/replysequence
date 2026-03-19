@@ -16,12 +16,12 @@ interface ActivityFeedProps {
 
 const defaultEvents: FeedEvent[] = [
   { id: '1', description: 'Analyzing conversation — Acme Corp discovery call', time: '2m ago', color: '#38E8FF' },
-  { id: '2', description: 'Transcript completed (4,230 words)', time: '8m ago', color: '#5B6CFF' },
+  { id: '2', description: 'Transcript completed (4,230 words)', time: '8m ago', color: '#6366F1' },
   { id: '3', description: 'Meeting uploaded from Google Meet — Acme Corp', time: '22m ago', color: '#38E8FF' },
   { id: '4', description: 'Sequence generated for Globex Inc review', time: '1h ago', color: '#7A5CFF' },
   { id: '5', description: 'Draft sent to mike@globex.io', time: '1h ago', color: '#4DFFA3' },
   { id: '6', description: 'Sequence paused — recipient replied', time: '2h ago', color: '#FFD75F' },
-  { id: '7', description: 'Draft generated for Initech product demo', time: '4h ago', color: '#5B6CFF' },
+  { id: '7', description: 'Draft generated for Initech product demo', time: '4h ago', color: '#6366F1' },
   { id: '8', description: 'Meeting processed from Zoom — Initech', time: '4h ago', color: '#38E8FF' },
   { id: '9', description: 'Email opened by tom@meridianhealth.com (3x)', time: '5h ago', color: '#FFD75F' },
   { id: '10', description: 'Follow-up sent to lisa@brightpath.io', time: '1d ago', color: '#4DFFA3' },
@@ -46,8 +46,8 @@ export function ActivityFeed({ events = defaultEvents }: ActivityFeedProps) {
       transition={{ duration: 0.4, delay: 0.1 }}
     >
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="w-8 h-8 rounded-xl bg-[#5B6CFF]/10 flex items-center justify-center">
-          <Activity className="w-4 h-4 text-[#5B6CFF]" strokeWidth={1.5} />
+        <div className="w-8 h-8 rounded-xl bg-[#6366F1]/10 flex items-center justify-center">
+          <Activity className="w-4 h-4 text-[#6366F1]" strokeWidth={1.5} />
         </div>
         <div>
           <h3 className="text-sm font-semibold text-white light:text-gray-900">Activity</h3>

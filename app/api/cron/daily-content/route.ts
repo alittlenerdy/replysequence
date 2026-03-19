@@ -35,7 +35,7 @@ const SLACK_CHANNEL = 'C0AL6K62Q23';
 const DAY_THEMES: Record<number, { name: string; primary: string; accent: string }> = {
   0: { name: 'Teal Cyan', primary: '#0891B2', accent: '#22D3EE' },
   1: { name: 'Electric Blue', primary: '#2563EB', accent: '#60A5FA' },
-  2: { name: 'Indigo Purple', primary: '#5B6CFF', accent: '#818CF8' },
+  2: { name: 'Indigo Purple', primary: '#6366F1', accent: '#818CF8' },
   3: { name: 'Emerald Green', primary: '#059669', accent: '#34D399' },
   4: { name: 'Warm Amber', primary: '#D97706', accent: '#FBBF24' },
   5: { name: 'Teal Cyan', primary: '#0891B2', accent: '#22D3EE' },

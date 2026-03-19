@@ -58,7 +58,15 @@ const item = {
 };
 
 export function KPIStrip({ data = defaultData }: KPIStripProps) {
-  const cards = [
+  const cards: Array<{
+    label: string;
+    value: number;
+    suffix: string;
+    icon: typeof Video;
+    color: string;
+    trend?: 'up' | 'down' | 'flat';
+    highlighted?: boolean;
+  }> = [
     {
       label: 'Meetings Processed',
       value: data.meetingsProcessed ?? 0,
@@ -88,8 +96,9 @@ export function KPIStrip({ data = defaultData }: KPIStripProps) {
       value: data.draftsReady ?? 0,
       suffix: '',
       icon: FileText,
-      color: '#5B6CFF',
+      color: '#6366F1',
       trend: data.trends?.drafts,
+      highlighted: true,
     },
     {
       label: 'Follow-Ups Sent',
@@ -114,7 +123,11 @@ export function KPIStrip({ data = defaultData }: KPIStripProps) {
           <motion.div
             key={card.label}
             variants={item}
-            className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-4 group hover:bg-white/[0.04] transition-all duration-300"
+            className={`rounded-2xl p-4 group hover:-translate-y-0.5 hover:bg-white/[0.04] transition-all duration-200 ${
+              card.highlighted
+                ? 'bg-[#6366F1]/[0.06] border border-[#6366F1]/25 light:bg-indigo-50/60 light:border-indigo-200'
+                : 'bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200'
+            }`}
           >
             <div className="flex items-center justify-between mb-2">
               <div

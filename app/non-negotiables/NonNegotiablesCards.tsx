@@ -71,7 +71,7 @@ function LogoBadge() {
 function TitleCard() {
   return (
     <CardShell>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#4A5BEE] via-[#3A4BDD] to-purple-800" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5] via-[#3A4BDD] to-purple-800" />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
         <Image
           src="/logo.png"
@@ -103,7 +103,7 @@ function ContentCard({
 
   return (
     <CardShell>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#4A5BEE] via-[#3A4BDD] to-purple-800" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5] via-[#3A4BDD] to-purple-800" />
       <div className="relative z-10 flex flex-col h-full px-16 py-16">
         {/* Top: logo + badge */}
         <div className="flex items-center justify-between mb-auto">
@@ -136,7 +136,7 @@ function ContentCard({
 function CTACard() {
   return (
     <CardShell>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#4A5BEE] via-[#3A4BDD] to-purple-800" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#4F46E5] via-[#3A4BDD] to-purple-800" />
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
         <Image
           src="/logo.png"

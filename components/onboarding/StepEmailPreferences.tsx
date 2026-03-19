@@ -49,9 +49,9 @@ export function StepEmailPreferences({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6366F1]/20 to-[#3A4BDD]/20 flex items-center justify-center mx-auto mb-6"
         >
-          <Mail className="w-8 h-8 text-[#5B6CFF]" />
+          <Mail className="w-8 h-8 text-[#6366F1]" />
         </motion.div>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -82,9 +82,9 @@ export function StepEmailPreferences({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1 }}
               onClick={() => setSelected(option.id)}
-              className={`w-full text-left p-6 rounded-2xl border-2 transition-[border-color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`w-full text-left p-6 rounded-2xl border-2 transition-[border-color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 isSelected
-                  ? 'border-[#5B6CFF] bg-[#5B6CFF]/10'
+                  ? 'border-[#6366F1] bg-[#6366F1]/10'
                   : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
               }`}
             >
@@ -93,8 +93,8 @@ export function StepEmailPreferences({
                   className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                     isSelected
                       ? option.color === 'blue'
-                        ? 'bg-[#5B6CFF]/20'
-                        : 'bg-[#5B6CFF]/20'
+                        ? 'bg-[#6366F1]/20'
+                        : 'bg-[#6366F1]/20'
                       : 'bg-gray-800'
                   }`}
                 >
@@ -102,8 +102,8 @@ export function StepEmailPreferences({
                     className={`w-6 h-6 ${
                       isSelected
                         ? option.color === 'blue'
-                          ? 'text-[#5B6CFF]'
-                          : 'text-[#5B6CFF]'
+                          ? 'text-[#6366F1]'
+                          : 'text-[#6366F1]'
                         : 'text-gray-500'
                     }`}
                   />
@@ -112,7 +112,7 @@ export function StepEmailPreferences({
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-white">{option.title}</h3>
                     {option.recommended && (
-                      <span className="text-xs font-medium text-[#5B6CFF] bg-[#5B6CFF]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-medium text-[#6366F1] bg-[#6366F1]/10 px-2 py-0.5 rounded-full">
                         Recommended
                       </span>
                     )}
@@ -127,7 +127,7 @@ export function StepEmailPreferences({
                 </div>
                 <div
                   className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                    isSelected ? 'border-[#5B6CFF] bg-[#5B6CFF]' : 'border-gray-600'
+                    isSelected ? 'border-[#6366F1] bg-[#6366F1]' : 'border-gray-600'
                   }`}
                 >
                   {isSelected && <Check className="w-4 h-4 text-white" />}
@@ -147,7 +147,7 @@ export function StepEmailPreferences({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#5B6CFF]/25 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#6366F1] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4F46E5] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#6366F1]/25 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {isSaving ? (
             <>

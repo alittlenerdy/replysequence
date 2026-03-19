@@ -35,7 +35,7 @@ export default async function Image() {
             style={{
               width: 80,
               height: 80,
-              background: 'linear-gradient(135deg, #7A5CFF 0%, #5B6CFF 100%)',
+              background: 'linear-gradient(135deg, #7A5CFF 0%, #6366F1 100%)',
               borderRadius: 20,
               display: 'flex',
               alignItems: 'center',

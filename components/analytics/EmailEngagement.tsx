@@ -79,9 +79,9 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           <p className="text-sm text-gray-400 light:text-gray-500">Track opens, clicks, and replies</p>
         </div>
         {hasData && engagement.avgTimeToOpen && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-lg">
-            <Clock className="w-4 h-4 text-[#5B6CFF]" />
-            <span className="text-sm text-[#5B6CFF]">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#6366F1]/10 border border-[#6366F1]/20 rounded-lg">
+            <Clock className="w-4 h-4 text-[#6366F1]" />
+            <span className="text-sm text-[#6366F1]">
               {engagement.avgTimeToOpen < 1
                 ? `${Math.round(engagement.avgTimeToOpen * 60)}m avg open time`
                 : `${engagement.avgTimeToOpen}h avg open time`
@@ -96,12 +96,12 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Funnel visualization */}
           <div className="flex items-center justify-between mb-6 px-2">
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-[#5B6CFF] tabular-nums">{engagement.sent}</div>
+              <div className="text-3xl font-black text-[#6366F1] tabular-nums">{engagement.sent}</div>
               <div className="text-xs text-gray-500 mt-1">Sent</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-[#5B6CFF] tabular-nums">{engagement.opened}</div>
+              <div className="text-3xl font-black text-[#6366F1] tabular-nums">{engagement.opened}</div>
               <div className="text-xs text-gray-500 mt-1">Opened</div>
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
@@ -111,7 +111,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
             </div>
             <ArrowRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
             <div className="text-center flex-1">
-              <div className="text-3xl font-black text-[#5B6CFF] tabular-nums">{engagement.replied ?? '--'}</div>
+              <div className="text-3xl font-black text-[#6366F1] tabular-nums">{engagement.replied ?? '--'}</div>
               <div className="text-xs text-gray-500 mt-1">Replied</div>
             </div>
           </div>
@@ -121,14 +121,14 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Open Rate</span>
-                <span className="text-[#5B6CFF] font-semibold">{engagement.openRate}%</span>
+                <span className="text-[#6366F1] font-semibold">{engagement.openRate}%</span>
               </div>
               <div className="h-2 bg-gray-800/50 light:bg-gray-100 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.openRate}%` }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="h-full rounded-full bg-[#4A5BEE]"
+                  className="h-full rounded-full bg-[#4F46E5]"
                 />
               </div>
             </div>
@@ -149,14 +149,14 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-400">Reply Rate</span>
-                <span className="text-[#5B6CFF] font-semibold">{engagement.replyRate ?? 0}%</span>
+                <span className="text-[#6366F1] font-semibold">{engagement.replyRate ?? 0}%</span>
               </div>
               <div className="h-2 bg-gray-800/50 light:bg-gray-100 light:bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${engagement.replyRate ?? 0}%` }}
                   transition={{ duration: 0.8, delay: 0.4 }}
-                  className="h-full rounded-full bg-[#4A5BEE]"
+                  className="h-full rounded-full bg-[#4F46E5]"
                 />
               </div>
             </div>
@@ -179,13 +179,13 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Animated mail illustration */}
           <div className="relative mx-auto w-16 h-16 mb-4">
             <div
-              className="w-16 h-16 bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 rounded-2xl flex items-center justify-center border border-[#5B6CFF]/20"
+              className="w-16 h-16 bg-gradient-to-br from-[#6366F1]/20 to-[#3A4BDD]/20 rounded-2xl flex items-center justify-center border border-[#6366F1]/20"
             >
-              <Mail className="w-8 h-8 text-[#5B6CFF]/70" />
+              <Mail className="w-8 h-8 text-[#6366F1]/70" />
             </div>
             {/* Floating notification dot */}
             <div
-              className="absolute -right-1 -top-1 w-4 h-4 bg-[#5B6CFF]/50 rounded-full flex items-center justify-center"
+              className="absolute -right-1 -top-1 w-4 h-4 bg-[#6366F1]/50 rounded-full flex items-center justify-center"
             >
               <Eye className="w-2 h-2 text-white" />
             </div>
@@ -201,12 +201,12 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
           {/* Preview funnel - grayed out */}
           <div className="flex items-center justify-center gap-2 opacity-40">
             <div className="text-center px-3">
-              <div className="text-lg font-bold text-[#5B6CFF]">--</div>
+              <div className="text-lg font-bold text-[#6366F1]">--</div>
               <div className="text-xs text-gray-500">Sent</div>
             </div>
             <ArrowRight className="w-4 h-4 text-gray-600" />
             <div className="text-center px-3">
-              <div className="text-lg font-bold text-[#5B6CFF]">--</div>
+              <div className="text-lg font-bold text-[#6366F1]">--</div>
               <div className="text-xs text-gray-500">Opened</div>
             </div>
             <ArrowRight className="w-4 h-4 text-gray-600" />
@@ -216,7 +216,7 @@ export function EmailEngagement({ engagement }: EmailEngagementProps) {
             </div>
             <ArrowRight className="w-4 h-4 text-gray-600" />
             <div className="text-center px-3">
-              <div className="text-lg font-bold text-[#5B6CFF]">--</div>
+              <div className="text-lg font-bold text-[#6366F1]">--</div>
               <div className="text-xs text-gray-500">Replied</div>
             </div>
           </div>

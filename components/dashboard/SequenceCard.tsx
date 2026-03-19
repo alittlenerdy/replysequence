@@ -40,7 +40,7 @@ interface SequenceCardProps {
 const STATUS_CONFIG: Record<SequenceStatus, { label: string; color: string }> = {
   active: { label: 'Active', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
   paused: { label: 'Paused', color: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
-  completed: { label: 'Completed', color: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20' },
+  completed: { label: 'Completed', color: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20' },
   cancelled: { label: 'Cancelled', color: 'bg-gray-500/15 text-gray-400 border-gray-500/20' },
 };
 
@@ -294,7 +294,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
               <button
                 onClick={handleScheduleAll}
                 disabled={isScheduling || isLoading}
-                className="px-2.5 py-1 text-xs font-medium rounded-lg bg-[#5B6CFF]/10 text-[#5B6CFF] border border-[#5B6CFF]/20 hover:bg-[#4A5BEE]/20 transition-colors disabled:opacity-50"
+                className="px-2.5 py-1 text-xs font-medium rounded-lg bg-[#6366F1]/10 text-[#6366F1] border border-[#6366F1]/20 hover:bg-[#4F46E5]/20 transition-colors disabled:opacity-50"
               >
                 {isScheduling ? 'Scheduling...' : 'Schedule All'}
               </button>
@@ -320,7 +320,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
             </div>
             <div className="h-1.5 bg-gray-700/50 light:bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] rounded-full transition-[width] duration-500"
+                className="h-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] rounded-full transition-[width] duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -406,11 +406,11 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                 <div className="px-4 pb-4 pt-1 ml-10">
                   {/* Timing suggestion */}
                   {(step.status === 'pending' || step.status === 'scheduled') && TIMING_SUGGESTIONS[step.stepType] && (
-                    <div className="mb-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#5B6CFF]/5 border border-[#5B6CFF]/10">
-                      <svg className="w-3.5 h-3.5 text-[#5B6CFF] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <div className="mb-2 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#6366F1]/5 border border-[#6366F1]/10">
+                      <svg className="w-3.5 h-3.5 text-[#6366F1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-xs text-[#7A8BFF] light:text-[#4A5BEE]">
+                      <span className="text-xs text-[#818CF8] light:text-[#4F46E5]">
                         <strong>{TIMING_SUGGESTIONS[step.stepType].label}</strong>
                         <span className="text-gray-500 ml-1.5">{TIMING_SUGGESTIONS[step.stepType].tip}</span>
                       </span>
@@ -419,14 +419,14 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
 
                   {editingStep === step.id ? (
                     /* Inline editor */
-                    <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-[#5B6CFF]/30 p-3 space-y-3">
+                    <div className="rounded-lg bg-gray-800/40 light:bg-gray-50 border border-[#6366F1]/30 p-3 space-y-3">
                       <div>
                         <label className="text-xs font-medium text-gray-400 light:text-gray-500 block mb-1">Subject</label>
                         <input
                           type="text"
                           value={editSubject}
                           onChange={(e) => setEditSubject(e.target.value)}
-                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#5B6CFF]/50"
+                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#6366F1]/50"
                         />
                       </div>
                       <div>
@@ -435,7 +435,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                           value={editBody}
                           onChange={(e) => setEditBody(e.target.value)}
                           rows={6}
-                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#5B6CFF]/50 resize-y"
+                          className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-800/50 light:bg-white border border-gray-700/50 light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#6366F1]/50 resize-y"
                         />
                       </div>
                       <div className="flex justify-end gap-2">
@@ -448,7 +448,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                         <button
                           onClick={() => handleSaveEdit(step.id)}
                           disabled={isLoading}
-                          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#5B6CFF] text-white hover:bg-[#4A5BEE] transition-colors disabled:opacity-50"
+                          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] transition-colors disabled:opacity-50"
                         >
                           {isLoading ? 'Saving...' : 'Save'}
                         </button>
@@ -462,7 +462,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                         {(step.status === 'pending' || step.status === 'scheduled') && (
                           <button
                             onClick={() => startEditing(step)}
-                            className="text-xs text-[#5B6CFF] hover:text-[#7A8BFF] transition-colors flex items-center gap-1"
+                            className="text-xs text-[#6366F1] hover:text-[#818CF8] transition-colors flex items-center gap-1"
                           >
                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -483,7 +483,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                   {step.status === 'sent' && (
                     <div className="flex flex-wrap gap-3 mt-2">
                       {step.openedAt && (
-                        <span className="text-xs text-[#5B6CFF] flex items-center gap-1">
+                        <span className="text-xs text-[#6366F1] flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -492,7 +492,7 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                         </span>
                       )}
                       {step.clickedAt && (
-                        <span className="text-xs text-[#5B6CFF] flex items-center gap-1">
+                        <span className="text-xs text-[#6366F1] flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                           </svg>

@@ -75,7 +75,7 @@ export function IntelligenceMobileStrip() {
         className="w-full flex items-center justify-between px-4 py-3 bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl hover:bg-white/5 light:hover:bg-gray-100 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-[#5B6CFF] animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-[#6366F1] animate-pulse" />
           <h3 className="text-xs font-medium uppercase tracking-wider text-gray-400 light:text-gray-500">Intelligence</h3>
         </div>
         {isExpanded ? (

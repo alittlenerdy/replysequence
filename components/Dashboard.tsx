@@ -181,7 +181,7 @@ export function Dashboard({
           <div className="flex items-center justify-between">
             <div className="animate-fade-in-up">
               <h1 className="text-2xl font-display font-bold">
-                <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
+                <span className="bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
                   Dashboard
                 </span>
               </h1>
@@ -191,11 +191,11 @@ export function Dashboard({
             </div>
             <a
               href="/"
-              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors duration-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="group text-sm font-medium text-gray-400 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors duration-300 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <span className="relative">
                 Back to Home
-                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] group-hover:w-full transition-[width] duration-300" />
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] group-hover:w-full transition-[width] duration-300" />
               </span>
             </a>
           </div>

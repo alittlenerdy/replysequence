@@ -109,7 +109,7 @@ export function ProcessingAnimation({
             <div
               className={`
                 p-2 rounded-lg
-                ${isComplete ? 'bg-green-500/20' : isFailed ? 'bg-red-500/20' : 'bg-[#5B6CFF]/20'}
+                ${isComplete ? 'bg-green-500/20' : isFailed ? 'bg-red-500/20' : 'bg-[#6366F1]/20'}
               `}
             >
               {isComplete ? (
@@ -117,7 +117,7 @@ export function ProcessingAnimation({
               ) : isFailed ? (
                 <XCircle className="w-5 h-5 text-red-400" />
               ) : (
-                <Video className="w-5 h-5 text-[#5B6CFF]" />
+                <Video className="w-5 h-5 text-[#6366F1]" />
               )}
             </div>
             <div>
@@ -139,7 +139,7 @@ export function ProcessingAnimation({
             {isProcessing && (
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
-                  <Loader2 className="w-4 h-4 text-[#5B6CFF] animate-spin" />
+                  <Loader2 className="w-4 h-4 text-[#6366F1] animate-spin" />
                   <span className="text-sm text-gray-400 light:text-gray-500">{formatTime(elapsedTime)}</span>
                 </div>
                 {estimatedRemaining > 0 && (
@@ -184,10 +184,10 @@ export function ProcessingAnimation({
                 h-full rounded-full
                 ${
                   isComplete
-                    ? 'bg-gradient-to-r from-[#5B6CFF] to-[#5B6CFF]'
+                    ? 'bg-gradient-to-r from-[#6366F1] to-[#6366F1]'
                     : isFailed
                     ? 'bg-gradient-to-r from-red-500 to-rose-400'
-                    : 'bg-gradient-to-r from-[#4A5BEE] to-[#5B6CFF]'
+                    : 'bg-gradient-to-r from-[#4F46E5] to-[#6366F1]'
                 }
               `}
               style={{ width: progressWidth }}

@@ -80,7 +80,7 @@ export default function WeeklyFeedbackPage() {
               id="worked-well"
               value={worked}
               onChange={(e) => setWorked(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#6366F1] resize-none"
               rows={3}
               placeholder="Draft quality, speed, integrations\u2026"
             />
@@ -94,7 +94,7 @@ export default function WeeklyFeedbackPage() {
               id="frustrated"
               value={frustrated}
               onChange={(e) => setFrustrated(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#6366F1] resize-none"
               rows={3}
               placeholder="Bugs, missing features, confusing UI\u2026"
             />
@@ -108,7 +108,7 @@ export default function WeeklyFeedbackPage() {
               id="whats-missing"
               value={missing}
               onChange={(e) => setMissing(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#5B6CFF] resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus-visible:outline-none focus-visible:border-[#6366F1] resize-none"
               rows={3}
               placeholder="Features you wish existed\u2026"
             />
@@ -121,7 +121,7 @@ export default function WeeklyFeedbackPage() {
           <button
             type="submit"
             disabled={submitting || (!worked && !frustrated && !missing)}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#4A5BEE] hover:bg-[#5B6CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#4F46E5] hover:bg-[#6366F1] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             {submitting ? 'Submitting\u2026' : 'Submit Feedback'}
             {!submitting && <Send className="w-4 h-4" />}

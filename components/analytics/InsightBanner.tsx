@@ -18,15 +18,15 @@ export function InsightBanner({ totalMeetings, emailsSent, atRiskCount }: Insigh
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-start gap-3 px-5 py-4 rounded-xl border border-[#5B6CFF]/20 bg-[#5B6CFF]/5 light:bg-[#EEF0FF] light:border-[#4A5BEE]/30">
-          <Sparkles className="w-5 h-5 text-[#5B6CFF] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 px-5 py-4 rounded-xl border border-[#6366F1]/20 bg-[#6366F1]/5 light:bg-[#EEF0FF] light:border-[#4F46E5]/30">
+          <Sparkles className="w-5 h-5 text-[#6366F1] shrink-0 mt-0.5" />
           <div>
             <p className="text-sm text-gray-300 light:text-gray-700 leading-relaxed">
               Connect a meeting platform and your analytics will populate automatically after your first meeting.
             </p>
             <a
               href="/dashboard/settings"
-              className="inline-flex items-center gap-1.5 mt-2 text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] light:hover:text-[#3A4BDD] transition-colors"
+              className="inline-flex items-center gap-1.5 mt-2 text-sm font-medium text-[#6366F1] light:text-[#4F46E5] hover:text-[#818CF8] light:hover:text-[#3A4BDD] transition-colors"
             >
               <Settings className="w-3.5 h-3.5" />
               Connect a platform
@@ -47,13 +47,13 @@ export function InsightBanner({ totalMeetings, emailsSent, atRiskCount }: Insigh
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-start gap-3 px-5 py-4 rounded-xl border border-[#5B6CFF]/20 bg-[#5B6CFF]/5 light:bg-[#EEF0FF] light:border-[#4A5BEE]/30">
-          <TrendingUp className="w-5 h-5 text-[#5B6CFF] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 px-5 py-4 rounded-xl border border-[#6366F1]/20 bg-[#6366F1]/5 light:bg-[#EEF0FF] light:border-[#4F46E5]/30">
+          <TrendingUp className="w-5 h-5 text-[#6366F1] shrink-0 mt-0.5" />
           <p className="text-sm text-gray-300 light:text-gray-700 leading-relaxed">
             You followed up on{' '}
             <strong className="text-white light:text-gray-900">{emailsSent}</strong> of{' '}
             <strong className="text-white light:text-gray-900">{totalMeetings}</strong> meetings &mdash;{' '}
-            <strong className="text-[#5B6CFF] light:text-[#4A5BEE]">{coveragePercent}% coverage</strong>.
+            <strong className="text-[#6366F1] light:text-[#4F46E5]">{coveragePercent}% coverage</strong>.
             Keep it up.
           </p>
         </div>

@@ -29,7 +29,7 @@ interface WaitlistData {
 
 const tierConfig: Record<string, { label: string; icon: typeof Crown; color: string }> = {
   vip: { label: 'VIP', icon: Crown, color: 'text-amber-400 bg-amber-400/10 border-amber-400/30' },
-  priority: { label: 'Priority', icon: Star, color: 'text-[#5B6CFF] bg-[#5B6CFF]/10 border-[#5B6CFF]/30' },
+  priority: { label: 'Priority', icon: Star, color: 'text-[#6366F1] bg-[#6366F1]/10 border-[#6366F1]/30' },
   standard: { label: 'Standard', icon: Users, color: 'text-gray-400 bg-gray-400/10 border-gray-400/30' },
 };
 
@@ -136,7 +136,7 @@ export function WaitlistAdmin() {
         </div>
         <button
           onClick={fetchData}
-          className="p-2 text-gray-400 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="p-2 text-gray-400 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           title="Refresh"
           aria-label="Refresh"
         >
@@ -171,7 +171,7 @@ export function WaitlistAdmin() {
           <button
             onClick={handleInvite}
             disabled={inviting || (stats.byStatus.waiting || 0) === 0}
-            className="px-4 py-1.5 bg-[#4A5BEE] hover:bg-[#3A4BDD] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="px-4 py-1.5 bg-[#4F46E5] hover:bg-[#3A4BDD] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             <Send className="w-4 h-4" />
             {inviting ? 'Sending\u2026' : 'Send Invites'}
@@ -189,9 +189,9 @@ export function WaitlistAdmin() {
         <span className="text-xs text-gray-500 light:text-gray-400 font-medium">Filter:</span>
         <button
           onClick={() => setStatusFilter(null)}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             !statusFilter
-              ? 'bg-[#4A5BEE] text-white'
+              ? 'bg-[#4F46E5] text-white'
               : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200'
           }`}
         >
@@ -204,9 +204,9 @@ export function WaitlistAdmin() {
             <button
               key={key}
               onClick={() => setStatusFilter(statusFilter === key ? null : key)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                 statusFilter === key
-                  ? 'bg-[#4A5BEE] text-white'
+                  ? 'bg-[#4F46E5] text-white'
                   : 'bg-gray-800 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700 light:hover:bg-gray-200'
               }`}
             >

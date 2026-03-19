@@ -76,7 +76,7 @@ export function PWAInstallPrompt() {
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 animate-in slide-in-from-bottom-4 duration-300">
       <div className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4">
         <div className="flex items-start gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] flex items-center justify-center flex-shrink-0">
             <Smartphone className="w-6 h-6 text-white" />
           </div>
 
@@ -94,7 +94,7 @@ export function PWAInstallPrompt() {
 
           <button
             onClick={handleDismiss}
-            className="text-gray-500 hover:text-gray-300 transition-colors p-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="text-gray-500 hover:text-gray-300 transition-colors p-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             aria-label="Dismiss"
           >
             <X className="w-5 h-5" />
@@ -105,13 +105,13 @@ export function PWAInstallPrompt() {
           <div className="flex gap-2 mt-3">
             <button
               onClick={handleDismiss}
-              className="flex-1 px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="flex-1 px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Not now
             </button>
             <button
               onClick={handleInstall}
-              className="flex-1 px-3 py-2 bg-[#4A5BEE] hover:bg-[#3A4BDD] text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="flex-1 px-3 py-2 bg-[#4F46E5] hover:bg-[#3A4BDD] text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <Download className="w-4 h-4" />
               Install

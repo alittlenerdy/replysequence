@@ -21,7 +21,7 @@ interface RecentAIActionsProps {
 }
 
 const actionConfig: Record<AIActionType, { icon: typeof FileText; color: string }> = {
-  draft_generated: { icon: FileText, color: '#5B6CFF' },
+  draft_generated: { icon: FileText, color: '#6366F1' },
   draft_sent: { icon: Send, color: '#4DFFA3' },
   sequence_created: { icon: Layers, color: '#7A5CFF' },
   sequence_paused: { icon: Pause, color: '#FFD75F' },

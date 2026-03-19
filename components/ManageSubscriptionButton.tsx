@@ -50,7 +50,7 @@ export function ManageSubscriptionButton({ className = '' }: ManageSubscriptionB
           bg-gray-700 light:bg-gray-200 text-white light:text-gray-900
           hover:bg-gray-600 light:hover:bg-gray-300
           disabled:opacity-50 disabled:cursor-not-allowed
-          outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
+          outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
           ${className}`}
       >
         {loading ? (

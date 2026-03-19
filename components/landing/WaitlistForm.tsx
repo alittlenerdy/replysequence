@@ -140,7 +140,7 @@ export function WaitlistForm({ className = '' }: WaitlistFormProps) {
                 />
                 <button
                   onClick={handleCopy}
-                  className="px-3 py-2 bg-[#4A5BEE] hover:bg-[#3A4BDD] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                  className="px-3 py-2 bg-[#4F46E5] hover:bg-[#3A4BDD] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 >
                   {copied ? (
                     <>

@@ -12,15 +12,15 @@ export const contentType = 'image/png';
 // Color palette for tag-based accent colors
 const TAG_COLORS: Record<string, string> = {
   'sales productivity': '#3B82F6',
-  'email automation': '#5B6CFF',
-  'meeting follow-up': '#5B6CFF',
+  'email automation': '#6366F1',
+  'meeting follow-up': '#6366F1',
   'ai email': '#FF9D2D',
   'crm integration': '#FF9D2D',
   'zoom meetings': '#2563EB',
-  'team management': '#5B6CFF',
-  'sales engagement': '#4A5BEE',
+  'team management': '#6366F1',
+  'sales engagement': '#4F46E5',
   'consulting': '#F97316',
-  'recruiting': '#4A5BEE',
+  'recruiting': '#4F46E5',
 };
 
 function getAccentColor(tags: string[]): string {
@@ -30,7 +30,7 @@ function getAccentColor(tags: string[]): string {
       if (lower.includes(key) || key.includes(lower)) return color;
     }
   }
-  return '#5B6CFF'; // default indigo
+  return '#6366F1'; // default indigo
 }
 
 export default async function Image({ params }: { params: { slug: string } }) {
@@ -193,7 +193,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
               style={{
                 width: 44,
                 height: 44,
-                background: 'linear-gradient(135deg, #7A5CFF 0%, #5B6CFF 100%)',
+                background: 'linear-gradient(135deg, #7A5CFF 0%, #6366F1 100%)',
                 borderRadius: 12,
                 display: 'flex',
                 alignItems: 'center',

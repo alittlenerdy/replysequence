@@ -21,7 +21,7 @@ const productItems = [
     description: 'AI-generated follow-ups after every meeting',
     href: '/how-it-works#follow-ups',
     icon: FileText,
-    color: '#5B6CFF',
+    color: '#6366F1',
   },
   {
     label: 'Sequences',
@@ -100,14 +100,14 @@ export default function MobileMenu() {
   }, [isOpen]);
 
   const linkClass =
-    'text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]';
+    'text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]';
 
   return (
     <>
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={isOpen}
       >
@@ -153,7 +153,7 @@ export default function MobileMenu() {
             <div className="flex flex-col items-center w-full max-w-sm">
               <button
                 onClick={() => setProductOpen(!productOpen)}
-                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 aria-expanded={productOpen}
               >
                 Product
@@ -171,7 +171,7 @@ export default function MobileMenu() {
                       key={item.label}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="group flex items-start gap-3 w-full p-3 rounded-xl transition-colors hover:bg-white/[0.05] outline-none focus-visible:ring-1 focus-visible:ring-[#5B6CFF]/40"
+                      className="group flex items-start gap-3 w-full p-3 rounded-xl transition-colors hover:bg-white/[0.05] outline-none focus-visible:ring-1 focus-visible:ring-[#6366F1]/40"
                     >
                       <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
@@ -189,7 +189,7 @@ export default function MobileMenu() {
                 <a
                   href="/how-it-works"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-1.5 mt-1 text-xs font-medium text-gray-400 hover:text-[#5B6CFF] transition-colors"
+                  className="flex items-center gap-1.5 mt-1 text-xs font-medium text-gray-400 hover:text-[#6366F1] transition-colors"
                 >
                   Explore the platform
                   <ArrowRight className="w-3 h-3" />
@@ -205,7 +205,7 @@ export default function MobileMenu() {
             <div className="flex flex-col items-center">
               <button
                 onClick={() => setCompareOpen(!compareOpen)}
-                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="flex items-center gap-2 text-2xl font-medium text-gray-300 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 aria-expanded={compareOpen}
               >
                 Compare
@@ -217,7 +217,7 @@ export default function MobileMenu() {
                     key={competitor.slug}
                     href={`/compare/${competitor.slug}`}
                     onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-gray-400 hover:text-[#5B6CFF] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                    className="text-lg font-medium text-gray-400 hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {competitor.name}
                   </a>
@@ -240,7 +240,7 @@ export default function MobileMenu() {
             <a
               href="/#waitlist"
               onClick={() => setIsOpen(false)}
-              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-[color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="px-8 py-4 rounded-xl font-bold text-lg text-white transition-[color,box-shadow] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               style={{
                 background: 'linear-gradient(135deg, #2563eb 0%, #9333ea 100%)',
                 boxShadow: '0 8px 30px rgba(37, 99, 235, 0.4)',

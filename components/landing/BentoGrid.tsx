@@ -26,12 +26,12 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       className={`group relative rounded-2xl bg-gray-900/50 light:bg-white/80 border border-gray-700 light:border-gray-200 overflow-hidden transition-colors duration-300 hover:border-gray-600 light:hover:border-gray-300 light:shadow-lg ${className}`}
     >
       {/* Gradient border on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#5B6CFF]/20 via-[#5B6CFF]/20 to-[#3A4BDD]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#6366F1]/20 via-[#6366F1]/20 to-[#3A4BDD]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Content */}
       <div className="relative p-6 h-full flex flex-col">
         {icon && (
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6366F1]/20 to-[#3A4BDD]/20 flex items-center justify-center mb-4 border border-gray-700 light:border-gray-200">
             {icon}
           </div>
         )}
@@ -47,7 +47,7 @@ function BentoCard({ title, description, icon, className = '', children, delay =
       </div>
 
       {/* Glow effect */}
-      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-[#5B6CFF] via-[#5B6CFF] to-[#3A4BDD] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-[#6366F1] via-[#6366F1] to-[#3A4BDD] opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
     </motion.div>
   );
 }
@@ -104,7 +104,7 @@ const RISK_ALERTS = [
 // Dashboard Preview — shows sequences, next steps, and risks at a glance
 function DashboardPreview() {
   const colorMap: Record<string, string> = {
-    indigo: 'bg-[#5B6CFF]',
+    indigo: 'bg-[#6366F1]',
     green: 'bg-green-400',
     amber: 'bg-amber-400',
     blue: 'bg-blue-400',
@@ -123,10 +123,10 @@ function DashboardPreview() {
       {/* Mini header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD]" />
+          <div className="w-6 h-6 rounded bg-gradient-to-br from-[#6366F1] to-[#3A4BDD]" />
           <div className="h-3 w-24 bg-gray-700 light:bg-gray-200 rounded" />
         </div>
-        <div className="h-6 w-16 bg-[#5B6CFF]/20 rounded border border-[#5B6CFF]/30" />
+        <div className="h-6 w-16 bg-[#6366F1]/20 rounded border border-[#6366F1]/30" />
       </div>
 
       {/* Stats row */}
@@ -145,7 +145,7 @@ function DashboardPreview() {
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
           >
-            <div className="text-lg font-bold tabular-nums bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
+            <div className="text-lg font-bold tabular-nums bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5] bg-clip-text text-transparent">
               {stat.value}
             </div>
             <div className="text-[8px] text-gray-500 light:text-gray-600 leading-tight">{stat.label}</div>
@@ -164,7 +164,7 @@ function DashboardPreview() {
             viewport={{ once: true }}
             transition={{ delay: 0.3 + i * 0.1 }}
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] flex items-center justify-center text-[10px] font-medium text-white">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] flex items-center justify-center text-[10px] font-medium text-white">
               {item.name.split(' ').map(n => n[0]).join('')}
             </div>
             <div className="flex-1 min-w-0">
@@ -184,14 +184,14 @@ function DashboardPreview() {
 function SequencePreview() {
   const statusStyles: Record<string, { dot: string; text: string }> = {
     sent: { dot: 'bg-green-400', text: 'text-green-400' },
-    scheduled: { dot: 'bg-[#5B6CFF]', text: 'text-[#5B6CFF]' },
+    scheduled: { dot: 'bg-[#6366F1]', text: 'text-[#6366F1]' },
     pending: { dot: 'bg-gray-500', text: 'text-gray-500' },
   };
 
   return (
     <div className="w-full h-40 bg-gray-800/50 light:bg-white/50 rounded-lg border border-gray-700 light:border-gray-200 p-3 overflow-hidden">
       <div className="flex items-center gap-2 mb-3">
-        <Send className="w-4 h-4 text-[#5B6CFF]" />
+        <Send className="w-4 h-4 text-[#6366F1]" />
         <motion.span
           className="text-[10px] text-gray-400 light:text-gray-600"
           initial={{ opacity: 0 }}
@@ -241,7 +241,7 @@ function SequencePreview() {
       >
         <div className="flex-1 h-1 bg-gray-700 light:bg-gray-300 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-green-400 to-[#5B6CFF] rounded-full"
+            className="h-full bg-gradient-to-r from-green-400 to-[#6366F1] rounded-full"
             initial={{ width: 0 }}
             whileInView={{ width: '33%' }}
             viewport={{ once: true }}
@@ -369,7 +369,7 @@ function CRMPreview() {
               viewport={{ once: true }}
               transition={{ delay: 1 + i * 0.3, type: 'spring' }}
             >
-              <Check className="w-2.5 h-2.5 text-[#5B6CFF] flex-shrink-0" />
+              <Check className="w-2.5 h-2.5 text-[#6366F1] flex-shrink-0" />
             </motion.div>
           </motion.div>
         ))}
@@ -378,14 +378,14 @@ function CRMPreview() {
       {/* Sync status bar — keep as subtle infinite animation */}
       <div className="flex items-center justify-center gap-2 mt-2">
         <motion.div
-          className="w-1.5 h-1.5 rounded-full bg-[#5B6CFF]"
+          className="w-1.5 h-1.5 rounded-full bg-[#6366F1]"
           animate={{ scale: [1, 1.3, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />
-        <span className="text-[9px] text-[#5B6CFF] light:text-[#4A5BEE] font-medium">Syncing&hellip;</span>
+        <span className="text-[9px] text-[#6366F1] light:text-[#4F46E5] font-medium">Syncing&hellip;</span>
         <div className="w-12 h-1 bg-gray-700 light:bg-gray-300 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#5B6CFF] to-[#5B6CFF] rounded-full"
+            className="h-full bg-gradient-to-r from-[#6366F1] to-[#6366F1] rounded-full"
             animate={{ width: ['0%', '100%'] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -411,7 +411,7 @@ function NextStepsPreview() {
           <div className={`w-3 h-3 rounded border-2 flex-shrink-0 ${
             step.status === 'overdue'
               ? 'border-red-400 bg-red-400/20'
-              : 'border-[#5B6CFF] bg-transparent'
+              : 'border-[#6366F1] bg-transparent'
           }`} />
           <div className="flex-1 min-w-0">
             <div className="text-[9px] font-medium text-white light:text-gray-900 truncate">{step.task}</div>
@@ -420,7 +420,7 @@ function NextStepsPreview() {
           <span className={`text-[8px] font-medium px-1.5 py-0.5 rounded ${
             step.status === 'overdue'
               ? 'bg-red-500/20 text-red-400'
-              : 'bg-[#5B6CFF]/20 text-[#5B6CFF]'
+              : 'bg-[#6366F1]/20 text-[#6366F1]'
           }`}>
             {step.due}
           </span>
@@ -513,7 +513,7 @@ export function BentoGrid() {
           <BentoCard
             title="Multi-Step Sequences"
             description="Context-aware follow-up sequences that keep deals warm automatically"
-            icon={<Send className="w-6 h-6 text-[#5B6CFF]" />}
+            icon={<Send className="w-6 h-6 text-[#6366F1]" />}
             delay={0.1}
           >
             <SequencePreview />
@@ -522,7 +522,7 @@ export function BentoGrid() {
           <BentoCard
             title="Zoom, Teams, and Meet"
             description="Every call captured automatically — no bot, no extra app"
-            icon={<Calendar className="w-6 h-6 text-[#5B6CFF]" />}
+            icon={<Calendar className="w-6 h-6 text-[#6366F1]" />}
             delay={0.2}
           >
             <MeetingListPreview />
@@ -531,7 +531,7 @@ export function BentoGrid() {
           <BentoCard
             title="CRM Updates Itself"
             description="Summaries, next steps, deal health, and sequence activity synced to your CRM"
-            icon={<Users className="w-6 h-6 text-[#5B6CFF]" />}
+            icon={<Users className="w-6 h-6 text-[#6366F1]" />}
             delay={0.3}
           >
             <CRMPreview />

@@ -169,8 +169,8 @@ export function DraftsView({
           >
             <h2 className="text-lg font-semibold text-white light:text-gray-900 flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5B6CFF] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#5B6CFF]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6366F1] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6366F1]" />
               </span>
               Processing
             </h2>
@@ -188,15 +188,15 @@ export function DraftsView({
 
       {/* Nudge banner when drafts await review */}
       {stats.generated > 0 && (
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-[#5B6CFF]/20 bg-[#5B6CFF]/5 light:bg-[#EEF0FF] light:border-[#4A5BEE]/30">
-          <span className="text-sm text-[#7A8BFF] light:text-[#3A4BDD]">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-[#6366F1]/20 bg-[#6366F1]/5 light:bg-[#EEF0FF] light:border-[#4F46E5]/30">
+          <span className="text-sm text-[#818CF8] light:text-[#3A4BDD]">
             You have <strong>{stats.generated}</strong> draft{stats.generated !== 1 ? 's' : ''} awaiting your review
           </span>
           <button
             onClick={() => {
               document.getElementById('drafts-table')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] light:hover:text-[#5B6CFF] transition-colors whitespace-nowrap ml-4 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="text-sm font-medium text-[#6366F1] light:text-[#4F46E5] hover:text-[#818CF8] light:hover:text-[#6366F1] transition-colors whitespace-nowrap ml-4 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Review Now &rarr;
           </button>
@@ -229,7 +229,7 @@ export function DraftsView({
           </div>
           <button
             onClick={() => fetchDrafts()}
-            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Retry
           </button>
@@ -252,7 +252,7 @@ export function DraftsView({
         {drafts.length > 0 && (
           <button
             onClick={handleRetakeTour}
-            className="text-xs text-gray-400 hover:text-gray-200 flex items-center gap-1 whitespace-nowrap pb-1 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="text-xs text-gray-400 hover:text-gray-200 flex items-center gap-1 whitespace-nowrap pb-1 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             title="Restart the guided tour of draft features"
           >
             <HelpCircle className="w-3.5 h-3.5" />

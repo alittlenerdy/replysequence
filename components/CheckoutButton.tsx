@@ -74,7 +74,7 @@ export function CheckoutButton({
     return (
       <button
         disabled
-        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold bg-[#5B6CFF]/20 text-[#5B6CFF] border border-[#5B6CFF]/30 cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${className}`}
+        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold bg-[#6366F1]/20 text-[#6366F1] border border-[#6366F1]/30 cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${className}`}
       >
         {children || 'Current Plan'}
       </button>

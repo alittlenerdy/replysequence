@@ -141,7 +141,7 @@ function inlineFormat(text: string): string {
   // Links: [text](url)
   text = text.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" class="text-[#5B6CFF] light:text-[#4A5BEE] underline hover:text-[#7A8BFF] light:hover:text-[#5B6CFF]">$1</a>'
+    '<a href="$2" class="text-[#6366F1] light:text-[#4F46E5] underline hover:text-[#818CF8] light:hover:text-[#6366F1]">$1</a>'
   );
   // Inline code: `code`
   text = text.replace(
@@ -222,7 +222,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Back link */}
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-[#5B6CFF] light:hover:text-[#4A5BEE] transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-[#6366F1] light:hover:text-[#4F46E5] transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to blog
@@ -233,7 +233,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#5B6CFF]/10 light:bg-[#EEF0FF] text-[#5B6CFF] light:text-[#3A4BDD]"
+                className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#6366F1]/10 light:bg-[#EEF0FF] text-[#6366F1] light:text-[#3A4BDD]"
               >
                 {tag}
               </span>
@@ -294,7 +294,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               [&_li]:text-gray-300 [&_li]:light:text-gray-700
               [&_strong]:text-white [&_strong]:light:text-gray-900 [&_strong]:font-semibold
               [&_em]:italic
-              [&_a]:text-[#5B6CFF] [&_a]:light:text-[#4A5BEE] [&_a]:underline [&_a]:hover:text-[#7A8BFF] [&_a]:light:hover:text-[#5B6CFF]
+              [&_a]:text-[#6366F1] [&_a]:light:text-[#4F46E5] [&_a]:underline [&_a]:hover:text-[#818CF8] [&_a]:light:hover:text-[#6366F1]
               [&_code]:bg-gray-800 [&_code]:light:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
@@ -338,9 +338,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <Link
                   key={related.slug}
                   href={`/blog/${related.slug}`}
-                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-[border-color] duration-300 hover:border-[#5B6CFF]/50 light:hover:border-[#5B6CFF]/50"
+                  className="group block rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white p-6 transition-[border-color] duration-300 hover:border-[#6366F1]/50 light:hover:border-[#6366F1]/50"
                 >
-                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-[#5B6CFF] light:group-hover:text-[#4A5BEE] transition-colors line-clamp-2">
+                  <h3 className="text-lg font-bold text-white light:text-gray-900 mb-2 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors line-clamp-2">
                     {related.title}
                   </h3>
                   <p className="text-sm text-gray-400 light:text-gray-600 line-clamp-2">

@@ -14,7 +14,7 @@ const actionCards = [
     description: 'Upload a recording from Zoom, Meet, or Teams',
     href: '/dashboard/meetings',
     icon: Upload,
-    color: '#5B6CFF',
+    color: '#6366F1',
     primary: true,
   },
   {
@@ -87,8 +87,8 @@ export function DashboardEmptyState({ className }: DashboardEmptyStateProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="inline-flex rounded-2xl p-3 bg-[#5B6CFF]/10 mb-4">
-          <Zap className="w-8 h-8 text-[#5B6CFF]" strokeWidth={1.5} />
+        <div className="inline-flex rounded-2xl p-3 bg-[#6366F1]/10 mb-4">
+          <Zap className="w-8 h-8 text-[#6366F1]" strokeWidth={1.5} />
         </div>
         <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-2">
           Welcome to ReplySequence
@@ -114,7 +114,7 @@ export function DashboardEmptyState({ className }: DashboardEmptyStateProps) {
                 href={card.href}
                 className={`group relative block w-full text-left rounded-2xl p-5 border transition-all duration-300 hover:bg-white/[0.04] ${
                   card.primary
-                    ? 'bg-[#5B6CFF]/10 border-[#5B6CFF]/25 hover:border-[#5B6CFF]/40 light:bg-[#5B6CFF]/5 light:border-[#4A5BEE]/20 light:hover:border-[#4A5BEE]/40'
+                    ? 'bg-[#6366F1]/10 border-[#6366F1]/25 hover:border-[#6366F1]/40 light:bg-[#6366F1]/5 light:border-[#4F46E5]/20 light:hover:border-[#4F46E5]/40'
                     : 'bg-gray-900/60 border-gray-700/50 hover:border-gray-600/50 light:bg-white light:border-gray-200 light:hover:border-gray-300'
                 }`}
               >
@@ -132,7 +132,7 @@ export function DashboardEmptyState({ className }: DashboardEmptyStateProps) {
                 </div>
                 {card.primary && (
                   <div className="absolute top-3 right-3">
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#5B6CFF]/15 text-[#5B6CFF]">
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#6366F1]/15 text-[#6366F1]">
                       Recommended
                     </span>
                   </div>

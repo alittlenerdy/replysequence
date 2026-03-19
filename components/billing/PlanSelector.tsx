@@ -19,7 +19,7 @@ export const PlanSelector = forwardRef<HTMLDivElement, PlanSelectorProps>(
       <div ref={ref} className="bg-gray-900/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-2xl overflow-hidden">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-2xl"
+          className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-2xl"
         >
           <h3 className="text-lg font-semibold text-white light:text-gray-900">
             {isFree ? 'Choose Your Plan' : 'Change Plan'}

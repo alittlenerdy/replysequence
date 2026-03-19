@@ -163,7 +163,7 @@ export function DealRiskAlerts({ compact = false }: DealRiskAlertsProps) {
               onClick={() => setSeverityFilter(null)}
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 !severityFilter
-                  ? 'bg-[#5B6CFF]/20 text-[#5B6CFF] border-[#5B6CFF]/50'
+                  ? 'bg-[#6366F1]/20 text-[#6366F1] border-[#6366F1]/50'
                   : 'bg-gray-800/50 text-gray-400 border-gray-700/50 hover:bg-gray-700/50 light:bg-gray-100 light:text-gray-600 light:border-gray-200'
               }`}
             >

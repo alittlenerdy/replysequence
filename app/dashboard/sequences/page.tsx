@@ -41,7 +41,7 @@ const FILTER_TABS: { key: FilterTab; label: string; color: string }[] = [
   { key: 'all', label: 'All', color: 'text-white light:text-gray-900' },
   { key: 'active', label: 'Active', color: 'text-emerald-400' },
   { key: 'paused', label: 'Paused', color: 'text-amber-400' },
-  { key: 'completed', label: 'Completed', color: 'text-[#5B6CFF]' },
+  { key: 'completed', label: 'Completed', color: 'text-[#6366F1]' },
 ];
 
 export default function SequencesPage() {
@@ -140,7 +140,7 @@ export default function SequencesPage() {
             onClick={() => setFilter(tab.key)}
             className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
               filter === tab.key
-                ? 'bg-[#5B6CFF] text-white shadow-sm'
+                ? 'bg-[#6366F1] text-white shadow-sm'
                 : 'text-gray-400 light:text-gray-500 hover:text-white light:hover:text-gray-900'
             }`}
           >

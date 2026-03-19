@@ -102,8 +102,8 @@ export default function SecurityPage() {
       <div className="max-w-6xl mx-auto px-4 pt-28 pb-16">
         <div className="text-center mb-16">
           <div className="flex justify-center mb-6">
-            <div className="p-4 bg-[#5B6CFF]/10 light:bg-[#EEF0FF] rounded-2xl">
-              <Shield className="w-12 h-12 text-[#5B6CFF] light:text-[#4A5BEE]" />
+            <div className="p-4 bg-[#6366F1]/10 light:bg-[#EEF0FF] rounded-2xl">
+              <Shield className="w-12 h-12 text-[#6366F1] light:text-[#4F46E5]" />
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white light:text-gray-900 mb-4">
@@ -121,13 +121,13 @@ export default function SecurityPage() {
             <CheckCircle className="w-4 h-4 text-amber-400 light:text-amber-600" />
             <span className="text-sm text-amber-400 light:text-amber-600">256-bit Encryption</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-[#5B6CFF]/10 light:bg-[#EEF0FF] border border-[#5B6CFF]/20 light:border-[#4A5BEE]/30 rounded-full">
-            <CheckCircle className="w-4 h-4 text-[#5B6CFF] light:text-[#4A5BEE]" />
-            <span className="text-sm text-[#5B6CFF] light:text-[#4A5BEE]">SOC 2 Infrastructure</span>
+          <div className="flex items-center gap-2 px-4 py-2 bg-[#6366F1]/10 light:bg-[#EEF0FF] border border-[#6366F1]/20 light:border-[#4F46E5]/30 rounded-full">
+            <CheckCircle className="w-4 h-4 text-[#6366F1] light:text-[#4F46E5]" />
+            <span className="text-sm text-[#6366F1] light:text-[#4F46E5]">SOC 2 Infrastructure</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-[#5B6CFF]/10 light:bg-[#EEF0FF] border border-[#5B6CFF]/20 light:border-[#4A5BEE]/30 rounded-full">
-            <CheckCircle className="w-4 h-4 text-[#5B6CFF] light:text-[#4A5BEE]" />
-            <span className="text-sm text-[#5B6CFF] light:text-[#4A5BEE]">GDPR Compliant</span>
+          <div className="flex items-center gap-2 px-4 py-2 bg-[#6366F1]/10 light:bg-[#EEF0FF] border border-[#6366F1]/20 light:border-[#4F46E5]/30 rounded-full">
+            <CheckCircle className="w-4 h-4 text-[#6366F1] light:text-[#4F46E5]" />
+            <span className="text-sm text-[#6366F1] light:text-[#4F46E5]">GDPR Compliant</span>
           </div>
         </div>
 
@@ -136,13 +136,13 @@ export default function SecurityPage() {
           {securityFeatures.map((feature) => (
             <div
               key={feature.title}
-              className="p-6 bg-gray-900/50 light:bg-gray-50 border border-gray-800 light:border-gray-200 rounded-xl hover:border-[#5B6CFF]/30 light:hover:border-[#99A8FF] transition-colors"
+              className="p-6 bg-gray-900/50 light:bg-gray-50 border border-gray-800 light:border-gray-200 rounded-xl hover:border-[#6366F1]/30 light:hover:border-[#99A8FF] transition-colors"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-[#5B6CFF]/10 light:bg-[#EEF0FF] rounded-lg">
-                  <feature.icon className="w-5 h-5 text-[#5B6CFF] light:text-[#4A5BEE]" />
+                <div className="p-2 bg-[#6366F1]/10 light:bg-[#EEF0FF] rounded-lg">
+                  <feature.icon className="w-5 h-5 text-[#6366F1] light:text-[#4F46E5]" />
                 </div>
-                <span className="px-2 py-0.5 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE] bg-[#5B6CFF]/10 light:bg-[#EEF0FF] rounded-full">
+                <span className="px-2 py-0.5 text-xs font-medium text-[#6366F1] light:text-[#4F46E5] bg-[#6366F1]/10 light:bg-[#EEF0FF] rounded-full">
                   Active
                 </span>
               </div>
@@ -164,7 +164,7 @@ export default function SecurityPage() {
                 <div className="text-lg font-semibold text-white light:text-gray-900 mb-1">{cert.name}</div>
                 <div className={`text-sm mb-2 ${
                   cert.status === 'Compliant' || cert.status === 'Infrastructure Provider'
-                    ? 'text-[#5B6CFF] light:text-[#4A5BEE]'
+                    ? 'text-[#6366F1] light:text-[#4F46E5]'
                     : 'text-gray-400 light:text-gray-600'
                 }`}>
                   {cert.status}
@@ -190,7 +190,7 @@ export default function SecurityPage() {
                 <tbody>
                   {securityHeaders.map((header) => (
                     <tr key={header.header} className="border-b border-gray-800/50 light:border-gray-200 last:border-0">
-                      <td className="p-4 text-sm font-mono text-[#5B6CFF] light:text-[#4A5BEE]">{header.header}</td>
+                      <td className="p-4 text-sm font-mono text-[#6366F1] light:text-[#4F46E5]">{header.header}</td>
                       <td className="p-4 text-sm font-mono text-gray-400 light:text-gray-600">{header.value}</td>
                     </tr>
                   ))}
@@ -233,7 +233,7 @@ export default function SecurityPage() {
 
         {/* Vulnerability Reporting */}
         <div className="mb-16">
-          <div className="p-8 bg-gradient-to-r from-[#5B6CFF]/10 to-[#3A4BDD]/10 light:from-[#F5F6FF] light:to-[#F5F6FF] border border-[#5B6CFF]/20 light:border-[#4A5BEE]/30 rounded-2xl text-center">
+          <div className="p-8 bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 light:from-[#F5F6FF] light:to-[#F5F6FF] border border-[#6366F1]/20 light:border-[#4F46E5]/30 rounded-2xl text-center">
             <h2 className="text-2xl font-bold text-white light:text-gray-900 mb-4">Security Vulnerability Reporting</h2>
             <p className="text-gray-400 light:text-gray-600 mb-6 max-w-2xl mx-auto">
               Found a security issue? We appreciate responsible disclosure.
@@ -241,7 +241,7 @@ export default function SecurityPage() {
             </p>
             <a
               href="mailto:security@replysequence.com"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#4A5BEE] hover:bg-[#5B6CFF] text-white rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#4F46E5] hover:bg-[#6366F1] text-white rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
               <Shield className="w-5 h-5" />
               Report a Vulnerability

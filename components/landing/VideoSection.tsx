@@ -83,7 +83,7 @@ export function VideoSection({ videoUrl }: VideoSectionProps) {
                   aria-label="Play demo video"
                 >
                   <motion.div
-                    className="w-20 h-20 rounded-full bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] flex items-center justify-center shadow-2xl shadow-[#5B6CFF]/50 group-hover:scale-110 transition-transform"
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] flex items-center justify-center shadow-2xl shadow-[#6366F1]/50 group-hover:scale-110 transition-transform"
                     whileTap={{ scale: 0.95 }}
                   >
                     <Play className="w-8 h-8 text-white ml-1" fill="white" />
@@ -93,8 +93,8 @@ export function VideoSection({ videoUrl }: VideoSectionProps) {
             ) : (
               // No video URL - show tasteful coming soon state
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 light:from-gray-50 light:to-gray-100">
-                <div className="w-20 h-20 rounded-full bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 flex items-center justify-center mb-6">
-                  <Play className="w-8 h-8 text-[#5B6CFF] ml-1" />
+                <div className="w-20 h-20 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center mb-6">
+                  <Play className="w-8 h-8 text-[#6366F1] ml-1" />
                 </div>
                 <p className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                   Product demo dropping soon

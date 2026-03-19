@@ -24,7 +24,7 @@ interface SequencePreviewCardProps {
 }
 
 const purposeConfig: Record<EmailPurpose, { label: string; color: string; bg: string }> = {
-  recap: { label: 'Recap', color: '#5B6CFF', bg: 'rgba(91, 108, 255, 0.10)' },
+  recap: { label: 'Recap', color: '#6366F1', bg: 'rgba(91, 108, 255, 0.10)' },
   value: { label: 'Value Reinforcement', color: '#7A5CFF', bg: 'rgba(122, 92, 255, 0.10)' },
   nudge: { label: 'Follow-Up Nudge', color: '#FFD75F', bg: 'rgba(255, 215, 95, 0.10)' },
 };

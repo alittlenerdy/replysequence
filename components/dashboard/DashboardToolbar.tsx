@@ -98,7 +98,7 @@ export function DashboardToolbar({ pendingDrafts = 0 }: DashboardToolbarProps) {
           title="Back to home"
         >
           <Image src="/logo.png" alt="" width={24} height={24} className="rounded-md" />
-          <span className="hidden md:inline text-sm font-bold bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] light:from-[#4A5BEE] light:to-[#4A5BEE] bg-clip-text text-transparent">
+          <span className="hidden md:inline text-sm font-bold bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5] light:from-[#4F46E5] light:to-[#4F46E5] bg-clip-text text-transparent">
             RS
           </span>
         </Link>
@@ -125,7 +125,7 @@ export function DashboardToolbar({ pendingDrafts = 0 }: DashboardToolbarProps) {
                   <Icon
                     className={`w-[18px] h-[18px] transition-colors ${
                       isActive
-                        ? 'text-[#5B6CFF] light:text-[#4A5BEE] drop-shadow-[0_0_6px_rgba(91,108,255,0.5)]'
+                        ? 'text-[#6366F1] light:text-[#4F46E5] drop-shadow-[0_0_6px_rgba(91,108,255,0.5)]'
                         : 'text-gray-400 light:text-gray-500'
                     }`}
                     strokeWidth={isActive ? 2 : 1.5}

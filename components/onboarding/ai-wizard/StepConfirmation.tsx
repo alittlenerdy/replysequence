@@ -78,7 +78,7 @@ export function StepConfirmation({
         <button
           onClick={handleSendTest}
           disabled={sendingTest || testSent}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600 disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600 disabled:opacity-60 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {sendingTest ? (
             <>
@@ -102,14 +102,14 @@ export function StepConfirmation({
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}
-          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="px-5 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           Back
         </button>
         <button
           onClick={onComplete}
           disabled={isSaving}
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#5B6CFF] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4A5BEE] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] shadow-lg shadow-[#5B6CFF]/25 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#6366F1] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4F46E5] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] shadow-lg shadow-[#6366F1]/25 disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         >
           {isSaving ? (
             <>

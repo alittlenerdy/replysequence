@@ -98,9 +98,9 @@ export function DashboardNav({ pendingDrafts = 0, userEmail = '' }: DashboardNav
               onKeyDown={(e) => handleKeyDown(e, index)}
               className={`
                 relative flex items-center gap-2.5 px-5 py-3.5 border-b-[3px] text-sm transition-colors duration-200
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white
                 ${isActive
-                  ? 'border-[#5B6CFF] text-white light:text-[#4A5BEE] bg-[#5B6CFF]/10 light:bg-[#EEF0FF] font-semibold'
+                  ? 'border-[#6366F1] text-white light:text-[#4F46E5] bg-[#6366F1]/10 light:bg-[#EEF0FF] font-semibold'
                   : 'border-transparent text-gray-400 light:text-gray-500 hover:text-gray-200 light:hover:text-gray-700 hover:bg-white/5 light:hover:bg-gray-100 font-medium'
                 }
               `}

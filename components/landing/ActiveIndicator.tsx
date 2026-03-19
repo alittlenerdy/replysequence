@@ -15,7 +15,7 @@ export function ActiveIndicator({ left, width }: ActiveIndicatorProps) {
       transition={{ type: 'spring', stiffness: 300, damping: 18 }}
     >
       {/* Layer 1: Glow */}
-      <div className="absolute inset-[-4px] rounded-[22px] bg-[#5B6CFF]/20 blur-md" style={{ boxShadow: '0 0 20px rgba(91, 108, 255, 0.3), 0 0 40px rgba(91, 108, 255, 0.15)' }} />
+      <div className="absolute inset-[-4px] rounded-[22px] bg-[#6366F1]/20 blur-md" style={{ boxShadow: '0 0 20px rgba(91, 108, 255, 0.3), 0 0 40px rgba(91, 108, 255, 0.15)' }} />
 
       {/* Layer 2: Clip container */}
       <div className="absolute inset-0 rounded-[18px] overflow-hidden">

@@ -23,7 +23,7 @@ const CARD_COLORS = [
   { bg: 'from-emerald-500/20 to-teal-600/20', icon: 'text-emerald-400 light:text-emerald-600', border: 'hover:border-emerald-500/40 light:hover:border-emerald-300', badge: 'bg-emerald-500', dot: 'from-emerald-500/30 to-teal-500/30', badgeText: 'text-emerald-400 light:text-emerald-600', glow: 'bg-emerald-500/10' },
   { bg: 'from-cyan-500/20 to-blue-600/20', icon: 'text-cyan-400 light:text-cyan-600', border: 'hover:border-cyan-500/40 light:hover:border-cyan-300', badge: 'bg-cyan-500', dot: 'from-cyan-500/30 to-blue-500/30', badgeText: 'text-cyan-400 light:text-cyan-600', glow: 'bg-cyan-500/10' },
   { bg: 'from-orange-500/20 to-red-600/20', icon: 'text-orange-400 light:text-orange-600', border: 'hover:border-orange-500/40 light:hover:border-orange-300', badge: 'bg-orange-500', dot: 'from-orange-500/30 to-red-500/30', badgeText: 'text-orange-400 light:text-orange-600', glow: 'bg-orange-500/10' },
-  { bg: 'from-[#5B6CFF]/20 to-blue-600/20', icon: 'text-[#5B6CFF] light:text-[#4A5BEE]', border: 'hover:border-[#5B6CFF]/40 light:hover:border-[#99A8FF]', badge: 'bg-[#5B6CFF]', dot: 'from-[#5B6CFF]/30 to-blue-500/30', badgeText: 'text-[#5B6CFF] light:text-[#4A5BEE]', glow: 'bg-[#5B6CFF]/10' },
+  { bg: 'from-[#6366F1]/20 to-blue-600/20', icon: 'text-[#6366F1] light:text-[#4F46E5]', border: 'hover:border-[#6366F1]/40 light:hover:border-[#99A8FF]', badge: 'bg-[#6366F1]', dot: 'from-[#6366F1]/30 to-blue-500/30', badgeText: 'text-[#6366F1] light:text-[#4F46E5]', glow: 'bg-[#6366F1]/10' },
   { bg: 'from-yellow-500/20 to-amber-600/20', icon: 'text-yellow-400 light:text-yellow-600', border: 'hover:border-yellow-500/40 light:hover:border-yellow-300', badge: 'bg-yellow-500', dot: 'from-yellow-500/30 to-amber-500/30', badgeText: 'text-yellow-400 light:text-yellow-600', glow: 'bg-yellow-500/10' },
   { bg: 'from-rose-500/20 to-pink-600/20', icon: 'text-rose-400 light:text-rose-600', border: 'hover:border-rose-500/40 light:hover:border-rose-300', badge: 'bg-rose-500', dot: 'from-rose-500/30 to-pink-500/30', badgeText: 'text-rose-400 light:text-rose-600', glow: 'bg-rose-500/10' },
   { bg: 'from-teal-500/20 to-emerald-600/20', icon: 'text-teal-400 light:text-teal-600', border: 'hover:border-teal-500/40 light:hover:border-teal-300', badge: 'bg-teal-500', dot: 'from-teal-500/30 to-emerald-500/30', badgeText: 'text-teal-400 light:text-teal-600', glow: 'bg-teal-500/10' },
@@ -390,7 +390,7 @@ export function NonNegotiablesCarousel() {
                 <button
                   key={i}
                   onClick={() => setActiveGroup(i)}
-                  className={`h-2 rounded-full transition-[width,background-color] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                  className={`h-2 rounded-full transition-[width,background-color] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                     i === activeGroup
                       ? `w-8 ${groupColor.badge}`
                       : 'w-2 bg-gray-700 light:bg-gray-300 hover:bg-gray-600 light:hover:bg-gray-400'

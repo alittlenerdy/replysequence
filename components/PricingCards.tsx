@@ -78,7 +78,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                     isEmbedded ? 'p-4 lg:p-5' : tier.highlighted ? 'p-7 lg:p-9' : 'p-6 lg:p-8'
                   } ${
                     tier.highlighted
-                      ? `rounded-2xl border border-[#6366F1]/40 ring-1 ring-[#6366F1]/20 bg-gray-900/80 light:bg-white shadow-xl shadow-[#5B6CFF]/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
+                      ? `rounded-2xl border border-[#6366F1]/40 ring-1 ring-[#6366F1]/20 bg-gray-900/80 light:bg-white shadow-xl shadow-[#6366F1]/10 ${isEmbedded ? '' : 'md:scale-105'} z-10`
                       : 'glass-border rounded-2xl'
                   }`}
                 >
@@ -95,7 +95,7 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                   {/* Current Plan Badge */}
                   {isCurrentPlan && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#5B6CFF]/20 text-[#5B6CFF] text-sm font-semibold border border-[#5B6CFF]/30">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#6366F1]/20 text-[#6366F1] text-sm font-semibold border border-[#6366F1]/30">
                         <Check className="w-4 h-4" />
                         Current Plan
                       </span>
@@ -106,12 +106,12 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                   <div className="mb-6 mt-4">
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
                       tier.highlighted
-                        ? 'bg-[#5B6CFF]/20'
+                        ? 'bg-[#6366F1]/20'
                         : 'bg-gray-800 light:bg-gray-100'
                     }`}>
                       <Icon className={`w-6 h-6 ${
                         tier.highlighted
-                          ? 'text-[#5B6CFF]'
+                          ? 'text-[#6366F1]'
                           : 'text-gray-400 light:text-gray-600'
                       }`} />
                     </div>
@@ -159,8 +159,8 @@ export function PricingCards({ tiers, currentTier, isLoggedIn, variant = 'page' 
                       <li key={index} className="flex items-start gap-3">
                         <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                           tier.highlighted
-                            ? 'text-[#5B6CFF]'
-                            : 'text-[#5B6CFF]'
+                            ? 'text-[#6366F1]'
+                            : 'text-[#6366F1]'
                         }`} />
                         <span className="text-gray-300 light:text-gray-700 text-sm">
                           {feature}

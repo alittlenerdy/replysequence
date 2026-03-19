@@ -37,7 +37,7 @@ export function UserAvatar() {
         onClick={() => setIsOpen(!isOpen)}
         className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white transition-transform hover:scale-105 active:scale-95"
         style={{
-          background: 'linear-gradient(135deg, #5B6CFF, #7A5CFF)',
+          background: 'linear-gradient(135deg, #6366F1, #7A5CFF)',
           border: '1px solid rgba(255,255,255,0.08)',
         }}
         aria-label="User menu"

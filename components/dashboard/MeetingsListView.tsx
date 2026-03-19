@@ -7,9 +7,9 @@ import type { MeetingListItem, MeetingsQueryResult } from '@/lib/dashboard-queri
 
 function PlatformIcon({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string; bg: string }> = {
-    zoom: { label: 'Zoom', color: 'text-[#5B6CFF]', bg: 'bg-[#5B6CFF]/15' },
-    google_meet: { label: 'Meet', color: 'text-[#5B6CFF]', bg: 'bg-[#5B6CFF]/15' },
-    microsoft_teams: { label: 'Teams', color: 'text-[#5B6CFF]', bg: 'bg-[#5B6CFF]/15' },
+    zoom: { label: 'Zoom', color: 'text-[#6366F1]', bg: 'bg-[#6366F1]/15' },
+    google_meet: { label: 'Meet', color: 'text-[#6366F1]', bg: 'bg-[#6366F1]/15' },
+    microsoft_teams: { label: 'Teams', color: 'text-[#6366F1]', bg: 'bg-[#6366F1]/15' },
   };
   const { label, color, bg } = config[platform] || { label: platform, color: 'text-gray-400', bg: 'bg-gray-500/15' };
 
@@ -56,7 +56,7 @@ function FollowUpBadge({ status }: { status: FollowUpStatus }) {
     },
     draft_ready: {
       label: 'Draft ready',
-      classes: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20',
+      classes: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20',
       icon: <FileText className="w-3 h-3" />,
     },
     overdue: {
@@ -66,7 +66,7 @@ function FollowUpBadge({ status }: { status: FollowUpStatus }) {
     },
     sent: {
       label: 'Follow-up sent',
-      classes: 'bg-[#5B6CFF]/15 text-[#5B6CFF] border-[#5B6CFF]/20',
+      classes: 'bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/20',
       icon: <CheckCircle className="w-3 h-3" />,
     },
   };
@@ -205,7 +205,7 @@ export function MeetingsListView() {
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Search meetings"
             autoComplete="off"
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/50 focus-visible:border-[#5B6CFF]/50"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 light:bg-white border border-gray-700 light:border-gray-200 rounded-lg text-sm text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/50 focus-visible:border-[#6366F1]/50"
           />
         </div>
       </div>
@@ -217,17 +217,17 @@ export function MeetingsListView() {
             ...(statusCounts.failed > 0 ? [{ key: 'failed' as const, label: 'Failed', color: 'text-red-400 bg-red-500/10 border-red-500/30' }] : []),
             ...(statusCounts.processing > 0 ? [{ key: 'processing' as const, label: 'Processing', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' }] : []),
             { key: 'no_draft' as const, label: 'No draft', color: 'text-gray-400 bg-gray-500/10 border-gray-600' },
-            { key: 'draft_ready' as const, label: 'Draft ready', color: 'text-[#5B6CFF] bg-[#5B6CFF]/10 border-[#5B6CFF]/30' },
+            { key: 'draft_ready' as const, label: 'Draft ready', color: 'text-[#6366F1] bg-[#6366F1]/10 border-[#6366F1]/30' },
             { key: 'overdue' as const, label: 'Overdue', color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
-            { key: 'sent' as const, label: 'Sent', color: 'text-[#5B6CFF] bg-[#5B6CFF]/10 border-[#5B6CFF]/30' },
+            { key: 'sent' as const, label: 'Sent', color: 'text-[#6366F1] bg-[#6366F1]/10 border-[#6366F1]/30' },
           ]).map(({ key, label, color }) => (
             <button
               key={key}
               onClick={() => setFollowUpFilter(followUpFilter === key ? 'all' : key)}
               className={`
-                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
+                px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
                 ${followUpFilter === key
-                  ? 'ring-2 ring-[#5B6CFF]/40 ' + color
+                  ? 'ring-2 ring-[#6366F1]/40 ' + color
                   : color + ' opacity-70 hover:opacity-100'
                 }
               `}
@@ -238,7 +238,7 @@ export function MeetingsListView() {
           {followUpFilter !== 'all' && (
             <button
               onClick={() => setFollowUpFilter('all')}
-              className="text-xs text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors ml-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="text-xs text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors ml-1 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Clear
             </button>
@@ -253,7 +253,7 @@ export function MeetingsListView() {
             key={chip.value}
             onClick={() => { setPlatform(chip.value); setPage(1); }}
             className={`
-              px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
+              px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]
               ${platform === chip.value
                 ? 'bg-orange-500/15 text-orange-400 border-orange-500/30 light:bg-orange-50 light:text-orange-600 light:border-orange-200'
                 : 'bg-transparent text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-300 light:text-gray-500 light:border-gray-300 light:hover:border-gray-400 light:hover:text-gray-700'
@@ -276,7 +276,7 @@ export function MeetingsListView() {
           </div>
           <button
             onClick={() => fetchMeetings()}
-            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Retry
           </button>
@@ -311,7 +311,7 @@ export function MeetingsListView() {
               </p>
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#4A5BEE] hover:bg-[#5B6CFF] text-white text-sm font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#4F46E5] hover:bg-[#6366F1] text-white text-sm font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 Connect Platform
               </Link>
@@ -333,13 +333,13 @@ export function MeetingsListView() {
               <Link
                 key={meeting.id}
                 href={`/dashboard/meetings/${meeting.id}`}
-                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-[#5B6CFF]/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group light:shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className="block bg-gray-900/50 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-xl p-5 hover:border-[#6366F1]/40 hover:bg-gray-800/30 light:hover:bg-gray-50 transition-colors group light:shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               >
                 <div className="flex items-start gap-4">
                   <PlatformIcon platform={meeting.platform} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-[#5B6CFF] light:group-hover:text-[#4A5BEE] transition-colors truncate">
+                      <h3 className="text-sm font-medium text-white light:text-gray-900 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors truncate">
                         {meeting.topic || 'Untitled Meeting'}
                       </h3>
                       <FollowUpBadge status={followUp} />
@@ -370,7 +370,7 @@ export function MeetingsListView() {
                       </span>
                     )}
                     {meeting.sentCount > 0 && (
-                      <span className="flex items-center gap-1 text-[#5B6CFF]">
+                      <span className="flex items-center gap-1 text-[#6366F1]">
                         <Send className="w-3.5 h-3.5" />
                         <span className="tabular-nums">{meeting.sentCount}</span> sent
                       </span>
@@ -393,7 +393,7 @@ export function MeetingsListView() {
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               <ChevronLeft className="w-4 h-4" />
               Previous
@@ -401,7 +401,7 @@ export function MeetingsListView() {
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-700 light:border-gray-200 rounded-lg text-gray-300 light:text-gray-600 hover:bg-gray-800 light:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Next
               <ChevronRight className="w-4 h-4" />

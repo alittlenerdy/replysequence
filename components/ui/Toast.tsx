@@ -23,7 +23,7 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
   }, [duration, onClose]);
 
   const Icon = type === 'success' ? CheckCircle : XCircle;
-  const bgColor = type === 'success' ? 'bg-[#5B6CFF]' : 'bg-red-500';
+  const bgColor = type === 'success' ? 'bg-[#6366F1]' : 'bg-red-500';
 
   return (
     <div
@@ -40,7 +40,7 @@ export function Toast({ message, type, onClose, duration = 5000 }: ToastProps) {
           setIsVisible(false);
           setTimeout(onClose, 300);
         }}
-        className="ml-2 p-1 hover:bg-white/20 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="ml-2 p-1 hover:bg-white/20 rounded transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
         aria-label="Close notification"
       >
         <X className="w-4 h-4" />

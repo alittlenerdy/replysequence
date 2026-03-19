@@ -65,7 +65,7 @@ export function DraftFeedback({
           Was this draft helpful?
         </h3>
         {submitted && (
-          <span className="text-xs text-[#5B6CFF] flex items-center gap-1">
+          <span className="text-xs text-[#6366F1] flex items-center gap-1">
             <Check className="w-3 h-3" />
             Saved
           </span>
@@ -76,7 +76,7 @@ export function DraftFeedback({
         <button
           onClick={() => handleThumbClick('up')}
           disabled={isSubmitting}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             rating === 'up'
               ? 'bg-orange-500/20 border-orange-500/40 text-orange-400'
               : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-orange-500/30 hover:text-orange-400'
@@ -93,7 +93,7 @@ export function DraftFeedback({
         <button
           onClick={() => handleThumbClick('down')}
           disabled={isSubmitting}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
             rating === 'down'
               ? 'bg-red-500/20 border-red-500/40 text-red-400'
               : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-red-500/30 hover:text-red-400'
@@ -110,7 +110,7 @@ export function DraftFeedback({
         {!showFeedbackInput && (
           <button
             onClick={() => setShowFeedbackInput(true)}
-            className="ml-auto text-xs text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+            className="ml-auto text-xs text-gray-500 hover:text-gray-400 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
           >
             Add a note
           </button>
@@ -125,13 +125,13 @@ export function DraftFeedback({
             placeholder="What could be improved? (optional)"
             rows={2}
             aria-label="Feedback"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus-visible:border-[#5B6CFF] focus-visible:outline-none resize-none"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus-visible:border-[#6366F1] focus-visible:outline-none resize-none"
           />
           <div className="flex items-center gap-2">
             <button
               onClick={handleFeedbackSubmit}
               disabled={isSubmitting}
-              className="px-3 py-1.5 text-xs font-medium bg-[#4A5BEE] text-white rounded-lg hover:bg-[#5B6CFF] transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="px-3 py-1.5 text-xs font-medium bg-[#4F46E5] text-white rounded-lg hover:bg-[#6366F1] transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               {isSubmitting ? 'Saving\u2026' : 'Save feedback'}
             </button>
@@ -140,7 +140,7 @@ export function DraftFeedback({
                 setShowFeedbackInput(false);
                 setFeedbackText(initialFeedback || '');
               }}
-              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
             >
               Cancel
             </button>

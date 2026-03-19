@@ -55,7 +55,7 @@ export function HeroAnimation() {
         <div className="relative" style={{ willChange: 'transform' }}>
           {/* Outer ring - Video platforms */}
           <div
-            className="absolute rounded-full border-2 border-[#5B6CFF]/30 animate-orbit-slow"
+            className="absolute rounded-full border-2 border-[#6366F1]/30 animate-orbit-slow"
             style={{
               width: 'min(600px, 90vw)',
               height: 'min(600px, 90vw)',
@@ -97,7 +97,7 @@ export function HeroAnimation() {
 
           {/* Middle ring - Core features (counter-rotate) */}
           <div
-            className="absolute rounded-full border-2 border-[#5B6CFF]/40 animate-orbit-reverse"
+            className="absolute rounded-full border-2 border-[#6366F1]/40 animate-orbit-reverse"
             style={{
               width: 'min(450px, 70vw)',
               height: 'min(450px, 70vw)',
@@ -192,7 +192,7 @@ export function HeroAnimation() {
             <div className="relative">
               {/* Outer glow ring - use opacity instead of scale for better perf */}
               <motion.div
-                className="absolute rounded-3xl bg-gradient-to-br from-[#5B6CFF]/20 to-[#3A4BDD]/20 blur-xl"
+                className="absolute rounded-3xl bg-gradient-to-br from-[#6366F1]/20 to-[#3A4BDD]/20 blur-xl"
                 style={{
                   width: 'min(160px, 30vw)',
                   height: 'min(160px, 30vw)',
@@ -206,7 +206,7 @@ export function HeroAnimation() {
 
               {/* Glowing core */}
               <div
-                className="relative w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-[#5B6CFF] to-[#3A4BDD] shadow-2xl animate-glow-pulse"
+                className="relative w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-[#6366F1] to-[#3A4BDD] shadow-2xl animate-glow-pulse"
                 style={{ willChange: 'transform, box-shadow' }}
               >
                 {/* AI Icon */}

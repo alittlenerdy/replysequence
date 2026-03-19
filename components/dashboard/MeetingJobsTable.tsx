@@ -193,7 +193,7 @@ export function MeetingJobsTable({
                     <>
                       <button
                         onClick={() => onViewTranscript?.(meeting.id)}
-                        className="text-[11px] text-[#5B6CFF] flex items-center gap-1"
+                        className="text-[11px] text-[#6366F1] flex items-center gap-1"
                       >
                         <Eye className="w-3 h-3" /> Transcript
                       </button>

@@ -106,12 +106,12 @@ export function StickyNewsletterBar() {
                     aria-label="Email address"
                     autoComplete="email"
                     spellCheck={false}
-                    className="flex-1 min-w-0 px-3 py-2 bg-gray-800/80 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:border-transparent text-sm"
+                    className="flex-1 min-w-0 px-3 py-2 bg-gray-800/80 light:bg-gray-100 border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:border-transparent text-sm"
                   />
                   <button
                     type="submit"
                     disabled={isSubmitting || !email}
-                    className="px-4 py-2 bg-[#4A5BEE] hover:bg-[#5B6CFF] disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                    className="px-4 py-2 bg-[#4F46E5] hover:bg-[#6366F1] disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     {isSubmitting ? '\u2026' : 'Subscribe'}
                   </button>
@@ -120,7 +120,7 @@ export function StickyNewsletterBar() {
             )}
             <button
               onClick={handleDismiss}
-              className="p-1.5 text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors shrink-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="p-1.5 text-gray-500 hover:text-gray-300 light:hover:text-gray-700 transition-colors shrink-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               aria-label="Dismiss"
             >
               <X className="w-4 h-4" />

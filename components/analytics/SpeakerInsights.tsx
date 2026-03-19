@@ -6,8 +6,8 @@ import type { SpeakerAnalytics } from '@/lib/types/analytics';
 
 // Indigo-based speaker colors for the bar chart
 const SPEAKER_COLORS = [
-  '#5B6CFF', // [#F5F6FF]0
-  '#7A8BFF', // [#7A8BFF]
+  '#6366F1', // [#F5F6FF]0
+  '#818CF8', // [#818CF8]
   '#A5B4FC', // [#99A8FF]
   '#FF9D2D', // amber-500
   '#FF9D2D', // amber-400
@@ -49,8 +49,8 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
     >
       {/* Section header */}
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-[#5B6CFF]/10 flex items-center justify-center">
-          <Mic className="w-4 h-4 text-[#5B6CFF]" />
+        <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 flex items-center justify-center">
+          <Mic className="w-4 h-4 text-[#6366F1]" />
         </div>
         <div>
           <h3 className="text-sm font-semibold text-white light:text-gray-900">Speaker Insights</h3>
@@ -64,7 +64,7 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-xl p-4 light:shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <Users className="w-3.5 h-3.5 text-[#5B6CFF]" />
+            <Users className="w-3.5 h-3.5 text-[#6366F1]" />
             <span className="text-xs text-gray-500">Speakers</span>
           </div>
           <p className="text-2xl font-bold text-white light:text-gray-900">{data.totalSpeakers}</p>
@@ -82,7 +82,7 @@ export function SpeakerInsights({ data }: SpeakerInsightsProps) {
 
         <div className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-xl p-4 light:shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <MessageSquare className="w-3.5 h-3.5 text-[#5B6CFF]" />
+            <MessageSquare className="w-3.5 h-3.5 text-[#6366F1]" />
             <span className="text-xs text-gray-500">Talk Ratio</span>
           </div>
           <p className="text-2xl font-bold text-white light:text-gray-900">

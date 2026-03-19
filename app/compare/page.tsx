@@ -54,7 +54,7 @@ const competitors = [
     name: 'Fathom',
     tagline: 'AI notetaker with meeting summaries',
     differentiator: 'Fathom focuses on note-taking and CRM sync. ReplySequence generates follow-ups, sequences, next steps, and risk alerts in seconds.',
-    color: 'from-purple-500 to-[#4A5BEE]',
+    color: 'from-purple-500 to-[#4F46E5]',
   },
   {
     slug: 'avoma',

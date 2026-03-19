@@ -83,7 +83,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
       <div id="at-risk-meetings" className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-5 light:shadow-sm">
         <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Meetings Needing Follow-up</h3>
         <div className="flex items-center justify-center gap-2 py-6 text-gray-500">
-          <CheckCircle2 className="w-5 h-5 text-[#5B6CFF]" />
+          <CheckCircle2 className="w-5 h-5 text-[#6366F1]" />
           <span className="text-sm">All meetings followed up. Nice.</span>
         </div>
       </div>
@@ -123,14 +123,14 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
               <span className="text-xs text-gray-500">Ended {formatRelativeTime(m.endTime)}</span>
               {m.draftStatus === 'generated' && m.draftId ? (
                 <span
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE]"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#6366F1] light:text-[#4F46E5]"
                 >
                   <FileText className="w-3 h-3" />
                   Open Draft
                 </span>
               ) : (
                 <span
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE]"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#6366F1] light:text-[#4F46E5]"
                 >
                   <Wand2 className="w-3 h-3" />
                   Generate Draft
@@ -161,7 +161,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                     href={`/dashboard/meetings/${m.meetingId}`}
                     className="block min-w-0 group/link"
                   >
-                    <p className="font-medium text-white light:text-gray-900 truncate max-w-[200px] group-hover/link:text-[#5B6CFF] light:group-hover/link:text-[#4A5BEE] transition-colors">
+                    <p className="font-medium text-white light:text-gray-900 truncate max-w-[200px] group-hover/link:text-[#6366F1] light:group-hover/link:text-[#4F46E5] transition-colors">
                       {m.topic || 'Untitled Meeting'}
                     </p>
                     {m.contactName && (
@@ -182,7 +182,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                   {m.draftStatus === 'generated' && m.draftId ? (
                     <Link
                       href={`/dashboard?draft=${m.draftId}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[#6366F1] light:text-[#4F46E5] hover:text-[#818CF8] whitespace-nowrap"
                     >
                       <FileText className="w-3 h-3" />
                       Open Draft
@@ -190,7 +190,7 @@ export function AtRiskMeetings({ meetings }: AtRiskMeetingsProps) {
                   ) : (
                     <Link
                       href={`/dashboard?meeting=${m.meetingId}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[#5B6CFF] light:text-[#4A5BEE] hover:text-[#7A8BFF] whitespace-nowrap"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[#6366F1] light:text-[#4F46E5] hover:text-[#818CF8] whitespace-nowrap"
                     >
                       <Wand2 className="w-3 h-3" />
                       Generate Draft

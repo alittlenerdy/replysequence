@@ -152,7 +152,7 @@ export function FloatingToolbar() {
           className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-xl hover:bg-white/10 light:hover:bg-gray-900/5 transition-colors relative z-10"
         >
           <Image src="/logo.png" alt="" width={24} height={24} className="rounded-md" />
-          <span className="text-sm font-bold bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] light:from-[#4A5BEE] light:to-[#4A5BEE] bg-clip-text text-transparent">
+          <span className="text-sm font-bold bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5] light:from-[#4F46E5] light:to-[#4F46E5] bg-clip-text text-transparent">
             RS
           </span>
         </Link>
@@ -172,7 +172,7 @@ export function FloatingToolbar() {
                 <Icon
                   className={`w-[18px] h-[18px] transition-colors ${
                     isActive
-                      ? 'text-[#5B6CFF] light:text-[#4A5BEE]'
+                      ? 'text-[#6366F1] light:text-[#4F46E5]'
                       : 'text-gray-400 light:text-gray-500'
                   }`}
                   strokeWidth={1.5}

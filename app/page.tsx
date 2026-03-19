@@ -56,7 +56,7 @@ function CountdownAnimation() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="text-[#5B6CFF] light:text-[#4A5BEE] font-bold text-base"
+            className="text-[#6366F1] light:text-[#4F46E5] font-bold text-base"
           >
             ✓ Follow-up, sequence, and next steps ready
           </motion.span>
@@ -71,7 +71,7 @@ function CountdownAnimation() {
               initial={{ opacity: 0, y: -10, scale: 1.2 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.8 }}
-              className="text-[#5B6CFF] light:text-[#4A5BEE] font-bold text-lg w-5 text-center"
+              className="text-[#6366F1] light:text-[#4F46E5] font-bold text-lg w-5 text-center"
             >
               {count}
             </motion.span>
@@ -88,7 +88,7 @@ const platformPillars = [
     icon: FileText,
     title: 'Follow-Ups',
     description: 'AI-drafted emails that reference the real conversation. Every follow-up sounds like you wrote it.',
-    color: '#5B6CFF',
+    color: '#6366F1',
     href: '/product/follow-ups',
   },
   {
@@ -127,7 +127,7 @@ export default function LandingPage() {
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-pretty">
               <span className="font-medium text-[#C0C8E0] light:text-gray-500">Every Tool Records the Meeting.</span>{' '}
-              <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
+              <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
             <p className="text-lg font-light text-[#C0C8E0] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
@@ -141,7 +141,7 @@ export default function LandingPage() {
                 'Deal risks flagged before they cost you',
               ].map((bullet, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#5B6CFF] shrink-0" aria-hidden="true" />
+                  <CheckCircle2 className="w-4 h-4 text-[#6366F1] shrink-0" aria-hidden="true" />
                   <span className="text-sm text-[#C0C8E0] light:text-gray-600 font-medium">{bullet}</span>
                 </div>
               ))}
@@ -154,10 +154,10 @@ export default function LandingPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-6"
           >
-            <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF9D2D]/10 to-[#5B6CFF]/10 light:from-[#FFF5EB] light:to-[#EEF0FF] border-2 border-[#FF9D2D]/40 light:border-[#FF9D2D]/40 shadow-lg shadow-[#FF9D2D]/10 light:shadow-[#FFE4C4]/30">
+            <div className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF9D2D]/10 to-[#6366F1]/10 light:from-[#FFF5EB] light:to-[#EEF0FF] border-2 border-[#FF9D2D]/40 light:border-[#FF9D2D]/40 shadow-lg shadow-[#FF9D2D]/10 light:shadow-[#FFE4C4]/30">
               <CountdownAnimation />
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#5B6CFF]/10 to-[#7A5CFF]/10 border border-[#5B6CFF]/20">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#6366F1]/10 to-[#7A5CFF]/10 border border-[#6366F1]/20">
               <Zap className="w-4 h-4 text-[#FF9D2D]" aria-hidden="true" />
               <span className="text-sm font-semibold text-[#C0C8E0] light:text-gray-700">
                 10x faster than typing it yourself
@@ -264,7 +264,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Sales Stack Has a <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Gap</span>. This Is It.
+              Your Sales Stack Has a <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Gap</span>. This Is It.
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up.
@@ -300,16 +300,16 @@ export default function LandingPage() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="rounded-2xl bg-[#0F1629] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 flex flex-col items-center text-center light:shadow-sm"
               >
-                <div className="w-12 h-12 rounded-lg bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-[#5B6CFF] light:text-[#4A5BEE]" aria-hidden="true" />
+                <div className="w-12 h-12 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-[#6366F1] light:text-[#4F46E5]" aria-hidden="true" />
                 </div>
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#8892B0] light:text-gray-500 mb-2">Before</span>
                 <p className="text-sm text-[#C0C8E0] light:text-gray-700 mb-3">{item.before}</p>
 
-                <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-1" aria-hidden="true" />
+                <ArrowDown className="w-4 h-4 text-[#6366F1]/60 mb-1" aria-hidden="true" />
                 <p className="text-xs text-[#8892B0] light:text-gray-500 mb-1">{item.process}</p>
-                <ArrowDown className="w-4 h-4 text-[#5B6CFF]/60 mb-3" aria-hidden="true" />
+                <ArrowDown className="w-4 h-4 text-[#6366F1]/60 mb-3" aria-hidden="true" />
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#F59E0B] light:text-amber-600 mb-2">After</span>
                 <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
@@ -332,7 +332,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              One Platform. Four <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Pillars</span>.
+              One Platform. Four <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Pillars</span>.
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Everything between the call ending and the deal closing — automated.
@@ -386,7 +386,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              From Call to <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Pipeline Automation</span> in Three Steps
+              From Call to <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Pipeline Automation</span> in Three Steps
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Connect once. Have your meetings. Follow-ups, sequences, next steps, and CRM updates handle themselves.
@@ -394,7 +394,7 @@ export default function LandingPage() {
           </motion.div>
 
           <div className="relative">
-            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-[#5B6CFF] via-[#7A5CFF] to-[#FF9D2D] opacity-30" />
+            <div className="hidden md:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5 bg-gradient-to-r from-[#6366F1] via-[#7A5CFF] to-[#FF9D2D] opacity-30" />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
@@ -403,7 +403,7 @@ export default function LandingPage() {
                   icon: <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
                   title: 'Have Your Meeting',
                   description: 'Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically — no separate app to install.',
-                  color: '#5B6CFF',
+                  color: '#6366F1',
                 },
                 {
                   step: '02',
@@ -482,7 +482,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Built for Teams That <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Follow Up Fast</span>
+              Built for Teams That <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Follow Up Fast</span>
             </h2>
           </motion.div>
 
@@ -531,7 +531,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Your Next Meeting Is Coming. The <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent">Follow-Up</span> Should Be Automatic.
+              Your Next Meeting Is Coming. The <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Follow-Up</span> Should Be Automatic.
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 mb-6">
               Start with 5 free AI drafts. No credit card. Connect your meeting platform and get follow-ups, sequences, next-step tracking, and deal intelligence in under 5 minutes.

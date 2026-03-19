@@ -250,9 +250,9 @@ export function CommandPalette() {
                               key={cmd.id}
                               onClick={() => runCommand(cmd)}
                               onMouseEnter={() => setSelectedIndex(index)}
-                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
                                 selectedIndex === index
-                                  ? 'bg-[#5B6CFF]/10 text-white light:text-gray-900'
+                                  ? 'bg-[#6366F1]/10 text-white light:text-gray-900'
                                   : 'text-gray-300 light:text-gray-700 hover:bg-gray-800/50 light:hover:bg-gray-50'
                               }`}
                             >

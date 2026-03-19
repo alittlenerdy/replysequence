@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass Navbar</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg-blob-1: rgba(120, 80, 255, 0.45);
+  --bg-blob-2: rgba(0, 200, 255, 0.35);
+  --bg-blob-3: rgba(255, 100, 200, 0.35);
+  --bg-base: #f0f0f5;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-shadow-outer: rgba(0, 0, 0, 0.12);
+  --glass-shadow-inner: rgba(255, 255, 255, 0.5);
+  --glass-caustic: rgba(255, 255, 255, 0.25);
+  --text-primary: rgba(30, 30, 50, 0.85);
+  --text-secondary: rgba(30, 30, 50, 0.5);
+  --pill-bg: rgba(30, 30, 50, 0.08);
+  --divider: rgba(30, 30, 50, 0.12);
+  --specular-top: rgba(255, 255, 255, 0.7);
+  --specular-bottom: rgba(255, 255, 255, 0.15);
+  --glare-color: rgba(255, 255, 255, 0.18);
+  --toggle-icon-active: rgba(30, 30, 50, 0.8);
+  --toggle-icon-inactive: rgba(30, 30, 50, 0.3);
+}
+
+[data-theme="dark"] {
+  --bg-blob-1: rgba(100, 50, 220, 0.5);
+  --bg-blob-2: rgba(0, 150, 220, 0.4);
+  --bg-blob-3: rgba(220, 50, 150, 0.35);
+  --bg-base: #0a0a14;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow-outer: rgba(0, 0, 0, 0.5);
+  --glass-shadow-inner: rgba(255, 255, 255, 0.08);
+  --glass-caustic: rgba(255, 255, 255, 0.06);
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.45);
+  --pill-bg: rgba(255, 255, 255, 0.1);
+  --divider: rgba(255, 255, 255, 0.1);
+  --specular-top: rgba(255, 255, 255, 0.25);
+  --specular-bottom: rgba(255, 255, 255, 0.04);
+  --glare-color: rgba(255, 255, 255, 0.08);
+  --toggle-icon-active: rgba(255, 255, 255, 0.9);
+  --toggle-icon-inactive: rgba(255, 255, 255, 0.25);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg-base);
+  transition: background 0.6s ease;
+}
+
+/* ===== ANIMATED MESH BACKGROUND ===== */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  will-change: transform;
+  transition: background 0.8s ease;
+}
+
+.blob-1 {
+  width: 55vmax;
+  height: 55vmax;
+  background: var(--bg-blob-1);
+  top: -15%;
+  left: -10%;
+  animation: drift1 18s ease-in-out infinite alternate;
+}
+.blob-2 {
+  width: 50vmax;
+  height: 50vmax;
+  background: var(--bg-blob-2);
+  bottom: -20%;
+  right: -10%;
+  animation: drift2 22s ease-in-out infinite alternate;
+}
+.blob-3 {
+  width: 45vmax;
+  height: 45vmax;
+  background: var(--bg-blob-3);
+  top: 30%;
+  left: 40%;
+  animation: drift3 20s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(15vw, 10vh) scale(1.15); }
+}
+@keyframes drift2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-12vw, -8vh) scale(1.1); }
+}
+@keyframes drift3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-8vw, 12vh) scale(1.2); }
+}
+
+/* ===== NAVBAR CONTAINER ===== */
+.navbar-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.navbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 22px;
+  pointer-events: auto;
+
+  /* Liquid glass material */
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+
+  /* Caustics + ambient shadow */
+  box-shadow:
+    0 8px 32px var(--glass-shadow-outer),
+    0 1px 0 var(--glass-caustic),
+    inset 0 1px 1px var(--glass-shadow-inner),
+    inset 0 -1px 2px rgba(0,0,0,0.04);
+
+  transition: box-shadow 0.5s ease, background 0.5s ease, border-color 0.5s ease;
+  --mx: 0.5;
+  --my: 0.5;
+}
+
+/* Specular highlight — curved top shine */
+.navbar::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    175deg,
+    var(--specular-top) 0%,
+    var(--specular-bottom) 40%,
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.5s ease;
+}
+
+/* Interactive mouse glare */
+.navbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 120px at calc(var(--mx) * 100%) calc(var(--my) * 100%),
+    var(--glare-color),
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 2;
+  transition: background 0.1s ease;
+}
+
+/* ===== SLIDING ACTIVE PILL ===== */
+.active-pill {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  height: calc(100% - 12px);
+  border-radius: 16px;
+  background: var(--pill-bg);
+  z-index: 1;
+  transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .active-pill {
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.06);
+}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btn {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  border-radius: 16px;
+  white-space: nowrap;
+  transition: color 0.3s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.nav-btn:active {
+  transform: scale(0.92);
+}
+
+.nav-btn.active {
+  color: var(--text-primary);
+}
+
+.nav-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--divider);
+  margin: 0 6px;
+  flex-shrink: 0;
+  z-index: 3;
+  border-radius: 1px;
+  transition: background 0.5s ease;
+}
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle:active {
+  transform: scale(0.88);
+}
+
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+  position: absolute;
+  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.35s ease;
+}
+
+.theme-toggle .icon-sun svg,
+.theme-toggle .icon-moon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.8;
+}
+
+/* Light mode: sun visible, moon hidden */
+[data-theme="light"] .theme-toggle .icon-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  color: var(--toggle-icon-active);
+}
+[data-theme="light"] .theme-toggle .icon-moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+  color: var(--toggle-icon-inactive);
+}
+
+/* Dark mode: moon visible, sun hidden */
+[data-theme="dark"] .theme-toggle .icon-sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+  color: var(--toggle-icon-inactive);
+}
+[data-theme="dark"] .theme-toggle .icon-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  color: var(--toggle-icon-active);
+}
+</style>
+</head>
+<body>
+
+<!-- Animated mesh background -->
+<div class="mesh-bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar-wrapper">
+  <nav class="navbar" id="navbar">
+    <div class="active-pill" id="activePill"></div>
+
+    <button class="nav-btn active" data-index="0" onclick="setActive(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
+      </svg>
+      Home
+    </button>
+
+    <button class="nav-btn" data-index="1" onclick="setActive(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+      </svg>
+      Call
+    </button>
+
+    <button class="nav-btn" data-index="2" onclick="setActive(this)">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+      </svg>
+      List
+    </button>
+
+    <div class="divider"></div>
+
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="icon-sun">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 7.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+      </span>
+      <span class="icon-moon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.005 9.005 0 0012 21a9.005 9.005 0 008.354-5.646z"/>
+        </svg>
+      </span>
+    </button>
+  </nav>
+</div>
+
+<script>
+const navbar = document.getElementById('navbar');
+const pill = document.getElementById('activePill');
+const btns = document.querySelectorAll('.nav-btn');
+
+// Position pill on the active button
+function movePill(btn) {
+  const navRect = navbar.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  pill.style.width = btnRect.width + 'px';
+  pill.style.transform = 'translateX(' + (btnRect.left - navRect.left - 8) + 'px)';
+}
+
+function setActive(btn) {
+  btns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  movePill(btn);
+}
+
+// Initial pill position
+requestAnimationFrame(() => {
+  const active = document.querySelector('.nav-btn.active');
+  if (active) {
+    // No transition for initial placement
+    pill.style.transition = 'none';
+    movePill(active);
+    // Re-enable transition after paint
+    requestAnimationFrame(() => {
+      pill.style.transition = '';
+    });
+  }
+});
+
+// Recalc on resize
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.nav-btn.active');
+  if (active) movePill(active);
+});
+
+// Interactive glare — mouse tracking
+navbar.addEventListener('mousemove', (e) => {
+  const rect = navbar.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;
+  const y = (e.clientY - rect.top) / rect.height;
+  navbar.style.setProperty('--mx', x);
+  navbar.style.setProperty('--my', y);
+});
+
+navbar.addEventListener('mouseleave', () => {
+  navbar.style.setProperty('--mx', 0.5);
+  navbar.style.setProperty('--my', 0.5);
+});
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

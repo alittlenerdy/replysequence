@@ -75,15 +75,15 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
           {/* Header - always visible */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-800/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-xl"
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-800/50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] rounded-xl"
           >
             <div className="flex items-center gap-3">
               {processingCount > 0 ? (
                 <>
                   <div className="relative">
-                    <Loader2 className="w-5 h-5 text-[#5B6CFF] animate-spin" />
+                    <Loader2 className="w-5 h-5 text-[#6366F1] animate-spin" />
                     {processingCount > 1 && (
-                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#5B6CFF] rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#6366F1] rounded-full text-[10px] font-bold text-white flex items-center justify-center">
                         {processingCount}
                       </span>
                     )}
@@ -129,7 +129,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
                       key={meeting.id}
                       className="flex items-center gap-3 p-2 bg-gray-800/50 rounded-lg"
                     >
-                      <Loader2 className="w-4 h-4 text-[#5B6CFF] animate-spin shrink-0" />
+                      <Loader2 className="w-4 h-4 text-[#6366F1] animate-spin shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-white truncate">
                           {meeting.topic || 'Meeting'}
@@ -156,7 +156,7 @@ export function ProcessingToast({ hideOnDashboard = true }: ProcessingToastProps
                 <div className="px-3 pb-3">
                   <Link
                     href="/dashboard"
-                    className="block w-full text-center py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 rounded-lg hover:bg-cyan-500/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                    className="block w-full text-center py-2 text-sm font-medium text-cyan-400 bg-cyan-500/10 rounded-lg hover:bg-cyan-500/20 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                   >
                     View Dashboard
                   </Link>

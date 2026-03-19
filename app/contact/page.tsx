@@ -26,7 +26,7 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white light:text-gray-900 mb-6">
             Get in{' '}
-            <span className="bg-gradient-to-r from-[#7A8BFF] via-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5] bg-clip-text text-transparent">
               Touch
             </span>
           </h1>
@@ -43,10 +43,10 @@ export default function ContactPage() {
             {/* Email */}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-[#5B6CFF]/50 transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-[#6366F1]/50 transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#5B6CFF]/20 mb-4">
-                <Mail className="w-6 h-6 text-[#5B6CFF]" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#6366F1]/20 mb-4">
+                <Mail className="w-6 h-6 text-[#6366F1]" />
               </div>
               <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                 Email Us
@@ -54,7 +54,7 @@ export default function ContactPage() {
               <p className="text-sm text-gray-400 light:text-gray-600 mb-4">
                 For support, sales questions, or partnership inquiries.
               </p>
-              <span className="text-[#5B6CFF] group-hover:text-[#7A8BFF] text-sm font-medium transition-colors">
+              <span className="text-[#6366F1] group-hover:text-[#818CF8] text-sm font-medium transition-colors">
                 jimmy@replysequence.com
               </span>
             </a>
@@ -62,10 +62,10 @@ export default function ContactPage() {
             {/* Feature Requests */}
             <a
               href="mailto:jimmy@replysequence.com"
-              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-[#5B6CFF]/50 transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+              className="group rounded-2xl p-8 bg-gray-900 light:bg-white border border-gray-800 light:border-gray-200 hover:border-[#6366F1]/50 transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#5B6CFF]/20 mb-4">
-                <MessageSquare className="w-6 h-6 text-[#5B6CFF]" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#6366F1]/20 mb-4">
+                <MessageSquare className="w-6 h-6 text-[#6366F1]" />
               </div>
               <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
                 Feature Requests
@@ -73,7 +73,7 @@ export default function ContactPage() {
               <p className="text-sm text-gray-400 light:text-gray-600 mb-4">
                 Tell us what you&apos;d like to see next in ReplySequence.
               </p>
-              <span className="text-[#5B6CFF] group-hover:text-[#7A8BFF] text-sm font-medium transition-colors">
+              <span className="text-[#6366F1] group-hover:text-[#818CF8] text-sm font-medium transition-colors">
                 jimmy@replysequence.com
               </span>
             </a>
@@ -81,9 +81,9 @@ export default function ContactPage() {
 
           {/* Response Time */}
           <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#5B6CFF]/10 border border-[#5B6CFF]/20">
-              <div className="w-2 h-2 rounded-full bg-[#5B6CFF] animate-pulse" />
-              <span className="text-sm text-[#5B6CFF] font-medium">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20">
+              <div className="w-2 h-2 rounded-full bg-[#6366F1] animate-pulse" />
+              <span className="text-sm text-[#6366F1] font-medium">
                 We respond to every message within 24 hours
               </span>
             </div>

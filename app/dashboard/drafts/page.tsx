@@ -30,7 +30,7 @@ async function DraftsContent() {
         <div className="lg:col-span-2 min-w-0">
           <div className="mb-5">
             <h2 className="text-2xl font-bold text-white light:text-gray-900">
-              <span className="bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">Follow-ups</span>
+              <span className="bg-gradient-to-r from-[#6366F1] to-[#4F46E5] bg-clip-text text-transparent">Follow-ups</span>
             </h2>
             <p className="text-gray-400 light:text-gray-500 mt-1">Review, edit, and send your meeting follow-ups</p>
           </div>

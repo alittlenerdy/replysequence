@@ -91,7 +91,7 @@ export function AIInsightsPanel({ insights = defaultInsights }: AIInsightsPanelP
         <div className="grid grid-cols-2 gap-3">
           {insights.decisionMaker && (
             <div className="flex items-start gap-2">
-              <User className="w-3.5 h-3.5 text-[#5B6CFF] mt-0.5 shrink-0" strokeWidth={1.5} />
+              <User className="w-3.5 h-3.5 text-[#6366F1] mt-0.5 shrink-0" strokeWidth={1.5} />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-0.5">
                   Decision Maker

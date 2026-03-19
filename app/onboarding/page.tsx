@@ -350,7 +350,7 @@ function OnboardingContent() {
     return (
       <div className="min-h-screen bg-[#060B18] flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#5B6CFF] animate-spin mx-auto" />
+          <Loader2 className="w-12 h-12 text-[#6366F1] animate-spin mx-auto" />
           <p className="mt-4 text-gray-400">Loading your progress\u2026</p>
         </div>
       </div>
@@ -373,13 +373,13 @@ function OnboardingContent() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
               <Image src="/logo.png" alt="" width={28} height={28} className="rounded-sm" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-[#6366F1] to-[#4F46E5] bg-clip-text text-transparent">
                 ReplySequence
               </span>
             </div>
             <button
               onClick={handleExit}
-              className="p-2 text-gray-500 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="p-2 text-gray-500 hover:text-gray-300 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
               aria-label="Exit onboarding"
             >
               <X className="w-5 h-5" />
@@ -399,9 +399,9 @@ function OnboardingContent() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-[#5B6CFF]/10 border border-[#5B6CFF]/20 rounded-lg"
+            className="mb-6 p-4 bg-[#6366F1]/10 border border-[#6366F1]/20 rounded-lg"
           >
-            <p className="text-[#5B6CFF] text-sm">
+            <p className="text-[#6366F1] text-sm">
               Welcome back! Let&apos;s continue where you left off.
             </p>
           </motion.div>
@@ -543,13 +543,13 @@ function OnboardingContent() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowExitModal(false)}
-                  className="flex-1 py-2.5 px-4 rounded-lg bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                  className="flex-1 py-2.5 px-4 rounded-lg bg-gray-800 text-white font-medium hover:bg-gray-700 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 >
                   Keep Going
                 </button>
                 <button
                   onClick={confirmExit}
-                  className="flex-1 py-2.5 px-4 rounded-lg border border-gray-600 text-gray-300 font-medium hover:bg-gray-800 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                  className="flex-1 py-2.5 px-4 rounded-lg border border-gray-600 text-gray-300 font-medium hover:bg-gray-800 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
                 >
                   Exit Anyway
                 </button>
@@ -566,7 +566,7 @@ function OnboardingLoadingFallback() {
   return (
     <div className="min-h-screen bg-[#060B18] flex items-center justify-center">
       <div className="text-center">
-        <Loader2 className="w-12 h-12 text-[#5B6CFF] animate-spin mx-auto" />
+        <Loader2 className="w-12 h-12 text-[#6366F1] animate-spin mx-auto" />
         <p className="mt-4 text-gray-400">Loading\u2026</p>
       </div>
     </div>

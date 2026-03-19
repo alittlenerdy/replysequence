@@ -124,7 +124,7 @@ async function PricingContent() {
             {isLoggedIn ? 'Manage Your Plan' : (
               <>
                 Enterprise Follow-Up at Startup{' '}
-                <span className="bg-gradient-to-r from-[#5B6CFF] to-[#4A5BEE] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#6366F1] to-[#4F46E5] bg-clip-text text-transparent">
                   Pricing
                 </span>
               </>
