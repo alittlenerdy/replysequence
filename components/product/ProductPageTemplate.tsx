@@ -3,7 +3,15 @@
 
 import { motion } from 'framer-motion';
 import { type LucideIcon } from 'lucide-react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
+
+const productPages = [
+  { href: '/product/follow-ups', title: 'Follow-Ups', color: '#6366F1' },
+  { href: '/product/sequences', title: 'Sequences', color: '#7C3AED' },
+  { href: '/product/meeting-intelligence', title: 'Meeting Intelligence', color: '#06B6D4' },
+  { href: '/product/pipeline-automation', title: 'Pipeline Automation', color: '#F59E0B' },
+];
 
 const WaitlistForm = dynamic(
   () => import('@/components/landing/WaitlistForm').then(m => ({ default: m.WaitlistForm })),
@@ -96,6 +104,11 @@ export function ProductPageTemplate({
           >
             {demo}
           </motion.div>
+          <p className="text-center mt-4">
+            <Link href="/demo" className="text-sm text-[#8892B0] light:text-gray-500 hover:text-[#6366F1] transition-colors">
+              Try it yourself with the interactive demo →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -158,6 +171,35 @@ export function ProductPageTemplate({
                 <p className="text-sm text-[#8892B0] light:text-gray-500">{uc.description}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cross Navigation */}
+      <section className="py-8 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col items-center gap-6">
+            <Link
+              href="/demo"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[#1E2A4A] light:border-gray-200 bg-[#0F1629] light:bg-white text-white light:text-gray-900 hover:border-[#6366F1] transition-colors font-medium"
+            >
+              <svg className="w-4 h-4 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              Watch Demo
+            </Link>
+            <div className="flex flex-wrap justify-center gap-3">
+              {productPages
+                .filter((p) => !title.toLowerCase().includes(p.title.toLowerCase()))
+                .map((p) => (
+                  <Link
+                    key={p.href}
+                    href={p.href}
+                    className="px-4 py-2 rounded-lg text-sm border border-[#1E2A4A] light:border-gray-200 bg-[#0F1629]/50 light:bg-gray-50 text-[#8892B0] light:text-gray-500 hover:text-white light:hover:text-gray-900 hover:border-opacity-60 transition-colors"
+                    style={{ ['--hover-color' as string]: p.color }}
+                  >
+                    {p.title} →
+                  </Link>
+                ))}
+            </div>
           </div>
         </div>
       </section>
