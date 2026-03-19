@@ -38,6 +38,7 @@ const item = {
 };
 
 export function ActivityFeed({ events = defaultEvents }: ActivityFeedProps) {
+  const visibleEvents = events.slice(0, 5);
   return (
     <motion.div
       className="rounded-2xl bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 p-5"
@@ -56,7 +57,7 @@ export function ActivityFeed({ events = defaultEvents }: ActivityFeedProps) {
       </div>
 
       <motion.div className="space-y-0.5" variants={container} initial="hidden" animate="show">
-        {events.map((event, i) => (
+        {visibleEvents.map((event, i) => (
           <motion.div
             key={event.id}
             variants={item}

@@ -171,10 +171,17 @@ function OutputPanel({ draft, sequence, nextSteps, riskFlag }: {
         <div className="border-t border-[#1E2A4A] light:border-gray-100 my-2" />
         <p className="text-xs text-[#C0C8E0] light:text-gray-600 leading-[1.6] line-clamp-3 mb-3 flex-1">{bodyPreview}</p>
 
-        <p className="text-[10px] text-[#8892B0] light:text-gray-500 mb-3 flex items-center gap-1">
-          <Clock className="w-3 h-3 text-[#06B6D4]" />
-          Generated from your last call {draft?.generationMs ? `· ${(draft.generationMs / 1000).toFixed(0)}s` : ''}
-        </p>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="inline-flex items-center gap-1 text-[10px] text-[#06B6D4] font-medium px-2 py-0.5 rounded-full bg-[#06B6D4]/10 border border-[#06B6D4]/20">
+            <Clock className="w-2.5 h-2.5" />
+            Ready to send
+          </span>
+          {draft?.generationMs && (
+            <span className="text-[10px] text-[#8892B0]/70 light:text-gray-400">
+              {(draft.generationMs / 1000).toFixed(0)}s
+            </span>
+          )}
+        </div>
 
         <div className="flex gap-2">
           <Link

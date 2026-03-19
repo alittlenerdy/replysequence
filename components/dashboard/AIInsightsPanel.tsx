@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Brain, User, Calendar, AlertCircle, Target, ArrowUpRight } from 'lucide-react';
+import { Brain, Target, ArrowUpRight } from 'lucide-react';
 
 type FollowUpPriority = 'high' | 'medium' | 'low';
 
@@ -77,104 +77,45 @@ export function AIInsightsPanel({ insights = defaultInsights }: AIInsightsPanelP
         )}
       </div>
 
-      {/* Summary */}
+      {/* Summary — truncated to 2 lines */}
       {insights.summary && (
-        <div className="mb-3">
-          <p className="text-xs text-gray-300 light:text-gray-600 leading-relaxed">
-            {insights.summary}
+        <p className="text-xs text-gray-300 light:text-gray-600 leading-relaxed line-clamp-2 mb-3">
+          {insights.summary}
+        </p>
+      )}
+
+      {/* Key bullets — max 3 next steps */}
+      {insights.nextSteps && insights.nextSteps.length > 0 && (
+        <div className="border-t border-gray-800/50 light:border-gray-100 pt-3 mb-3">
+          <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-2 flex items-center gap-1">
+            <ArrowUpRight className="w-3 h-3" /> Next Steps
           </p>
+          <ul className="space-y-1.5">
+            {insights.nextSteps.slice(0, 3).map((step, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs text-gray-300 light:text-gray-600">
+                <span className="text-[#06B6D4] mt-0.5 shrink-0">-</span>
+                <span className="line-clamp-1">{step}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
-      <div className="border-t border-gray-800/50 light:border-gray-100 pt-3 space-y-3">
-        {/* Decision Maker + Timeline */}
-        <div className="grid grid-cols-2 gap-3">
-          {insights.decisionMaker && (
-            <div className="flex items-start gap-2">
-              <User className="w-3.5 h-3.5 text-[#6366F1] mt-0.5 shrink-0" strokeWidth={1.5} />
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-0.5">
-                  Decision Maker
-                </p>
-                <p className="text-xs text-white light:text-gray-900 font-medium">
-                  {insights.decisionMaker.name}
-                </p>
-                <p className="text-[11px] text-gray-500 light:text-gray-400">
-                  {insights.decisionMaker.title}
-                </p>
-              </div>
-            </div>
-          )}
-          {insights.timeline && (
-            <div className="flex items-start gap-2">
-              <Calendar className="w-3.5 h-3.5 text-[#38E8FF] mt-0.5 shrink-0" strokeWidth={1.5} />
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-0.5">
-                  Timeline
-                </p>
-                <p className="text-xs text-white light:text-gray-900">
-                  {insights.timeline}
-                </p>
-              </div>
-            </div>
-          )}
+      {/* Compact tags row — pain points + objections combined, max 4 */}
+      {((insights.painPoints && insights.painPoints.length > 0) || (insights.objections && insights.objections.length > 0)) && (
+        <div className="flex flex-wrap gap-1.5">
+          {insights.painPoints?.slice(0, 2).map((point, i) => (
+            <span key={`p-${i}`} className="text-[10px] px-2 py-0.5 rounded-full bg-[#FF5D5D]/10 text-[#FF8585] border border-[#FF5D5D]/15">
+              {point}
+            </span>
+          ))}
+          {insights.objections?.slice(0, 2).map((obj, i) => (
+            <span key={`o-${i}`} className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFD75F]/10 text-[#FFD75F] border border-[#FFD75F]/15">
+              {obj}
+            </span>
+          ))}
         </div>
-
-        {/* Next Steps */}
-        {insights.nextSteps && insights.nextSteps.length > 0 && (
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-1.5 flex items-center gap-1">
-              <ArrowUpRight className="w-3 h-3" /> Next Steps
-            </p>
-            <ul className="space-y-1">
-              {insights.nextSteps.map((step, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-gray-300 light:text-gray-600">
-                  <span className="text-[#4DFFA3] mt-0.5 shrink-0">-</span>
-                  {step}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Pain Points */}
-        {insights.painPoints && insights.painPoints.length > 0 && (
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-1.5">
-              Pain Points
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {insights.painPoints.map((point, i) => (
-                <span
-                  key={i}
-                  className="text-[11px] px-2 py-0.5 rounded-full bg-[#FF5D5D]/10 text-[#FF8585] border border-[#FF5D5D]/15"
-                >
-                  {point}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Objections */}
-        {insights.objections && insights.objections.length > 0 && (
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-gray-500 light:text-gray-400 font-medium mb-1.5 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" /> Objections
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {insights.objections.map((obj, i) => (
-                <span
-                  key={i}
-                  className="text-[11px] px-2 py-0.5 rounded-full bg-[#FFD75F]/10 text-[#FFD75F] border border-[#FFD75F]/15"
-                >
-                  {obj}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </motion.div>
   );
 }
