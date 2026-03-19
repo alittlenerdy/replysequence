@@ -1,716 +1,327 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
-  ChevronDown,
   Video,
   Sparkles,
   Mail,
-  CheckCircle,
-  Clock,
-  Shield,
-  Edit3,
-  Zap,
-  MessageSquare,
-  Users,
-  FileText,
   ArrowRight,
+  MessageSquare,
+  BarChart3,
+  RefreshCw,
+  Brain,
+  Shield,
+  CheckCircle,
+  Zap,
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { GradientText } from '@/components/ui/GradientText';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { WaitlistForm } from '@/components/landing/WaitlistForm';
 
-// Animated flow line connecting steps
-function FlowLine({ progress }: { progress: number }) {
-  return (
-    <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 hidden lg:block">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-700/50 to-transparent" />
-      <motion.div
-        className="absolute top-0 left-0 w-full bg-gradient-to-b from-[#6366F1] via-[#6366F1] to-[#3A4BDD]"
-        style={{ height: `${progress * 100}%` }}
-      />
-      {/* Glowing dot at the end */}
-      <motion.div
-        className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-lg shadow-[#6366F1]/50"
-        style={{ top: `${progress * 100}%` }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-      />
-    </div>
-  );
-}
+const WaitlistForm = dynamic(
+  () => import('@/components/landing/WaitlistForm').then((m) => m.WaitlistForm),
+  { ssr: false }
+);
 
-// Typewriter effect for example output
-function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
-  const [displayText, setDisplayText] = useState('');
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.5, ease: 'easeOut' },
+  }),
+};
 
-  useEffect(() => {
-    if (isInView && !started) {
-      const timer = setTimeout(() => {
-        setStarted(true);
-        let i = 0;
-        const interval = setInterval(() => {
-          if (i <= text.length) {
-            setDisplayText(text.slice(0, i));
-            i++;
-          } else {
-            clearInterval(interval);
-          }
-        }, 30);
-        return () => clearInterval(interval);
-      }, delay);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView, text, delay, started]);
-
-  return (
-    <span ref={ref}>
-      {displayText}
-      {displayText.length < text.length && started && (
-        <motion.span
-          animate={{ opacity: [1, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity }}
-          className="text-[#6366F1]"
-        >
-          |
-        </motion.span>
-      )}
-    </span>
-  );
-}
-
-// Platform icons as SVG components
-function ZoomIcon({ className, fill = 'white' }: { className?: string; fill?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill={fill} aria-hidden="true">
-      <path d="M4.585 6.836C3.71 6.836 3 7.547 3 8.42v7.16c0 .872.71 1.584 1.585 1.584h9.83c.875 0 1.585-.712 1.585-1.585V8.42c0-.872-.71-1.585-1.585-1.585H4.585zm12.415 2.11l3.96-2.376c.666-.4 1.04-.266 1.04.56v9.74c0 .826-.374.96-1.04.56L17 15.054V8.946z" />
-    </svg>
-  );
-}
-
-function TeamsIcon({ className, fill = 'white' }: { className?: string; fill?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill={fill} aria-hidden="true">
-      <path d="M20.625 8.5h-6.25a.625.625 0 00-.625.625v6.25c0 .345.28.625.625.625h6.25c.345 0 .625-.28.625-.625v-6.25a.625.625 0 00-.625-.625zM17.5 6.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM12.5 8a3 3 0 100-6 3 3 0 000 6zm0 1c-2.21 0-4 1.567-4 3.5V15h8v-2.5c0-1.933-1.79-3.5-4-3.5z" />
-    </svg>
-  );
-}
-
-function MeetIcon({ className, fill = 'white' }: { className?: string; fill?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill={fill} aria-hidden="true">
-      <path d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-      <path d="M15.29 15.71L18 18.41V5.59l-2.71 2.7A5.977 5.977 0 0112 7c-1.38 0-2.65.47-3.66 1.26L14.59 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V9.41l-5.71 6.3zM6 10a6 6 0 1112 0 6 6 0 01-12 0z" />
-    </svg>
-  );
-}
-
-// Accordion component for platform tips
-function Accordion({
-  title,
-  children,
-  icon,
-}: {
-  title: string;
-  children: React.ReactNode;
-  icon: React.ReactNode;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <motion.div
-      className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden"
-      whileHover={{ scale: 1.01 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-800/50 light:bg-gray-50 hover:bg-gray-800 light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-      >
-        <div className="flex items-center gap-3">
-          {icon}
-          <span className="font-medium text-white light:text-gray-900">{title}</span>
-        </div>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ChevronDown className="w-5 h-5 text-gray-400" aria-hidden="true" />
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="p-4 bg-gray-900/30 light:bg-white text-sm text-gray-400 light:text-gray-600">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-// FAQ Item component
-function FAQItem({ question, answer, index }: { question: string; answer: string; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      className="border border-gray-700 light:border-gray-200 rounded-xl overflow-hidden"
-      whileHover={{ scale: 1.01, borderColor: 'rgba(91, 108, 255, 0.3)' }}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-5 bg-gray-900/50 light:bg-white hover:bg-gray-800/50 light:hover:bg-gray-50 transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-      >
-        <span className="font-semibold text-white light:text-gray-900 pr-4">{question}</span>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex-shrink-0"
-        >
-          <ChevronDown className="w-5 h-5 text-gray-400" aria-hidden="true" />
-        </motion.div>
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="p-5 pt-0 bg-gray-900/50 light:bg-white text-gray-400 light:text-gray-600">
-              {answer}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-// 3D Tilt Step card component
-function StepCard({
-  step,
-  icon,
-  title,
-  description,
-  children,
-  color,
-}: {
-  step: number;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  children?: React.ReactNode;
-  color: 'indigo' | 'amber' | 'cyan';
-}) {
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const mouseX = e.clientX - centerX;
-    const mouseY = e.clientY - centerY;
-
-    setRotateX(-mouseY / 20);
-    setRotateY(mouseX / 20);
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-  };
-
-  const colorClasses = {
-    indigo: {
-      border: 'border-[#6366F1]/50',
-      bg: 'bg-[#6366F1]/10',
-      text: 'text-[#6366F1]',
-      badge: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
-      glow: 'shadow-[#6366F1]/30',
-      hoverGlow: 'hover:shadow-[#6366F1]/40',
-    },
-    amber: {
-      border: 'border-amber-500/50',
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-400',
-      badge: 'bg-gradient-to-r from-amber-500 to-amber-600',
-      glow: 'shadow-amber-500/30',
-      hoverGlow: 'hover:shadow-amber-500/40',
-    },
-    cyan: {
-      border: 'border-[#6366F1]/50',
-      bg: 'bg-[#6366F1]/10',
-      text: 'text-[#6366F1]',
-      badge: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
-      glow: 'shadow-[#6366F1]/30',
-      hoverGlow: 'hover:shadow-[#6366F1]/40',
-    },
-  };
-
-  const classes = colorClasses[color];
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.6, delay: step * 0.15, type: 'spring' }}
-      style={{
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-        transformStyle: 'preserve-3d',
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={`relative glass-border rounded-2xl p-6 md:p-8 transition-[box-shadow] duration-200 shadow-xl ${classes.glow} ${classes.hoverGlow}`}
-    >
-      {/* Animated step number badge */}
-      <motion.div
-        className="absolute -top-4 left-6 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold shadow-lg shadow-amber-500/30 border border-amber-500/30"
-        animate={{ y: [0, -3, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        Step {step}
-      </motion.div>
-
-      {/* Glowing icon container */}
-      <motion.div
-        className={`w-16 h-16 rounded-2xl ${classes.bg} flex items-center justify-center mb-6 mt-2 border ${classes.border} relative overflow-hidden`}
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-      >
-        {/* Shine effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
-          initial={{ x: '-200%' }}
-          whileHover={{ x: '200%' }}
-          transition={{ duration: 0.6 }}
-        />
-        <div className={classes.text}>{icon}</div>
-      </motion.div>
-
-      {/* Content */}
-      <h2 className="text-xl md:text-2xl font-bold text-white light:text-gray-900 mb-3">{title}</h2>
-      <p className="text-gray-300 light:text-gray-600 mb-4">{description}</p>
-
-      {/* Additional content */}
-      {children}
-
-      {/* Arrow indicator for next step */}
-      {step < 3 && (
-        <motion.div
-          className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-gray-600 hidden lg:block"
-          animate={{ y: [0, 5, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <ArrowRight className="w-6 h-6 rotate-90" aria-hidden="true" />
-        </motion.div>
-      )}
-    </motion.div>
-  );
-}
-
-// Animated counter for stats
-function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const duration = 1500;
-      const steps = 60;
-      const increment = value / steps;
-      let current = 0;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= value) {
-          setCount(value);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(current));
-        }
-      }, duration / steps);
-      return () => clearInterval(timer);
-    }
-  }, [isInView, value]);
-
-  return (
-    <span ref={ref}>
-      {count}
-      {suffix}
-    </span>
-  );
-}
+const products = [
+  {
+    href: '/product/follow-ups',
+    icon: Mail,
+    title: 'Follow-Ups',
+    description:
+      'AI-generated follow-up emails that reference real topics, action items, and next steps from your meeting. Ready to review and send in seconds.',
+    color: '#6366F1',
+  },
+  {
+    href: '/product/sequences',
+    icon: MessageSquare,
+    title: 'Sequences',
+    description:
+      'Multi-step email sequences built from your conversation. Automated nurture that keeps deals warm without you lifting a finger.',
+    color: '#F59E0B',
+  },
+  {
+    href: '/product/meeting-intelligence',
+    icon: Brain,
+    title: 'Meeting Intelligence',
+    description:
+      'Next-step extraction, deal risk alerts, buyer signal detection, and pre-meeting briefings. Know what happened and what to do next.',
+    color: '#10B981',
+  },
+  {
+    href: '/product/pipeline-automation',
+    icon: RefreshCw,
+    title: 'Pipeline Automation',
+    description:
+      'CRM updates, deal stage tracking, and pipeline health scoring happen automatically after every call. Zero manual data entry.',
+    color: '#8B5CF6',
+  },
+];
 
 export default function HowItWorksPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  const flowProgress = useTransform(scrollYProgress, [0.1, 0.8], [0, 1]);
-
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#060B18] light:bg-gray-50 text-white light:text-gray-900">
+    <div className="min-h-screen bg-[#060B18] light:bg-gray-50 text-white light:text-gray-900">
       <Header />
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.12 } },
+            }}
           >
-            {/* Animated badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 border border-[#6366F1]/20 mb-6"
+            <motion.h1
+              variants={fadeUp}
+              custom={0}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-[#E8ECF4] light:text-gray-900 text-pretty"
             >
-              <motion.span
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              >
-                <Sparkles className="w-4 h-4 text-[#6366F1]" aria-hidden="true" />
-              </motion.span>
-              <span className="text-sm font-medium text-gray-300 light:text-gray-700">
-                Powered by Claude AI
-              </span>
-            </motion.div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-pretty">
-              From Meeting to <GradientText>Follow-Up</GradientText> in Three Steps
-            </h1>
-            <p className="text-xl text-gray-300 light:text-gray-600 max-w-2xl mx-auto mb-8">
-              Connect your meeting platform. Have a call. Let the follow-up handle itself.
-            </p>
-          </motion.div>
-
-          {/* Animated stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-6"
-          >
-            <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 border border-[#6366F1]/20"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(91, 108, 255, 0.5)' }}
+              How <GradientText>ReplySequence</GradientText> Works
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              custom={1}
+              className="text-xl text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto"
             >
-              <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
-              <span className="text-lg font-bold text-white light:text-gray-900">
-                Seconds
-              </span>
-              <span className="text-sm text-gray-400 light:text-gray-600">to draft</span>
-            </motion.div>
-            <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/20"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(245, 158, 11, 0.5)' }}
-            >
-              <Clock className="w-5 h-5 text-amber-400" aria-hidden="true" />
-              <span className="text-lg font-bold text-white light:text-gray-900">
-                <AnimatedCounter value={100} suffix="%" />
-              </span>
-              <span className="text-sm text-gray-400 light:text-gray-600">follow-up coverage</span>
-            </motion.div>
-            <motion.div
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#6366F1]/10 to-[#3A4BDD]/10 border border-[#6366F1]/20"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(91, 108, 255, 0.5)' }}
-            >
-              <CheckCircle className="w-5 h-5 text-[#6366F1]" aria-hidden="true" />
-              <span className="text-lg font-bold text-white light:text-gray-900">
-                Zero
-              </span>
-              <span className="text-sm text-gray-400 light:text-gray-600">data entry</span>
-            </motion.div>
+              From meeting to pipeline automation in three steps
+            </motion.p>
           </motion.div>
         </div>
       </section>
 
-      {/* Steps Section */}
+      {/* Three-step flow */}
       <section className="py-16 px-4 relative z-10">
-        {/* Connecting flow line */}
-        <motion.div style={{ opacity: flowProgress }}>
-          <FlowLine progress={flowProgress.get()} />
-        </motion.div>
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-4 relative">
+            {/* Connecting lines (desktop) */}
+            <div className="hidden lg:block absolute top-1/2 left-[33.33%] w-[33.33%] h-px -translate-y-1/2 z-0">
+              <div className="h-full bg-gradient-to-r from-[#6366F1]/40 to-[#F59E0B]/40" />
+            </div>
+            <div className="hidden lg:block absolute top-1/2 left-[66.66%] w-[33.33%] h-px -translate-y-1/2 z-0">
+              <div className="h-full bg-gradient-to-r from-[#F59E0B]/40 to-[#10B981]/40" />
+            </div>
 
-        <div className="max-w-4xl mx-auto space-y-16 lg:space-y-24">
-          {/* Step 1: Have Your Meeting */}
-          <StepCard
-            step={1}
-            icon={<Video className="w-8 h-8" />}
-            title="Have Your Meeting"
-            description="Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript automatically. No bot joins the call. No extra app to install."
-            color="indigo"
-          >
-            <div className="mt-6 space-y-3">
-              {/* Animated platform badges */}
-              <div className="flex flex-wrap gap-3 mb-4">
-                {[
-                  { name: 'Zoom', color: '#2D8CFF', Icon: ZoomIcon },
-                  { name: 'Teams', color: '#5B5FC7', Icon: TeamsIcon },
-                  { name: 'Meet', color: '#00897B', Icon: MeetIcon },
-                ].map(({ name, color, Icon }, i) => (
-                  <motion.div
-                    key={name}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
-                    style={{
-                      backgroundColor: `${color}15`,
-                      border: `1px solid ${color}40`,
-                    }}
+            {/* Step 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="relative z-10 rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 md:p-8"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#6366F1]/10 border border-[#6366F1]/30 flex items-center justify-center">
+                  <Video className="w-5 h-5 text-[#6366F1]" aria-hidden="true" />
+                </div>
+                <span className="text-sm font-bold text-[#6366F1] uppercase tracking-wider">Step 1</span>
+              </div>
+              <h3 className="text-xl font-bold text-[#E8ECF4] light:text-gray-900 mb-2">Have Your Meeting</h3>
+              <p className="text-[#C0C8E0] light:text-gray-600 text-sm leading-relaxed">
+                Use Zoom, Teams, or Meet like you already do. ReplySequence captures the transcript
+                automatically through a lightweight meeting bot. One-click OAuth setup.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {['Zoom', 'Teams', 'Meet'].map((p) => (
+                  <span
+                    key={p}
+                    className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#6366F1]/10 text-[#6366F1] border border-[#6366F1]/20"
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="text-sm font-medium" style={{ color }}>{name}</span>
-                  </motion.div>
+                    {p}
+                  </span>
                 ))}
               </div>
+            </motion.div>
 
-              {/* Animated checklist */}
-              {[
-                'One-click OAuth connection',
-                'Takes less than 30 seconds to set up',
-                'No bot joins the call - uses native transcription',
-              ].map((text, i) => (
-                <motion.div
-                  key={text}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + i * 0.1 }}
-                  className="flex items-center gap-2 text-sm text-gray-400 light:text-gray-600"
-                >
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 + i * 0.1, type: 'spring' }}
-                  >
-                    <CheckCircle className="w-4 h-4 text-[#6366F1] flex-shrink-0" aria-hidden="true" />
-                  </motion.div>
-                  <span>{text}</span>
-                </motion.div>
-              ))}
-            </div>
-          </StepCard>
-
-          {/* Step 2: AI Writes Your Follow-Up */}
-          <StepCard
-            step={2}
-            icon={<Sparkles className="w-8 h-8" />}
-            title="AI Does Everything After the Call"
-            description="Within seconds, you get a personalized follow-up email, a multi-step sequence to keep the deal warm, extracted next steps with due dates, deal risk flags, and CRM updates — all built from the actual transcript."
-            color="amber"
-          >
-            <div className="mt-6">
-              {/* Animated example output preview with typewriter */}
-              <div className="rounded-xl bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 p-4 overflow-hidden">
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                  Example Output
+            {/* Step 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="relative z-10 rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 md:p-8"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-amber-400" aria-hidden="true" />
                 </div>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-[#6366F1] mb-1">
-                      <Mail className="w-4 h-4" aria-hidden="true" />
-                      Follow-Up Email
-                    </div>
-                    <div className="text-sm text-gray-400 light:text-gray-600 pl-6">
-                      <TypewriterText text="Personalized draft referencing pricing discussion and competitor concerns..." delay={0} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-amber-400 mb-1">
-                      <MessageSquare className="w-4 h-4" aria-hidden="true" />
-                      3-Step Sequence Triggered
-                    </div>
-                    <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
-                      <li className="list-disc"><TypewriterText text="Day 1: Follow-up with proposal attached" delay={800} /></li>
-                      <li className="list-disc"><TypewriterText text="Day 3: Check-in on timeline concerns" delay={1600} /></li>
-                      <li className="list-disc"><TypewriterText text="Day 7: Value recap with case study" delay={2400} /></li>
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-[#6366F1] mb-1">
-                      <CheckCircle className="w-4 h-4" aria-hidden="true" />
-                      Next Steps Tracked
-                    </div>
-                    <ul className="text-sm text-gray-400 light:text-gray-600 space-y-1 pl-6">
-                      <li className="list-disc"><TypewriterText text="Send proposal by Friday (John) — due in 3 days" delay={3200} /></li>
-                      <li className="list-disc"><TypewriterText text="Schedule follow-up demo (Sarah) — due next week" delay={4000} /></li>
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-red-400 mb-1">
-                      <Users className="w-4 h-4" aria-hidden="true" />
-                      Risk Alert
-                    </div>
-                    <div className="text-sm text-gray-400 light:text-gray-600 pl-6">
-                      <TypewriterText text="Budget concern flagged — buyer mentioned Q2 freeze" delay={4800} />
-                    </div>
-                  </div>
+                <span className="text-sm font-bold text-amber-400 uppercase tracking-wider">Step 2</span>
+              </div>
+              <h3 className="text-xl font-bold text-[#E8ECF4] light:text-gray-900 mb-2">AI Processes Everything</h3>
+              <p className="text-[#C0C8E0] light:text-gray-600 text-sm leading-relaxed">
+                Within seconds of your call ending, Claude AI reads the full transcript and generates
+                follow-up emails, sequences, next steps, risk alerts, and CRM updates.
+              </p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-[#8892B0] light:text-gray-500">
+                <Zap className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+                <span>Powered by Claude AI</span>
+              </div>
+            </motion.div>
+
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="relative z-10 rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 md:p-8"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-emerald-400" aria-hidden="true" />
                 </div>
+                <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider">Step 3</span>
               </div>
-            </div>
-          </StepCard>
-
-          {/* Step 3: Review, Send, Move On */}
-          <StepCard
-            step={3}
-            icon={<Mail className="w-8 h-8" />}
-            title="Review, Send, Move On"
-            description="Edit the follow-up and hit send. The sequence keeps the deal warm. Next steps track themselves with reminders. Risk alerts flag deals going cold. Your CRM updates automatically. You are already on your next call."
-            color="cyan"
-          >
-            <div className="mt-6 space-y-4">
-              {/* Animated features grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  { icon: Edit3, text: 'Edit and send follow-ups' },
-                  { icon: MessageSquare, text: 'Multi-step sequences active' },
-                  { icon: CheckCircle, text: 'Next steps tracked with reminders' },
-                  { icon: Shield, text: 'Deal risks flagged automatically' },
-                ].map(({ icon: Icon, text }, i) => (
-                  <motion.div
-                    key={text}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(91, 108, 255, 0.1)' }}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 light:bg-gray-100 border border-gray-700 light:border-gray-200 transition-colors"
-                  >
-                    <Icon className="w-5 h-5 text-[#6366F1]" aria-hidden="true" />
-                    <span className="text-sm text-gray-300 light:text-gray-700">{text}</span>
-                  </motion.div>
-                ))}
+              <h3 className="text-xl font-bold text-[#E8ECF4] light:text-gray-900 mb-2">Review and Go</h3>
+              <p className="text-[#C0C8E0] light:text-gray-600 text-sm leading-relaxed">
+                Review your AI-drafted follow-up, tweak if needed, and send. Sequences activate
+                automatically. Your CRM updates itself. You are already on your next call.
+              </p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-[#8892B0] light:text-gray-500">
+                <Shield className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                <span>You stay in control of every email</span>
               </div>
-            </div>
-          </StepCard>
-        </div>
-      </section>
+            </motion.div>
+          </div>
 
-      {/* Gradient divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-8" />
-
-      {/* FAQ Section */}
-      <section className="py-20 px-4 relative z-10">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
-              Frequently Asked <GradientText>Questions</GradientText>
-            </h2>
-            <p className="text-gray-300 light:text-gray-600">
-              Everything you need to know about ReplySequence
-            </p>
-          </motion.div>
-
-          <div className="space-y-4">
-            {[
-              {
-                question: 'What happens after my meeting ends?',
-                answer: 'ReplySequence reads the transcript and generates a personalized follow-up email, triggers a multi-step sequence, extracts next steps with due dates, flags deal risks, and updates your CRM — all within seconds.',
-              },
-              {
-                question: 'What are follow-up sequences?',
-                answer: 'After the initial follow-up email, ReplySequence generates a 3-step sequence to keep the deal warm — each step built from the actual conversation. You can edit timing and content, then schedule all steps with one click.',
-              },
-              {
-                question: 'How does next-step tracking work?',
-                answer: 'The AI extracts every commitment and action item from the call — who owns it, what it is, and when it is due. These appear in your dashboard timeline, and you get email reminders when items are overdue.',
-              },
-              {
-                question: 'What are deal risk alerts?',
-                answer: 'ReplySequence monitors your conversations for budget concerns, timeline risks, missing champions, competitive threats, and other deal-killing signals. Risks are categorized by severity and surfaced in your dashboard.',
-              },
-              {
-                question: 'Do I get briefings before meetings?',
-                answer: 'Yes. Before each call, ReplySequence compiles a briefing with deal history, past commitments, risk flags, and buyer signals from previous meetings — so you walk in fully prepared.',
-              },
-              {
-                question: 'Is my data secure?',
-                answer: 'AES-256 encryption at rest, TLS in transit. Transcripts are processed to generate your outputs and are not stored permanently. We never read your inbox or access existing emails.',
-              },
-            ].map((faq, index) => (
-              <FAQItem key={faq.question} {...faq} index={index} />
-            ))}
+          {/* Arrows between steps (mobile) */}
+          <div className="flex flex-col items-center lg:hidden -mt-3 -mb-3">
+            {/* These are already naturally stacked vertically on mobile */}
           </div>
         </div>
       </section>
 
       {/* Gradient divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-8" />
+      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-4" />
 
-      {/* Final CTA Section */}
+      {/* Four product sections */}
+      <section className="py-20 px-4 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-14"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900 text-pretty">
+              Everything That Happens <GradientText>After the Call</GradientText>
+            </h2>
+            <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
+              Four products working together so nothing falls through the cracks.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {products.map((product, i) => {
+              const Icon = product.icon;
+              return (
+                <motion.div
+                  key={product.href}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="group rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 md:p-8 transition-all duration-200 hover:border-[#6366F1]/30 light:hover:border-indigo-300"
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 border"
+                    style={{
+                      backgroundColor: `${product.color}15`,
+                      borderColor: `${product.color}40`,
+                    }}
+                  >
+                    <Icon className="w-6 h-6" style={{ color: product.color }} aria-hidden="true" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#E8ECF4] light:text-gray-900 mb-3">
+                    {product.title}
+                  </h3>
+                  <p className="text-[#C0C8E0] light:text-gray-600 text-sm leading-relaxed mb-5">
+                    {product.description}
+                  </p>
+                  <Link
+                    href={product.href}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6366F1] hover:text-[#818CF8] transition-colors group-hover:gap-2.5"
+                  >
+                    Learn more
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Gradient divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-4" />
+
+      {/* Demo CTA */}
+      <section className="py-16 px-4 relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <BarChart3 className="w-10 h-10 text-[#6366F1] mx-auto mb-4" aria-hidden="true" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900 text-pretty">
+              See It in Action
+            </h2>
+            <p className="text-[#C0C8E0] light:text-gray-600 max-w-xl mx-auto mb-8">
+              Watch a real meeting turn into a follow-up email, a nurture sequence, extracted action items,
+              and CRM updates -- all in under a minute.
+            </p>
+            <Link
+              href="/demo"
+              className="btn-secondary-cta inline-flex items-center gap-2"
+            >
+              Watch the demo
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Gradient divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#6366F1]/20 to-transparent my-4" />
+
+      {/* Waitlist CTA */}
       <section className="py-20 px-4 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white light:text-gray-900 text-pretty">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#E8ECF4] light:text-gray-900 text-pretty">
               Your next meeting is coming. The <GradientText>follow-up</GradientText> should be automatic.
             </h2>
-            <p className="text-gray-400 light:text-gray-600 mb-8 max-w-xl mx-auto">
-              Start with 5 free AI drafts. No credit card required.
+            <p className="text-[#8892B0] light:text-gray-600 mb-8 max-w-xl mx-auto">
+              Join the waitlist for early access. No credit card required.
             </p>
-
             <div className="glass-border-accent rounded-2xl p-6 sm:p-10 max-w-lg mx-auto">
               <WaitlistForm />
-            </div>
-            <div className="flex justify-center mt-4">
-              <GradientButton
-                href="/pricing"
-                variant="secondary"
-                size="lg"
-              >
-                View Pricing
-              </GradientButton>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

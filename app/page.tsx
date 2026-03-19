@@ -246,10 +246,78 @@ export default function LandingPage() {
               <span className="text-xs font-medium text-[#9CA3BF] light:text-gray-500">Privacy First</span>
             </a>
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+            className="text-center text-xs text-[#64748B] light:text-gray-400 mt-4"
+          >
+            Built by a founder who has been on 1,000+ sales calls
+          </motion.p>
         </div>
       </section>
 
       {/* Demo link is now /demo — no inline modal needed */}
+
+      {/* ============ PRODUCT PREVIEW ============ */}
+      <section className="relative z-10 pb-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-1 shadow-2xl shadow-black/20 light:shadow-gray-300/30"
+          >
+            {/* Fake browser chrome */}
+            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[#1E2A4A] light:border-gray-100">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-400/60" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
+              <div className="flex-1 mx-8">
+                <div className="h-5 bg-[#1E2A4A] light:bg-gray-100 rounded-md max-w-xs mx-auto" />
+              </div>
+            </div>
+            {/* Product preview content */}
+            <div className="p-6 grid grid-cols-3 gap-4">
+              <div className="col-span-2 space-y-3">
+                <div className="h-3 bg-[#1E2A4A] light:bg-gray-100 rounded w-1/3" />
+                <div className="rounded-lg bg-[#0A1020] light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-4 space-y-2">
+                  <div className="h-2.5 bg-[#6366F1]/20 rounded w-3/4" />
+                  <div className="h-2.5 bg-[#1E2A4A] light:bg-gray-100 rounded w-full" />
+                  <div className="h-2.5 bg-[#1E2A4A] light:bg-gray-100 rounded w-5/6" />
+                </div>
+                <div className="rounded-lg bg-[#0A1020] light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-4 space-y-2">
+                  <div className="h-2.5 bg-amber-500/20 rounded w-1/2" />
+                  <div className="h-2.5 bg-[#1E2A4A] light:bg-gray-100 rounded w-full" />
+                  <div className="h-2.5 bg-[#1E2A4A] light:bg-gray-100 rounded w-2/3" />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-3 bg-[#1E2A4A] light:bg-gray-100 rounded w-2/3" />
+                <div className="rounded-lg bg-[#0A1020] light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-4">
+                  <div className="w-16 h-16 rounded-full border-4 border-[#6366F1]/30 mx-auto mb-2" />
+                  <div className="h-2 bg-[#1E2A4A] light:bg-gray-100 rounded w-full" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-[#0A1020] light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-3">
+                    <div className="h-5 bg-[#6366F1]/20 rounded w-1/2 mb-1" />
+                    <div className="h-2 bg-[#1E2A4A] light:bg-gray-100 rounded w-full" />
+                  </div>
+                  <div className="rounded-lg bg-[#0A1020] light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200 p-3">
+                    <div className="h-5 bg-amber-500/20 rounded w-1/2 mb-1" />
+                    <div className="h-2 bg-[#1E2A4A] light:bg-gray-100 rounded w-full" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+          <p className="text-center text-xs text-[#64748B] light:text-gray-400 mt-4">
+            Your command center after every sales call
+          </p>
+        </div>
+      </section>
 
       <div className="h-px bg-gradient-to-r from-transparent via-[#1E2A4A] to-transparent" />
 

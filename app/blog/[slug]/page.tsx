@@ -222,7 +222,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Back link */}
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-400 light:text-gray-500 hover:text-[#6366F1] light:hover:text-[#4F46E5] transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-[#6366F1] light:text-[#4F46E5] hover:underline transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to blog
@@ -233,7 +233,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#6366F1]/10 light:bg-[#EEF0FF] text-[#6366F1] light:text-[#3A4BDD]"
+                className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#6366F1]/10 light:bg-indigo-50 text-[#6366F1] light:text-[#4F46E5]"
               >
                 {tag}
               </span>
@@ -246,7 +246,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </h1>
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 light:text-gray-500 mb-10 pb-10 border-b border-gray-800 light:border-gray-200">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#8892B0] light:text-gray-500 mb-10 pb-10 border-b border-[#1E2A4A] light:border-gray-200">
             <span className="flex items-center gap-1.5">
               <User className="w-4 h-4" />
               {post.author}
@@ -284,14 +284,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Content */}
           <div
-            className="prose prose-lg max-w-none
-              text-gray-300 light:text-gray-700
+            className="prose prose-lg max-w-3xl
+              text-gray-300 light:text-gray-700 leading-7 text-[1.0625rem]
               [&_h2]:text-2xl [&_h2]:md:text-3xl [&_h2]:font-bold [&_h2]:text-white [&_h2]:light:text-gray-900 [&_h2]:mt-12 [&_h2]:mb-4
               [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-white [&_h3]:light:text-gray-900 [&_h3]:mt-8 [&_h3]:mb-3
-              [&_p]:mb-4 [&_p]:leading-relaxed
+              [&_p]:mb-5 [&_p]:leading-7
               [&_ul]:my-4 [&_ul]:pl-6 [&_ul]:list-disc [&_ul]:space-y-2
               [&_ol]:my-4 [&_ol]:pl-6 [&_ol]:list-decimal [&_ol]:space-y-2
-              [&_li]:text-gray-300 [&_li]:light:text-gray-700
+              [&_li]:text-gray-300 [&_li]:light:text-gray-700 [&_li]:leading-7
               [&_strong]:text-white [&_strong]:light:text-gray-900 [&_strong]:font-semibold
               [&_em]:italic
               [&_a]:text-[#6366F1] [&_a]:light:text-[#4F46E5] [&_a]:underline [&_a]:hover:text-[#818CF8] [&_a]:light:hover:text-[#6366F1]
@@ -300,18 +300,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           />
 
           {/* Inline Product Callout */}
-          <div className="my-10 rounded-xl border border-amber-500/20 bg-amber-500/5 light:bg-amber-50 light:border-amber-200 p-6">
-            <p className="text-sm font-medium text-amber-400 light:text-amber-600 mb-1">How ReplySequence handles this</p>
-            <p className="text-sm text-gray-300 light:text-gray-600 leading-relaxed">
+          <div className="my-12 rounded-2xl border border-[#1E2A4A] light:border-gray-200 bg-[#0A1628] light:bg-gray-50 p-8">
+            <p className="text-base font-semibold text-white light:text-gray-900 mb-2">How ReplySequence handles this</p>
+            <p className="text-sm text-[#8892B0] light:text-gray-600 leading-relaxed mb-5">
               ReplySequence connects to your Zoom, Teams, or Meet calls, reads the transcript, and drafts a context-rich follow-up email in about 8 seconds. You review it, make any edits, and send from your real inbox. Your CRM updates automatically.
             </p>
-            <a
-              href="/#waitlist"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-400 light:text-amber-600 hover:text-amber-300 mt-3 transition-colors"
-            >
-              Join the waitlist
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-            </a>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="/#waitlist"
+                className="btn-cta inline-flex items-center gap-1.5 text-sm font-medium px-5 py-2.5 rounded-lg"
+              >
+                Join the waitlist
+              </a>
+              <a
+                href="/demo"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[#6366F1] light:text-[#4F46E5] hover:underline transition-colors"
+              >
+                Watch the demo
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+              </a>
+            </div>
           </div>
         </div>
       </article>
