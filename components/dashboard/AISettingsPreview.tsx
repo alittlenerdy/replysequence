@@ -18,32 +18,91 @@ const MOCK_MEETING = {
   date: 'Today',
 };
 
+/** Generate a visibly different full email preview for each tone + instruction combo */
 function getPreviewBody(tone: ToneValue, customInstructions: string): string {
-  const toneOption = TONE_OPTIONS.find(o => o.value === tone);
-  const base = toneOption?.preview || TONE_OPTIONS[0].preview;
-
-  // Add instruction-driven content hints
-  const hints: string[] = [];
   const lower = customInstructions.toLowerCase();
+
+  // Full email bodies per tone — dramatically different
+  const bodies: Record<ToneValue, string> = {
+    professional: `Dear Sarah,
+
+Thank you for taking the time to meet today. I wanted to follow up on the key points we discussed and outline the next steps we agreed upon.
+
+I'd love to offer you a free trial so you can experience it firsthand.
+
+Would Thursday at 2pm work for a follow-up call?
+
+Best regards`,
+    casual: `Hey Sarah!
+
+Great chatting today — lots of good stuff came out of that call. Here's where we landed:
+
+We talked about the demo, your team's workflow, and how this could save a bunch of time. I think the next move is getting you set up with a trial.
+
+Let me know what works for a quick follow-up — maybe Thursday?
+
+Cheers`,
+    friendly: `Hi Sarah!
+
+It was so great connecting with you today! I'm really excited about what we discussed and I think there's a great fit here.
+
+I'd love to get you started with a trial so you can see the magic firsthand. I think your team would really enjoy it.
+
+How does Thursday at 2pm sound for our next chat? Looking forward to it!
+
+Warmly`,
+    concise: `Sarah,
+
+Following up on today's call.
+
+Next steps:
+- Send proposal by Thursday
+- Schedule technical review
+- Start trial setup
+
+Let me know if anything needs adjusting.`,
+  };
+
+  let body = bodies[tone];
+
+  // Instruction-driven modifications — visibly change the output
   if (lower.includes('trial') || lower.includes('free')) {
-    hints.push("I'd love to offer you a free trial so you can experience it firsthand.");
-  }
-  if (lower.includes('next step') || lower.includes('date')) {
-    hints.push('Would Thursday at 2pm work for a follow-up call?');
-  }
-  if (lower.includes('bullet') || lower.includes('action item')) {
-    hints.push('\n- Review proposal document\n- Schedule follow-up call\n- Share feedback with team');
+    if (!body.includes('trial')) {
+      body = body.replace(/\n\n([A-Z])/m, '\n\nI\'d love to offer you a free trial so you can experience it firsthand.\n\n$1');
+    }
   }
 
-  if (hints.length > 0) {
-    return `${base}\n\n${hints.join('\n\n')}`;
+  if (lower.includes('bullet') || lower.includes('action item')) {
+    if (!body.includes('- ')) {
+      body += '\n\nAction items:\n- Review proposal document\n- Schedule follow-up call\n- Share feedback with team';
+    }
   }
-  return base;
+
+  if (lower.includes('150 words') || lower.includes('short') || lower.includes('brief')) {
+    // Truncate to first 3 sentences + closing
+    const sentences = body.split(/(?<=[.!?])\s+/);
+    if (sentences.length > 4) {
+      body = sentences.slice(0, 3).join(' ') + '\n\n' + sentences[sentences.length - 1];
+    }
+  }
+
+  if (lower.includes('next step') || lower.includes('specific')) {
+    if (!body.includes('Thursday')) {
+      body += '\n\nSpecific next step: Let\'s reconnect Thursday at 2pm to review the proposal.';
+    }
+  }
+
+  return body;
 }
 
 function getSubjectLine(tone: ToneValue): string {
-  const toneOption = TONE_OPTIONS.find(o => o.value === tone);
-  return toneOption?.subjectExample || 'Re: Follow-up from our meeting';
+  const subjects: Record<ToneValue, string> = {
+    professional: 'Re: Follow-up from our meeting',
+    casual: 'Quick recap from today',
+    friendly: 'Great connecting today!',
+    concise: 'Meeting recap + next steps',
+  };
+  return subjects[tone];
 }
 
 function getToneLabel(tone: ToneValue): string {
@@ -149,11 +208,11 @@ export function AISettingsPreview({ tone, customInstructions, signature }: AISet
       <div className="px-5 py-4">
         <AnimatePresence mode="wait">
           <motion.div
-            key={displayBody}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: isUpdating ? 0.4 : 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.2 }}
+            key={`${tone}-${displayBody.length}`}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: isUpdating ? 0.3 : 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25 }}
             className="text-sm text-gray-300 light:text-gray-600 leading-relaxed whitespace-pre-line"
           >
             {displayBody}
