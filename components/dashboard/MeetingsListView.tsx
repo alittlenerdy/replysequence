@@ -223,7 +223,7 @@ export function MeetingsListView() {
               className={`rounded-xl ${tile.bg} border ${tile.border} ${tile.hoverBorder} p-3 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 ${
                 followUpFilter === tile.key ? 'ring-2 ring-offset-1 ring-offset-[#060B18] light:ring-offset-white' : ''
               }`}
-              style={followUpFilter === tile.key ? { ringColor: tile.color } : undefined}
+              style={followUpFilter === tile.key ? { outlineColor: tile.color } : undefined}
             >
               <p className="text-2xl font-bold tabular-nums" style={{ color: tile.color }}>{statusCounts[tile.key]}</p>
               <p className="text-xs font-medium text-white light:text-gray-900">{tile.label}</p>
