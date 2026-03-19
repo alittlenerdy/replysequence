@@ -3,6 +3,7 @@ import { OpportunityHealth } from '@/components/dashboard/OpportunityHealth';
 import { AIInsightsPanel } from '@/components/dashboard/AIInsightsPanel';
 import { MeetingJobsTable } from '@/components/dashboard/MeetingJobsTable';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
+import { ProcessingStatusCard } from '@/components/dashboard/ProcessingStatusCard';
 import { PostCallSystemPanel } from '@/components/dashboard/PostCallSystemPanel';
 import {
   getDraftStats,
@@ -79,7 +80,7 @@ async function CommandCenterContent() {
       />
 
       {/* ═══════ 2. PIPELINE INTELLIGENCE ═══════ */}
-      <div className="mb-6">
+      <div className="mb-4">
         <h2 className="text-xs font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-3">
           Pipeline Intelligence
         </h2>
@@ -93,13 +94,27 @@ async function CommandCenterContent() {
         </div>
       </div>
 
-      {/* ═══════ 3. SECONDARY — compact history ═══════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <MeetingJobsTable meetings={recentMeetings.length > 0 ? recentMeetings : undefined} />
-        </div>
-        <div>
-          <ActivityFeed events={activityEvents.length > 0 ? activityEvents : undefined} />
+      {/* ═══════ 3. WORK QUEUE ═══════ */}
+      <div>
+        <h2 className="text-xs font-semibold text-[#8892B0] light:text-gray-500 uppercase tracking-wider mb-3">
+          Work Queue
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 space-y-4">
+            {/* Compact processing status — only when active */}
+            {processingStatus && !isProcessing && processingStatus.status !== 'idle' && processingStatus.status !== 'draft_ready' && (
+              <ProcessingStatusCard
+                status={processingStatus.status}
+                meetingName={processingStatus.meetingName}
+                lastUpdated={processingStatus.lastUpdated}
+                error={processingStatus.error}
+              />
+            )}
+            <MeetingJobsTable meetings={recentMeetings.length > 0 ? recentMeetings : undefined} />
+          </div>
+          <div>
+            <ActivityFeed events={activityEvents.length > 0 ? activityEvents : undefined} />
+          </div>
         </div>
       </div>
     </>
@@ -113,21 +128,21 @@ function CommandCenterLoading() {
         <div className="h-8 w-48 bg-gray-700/50 light:bg-gray-300 rounded mb-1" />
         <div className="h-4 w-64 bg-gray-700/50 light:bg-gray-300 rounded" />
       </div>
-      {/* 3-card skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      {/* Band 1: 3-card skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-52" />
         ))}
       </div>
-      {/* Pipeline skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-48" />
-        <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-48" />
+      {/* Band 2: Pipeline skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <div className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-44" />
+        <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-44" />
       </div>
-      {/* History skeleton */}
+      {/* Band 3: Work queue skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-64" />
-        <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-48" />
+        <div className="lg:col-span-2 rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-56" />
+        <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 p-5 h-56" />
       </div>
     </div>
   );

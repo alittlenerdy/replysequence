@@ -242,7 +242,7 @@ export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, ri
   const isProcessing = processing && ['uploading', 'transcribing', 'analyzing', 'generating_sequence'].includes(processing.status);
 
   return (
-    <div className="mb-6">
+    <div className="mb-4">
       {isProcessing ? (
         <ProcessingPanel status={processing!.status} meetingName={processing!.meetingName} />
       ) : (
