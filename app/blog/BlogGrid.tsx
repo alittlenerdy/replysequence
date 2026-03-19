@@ -14,6 +14,24 @@ function formatDate(dateString: string): string {
   });
 }
 
+/** Map the first tag to a gradient for the placeholder image area. */
+function getGradient(tags: string[]): string {
+  const tag = (tags[0] ?? '').toLowerCase();
+  if (tag.includes('sales'))
+    return 'bg-gradient-to-br from-[#6366F1]/20 to-[#818CF8]/5';
+  if (tag.includes('ai') || tag.includes('automation'))
+    return 'bg-gradient-to-br from-violet-500/20 to-purple-500/5';
+  if (tag.includes('email') || tag.includes('follow'))
+    return 'bg-gradient-to-br from-amber-500/20 to-orange-500/5';
+  if (tag.includes('crm') || tag.includes('integration'))
+    return 'bg-gradient-to-br from-emerald-500/20 to-teal-500/5';
+  if (tag.includes('productivity') || tag.includes('workflow'))
+    return 'bg-gradient-to-br from-sky-500/20 to-cyan-500/5';
+  if (tag.includes('meeting') || tag.includes('call'))
+    return 'bg-gradient-to-br from-rose-500/20 to-pink-500/5';
+  return 'bg-gradient-to-br from-[#6366F1]/20 to-[#6366F1]/5';
+}
+
 const VISIBLE_TAGS = 6;
 
 export function BlogGrid({ posts }: { posts: BlogPost[] }) {
@@ -40,7 +58,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <button
             onClick={() => setSelectedTag(null)}
-            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+            className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white ${
               selectedTag === null
                 ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                 : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
@@ -52,7 +70,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             <button
               key={tag}
               onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
-              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+              className={`text-sm font-medium px-4 py-2 rounded-full transition-[color,background-color,box-shadow] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white ${
                 selectedTag === tag
                   ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                   : 'bg-gray-800/50 light:bg-gray-100 text-gray-400 light:text-gray-600 hover:bg-gray-700/50 light:hover:bg-gray-200'
@@ -64,7 +82,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
           {!showAllTags && hiddenCount > 0 && (
             <button
               onClick={() => setShowAllTags(true)}
-              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-[#5B6CFF] light:text-[#4A5BEE] hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-[#6366F1] light:text-[#4F46E5] hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
               +{hiddenCount} more
             </button>
@@ -72,7 +90,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
           {showAllTags && hiddenCount > 0 && (
             <button
               onClick={() => setShowAllTags(false)}
-              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-[#5B6CFF] light:text-[#4A5BEE] hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="text-sm font-medium px-4 py-2 rounded-full bg-gray-800/50 light:bg-gray-100 text-[#6366F1] light:text-[#4F46E5] hover:bg-gray-700/50 light:hover:bg-gray-200 transition-[color,background-color] duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
               Show less
             </button>
@@ -81,73 +99,96 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
 
         {/* Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map((post) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="group block"
-            >
-              <article className="h-full rounded-2xl border border-gray-800 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden transition-[border-color,box-shadow] duration-300 hover:border-[#5B6CFF]/50 light:hover:border-[#5B6CFF]/50 hover:shadow-lg hover:shadow-[#5B6CFF]/5 light:hover:shadow-[#7A8BFF]/10">
-                {/* Hero Image */}
-                {post.heroImage && (
-                  <div className="relative w-full aspect-[16/9]">
-                    <Image
-                      src={post.heroImage}
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  </div>
-                )}
-                <div className="p-6">
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags.slice(0, 2).map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#5B6CFF]/10 light:bg-[#EEF0FF] text-[#5B6CFF] light:text-[#3A4BDD]"
+          {filteredPosts.map((post, index) => {
+            const isFeatured = index === 0 && selectedTag === null;
+
+            return (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className={`group block ${isFeatured ? 'md:col-span-2 lg:col-span-2' : ''}`}
+              >
+                <article
+                  className={`h-full rounded-2xl border border-gray-800/60 light:border-gray-200 bg-gray-900/50 light:bg-white overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-[#6366F1]/30 light:hover:border-[#6366F1]/30 hover:shadow-[#6366F1]/5 light:hover:shadow-[#6366F1]/10 ${isFeatured ? 'md:flex md:flex-row' : 'flex flex-col'}`}
+                >
+                  {/* Hero Image or Gradient Placeholder */}
+                  {post.heroImage ? (
+                    <div
+                      className={`relative w-full shrink-0 ${isFeatured ? 'md:w-1/2 aspect-[16/9] md:aspect-auto' : 'aspect-[16/9]'}`}
                     >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                      <Image
+                        src={post.heroImage}
+                        alt={post.title}
+                        fill
+                        className="object-cover"
+                        sizes={
+                          isFeatured
+                            ? '(max-width: 768px) 100vw, 50vw'
+                            : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className={`shrink-0 ${getGradient(post.tags)} ${isFeatured ? 'md:w-1/2 h-48 md:h-auto md:min-h-[16rem]' : 'h-32'}`}
+                    />
+                  )}
 
-                {/* Title */}
-                <h2 className="text-xl font-bold text-white light:text-gray-900 mb-3 group-hover:text-[#5B6CFF] light:group-hover:text-[#4A5BEE] transition-colors line-clamp-2">
-                  {post.title}
-                </h2>
+                  <div
+                    className={`p-6 flex flex-col flex-1 ${isFeatured ? 'md:p-8' : ''}`}
+                  >
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {post.tags.slice(0, 2).map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#6366F1]/10 light:bg-indigo-50 text-[#6366F1] light:text-[#4F46E5]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
 
-                {/* Excerpt */}
-                <p className="text-gray-400 light:text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">
-                  {post.excerpt}
-                </p>
+                    {/* Title */}
+                    <h2
+                      className={`font-bold text-white light:text-gray-900 mb-3 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors ${isFeatured ? 'text-2xl md:text-3xl line-clamp-3' : 'text-xl line-clamp-2'}`}
+                    >
+                      {post.title}
+                    </h2>
 
-                {/* Meta */}
-                <div className="mt-auto flex items-center justify-between text-sm text-gray-500 light:text-gray-500">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {formatDate(post.date)}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" />
-                      {post.readingTime} min read
-                    </span>
+                    {/* Excerpt */}
+                    <p
+                      className={`text-gray-400 light:text-gray-600 leading-relaxed mb-6 ${isFeatured ? 'text-base line-clamp-4' : 'text-sm line-clamp-3'}`}
+                    >
+                      {post.excerpt}
+                    </p>
+
+                    {/* Meta */}
+                    <div className="mt-auto flex items-center justify-between text-sm text-gray-500 light:text-gray-500">
+                      <div className="flex items-center gap-4">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {formatDate(post.date)}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5" />
+                          {post.readingTime} min read
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Read More */}
+                    <div className="mt-4 pt-4 border-t border-gray-800/50 light:border-gray-100">
+                      <span className="text-sm font-medium text-[#6366F1] light:text-[#4F46E5] flex items-center gap-1.5 group-hover:gap-2.5 transition-[gap]">
+                        Read article
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Read More */}
-                <div className="mt-4 pt-4 border-t border-gray-800/50 light:border-gray-100">
-                  <span className="text-sm font-medium text-[#5B6CFF] light:text-[#4A5BEE] flex items-center gap-1.5 group-hover:gap-2.5 transition-[gap]">
-                    Read article
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-                </div>
-              </article>
-            </Link>
-          ))}
+                </article>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Empty state */}
@@ -158,7 +199,7 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
             </p>
             <button
               onClick={() => setSelectedTag(null)}
-              className="mt-4 text-[#5B6CFF] light:text-[#4A5BEE] hover:underline rounded outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              className="mt-4 text-[#6366F1] light:text-[#4F46E5] hover:underline rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
               View all articles
             </button>
