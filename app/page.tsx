@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
@@ -15,7 +15,6 @@ import {
   Layers,
   Brain,
   TrendingUp,
-  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
@@ -115,96 +114,6 @@ const platformPillars = [
   },
 ];
 
-function ArcadeDemoModal() {
-  const [open, setOpen] = useState(false);
-
-  const close = useCallback(() => setOpen(false), []);
-
-  useEffect(() => {
-    const handler = () => setOpen(true);
-    document.addEventListener('open-arcade-demo', handler);
-    return () => document.removeEventListener('open-arcade-demo', handler);
-  }, []);
-
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
-    };
-    document.addEventListener('keydown', onKey);
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-    };
-  }, [open, close]);
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-8"
-          onClick={close}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Product demo"
-        >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-
-          {/* Modal content */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="relative w-full max-w-5xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close button */}
-            <button
-              onClick={close}
-              className="absolute -top-12 right-0 p-2 text-white/60 hover:text-white transition-colors rounded-full hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF]"
-              aria-label="Close demo"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            {/* Arcade iframe */}
-            <div
-              className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50"
-              style={{ paddingBottom: 'calc(54.28% + 41px)' }}
-            >
-              <iframe
-                src="https://demo.arcade.software/vgH8BUFUeiIHapleaNQ8?embed&embed_mobile=tab&embed_desktop=inline&show_copy_link=true"
-                title="ReplySequence Product Demo"
-                frameBorder="0"
-                loading="lazy"
-                allowFullScreen
-                allow="clipboard-write"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  colorScheme: 'light',
-                }}
-              />
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#060B18] light:bg-gray-50 text-white light:text-gray-900 font-sans relative overflow-hidden">
@@ -216,12 +125,12 @@ export default function LandingPage() {
         <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,157,45,0.08)_0%,transparent_70%)] pointer-events-none" />
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-pretty text-[#E8ECF4] light:text-gray-900">
-              Every Tool Records the Meeting.{' '}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight text-pretty">
+              <span className="font-medium text-[#C0C8E0] light:text-gray-500">Every Tool Records the Meeting.</span>{' '}
               <span className="bg-gradient-to-r from-[#5B6CFF] to-[#7A5CFF] bg-clip-text text-transparent font-extrabold">None of Them Send the Follow-Up.</span>
             </h1>
 
-            <p className="text-xl text-[#C0C8E0] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg font-light text-[#C0C8E0] light:text-gray-600 mb-6 leading-relaxed max-w-3xl mx-auto">
               ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates — automatically, before your next meeting starts.
             </p>
 
@@ -304,13 +213,13 @@ export default function LandingPage() {
           >
             <Link
               href="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold text-white light:text-[#B87A1A] border-2 border-[#FF9D2D]/40 light:border-[#FF9D2D]/60 rounded-full bg-[#FF9D2D]/10 light:bg-[#FF9D2D]/10 hover:bg-[#FF9D2D]/20 hover:border-[#FF9D2D]/60 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF9D2D] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white group"
+              className="btn-secondary-cta inline-flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white group"
             >
-              <svg className="w-5 h-5 text-[#FF9D2D] light:text-[#E08A1E]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg className="w-4 h-4 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5v14l11-7z" />
               </svg>
               Watch Demo
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#FF9D2D]/60 light:text-[#E08A1E]/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </Link>
@@ -324,17 +233,17 @@ export default function LandingPage() {
           >
             <a
               href="/security"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.05] light:bg-gray-100 border border-white/10 light:border-gray-200 rounded-full hover:bg-white/[0.08] light:hover:bg-gray-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] light:bg-gray-50 border border-white/[0.08] light:border-gray-200 rounded-full hover:bg-white/[0.07] light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
-              <Lock className="w-3.5 h-3.5 text-[#8892B0] light:text-gray-500" aria-hidden="true" />
-              <span className="text-xs font-medium text-[#C0C8E0] light:text-gray-600">AES-256 Encryption</span>
+              <Lock className="w-3.5 h-3.5 text-[#8892B0] light:text-gray-400" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#9CA3BF] light:text-gray-500">AES-256 Encryption</span>
             </a>
             <a
               href="/privacy"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.05] light:bg-gray-100 border border-white/10 light:border-gray-200 rounded-full hover:bg-white/[0.08] light:hover:bg-gray-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B6CFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] light:bg-gray-50 border border-white/[0.08] light:border-gray-200 rounded-full hover:bg-white/[0.07] light:hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
             >
-              <Shield className="w-3.5 h-3.5 text-[#8892B0] light:text-gray-500" aria-hidden="true" />
-              <span className="text-xs font-medium text-[#C0C8E0] light:text-gray-600">Privacy First</span>
+              <Shield className="w-3.5 h-3.5 text-[#8892B0] light:text-gray-400" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#9CA3BF] light:text-gray-500">Privacy First</span>
             </a>
           </motion.div>
         </div>
