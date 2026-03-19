@@ -3,92 +3,92 @@ import { GradientText } from '@/components/ui/GradientText';
 import { Linkedin, Github } from 'lucide-react';
 
 const productLinks = [
-  { href: '/how-it-works', label: 'How It Works' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/integrations', label: 'Integrations' },
+  { href: '/how-it-works', label: 'Follow-Ups' },
+  { href: '/how-it-works#sequences', label: 'Sequences' },
+  { href: '/how-it-works#meeting-intelligence', label: 'Meeting Intelligence' },
+  { href: '/how-it-works#pipeline', label: 'Pipeline Automation' },
+  { href: '/demo', label: 'Demo' },
 ];
 
 const companyLinks = [
-  { href: '/about', label: 'About' },
+  { href: '/compare', label: 'Compare' },
+  { href: '/pricing', label: 'Pricing' },
   { href: '/blog', label: 'Blog' },
-  { href: '/blog/rss.xml', label: 'RSS Feed' },
   { href: '/newsletter', label: 'Newsletter' },
-  { href: '/contact', label: 'Contact' },
-];
-
-const compareLinks = [
-  { href: '/compare', label: 'All Comparisons' },
-  { href: '/compare/gong', label: 'vs Gong' },
-  { href: '/compare/otter', label: 'vs Otter.ai' },
-  { href: '/compare/fireflies', label: 'vs Fireflies' },
-  { href: '/compare/chorus', label: 'vs Chorus' },
-  { href: '/compare/fathom', label: 'vs Fathom' },
-  { href: '/compare/avoma', label: 'vs Avoma' },
-  { href: '/compare/grain', label: 'vs Grain' },
-  { href: '/compare/tldv', label: 'vs tl;dv' },
-  { href: '/compare/manual', label: 'vs Manual Follow-Up' },
 ];
 
 const legalLinks = [
-  { href: '/terms', label: 'Terms' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/security', label: 'Security' },
+  { href: '/terms', label: 'Terms' },
 ];
+
+const linkClasses =
+  'text-sm text-[#64748B] hover:text-white light:text-gray-500 light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white';
+
+const socialClasses =
+  'text-[#64748B] hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white';
 
 export function Footer() {
   return (
-    <footer className="py-10 md:py-14 px-4 border-t border-gray-800 light:border-gray-200 relative z-10">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
-              <GradientText className="text-2xl font-bold">ReplySequence</GradientText>
+    <footer className="border-t border-[#1E2A4A] light:border-gray-200 bg-[#030712] light:bg-[#F1F5F9] relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-8 lg:gap-12">
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-4 lg:col-span-5">
+            <Link
+              href="/"
+              className="inline-block rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white"
+            >
+              <GradientText className="text-2xl font-bold tracking-tight">
+                ReplySequence
+              </GradientText>
             </Link>
-            <p className="text-sm text-gray-500 light:text-gray-600 mt-2">
+            <p className="text-sm text-[#64748B] mt-2 max-w-xs leading-relaxed">
               The follow-up layer for sales.
             </p>
-            <div className="flex items-center gap-3 mt-4">
+            <div className="flex items-center gap-4 mt-5">
               <a
                 href="https://linkedin.com/in/jimmyhackett"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className={socialClasses}
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-5 h-5" aria-hidden="true" />
+                <Linkedin className="w-[18px] h-[18px]" aria-hidden="true" />
               </a>
               <a
                 href="https://x.com/replysequence"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className={socialClasses}
                 aria-label="X (Twitter)"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
               </a>
               <a
                 href="https://github.com/alittlenerdy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+                className={socialClasses}
                 aria-label="GitHub"
               >
-                <Github className="w-5 h-5" aria-hidden="true" />
+                <Github className="w-[18px] h-[18px]" aria-hidden="true" />
               </a>
             </div>
           </div>
 
           {/* Product */}
-          <div>
-            <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Product</h3>
-            <ul className="space-y-2">
+          <div className="col-span-1 md:col-span-3 lg:col-span-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/60 light:text-gray-400 mb-4">
+              Product
+            </h3>
+            <ul className="space-y-2.5">
               {productLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-                  >
+                  <Link href={link.href} className={linkClasses}>
                     {link.label}
                   </Link>
                 </li>
@@ -97,32 +97,14 @@ export function Footer() {
           </div>
 
           {/* Company */}
-          <div>
-            <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Company</h3>
-            <ul className="space-y-2">
+          <div className="col-span-1 md:col-span-3 lg:col-span-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/60 light:text-gray-400 mb-4">
+              Company
+            </h3>
+            <ul className="space-y-2.5">
               {companyLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Compare */}
-          <div>
-            <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Compare</h3>
-            <ul className="space-y-2">
-              {compareLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-                  >
+                  <Link href={link.href} className={linkClasses}>
                     {link.label}
                   </Link>
                 </li>
@@ -131,15 +113,14 @@ export function Footer() {
           </div>
 
           {/* Legal */}
-          <div>
-            <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Legal</h3>
-            <ul className="space-y-2">
+          <div className="col-span-1 md:col-span-2 lg:col-span-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/60 light:text-gray-400 mb-4">
+              Legal
+            </h3>
+            <ul className="space-y-2.5">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-400 light:text-gray-600 hover:text-[#6366F1] light:hover:text-[#6366F1] transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-                  >
+                  <Link href={link.href} className={linkClasses}>
                     {link.label}
                   </Link>
                 </li>
@@ -149,8 +130,9 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-gray-800/50 light:border-gray-200 text-center text-sm text-gray-500 light:text-gray-600">
-          <p>&copy; {new Date().getFullYear()} ReplySequence. Built by Playground Giants.</p>
+        <div className="mt-12 pt-6 border-t border-[#1E2A4A]/50 light:border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#64748B]">
+          <p>&copy; {new Date().getFullYear()} ReplySequence</p>
+          <p>Built with taste by Playground Giants</p>
         </div>
       </div>
     </footer>
