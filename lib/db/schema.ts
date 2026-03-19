@@ -1869,3 +1869,31 @@ export const newsletterSubscribers = pgTable(
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;
 
+// Agent Actions — AI transparency feed for user-facing "what did the AI do?" log
+export const agentActions = pgTable(
+  'agent_actions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: varchar('user_id', { length: 255 }),
+    agentName: varchar('agent_name', { length: 100 }).notNull(),
+    description: text('description').notNull(),
+    meetingId: uuid('meeting_id'),
+    status: varchar('status', { length: 20 }).notNull().$type<'success' | 'failed'>(),
+    durationMs: integer('duration_ms').notNull(),
+    inputTokens: integer('input_tokens').notNull().default(0),
+    outputTokens: integer('output_tokens').notNull().default(0),
+    costUsd: decimal('cost_usd', { precision: 10, scale: 6 }).notNull().default('0'),
+    metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+    errorMessage: text('error_message'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('agent_actions_user_id_created_at_idx').on(table.userId, table.createdAt),
+    index('agent_actions_meeting_id_idx').on(table.meetingId),
+    index('agent_actions_agent_name_idx').on(table.agentName),
+  ]
+);
+
+export type AgentAction = typeof agentActions.$inferSelect;
+export type NewAgentAction = typeof agentActions.$inferInsert;
+

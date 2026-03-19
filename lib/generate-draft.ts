@@ -11,6 +11,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { callClaudeAPI, CLAUDE_MODEL, calculateCost, log, CLAUDE_API_TIMEOUT_MS } from './claude-api';
+import { recordAgentAction } from './agents/core';
 import {
   OPTIMIZED_SYSTEM_PROMPT,
   buildOptimizedPrompt,
@@ -539,6 +540,28 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         });
       }
 
+      // Record agent action for AI transparency feed
+      recordAgentAction({
+        agentName: 'draft-generation',
+        description: `Generated follow-up email: ${parsed.subject.substring(0, 80)}`,
+        userId: userId ?? undefined,
+        meetingId,
+        status: 'success',
+        durationMs: totalDurationMs,
+        inputTokens,
+        outputTokens,
+        costUsd,
+        metadata: {
+          draftId: draft.id,
+          meetingType: parsed.meetingTypeDetected,
+          toneUsed: parsed.toneUsed,
+          qualityScore: qualityResult.overall,
+          actionItemCount: parsed.actionItems.length,
+          attempt,
+        },
+        errorMessage: null,
+      }).catch(() => { /* fire-and-forget */ });
+
       return {
         success: true,
         draftId: draft.id,
@@ -627,6 +650,21 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         meetingType: detectionResult.meetingType,
       })
       .returning();
+
+    // Record failed agent action for AI transparency feed
+    recordAgentAction({
+      agentName: 'draft-generation',
+      description: `Draft generation failed for meeting ${meetingId}`,
+      userId: userId ?? undefined,
+      meetingId,
+      status: 'failed',
+      durationMs: generationDurationMs,
+      inputTokens: 0,
+      outputTokens: 0,
+      costUsd: 0,
+      metadata: { attempts: attempt, meetingType: detectionResult.meetingType },
+      errorMessage,
+    }).catch(() => { /* fire-and-forget */ });
 
     return {
       success: false,

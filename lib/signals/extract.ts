@@ -8,6 +8,7 @@
  */
 
 import { callClaudeAPI, calculateCost, log } from '@/lib/claude-api';
+import { recordAgentAction } from '@/lib/agents/core';
 import { signalBatchSchema, type Signal } from '@/lib/signals/types';
 import { insertSignals, getDealContext, updateHealthScore, upsertDealContext, linkMeetingToDeal } from '@/lib/context-store';
 import { generateNextSteps } from '@/lib/signals/next-steps';
@@ -200,6 +201,24 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
       transcriptLength: transcript.length,
     });
 
+    // Record agent action for AI transparency feed
+    recordAgentAction({
+      agentName: 'signal-extraction',
+      description: `Extracted ${signals.length} deal signals from meeting`,
+      meetingId,
+      status: 'success',
+      durationMs,
+      inputTokens: response.inputTokens,
+      outputTokens: response.outputTokens,
+      costUsd,
+      metadata: {
+        signalCount: signals.length,
+        byType: countByType(signals),
+        dealContextId: dealContextId || null,
+      },
+      errorMessage: null,
+    }).catch(() => { /* fire-and-forget */ });
+
     return {
       success: true,
       signals,
@@ -218,6 +237,20 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
       error: errorMessage,
       durationMs,
     });
+
+    // Record failed agent action
+    recordAgentAction({
+      agentName: 'signal-extraction',
+      description: `Signal extraction failed for meeting ${meetingId}`,
+      meetingId,
+      status: 'failed',
+      durationMs,
+      inputTokens: 0,
+      outputTokens: 0,
+      costUsd: 0,
+      metadata: null,
+      errorMessage,
+    }).catch(() => { /* fire-and-forget */ });
 
     return {
       success: false,
