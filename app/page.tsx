@@ -226,7 +226,7 @@ export default function LandingPage() {
             className="text-center mb-8"
           >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white light:text-gray-900 text-pretty">
-              Your stack records the call. Nothing connects it to <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">revenue</span>.
+              Your stack records the call. Nothing connects it to <span className="bg-gradient-to-r from-[#F59E0B] to-[#FF9D2D] bg-clip-text text-transparent">revenue</span>.
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto mt-4">
               Your meeting tool records. Your CRM stores. Your sequencer sends cold emails. Nothing connects the conversation to the follow-up.
@@ -300,7 +300,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white light:text-gray-900 text-pretty">
-              One Platform. Four <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Pillars</span>.
+              One Platform. Four <span className="bg-gradient-to-r from-[#F59E0B] to-[#FF9D2D] bg-clip-text text-transparent">Pillars</span>.
             </h2>
             <p className="text-gray-300 light:text-gray-600 max-w-2xl mx-auto">
               Everything between the call ending and the deal closing — automated.
@@ -355,7 +355,7 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white light:text-gray-900 text-pretty">
-              From Call to <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Pipeline Automation</span> in Three Steps
+              From Call to <span className="bg-gradient-to-r from-[#F59E0B] to-[#FF9D2D] bg-clip-text text-transparent">Pipeline Automation</span> in Three Steps
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               Connect once. Have your meetings. Follow-ups, sequences, next steps, and CRM updates handle themselves.
@@ -444,7 +444,7 @@ export default function LandingPage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white light:text-gray-900">
-              What Happens After <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">Every Call</span>
+              What Happens After <span className="bg-gradient-to-r from-[#F59E0B] to-[#FF9D2D] bg-clip-text text-transparent">Every Call</span>
             </h2>
             <p className="text-[#C0C8E0] light:text-gray-600 max-w-2xl mx-auto">
               After every meeting, six things happen automatically. Here is what the system produces.
