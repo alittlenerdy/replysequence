@@ -407,15 +407,11 @@ export default function LandingPage() {
                   </div>
 
                   {index < 2 && (
-                    <motion.div
-                      className="hidden md:block absolute top-10 -right-4 z-10"
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <svg className="w-8 h-8 text-[#1E2A4A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <div className="hidden md:block absolute top-10 -right-3 z-10">
+                      <svg className="w-6 h-6 text-[#1E2A4A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
-                    </motion.div>
+                    </div>
                   )}
 
                   <div className="text-center">
