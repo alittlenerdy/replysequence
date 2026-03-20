@@ -1591,6 +1591,148 @@ Once you have that visibility -- through automated follow-up tracking, CRM synci
 Your 1:1s are the highest-leverage time you have with each rep. Stop spending them verifying what already happened. Start spending them shaping what happens next.
 `,
   },
+  {
+    title: 'The 10-Minute Rule for Closing Deals',
+    slug: 'the-10-minute-rule-for-closing-deals',
+    excerpt:
+      'There\'s a window after every sales call where your prospect is most likely to say yes. It\'s smaller than you think, and most reps miss it completely.',
+    date: '2026-03-20',
+    author: 'Jimmy Daly',
+    tags: ['sales follow-up', 'close rates', 'sales productivity'],
+    readingTime: 6,
+    content: `
+# The 10-Minute Rule for Closing Deals
+
+There's a window after every sales call where your prospect is most likely to say yes. It's smaller than you think, and most reps miss it completely.
+
+I call it the 10-minute rule: send your follow-up within 10 minutes of hanging up, or accept that your close rate just dropped by two-thirds. This isn't motivational sales advice. It's pattern recognition backed by psychology, data, and the lived experience of every founder who's ever watched a hot lead go cold.
+
+## The Rule
+
+Within 10 minutes of ending a sales call, the prospect should have a follow-up email in their inbox. Not a "thanks for your time" one-liner. A real recap -- what you discussed, what was agreed, what happens next, and when.
+
+That's it. That's the rule.
+
+It sounds simple because it is. The hard part isn't knowing you should do it. The hard part is actually doing it when you've got three more calls stacked back-to-back, your CRM needs updating, and your manager just pinged you about a forecast.
+
+But the reps who figure out how to send fast, specific follow-ups consistently are the ones who close. Everyone else is playing catch-up -- literally.
+
+## The Research Behind It
+
+The psychological foundation here is the peak-end rule, first described by Daniel Kahneman. It says people judge an experience based on two things: the most emotionally intense moment and how it ended. Not the average of the whole experience. The peak and the end.
+
+Apply this to sales. Your prospect just had a 30-minute discovery call. There was probably a moment where they got excited -- when you nailed their pain point, when the demo clicked, when they said "that's exactly what we need." That's the peak. Now, how does the experience end?
+
+If you follow up in 10 minutes with a sharp recap that references that peak moment, the ending matches the energy. The whole experience gets encoded as positive. But if the ending is silence -- if they don't hear from you for hours or days -- the experience ends with nothing. The peak fades. The urgency disappears. They move on.
+
+There's quantitative evidence too. Research from Lead Connect found that 78% of deals go to the vendor that responds first. InsideSales.com (now XANT) published data showing that the odds of qualifying a lead drop by 10x if you wait more than five minutes to respond after initial contact. The exact numbers vary by study, but the direction is always the same: faster follow-up, higher close rates. Every time.
+
+Harvard Business Review published a study of 1.25 million sales leads and found that companies who contacted prospects within an hour were 7x more likely to have a meaningful conversation than those who waited even 60 minutes longer. Scale that down to follow-up emails after calls and the same principle holds -- speed signals seriousness.
+
+## How to Actually Implement This
+
+Knowing the rule and following the rule are two different things. Here's what I've seen work:
+
+**Block post-call time.** If you have calls scheduled back-to-back with zero buffer, you will never follow up in 10 minutes. Period. Build 10-15 minutes of white space after every external call. Protect it like you'd protect the call itself. Your calendar is not just for meetings -- it's for the work that makes meetings matter.
+
+**Use a follow-up structure, not a blank page.** The blank compose window is the reason most follow-ups take 20 minutes instead of 5. Have a go-to structure:
+
+- Two or three bullet points covering what you discussed
+- Action items with names and dates
+- A proposed next step
+
+When you have the structure memorized, filling in the specifics takes two minutes. You're not writing an email from scratch. You're completing a template with details from the call you just finished.
+
+**Stop trying to make it perfect.** A fast, honest, slightly rough follow-up beats a polished one sent the next day. Every time. Prospects don't grade your emails on prose quality. They grade them on relevance and speed. "Here's what we talked about, here's what's next, let me know if I missed anything" -- sent in 8 minutes -- will outperform a beautifully crafted three-paragraph email sent at 9am tomorrow.
+
+## How AI Changes the Equation
+
+Here's where I'll be direct: the 10-minute rule is hard to follow manually at scale. If you're running 4-6 calls a day, writing a specific, accurate follow-up for each one in under 10 minutes requires superhuman recall and typing speed. Most reps can't do it. Most reps shouldn't have to.
+
+This is the problem I built ReplySequence to solve. Your Zoom or Meet call ends. The transcript gets processed by AI that pulls out the key discussion points, action items, objections raised, and commitments made. A follow-up email draft lands in your inbox -- personalized, accurate, and ready to review -- before you've even opened your next meeting link.
+
+You still own the send. You review it, tweak it if needed, and hit send. But the 15-minute writing process just became a 30-second review. The 10-minute rule becomes trivially easy to follow because the hard part -- recalling what was said, structuring the email, making it specific -- is already done.
+
+This isn't about replacing the rep. It's about removing the friction that stops good reps from doing what they already know they should do. Follow-up is where deals go to die. AI makes sure you show up before the window closes.
+
+## The Window Is Smaller Than You Think
+
+Every sales follow-up best practice eventually comes back to the same thing: be fast, be specific, be consistent. The 10-minute rule puts a number on "fast" so you can actually hold yourself to it.
+
+Your prospect's attention is a decaying asset. The moment they hang up, a dozen other priorities start competing for the mental real estate you just earned. A follow-up sent in 10 minutes keeps you in pole position. A follow-up sent tomorrow puts you at the back of the line.
+
+If you want to see what a 10-minute follow-up looks like when AI handles the heavy lifting, [try the demo](/demo). Upload a transcript or connect your Zoom account. The draft is ready before the call is cold.
+`,
+  },
+  {
+    title: 'Why Most Sales Follow-Ups Never Get Sent',
+    slug: 'why-most-sales-follow-ups-never-get-sent',
+    excerpt:
+      'Follow-up is where deals go to die. Not because reps don\'t care, but because the system is broken.',
+    date: '2026-03-20',
+    author: 'Jimmy Daly',
+    tags: ['sales follow-up', 'sales automation', 'sales productivity'],
+    readingTime: 5,
+    content: `
+# Why Most Sales Follow-Ups Never Get Sent
+
+Follow-up is where deals go to die. Not because reps don't care, but because the system is broken.
+
+Here's a stat that should make every sales leader uncomfortable: according to research from Brevala, 48% of salespeople never make a single follow-up attempt after a meeting. Nearly half. And of the reps who do follow up, most wait more than 24 hours -- long past the window where their message actually matters.
+
+This isn't a people problem. It's a workflow problem. And until you fix the workflow, no amount of coaching or pipeline reviews will move the needle.
+
+## The Follow-Up Gap Is Costing You Revenue
+
+Let's do some rough math. Say your team runs 50 discovery calls a week. If even 20% of those calls don't get a timely, quality follow-up, that's 10 conversations per week where the prospect heard a great pitch, felt some momentum, and then... nothing. Radio silence. The meeting went great -- then nothing.
+
+Over a quarter, that's 130 deals where the ball got dropped before it was even in play. If your average deal size is $15K and your close rate on followed-up deals is 25%, you're leaving over $480K on the table annually just from follow-ups that never happened.
+
+These aren't lost deals in the traditional sense. Nobody said no. The prospect didn't go with a competitor. The deal just evaporated because nobody closed the loop.
+
+## Why Reps Don't Follow Up (It's Not What You Think)
+
+The easy answer is "they're lazy" or "they don't care." That's almost never true. Talk to the reps who skip follow-ups and you'll hear the same things:
+
+**They're juggling too many conversations.** A mid-market AE might run 4-6 calls a day. By the time they finish their last call, the first three are a blur. Writing a specific, relevant follow-up for each one requires recalling details they've already half-forgotten.
+
+**They don't know what to say.** Surprisingly common. Reps know the call went well but freeze when it's time to translate that into an email. Should they recap the conversation? Pitch again? Just say thanks? The blank compose window is the enemy.
+
+**CRM admin eats their time.** Reps spend roughly 72% of their week on non-selling activities, according to Salesforce's State of Sales report. By the time they've logged notes, updated deal stages, and prepped for the next call, the follow-up window has closed.
+
+**There's no system.** Most orgs have playbooks for cold outreach, discovery questions, even objection handling. Almost none have a repeatable follow-up process. It's the most important touchpoint in the sales cycle and it's completely ad hoc.
+
+## The Real Problem: Manual Follow-Ups Don't Scale
+
+Here's the uncomfortable truth -- even the reps who DO follow up consistently are spending 15-20 minutes per email doing it manually. They're re-watching parts of the recording, pulling out key moments, trying to remember what the prospect said about their timeline, crafting something that sounds personal but not desperate.
+
+That process works when you have three deals in pipeline. It falls apart at 30.
+
+Sales follow-up automation used to mean drip sequences -- pre-written emails blasted on a schedule regardless of what happened in the conversation. Reps hated them because they felt impersonal. Prospects hated them because they were impersonal. Nobody's follow-up problem was ever solved by a three-email nurture sequence that says "just circling back."
+
+The new generation of follow-up automation is different. It starts with what actually happened in the conversation -- the transcript -- and generates a follow-up that references specific pain points, action items, and next steps from that particular call. It's not a template. It's a draft that knows what was said.
+
+## What Actually Fixes This
+
+If you want follow-ups to happen consistently, you need to remove the friction. All of it. That means:
+
+1. **Auto-capture the conversation.** If the rep has to manually take notes, you've already lost. Record the call, transcribe it, and extract the key moments automatically.
+
+2. **Generate the draft immediately.** Not an hour later. Not the next morning. Within minutes of the call ending, the rep should have a ready-to-send email in their inbox that references what was actually discussed.
+
+3. **Make it editable, not prescriptive.** Reps need to own the email. The best system gives them a solid first draft they can tweak in 30 seconds, not a locked template they can't touch.
+
+4. **Log it to CRM automatically.** If the follow-up also updates the deal record with notes, action items, and next steps, you've eliminated two problems at once -- the follow-up gap and the CRM data gap.
+
+This is exactly what I'm building with ReplySequence. Your Zoom call ends, AI reads the transcript, and a personalized follow-up email draft is waiting for you before you've closed the tab. No note-taking, no blank compose window, no 24-hour delay.
+
+## Stop Losing Deals to Silence
+
+The best reps already have systems for this. They write fast, they use templates, they follow up the same day every time. But "hope your best reps figure it out" isn't a strategy. Pipeline hygiene means making sure every conversation gets closed -- not just the ones your top closer happens to remember.
+
+If you want to see what AI-powered follow-ups look like in practice, [try the demo](/demo). It takes 30 seconds and you don't need to sign up.
+`,
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
