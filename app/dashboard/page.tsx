@@ -122,6 +122,7 @@ async function CommandCenterContent() {
                 </div>
               ))}
             </div>
+            <AIActionsFeed />
           </div>
           <div className="space-y-4">
             <DealsAtRiskCard />
@@ -151,7 +152,6 @@ async function CommandCenterContent() {
           </div>
           <div className="space-y-4">
             <ActivityFeed events={activityEvents.length > 0 ? activityEvents : undefined} />
-            <AIActionsFeed />
             <CRMPreviewCard />
           </div>
         </div>
