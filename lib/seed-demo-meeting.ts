@@ -123,10 +123,10 @@ export async function seedDemoMeeting(userId: string): Promise<{ meetingId: stri
       isDemo: true,
       summary: 'Discovery call with Acme Corp to discuss their sales follow-up challenges. Discussed ReplySequence platform capabilities, HubSpot integration, pricing ($39/user/month for 12 reps), and agreed to set up a 14-day pilot with 3-4 reps.',
       keyTopics: [
-        { topic: 'Current follow-up workflow challenges', detail: 'Reps spend 20-30 min writing follow-ups, often delayed to next day' },
-        { topic: 'ReplySequence capabilities', detail: '8-second follow-ups, CRM sync, automatic sequences' },
-        { topic: 'HubSpot integration', detail: 'Activity logs, deal properties, and custom field updates' },
-        { topic: 'Pricing and pilot plan', detail: '$39/user/month, 14-day pilot with 3-4 reps' },
+        { topic: 'Current follow-up workflow challenges', duration: 'main focus' },
+        { topic: 'ReplySequence capabilities', duration: 'discussed briefly' },
+        { topic: 'HubSpot integration', duration: 'discussed briefly' },
+        { topic: 'Pricing and pilot plan', duration: 'discussed briefly' },
       ],
       actionItems: DEMO_ACTION_ITEMS,
     } as NewMeeting)
