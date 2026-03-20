@@ -157,7 +157,7 @@ export async function getDraftsWithMeetings(
 
   // Reply intent filter
   if (replyIntent) {
-    conditions.push(eq(drafts.replyIntent, replyIntent));
+    conditions.push(sql`${drafts.replyIntent} = ${replyIntent}`);
   }
 
   // Search filter (searches subject and meeting topic)
