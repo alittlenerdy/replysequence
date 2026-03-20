@@ -91,7 +91,7 @@ export default function LandingPage() {
           <div className="animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1] text-pretty text-white light:text-gray-900">
               Every Tool Records the Meeting.{' '}
-              <span className="bg-gradient-to-r from-[#6366F1] to-[#7A5CFF] bg-clip-text text-transparent">None of Them Send the Follow-Up.</span>
+              <span className="bg-gradient-to-r from-[#F59E0B] to-[#FF9D2D] bg-clip-text text-transparent">None of Them Send the Follow-Up.</span>
             </h1>
 
             <p className="text-xl text-[#C0C8E0] light:text-gray-600 mb-4 leading-relaxed max-w-2xl mx-auto">
