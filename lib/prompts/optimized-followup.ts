@@ -33,6 +33,9 @@ export interface FollowUpContext {
   recipientName?: string;
   additionalContext?: string;
 
+  // Language for response generation (ISO 639-1 code, e.g., 'es', 'fr')
+  responseLanguage?: string;
+
   // Template customization
   templateId?: string;
   templateInstructions?: string;
@@ -251,6 +254,17 @@ Adapt your writing to match these preferences:
   // Inject flywheel context: contact history
   if (context.contactContext) {
     prompt += context.contactContext.promptBlock;
+  }
+
+  // Inject language instruction for non-English responses
+  if (context.responseLanguage && context.responseLanguage !== 'en') {
+    const langNames: Record<string, string> = {
+      es: 'Spanish', fr: 'French', de: 'German', pt: 'Portuguese',
+      ja: 'Japanese', zh: 'Chinese', ko: 'Korean', it: 'Italian', nl: 'Dutch',
+    };
+    const langName = langNames[context.responseLanguage] || context.responseLanguage;
+    prompt += `\n\n## LANGUAGE REQUIREMENT:
+Write the entire follow-up email (subject, body, and action items) in ${langName}. The meeting summary and key topics/decisions should also be in ${langName}. Keep JSON field names in English but all content values in ${langName}.`;
   }
 
   prompt += `

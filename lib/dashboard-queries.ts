@@ -665,6 +665,7 @@ export async function getMeetingsList(
     sentCount: draftCounts[m.id]?.sent || 0,
     createdAt: m.createdAt,
     isDemo: m.isDemo,
+    detectedLanguage: m.detectedLanguage ?? null,
   }));
 
   return {

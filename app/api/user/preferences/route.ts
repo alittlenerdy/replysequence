@@ -22,6 +22,7 @@ export async function GET() {
         userRole: users.userRole,
         aiOnboardingComplete: users.aiOnboardingComplete,
         aiPaused: users.aiPaused,
+        responseLanguage: users.responseLanguage,
         notificationPrefs: users.notificationPrefs,
       })
       .from(users)
@@ -50,7 +51,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate, userRole, aiOnboardingComplete, aiPaused, notificationPrefs } = body;
+    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate, userRole, aiOnboardingComplete, aiPaused, responseLanguage, notificationPrefs } = body;
 
     // Validate tone
     const validTones = ['professional', 'casual', 'friendly', 'concise'];
@@ -102,6 +103,13 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: 'aiPaused must be a boolean' }, { status: 400 });
       }
       updateData.aiPaused = aiPaused;
+    }
+    if (responseLanguage !== undefined) {
+      const validLanguages = ['auto', 'en', 'es', 'fr', 'de', 'pt', 'ja', 'zh', 'ko', 'it', 'nl'];
+      if (responseLanguage !== null && !validLanguages.includes(responseLanguage)) {
+        return NextResponse.json({ error: 'Invalid response language' }, { status: 400 });
+      }
+      updateData.responseLanguage = responseLanguage || null;
     }
     if (notificationPrefs !== undefined) {
       if (notificationPrefs !== null && typeof notificationPrefs !== 'object') {

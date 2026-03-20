@@ -6,6 +6,11 @@ import { Search, ChevronLeft, ChevronRight, FileText, Send, Clock, CheckCircle, 
 import type { MeetingListItem, MeetingsQueryResult } from '@/lib/dashboard-queries';
 import { CopySummaryButton } from '@/components/dashboard/CopyToCRM';
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English', es: 'Spanish', fr: 'French', de: 'German', pt: 'Portuguese',
+  ja: 'Japanese', zh: 'Chinese', ko: 'Korean', it: 'Italian', nl: 'Dutch',
+};
+
 function PlatformIcon({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string; bg: string }> = {
     zoom: { label: 'Zoom', color: 'text-[#6366F1]', bg: 'bg-[#6366F1]/15' },
@@ -346,6 +351,11 @@ export function MeetingsListView() {
                       {meeting.isDemo && (
                         <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded bg-[#7A5CFF]/15 text-[#7A5CFF] border border-[#7A5CFF]/20 shrink-0">
                           Demo
+                        </span>
+                      )}
+                      {meeting.detectedLanguage && meeting.detectedLanguage !== 'en' && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/20 shrink-0 uppercase" title={`Transcript language: ${LANGUAGE_NAMES[meeting.detectedLanguage] || meeting.detectedLanguage}`}>
+                          {meeting.detectedLanguage}
                         </span>
                       )}
                       <FollowUpBadge status={followUp} />

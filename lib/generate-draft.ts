@@ -27,6 +27,7 @@ import { db, drafts, meetings, users, transcripts } from './db';
 import { eq } from 'drizzle-orm';
 import type { ActionItem } from './db/schema';
 import { analyzeSentiment } from './sentiment';
+import { detectLanguage, type LanguageCode } from './language-detection';
 // NOTE: CRM sync moved to drafts/send/route.ts - only log to CRM when email is sent
 import { trackEvent } from './analytics';
 import { extractMeetingMemory } from './meeting-memory';
@@ -231,6 +232,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
       let userAiTone: string | null = null;
       let userCustomInstructions: string | null = null;
       let userSignature: string | null = null;
+      let userResponseLanguage: string | null = null;
       let styleProfile = null;
       if (userId) {
         try {
@@ -240,6 +242,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
               aiCustomInstructions: users.aiCustomInstructions,
               aiSignature: users.aiSignature,
               styleProfile: users.styleProfile,
+              responseLanguage: users.responseLanguage,
             })
             .from(users)
             .where(eq(users.id, userId))
@@ -249,10 +252,42 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
             userCustomInstructions = userPrefs.aiCustomInstructions;
             userSignature = userPrefs.aiSignature;
             styleProfile = userPrefs.styleProfile ?? null;
+            userResponseLanguage = userPrefs.responseLanguage ?? null;
           }
         } catch {
           // Non-blocking — use defaults if lookup fails
         }
+      }
+
+      // Detect transcript language and determine response language
+      let resolvedLanguage: LanguageCode | null = null;
+      try {
+        const detectedLang = await detectLanguage(context.transcript, false); // heuristic only for speed
+
+        // Store detected language on the meeting record (fire-and-forget)
+        db.update(meetings)
+          .set({ detectedLanguage: detectedLang, updatedAt: new Date() })
+          .where(eq(meetings.id, meetingId))
+          .catch(() => {});
+
+        // Resolve which language to use for the draft:
+        // 1. User preference overrides (unless set to 'auto')
+        // 2. Auto-detect uses transcript language
+        if (userResponseLanguage && userResponseLanguage !== 'auto') {
+          resolvedLanguage = userResponseLanguage as LanguageCode;
+        } else if (detectedLang !== 'en') {
+          resolvedLanguage = detectedLang;
+        }
+        // null means English (default) — no special instruction needed
+
+        log('info', 'Language detection result', {
+          meetingId,
+          detectedLanguage: detectedLang,
+          userPreference: userResponseLanguage,
+          resolvedLanguage: resolvedLanguage || 'en',
+        });
+      } catch {
+        // Non-blocking — default to English if detection fails
       }
 
       // Build additional context with user preferences
@@ -311,6 +346,7 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         companyName: context.companyName,
         recipientName: context.recipientName || participants[0], // Default to first participant
         additionalContext: combinedAdditionalContext || undefined,
+        responseLanguage: resolvedLanguage || undefined,
         templateId: template?.id,
         templateInstructions: template?.focusInstructions,
         styleProfile,

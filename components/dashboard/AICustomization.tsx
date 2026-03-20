@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp, Loader2, DollarSign, CheckCircle2, X, AlertTriangle, Pause, Bell, Mail, BarChart3 } from 'lucide-react';
+import { Sparkles, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp, Loader2, DollarSign, CheckCircle2, X, AlertTriangle, Pause, Bell, Mail, BarChart3, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TONE_OPTIONS, INSTRUCTION_CHIPS, HOURLY_RATE_CHIPS, type ToneValue } from '@/lib/constants/ai-settings';
 import { useAutoSave, type AutoSaveStatus } from '@/lib/hooks/use-auto-save';
@@ -26,8 +26,23 @@ interface AIPreferences {
   aiSignature: string;
   hourlyRate: number;
   aiPaused: boolean;
+  responseLanguage: string;
   notificationPrefs: NotificationPrefs;
 }
+
+const LANGUAGE_OPTIONS = [
+  { value: 'auto', label: 'Auto-detect (match transcript language)' },
+  { value: 'en', label: 'English' },
+  { value: 'es', label: 'Spanish' },
+  { value: 'fr', label: 'French' },
+  { value: 'de', label: 'German' },
+  { value: 'pt', label: 'Portuguese' },
+  { value: 'ja', label: 'Japanese' },
+  { value: 'zh', label: 'Chinese' },
+  { value: 'ko', label: 'Korean' },
+  { value: 'it', label: 'Italian' },
+  { value: 'nl', label: 'Dutch' },
+] as const;
 
 interface Template {
   id: string;
@@ -127,6 +142,7 @@ export function AICustomization() {
     aiSignature: '',
     hourlyRate: 100,
     aiPaused: false,
+    responseLanguage: 'auto',
     notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFS },
   });
   const [loading, setLoading] = useState(true);
@@ -152,6 +168,7 @@ export function AICustomization() {
             aiSignature: data.aiSignature || '',
             hourlyRate: data.hourlyRate ?? 100,
             aiPaused: data.aiPaused ?? false,
+            responseLanguage: data.responseLanguage || 'auto',
             notificationPrefs: data.notificationPrefs
               ? { ...DEFAULT_NOTIFICATION_PREFS, ...data.notificationPrefs }
               : { ...DEFAULT_NOTIFICATION_PREFS },
@@ -603,6 +620,34 @@ export function AICustomization() {
             <p className="text-[10px] text-gray-500 mt-4">
               Delivery mode (review vs. auto-send) is managed in the Email tab.
             </p>
+          </div>
+
+          {/* Language Preference */}
+          <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <Globe className="w-4 h-4 text-[#6366F1]" />
+              <h4 className="text-sm font-medium text-white light:text-gray-900">Response Language</h4>
+            </div>
+            <p className="text-xs text-gray-500 mb-3">
+              Choose which language your follow-up emails are written in. Auto-detect matches the language of the meeting transcript.
+            </p>
+            <select
+              value={preferences.responseLanguage}
+              onChange={(e) => setPreferences(p => ({ ...p, responseLanguage: e.target.value }))}
+              aria-label="Response language"
+              className="w-full px-3 py-2 text-sm bg-gray-800 light:bg-white border border-gray-700 light:border-gray-300 rounded-lg text-white light:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] light:focus-visible:ring-offset-white"
+            >
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            {preferences.responseLanguage !== 'auto' && preferences.responseLanguage !== 'en' && (
+              <p className="text-xs text-[#6366F1] light:text-[#4F46E5] mt-2">
+                All drafts will be generated in {LANGUAGE_OPTIONS.find(o => o.value === preferences.responseLanguage)?.label || preferences.responseLanguage}, regardless of transcript language.
+              </p>
+            )}
           </div>
         </div>
 
