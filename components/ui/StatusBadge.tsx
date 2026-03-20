@@ -20,6 +20,10 @@ const statusConfig: Record<DraftStatus, { label: string; className: string }> = 
     label: 'Draft',
     className: 'bg-yellow-900 text-yellow-200 border-yellow-800 light:bg-amber-100 light:text-amber-700 light:border-amber-200',
   },
+  sending: {
+    label: 'Sending',
+    className: 'bg-amber-900 text-amber-300 border-amber-800 light:bg-amber-100 light:text-amber-700 light:border-amber-200 animate-pulse',
+  },
   sent: {
     label: 'Sent',
     className: 'bg-green-900 text-green-300 border-green-800 light:bg-green-100 light:text-green-700 light:border-green-200',

@@ -4,6 +4,7 @@
  */
 
 import { db, meetings, transcripts, drafts, users, userOnboarding } from './db';
+import type { NewMeeting } from './db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { SAMPLE_MEETINGS } from './sample-meetings';
 
@@ -128,7 +129,7 @@ export async function seedDemoMeeting(userId: string): Promise<{ meetingId: stri
         { topic: 'Pricing and pilot plan', detail: '$39/user/month, 14-day pilot with 3-4 reps' },
       ],
       actionItems: DEMO_ACTION_ITEMS,
-    })
+    } as NewMeeting)
     .returning();
 
   // Create transcript

@@ -120,22 +120,22 @@ describe('determineAutoSendRecipient', () => {
 
   it('returns the email when exactly 1 non-host participant', () => {
     const participants = [
-      { name: 'Host', email: 'host@example.com' },
-      { name: 'Attendee', email: 'attendee@example.com' },
+      { user_name: 'Host', email: 'host@example.com' },
+      { user_name: 'Attendee', email: 'attendee@example.com' },
     ];
     expect(determineAutoSendRecipient(participants, hostEmail)).toBe('attendee@example.com');
   });
 
   it('returns null when 0 non-host participants', () => {
-    const participants = [{ name: 'Host', email: 'host@example.com' }];
+    const participants = [{ user_name: 'Host', email: 'host@example.com' }];
     expect(determineAutoSendRecipient(participants, hostEmail)).toBeNull();
   });
 
   it('returns null when 2+ non-host participants', () => {
     const participants = [
-      { name: 'Host', email: 'host@example.com' },
-      { name: 'A', email: 'a@example.com' },
-      { name: 'B', email: 'b@example.com' },
+      { user_name: 'Host', email: 'host@example.com' },
+      { user_name: 'A', email: 'a@example.com' },
+      { user_name: 'B', email: 'b@example.com' },
     ];
     expect(determineAutoSendRecipient(participants, hostEmail)).toBeNull();
   });
