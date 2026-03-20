@@ -7,8 +7,8 @@
  * Pipeline: Transcript → extractSignals() → validate with Zod → write to signals table
  */
 
-import { callClaudeAPI, calculateCost, log } from '@/lib/claude-api';
-import { recordAgentAction } from '@/lib/agents/core';
+import { callClaudeAPI, log } from '@/lib/claude-api';
+import { runAgent } from '@/lib/agents/core';
 import { signalBatchSchema, type Signal } from '@/lib/signals/types';
 import { insertSignals, getDealContext, updateHealthScore, upsertDealContext, linkMeetingToDeal } from '@/lib/context-store';
 import { generateNextSteps } from '@/lib/signals/next-steps';
@@ -94,7 +94,6 @@ export interface ExtractSignalsResult {
 export async function extractSignals(input: ExtractSignalsInput): Promise<ExtractSignalsResult> {
   const { meetingId, transcript, meetingTopic } = input;
   let { dealContextId } = input;
-  const startTime = Date.now();
 
   if (!transcript || transcript.trim().length < 50) {
     logMetric('skipped_short_transcript', {
@@ -111,155 +110,125 @@ export async function extractSignals(input: ExtractSignalsInput): Promise<Extrac
 
   logMetric('extraction_started', { meetingId, transcriptLength: transcript.length, dealContextId: dealContextId || 'none' });
 
-  try {
-    const userPrompt = buildUserPrompt(transcript, meetingTopic);
+  const result = await runAgent<Signal[]>({
+    name: 'signal-extraction',
+    description: `Extract deal signals from meeting transcript`,
+    meetingId,
+    fn: async () => {
+      const userPrompt = buildUserPrompt(transcript, meetingTopic);
 
-    const response = await callClaudeAPI({
-      systemPrompt: SIGNAL_EXTRACTION_SYSTEM_PROMPT,
-      userPrompt,
-      maxTokens: 4096,
-    });
-
-    const durationMs = Date.now() - startTime;
-    const costUsd = calculateCost(
-      response.inputTokens,
-      response.outputTokens,
-      response.cacheCreationTokens,
-      response.cacheReadTokens,
-    );
-
-    // Parse and validate the JSON response
-    const signals = parseSignalResponse(response.content);
-
-    // Write to database and attach DB IDs back to signals for downstream attribution
-    if (signals.length > 0) {
-      const insertedRows = await insertSignals({
-        meetingId,
-        dealContextId,
-        signals,
+      const response = await callClaudeAPI({
+        systemPrompt: SIGNAL_EXTRACTION_SYSTEM_PROMPT,
+        userPrompt,
+        maxTokens: 4096,
       });
 
-      // Map DB IDs back onto signals so downstream consumers (MAP attribution) can reference them
-      // insertSignals preserves order: rows[i] corresponds to signals[i]
-      for (let i = 0; i < signals.length && i < insertedRows.length; i++) {
-        signals[i].id = insertedRows[i].id;
+      // Parse and validate the JSON response
+      const signals = parseSignalResponse(response.content);
+
+      // Write to database and attach DB IDs back to signals for downstream attribution
+      if (signals.length > 0) {
+        const insertedRows = await insertSignals({
+          meetingId,
+          dealContextId,
+          signals,
+        });
+
+        // Map DB IDs back onto signals so downstream consumers (MAP attribution) can reference them
+        // insertSignals preserves order: rows[i] corresponds to signals[i]
+        for (let i = 0; i < signals.length && i < insertedRows.length; i++) {
+          signals[i].id = insertedRows[i].id;
+        }
+
+        // Run downstream consumers in parallel (fire-and-forget)
+        // Next-step tracking, risk detection, and MAP generation use the extracted signals
+        const downstreamInput = { meetingId, dealContextId, signals, meetingTopic };
+        Promise.allSettled([
+          generateNextSteps(downstreamInput),
+          detectRisks(downstreamInput),
+          generateMap(downstreamInput),
+        ]).then(async (results) => {
+          for (const r of results) {
+            if (r.status === 'rejected') {
+              log('error', 'Downstream signal consumer failed (non-blocking)', {
+                meetingId,
+                error: r.reason instanceof Error ? r.reason.message : String(r.reason),
+              });
+            }
+          }
+
+          // Calculate health score after downstream consumers update the deal context
+          if (dealContextId) {
+            try {
+              const ctx = await getDealContext(dealContextId);
+              if (ctx) {
+                const health = calculateHealthScore({
+                  risks: (ctx.risks as string[]) || [],
+                  nextSteps: (ctx.nextSteps as string[]) || [],
+                  stakeholders: (ctx.stakeholders as string[]) || [],
+                  commitments: (ctx.commitments as string[]) || [],
+                  signalCount: ctx.signalCount,
+                  meetingCount: ctx.meetingCount,
+                });
+                await updateHealthScore(dealContextId, health.score);
+              }
+            } catch (err) {
+              log('error', 'Health score calculation failed (non-blocking)', {
+                meetingId,
+                dealContextId,
+                error: err instanceof Error ? err.message : String(err),
+              });
+            }
+          }
+        });
       }
 
-      // Run downstream consumers in parallel (fire-and-forget)
-      // Next-step tracking, risk detection, and MAP generation use the extracted signals
-      const downstreamInput = { meetingId, dealContextId, signals, meetingTopic };
-      Promise.allSettled([
-        generateNextSteps(downstreamInput),
-        detectRisks(downstreamInput),
-        generateMap(downstreamInput),
-      ]).then(async (results) => {
-        for (const r of results) {
-          if (r.status === 'rejected') {
-            log('error', 'Downstream signal consumer failed (non-blocking)', {
-              meetingId,
-              error: r.reason instanceof Error ? r.reason.message : String(r.reason),
-            });
-          }
-        }
-
-        // Calculate health score after downstream consumers update the deal context
-        if (dealContextId) {
-          try {
-            const ctx = await getDealContext(dealContextId);
-            if (ctx) {
-              const health = calculateHealthScore({
-                risks: (ctx.risks as string[]) || [],
-                nextSteps: (ctx.nextSteps as string[]) || [],
-                stakeholders: (ctx.stakeholders as string[]) || [],
-                commitments: (ctx.commitments as string[]) || [],
-                signalCount: ctx.signalCount,
-                meetingCount: ctx.meetingCount,
-              });
-              await updateHealthScore(dealContextId, health.score);
-            }
-          } catch (err) {
-            log('error', 'Health score calculation failed (non-blocking)', {
-              meetingId,
-              dealContextId,
-              error: err instanceof Error ? err.message : String(err),
-            });
-          }
-        }
-      });
-    }
-
-    // ── Emit metrics ──
-    logMetric('extraction_complete', {
-      meetingId,
-      signalCount: signals.length,
-      zeroSignals: signals.length === 0,
-      byType: countByType(signals),
-      inputTokens: response.inputTokens,
-      outputTokens: response.outputTokens,
-      costUsd: costUsd.toFixed(6),
-      durationMs,
-      transcriptLength: transcript.length,
-    });
-
-    // Record agent action for AI transparency feed
-    recordAgentAction({
-      agentName: 'signal-extraction',
-      description: `Extracted ${signals.length} deal signals from meeting`,
-      meetingId,
-      status: 'success',
-      durationMs,
-      inputTokens: response.inputTokens,
-      outputTokens: response.outputTokens,
-      costUsd,
-      metadata: {
+      // ── Emit metrics ──
+      logMetric('extraction_complete', {
+        meetingId,
         signalCount: signals.length,
+        zeroSignals: signals.length === 0,
         byType: countByType(signals),
-        dealContextId: dealContextId || null,
-      },
-      errorMessage: null,
-    }).catch(() => { /* fire-and-forget */ });
+        inputTokens: response.inputTokens,
+        outputTokens: response.outputTokens,
+        transcriptLength: transcript.length,
+      });
 
+      return {
+        data: signals,
+        tokens: {
+          input: response.inputTokens,
+          output: response.outputTokens,
+          cacheCreation: response.cacheCreationTokens,
+          cacheRead: response.cacheReadTokens,
+        },
+        metadata: {
+          signalCount: signals.length,
+          byType: countByType(signals),
+          dealContextId: dealContextId || null,
+        },
+      };
+    },
+  });
+
+  if (result.success) {
+    const signals = result.data ?? [];
     return {
       success: true,
       signals,
       signalCount: signals.length,
-      inputTokens: response.inputTokens,
-      outputTokens: response.outputTokens,
-      costUsd,
-      durationMs,
-    };
-  } catch (error) {
-    const durationMs = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : String(error);
-
-    logMetric('extraction_failed', {
-      meetingId,
-      error: errorMessage,
-      durationMs,
-    });
-
-    // Record failed agent action
-    recordAgentAction({
-      agentName: 'signal-extraction',
-      description: `Signal extraction failed for meeting ${meetingId}`,
-      meetingId,
-      status: 'failed',
-      durationMs,
-      inputTokens: 0,
-      outputTokens: 0,
-      costUsd: 0,
-      metadata: null,
-      errorMessage,
-    }).catch(() => { /* fire-and-forget */ });
-
-    return {
-      success: false,
-      signals: [],
-      signalCount: 0,
-      durationMs,
-      error: errorMessage,
+      costUsd: result.costUsd,
+      durationMs: result.durationMs,
     };
   }
+
+  return {
+    success: false,
+    signals: [],
+    signalCount: 0,
+    durationMs: result.durationMs,
+    error: result.error,
+  };
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────

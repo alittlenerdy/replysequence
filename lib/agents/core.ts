@@ -40,7 +40,8 @@ export type AgentName =
   | 'map-generation'
   | 'sequence-generation'
   | 'sentiment-analysis'
-  | 'draft-grading';
+  | 'draft-grading'
+  | 'pre-meeting-briefing';
 
 export interface AgentTokens {
   input: number;

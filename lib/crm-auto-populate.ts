@@ -11,13 +11,10 @@ import { meetings, dealContexts, hubspotConnections, salesforceConnections } fro
 import type { Participant, DealStage } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { callClaudeAPI } from '@/lib/claude-api';
+import { callClaudeAPI, log } from '@/lib/claude-api';
 import { refreshHubSpotToken } from '@/lib/hubspot';
 import { refreshSalesforceToken } from '@/lib/salesforce';
-
-function log(level: 'info' | 'warn' | 'error', message: string, data?: Record<string, unknown>) {
-  console.log(JSON.stringify({ level, tag: '[CRM-AUTO]', message, ...data }));
-}
+import { runAgent } from '@/lib/agents/core';
 
 interface InferredDealFields {
   dealStage: DealStage;
@@ -69,113 +66,139 @@ export async function autoPopulateCRMFields(
   transcript: string
 ): Promise<void> {
   try {
-    // Get meeting context
-    const [meeting] = await db
-      .select({
-        topic: meetings.topic,
-        startTime: meetings.startTime,
-        hostEmail: meetings.hostEmail,
-        participants: meetings.participants,
-        dealContextId: meetings.dealContextId,
-        summary: meetings.summary,
-      })
-      .from(meetings)
-      .where(eq(meetings.id, meetingId))
-      .limit(1);
-
-    if (!meeting) return;
-
-    // Identify external contact
-    const participants = (meeting.participants || []) as Participant[];
-    const externalContact = participants.find((p) => p.email && p.email !== meeting.hostEmail);
-    if (!externalContact?.email) {
-      log('info', 'No external contact, skipping CRM auto-population', { meetingId });
-      return;
-    }
-
-    // Truncate transcript
-    const maxChars = 24000;
-    const trimmedTranscript = transcript.length > maxChars
-      ? transcript.slice(0, maxChars) + '\n[Truncated]'
-      : transcript;
-
-    // Infer deal fields via Claude
-    const userPrompt = [
-      `Meeting: ${meeting.topic || 'Untitled'}`,
-      `Date: ${meeting.startTime ? new Date(meeting.startTime).toISOString() : 'Unknown'}`,
-      `Host: ${meeting.hostEmail}`,
-      `Contact: ${externalContact.user_name} (${externalContact.email})`,
-      '',
-      'Transcript:',
-      trimmedTranscript,
-    ].join('\n');
-
-    const result = await callClaudeAPI({
-      systemPrompt: DEAL_INFERENCE_PROMPT,
-      userPrompt,
-      maxTokens: 1024,
-    });
-
-    let inferred: InferredDealFields;
-    try {
-      let jsonStr = result.content.trim();
-      const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonMatch) jsonStr = jsonMatch[1].trim();
-      inferred = JSON.parse(jsonStr);
-    } catch {
-      log('warn', 'Failed to parse deal inference', { meetingId });
-      return;
-    }
-
-    log('info', 'Deal fields inferred', {
+    await runAgent({
+      name: 'crm-auto-populate',
+      description: 'Infer deal fields from transcript and sync to CRM',
+      userId,
       meetingId,
-      stage: inferred.dealStage,
-      probability: inferred.closeProbability,
-    });
+      fn: async () => {
+        // Get meeting context
+        const [meeting] = await db
+          .select({
+            topic: meetings.topic,
+            startTime: meetings.startTime,
+            hostEmail: meetings.hostEmail,
+            participants: meetings.participants,
+            dealContextId: meetings.dealContextId,
+            summary: meetings.summary,
+          })
+          .from(meetings)
+          .where(eq(meetings.id, meetingId))
+          .limit(1);
 
-    // Update deal context if linked
-    if (meeting.dealContextId) {
-      await db
-        .update(dealContexts)
-        .set({
-          dealStage: inferred.dealStage,
-          dealHealthScore: inferred.closeProbability,
-          lastMeetingId: meetingId,
-          lastMeetingAt: meeting.startTime || new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(dealContexts.id, meeting.dealContextId));
-    }
+        if (!meeting) {
+          return { data: null, tokens: { input: 0, output: 0 } };
+        }
 
-    // Sync to connected CRMs
-    const [hsConnection, sfConnection] = await Promise.all([
-      db.select().from(hubspotConnections).where(eq(hubspotConnections.userId, userId)).limit(1),
-      db.select().from(salesforceConnections).where(eq(salesforceConnections.userId, userId)).limit(1),
-    ]);
+        // Identify external contact
+        const participants = (meeting.participants || []) as Participant[];
+        const externalContact = participants.find((p) => p.email && p.email !== meeting.hostEmail);
+        if (!externalContact?.email) {
+          log('info', 'No external contact, skipping CRM auto-population', { meetingId });
+          return { data: null, tokens: { input: 0, output: 0 } };
+        }
 
-    const syncPromises: Promise<void>[] = [];
+        // Truncate transcript
+        const maxChars = 24000;
+        const trimmedTranscript = transcript.length > maxChars
+          ? transcript.slice(0, maxChars) + '\n[Truncated]'
+          : transcript;
 
-    if (hsConnection.length > 0) {
-      syncPromises.push(
-        syncDealFieldsToHubSpot(hsConnection[0], externalContact.email, inferred, meeting.topic || 'Meeting')
-      );
-    }
+        // Infer deal fields via Claude
+        const userPrompt = [
+          `Meeting: ${meeting.topic || 'Untitled'}`,
+          `Date: ${meeting.startTime ? new Date(meeting.startTime).toISOString() : 'Unknown'}`,
+          `Host: ${meeting.hostEmail}`,
+          `Contact: ${externalContact.user_name} (${externalContact.email})`,
+          '',
+          'Transcript:',
+          trimmedTranscript,
+        ].join('\n');
 
-    if (sfConnection.length > 0) {
-      syncPromises.push(
-        syncDealFieldsToSalesforce(sfConnection[0], externalContact.email, inferred, meeting.topic || 'Meeting')
-      );
-    }
+        const result = await callClaudeAPI({
+          systemPrompt: DEAL_INFERENCE_PROMPT,
+          userPrompt,
+          maxTokens: 1024,
+        });
 
-    await Promise.allSettled(syncPromises);
+        let inferred: InferredDealFields;
+        try {
+          let jsonStr = result.content.trim();
+          const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+          if (jsonMatch) jsonStr = jsonMatch[1].trim();
+          inferred = JSON.parse(jsonStr);
+        } catch {
+          log('warn', 'Failed to parse deal inference', { meetingId });
+          return {
+            data: null,
+            tokens: { input: result.inputTokens, output: result.outputTokens, cacheCreation: result.cacheCreationTokens, cacheRead: result.cacheReadTokens },
+          };
+        }
 
-    log('info', 'CRM auto-population completed', {
-      meetingId,
-      hubspot: hsConnection.length > 0,
-      salesforce: sfConnection.length > 0,
+        log('info', 'Deal fields inferred', {
+          meetingId,
+          stage: inferred.dealStage,
+          probability: inferred.closeProbability,
+        });
+
+        // Update deal context if linked
+        if (meeting.dealContextId) {
+          await db
+            .update(dealContexts)
+            .set({
+              dealStage: inferred.dealStage,
+              dealHealthScore: inferred.closeProbability,
+              lastMeetingId: meetingId,
+              lastMeetingAt: meeting.startTime || new Date(),
+              updatedAt: new Date(),
+            })
+            .where(eq(dealContexts.id, meeting.dealContextId));
+        }
+
+        // Sync to connected CRMs
+        const [hsConnection, sfConnection] = await Promise.all([
+          db.select().from(hubspotConnections).where(eq(hubspotConnections.userId, userId)).limit(1),
+          db.select().from(salesforceConnections).where(eq(salesforceConnections.userId, userId)).limit(1),
+        ]);
+
+        const syncPromises: Promise<void>[] = [];
+
+        if (hsConnection.length > 0) {
+          syncPromises.push(
+            syncDealFieldsToHubSpot(hsConnection[0], externalContact.email, inferred, meeting.topic || 'Meeting')
+          );
+        }
+
+        if (sfConnection.length > 0) {
+          syncPromises.push(
+            syncDealFieldsToSalesforce(sfConnection[0], externalContact.email, inferred, meeting.topic || 'Meeting')
+          );
+        }
+
+        const syncResults = await Promise.allSettled(syncPromises);
+        const crmSynced = syncResults.some((r) => r.status === 'fulfilled');
+
+        return {
+          data: inferred,
+          tokens: {
+            input: result.inputTokens,
+            output: result.outputTokens,
+            cacheCreation: result.cacheCreationTokens,
+            cacheRead: result.cacheReadTokens,
+          },
+          metadata: {
+            dealStage: inferred.dealStage,
+            closeProbability: inferred.closeProbability,
+            crmSynced,
+            hubspot: hsConnection.length > 0,
+            salesforce: sfConnection.length > 0,
+          },
+        };
+      },
     });
   } catch (error) {
-    log('error', 'CRM auto-population failed', {
+    // Maintain fire-and-forget — never throw
+    log('error', 'CRM auto-population failed outside wrapper', {
       meetingId,
       error: error instanceof Error ? error.message : String(error),
     });

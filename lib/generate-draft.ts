@@ -11,7 +11,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { callClaudeAPI, CLAUDE_MODEL, calculateCost, log, CLAUDE_API_TIMEOUT_MS } from './claude-api';
-import { recordAgentAction } from './agents/core';
+import { runAgent } from './agents/core';
 import {
   OPTIMIZED_SYSTEM_PROMPT,
   buildOptimizedPrompt,
@@ -153,546 +153,539 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     }
   }
 
-  // Detect meeting type and tone
-  const detectionResult = detectMeetingType(context.transcript, context.meetingTopic);
-  const participants = extractParticipants(context.transcript);
+  // Use runAgent wrapper for automatic duration tracking, cost calculation, and action recording.
+  // On failure, the fn throws so the wrapper records a failed action. We capture the
+  // failed draft result in this closure variable so we can return it to the caller.
+  let failedDraftResult: GenerateDraftResult | null = null;
 
-  log('info', 'Meeting context detected', {
+  const agentResult = await runAgent<GenerateDraftResult>({
+    name: 'draft-generation',
+    description: `Generate follow-up email for meeting ${meetingId}`,
+    userId: userId ?? undefined,
     meetingId,
-    meetingType: detectionResult.meetingType,
-    confidence: detectionResult.confidence,
-    tone: detectionResult.tone,
-    participantCount: participants.length,
-    signals: detectionResult.signals,
-  });
+    fn: async () => {
+      // Detect meeting type and tone
+      const detectionResult = detectMeetingType(context.transcript, context.meetingTopic);
+      const participants = extractParticipants(context.transcript);
 
-  // Look up template - use provided templateId or auto-select based on meeting type
-  let template: MeetingTemplate | undefined;
-  if (input.templateId) {
-    // First check built-in templates, then check database for custom templates
-    template = getTemplateById(input.templateId);
-    if (!template) {
-      try {
-        const [customTemplate] = await db
-          .select()
-          .from(emailTemplates)
-          .where(eq(emailTemplates.id, input.templateId))
-          .limit(1);
-        if (customTemplate) {
-          template = {
-            id: customTemplate.id,
-            name: customTemplate.name,
-            description: customTemplate.description || '',
-            meetingTypes: customTemplate.meetingType ? [customTemplate.meetingType as typeof detectionResult.meetingType] : [],
-            focusInstructions: customTemplate.promptInstructions,
-            icon: (customTemplate.icon as MeetingTemplate['icon']) || 'general',
-          };
-        }
-      } catch {
-        // Fall through to auto-select
-      }
-    }
-  }
-  if (!template) {
-    template = getDefaultTemplate(detectionResult.meetingType);
-  }
-
-  // Look up user's AI preferences and style profile in a single query
-  let userAiTone: string | null = null;
-  let userCustomInstructions: string | null = null;
-  let userSignature: string | null = null;
-  let styleProfile = null;
-  if (userId) {
-    try {
-      const [userPrefs] = await db
-        .select({
-          aiTone: users.aiTone,
-          aiCustomInstructions: users.aiCustomInstructions,
-          aiSignature: users.aiSignature,
-          styleProfile: users.styleProfile,
-        })
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
-      if (userPrefs) {
-        userAiTone = userPrefs.aiTone;
-        userCustomInstructions = userPrefs.aiCustomInstructions;
-        userSignature = userPrefs.aiSignature;
-        styleProfile = userPrefs.styleProfile ?? null;
-      }
-    } catch {
-      // Non-blocking — use defaults if lookup fails
-    }
-  }
-
-  // Build additional context with user preferences
-  const aiInstructions: string[] = [];
-  if (userAiTone && userAiTone !== 'professional') {
-    aiInstructions.push(`Write in a ${userAiTone} tone.`);
-  }
-  if (userCustomInstructions) {
-    aiInstructions.push(userCustomInstructions);
-  }
-  if (userSignature) {
-    aiInstructions.push(`End the email with this signature:\n${userSignature}`);
-  }
-  const combinedAdditionalContext = [
-    context.additionalContext,
-    ...aiInstructions,
-  ].filter(Boolean).join('\n\n');
-
-  // Map user tone to prompt tone type
-  const toneMap: Record<string, 'formal' | 'casual' | 'neutral'> = {
-    professional: 'formal',
-    casual: 'casual',
-    friendly: 'neutral',
-    concise: 'formal',
-  };
-  const mappedTone = userAiTone ? toneMap[userAiTone] : undefined;
-
-  // Fetch flywheel context (contact memory — style profile already fetched above)
-  let contactContext = null;
-  if (userId) {
-    try {
-      // Contact memory: look up recipient email
-      const recipientEmail = context.recipientName
-        ? undefined // recipientName is a name, not email - need email for lookup
-        : context.hostEmail; // fall back to host email for now
-      if (recipientEmail) {
-        const { buildContactContext } = await import('./flywheel/contact-memory');
-        contactContext = await buildContactContext(userId, recipientEmail);
-      }
-    } catch {
-      // Non-blocking — flywheel context is optional
-    }
-  }
-
-  // Build optimized context
-  const optimizedContext: FollowUpContext = {
-    meetingTopic: context.meetingTopic,
-    meetingDate: context.meetingDate,
-    hostName: context.hostName,
-    hostEmail: context.hostEmail || '',
-    transcript: context.transcript,
-    meetingType: detectionResult.meetingType,
-    detectedTone: mappedTone || detectionResult.tone,
-    keyParticipants: participants,
-    senderName: context.senderName,
-    companyName: context.companyName,
-    recipientName: context.recipientName || participants[0], // Default to first participant
-    additionalContext: combinedAdditionalContext || undefined,
-    templateId: template?.id,
-    templateInstructions: template?.focusInstructions,
-    styleProfile,
-    contactContext,
-  };
-
-  // Build the prompt
-  let userPrompt: string;
-  let estimatedInputTokens: number;
-
-  try {
-    userPrompt = buildOptimizedPrompt(optimizedContext);
-    estimatedInputTokens = estimateTokenCount(OPTIMIZED_SYSTEM_PROMPT + userPrompt);
-
-    log('info', 'Optimized prompt built', {
-      meetingId,
-      estimatedInputTokens,
-      promptLength: userPrompt.length,
-      meetingType: detectionResult.meetingType,
-    });
-  } catch (promptError) {
-    const errorMessage = promptError instanceof Error ? promptError.message : 'Unknown prompt error';
-    log('error', 'Failed to build prompt', {
-      meetingId,
-      error: errorMessage,
-    });
-    return {
-      success: false,
-      error: `Failed to build prompt: ${errorMessage}`,
-      generationDurationMs: Date.now() - startTime,
-    };
-  }
-
-  let lastError: Error | null = null;
-  let attempt = 0;
-
-  // Retry loop with exponential backoff
-  while (attempt < MAX_RETRIES) {
-    attempt++;
-    const attemptStartTime = Date.now();
-
-    try {
-      log('info', 'Calling Claude API with optimized prompt', {
-        attempt,
-        model: CLAUDE_MODEL,
+      log('info', 'Meeting context detected', {
         meetingId,
-        maxTokens: MAX_OUTPUT_TOKENS,
+        meetingType: detectionResult.meetingType,
+        confidence: detectionResult.confidence,
+        tone: detectionResult.tone,
+        participantCount: participants.length,
+        signals: detectionResult.signals,
+      });
+
+      // Look up template - use provided templateId or auto-select based on meeting type
+      let template: MeetingTemplate | undefined;
+      if (input.templateId) {
+        // First check built-in templates, then check database for custom templates
+        template = getTemplateById(input.templateId);
+        if (!template) {
+          try {
+            const [customTemplate] = await db
+              .select()
+              .from(emailTemplates)
+              .where(eq(emailTemplates.id, input.templateId))
+              .limit(1);
+            if (customTemplate) {
+              template = {
+                id: customTemplate.id,
+                name: customTemplate.name,
+                description: customTemplate.description || '',
+                meetingTypes: customTemplate.meetingType ? [customTemplate.meetingType as typeof detectionResult.meetingType] : [],
+                focusInstructions: customTemplate.promptInstructions,
+                icon: (customTemplate.icon as MeetingTemplate['icon']) || 'general',
+              };
+            }
+          } catch {
+            // Fall through to auto-select
+          }
+        }
+      }
+      if (!template) {
+        template = getDefaultTemplate(detectionResult.meetingType);
+      }
+
+      // Look up user's AI preferences and style profile in a single query
+      let userAiTone: string | null = null;
+      let userCustomInstructions: string | null = null;
+      let userSignature: string | null = null;
+      let styleProfile = null;
+      if (userId) {
+        try {
+          const [userPrefs] = await db
+            .select({
+              aiTone: users.aiTone,
+              aiCustomInstructions: users.aiCustomInstructions,
+              aiSignature: users.aiSignature,
+              styleProfile: users.styleProfile,
+            })
+            .from(users)
+            .where(eq(users.id, userId))
+            .limit(1);
+          if (userPrefs) {
+            userAiTone = userPrefs.aiTone;
+            userCustomInstructions = userPrefs.aiCustomInstructions;
+            userSignature = userPrefs.aiSignature;
+            styleProfile = userPrefs.styleProfile ?? null;
+          }
+        } catch {
+          // Non-blocking — use defaults if lookup fails
+        }
+      }
+
+      // Build additional context with user preferences
+      const aiInstructions: string[] = [];
+      if (userAiTone && userAiTone !== 'professional') {
+        aiInstructions.push(`Write in a ${userAiTone} tone.`);
+      }
+      if (userCustomInstructions) {
+        aiInstructions.push(userCustomInstructions);
+      }
+      if (userSignature) {
+        aiInstructions.push(`End the email with this signature:\n${userSignature}`);
+      }
+      const combinedAdditionalContext = [
+        context.additionalContext,
+        ...aiInstructions,
+      ].filter(Boolean).join('\n\n');
+
+      // Map user tone to prompt tone type
+      const toneMap: Record<string, 'formal' | 'casual' | 'neutral'> = {
+        professional: 'formal',
+        casual: 'casual',
+        friendly: 'neutral',
+        concise: 'formal',
+      };
+      const mappedTone = userAiTone ? toneMap[userAiTone] : undefined;
+
+      // Fetch flywheel context (contact memory — style profile already fetched above)
+      let contactContext = null;
+      if (userId) {
+        try {
+          // Contact memory: look up recipient email
+          const recipientEmail = context.recipientName
+            ? undefined // recipientName is a name, not email - need email for lookup
+            : context.hostEmail; // fall back to host email for now
+          if (recipientEmail) {
+            const { buildContactContext } = await import('./flywheel/contact-memory');
+            contactContext = await buildContactContext(userId, recipientEmail);
+          }
+        } catch {
+          // Non-blocking — flywheel context is optional
+        }
+      }
+
+      // Build optimized context
+      const optimizedContext: FollowUpContext = {
+        meetingTopic: context.meetingTopic,
+        meetingDate: context.meetingDate,
+        hostName: context.hostName,
+        hostEmail: context.hostEmail || '',
+        transcript: context.transcript,
+        meetingType: detectionResult.meetingType,
+        detectedTone: mappedTone || detectionResult.tone,
+        keyParticipants: participants,
+        senderName: context.senderName,
+        companyName: context.companyName,
+        recipientName: context.recipientName || participants[0], // Default to first participant
+        additionalContext: combinedAdditionalContext || undefined,
+        templateId: template?.id,
+        templateInstructions: template?.focusInstructions,
+        styleProfile,
+        contactContext,
+      };
+
+      // Build the prompt
+      const userPrompt = buildOptimizedPrompt(optimizedContext);
+
+      log('info', 'Optimized prompt built', {
+        meetingId,
+        estimatedInputTokens: estimateTokenCount(OPTIMIZED_SYSTEM_PROMPT + userPrompt),
+        promptLength: userPrompt.length,
         meetingType: detectionResult.meetingType,
       });
 
-      const response = await callClaudeAPI({
-        systemPrompt: OPTIMIZED_SYSTEM_PROMPT,
-        userPrompt,
-        maxTokens: MAX_OUTPUT_TOKENS,
-        timeoutMs: CLAUDE_API_TIMEOUT_MS,
-      });
+      let lastError: Error | null = null;
+      let attempt = 0;
 
-      const apiLatencyMs = Date.now() - attemptStartTime;
+      // Retry loop with exponential backoff
+      while (attempt < MAX_RETRIES) {
+        attempt++;
+        const attemptStartTime = Date.now();
 
-      log('info', 'Claude API response received', {
-        meetingId,
-        attempt,
-        apiLatencyMs,
-        stopReason: response.stopReason,
-        inputTokens: response.inputTokens,
-        outputTokens: response.outputTokens,
-      });
+        try {
+          log('info', 'Calling Claude API with optimized prompt', {
+            attempt,
+            model: CLAUDE_MODEL,
+            meetingId,
+            maxTokens: MAX_OUTPUT_TOKENS,
+            meetingType: detectionResult.meetingType,
+          });
 
-      // Parse the structured response
-      const parsed = parseOptimizedResponse(response.content);
+          const response = await callClaudeAPI({
+            systemPrompt: OPTIMIZED_SYSTEM_PROMPT,
+            userPrompt,
+            maxTokens: MAX_OUTPUT_TOKENS,
+            timeoutMs: CLAUDE_API_TIMEOUT_MS,
+          });
 
-      log('info', 'Response parsed successfully', {
-        meetingId,
-        hasSubject: !!parsed.subject,
-        hasSummary: !!parsed.meetingSummary,
-        subjectLength: parsed.subject.length,
-        bodyLength: parsed.body.length,
-        actionItemCount: parsed.actionItems.length,
-        topicCount: parsed.keyTopics.length,
-        decisionCount: parsed.keyDecisions.length,
-        meetingTypeDetected: parsed.meetingTypeDetected,
-        toneUsed: parsed.toneUsed,
-      });
+          const apiLatencyMs = Date.now() - attemptStartTime;
 
-      // Score the draft quality
-      const qualityResult = scoreDraft(parsed, context.transcript);
+          log('info', 'Claude API response received', {
+            meetingId,
+            attempt,
+            apiLatencyMs,
+            stopReason: response.stopReason,
+            inputTokens: response.inputTokens,
+            outputTokens: response.outputTokens,
+          });
 
-      log('info', 'Draft quality scored', {
-        meetingId,
-        overallScore: qualityResult.overall,
-        breakdown: qualityResult.breakdown,
-        issueCount: qualityResult.issues.length,
-      });
+          // Parse the structured response
+          const parsed = parseOptimizedResponse(response.content);
 
-      // Calculate costs (with prompt caching awareness)
-      const inputTokens = response.inputTokens;
-      const outputTokens = response.outputTokens;
-      const costUsd = calculateCost(
-        inputTokens,
-        outputTokens,
-        response.cacheCreationTokens,
-        response.cacheReadTokens,
-      );
-      const totalDurationMs = Date.now() - startTime;
+          log('info', 'Response parsed successfully', {
+            meetingId,
+            hasSubject: !!parsed.subject,
+            hasSummary: !!parsed.meetingSummary,
+            subjectLength: parsed.subject.length,
+            bodyLength: parsed.body.length,
+            actionItemCount: parsed.actionItems.length,
+            topicCount: parsed.keyTopics.length,
+            decisionCount: parsed.keyDecisions.length,
+            meetingTypeDetected: parsed.meetingTypeDetected,
+            toneUsed: parsed.toneUsed,
+          });
 
-      // Append action items to body if they exist
-      let finalBody = parsed.body;
-      if (parsed.actionItems.length > 0) {
-        finalBody += formatActionItemsForEmail(parsed.actionItems);
-      }
+          // Score the draft quality
+          const qualityResult = scoreDraft(parsed, context.transcript);
 
-      // Store draft in database
-      const [draft] = await db
-        .insert(drafts)
-        .values({
-          meetingId,
-          transcriptId,
-          subject: parsed.subject,
-          body: finalBody,
-          originalBody: finalBody,
-          model: CLAUDE_MODEL,
-          inputTokens,
-          outputTokens,
-          costUsd: costUsd.toFixed(6),
-          generationStartedAt: new Date(startTime),
-          generationCompletedAt: new Date(),
-          generationDurationMs: totalDurationMs,
-          qualityScore: qualityResult.overall,
-          meetingType: parsed.meetingTypeDetected,
-          toneUsed: parsed.toneUsed,
-          actionItems: parsed.actionItems,
-          keyPointsReferenced: parsed.keyPointsReferenced,
-          status: 'generated',
-          flywheelContextUsed: !!(styleProfile || contactContext),
-          flywheelMetadata: (styleProfile || contactContext) ? {
-            styleProfileUsed: !!styleProfile,
-            styleEditCount: (styleProfile as { sampleCount?: number } | null)?.sampleCount ?? 0,
-            contactHistoryUsed: !!contactContext,
-            contactEmailCount: contactContext?.emailCount ?? 0,
-            contactMeetingCount: contactContext?.meetingCount ?? 0,
-            contactEmail: contactContext?.recipientEmail ?? null,
-            referencedMeetingIds: [],
-            referencedDraftIds: [],
-          } : null,
-        })
-        .returning();
+          log('info', 'Draft quality scored', {
+            meetingId,
+            overallScore: qualityResult.overall,
+            breakdown: qualityResult.breakdown,
+            issueCount: qualityResult.issues.length,
+          });
 
-      // Store meeting summary on the meeting record
-      if (parsed.meetingSummary) {
-        await db
-          .update(meetings)
-          .set({
-            summary: parsed.meetingSummary,
-            keyDecisions: parsed.keyDecisions.length > 0 ? parsed.keyDecisions : null,
-            keyTopics: parsed.keyTopics.length > 0 ? parsed.keyTopics : null,
-            actionItems: parsed.actionItems.length > 0 ? parsed.actionItems : null,
-            summaryGeneratedAt: new Date(),
-          })
-          .where(eq(meetings.id, meetingId));
-      }
+          // Calculate costs for DB record (with prompt caching awareness)
+          const inputTokens = response.inputTokens;
+          const outputTokens = response.outputTokens;
+          const costUsd = calculateCost(
+            inputTokens,
+            outputTokens,
+            response.cacheCreationTokens,
+            response.cacheReadTokens,
+          );
+          const totalDurationMs = Date.now() - startTime;
 
-      log('info', 'Draft generated and saved with quality scoring', {
-        draftId: draft.id,
-        meetingId,
-        transcriptId,
-        cost: costUsd.toFixed(6),
-        inputTokens,
-        outputTokens,
-        generationDurationMs: totalDurationMs,
-        qualityScore: qualityResult.overall,
-        meetingType: parsed.meetingTypeDetected,
-        toneUsed: parsed.toneUsed,
-        actionItemCount: parsed.actionItems.length,
-        hasMeetingSummary: !!parsed.meetingSummary,
-        subject: parsed.subject.substring(0, 60),
-      });
+          // Append action items to body if they exist
+          let finalBody = parsed.body;
+          if (parsed.actionItems.length > 0) {
+            finalBody += formatActionItemsForEmail(parsed.actionItems);
+          }
 
-      // Log usage for free tier tracking (skip demo meetings)
-      if (userId) {
-        const [meetingRecord] = await db
-          .select({ isDemo: meetings.isDemo })
-          .from(meetings)
-          .where(eq(meetings.id, meetingId))
-          .limit(1);
+          // Store draft in database
+          const [draft] = await db
+            .insert(drafts)
+            .values({
+              meetingId,
+              transcriptId,
+              subject: parsed.subject,
+              body: finalBody,
+              originalBody: finalBody,
+              model: CLAUDE_MODEL,
+              inputTokens,
+              outputTokens,
+              costUsd: costUsd.toFixed(6),
+              generationStartedAt: new Date(startTime),
+              generationCompletedAt: new Date(),
+              generationDurationMs: totalDurationMs,
+              qualityScore: qualityResult.overall,
+              meetingType: parsed.meetingTypeDetected,
+              toneUsed: parsed.toneUsed,
+              actionItems: parsed.actionItems,
+              keyPointsReferenced: parsed.keyPointsReferenced,
+              status: 'generated',
+              flywheelContextUsed: !!(styleProfile || contactContext),
+              flywheelMetadata: (styleProfile || contactContext) ? {
+                styleProfileUsed: !!styleProfile,
+                styleEditCount: (styleProfile as { sampleCount?: number } | null)?.sampleCount ?? 0,
+                contactHistoryUsed: !!contactContext,
+                contactEmailCount: contactContext?.emailCount ?? 0,
+                contactMeetingCount: contactContext?.meetingCount ?? 0,
+                contactEmail: contactContext?.recipientEmail ?? null,
+                referencedMeetingIds: [],
+                referencedDraftIds: [],
+              } : null,
+            })
+            .returning();
 
-        if (!meetingRecord?.isDemo) {
-          await logUsage(userId, 'draft_generated', {
+          // Store meeting summary on the meeting record
+          if (parsed.meetingSummary) {
+            await db
+              .update(meetings)
+              .set({
+                summary: parsed.meetingSummary,
+                keyDecisions: parsed.keyDecisions.length > 0 ? parsed.keyDecisions : null,
+                keyTopics: parsed.keyTopics.length > 0 ? parsed.keyTopics : null,
+                actionItems: parsed.actionItems.length > 0 ? parsed.actionItems : null,
+                summaryGeneratedAt: new Date(),
+              })
+              .where(eq(meetings.id, meetingId));
+          }
+
+          log('info', 'Draft generated and saved with quality scoring', {
             draftId: draft.id,
             meetingId,
-            costUsd,
+            transcriptId,
+            cost: costUsd.toFixed(6),
+            inputTokens,
+            outputTokens,
+            generationDurationMs: totalDurationMs,
+            qualityScore: qualityResult.overall,
+            meetingType: parsed.meetingTypeDetected,
+            toneUsed: parsed.toneUsed,
+            actionItemCount: parsed.actionItems.length,
+            hasMeetingSummary: !!parsed.meetingSummary,
+            subject: parsed.subject.substring(0, 60),
           });
-        }
-      }
 
-      // Track analytics event (must await for serverless flush)
-      try {
-        await trackEvent(
-          context.hostEmail || `meeting-${meetingId}`,
-          'draft_generated',
-          {
-            meeting_id: meetingId,
-            draft_id: draft.id,
-            generation_time_seconds: totalDurationMs / 1000,
-            cost_dollars: costUsd,
-            word_count: finalBody.split(/\s+/).length,
-            meeting_type: parsed.meetingTypeDetected,
-            quality_score: qualityResult.overall,
+          // Log usage for free tier tracking (skip demo meetings)
+          if (userId) {
+            const [meetingRecord] = await db
+              .select({ isDemo: meetings.isDemo })
+              .from(meetings)
+              .where(eq(meetings.id, meetingId))
+              .limit(1);
+
+            if (!meetingRecord?.isDemo) {
+              await logUsage(userId, 'draft_generated', {
+                draftId: draft.id,
+                meetingId,
+                costUsd,
+              });
+            }
           }
-        );
-      } catch { /* Analytics should never fail the operation */ }
 
-      // NOTE: CRM sync moved to drafts/send/route.ts to prevent duplicates
-      // CRM records are created only when email is actually sent, not on draft generation
+          // Track analytics event (must await for serverless flush)
+          try {
+            await trackEvent(
+              context.hostEmail || `meeting-${meetingId}`,
+              'draft_generated',
+              {
+                meeting_id: meetingId,
+                draft_id: draft.id,
+                generation_time_seconds: totalDurationMs / 1000,
+                cost_dollars: costUsd,
+                word_count: finalBody.split(/\s+/).length,
+                meeting_type: parsed.meetingTypeDetected,
+                quality_score: qualityResult.overall,
+              }
+            );
+          } catch { /* Analytics should never fail the operation */ }
 
-      // Grade the draft with Claude Haiku (Phase 1 - non-blocking)
-      gradeDraftAsync({
-        draftId: draft.id,
-        subject: parsed.subject,
-        body: finalBody,
-        transcript: context.transcript,
-        meetingTopic: context.meetingTopic,
-        meetingDate: context.meetingDate,
-      }).catch((err) => {
-        log('error', 'Draft grading failed (non-blocking)', {
-          draftId: draft.id,
-          error: err instanceof Error ? err.message : String(err),
-        });
-      });
+          // NOTE: CRM sync moved to drafts/send/route.ts to prevent duplicates
+          // CRM records are created only when email is actually sent, not on draft generation
 
-      // Analyze meeting sentiment (non-blocking, async)
-      // Fetch speaker segments from transcript for analysis
-      try {
-        const [transcript] = await db
-          .select({ speakerSegments: transcripts.speakerSegments })
-          .from(transcripts)
-          .where(eq(transcripts.id, transcriptId))
-          .limit(1);
-
-        if (transcript?.speakerSegments && transcript.speakerSegments.length > 0) {
-          analyzeSentiment(meetingId, transcript.speakerSegments).catch((err) => {
-            log('error', 'Sentiment analysis failed (non-blocking)', {
-              meetingId,
+          // Grade the draft with Claude Haiku (Phase 1 - non-blocking)
+          gradeDraftAsync({
+            draftId: draft.id,
+            subject: parsed.subject,
+            body: finalBody,
+            transcript: context.transcript,
+            meetingTopic: context.meetingTopic,
+            meetingDate: context.meetingDate,
+          }).catch((err) => {
+            log('error', 'Draft grading failed (non-blocking)', {
+              draftId: draft.id,
               error: err instanceof Error ? err.message : String(err),
             });
           });
+
+          // Analyze meeting sentiment (non-blocking, async)
+          // Fetch speaker segments from transcript for analysis
+          try {
+            const [transcript] = await db
+              .select({ speakerSegments: transcripts.speakerSegments })
+              .from(transcripts)
+              .where(eq(transcripts.id, transcriptId))
+              .limit(1);
+
+            if (transcript?.speakerSegments && transcript.speakerSegments.length > 0) {
+              analyzeSentiment(meetingId, transcript.speakerSegments).catch((err) => {
+                log('error', 'Sentiment analysis failed (non-blocking)', {
+                  meetingId,
+                  error: err instanceof Error ? err.message : String(err),
+                });
+              });
+            }
+          } catch {
+            // Non-blocking — if transcript lookup fails, skip sentiment
+          }
+
+          // Extract meeting memory + auto-populate CRM fields (non-blocking, async)
+          const meetingUserId = await getUserIdFromMeeting(meetingId);
+          if (meetingUserId) {
+            extractMeetingMemory(meetingId, meetingUserId).catch((err) => {
+              log('error', 'Meeting memory extraction failed (non-blocking)', {
+                meetingId,
+                error: err instanceof Error ? err.message : String(err),
+              });
+            });
+            autoPopulateCRMFields(meetingId, meetingUserId, context.transcript).catch((err) => {
+              log('error', 'CRM auto-population failed (non-blocking)', {
+                meetingId,
+                error: err instanceof Error ? err.message : String(err),
+              });
+            });
+          }
+
+          // Return result for the wrapper — it handles action recording, duration, and cost
+          const result: GenerateDraftResult = {
+            success: true,
+            draftId: draft.id,
+            subject: parsed.subject,
+            body: finalBody,
+            actionItems: parsed.actionItems,
+            meetingType: parsed.meetingTypeDetected,
+            toneUsed: parsed.toneUsed,
+            qualityScore: qualityResult.overall,
+            inputTokens,
+            outputTokens,
+            costUsd,
+            generationDurationMs: totalDurationMs,
+          };
+
+          return {
+            data: result,
+            tokens: {
+              input: inputTokens,
+              output: outputTokens,
+              cacheCreation: response.cacheCreationTokens,
+              cacheRead: response.cacheReadTokens,
+            },
+            metadata: {
+              draftId: draft.id,
+              meetingType: parsed.meetingTypeDetected,
+              toneUsed: parsed.toneUsed,
+              qualityScore: qualityResult.overall,
+              actionItemCount: parsed.actionItems.length,
+              attempt,
+            },
+          };
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error));
+          const attemptLatencyMs = Date.now() - attemptStartTime;
+
+          const errorDetails: Record<string, unknown> = {
+            meetingId,
+            attempt,
+            maxRetries: MAX_RETRIES,
+            error: lastError.message,
+            errorName: lastError.name,
+            attemptLatencyMs,
+          };
+
+          const errorCode = (lastError as NodeJS.ErrnoException).code;
+          if (lastError.message.includes('timeout') || lastError.name === 'TimeoutError' || errorCode === 'ETIMEDOUT') {
+            errorDetails.errorType = 'timeout';
+            log('error', 'Claude API timed out', errorDetails);
+          } else if (lastError.message.includes('rate') || lastError.message.includes('429')) {
+            errorDetails.errorType = 'rate_limit';
+            log('warn', 'Claude API rate limited', errorDetails);
+          } else {
+            errorDetails.errorType = 'unknown';
+            log('error', 'Claude API error', errorDetails);
+          }
+
+          const isRetryable = isRetryableError(lastError);
+
+          if (!isRetryable || attempt >= MAX_RETRIES) {
+            break;
+          }
+
+          const delayMs = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+          log('info', 'Retrying after delay', { meetingId, attempt, delayMs });
+          await sleep(delayMs);
         }
-      } catch {
-        // Non-blocking — if transcript lookup fails, skip sentiment
       }
 
-      // Extract meeting memory + auto-populate CRM fields (non-blocking, async)
-      const meetingUserId = await getUserIdFromMeeting(meetingId);
-      if (meetingUserId) {
-        extractMeetingMemory(meetingId, meetingUserId).catch((err) => {
-          log('error', 'Meeting memory extraction failed (non-blocking)', {
-            meetingId,
-            error: err instanceof Error ? err.message : String(err),
-          });
-        });
-        autoPopulateCRMFields(meetingId, meetingUserId, context.transcript).catch((err) => {
-          log('error', 'CRM auto-population failed (non-blocking)', {
-            meetingId,
-            error: err instanceof Error ? err.message : String(err),
-          });
+      // All retries exhausted - store failed draft
+      const generationDurationMs = Date.now() - startTime;
+      const errorMessage = lastError?.message || 'Unknown error';
+
+      if (lastError) {
+        Sentry.captureException(lastError, {
+          tags: { component: 'generate-draft' },
+          extra: { meetingId, transcriptId, attempts: attempt, generationDurationMs },
         });
       }
 
-      // Record agent action for AI transparency feed
-      recordAgentAction({
-        agentName: 'draft-generation',
-        description: `Generated follow-up email: ${parsed.subject.substring(0, 80)}`,
-        userId: userId ?? undefined,
-        meetingId,
-        status: 'success',
-        durationMs: totalDurationMs,
-        inputTokens,
-        outputTokens,
-        costUsd,
-        metadata: {
-          draftId: draft.id,
-          meetingType: parsed.meetingTypeDetected,
-          toneUsed: parsed.toneUsed,
-          qualityScore: qualityResult.overall,
-          actionItemCount: parsed.actionItems.length,
-          attempt,
-        },
-        errorMessage: null,
-      }).catch(() => { /* fire-and-forget */ });
-
-      return {
-        success: true,
-        draftId: draft.id,
-        subject: parsed.subject,
-        body: finalBody,
-        actionItems: parsed.actionItems,
-        meetingType: parsed.meetingTypeDetected,
-        toneUsed: parsed.toneUsed,
-        qualityScore: qualityResult.overall,
-        inputTokens,
-        outputTokens,
-        costUsd,
-        generationDurationMs: totalDurationMs,
-      };
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-      const attemptLatencyMs = Date.now() - attemptStartTime;
-
-      const errorDetails: Record<string, unknown> = {
-        meetingId,
-        attempt,
-        maxRetries: MAX_RETRIES,
-        error: lastError.message,
-        errorName: lastError.name,
-        attemptLatencyMs,
-      };
-
-      const errorCode = (lastError as NodeJS.ErrnoException).code;
-      if (lastError.message.includes('timeout') || lastError.name === 'TimeoutError' || errorCode === 'ETIMEDOUT') {
-        errorDetails.errorType = 'timeout';
-        log('error', 'Claude API timed out', errorDetails);
-      } else if (lastError.message.includes('rate') || lastError.message.includes('429')) {
-        errorDetails.errorType = 'rate_limit';
-        log('warn', 'Claude API rate limited', errorDetails);
-      } else {
-        errorDetails.errorType = 'unknown';
-        log('error', 'Claude API error', errorDetails);
-      }
-
-      const isRetryable = isRetryableError(lastError);
-
-      if (!isRetryable || attempt >= MAX_RETRIES) {
-        break;
-      }
-
-      const delayMs = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
-      log('info', 'Retrying after delay', { meetingId, attempt, delayMs });
-      await sleep(delayMs);
-    }
-  }
-
-  // All retries exhausted - store failed draft
-  const generationDurationMs = Date.now() - startTime;
-  const errorMessage = lastError?.message || 'Unknown error';
-
-  if (lastError) {
-    Sentry.captureException(lastError, {
-      tags: { component: 'generate-draft' },
-      extra: { meetingId, transcriptId, attempts: attempt, generationDurationMs },
-    });
-  }
-
-  log('error', 'Draft generation failed', {
-    meetingId,
-    transcriptId,
-    attempts: attempt,
-    error: errorMessage,
-    generationDurationMs,
-  });
-
-  try {
-    const [draft] = await db
-      .insert(drafts)
-      .values({
+      log('error', 'Draft generation failed', {
         meetingId,
         transcriptId,
-        subject: '',
-        body: '',
-        model: CLAUDE_MODEL,
-        status: 'failed',
-        errorMessage,
-        generationStartedAt: new Date(startTime),
-        generationCompletedAt: new Date(),
+        attempts: attempt,
+        error: errorMessage,
         generationDurationMs,
-        retryCount: attempt,
-        meetingType: detectionResult.meetingType,
-      })
-      .returning();
+      });
 
-    // Record failed agent action for AI transparency feed
-    recordAgentAction({
-      agentName: 'draft-generation',
-      description: `Draft generation failed for meeting ${meetingId}`,
-      userId: userId ?? undefined,
-      meetingId,
-      status: 'failed',
-      durationMs: generationDurationMs,
-      inputTokens: 0,
-      outputTokens: 0,
-      costUsd: 0,
-      metadata: { attempts: attempt, meetingType: detectionResult.meetingType },
-      errorMessage,
-    }).catch(() => { /* fire-and-forget */ });
+      try {
+        const [draft] = await db
+          .insert(drafts)
+          .values({
+            meetingId,
+            transcriptId,
+            subject: '',
+            body: '',
+            model: CLAUDE_MODEL,
+            status: 'failed',
+            errorMessage,
+            generationStartedAt: new Date(startTime),
+            generationCompletedAt: new Date(),
+            generationDurationMs,
+            retryCount: attempt,
+            meetingType: detectionResult.meetingType,
+          })
+          .returning();
 
-    return {
-      success: false,
-      draftId: draft.id,
-      meetingType: detectionResult.meetingType,
-      generationDurationMs,
-      error: errorMessage,
-    };
-  } catch (dbError) {
-    log('error', 'Failed to store failed draft', {
-      meetingId,
-      error: dbError instanceof Error ? dbError.message : 'Unknown error',
-    });
+        failedDraftResult = {
+          success: false,
+          draftId: draft.id,
+          meetingType: detectionResult.meetingType,
+          generationDurationMs,
+          error: errorMessage,
+        };
+      } catch (dbError) {
+        log('error', 'Failed to store failed draft', {
+          meetingId,
+          error: dbError instanceof Error ? dbError.message : 'Unknown error',
+        });
 
-    return {
-      success: false,
-      generationDurationMs,
-      error: errorMessage,
-    };
+        failedDraftResult = {
+          success: false,
+          generationDurationMs,
+          error: errorMessage,
+        };
+      }
+
+      // Throw so the wrapper records this as a failed agent action
+      throw new Error(errorMessage);
+    },
+  });
+
+  // Map RunAgentOutput back to GenerateDraftResult
+  if (agentResult.success && agentResult.data) {
+    return agentResult.data;
   }
+
+  // Failure path — return the result captured in the closure, or build a fallback
+  return failedDraftResult ?? {
+    success: false,
+    generationDurationMs: agentResult.durationMs,
+    error: agentResult.error ?? 'Unknown error',
+  };
 }
 
 /**

@@ -8,10 +8,11 @@
  * 4. Using Claude to synthesize a pre-meeting briefing
  */
 
-import Anthropic from '@anthropic-ai/sdk';
 import { db, meetings, calendarEvents, users, preMeetingBriefings } from '@/lib/db';
-import { eq, and, or, sql, desc, inArray } from 'drizzle-orm';
+import { eq, and, or, desc } from 'drizzle-orm';
 import { sendEmail } from '@/lib/email';
+import { getClaudeClient, log, calculateCost } from '@/lib/claude-api';
+import { runAgent } from '@/lib/agents/core';
 import type {
   BriefingContent,
   BriefingAttendeeInsight,
@@ -19,24 +20,6 @@ import type {
   ActionItem,
   CalendarEventAttendee,
 } from '@/lib/db/schema';
-
-const anthropic = new Anthropic();
-
-function log(
-  level: 'info' | 'warn' | 'error' | 'debug',
-  message: string,
-  data: Record<string, unknown> = {}
-): void {
-  console.log(
-    JSON.stringify({
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      service: 'pre-meeting-briefing',
-      ...data,
-    })
-  );
-}
 
 interface PastMeetingContext {
   topic: string | null;
@@ -145,7 +128,7 @@ async function generateBriefingContent(
   attendeeInsights: BriefingAttendeeInsight[],
   pastMeetings: PastMeetingContext[],
   senderName: string
-): Promise<{ content: BriefingContent; inputTokens: number; outputTokens: number; costUsd: number }> {
+): Promise<{ content: BriefingContent; inputTokens: number; outputTokens: number }> {
   const pastMeetingsSummary = pastMeetings
     .map((m, i) => {
       const date = m.startTime?.toISOString().split('T')[0] || 'unknown date';
@@ -190,19 +173,16 @@ Rules:
 
 Return ONLY valid JSON, no markdown fences.`;
 
-  const startTime = Date.now();
-  const response = await anthropic.messages.create({
+  const client = getClaudeClient();
+  const response = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 1500,
     messages: [{ role: 'user', content: prompt }],
   });
 
-  const durationMs = Date.now() - startTime;
   const text = response.content[0].type === 'text' ? response.content[0].text : '';
   const inputTokens = response.usage.input_tokens;
   const outputTokens = response.usage.output_tokens;
-  // Haiku pricing: $1/MTok input, $5/MTok output
-  const costUsd = (inputTokens * 1 + outputTokens * 5) / 1_000_000;
 
   // Strip markdown fences if present (```json ... ```)
   const cleaned = text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
@@ -230,7 +210,7 @@ Return ONLY valid JSON, no markdown fences.`;
     riskFlags: parsed.riskFlags || [],
   };
 
-  return { content, inputTokens, outputTokens, costUsd };
+  return { content, inputTokens, outputTokens };
 }
 
 /**
@@ -306,144 +286,161 @@ export async function generateBriefing(
   userId: string,
   calendarEventId: string
 ): Promise<{ success: boolean; briefingId?: string; error?: string }> {
-  const startTime = Date.now();
-
-  try {
-    // Get the calendar event
-    const [event] = await db
-      .select()
-      .from(calendarEvents)
-      .where(
-        and(
-          eq(calendarEvents.id, calendarEventId),
-          eq(calendarEvents.userId, userId)
-        )
+  // Pre-flight: fetch event and user before entering the agent wrapper,
+  // so we can return early with a clear error without recording a failed action.
+  const [event] = await db
+    .select()
+    .from(calendarEvents)
+    .where(
+      and(
+        eq(calendarEvents.id, calendarEventId),
+        eq(calendarEvents.userId, userId)
       )
-      .limit(1);
+    )
+    .limit(1);
 
-    if (!event) {
-      return { success: false, error: 'Calendar event not found' };
-    }
+  if (!event) {
+    return { success: false, error: 'Calendar event not found' };
+  }
 
-    // Get user info
-    const [user] = await db
-      .select({ id: users.id, email: users.email, name: users.name })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
+  const [user] = await db
+    .select({ id: users.id, email: users.email, name: users.name })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
 
-    if (!user) {
-      return { success: false, error: 'User not found' };
-    }
+  if (!user) {
+    return { success: false, error: 'User not found' };
+  }
 
-    const attendees = (event.attendees || []) as CalendarEventAttendee[];
-    const attendeeEmails = attendees
-      .map(a => a.email)
-      .filter(Boolean);
+  const result = await runAgent<{ briefingId: string }>({
+    name: 'pre-meeting-briefing',
+    description: `Generate pre-meeting briefing for "${event.title}"`,
+    userId,
+    fn: async () => {
+      const attendees = (event.attendees || []) as CalendarEventAttendee[];
+      const attendeeEmails = attendees
+        .map(a => a.email)
+        .filter(Boolean);
 
-    log('info', 'Generating briefing', {
-      userId,
-      calendarEventId,
-      meetingTitle: event.title,
-      attendeeCount: attendeeEmails.length,
-    });
-
-    // Create briefing record in generating state
-    const [briefing] = await db
-      .insert(preMeetingBriefings)
-      .values({
+      log('info', 'Generating briefing', {
         userId,
         calendarEventId,
         meetingTitle: event.title,
-        meetingStartTime: event.startTime,
-        meetingPlatform: event.meetingPlatform,
-        meetingUrl: event.meetingUrl,
-        status: 'generating',
-      })
-      .onConflictDoNothing()
-      .returning({ id: preMeetingBriefings.id });
+        attendeeCount: attendeeEmails.length,
+      });
 
-    if (!briefing) {
-      log('info', 'Briefing already exists for this event', { calendarEventId });
-      return { success: true, error: 'Briefing already exists' };
-    }
+      // Create briefing record in generating state
+      const [briefing] = await db
+        .insert(preMeetingBriefings)
+        .values({
+          userId,
+          calendarEventId,
+          meetingTitle: event.title,
+          meetingStartTime: event.startTime,
+          meetingPlatform: event.meetingPlatform,
+          meetingUrl: event.meetingUrl,
+          status: 'generating',
+        })
+        .onConflictDoNothing()
+        .returning({ id: preMeetingBriefings.id });
 
-    // Find past meetings with overlapping attendees
-    const pastMeetings = await findRelatedMeetings(userId, attendeeEmails);
+      if (!briefing) {
+        log('info', 'Briefing already exists for this event', { calendarEventId });
+        // Return with zero tokens since no AI call was made
+        return {
+          data: { briefingId: '' },
+          tokens: { input: 0, output: 0 },
+          metadata: { skipped: true, reason: 'already_exists' },
+        };
+      }
 
-    // Build attendee insights
-    const attendeeInsights = buildAttendeeInsights(attendees, pastMeetings);
+      // Find past meetings with overlapping attendees
+      const pastMeetings = await findRelatedMeetings(userId, attendeeEmails);
 
-    // Generate briefing with Claude
-    const { content, inputTokens, outputTokens, costUsd } = await generateBriefingContent(
-      event.title,
-      attendeeInsights,
-      pastMeetings,
-      user.name || 'there'
-    );
+      // Build attendee insights
+      const attendeeInsights = buildAttendeeInsights(attendees, pastMeetings);
 
-    const durationMs = Date.now() - startTime;
-
-    // Update briefing with content
-    await db
-      .update(preMeetingBriefings)
-      .set({
-        content,
-        status: 'ready',
-        generationModel: 'claude-haiku-4-5-20251001',
-        inputTokens,
-        outputTokens,
-        costUsd: costUsd.toFixed(6),
-        generationDurationMs: durationMs,
-        updatedAt: new Date(),
-      })
-      .where(eq(preMeetingBriefings.id, briefing.id));
-
-    // Send email notification
-    try {
-      const emailSent = await sendBriefingEmail(
-        user.email,
-        user.name || 'there',
+      // Generate briefing with Claude
+      const { content, inputTokens, outputTokens } = await generateBriefingContent(
         event.title,
-        event.startTime,
-        content
+        attendeeInsights,
+        pastMeetings,
+        user.name || 'there'
       );
 
-      if (emailSent) {
-        await db
-          .update(preMeetingBriefings)
-          .set({
-            emailSentAt: new Date(),
-            deliveryChannel: 'both',
-            updatedAt: new Date(),
-          })
-          .where(eq(preMeetingBriefings.id, briefing.id));
+      // Calculate cost using shared utility (Haiku pricing differs from Sonnet,
+      // but calculateCost uses Sonnet rates. We pass 0 for cache tokens and
+      // store the correct Haiku cost in the briefing record directly.)
+      const haikuCostUsd = (inputTokens * 1 + outputTokens * 5) / 1_000_000;
+
+      // Update briefing with content
+      await db
+        .update(preMeetingBriefings)
+        .set({
+          content,
+          status: 'ready',
+          generationModel: 'claude-haiku-4-5-20251001',
+          inputTokens,
+          outputTokens,
+          costUsd: haikuCostUsd.toFixed(6),
+          updatedAt: new Date(),
+        })
+        .where(eq(preMeetingBriefings.id, briefing.id));
+
+      // Send email notification
+      try {
+        const emailSent = await sendBriefingEmail(
+          user.email,
+          user.name || 'there',
+          event.title,
+          event.startTime,
+          content
+        );
+
+        if (emailSent) {
+          await db
+            .update(preMeetingBriefings)
+            .set({
+              emailSentAt: new Date(),
+              deliveryChannel: 'both',
+              updatedAt: new Date(),
+            })
+            .where(eq(preMeetingBriefings.id, briefing.id));
+        }
+      } catch (emailErr) {
+        log('warn', 'Failed to send briefing email', {
+          briefingId: briefing.id,
+          error: emailErr instanceof Error ? emailErr.message : String(emailErr),
+        });
       }
-    } catch (emailErr) {
-      log('warn', 'Failed to send briefing email', {
+
+      log('info', 'Briefing generated successfully', {
         briefingId: briefing.id,
-        error: emailErr instanceof Error ? emailErr.message : String(emailErr),
+        pastMeetingsFound: pastMeetings.length,
+        attendeeCount: attendeeInsights.length,
       });
-    }
 
-    log('info', 'Briefing generated successfully', {
-      briefingId: briefing.id,
-      pastMeetingsFound: pastMeetings.length,
-      attendeeCount: attendeeInsights.length,
-      durationMs,
-      costUsd,
-    });
+      return {
+        data: { briefingId: briefing.id },
+        tokens: { input: inputTokens, output: outputTokens },
+        metadata: {
+          pastMeetingsFound: pastMeetings.length,
+          attendeeCount: attendeeInsights.length,
+          model: 'claude-haiku-4-5-20251001',
+        },
+      };
+    },
+  });
 
-    return { success: true, briefingId: briefing.id };
-  } catch (error) {
-    log('error', 'Failed to generate briefing', {
-      userId,
-      calendarEventId,
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to generate briefing',
-    };
+  if (!result.success) {
+    return { success: false, error: result.error };
   }
+
+  // Handle the "already exists" skip case
+  if (result.data && !result.data.briefingId) {
+    return { success: true, error: 'Briefing already exists' };
+  }
+
+  return { success: true, briefingId: result.data?.briefingId };
 }
