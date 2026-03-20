@@ -79,10 +79,10 @@ export async function detectPipelineStage(
       const transcriptExcerpt = transcript?.content?.slice(0, 3000) || '';
       const summary = meeting.summary || '';
       const keyDecisions = Array.isArray(meeting.keyDecisions)
-        ? (meeting.keyDecisions as string[]).join('\n- ')
+        ? (meeting.keyDecisions as unknown as Array<{ decision: string }>).map(d => typeof d === 'string' ? d : d.decision).join('\n- ')
         : '';
       const keyTopics = Array.isArray(meeting.keyTopics)
-        ? (meeting.keyTopics as string[]).join(', ')
+        ? (meeting.keyTopics as unknown as Array<{ topic: string }>).map(t => typeof t === 'string' ? t : t.topic).join(', ')
         : '';
 
       if (!summary && !transcriptExcerpt) {
