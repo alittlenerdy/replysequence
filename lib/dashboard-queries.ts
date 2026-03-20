@@ -1348,6 +1348,7 @@ export async function getRecentMeetingsForDashboard(): Promise<Array<{
   time: string;
   status: 'processing' | 'completed' | 'failed' | 'pending';
   duration?: string;
+  isDemo: boolean;
 }>> {
   const userId = await getCurrentUserId();
   if (!userId) return [];
@@ -1362,6 +1363,7 @@ export async function getRecentMeetingsForDashboard(): Promise<Array<{
       duration: meetings.duration,
       createdAt: meetings.createdAt,
       processingStep: meetings.processingStep,
+      isDemo: meetings.isDemo,
     })
     .from(meetings)
     .where(eq(meetings.userId, userId))
@@ -1404,8 +1406,32 @@ export async function getRecentMeetingsForDashboard(): Promise<Array<{
       time,
       status,
       duration,
+      isDemo: m.isDemo,
     };
   });
+}
+
+/**
+ * Check if user has only demo meetings (no real ones).
+ * Used to show the demo data banner on the dashboard.
+ */
+export async function getHasOnlyDemoMeetings(): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  if (!userId) return false;
+
+  const [result] = await db
+    .select({
+      total: sql<number>`count(*)`,
+      demoCount: sql<number>`count(*) filter (where ${meetings.isDemo} = true)`,
+    })
+    .from(meetings)
+    .where(eq(meetings.userId, userId));
+
+  const total = Number(result?.total || 0);
+  const demoCount = Number(result?.demoCount || 0);
+
+  // Show banner if there are demo meetings and no real meetings
+  return total > 0 && demoCount === total;
 }
 
 /**

@@ -20,6 +20,7 @@ interface MeetingJob {
   time: string;
   status: MeetingJobStatus;
   duration?: string;
+  isDemo?: boolean;
 }
 
 interface MeetingJobsTableProps {
@@ -30,11 +31,11 @@ interface MeetingJobsTableProps {
 }
 
 const defaultMeetings: MeetingJob[] = [
-  { id: '1', name: 'Acme Corp - Sales Discovery', source: 'meet', time: '22 min ago', status: 'processing', duration: '47m' },
-  { id: '2', name: 'Globex Inc - Quarterly Review', source: 'zoom', time: '2h ago', status: 'completed', duration: '58m' },
-  { id: '3', name: 'Initech - Product Demo', source: 'teams', time: '4h ago', status: 'completed', duration: '32m' },
-  { id: '4', name: 'Meridian Health - Technical Review', source: 'zoom', time: '6h ago', status: 'failed', duration: '25m' },
-  { id: '5', name: 'Brightpath Consulting - Intro Call', source: 'meet', time: '1d ago', status: 'pending', duration: '41m' },
+  { id: '1', name: 'Acme Corp - Sales Discovery', source: 'meet', time: '22 min ago', status: 'processing', duration: '47m', isDemo: true },
+  { id: '2', name: 'Globex Inc - Quarterly Review', source: 'zoom', time: '2h ago', status: 'completed', duration: '58m', isDemo: true },
+  { id: '3', name: 'Initech - Product Demo', source: 'teams', time: '4h ago', status: 'completed', duration: '32m', isDemo: true },
+  { id: '4', name: 'Meridian Health - Technical Review', source: 'zoom', time: '6h ago', status: 'failed', duration: '25m', isDemo: true },
+  { id: '5', name: 'Brightpath Consulting - Intro Call', source: 'meet', time: '1d ago', status: 'pending', duration: '41m', isDemo: true },
 ];
 
 const sourceIcons: Record<string, typeof Video> = {
@@ -109,7 +110,14 @@ export function MeetingJobsTable({
                 className="grid grid-cols-[1fr_120px_80px_100px_140px] gap-2 items-center px-5 py-3 border-b border-gray-800/30 light:border-gray-50 last:border-b-0 hover:bg-white/[0.02] light:hover:bg-gray-50 transition-colors"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-white light:text-gray-900 truncate">{meeting.name}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-medium text-white light:text-gray-900 truncate">{meeting.name}</p>
+                    {meeting.isDemo && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded bg-[#7A5CFF]/15 text-[#7A5CFF] border border-[#7A5CFF]/20 shrink-0">
+                        Demo
+                      </span>
+                    )}
+                  </div>
                   {meeting.duration && (
                     <span className="text-[10px] text-gray-500 light:text-gray-400">{meeting.duration}</span>
                   )}
@@ -172,7 +180,14 @@ export function MeetingJobsTable({
               className="rounded-xl bg-gray-800/40 light:bg-gray-50 border border-gray-700/30 light:border-gray-200 p-3"
             >
               <div className="flex items-start justify-between mb-2">
-                <p className="text-sm font-medium text-white light:text-gray-900 truncate flex-1 mr-2">{meeting.name}</p>
+                <div className="flex items-center gap-1.5 flex-1 mr-2 min-w-0">
+                  <p className="text-sm font-medium text-white light:text-gray-900 truncate">{meeting.name}</p>
+                  {meeting.isDemo && (
+                    <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded bg-[#7A5CFF]/15 text-[#7A5CFF] border border-[#7A5CFF]/20 shrink-0">
+                      Demo
+                    </span>
+                  )}
+                </div>
                 <span
                   className="inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0"
                   style={{ backgroundColor: config.bg, color: config.color }}

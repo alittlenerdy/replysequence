@@ -21,7 +21,9 @@ import {
   getLatestSequencePreview,
   getLatestReadyDraft,
   getUserHasConnectedPlatforms,
+  getHasOnlyDemoMeetings,
 } from '@/lib/dashboard-queries';
+import { DemoDataBanner } from '@/components/dashboard/DemoDataBanner';
 import { shouldSeedDemoMeeting, seedDemoMeeting } from '@/lib/seed-demo-meeting';
 
 export const dynamic = 'force-dynamic';
@@ -46,7 +48,7 @@ async function CommandCenterContent() {
     }
   }
 
-  const [stats, missionControl, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview, latestDraft, hasConnectedPlatforms] = await Promise.all([
+  const [stats, missionControl, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview, latestDraft, hasConnectedPlatforms, hasOnlyDemoMeetings] = await Promise.all([
     getDraftStats(),
     getMissionControlData(),
     getRecentMeetingsForDashboard(),
@@ -56,6 +58,7 @@ async function CommandCenterContent() {
     getLatestSequencePreview(),
     getLatestReadyDraft(),
     getUserHasConnectedPlatforms(),
+    getHasOnlyDemoMeetings(),
   ]);
 
   // Determine if we're in a processing state
@@ -88,6 +91,9 @@ async function CommandCenterContent() {
           After every call, everything is handled.
         </p>
       </div>
+
+      {/* Demo data banner — shown when user has only demo meetings */}
+      <DemoDataBanner hasOnlyDemo={hasOnlyDemoMeetings} />
 
       {/* ═══════ 1. POST-CALL SYSTEM PANEL ═══════ */}
       <PostCallSystemPanel
