@@ -1901,3 +1901,38 @@ export const agentActions = pgTable(
 export type AgentAction = typeof agentActions.$inferSelect;
 export type NewAgentAction = typeof agentActions.$inferInsert;
 
+// Contacts table — persistent contact records created from meeting participants
+export const contacts = pgTable(
+  'contacts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    email: varchar('email', { length: 255 }).notNull(),
+    name: varchar('name', { length: 255 }),
+    company: varchar('company', { length: 255 }),
+    title: varchar('title', { length: 255 }),
+    meetingCount: integer('meeting_count').notNull().default(0),
+    lastMeetingAt: timestamp('last_meeting_at', { withTimezone: true }),
+    lastMeetingId: uuid('last_meeting_id').references(() => meetings.id),
+    emailsSent: integer('emails_sent').notNull().default(0),
+    lastEmailedAt: timestamp('last_emailed_at', { withTimezone: true }),
+    notes: text('notes'),
+    tags: jsonb('tags').$type<string[]>().default([]),
+    metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('contacts_user_id_idx').on(table.userId),
+    index('contacts_email_idx').on(table.email),
+    uniqueIndex('contacts_user_id_email_idx').on(table.userId, table.email),
+    index('contacts_last_meeting_at_idx').on(table.lastMeetingAt),
+    index('contacts_company_idx').on(table.company),
+  ]
+);
+
+export type Contact = typeof contacts.$inferSelect;
+export type NewContact = typeof contacts.$inferInsert;
+

@@ -17,6 +17,7 @@ import type { MeetingPlatform } from '@/lib/db/schema';
 import { z } from 'zod';
 import { parseBody } from '@/lib/api-validation';
 import { scheduleFollowUpSequence } from '@/lib/sequence-scheduler';
+import { incrementContactEmailsSent } from '@/lib/contacts';
 
 const sendDraftSchema = z.object({
   draftId: z.string().uuid(),
@@ -232,6 +233,11 @@ export async function POST(request: NextRequest) {
 
     // Mark draft as sent only after successful email delivery
     await markDraftAsSent(draftId, recipientEmail);
+
+    // Increment contact emailsSent counter (fire-and-forget)
+    if (meetingUserId) {
+      incrementContactEmailsSent(meetingUserId, recipientEmail).catch(() => {});
+    }
 
     // Store Resend message ID for webhook event correlation (bounce/complaint tracking)
     if (result.messageId) {

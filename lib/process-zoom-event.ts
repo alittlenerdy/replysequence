@@ -22,7 +22,8 @@ import {
   completeProcessing,
   failProcessing,
 } from '@/lib/processing-progress';
-import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
+import { upsertContactsFromMeeting } from '@/lib/contacts';
+import type { RawEvent, NewMeeting, MeetingPlatform, Participant } from '@/lib/db/schema';
 
 // Default platform for Zoom webhook events
 const ZOOM_PLATFORM: MeetingPlatform = 'zoom';
@@ -896,6 +897,20 @@ async function fetchAndStoreTranscript(
       .from(meetings)
       .where(eq(meetings.id, meetingId))
       .limit(1);
+
+    // Upsert contacts from meeting participants (fire-and-forget)
+    if (meeting?.userId) {
+      const meetingParticipants = (meeting.participants as Participant[] | null) || [];
+      if (meetingParticipants.length > 0) {
+        upsertContactsFromMeeting(
+          meeting.userId,
+          meetingId,
+          meetingParticipants,
+          meeting.startTime || new Date(),
+          meeting.hostEmail
+        ).catch(() => {});
+      }
+    }
 
     // Track meeting_processed analytics event (non-blocking)
     if (meeting) {

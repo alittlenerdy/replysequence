@@ -23,7 +23,8 @@ import { getValidTeamsToken } from '@/lib/teams-token';
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
 import { trackEvent } from '@/lib/analytics';
-import type { RawEvent, MeetingPlatform } from '@/lib/db/schema';
+import { upsertContactsFromMeeting } from '@/lib/contacts';
+import type { RawEvent, MeetingPlatform, Participant } from '@/lib/db/schema';
 import type { ChangeNotificationItem } from '@/lib/teams/types';
 
 // Platform constant
@@ -458,6 +459,20 @@ async function fetchAndStoreTeamsTranscript(
           }
         );
       } catch { /* Analytics should never fail the operation */ }
+    }
+
+    // Upsert contacts from meeting participants (fire-and-forget)
+    if (meeting?.userId) {
+      const meetingParticipants = (meeting.participants as Participant[] | null) || [];
+      if (meetingParticipants.length > 0) {
+        upsertContactsFromMeeting(
+          meeting.userId,
+          meetingId,
+          meetingParticipants,
+          meeting.startTime || new Date(),
+          meeting.hostEmail
+        ).catch(() => {});
+      }
     }
 
     // Generate draft email, passing pre-fetched meeting to avoid re-query

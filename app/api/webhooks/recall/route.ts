@@ -10,6 +10,8 @@ import { getRecallClient } from '@/lib/recall/client';
 import { generateDraft } from '@/lib/generate-draft';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 // Types from @/lib/recall/types are available if needed for future extensions
+import { upsertContactsFromMeeting } from '@/lib/contacts';
+import type { Participant } from '@/lib/db/schema';
 import crypto from 'crypto';
 
 // Verify webhook signature (Recall uses Svix-style webhook signing)
@@ -588,6 +590,26 @@ async function processTranscriptAndGenerateDraft(
     meetingId: meeting.id,
     transcriptId: transcriptRecord.id,
   });
+
+  // Upsert contacts from meeting participants and transcript speakers (fire-and-forget)
+  const contactParticipants: Participant[] = [
+    // Use meeting.participants if available
+    ...((meeting.participants as Participant[] | null) || []),
+    // Also extract from transcript speakers (may have names but not emails)
+    ...(transcript.speakers || [])
+      .filter(s => s.name && s.name !== 'Unknown')
+      .map(s => ({ user_name: s.name || `Speaker ${s.id}` })),
+  ];
+
+  if (contactParticipants.length > 0) {
+    upsertContactsFromMeeting(
+      botRecord.userId,
+      meeting.id,
+      contactParticipants,
+      meeting.startTime || new Date(),
+      user.email
+    ).catch(() => {});
+  }
 
   // Check auto-process preference before generating draft
   if (botRecord.calendarEventId) {

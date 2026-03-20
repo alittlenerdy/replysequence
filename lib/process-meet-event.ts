@@ -25,7 +25,8 @@ import {
 import { parseVTT } from '@/lib/transcript/vtt-parser';
 import { generateDraft } from '@/lib/generate-draft';
 import { searchMeetRecordingsFolder, downloadDocAsText, DriveFile } from '@/lib/drive-api';
-import type { RawEvent, NewMeeting, MeetingPlatform } from '@/lib/db/schema';
+import { upsertContactsFromMeeting } from '@/lib/contacts';
+import type { RawEvent, NewMeeting, MeetingPlatform, Participant } from '@/lib/db/schema';
 import type { MeetWorkspaceEvent, MeetTranscript } from '@/lib/meet/types';
 
 // Platform constant
@@ -777,6 +778,20 @@ async function fetchAndStoreMeetTranscript(
       .from(meetings)
       .where(eq(meetings.id, meetingId))
       .limit(1);
+
+    // Upsert contacts from meeting participants (fire-and-forget)
+    if (meetingForDraft?.userId) {
+      const meetingParticipants = (meetingForDraft.participants as Participant[] | null) || [];
+      if (meetingParticipants.length > 0) {
+        upsertContactsFromMeeting(
+          meetingForDraft.userId,
+          meetingId,
+          meetingParticipants,
+          meetingForDraft.startTime || new Date(),
+          meetingForDraft.hostEmail
+        ).catch(() => {});
+      }
+    }
 
     // Generate draft email, passing pre-fetched meeting to avoid re-query
     await generateDraftForMeeting(meetingId, transcriptRecordId, fullText, meetingForDraft);
