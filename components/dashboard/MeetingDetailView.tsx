@@ -8,6 +8,7 @@ import { DraftQualityBadge } from '@/components/ui/DraftQualityBadge';
 import { DraftPreviewModal } from '@/components/DraftPreviewModal';
 import { MeetingSummaryCard } from '@/components/dashboard/MeetingSummaryCard';
 import { SequencesSection } from '@/components/dashboard/SequencesSection';
+import { CopyToCRM } from '@/components/dashboard/CopyToCRM';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 
 function PlatformBadge({ platform }: { platform: string }) {
@@ -186,6 +187,11 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
               )}
             </div>
           </div>
+          {meeting.summary && (
+            <div className="shrink-0">
+              <CopyToCRM meeting={meeting} />
+            </div>
+          )}
         </div>
 
         {/* Participants */}

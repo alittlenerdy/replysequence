@@ -535,6 +535,7 @@ export interface MeetingListItem {
   duration: number | null;
   status: string;
   hasSummary: boolean;
+  summary: string | null;
   draftCount: number;
   sentCount: number;
   createdAt: Date;
@@ -651,6 +652,7 @@ export async function getMeetingsList(
     duration: m.duration,
     status: m.status,
     hasSummary: !!m.summary,
+    summary: m.summary,
     draftCount: draftCounts[m.id]?.total || 0,
     sentCount: draftCounts[m.id]?.sent || 0,
     createdAt: m.createdAt,

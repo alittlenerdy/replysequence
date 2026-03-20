@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { Search, ChevronLeft, ChevronRight, FileText, Send, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import type { MeetingListItem, MeetingsQueryResult } from '@/lib/dashboard-queries';
+import { CopySummaryButton } from '@/components/dashboard/CopyToCRM';
 
 function PlatformIcon({ platform }: { platform: string }) {
   const config: Record<string, { label: string; color: string; bg: string }> = {
@@ -377,6 +378,11 @@ export function MeetingsListView() {
                       </span>
                     )}
                   </div>
+
+                  {/* Copy summary */}
+                  {meeting.summary && (
+                    <CopySummaryButton summary={meeting.summary} meetingTopic={meeting.topic} />
+                  )}
 
                   {/* Right: action hint */}
                   <div className="shrink-0">
