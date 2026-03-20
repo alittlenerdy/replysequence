@@ -1,18 +1,32 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp, Loader2, DollarSign, CheckCircle2, X } from 'lucide-react';
+import { Sparkles, Check, FileText, Plus, Trash2, ChevronDown, ChevronUp, Loader2, DollarSign, CheckCircle2, X, AlertTriangle, Pause, Bell, Mail, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TONE_OPTIONS, INSTRUCTION_CHIPS, HOURLY_RATE_CHIPS, type ToneValue } from '@/lib/constants/ai-settings';
 import { useAutoSave, type AutoSaveStatus } from '@/lib/hooks/use-auto-save';
 import { AISettingsPreview } from './AISettingsPreview';
 import { Toast } from '@/components/ui/Toast';
 
+interface NotificationPrefs {
+  draftReady: boolean;
+  sequenceStepSent: boolean;
+  weeklySummary: boolean;
+}
+
+const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
+  draftReady: true,
+  sequenceStepSent: false,
+  weeklySummary: true,
+};
+
 interface AIPreferences {
   aiTone: ToneValue;
   aiCustomInstructions: string;
   aiSignature: string;
   hourlyRate: number;
+  aiPaused: boolean;
+  notificationPrefs: NotificationPrefs;
 }
 
 interface Template {
@@ -112,6 +126,8 @@ export function AICustomization() {
     aiCustomInstructions: '',
     aiSignature: '',
     hourlyRate: 100,
+    aiPaused: false,
+    notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFS },
   });
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
@@ -135,6 +151,10 @@ export function AICustomization() {
             aiCustomInstructions: data.aiCustomInstructions || '',
             aiSignature: data.aiSignature || '',
             hourlyRate: data.hourlyRate ?? 100,
+            aiPaused: data.aiPaused ?? false,
+            notificationPrefs: data.notificationPrefs
+              ? { ...DEFAULT_NOTIFICATION_PREFS, ...data.notificationPrefs }
+              : { ...DEFAULT_NOTIFICATION_PREFS },
           });
         }
       } catch {
@@ -261,6 +281,55 @@ export function AICustomization() {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left column: Settings form */}
         <div className="flex-1 min-w-0 space-y-6 lg:pr-6 lg:border-r lg:border-white/[0.08] light:lg:border-gray-200">
+          {/* Pause All AI — emergency toggle */}
+          <div className={`rounded-xl border p-5 transition-colors duration-200 ${
+            preferences.aiPaused
+              ? 'border-amber-500/40 bg-amber-500/10 light:border-amber-300 light:bg-amber-50'
+              : 'glass-card border-white/[0.06] light:border-gray-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                  preferences.aiPaused
+                    ? 'bg-amber-500/20'
+                    : 'bg-gray-700/50 light:bg-gray-100'
+                }`}>
+                  <Pause className={`w-4 h-4 ${preferences.aiPaused ? 'text-amber-400' : 'text-gray-400 light:text-gray-500'}`} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-white light:text-gray-900">Pause All AI</h4>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Stop all draft generation, auto-send, and sequences
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={preferences.aiPaused}
+                aria-label="Pause all AI processing"
+                onClick={() => setPreferences(p => ({ ...p, aiPaused: !p.aiPaused }))}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                  preferences.aiPaused ? 'bg-amber-500' : 'bg-gray-600 light:bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ${
+                    preferences.aiPaused ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            {preferences.aiPaused && (
+              <div className="mt-3 flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 light:bg-amber-50 light:border-amber-200">
+                <AlertTriangle className="w-4 h-4 text-amber-400 light:text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-300 light:text-amber-700">
+                  AI processing is paused. No drafts will be generated and no sequences will send.
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Step 1: Tone Selection */}
           <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
             <div className="flex items-center gap-2 mb-3">
@@ -436,6 +505,105 @@ export function AICustomization() {
 
           {/* Step 4: Email Templates */}
           <TemplateManager />
+
+          {/* Notification Preferences */}
+          <div className="glass-card border border-white/[0.06] light:border-gray-200 rounded-xl p-5 transition-[border-color] duration-200 hover:border-gray-600 light:hover:border-gray-300 light:shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Bell className="w-4 h-4 text-[#6366F1]" />
+              <h4 className="text-sm font-medium text-white light:text-gray-900">Notifications</h4>
+            </div>
+            <div className="space-y-3">
+              {/* Draft ready */}
+              <label className="flex items-center justify-between cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-gray-400 light:text-gray-500" />
+                  <div>
+                    <span className="text-sm text-white light:text-gray-900">Email me when a draft is ready</span>
+                    <p className="text-[10px] text-gray-500 mt-0.5">Get notified when AI finishes writing a follow-up</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={preferences.notificationPrefs.draftReady}
+                  onClick={() => setPreferences(p => ({
+                    ...p,
+                    notificationPrefs: { ...p.notificationPrefs, draftReady: !p.notificationPrefs.draftReady },
+                  }))}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                    preferences.notificationPrefs.draftReady ? 'bg-[#6366F1]' : 'bg-gray-600 light:bg-gray-300'
+                  }`}
+                >
+                  <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ${
+                    preferences.notificationPrefs.draftReady ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
+                </button>
+              </label>
+
+              <div className="h-px bg-white/[0.06] light:bg-gray-100" />
+
+              {/* Sequence step sent */}
+              <label className="flex items-center justify-between cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="w-4 h-4 text-gray-400 light:text-gray-500" />
+                  <div>
+                    <span className="text-sm text-white light:text-gray-900">Email me when a sequence step sends</span>
+                    <p className="text-[10px] text-gray-500 mt-0.5">Real-time alerts for automated follow-ups</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={preferences.notificationPrefs.sequenceStepSent}
+                  onClick={() => setPreferences(p => ({
+                    ...p,
+                    notificationPrefs: { ...p.notificationPrefs, sequenceStepSent: !p.notificationPrefs.sequenceStepSent },
+                  }))}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                    preferences.notificationPrefs.sequenceStepSent ? 'bg-[#6366F1]' : 'bg-gray-600 light:bg-gray-300'
+                  }`}
+                >
+                  <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ${
+                    preferences.notificationPrefs.sequenceStepSent ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
+                </button>
+              </label>
+
+              <div className="h-px bg-white/[0.06] light:bg-gray-100" />
+
+              {/* Weekly summary */}
+              <label className="flex items-center justify-between cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <BarChart3 className="w-4 h-4 text-gray-400 light:text-gray-500" />
+                  <div>
+                    <span className="text-sm text-white light:text-gray-900">Weekly summary email</span>
+                    <p className="text-[10px] text-gray-500 mt-0.5">Digest of meetings processed, drafts sent, and ROI</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={preferences.notificationPrefs.weeklySummary}
+                  onClick={() => setPreferences(p => ({
+                    ...p,
+                    notificationPrefs: { ...p.notificationPrefs, weeklySummary: !p.notificationPrefs.weeklySummary },
+                  }))}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] ${
+                    preferences.notificationPrefs.weeklySummary ? 'bg-[#6366F1]' : 'bg-gray-600 light:bg-gray-300'
+                  }`}
+                >
+                  <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ${
+                    preferences.notificationPrefs.weeklySummary ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
+                </button>
+              </label>
+            </div>
+
+            {/* Cross-reference to Email tab */}
+            <p className="text-[10px] text-gray-500 mt-4">
+              Delivery mode (review vs. auto-send) is managed in the Email tab.
+            </p>
+          </div>
         </div>
 
         {/* Right column: Sticky preview — shows the result of your choices */}

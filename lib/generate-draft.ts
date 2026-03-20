@@ -133,9 +133,28 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
     };
   }
 
-  // Check free tier usage limit
+  // Check if AI is paused for this user
   const userId = await getUserIdFromMeeting(meetingId);
   if (userId) {
+    try {
+      const [pauseCheck] = await db
+        .select({ aiPaused: users.aiPaused })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      if (pauseCheck?.aiPaused) {
+        log('info', 'AI processing is paused for user — skipping draft generation', { meetingId, userId });
+        return {
+          success: false,
+          error: 'AI processing is paused. Enable it in Settings > AI to resume draft generation.',
+          generationDurationMs: Date.now() - startTime,
+        };
+      }
+    } catch {
+      // Non-blocking — continue if lookup fails
+    }
+
+    // Check free tier usage limit
     const usageCheck = await checkDraftLimit(userId);
     if (!usageCheck.allowed) {
       log('warn', 'Free tier draft limit reached', {

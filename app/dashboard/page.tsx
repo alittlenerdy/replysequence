@@ -5,8 +5,11 @@ import { AIInsightsPanel } from '@/components/dashboard/AIInsightsPanel';
 import { MeetingJobsTable } from '@/components/dashboard/MeetingJobsTable';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { AIActionsFeed } from '@/components/dashboard/AIActionsFeed';
+import { DealsAtRiskCard } from '@/components/dashboard/DealsAtRiskCard';
+import { CRMPreviewCard } from '@/components/dashboard/CRMPreviewCard';
 import { ProcessingStatusCard } from '@/components/dashboard/ProcessingStatusCard';
 import { PostCallSystemPanel } from '@/components/dashboard/PostCallSystemPanel';
+import { TimeSavingsWidget } from '@/components/dashboard/TimeSavingsWidget';
 import {
   getDraftStats,
   getMissionControlData,
@@ -120,7 +123,9 @@ async function CommandCenterContent() {
               ))}
             </div>
           </div>
-          <div>
+          <div className="space-y-4">
+            <DealsAtRiskCard />
+            <TimeSavingsWidget />
             <AIInsightsPanel insights={meetingInsights || undefined} />
           </div>
         </div>
@@ -147,6 +152,7 @@ async function CommandCenterContent() {
           <div className="space-y-4">
             <ActivityFeed events={activityEvents.length > 0 ? activityEvents : undefined} />
             <AIActionsFeed />
+            <CRMPreviewCard />
           </div>
         </div>
       </div>

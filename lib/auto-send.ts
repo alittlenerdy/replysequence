@@ -106,6 +106,16 @@ export async function attemptAutoSend(params: {
   const { draftId, meetingId, userId } = params;
 
   try {
+    // 0. Check if AI is globally paused for this user
+    const [pauseCheck] = await db
+      .select({ aiPaused: users.aiPaused })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (pauseCheck?.aiPaused) {
+      return { autoSent: false, reason: 'ai_paused' };
+    }
+
     // 1. Check preference
     const isAutoSend = await getUserAutoSendPreference(userId);
     if (!isAutoSend) {

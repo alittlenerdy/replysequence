@@ -440,6 +440,14 @@ export const users = pgTable(
     // Email complaint tracking (auto-pause sending after 3 complaints)
     emailComplaintCount: integer('email_complaint_count').notNull().default(0),
     emailSendingPaused: boolean('email_sending_paused').notNull().default(false),
+    // Global AI pause toggle — stops all draft generation, auto-send, sequences
+    aiPaused: boolean('ai_paused').notNull().default(false),
+    // Notification preferences (draft ready, sequence step sent, weekly summary)
+    notificationPrefs: jsonb('notification_prefs').$type<{
+      draftReady: boolean;
+      sequenceStepSent: boolean;
+      weeklySummary: boolean;
+    }>(),
     // Privacy consent
     consentedAt: timestamp('consented_at', { withTimezone: true }),
     // Waitlist gate: set when user is admitted (null = still on waitlist)

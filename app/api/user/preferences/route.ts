@@ -21,6 +21,8 @@ export async function GET() {
         hourlyRate: users.hourlyRate,
         userRole: users.userRole,
         aiOnboardingComplete: users.aiOnboardingComplete,
+        aiPaused: users.aiPaused,
+        notificationPrefs: users.notificationPrefs,
       })
       .from(users)
       .where(eq(users.clerkId, user.id))
@@ -48,7 +50,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate, userRole, aiOnboardingComplete } = body;
+    const { aiTone, aiCustomInstructions, aiSignature, hourlyRate, userRole, aiOnboardingComplete, aiPaused, notificationPrefs } = body;
 
     // Validate tone
     const validTones = ['professional', 'casual', 'friendly', 'concise'];
@@ -94,6 +96,18 @@ export async function PUT(request: NextRequest) {
     }
     if (aiOnboardingComplete !== undefined) {
       updateData.aiOnboardingComplete = aiOnboardingComplete;
+    }
+    if (aiPaused !== undefined) {
+      if (typeof aiPaused !== 'boolean') {
+        return NextResponse.json({ error: 'aiPaused must be a boolean' }, { status: 400 });
+      }
+      updateData.aiPaused = aiPaused;
+    }
+    if (notificationPrefs !== undefined) {
+      if (notificationPrefs !== null && typeof notificationPrefs !== 'object') {
+        return NextResponse.json({ error: 'notificationPrefs must be an object' }, { status: 400 });
+      }
+      updateData.notificationPrefs = notificationPrefs;
     }
 
     await db
