@@ -316,7 +316,6 @@ export default function LandingPage() {
                   <Link
                     href={pillar.href}
                     className="block h-full rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 transition-all duration-200 cursor-pointer light:shadow-sm group flex flex-col"
-                    style={{ borderTop: `3px solid ${pillar.color}` }}
                   >
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
