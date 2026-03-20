@@ -10,6 +10,7 @@ import { CRMPreviewCard } from '@/components/dashboard/CRMPreviewCard';
 import { ProcessingStatusCard } from '@/components/dashboard/ProcessingStatusCard';
 import { PostCallSystemPanel } from '@/components/dashboard/PostCallSystemPanel';
 import { TimeSavingsWidget } from '@/components/dashboard/TimeSavingsWidget';
+import { ReplyIntelligenceCard } from '@/components/dashboard/ReplyIntelligenceCard';
 import {
   getDraftStats,
   getMissionControlData,
@@ -125,6 +126,7 @@ async function CommandCenterContent() {
             <AIActionsFeed />
           </div>
           <div className="space-y-4">
+            <ReplyIntelligenceCard />
             <DealsAtRiskCard />
             <TimeSavingsWidget />
             <AIInsightsPanel insights={meetingInsights || undefined} />

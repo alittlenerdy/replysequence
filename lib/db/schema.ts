@@ -1960,3 +1960,54 @@ export const contacts = pgTable(
 export type Contact = typeof contacts.$inferSelect;
 export type NewContact = typeof contacts.$inferInsert;
 
+// ── Keyword and Topic Tracking ──────────────────────────────────────
+
+export type KeywordCategory = 'competitor' | 'product' | 'objection' | 'custom';
+
+// Tracked keywords table — user-defined keywords/topics to monitor across meetings
+export const trackedKeywords = pgTable(
+  'tracked_keywords',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    keyword: text('keyword').notNull(),
+    category: varchar('category', { length: 20 }).$type<KeywordCategory>().notNull().default('custom'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('tracked_keywords_user_id_idx').on(table.userId),
+    index('tracked_keywords_category_idx').on(table.category),
+    uniqueIndex('tracked_keywords_user_keyword_idx').on(table.userId, table.keyword),
+  ]
+);
+
+// Keyword mentions table — records where tracked keywords appear in meeting transcripts
+export const keywordMentions = pgTable(
+  'keyword_mentions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    keywordId: uuid('keyword_id')
+      .notNull()
+      .references(() => trackedKeywords.id, { onDelete: 'cascade' }),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    context: text('context').notNull(), // Text snippet around the mention
+    timestamp: integer('timestamp'), // Milliseconds into the meeting
+    speakerName: varchar('speaker_name', { length: 255 }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('keyword_mentions_keyword_id_idx').on(table.keywordId),
+    index('keyword_mentions_meeting_id_idx').on(table.meetingId),
+    index('keyword_mentions_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type TrackedKeyword = typeof trackedKeywords.$inferSelect;
+export type NewTrackedKeyword = typeof trackedKeywords.$inferInsert;
+export type KeywordMention = typeof keywordMentions.$inferSelect;
+export type NewKeywordMention = typeof keywordMentions.$inferInsert;
+

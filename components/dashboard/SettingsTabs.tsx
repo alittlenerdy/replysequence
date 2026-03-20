@@ -2,17 +2,19 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Sparkles, Plug, Mail, User } from 'lucide-react';
+import { Sparkles, Plug, Mail, User, Hash } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { IntegrationSettings } from './IntegrationSettings';
 import { EmailPreferencesSettings } from './EmailPreferencesSettings';
 import { AICustomization, TemplateManager } from './AICustomization';
 import { AccountManagement } from './AccountManagement';
+import { TopicTracker } from './TopicTracker';
 
 const tabs = [
   { id: 'ai', label: 'AI', icon: Sparkles },
   { id: 'integrations', label: 'Integrations', icon: Plug },
   { id: 'email', label: 'Email', icon: Mail },
+  { id: 'topics', label: 'Topics', icon: Hash },
   { id: 'account', label: 'Account', icon: User },
 ] as const;
 
@@ -92,6 +94,7 @@ export function SettingsTabs() {
             <TemplateManager />
           </div>
         )}
+        {activeTab === 'topics' && <TopicTracker />}
         {activeTab === 'account' && <AccountManagement />}
       </div>
     </div>

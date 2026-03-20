@@ -55,6 +55,17 @@ function ReplyIntentBadge({ intent }: { intent: string }) {
   );
 }
 
+const REPLY_ACTION_SUGGESTIONS: Record<string, string> = {
+  interested: 'Send a personalized follow-up to keep momentum.',
+  meeting_requested: 'Share your calendar link or propose meeting times.',
+  more_info: 'Prepare a detailed response with relevant info.',
+  not_now: 'Set a reminder to follow up in a few weeks.',
+  objection: 'Craft a response that addresses their specific concern.',
+  unsubscribe: 'Respect their request. Sequence has been cancelled.',
+  auto_reply: 'Wait for their return. Sequence is paused automatically.',
+  other: 'Review the reply manually to determine next steps.',
+};
+
 const TEMPLATE_ICON_COLORS: Record<string, string> = {
   sales: 'text-amber-400 bg-amber-500/20 border-amber-500/30',
   team: 'text-[#6366F1] bg-[#6366F1]/20 border-[#6366F1]/30',
@@ -432,14 +443,22 @@ export function DraftInlinePanel({
                 </p>
               )}
 
-              {/* Reply intent badge + summary */}
+              {/* Reply intent badge + summary + suggested action */}
               {draft.replyIntent && (
-                <div className="flex items-start gap-2 px-1">
-                  <ReplyIntentBadge intent={draft.replyIntent} />
-                  {draft.replyIntentSummary && (
-                    <span className="text-xs text-[#8892B0] light:text-gray-500">
-                      {draft.replyIntentSummary}
-                    </span>
+                <div className="px-1 space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <ReplyIntentBadge intent={draft.replyIntent} />
+                    {draft.replyIntentSummary && (
+                      <span className="text-xs text-[#8892B0] light:text-gray-500">
+                        {draft.replyIntentSummary}
+                      </span>
+                    )}
+                  </div>
+                  {REPLY_ACTION_SUGGESTIONS[draft.replyIntent] && (
+                    <div className="flex items-center gap-2 text-[11px] text-[#8892B0] light:text-gray-500 pl-0.5">
+                      <span className="font-medium text-[#6366F1]">Suggested:</span>
+                      <span>{REPLY_ACTION_SUGGESTIONS[draft.replyIntent]}</span>
+                    </div>
                   )}
                 </div>
               )}
