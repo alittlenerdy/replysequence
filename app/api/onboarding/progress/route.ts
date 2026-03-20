@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
           .where(
             and(
               eq(userOnboarding.clerkId, userId),
-              lt(userOnboarding.currentStep, currentStep)
+              sql`${userOnboarding.currentStep} < ${currentStep}`
             )
           );
       } else {

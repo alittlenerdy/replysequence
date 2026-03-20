@@ -480,7 +480,7 @@ async function processTranscriptAndGenerateDraft(
   // Create or update meeting record + transcript in a single transaction
   // This ensures we never have a meeting without its transcript (or vice versa)
   let meeting: typeof meetings.$inferSelect;
-  let transcriptRecord: { id: string; meetingId: string; platform: string; content: string; speakerSegments: unknown; source: string; language: string | null; wordCount: number; status: string };
+  let transcriptRecord: { id: string; meetingId: string; platform: string; content: string; speakerSegments: unknown; source: string; language: string | null; wordCount: number | null; status: string };
 
   const txResult = await db.transaction(async (tx) => {
     let txMeeting = botRecord.meetingId ? await tx.query.meetings.findFirst({
@@ -562,7 +562,7 @@ async function processTranscriptAndGenerateDraft(
         speakerSegments,
         source: 'recall',
         language: 'en',
-        wordCount: transcript.words?.length || 0,
+        wordCount: transcript.words?.length ?? 0,
         status: 'ready',
       })
       .returning();
