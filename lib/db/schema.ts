@@ -1440,10 +1440,12 @@ export const signalTypeEnum = pgEnum('signal_type', [
 // Deal stage tracking
 export type DealStage =
   | 'prospecting'
-  | 'qualification'
   | 'discovery'
+  | 'qualification'
+  | 'demo'
   | 'proposal'
   | 'negotiation'
+  | 'verbal_commit'
   | 'closed_won'
   | 'closed_lost';
 
@@ -2010,4 +2012,69 @@ export type TrackedKeyword = typeof trackedKeywords.$inferSelect;
 export type NewTrackedKeyword = typeof trackedKeywords.$inferInsert;
 export type KeywordMention = typeof keywordMentions.$inferSelect;
 export type NewKeywordMention = typeof keywordMentions.$inferInsert;
+
+// ── Shared Recaps (Viral Growth) ──────────────────────────────────
+
+export const sharedRecaps = pgTable(
+  'shared_recaps',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    shareToken: varchar('share_token', { length: 64 }).notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    viewCount: integer('view_count').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('shared_recaps_share_token_idx').on(table.shareToken),
+    index('shared_recaps_meeting_id_idx').on(table.meetingId),
+    index('shared_recaps_user_id_idx').on(table.userId),
+  ]
+);
+
+export type SharedRecap = typeof sharedRecaps.$inferSelect;
+export type NewSharedRecap = typeof sharedRecaps.$inferInsert;
+
+// Talk ratio type for JSONB storage
+export interface TalkRatio {
+  seller: number;  // percentage 0-100
+  prospect: number; // percentage 0-100
+}
+
+// Call coaching insights table — AI post-call analysis
+export const callCoachingInsights = pgTable(
+  'call_coaching_insights',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    meetingId: uuid('meeting_id')
+      .notNull()
+      .references(() => meetings.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    talkRatio: jsonb('talk_ratio').$type<TalkRatio>().notNull(),
+    questionCount: integer('question_count').notNull().default(0),
+    openQuestionCount: integer('open_question_count').notNull().default(0),
+    fillerWordCount: integer('filler_word_count').notNull().default(0),
+    longestMonologue: integer('longest_monologue').notNull().default(0), // seconds
+    nextStepSet: boolean('next_step_set').notNull().default(false),
+    objectionHandled: boolean('objection_handled').notNull().default(false),
+    overallScore: integer('overall_score').notNull().default(0), // 0-100
+    suggestions: jsonb('suggestions').$type<string[]>().notNull().default([]),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('call_coaching_meeting_id_idx').on(table.meetingId),
+    index('call_coaching_user_id_idx').on(table.userId),
+    index('call_coaching_created_at_idx').on(table.createdAt),
+  ]
+);
+
+export type CallCoachingInsight = typeof callCoachingInsights.$inferSelect;
+export type NewCallCoachingInsight = typeof callCoachingInsights.$inferInsert;
 

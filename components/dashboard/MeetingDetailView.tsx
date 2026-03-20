@@ -9,6 +9,8 @@ import { DraftPreviewModal } from '@/components/DraftPreviewModal';
 import { MeetingSummaryCard } from '@/components/dashboard/MeetingSummaryCard';
 import { SequencesSection } from '@/components/dashboard/SequencesSection';
 import { CopyToCRM } from '@/components/dashboard/CopyToCRM';
+import { PipelineStageIndicator } from '@/components/dashboard/PipelineStageIndicator';
+import { CallCoachingCard } from '@/components/dashboard/CallCoachingCard';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 
 function PlatformBadge({ platform }: { platform: string }) {
@@ -100,6 +102,8 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
   const [isReprocessing, setIsReprocessing] = useState(false);
   const [regenerateError, setRegenerateError] = useState<string | null>(null);
   const [regenerateSuccess, setRegenerateSuccess] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   const handleRegenerate = async () => {
     setIsRegenerating(true);
@@ -153,6 +157,26 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
     }
   };
 
+  const handleShareRecap = async () => {
+    setIsSharing(true);
+    try {
+      const res = await fetch(`/api/meetings/${meeting.id}/share`, {
+        method: 'POST',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const fullUrl = `${window.location.origin}${data.shareUrl}`;
+        await navigator.clipboard.writeText(fullUrl);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 3000);
+      }
+    } catch {
+      // Silently fail — the button will reset
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Back link */}
@@ -188,7 +212,28 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
             </div>
           </div>
           {meeting.summary && (
-            <div className="shrink-0">
+            <div className="shrink-0 flex items-center gap-2">
+              <button
+                onClick={handleShareRecap}
+                disabled={isSharing}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/20 hover:bg-[#4F46E5]/25 transition-colors disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+              >
+                {shareCopied ? (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Link copied!
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    {isSharing ? 'Sharing...' : 'Share Recap'}
+                  </>
+                )}
+              </button>
               <CopyToCRM meeting={meeting} />
             </div>
           )}
@@ -320,6 +365,9 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
           </div>
         </div>
       )}
+
+      {/* Call Coaching Insights */}
+      <CallCoachingCard meetingId={meeting.id} hasTranscript={!!meeting.transcript} />
 
       {/* Processing Status (if not completed) */}
       {meeting.status === 'processing' && meeting.processingLogs && meeting.processingLogs.length > 0 && (
