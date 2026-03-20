@@ -15,6 +15,7 @@ import {
   ChevronUp,
   RotateCcw,
 } from 'lucide-react';
+import { SourceBadge, mapToSourceType } from '@/components/ui/SourceBadge';
 
 interface NextStepItem {
   id: string;
@@ -228,11 +229,7 @@ export function NextStepTimeline({ compact = false }: NextStepTimelineProps) {
                         <span className={`text-sm font-medium ${step.status === 'completed' ? 'line-through text-gray-500' : 'text-white light:text-gray-900'}`}>
                           {step.task}
                         </span>
-                        {step.source === 'predicted' && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                            AI predicted
-                          </span>
-                        )}
+                        <SourceBadge source={mapToSourceType(step.source)} compact />
                       </div>
                       <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
                         <span className="flex items-center gap-1">

@@ -1,5 +1,7 @@
 'use client';
 
+import { SourceBadge } from '@/components/ui/SourceBadge';
+
 interface MeetingSummaryCardProps {
   summary: string;
   keyTopics?: Array<{ topic: string; duration?: string }> | null;
@@ -90,12 +92,15 @@ export function MeetingSummaryCard({
               {actionItems.map((item, i) => (
                 <li key={i} className={`flex items-start gap-2 ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} bg-gray-800/50 light:bg-gray-50 rounded-lg border border-gray-700/50 light:border-gray-200`}>
                   <span className="w-4 h-4 mt-0.5 shrink-0 rounded border border-gray-600 light:border-gray-300 flex items-center justify-center" />
-                  <div className="min-w-0">
-                    <p className={`${bodySize} text-gray-200 light:text-gray-700`}>
-                      <span className="font-medium text-amber-300 light:text-amber-600">{item.owner}</span>
-                      {': '}
-                      {item.task}
-                    </p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className={`${bodySize} text-gray-200 light:text-gray-700`}>
+                        <span className="font-medium text-amber-300 light:text-amber-600">{item.owner}</span>
+                        {': '}
+                        {item.task}
+                      </p>
+                      <SourceBadge source="ai" compact />
+                    </div>
                     {item.deadline && (
                       <p className="text-xs text-gray-500 mt-0.5">{item.deadline}</p>
                     )}
