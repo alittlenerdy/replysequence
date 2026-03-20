@@ -181,5 +181,5 @@ git push origin main # Deploy
 
 **Creator:** Jimmy Hackett
 **Company:** Playground Giants
-**Email:** jimmy@playgroundgiants.com
+**Email:** jimmy@replysequence.com
 **Website:** https://www.replysequence.com
