@@ -100,6 +100,7 @@ export async function searchMeetingNotes(
 
       const response = await fetch(`${DRIVE_API}/files?${params}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
+        signal: AbortSignal.timeout(30000),
       });
 
       if (!response.ok) {
@@ -172,6 +173,7 @@ export async function searchMeetRecordingsFolder(
 
     const folderResponse = await fetch(`${DRIVE_API}/files?${folderParams}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!folderResponse.ok) {
@@ -242,6 +244,7 @@ export async function downloadDocAsText(
 
   const response = await fetch(exportUrl, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(60000),
   });
 
   if (!response.ok) {
@@ -275,6 +278,7 @@ export async function getFileMetadata(
 
     const response = await fetch(`${DRIVE_API}/files/${fileId}?${params}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {

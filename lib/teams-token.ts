@@ -8,6 +8,7 @@
 import { eq } from 'drizzle-orm';
 import { db, teamsConnections, users } from '@/lib/db';
 import { encrypt, decrypt } from '@/lib/encryption';
+import { withTokenRefreshLock } from '@/lib/token-refresh-lock';
 
 // Configuration from environment (trim to prevent newline issues)
 const CLIENT_ID = process.env.MICROSOFT_TEAMS_CLIENT_ID?.trim();
@@ -80,51 +81,54 @@ export async function getValidTeamsToken(userId: string): Promise<string | null>
       now: now.toISOString(),
     });
 
-    // Refresh the token
-    const refreshToken = decrypt(connection.refreshTokenEncrypted);
-    const newTokens = await refreshAccessToken(refreshToken);
+    // Use lock to prevent concurrent refreshes for the same user
+    const lockKey = `teams:${userId}`;
+    return withTokenRefreshLock(lockKey, async () => {
+      const refreshToken = decrypt(connection.refreshTokenEncrypted);
+      const newTokens = await refreshAccessToken(refreshToken);
 
-    if (!newTokens) {
-      log('error', 'Failed to refresh token', { userId });
-      return null;
-    }
+      if (!newTokens) {
+        log('error', 'Failed to refresh token', { userId });
+        return null;
+      }
 
-    // Update tokens in database
-    const newExpiresAt = new Date(Date.now() + newTokens.expires_in * 1000);
-    const newAccessTokenEncrypted = encrypt(newTokens.access_token);
+      // Update tokens in database
+      const newExpiresAt = new Date(Date.now() + newTokens.expires_in * 1000);
+      const newAccessTokenEncrypted = encrypt(newTokens.access_token);
 
-    // Microsoft may or may not return a new refresh token
-    // If a new refresh token was provided, update it too
-    if (newTokens.refresh_token) {
-      await db
-        .update(teamsConnections)
-        .set({
-          accessTokenEncrypted: newAccessTokenEncrypted,
-          accessTokenExpiresAt: newExpiresAt,
-          refreshTokenEncrypted: encrypt(newTokens.refresh_token),
-          lastRefreshedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(teamsConnections.userId, userId));
-    } else {
-      await db
-        .update(teamsConnections)
-        .set({
-          accessTokenEncrypted: newAccessTokenEncrypted,
-          accessTokenExpiresAt: newExpiresAt,
-          lastRefreshedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(teamsConnections.userId, userId));
-    }
+      // Microsoft may or may not return a new refresh token
+      // If a new refresh token was provided, update it too
+      if (newTokens.refresh_token) {
+        await db
+          .update(teamsConnections)
+          .set({
+            accessTokenEncrypted: newAccessTokenEncrypted,
+            accessTokenExpiresAt: newExpiresAt,
+            refreshTokenEncrypted: encrypt(newTokens.refresh_token),
+            lastRefreshedAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(teamsConnections.userId, userId));
+      } else {
+        await db
+          .update(teamsConnections)
+          .set({
+            accessTokenEncrypted: newAccessTokenEncrypted,
+            accessTokenExpiresAt: newExpiresAt,
+            lastRefreshedAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(teamsConnections.userId, userId));
+      }
 
-    log('info', 'Token refreshed successfully', {
-      userId,
-      newExpiresAt: newExpiresAt.toISOString(),
-      hasNewRefreshToken: !!newTokens.refresh_token,
+      log('info', 'Token refreshed successfully', {
+        userId,
+        newExpiresAt: newExpiresAt.toISOString(),
+        hasNewRefreshToken: !!newTokens.refresh_token,
+      });
+
+      return newTokens.access_token;
     });
-
-    return newTokens.access_token;
   } catch (error) {
     log('error', 'Error getting valid Teams token', {
       userId,

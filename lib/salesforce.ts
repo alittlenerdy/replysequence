@@ -7,6 +7,7 @@
  */
 
 import type { SalesforceFieldMapping } from './db/schema';
+import { withTokenRefreshLock } from '@/lib/token-refresh-lock';
 
 // Configuration from environment
 const SALESFORCE_CLIENT_ID = process.env.SALESFORCE_CLIENT_ID;
@@ -91,6 +92,7 @@ export async function exchangeSalesforceCode(code: string): Promise<{
       redirect_uri: SALESFORCE_REDIRECT_URI,
       code,
     }),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -110,32 +112,49 @@ export async function exchangeSalesforceCode(code: string): Promise<{
   };
 }
 
-export async function refreshSalesforceToken(refreshToken: string): Promise<{
+/**
+ * Refresh Salesforce access token.
+ *
+ * Uses a lock keyed by connectionId (or refresh token hash) to prevent
+ * concurrent refresh requests from racing against each other.
+ *
+ * @param refreshToken - The current refresh token
+ * @param connectionId - Optional connection ID for lock deduplication
+ */
+export async function refreshSalesforceToken(
+  refreshToken: string,
+  connectionId?: string
+): Promise<{
   accessToken: string;
   instanceUrl: string;
 }> {
-  const response = await fetch(SF_TOKEN_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      client_id: SALESFORCE_CLIENT_ID!,
-      client_secret: SALESFORCE_CLIENT_SECRET!,
-      refresh_token: refreshToken,
-    }),
+  const lockKey = `salesforce:${connectionId ?? refreshToken.slice(-16)}`;
+
+  return withTokenRefreshLock(lockKey, async () => {
+    const response = await fetch(SF_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: SALESFORCE_CLIENT_ID!,
+        client_secret: SALESFORCE_CLIENT_SECRET!,
+        refresh_token: refreshToken,
+      }),
+      signal: AbortSignal.timeout(30000),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      log('error', 'Token refresh failed', { status: response.status, error: errorText });
+      throw new Error(`Salesforce token refresh failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+      accessToken: data.access_token,
+      instanceUrl: data.instance_url,
+    };
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    log('error', 'Token refresh failed', { status: response.status, error: errorText });
-    throw new Error(`Salesforce token refresh failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return {
-    accessToken: data.access_token,
-    instanceUrl: data.instance_url,
-  };
 }
 
 // --- Identity ---
@@ -148,6 +167,7 @@ export async function getSalesforceUserInfo(accessToken: string, identityUrl: st
 }> {
   const response = await fetch(identityUrl, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -179,6 +199,7 @@ async function sfFetch(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    signal: AbortSignal.timeout(30000),
   });
 }
 

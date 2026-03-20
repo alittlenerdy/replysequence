@@ -477,106 +477,117 @@ async function processTranscriptAndGenerateDraft(
   }
   if (!meetingTitle || genericTitles.includes(meetingTitle)) meetingTitle = 'Untitled Meeting';
 
-  // Create or update meeting record
-  let meeting = botRecord.meetingId ? await db.query.meetings.findFirst({
-    where: eq(meetings.id, botRecord.meetingId),
-  }) : null;
+  // Create or update meeting record + transcript in a single transaction
+  // This ensures we never have a meeting without its transcript (or vice versa)
+  let meeting: typeof meetings.$inferSelect;
+  let transcriptRecord: { id: string; meetingId: string; platform: string; content: string; speakerSegments: unknown; source: string; language: string | null; wordCount: number; status: string };
 
-  // If no linked meeting, try to find one by meeting URL (may have been created by Meet webhook)
-  if (!meeting && botRecord.meetingUrl) {
-    const recentMeetings = await db
-      .select()
-      .from(meetings)
-      .where(and(
-        eq(meetings.userId, botRecord.userId),
-        sql`${meetings.createdAt} > NOW() - INTERVAL '2 hours'`
-      ))
-      .orderBy(sql`${meetings.createdAt} DESC`)
-      .limit(10);
+  const txResult = await db.transaction(async (tx) => {
+    let txMeeting = botRecord.meetingId ? await tx.query.meetings.findFirst({
+      where: eq(meetings.id, botRecord.meetingId),
+    }) : null;
 
-    // Match by URL pattern (meet.google.com/xxx-xxxx-xxx)
-    const meetUrl = botRecord.meetingUrl.replace('https://', '').replace('http://', '');
-    meeting = recentMeetings.find(m =>
-      m.platformMeetingId?.includes(meetUrl.split('/').pop() || '') ||
-      m.zoomMeetingId?.includes('meet-')
-    ) || null;
-  }
+    // If no linked meeting, try to find one by meeting URL (may have been created by Meet webhook)
+    if (!txMeeting && botRecord.meetingUrl) {
+      const recentMeetings = await tx
+        .select()
+        .from(meetings)
+        .where(and(
+          eq(meetings.userId, botRecord.userId),
+          sql`${meetings.createdAt} > NOW() - INTERVAL '2 hours'`
+        ))
+        .orderBy(sql`${meetings.createdAt} DESC`)
+        .limit(10);
 
-  if (meeting) {
-    // Update existing meeting with better title if current one is generic
-    const genericMeetingTitles = ['Google Meet', 'Zoom Meeting', 'Teams Meeting', 'Meeting', 'Untitled Meeting'];
-    if (genericMeetingTitles.includes(meeting.topic || '') && meetingTitle && !genericMeetingTitles.includes(meetingTitle)) {
-      await db
-        .update(meetings)
-        .set({ topic: meetingTitle, status: 'processing', processingStep: 'transcript_stored', processingProgress: 60 })
-        .where(eq(meetings.id, meeting.id));
-      meeting = { ...meeting, topic: meetingTitle };
+      // Match by URL pattern (meet.google.com/xxx-xxxx-xxx)
+      const meetUrl = botRecord.meetingUrl.replace('https://', '').replace('http://', '');
+      txMeeting = recentMeetings.find(m =>
+        m.platformMeetingId?.includes(meetUrl.split('/').pop() || '') ||
+        m.zoomMeetingId?.includes('meet-')
+      ) || null;
     }
 
-    // Link meeting to bot record if not already linked
-    if (!botRecord.meetingId) {
-      await db
+    if (txMeeting) {
+      // Update existing meeting with better title if current one is generic
+      const genericMeetingTitles = ['Google Meet', 'Zoom Meeting', 'Teams Meeting', 'Meeting', 'Untitled Meeting'];
+      if (genericMeetingTitles.includes(txMeeting.topic || '') && meetingTitle && !genericMeetingTitles.includes(meetingTitle)) {
+        await tx
+          .update(meetings)
+          .set({ topic: meetingTitle, status: 'processing', processingStep: 'transcript_stored', processingProgress: 60 })
+          .where(eq(meetings.id, txMeeting.id));
+        txMeeting = { ...txMeeting, topic: meetingTitle };
+      }
+
+      // Link meeting to bot record if not already linked
+      if (!botRecord.meetingId) {
+        await tx
+          .update(recallBots)
+          .set({ meetingId: txMeeting.id, updatedAt: new Date() })
+          .where(eq(recallBots.id, botRecord.id));
+      }
+    } else {
+      // Create new meeting record
+      const [newMeeting] = await tx
+        .insert(meetings)
+        .values({
+          userId: botRecord.userId,
+          platform,
+          zoomMeetingId: botRecord.recallBotId!, // Use recall bot ID as external ID
+          platformMeetingId: botRecord.calendarEventId || botRecord.recallBotId,
+          hostEmail: user.email,
+          topic: meetingTitle,
+          startTime: botRecord.actualJoinAt || botRecord.scheduledJoinAt,
+          endTime: botRecord.endedAt,
+          status: 'processing',
+          processingStep: 'transcript_stored',
+          processingProgress: 60,
+        })
+        .returning();
+      txMeeting = newMeeting;
+
+      // Link meeting to bot record
+      await tx
         .update(recallBots)
-        .set({ meetingId: meeting.id, updatedAt: new Date() })
+        .set({ meetingId: txMeeting.id, updatedAt: new Date() })
         .where(eq(recallBots.id, botRecord.id));
     }
-  } else {
-    // Create new meeting record
-    const [newMeeting] = await db
-      .insert(meetings)
+
+    // Create transcript record
+    const [txTranscript] = await tx
+      .insert(transcriptsTable)
       .values({
-        userId: botRecord.userId,
+        meetingId: txMeeting.id,
         platform,
-        zoomMeetingId: botRecord.recallBotId!, // Use recall bot ID as external ID
-        platformMeetingId: botRecord.calendarEventId || botRecord.recallBotId,
-        hostEmail: user.email,
-        topic: meetingTitle,
-        startTime: botRecord.actualJoinAt || botRecord.scheduledJoinAt,
-        endTime: botRecord.endedAt,
-        status: 'processing',
-        processingStep: 'transcript_stored',
-        processingProgress: 60,
+        content: fullText.trim(),
+        speakerSegments,
+        source: 'recall',
+        language: 'en',
+        wordCount: transcript.words?.length || 0,
+        status: 'ready',
       })
       .returning();
-    meeting = newMeeting;
 
-    // Link meeting to bot record
-    await db
-      .update(recallBots)
-      .set({ meetingId: meeting.id, updatedAt: new Date() })
-      .where(eq(recallBots.id, botRecord.id));
-  }
+    // Update meeting status
+    await tx
+      .update(meetings)
+      .set({
+        status: 'ready',
+        processingStep: 'draft_generation',
+        processingProgress: 70,
+        updatedAt: new Date(),
+      })
+      .where(eq(meetings.id, txMeeting.id));
 
-  // Create transcript record
-  const [transcriptRecord] = await db
-    .insert(transcriptsTable)
-    .values({
-      meetingId: meeting.id,
-      platform,
-      content: fullText.trim(),
-      speakerSegments,
-      source: 'recall',
-      language: 'en',
-      wordCount: transcript.words?.length || 0,
-      status: 'ready',
-    })
-    .returning();
+    return { meeting: txMeeting, transcript: txTranscript };
+  });
+
+  meeting = txResult.meeting;
+  transcriptRecord = txResult.transcript;
 
   console.log('[RECALL-WEBHOOK] Transcript stored:', {
     meetingId: meeting.id,
     transcriptId: transcriptRecord.id,
   });
-
-  // Update meeting status
-  await db
-    .update(meetings)
-    .set({
-      status: 'ready',
-      processingStep: 'draft_generation',
-      processingProgress: 70,
-      updatedAt: new Date(),
-    })
-    .where(eq(meetings.id, meeting.id));
 
   // Check auto-process preference before generating draft
   if (botRecord.calendarEventId) {

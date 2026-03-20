@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { userOnboarding, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, sheetsConnections, salesforceConnections } from '@/lib/db/schema';
 import type { OnboardingStep, ConnectedPlatform, EmailPreference } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, lt, sql } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import { z } from 'zod';
 import { parseBody } from '@/lib/api-validation';
@@ -187,10 +187,29 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (existing) {
-      await db
-        .update(userOnboarding)
-        .set(updates)
-        .where(eq(userOnboarding.clerkId, userId));
+      // When updating currentStep, only allow forward advancement to prevent
+      // race conditions from rapid clicks overwriting each other.
+      // Other fields (platformConnected, etc.) update unconditionally.
+      if (currentStep !== undefined && currentStep > existing.currentStep) {
+        await db
+          .update(userOnboarding)
+          .set(updates)
+          .where(
+            and(
+              eq(userOnboarding.clerkId, userId),
+              lt(userOnboarding.currentStep, currentStep)
+            )
+          );
+      } else {
+        // No step change or step is not advancing: update other fields only
+        const { currentStep: _step, ...otherUpdates } = updates;
+        if (Object.keys(otherUpdates).length > 1) { // > 1 because updatedAt is always present
+          await db
+            .update(userOnboarding)
+            .set(otherUpdates)
+            .where(eq(userOnboarding.clerkId, userId));
+        }
+      }
     } else {
       await db.insert(userOnboarding).values({
         clerkId: userId,

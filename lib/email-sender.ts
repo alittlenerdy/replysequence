@@ -1,6 +1,7 @@
 import { decrypt, encrypt } from '@/lib/encryption';
 import { db, emailConnections } from '@/lib/db';
 import { eq } from 'drizzle-orm';
+import { withTokenRefreshLock } from '@/lib/token-refresh-lock';
 
 export interface ConnectedEmailResult {
   success: boolean;
@@ -32,6 +33,7 @@ export async function refreshGmailToken(
       refresh_token: refreshToken,
       grant_type: 'refresh_token',
     }),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -96,6 +98,7 @@ export async function refreshOutlookToken(
         grant_type: 'refresh_token',
         scope: 'openid profile email Mail.Send offline_access',
       }),
+      signal: AbortSignal.timeout(30000),
     }
   );
 
@@ -205,6 +208,7 @@ export async function sendViaGmail(params: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ raw: base64urlMessage }),
+        signal: AbortSignal.timeout(30000),
       }
     );
 
@@ -311,6 +315,7 @@ export async function sendViaOutlook(params: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(mailBody),
+        signal: AbortSignal.timeout(30000),
       }
     );
 
@@ -411,56 +416,61 @@ export async function sendViaConnectedAccount(params: {
         timestamp: new Date().toISOString(),
       }));
 
-      // 3. Decrypt refresh token and refresh
-      const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
+      // Use lock to prevent concurrent refreshes for the same email connection
+      const lockKey = `email:${connection.id}`;
+      accessToken = await withTokenRefreshLock(lockKey, async () => {
+        const refreshTokenDecrypted = decrypt(connection.refreshTokenEncrypted);
 
-      if (connection.provider === 'gmail') {
-        const refreshed = await refreshGmailToken(refreshTokenDecrypted);
-        accessToken = refreshed.accessToken;
+        if (connection.provider === 'gmail') {
+          const refreshed = await refreshGmailToken(refreshTokenDecrypted);
 
-        // Update DB with new encrypted access token + expiration
-        const newExpiresAt = new Date(Date.now() + refreshed.expiresIn * 1000);
-        await db
-          .update(emailConnections)
-          .set({
-            accessTokenEncrypted: encrypt(refreshed.accessToken),
-            accessTokenExpiresAt: newExpiresAt,
-          })
-          .where(eq(emailConnections.id, connection.id));
+          // Update DB with new encrypted access token + expiration
+          const newExpiresAt = new Date(Date.now() + refreshed.expiresIn * 1000);
+          await db
+            .update(emailConnections)
+            .set({
+              accessTokenEncrypted: encrypt(refreshed.accessToken),
+              accessTokenExpiresAt: newExpiresAt,
+            })
+            .where(eq(emailConnections.id, connection.id));
 
-        console.log(JSON.stringify({
-          level: 'info',
-          tag: '[EMAIL-SENDER]',
-          message: 'Gmail token refreshed and stored',
-          connectionId: connection.id,
-          newExpiresAt: newExpiresAt.toISOString(),
-          timestamp: new Date().toISOString(),
-        }));
-      } else {
-        // Outlook
-        const refreshed = await refreshOutlookToken(refreshTokenDecrypted);
-        accessToken = refreshed.accessToken;
+          console.log(JSON.stringify({
+            level: 'info',
+            tag: '[EMAIL-SENDER]',
+            message: 'Gmail token refreshed and stored',
+            connectionId: connection.id,
+            newExpiresAt: newExpiresAt.toISOString(),
+            timestamp: new Date().toISOString(),
+          }));
 
-        // Update DB with new encrypted access AND refresh tokens + expiration
-        const newExpiresAt = new Date(Date.now() + refreshed.expiresIn * 1000);
-        await db
-          .update(emailConnections)
-          .set({
-            accessTokenEncrypted: encrypt(refreshed.accessToken),
-            refreshTokenEncrypted: encrypt(refreshed.refreshToken),
-            accessTokenExpiresAt: newExpiresAt,
-          })
-          .where(eq(emailConnections.id, connection.id));
+          return refreshed.accessToken;
+        } else {
+          // Outlook
+          const refreshed = await refreshOutlookToken(refreshTokenDecrypted);
 
-        console.log(JSON.stringify({
-          level: 'info',
-          tag: '[EMAIL-SENDER]',
-          message: 'Outlook tokens refreshed and stored',
-          connectionId: connection.id,
-          newExpiresAt: newExpiresAt.toISOString(),
-          timestamp: new Date().toISOString(),
-        }));
-      }
+          // Update DB with new encrypted access AND refresh tokens + expiration
+          const newExpiresAt = new Date(Date.now() + refreshed.expiresIn * 1000);
+          await db
+            .update(emailConnections)
+            .set({
+              accessTokenEncrypted: encrypt(refreshed.accessToken),
+              refreshTokenEncrypted: encrypt(refreshed.refreshToken),
+              accessTokenExpiresAt: newExpiresAt,
+            })
+            .where(eq(emailConnections.id, connection.id));
+
+          console.log(JSON.stringify({
+            level: 'info',
+            tag: '[EMAIL-SENDER]',
+            message: 'Outlook tokens refreshed and stored',
+            connectionId: connection.id,
+            newExpiresAt: newExpiresAt.toISOString(),
+            timestamp: new Date().toISOString(),
+          }));
+
+          return refreshed.accessToken;
+        }
+      });
     }
 
     // 4. Send via the correct provider

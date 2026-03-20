@@ -40,6 +40,7 @@ class RecallClient {
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {

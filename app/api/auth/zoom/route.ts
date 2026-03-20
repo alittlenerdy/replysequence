@@ -5,6 +5,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
@@ -48,9 +49,11 @@ export async function GET(request: NextRequest) {
   const baseUrl = rawAppUrl.replace(/\/+$/, '');
   const redirectUri = `${baseUrl}/api/auth/zoom/callback`;
 
-  // Encode returnTo in state along with userId for CSRF protection
-  // Format: userId|returnTo (base64 encoded)
-  const statePayload = JSON.stringify({ userId, returnTo });
+  // Generate a random nonce for CSRF protection
+  const csrfNonce = crypto.randomUUID();
+
+  // Encode returnTo in state along with userId and CSRF nonce
+  const statePayload = JSON.stringify({ userId, returnTo, nonce: csrfNonce });
   const state = Buffer.from(statePayload).toString('base64');
 
   console.log('[ZOOM-OAUTH] URL construction:', {
@@ -66,7 +69,7 @@ export async function GET(request: NextRequest) {
     response_type: 'code',
     client_id: clientId,
     redirect_uri: redirectUri,
-    state, // Encoded userId + returnTo
+    state, // Encoded userId + returnTo + nonce
   });
 
   const zoomAuthUrl = `https://zoom.us/oauth/authorize?${params.toString()}`;
@@ -76,5 +79,15 @@ export async function GET(request: NextRequest) {
     redirectUri,
   });
 
-  return NextResponse.redirect(zoomAuthUrl);
+  // Set CSRF state cookie and redirect
+  const response = NextResponse.redirect(zoomAuthUrl);
+  response.cookies.set('oauth_state_zoom', csrfNonce, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 600,
+    path: '/',
+  });
+
+  return response;
 }

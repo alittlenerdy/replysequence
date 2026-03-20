@@ -91,6 +91,7 @@ export async function getAccessToken(): Promise<string> {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params.toString(),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -140,6 +141,7 @@ async function meetRequest<T>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -322,6 +324,7 @@ async function meetBetaRequest<T>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -419,6 +422,7 @@ export async function downloadTranscriptFromDocs(
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      signal: AbortSignal.timeout(60000),
     });
 
     if (response.ok) {

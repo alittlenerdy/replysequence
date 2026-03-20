@@ -80,6 +80,7 @@ async function refreshGoogleAccessToken(
         refresh_token: refreshToken,
         grant_type: 'refresh_token',
       }),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
@@ -150,6 +151,7 @@ async function fetchUpcomingCalendarEvents(
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        signal: AbortSignal.timeout(30000),
       }
     );
 

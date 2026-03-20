@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 export const maxDuration = 60;
 
@@ -31,9 +32,11 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${baseUrl}/api/auth/outlook/callback`;
     const scopes = 'openid profile email Mail.Send offline_access';
 
+    const csrfNonce = crypto.randomUUID();
     const state = Buffer.from(JSON.stringify({
       userId,
       returnTo: redirect,
+      nonce: csrfNonce,
     })).toString('base64');
 
     const params = new URLSearchParams({
@@ -53,7 +56,15 @@ export async function GET(request: NextRequest) {
       userId,
     }));
 
-    return NextResponse.redirect(authUrl);
+    const response = NextResponse.redirect(authUrl);
+    response.cookies.set('oauth_state_outlook', csrfNonce, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 600,
+      path: '/',
+    });
+    return response;
   } catch (error) {
     console.log(JSON.stringify({
       level: 'error',

@@ -8,6 +8,7 @@
 import { eq, and, desc } from 'drizzle-orm';
 import { db, meetConnections, users } from '@/lib/db';
 import { encrypt, decrypt } from '@/lib/encryption';
+import { withTokenRefreshLock } from '@/lib/token-refresh-lock';
 
 // Configuration from environment (trim to prevent newline issues)
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID?.trim();
@@ -96,43 +97,46 @@ async function getValidTokenForConnection(connection: typeof meetConnections.$in
     now: now.toISOString(),
   });
 
-  // Refresh the token
-  const refreshToken = decrypt(connection.refreshTokenEncrypted);
-  const newTokens = await refreshAccessToken(refreshToken);
+  // Use lock to prevent concurrent refreshes for the same connection
+  const lockKey = `meet:${connection.id}`;
+  return withTokenRefreshLock(lockKey, async () => {
+    const refreshToken = decrypt(connection.refreshTokenEncrypted);
+    const newTokens = await refreshAccessToken(refreshToken);
 
-  if (!newTokens) {
-    log('error', '[MEET-TOKEN-ERROR] Failed to refresh token', { connectionId: connection.id });
-    return null;
-  }
+    if (!newTokens) {
+      log('error', '[MEET-TOKEN-ERROR] Failed to refresh token', { connectionId: connection.id });
+      return null;
+    }
 
-  // Update tokens in database - use connection ID for precise targeting
-  const newExpiresAt = new Date(Date.now() + newTokens.expires_in * 1000);
-  const newAccessTokenEncrypted = encrypt(newTokens.access_token);
+    // Update tokens in database - use connection ID for precise targeting
+    const newExpiresAt = new Date(Date.now() + newTokens.expires_in * 1000);
+    const newAccessTokenEncrypted = encrypt(newTokens.access_token);
 
-  const updateData: Record<string, unknown> = {
-    accessTokenEncrypted: newAccessTokenEncrypted,
-    accessTokenExpiresAt: newExpiresAt,
-    lastRefreshedAt: new Date(),
-    updatedAt: new Date(),
-  };
+    const updateData: Record<string, unknown> = {
+      accessTokenEncrypted: newAccessTokenEncrypted,
+      accessTokenExpiresAt: newExpiresAt,
+      lastRefreshedAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-  // Google may or may not return a new refresh token
-  if (newTokens.refresh_token) {
-    updateData.refreshTokenEncrypted = encrypt(newTokens.refresh_token);
-  }
+    // Google may or may not return a new refresh token
+    if (newTokens.refresh_token) {
+      updateData.refreshTokenEncrypted = encrypt(newTokens.refresh_token);
+    }
 
-  await db
-    .update(meetConnections)
-    .set(updateData)
-    .where(eq(meetConnections.id, connection.id));
+    await db
+      .update(meetConnections)
+      .set(updateData)
+      .where(eq(meetConnections.id, connection.id));
 
-  log('info', '[MEET-TOKEN-4] Token refreshed successfully', {
-    connectionId: connection.id,
-    newExpiresAt: newExpiresAt.toISOString(),
-    hasNewRefreshToken: !!newTokens.refresh_token,
+    log('info', '[MEET-TOKEN-4] Token refreshed successfully', {
+      connectionId: connection.id,
+      newExpiresAt: newExpiresAt.toISOString(),
+      hasNewRefreshToken: !!newTokens.refresh_token,
+    });
+
+    return newTokens.access_token;
   });
-
-  return newTokens.access_token;
 }
 
 /**

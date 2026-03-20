@@ -37,7 +37,7 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Verify meeting belongs to user (by host email)
+    // Verify meeting belongs to user (by userId)
     const [meeting] = await db
       .select({
         id: meetings.id,
@@ -49,19 +49,13 @@ export async function GET(
         processingCompletedAt: meetings.processingCompletedAt,
         processingError: meetings.processingError,
         topic: meetings.topic,
-        hostEmail: meetings.hostEmail,
       })
       .from(meetings)
-      .where(eq(meetings.id, meetingId))
+      .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
       .limit(1);
 
     if (!meeting) {
       return NextResponse.json({ error: 'Meeting not found' }, { status: 404 });
-    }
-
-    // Check if user owns this meeting (host email matches)
-    if (meeting.hostEmail !== user.email) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     return NextResponse.json({

@@ -7,36 +7,43 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { db, meetings } from '@/lib/db';
-import { signals } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { signals, users } from '@/lib/db/schema';
+import { eq, and, desc } from 'drizzle-orm';
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ meetingId: string }> },
 ) {
-  const user = await currentUser();
-  if (!user) {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { meetingId } = await params;
 
   try {
-    // Verify meeting belongs to the authenticated user
+    // Get user's internal ID from Clerk ID
+    const [user] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Verify meeting belongs to the authenticated user using internal user ID
     const [meeting] = await db
-      .select({ id: meetings.id, userId: meetings.userId })
+      .select({ id: meetings.id })
       .from(meetings)
-      .where(eq(meetings.id, meetingId))
+      .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
       .limit(1);
 
     if (!meeting) {
       return NextResponse.json({ error: 'Meeting not found' }, { status: 404 });
-    }
-
-    if (meeting.userId !== user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Fetch signals ordered by confidence (highest first)

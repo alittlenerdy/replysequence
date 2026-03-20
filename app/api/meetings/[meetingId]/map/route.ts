@@ -9,22 +9,31 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { db, meetings } from '@/lib/db';
-import { eq } from 'drizzle-orm';
+import { users } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { getMapForMeeting } from '@/lib/map/store';
 import { generateMap } from '@/lib/map/generate';
 import { toJson, toMarkdown, toPlainText } from '@/lib/map/export';
 
-async function verifyMeetingOwnership(meetingId: string, userId: string) {
+async function getInternalUserId(clerkId: string): Promise<string | null> {
+  const [user] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.clerkId, clerkId))
+    .limit(1);
+  return user?.id || null;
+}
+
+async function verifyMeetingOwnership(meetingId: string, internalUserId: string) {
   const [meeting] = await db
     .select({ id: meetings.id, userId: meetings.userId, topic: meetings.topic })
     .from(meetings)
-    .where(eq(meetings.id, meetingId))
+    .where(and(eq(meetings.id, meetingId), eq(meetings.userId, internalUserId)))
     .limit(1);
 
   if (!meeting) return { error: 'Meeting not found', status: 404 };
-  if (meeting.userId !== userId) return { error: 'Forbidden', status: 403 };
   return { meeting };
 }
 
@@ -32,15 +41,20 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ meetingId: string }> },
 ) {
-  const user = await currentUser();
-  if (!user) {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const internalUserId = await getInternalUserId(clerkId);
+  if (!internalUserId) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
   const { meetingId } = await params;
 
   try {
-    const ownership = await verifyMeetingOwnership(meetingId, user.id);
+    const ownership = await verifyMeetingOwnership(meetingId, internalUserId);
     if ('error' in ownership) {
       return NextResponse.json({ error: ownership.error }, { status: ownership.status });
     }
@@ -74,15 +88,20 @@ export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ meetingId: string }> },
 ) {
-  const user = await currentUser();
-  if (!user) {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const internalUserId = await getInternalUserId(clerkId);
+  if (!internalUserId) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
   const { meetingId } = await params;
 
   try {
-    const ownership = await verifyMeetingOwnership(meetingId, user.id);
+    const ownership = await verifyMeetingOwnership(meetingId, internalUserId);
     if ('error' in ownership) {
       return NextResponse.json({ error: ownership.error }, { status: ownership.status });
     }

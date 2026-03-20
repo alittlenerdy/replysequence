@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ meetings: [] });
     }
 
-    // Get all meetings that are currently processing
+    // Get all meetings that are currently processing (scoped to user by userId)
     const processingMeetings = await db
       .select({
         id: meetings.id,
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       .from(meetings)
       .where(
         and(
-          eq(meetings.hostEmail, user.email),
+          eq(meetings.userId, user.id),
           inArray(meetings.status, ['processing', 'pending'])
         )
       )

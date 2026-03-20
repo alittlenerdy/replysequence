@@ -6,6 +6,8 @@
  * Non-blocking - email delivery takes priority over CRM logging.
  */
 
+import { withTokenRefreshLock } from '@/lib/token-refresh-lock';
+
 // Configuration from environment
 const HUBSPOT_CLIENT_ID = process.env.HUBSPOT_CLIENT_ID;
 const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET;
@@ -103,6 +105,7 @@ export async function exchangeHubSpotCode(code: string): Promise<{
       redirect_uri: HUBSPOT_REDIRECT_URI,
       code,
     }),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -120,42 +123,57 @@ export async function exchangeHubSpotCode(code: string): Promise<{
 }
 
 /**
- * Refresh HubSpot access token
+ * Refresh HubSpot access token.
+ *
+ * Uses a lock keyed by connectionId (or refresh token hash) to prevent
+ * concurrent refresh requests from racing against each other.
+ *
+ * @param refreshToken - The current refresh token
+ * @param connectionId - Optional connection ID for lock deduplication
  */
-export async function refreshHubSpotToken(refreshToken: string): Promise<{
+export async function refreshHubSpotToken(
+  refreshToken: string,
+  connectionId?: string
+): Promise<{
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
 }> {
-  if (!HUBSPOT_CLIENT_ID || !HUBSPOT_CLIENT_SECRET) {
-    throw new Error('HubSpot credentials not configured');
-  }
+  // Use connectionId if available, otherwise fall back to a hash of the refresh token
+  const lockKey = `hubspot:${connectionId ?? refreshToken.slice(-16)}`;
 
-  const response = await fetch(HUBSPOT_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      client_id: HUBSPOT_CLIENT_ID,
-      client_secret: HUBSPOT_CLIENT_SECRET,
-      refresh_token: refreshToken,
-    }),
+  return withTokenRefreshLock(lockKey, async () => {
+    if (!HUBSPOT_CLIENT_ID || !HUBSPOT_CLIENT_SECRET) {
+      throw new Error('HubSpot credentials not configured');
+    }
+
+    const response = await fetch(HUBSPOT_TOKEN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: HUBSPOT_CLIENT_ID,
+        client_secret: HUBSPOT_CLIENT_SECRET,
+        refresh_token: refreshToken,
+      }),
+      signal: AbortSignal.timeout(30000),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      log('error', 'Failed to refresh HubSpot token', { error });
+      throw new Error(`HubSpot token refresh error: ${error}`);
+    }
+
+    const data = await response.json();
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresIn: data.expires_in,
+    };
   });
-
-  if (!response.ok) {
-    const error = await response.text();
-    log('error', 'Failed to refresh HubSpot token', { error });
-    throw new Error(`HubSpot token refresh error: ${error}`);
-  }
-
-  const data = await response.json();
-  return {
-    accessToken: data.access_token,
-    refreshToken: data.refresh_token,
-    expiresIn: data.expires_in,
-  };
 }
 
 /**
@@ -178,7 +196,7 @@ async function hubspotFetch(
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const response = await fetch(url, { ...options, headers });
+      const response = await fetch(url, { ...options, headers, signal: AbortSignal.timeout(30000) });
 
       // Handle rate limiting with separate counter to prevent infinite loops
       if (response.status === 429) {

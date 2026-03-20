@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { userOnboarding, onboardingEvents, users, zoomConnections, teamsConnections, meetConnections, emailConnections, hubspotConnections, salesforceConnections, sheetsConnections } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 import { sendWelcomeEmail } from '@/lib/email';
 
@@ -29,21 +29,28 @@ export async function POST(request: NextRequest) {
 
     const completedAt = new Date();
 
-    // Mark onboarding as complete
-    await db
-      .update(userOnboarding)
-      .set({
-        completedAt,
-        updatedAt: completedAt,
-      })
-      .where(eq(userOnboarding.clerkId, userId));
+    // Mark onboarding as complete + log event atomically
+    await db.transaction(async (tx) => {
+      // Only set completedAt if not already completed (prevents double-completion race)
+      await tx
+        .update(userOnboarding)
+        .set({
+          completedAt,
+          updatedAt: completedAt,
+        })
+        .where(
+          and(
+            eq(userOnboarding.clerkId, userId),
+            isNull(userOnboarding.completedAt)
+          )
+        );
 
-    // Log completion event
-    await db.insert(onboardingEvents).values({
-      clerkId: userId,
-      eventType: 'onboarding_completed',
-      stepNumber: 6,
-      metadata: { completedAt: completedAt.toISOString() },
+      await tx.insert(onboardingEvents).values({
+        clerkId: userId,
+        eventType: 'onboarding_completed',
+        stepNumber: 6,
+        metadata: { completedAt: completedAt.toISOString() },
+      });
     });
 
     console.log('[ONBOARDING-COMPLETE] User completed onboarding:', userId, 'at', completedAt);

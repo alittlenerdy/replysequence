@@ -379,57 +379,62 @@ async function fetchAndStoreTeamsTranscript(
       segmentCount: segments.length,
     });
 
-    // Check for existing transcript
-    const [existingTranscript] = await db
-      .select({ id: transcripts.id })
-      .from(transcripts)
-      .where(eq(transcripts.meetingId, meetingId))
-      .limit(1);
+    // Upsert transcript + update meeting status atomically
+    // A meeting marked 'ready' without a transcript is inconsistent
+    const transcriptRecordId = await db.transaction(async (tx) => {
+      const [existingTranscript] = await tx
+        .select({ id: transcripts.id })
+        .from(transcripts)
+        .where(eq(transcripts.meetingId, meetingId))
+        .limit(1);
 
-    let transcriptRecordId: string;
+      let txTranscriptId: string;
 
-    if (existingTranscript) {
-      // Update existing transcript
-      await db
-        .update(transcripts)
-        .set({
-          content: fullText,
-          vttContent,
-          speakerSegments: segments,
-          wordCount,
-          status: 'ready',
-          lastFetchError: null,
-          updatedAt: new Date(),
-        })
-        .where(eq(transcripts.id, existingTranscript.id));
+      if (existingTranscript) {
+        // Update existing transcript
+        await tx
+          .update(transcripts)
+          .set({
+            content: fullText,
+            vttContent,
+            speakerSegments: segments,
+            wordCount,
+            status: 'ready',
+            lastFetchError: null,
+            updatedAt: new Date(),
+          })
+          .where(eq(transcripts.id, existingTranscript.id));
 
-      transcriptRecordId = existingTranscript.id;
-      log('info', '[TEAMS-WEBHOOK-6] Transcript stored in database (updated)', { transcriptId: transcriptRecordId });
-    } else {
-      // Create new transcript
-      const [newTranscript] = await db
-        .insert(transcripts)
-        .values({
-          meetingId,
-          content: fullText,
-          vttContent,
-          speakerSegments: segments,
-          platform: TEAMS_PLATFORM,
-          source: 'teams',
-          wordCount,
-          status: 'ready',
-        })
-        .returning({ id: transcripts.id });
+        txTranscriptId = existingTranscript.id;
+        log('info', '[TEAMS-WEBHOOK-6] Transcript stored in database (updated)', { transcriptId: txTranscriptId });
+      } else {
+        // Create new transcript
+        const [newTranscript] = await tx
+          .insert(transcripts)
+          .values({
+            meetingId,
+            content: fullText,
+            vttContent,
+            speakerSegments: segments,
+            platform: TEAMS_PLATFORM,
+            source: 'teams',
+            wordCount,
+            status: 'ready',
+          })
+          .returning({ id: transcripts.id });
 
-      transcriptRecordId = newTranscript.id;
-      log('info', '[TEAMS-WEBHOOK-6] Transcript stored in database (created)', { transcriptId: transcriptRecordId });
-    }
+        txTranscriptId = newTranscript.id;
+        log('info', '[TEAMS-WEBHOOK-6] Transcript stored in database (created)', { transcriptId: txTranscriptId });
+      }
 
-    // Update meeting status
-    await db
-      .update(meetings)
-      .set({ status: 'ready', updatedAt: new Date() })
-      .where(eq(meetings.id, meetingId));
+      // Update meeting status
+      await tx
+        .update(meetings)
+        .set({ status: 'ready', updatedAt: new Date() })
+        .where(eq(meetings.id, meetingId));
+
+      return txTranscriptId;
+    });
 
     // Fetch meeting once for both analytics and draft generation
     const [meeting] = await db

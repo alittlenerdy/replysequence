@@ -5,6 +5,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 // Allow longer timeout for cold starts
 export const maxDuration = 60;
@@ -71,8 +72,11 @@ export async function GET(request: NextRequest) {
     scopesList: scopesList.filter(s => s.startsWith('https://')),
   });
 
-  // Encode returnTo in state along with userId for CSRF protection
-  const statePayload = JSON.stringify({ userId, returnTo });
+  // Generate a random nonce for CSRF protection
+  const csrfNonce = crypto.randomUUID();
+
+  // Encode returnTo in state along with userId and CSRF nonce
+  const statePayload = JSON.stringify({ userId, returnTo, nonce: csrfNonce });
   const state = Buffer.from(statePayload).toString('base64');
 
   // Build Google OAuth URL
@@ -83,7 +87,7 @@ export async function GET(request: NextRequest) {
     scope: scopes,
     access_type: 'offline', // Get refresh token
     prompt: 'consent', // Force consent screen to get refresh token every time
-    state, // Encoded userId + returnTo
+    state, // Encoded userId + returnTo + nonce
   });
 
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
@@ -104,5 +108,15 @@ export async function GET(request: NextRequest) {
   // 3. www vs non-www mismatch
   console.log('[MEET-OAUTH-START-6] IMPORTANT - Verify this redirect_uri is in Google Cloud Console:', redirectUri);
 
-  return NextResponse.redirect(googleAuthUrl);
+  // Set CSRF state cookie and redirect
+  const response = NextResponse.redirect(googleAuthUrl);
+  response.cookies.set('oauth_state_meet', csrfNonce, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 600, // 10 minutes
+    path: '/',
+  });
+
+  return response;
 }

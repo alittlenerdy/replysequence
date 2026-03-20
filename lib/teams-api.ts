@@ -103,6 +103,7 @@ export async function getAccessToken(): Promise<string> {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: params.toString(),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -147,6 +148,7 @@ async function graphRequest<T>(
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -189,6 +191,7 @@ async function graphRequestText(
       Authorization: `Bearer ${token}`,
       Accept: format || 'text/vtt',
     },
+    signal: AbortSignal.timeout(60000),
   });
 
   if (!response.ok) {
@@ -382,6 +385,7 @@ export async function createTeamsSubscription(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
@@ -433,6 +437,7 @@ export async function renewTeamsSubscription(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ expirationDateTime }),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {

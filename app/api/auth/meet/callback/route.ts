@@ -77,13 +77,15 @@ export async function GET(request: NextRequest) {
   // We trust this userId because it was set by our server during the initial OAuth redirect
   let stateUserId: string;
   let returnTo = '/dashboard/settings?connected=meet';
+  let stateNonce: string | undefined;
 
   try {
     const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
     const parsed = JSON.parse(decoded);
     stateUserId = parsed.userId;
     returnTo = parsed.returnTo || returnTo;
-    console.log('[MEET-OAUTH-CALLBACK] Decoded state:', { stateUserId, returnTo });
+    stateNonce = parsed.nonce;
+    console.log('[MEET-OAUTH-CALLBACK] Decoded state:', { stateUserId, returnTo, hasNonce: !!stateNonce });
   } catch {
     // Fallback for old format where state was just the userId
     stateUserId = state || '';
@@ -93,6 +95,16 @@ export async function GET(request: NextRequest) {
   if (!stateUserId) {
     console.error('[MEET-OAUTH-CALLBACK-ERROR] No userId in state - invalid OAuth flow');
     return NextResponse.redirect(new URL('/dashboard/settings?error=invalid_state', baseUrl));
+  }
+
+  // CSRF validation: verify the nonce in the state matches the cookie we set
+  const expectedNonce = request.cookies.get('oauth_state_meet')?.value;
+  if (!stateNonce || !expectedNonce || stateNonce !== expectedNonce) {
+    console.error('[MEET-OAUTH-CALLBACK-ERROR] Invalid OAuth state - CSRF check failed', {
+      hasStateNonce: !!stateNonce,
+      hasExpectedNonce: !!expectedNonce,
+    });
+    return NextResponse.json({ error: 'Invalid OAuth state' }, { status: 403 });
   }
 
   // Optionally verify current session matches (but don't require it - session might not persist through OAuth redirect)
@@ -283,8 +295,10 @@ export async function GET(request: NextRequest) {
       returnTo,
     });
 
-    // Redirect to the return URL
-    return NextResponse.redirect(new URL(returnTo, baseUrl));
+    // Clear the CSRF cookie and redirect to the return URL
+    const successResponse = NextResponse.redirect(new URL(returnTo, baseUrl));
+    successResponse.cookies.delete('oauth_state_meet');
+    return successResponse;
   } catch (error) {
     console.error('[MEET-OAUTH-CALLBACK-ERROR] Error processing OAuth callback:', error);
     return NextResponse.redirect(

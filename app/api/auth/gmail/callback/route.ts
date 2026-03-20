@@ -84,13 +84,15 @@ export async function GET(request: NextRequest) {
   // Decode state to get userId and returnTo
   let stateUserId: string;
   let returnTo = '/dashboard/settings?gmail_connected=true';
+  let stateNonce: string | undefined;
 
   try {
     const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
     const parsed = JSON.parse(decoded);
     stateUserId = parsed.userId;
     returnTo = parsed.returnTo || returnTo;
-    console.log('[GMAIL-OAUTH-CALLBACK-2] Decoded state:', { stateUserId, returnTo });
+    stateNonce = parsed.nonce;
+    console.log('[GMAIL-OAUTH-CALLBACK-2] Decoded state:', { stateUserId, returnTo, hasNonce: !!stateNonce });
   } catch {
     stateUserId = state || '';
     console.log('[GMAIL-OAUTH-CALLBACK-2] Using legacy state format:', { stateUserId });
@@ -99,6 +101,16 @@ export async function GET(request: NextRequest) {
   if (!stateUserId) {
     console.error('[GMAIL-OAUTH-CALLBACK-ERROR] No userId in state');
     return NextResponse.redirect(new URL('/dashboard/settings?error=invalid_state', baseUrl));
+  }
+
+  // CSRF validation: verify the nonce in the state matches the cookie we set
+  const expectedNonce = request.cookies.get('oauth_state_gmail')?.value;
+  if (!stateNonce || !expectedNonce || stateNonce !== expectedNonce) {
+    console.error('[GMAIL-OAUTH-CALLBACK-ERROR] Invalid OAuth state - CSRF check failed', {
+      hasStateNonce: !!stateNonce,
+      hasExpectedNonce: !!expectedNonce,
+    });
+    return NextResponse.json({ error: 'Invalid OAuth state' }, { status: 403 });
   }
 
   // Optionally verify current session matches (but don't require it - session might not persist through OAuth redirect)
@@ -236,7 +248,9 @@ export async function GET(request: NextRequest) {
       returnTo,
     });
 
-    return NextResponse.redirect(new URL(returnTo, baseUrl));
+    const successResponse = NextResponse.redirect(new URL(returnTo, baseUrl));
+    successResponse.cookies.delete('oauth_state_gmail');
+    return successResponse;
   } catch (err) {
     console.error('[GMAIL-OAUTH-CALLBACK-ERROR] Error processing OAuth callback:', err);
     const errorTarget = returnTo.startsWith('/onboarding')

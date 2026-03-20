@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 export const maxDuration = 60;
 
@@ -48,9 +49,10 @@ export async function GET(request: NextRequest) {
       'https://www.googleapis.com/auth/gmail.send',
     ].join(' ');
 
-    // 6. State
+    // 6. State with CSRF nonce
+    const csrfNonce = crypto.randomUUID();
     const state = Buffer.from(
-      JSON.stringify({ userId, returnTo: redirect })
+      JSON.stringify({ userId, returnTo: redirect, nonce: csrfNonce })
     ).toString('base64');
 
     // 7. Build Google OAuth URL
@@ -71,8 +73,16 @@ export async function GET(request: NextRequest) {
       redirectUri,
     }));
 
-    // 8. Redirect
-    return NextResponse.redirect(authUrl.toString());
+    // 8. Redirect with CSRF state cookie
+    const response = NextResponse.redirect(authUrl.toString());
+    response.cookies.set('oauth_state_gmail', csrfNonce, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 600,
+      path: '/',
+    });
+    return response;
   } catch (error) {
     console.log(JSON.stringify({
       level: 'error',
