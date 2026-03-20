@@ -203,6 +203,7 @@ export function DraftInlinePanel({
   const [isSending, setIsSending] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isGeneratingVariant, setIsGeneratingVariant] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -262,6 +263,30 @@ export function DraftInlinePanel({
       setError(err instanceof Error ? err.message : 'Failed to save draft');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Generate A/B subject variant
+  const handleGenerateVariant = async () => {
+    setIsGeneratingVariant(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/drafts/${draft.id}/generate-variant`, {
+        method: 'POST',
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to generate variant');
+      }
+      const data = await res.json();
+      setDraft({ ...draft, subjectVariantB: data.subjectVariantB });
+      setSuccess('A/B variant generated');
+      setTimeout(() => setSuccess(null), 2000);
+      onDraftUpdated();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate variant');
+    } finally {
+      setIsGeneratingVariant(false);
     }
   };
 
@@ -470,8 +495,39 @@ export function DraftInlinePanel({
                   placeholder="Subject"
                 />
               ) : (
-                <div className="text-sm font-medium text-white light:text-gray-900 px-1">
-                  {draft.subject || 'Untitled Draft'}
+                <div className="space-y-1 px-1">
+                  <div className="flex items-center gap-2">
+                    {draft.subjectVariantB && (
+                      <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#6366F1]/20 text-[#6366F1] border border-[#6366F1]/30">A</span>
+                    )}
+                    <span className="text-sm font-medium text-white light:text-gray-900">
+                      {draft.subject || 'Untitled Draft'}
+                    </span>
+                  </div>
+                  {draft.subjectVariantB && (
+                    <div className="flex items-center gap-2">
+                      <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">B</span>
+                      <span className="text-sm text-gray-300 light:text-gray-600">
+                        {draft.subjectVariantB}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Generate A/B variant button */}
+              {!isEditing && draft.status !== 'sent' && draft.status !== 'sending' && !draft.subjectVariantB && (
+                <div className="px-1" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={handleGenerateVariant}
+                    disabled={isGeneratingVariant}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 disabled:opacity-50 transition-colors"
+                  >
+                    <svg className={`w-3.5 h-3.5 ${isGeneratingVariant ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    {isGeneratingVariant ? 'Generating...' : 'Generate Alt Subject'}
+                  </button>
                 </div>
               )}
 

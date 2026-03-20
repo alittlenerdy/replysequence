@@ -99,9 +99,22 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
 
                   {/* Center: subject + preview */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white light:text-gray-900 truncate mb-0.5">
-                      {draft.subject}
-                    </p>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      {draft.subjectVariantB && (
+                        <span className="shrink-0 text-[9px] font-semibold px-1 py-0.5 rounded bg-[#6366F1]/20 text-[#6366F1] border border-[#6366F1]/20">A</span>
+                      )}
+                      <p className="text-sm font-semibold text-white light:text-gray-900 truncate">
+                        {draft.subject}
+                      </p>
+                    </div>
+                    {draft.subjectVariantB && (
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="shrink-0 text-[9px] font-semibold px-1 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/20">B</span>
+                        <p className="text-xs text-[#8892B0] light:text-gray-500 truncate">
+                          {draft.subjectVariantB}
+                        </p>
+                      </div>
+                    )}
                     <p className="text-xs text-[#8892B0] light:text-gray-500 line-clamp-1">
                       {bodyPreview}
                     </p>

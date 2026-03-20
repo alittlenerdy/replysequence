@@ -402,9 +402,126 @@ export default function ContactsPage() {
   );
 }
 
+function VerificationBadge({ status }: { status: EmailVerificationStatus }) {
+  if (!status) return null;
+
+  const config = {
+    verified: {
+      label: 'Verified',
+      bg: 'bg-emerald-500/15',
+      text: 'text-emerald-400',
+      border: 'border-emerald-500/20',
+    },
+    unverified: {
+      label: 'Unverified',
+      bg: 'bg-red-500/15',
+      text: 'text-red-400',
+      border: 'border-red-500/20',
+    },
+    disposable: {
+      label: 'Disposable',
+      bg: 'bg-amber-500/15',
+      text: 'text-amber-400',
+      border: 'border-amber-500/20',
+    },
+  }[status];
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full ${config.bg} ${config.text} border ${config.border}`}
+    >
+      <ShieldCheck className="w-3 h-3" />
+      {config.label}
+    </span>
+  );
+}
+
 function ContactDetail({ contact, onClose, onRefresh }: { contact: ContactData; onClose: () => void; onRefresh: () => void }) {
   const [enriching, setEnriching] = useState(false);
   const [enrichError, setEnrichError] = useState<string | null>(null);
+  const [findLoading, setFindLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [foundEmail, setFoundEmail] = useState<string | null>(null);
+  const [hunterError, setHunterError] = useState<string | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<EmailVerificationStatus>(null);
+  const [verifyScore, setVerifyScore] = useState<number | null>(null);
+
+  const hasEmail = !!contact.email && contact.email !== '';
+  const hasNameAndCompany = !!contact.name && contact.name.trim().split(' ').length >= 2 && !!contact.company;
+
+  const handleFindEmail = async () => {
+    if (!hasNameAndCompany) return;
+    setFindLoading(true);
+    setHunterError(null);
+    setFoundEmail(null);
+
+    try {
+      const nameParts = contact.name.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ');
+      const domain = contact.company!.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+
+      const res = await fetch('/api/contacts/find-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, domain }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setHunterError(data.error || 'Failed to find email');
+        return;
+      }
+
+      const data = await res.json();
+      if (data.email) {
+        setFoundEmail(data.email);
+        onRefresh();
+      } else {
+        setHunterError('No email found for this contact');
+      }
+    } catch {
+      setHunterError('Network error');
+    } finally {
+      setFindLoading(false);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    const emailToVerify = foundEmail || contact.email;
+    if (!emailToVerify) return;
+    setVerifyLoading(true);
+    setHunterError(null);
+
+    try {
+      const res = await fetch('/api/contacts/find-email?action=verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailToVerify }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setHunterError(data.error || 'Verification failed');
+        return;
+      }
+
+      const data = await res.json();
+      setVerifyScore(data.score);
+
+      if (data.status === 'disposable') {
+        setVerificationStatus('disposable');
+      } else if (data.result === 'deliverable' || data.status === 'valid') {
+        setVerificationStatus('verified');
+      } else {
+        setVerificationStatus('unverified');
+      }
+    } catch {
+      setHunterError('Network error');
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
 
   const handleEnrich = async () => {
     setEnriching(true);
@@ -460,7 +577,10 @@ function ContactDetail({ contact, onClose, onRefresh }: { contact: ContactData; 
                 {contact.title && (
                   <p className="text-xs text-gray-400 light:text-gray-600">{contact.title}</p>
                 )}
-                <p className="text-xs text-gray-500">{contact.email}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-gray-500">{contact.email || 'No email'}</p>
+                  <VerificationBadge status={verificationStatus} />
+                </div>
               </div>
             </div>
             <button
@@ -470,6 +590,81 @@ function ContactDetail({ contact, onClose, onRefresh }: { contact: ContactData; 
             >
               <X className="w-5 h-5" />
             </button>
+          </div>
+        </div>
+
+        {/* Email Intelligence — Hunter.io */}
+        <div className="px-6 py-4 border-b border-[#1E2A4A]/60 light:border-gray-100">
+          <h3 className="text-sm font-semibold text-white light:text-gray-900 mb-3">Email Intelligence</h3>
+
+          {foundEmail && (
+            <div className="mb-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+              <p className="text-sm text-emerald-400">
+                Found: <span className="font-medium">{foundEmail}</span>
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Email saved to contact record</p>
+            </div>
+          )}
+
+          {verifyScore !== null && (
+            <div className="mb-3 p-3 rounded-lg bg-[#1E2A4A]/40 light:bg-gray-50 border border-[#1E2A4A] light:border-gray-200">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-400">Deliverability Score</span>
+                <span className="text-sm font-bold text-white light:text-gray-900">{verifyScore}/100</span>
+              </div>
+              <div className="mt-1.5 w-full h-1.5 rounded-full bg-gray-800 light:bg-gray-200 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    verifyScore >= 70 ? 'bg-emerald-400' : verifyScore >= 40 ? 'bg-amber-400' : 'bg-red-400'
+                  }`}
+                  style={{ width: `${verifyScore}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {hunterError && (
+            <div className="mb-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+              <p className="text-xs text-red-400">{hunterError}</p>
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            {!hasEmail && hasNameAndCompany && !foundEmail && (
+              <button
+                onClick={handleFindEmail}
+                disabled={findLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#6366F1]/15 text-[#6366F1] border border-[#6366F1]/20 hover:bg-[#6366F1]/25 transition-colors disabled:opacity-50"
+              >
+                {findLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <SearchCheck className="w-3.5 h-3.5" />
+                )}
+                Find Email
+              </button>
+            )}
+
+            {(hasEmail || foundEmail) && !verificationStatus && (
+              <button
+                onClick={handleVerifyEmail}
+                disabled={verifyLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+              >
+                {verifyLoading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                )}
+                Verify
+              </button>
+            )}
+
+            {!hasEmail && !hasNameAndCompany && !foundEmail && (
+              <p className="text-xs text-gray-500">
+                Add a name and company to find their email address.
+              </p>
+            )}
           </div>
         </div>
 

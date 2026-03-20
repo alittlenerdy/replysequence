@@ -76,6 +76,8 @@ export interface DraftWithMeeting {
   replyIntent: string | null;
   replyIntentConfidence: string | null;
   replyIntentSummary: string | null;
+  // A/B testing
+  subjectVariantB: string | null;
   // Data flywheel fields
   originalBody: string | null;
   flywheelContextUsed: boolean | null;
@@ -229,6 +231,8 @@ export async function getDraftsWithMeetings(
       replyIntent: drafts.replyIntent,
       replyIntentConfidence: drafts.replyIntentConfidence,
       replyIntentSummary: drafts.replyIntentSummary,
+      // A/B testing
+      subjectVariantB: drafts.subjectVariantB,
       // Data flywheel fields
       flywheelContextUsed: drafts.flywheelContextUsed,
       flywheelMetadata: drafts.flywheelMetadata,
@@ -298,6 +302,8 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       replyIntent: drafts.replyIntent,
       replyIntentConfidence: drafts.replyIntentConfidence,
       replyIntentSummary: drafts.replyIntentSummary,
+      // A/B testing
+      subjectVariantB: drafts.subjectVariantB,
       // Data flywheel fields
       originalBody: drafts.originalBody,
       flywheelContextUsed: drafts.flywheelContextUsed,
@@ -540,6 +546,7 @@ export interface MeetingListItem {
   sentCount: number;
   createdAt: Date;
   isDemo: boolean;
+  detectedLanguage: string | null;
 }
 
 export interface MeetingsQueryParams {
@@ -608,6 +615,7 @@ export async function getMeetingsList(
         summary: meetings.summary,
         createdAt: meetings.createdAt,
         isDemo: meetings.isDemo,
+        detectedLanguage: meetings.detectedLanguage,
       })
       .from(meetings)
       .where(whereClause)
