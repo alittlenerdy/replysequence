@@ -24,10 +24,10 @@ const legalLinks = [
 ];
 
 const linkClasses =
-  'text-sm text-[#64748B] hover:text-white light:text-gray-500 light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white';
+  'text-sm text-[#64748B] hover:text-white light:text-gray-500 light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white py-1';
 
 const socialClasses =
-  'text-[#64748B] hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white';
+  'text-[#64748B] hover:text-white light:hover:text-gray-900 transition-colors rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712] light:focus-visible:ring-offset-white p-2.5 -m-2.5 inline-flex items-center justify-center';
 
 export function Footer() {
   return (
@@ -55,7 +55,7 @@ export function Footer() {
                 className={socialClasses}
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-[18px] h-[18px]" aria-hidden="true" />
+                <Linkedin className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
                 href="https://x.com/replysequence"
@@ -64,7 +64,7 @@ export function Footer() {
                 className={socialClasses}
                 aria-label="X (Twitter)"
               >
-                <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </a>
@@ -75,7 +75,7 @@ export function Footer() {
                 className={socialClasses}
                 aria-label="GitHub"
               >
-                <Github className="w-[18px] h-[18px]" aria-hidden="true" />
+                <Github className="w-5 h-5" aria-hidden="true" />
               </a>
             </div>
           </div>
