@@ -34,6 +34,7 @@ interface SequenceData {
 
 interface SequenceCardProps {
   sequence: SequenceData;
+  isStale?: boolean;
   onStatusChange?: () => void;
 }
 
@@ -151,7 +152,7 @@ const TIMING_SUGGESTIONS: Record<string, { label: string; tip: string }> = {
   },
 };
 
-export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
+export function SequenceCard({ sequence, isStale, onStatusChange }: SequenceCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
@@ -159,6 +160,9 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
   const [editSubject, setEditSubject] = useState('');
   const [editBody, setEditBody] = useState('');
   const [isScheduling, setIsScheduling] = useState(false);
+  const [rewritingStep, setRewritingStep] = useState<string | null>(null);
+  const [rewriteInstructions, setRewriteInstructions] = useState('');
+  const [showRewriteInput, setShowRewriteInput] = useState<string | null>(null);
 
   const handleAction = async (action: 'pause' | 'resume' | 'cancel') => {
     setIsLoading(true);
@@ -239,6 +243,35 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
     }
   };
 
+  const handleRewrite = async (stepId: string) => {
+    setRewritingStep(stepId);
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/sequences/${sequence.id}/steps/${stepId}/rewrite`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instructions: rewriteInstructions || undefined,
+          }),
+        },
+      );
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Failed to rewrite step');
+        return;
+      }
+      setShowRewriteInput(null);
+      setRewriteInstructions('');
+      onStatusChange?.();
+    } catch {
+      setError('Failed to rewrite step');
+    } finally {
+      setRewritingStep(null);
+    }
+  };
+
   const hasPendingSteps = sequence.steps.some(s => s.status === 'pending');
 
   const statusConfig = STATUS_CONFIG[sequence.status];
@@ -259,6 +292,11 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
               <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusConfig.color}`}>
                 {statusConfig.label}
               </span>
+              {isStale && (
+                <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-medium rounded-full border bg-amber-500/15 text-amber-400 border-amber-500/20">
+                  Stale
+                </span>
+              )}
               <span className="text-xs text-[#8892B0] light:text-gray-500">
                 {sequence.status === 'active' ? 'Following up after your last call' : sequence.status === 'completed' ? 'Sequence completed' : sequence.status === 'paused' ? 'Sequence paused' : 'Sequence cancelled'}
               </span>
@@ -481,17 +519,60 @@ export function SequenceCard({ sequence, onStatusChange }: SequenceCardProps) {
                       <div className="flex items-start justify-between">
                         <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Subject</p>
                         {(step.status === 'pending' || step.status === 'scheduled') && (
-                          <button
-                            onClick={() => startEditing(step)}
-                            className="text-xs text-[#6366F1] hover:text-[#818CF8] transition-colors flex items-center gap-1"
-                          >
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Edit
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                if (showRewriteInput === step.id) {
+                                  setShowRewriteInput(null);
+                                } else {
+                                  setShowRewriteInput(step.id);
+                                  setRewriteInstructions('');
+                                }
+                              }}
+                              disabled={rewritingStep === step.id}
+                              className="text-xs text-[#06B6D4] hover:text-[#22D3EE] transition-colors flex items-center gap-1 disabled:opacity-50"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                              </svg>
+                              {rewritingStep === step.id ? 'Rewriting...' : 'Rewrite with AI'}
+                            </button>
+                            <button
+                              onClick={() => startEditing(step)}
+                              className="text-xs text-[#6366F1] hover:text-[#818CF8] transition-colors flex items-center gap-1"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Edit
+                            </button>
+                          </div>
                         )}
                       </div>
+
+                      {/* Rewrite instructions input */}
+                      {showRewriteInput === step.id && (
+                        <div className="mb-3 flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={rewriteInstructions}
+                            onChange={(e) => setRewriteInstructions(e.target.value)}
+                            placeholder="Optional: make it shorter, add urgency, etc."
+                            className="flex-1 px-3 py-1.5 text-xs rounded-lg bg-gray-800/50 light:bg-white border border-[#1E2A4A] light:border-gray-200 text-gray-200 light:text-gray-800 focus:outline-none focus:border-[#06B6D4]/50 placeholder:text-gray-600"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleRewrite(step.id);
+                            }}
+                          />
+                          <button
+                            onClick={() => handleRewrite(step.id)}
+                            disabled={rewritingStep === step.id}
+                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/25 hover:bg-[#06B6D4]/25 transition-colors disabled:opacity-50"
+                          >
+                            {rewritingStep === step.id ? 'Rewriting...' : 'Rewrite'}
+                          </button>
+                        </div>
+                      )}
+
                       <p className="text-sm text-gray-200 light:text-gray-800 mb-3">{step.subject}</p>
                       <p className="text-xs font-medium text-gray-400 light:text-gray-500 mb-1">Body</p>
                       <p className="text-sm text-gray-300 light:text-gray-700 whitespace-pre-wrap leading-relaxed">

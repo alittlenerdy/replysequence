@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Layers, Pause, Play, XCircle, ChevronDown, ChevronRight, RefreshCw } from 'lucide-react';
+import { Layers, Pause, Play, XCircle, ChevronDown, ChevronRight, RefreshCw, AlertTriangle } from 'lucide-react';
 import { SequenceCard } from '@/components/dashboard/SequenceCard';
 import type { SequenceStatus, SequenceStepStatus, SequencePauseReason } from '@/lib/db/schema';
 
@@ -44,22 +44,40 @@ const FILTER_TABS: { key: FilterTab; label: string; color: string }[] = [
   { key: 'completed', label: 'Completed', color: 'text-[#6366F1]' },
 ];
 
+interface StaleSequenceData {
+  sequenceId: string;
+  recipientEmail: string;
+  recipientName: string | null;
+  daysSinceLastActivity: number;
+}
+
 export default function SequencesPage() {
   const [sequences, setSequences] = useState<SequenceData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterTab>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [staleSequences, setStaleSequences] = useState<StaleSequenceData[]>([]);
+  const [staleDismissed, setStaleDismissed] = useState(false);
 
   const fetchSequences = useCallback(async (showRefresh = false) => {
     try {
       if (showRefresh) setIsRefreshing(true);
       else setIsLoading(true);
 
-      const res = await fetch('/api/sequences');
-      if (!res.ok) throw new Error('Failed to load sequences');
-      const data = await res.json();
+      const [seqRes, staleRes] = await Promise.all([
+        fetch('/api/sequences'),
+        fetch('/api/sequences/stale'),
+      ]);
+      if (!seqRes.ok) throw new Error('Failed to load sequences');
+      const data = await seqRes.json();
       setSequences(data.sequences || []);
+
+      if (staleRes.ok) {
+        const staleData = await staleRes.json();
+        setStaleSequences(staleData.staleSequences || []);
+      }
+
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load sequences');
@@ -72,6 +90,9 @@ export default function SequencesPage() {
   useEffect(() => {
     fetchSequences();
   }, [fetchSequences]);
+
+  // Build a set of stale sequence IDs for badge rendering on cards
+  const staleIds = new Set(staleSequences.map(s => s.sequenceId));
 
   const filtered = filter === 'all'
     ? sequences
@@ -152,6 +173,28 @@ export default function SequencesPage() {
         ))}
       </div>
 
+      {/* Stale sequences alert */}
+      {staleSequences.length > 0 && !staleDismissed && (
+        <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 flex items-center gap-3">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <p className="text-sm text-amber-300 light:text-amber-700 flex-1">
+            <span className="font-semibold">{staleSequences.length} sequence{staleSequences.length === 1 ? ' has' : 's have'} gone cold</span>
+            <span className="text-amber-400/70 light:text-amber-600 ml-1">
+              — no engagement in 7+ days
+            </span>
+          </p>
+          <button
+            onClick={() => setStaleDismissed(true)}
+            className="text-amber-400/60 hover:text-amber-300 transition-colors shrink-0"
+            aria-label="Dismiss stale alert"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Error */}
       {error && (
         <div className="rounded-2xl bg-red-500/10 border border-red-500/20 p-4 text-center">
@@ -186,6 +229,7 @@ export default function SequencesPage() {
             <SequenceCard
               key={seq.id}
               sequence={seq}
+              isStale={staleIds.has(seq.id)}
               onStatusChange={() => fetchSequences(true)}
             />
           ))}

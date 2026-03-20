@@ -1572,8 +1572,8 @@ export type NewMapStep = typeof mapSteps.$inferInsert;
 // ── Follow-Up Sequences ──────────────────────────────────────────────
 
 export type SequenceStatus = 'active' | 'paused' | 'completed' | 'cancelled';
-export type SequenceStepStatus = 'pending' | 'scheduled' | 'sent' | 'skipped' | 'failed';
-export type SequencePauseReason = 'recipient_replied' | 'recipient_opened' | 'user_paused' | 'bounce' | 'complaint';
+export type SequenceStepStatus = 'pending' | 'scheduled' | 'sent' | 'skipped' | 'failed' | 'paused';
+export type SequencePauseReason = 'recipient_replied' | 'recipient_opened' | 'user_paused' | 'bounce' | 'complaint' | 'meeting_booked' | 'ooo_detected' | 'positive_reply';
 
 export const emailSequences = pgTable(
   'email_sequences',
@@ -1594,6 +1594,7 @@ export const emailSequences = pgTable(
     status: varchar('status', { length: 20 }).$type<SequenceStatus>().notNull().default('active'),
     pauseReason: varchar('pause_reason', { length: 30 }).$type<SequencePauseReason>(),
     pausedAt: timestamp('paused_at', { withTimezone: true }),
+    resumeAt: timestamp('resume_at', { withTimezone: true }), // Auto-resume after OOO period
     // Generation tracking
     totalSteps: integer('total_steps').notNull().default(0),
     completedSteps: integer('completed_steps').notNull().default(0),

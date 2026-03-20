@@ -11,6 +11,7 @@ import { generateDraft } from '@/lib/generate-draft';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 // Types from @/lib/recall/types are available if needed for future extensions
 import { upsertContactsFromMeeting } from '@/lib/contacts';
+import { checkAndPauseSequencesForMeeting } from '@/lib/sequence-intelligence';
 import type { Participant } from '@/lib/db/schema';
 import crypto from 'crypto';
 
@@ -609,6 +610,15 @@ async function processTranscriptAndGenerateDraft(
       meeting.startTime || new Date(),
       user.email
     ).catch(() => {});
+  }
+
+  // Auto-pause any active sequences whose recipient just had a meeting (fire-and-forget)
+  const participantEmails = contactParticipants
+    .map((p) => (p as { email?: string }).email)
+    .filter((e): e is string => !!e && e !== user.email);
+
+  if (participantEmails.length > 0) {
+    checkAndPauseSequencesForMeeting(botRecord.userId, participantEmails).catch(() => {});
   }
 
   // Check auto-process preference before generating draft

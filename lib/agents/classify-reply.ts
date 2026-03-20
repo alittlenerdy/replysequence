@@ -11,6 +11,7 @@ import { drafts } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { getClaudeClient, log } from '@/lib/claude-api';
 import { runAgent } from './core';
+import { handleReplyIntent } from '@/lib/sequence-intelligence';
 import type { ReplyIntent } from '@/lib/db/schema';
 
 const HAIKU_MODEL = 'claude-haiku-4-5-20251001';
@@ -128,6 +129,15 @@ ${replyBody.slice(0, 2000)}`;
         draftId,
         intent: classification.intent,
         confidence: classification.confidence,
+      });
+
+      // Auto-pause/cancel sequences based on reply intent (fire-and-forget)
+      handleReplyIntent(draftId, classification.intent, replyBody).catch((err) => {
+        log('error', 'Sequence intent handling failed', {
+          draftId,
+          intent: classification.intent,
+          error: err instanceof Error ? err.message : String(err),
+        });
       });
 
       return {

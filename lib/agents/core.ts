@@ -42,7 +42,8 @@ export type AgentName =
   | 'sentiment-analysis'
   | 'draft-grading'
   | 'pre-meeting-briefing'
-  | 'reply-classification';
+  | 'reply-classification'
+  | 'sequence-rewrite';
 
 export interface AgentTokens {
   input: number;

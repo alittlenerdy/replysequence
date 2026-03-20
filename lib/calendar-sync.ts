@@ -17,6 +17,7 @@ import {
   type MeetingPlatform,
 } from '@/lib/db';
 import { decrypt } from '@/lib/encryption';
+import { checkAndPauseSequencesForMeeting } from '@/lib/sequence-intelligence';
 
 // Configuration
 const GOOGLE_CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
@@ -445,6 +446,14 @@ export async function upsertCalendarEvents(
         // Insert new event
         await db.insert(calendarEvents).values(event);
         inserted++;
+
+        // Auto-pause sequences for attendees of newly discovered meetings
+        const attendeeEmails = (event.attendees || [])
+          .map((a) => a.email)
+          .filter((e): e is string => !!e);
+        if (attendeeEmails.length > 0) {
+          checkAndPauseSequencesForMeeting(userId, attendeeEmails).catch(() => {});
+        }
       }
     } catch (error) {
       log('error', 'Error upserting calendar event', {
