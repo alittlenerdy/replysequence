@@ -112,7 +112,7 @@ function ProductDropdown() {
     >
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+        className="flex items-center gap-1 text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] py-3 px-1"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -199,7 +199,7 @@ function ProductDropdown() {
 }
 
 const navLinkClass =
-  'text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]';
+  'text-sm font-medium text-gray-300 light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] py-3 px-1';
 
 export function Header() {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -216,7 +216,7 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-5">
           <ProductDropdown />
-          <Link href="/demo" className="flex items-center gap-1.5 text-sm font-medium text-[#C0C8E0] light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]">
+          <Link href="/demo" className="flex items-center gap-1.5 text-sm font-medium text-[#C0C8E0] light:text-gray-600 hover:text-white light:hover:text-gray-900 transition-colors rounded outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18] py-3 px-1">
             <svg className="w-3.5 h-3.5 text-[#6366F1]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
             Demo
           </Link>
