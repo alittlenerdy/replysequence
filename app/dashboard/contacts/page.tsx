@@ -14,7 +14,50 @@ interface ContactData {
   completedSequences: number;
 }
 
-type SortKey = 'name' | 'meetingCount' | 'lastMeetingDate' | 'emailsSent';
+type SortKey = 'name' | 'meetingCount' | 'lastMeetingDate' | 'emailsSent' | 'strength';
+
+function calcStrength(contact: ContactData): number {
+  let score = contact.meetingCount * 2 + contact.emailsSent + contact.activeSequences * 3;
+  if (contact.lastMeetingDate) {
+    const diffDays = Math.floor(
+      (Date.now() - new Date(contact.lastMeetingDate).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    if (diffDays < 7) score += 3;
+    else if (diffDays < 30) score += 1;
+  }
+  return Math.min(score, 10);
+}
+
+function StrengthIndicator({ score, size = 'default' }: { score: number; size?: 'default' | 'dot' }) {
+  const label = score <= 3 ? 'Cold' : score <= 6 ? 'Warm' : 'Hot';
+  const color =
+    score <= 3
+      ? { bg: 'bg-gray-500/20', fill: 'bg-gray-400', text: 'text-gray-400', border: 'border-gray-500/30' }
+      : score <= 6
+        ? { bg: 'bg-amber-500/15', fill: 'bg-amber-400', text: 'text-amber-400', border: 'border-amber-500/20' }
+        : { bg: 'bg-emerald-500/15', fill: 'bg-emerald-400', text: 'text-emerald-400', border: 'border-emerald-500/20' };
+
+  if (size === 'dot') {
+    return (
+      <span
+        className={`inline-block w-2 h-2 rounded-full ${color.fill} shrink-0`}
+        title={`${label} (${score}/10)`}
+      />
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-16 h-1.5 rounded-full ${color.bg} overflow-hidden`}>
+        <div
+          className={`h-full rounded-full ${color.fill} transition-all`}
+          style={{ width: `${(score / 10) * 100}%` }}
+        />
+      </div>
+      <span className={`text-[10px] font-medium ${color.text}`}>{label}</span>
+    </div>
+  );
+}
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return '--';
@@ -107,6 +150,9 @@ export default function ContactsPage() {
         case 'emailsSent':
           cmp = a.emailsSent - b.emailsSent;
           break;
+        case 'strength':
+          cmp = calcStrength(a) - calcStrength(b);
+          break;
       }
       return sortAsc ? cmp : -cmp;
     });
@@ -193,7 +239,7 @@ export default function ContactsPage() {
       ) : (
         <div className="rounded-2xl bg-gray-900/60 border border-[#1E2A4A] light:bg-white light:border-gray-200 light:shadow-sm overflow-hidden">
           {/* Table header */}
-          <div className="hidden md:grid grid-cols-[1fr_100px_120px_80px_120px] gap-4 px-5 py-3 border-b border-[#1E2A4A] light:border-gray-200 text-xs font-medium text-[#64748B] light:text-gray-400 uppercase tracking-wider">
+          <div className="hidden md:grid grid-cols-[1fr_100px_120px_80px_120px_110px] gap-4 px-5 py-3 border-b border-[#1E2A4A] light:border-gray-200 text-xs font-medium text-[#64748B] light:text-gray-400 uppercase tracking-wider">
             <button onClick={() => handleSort('name')} className="flex items-center gap-1 text-left hover:text-gray-300 light:hover:text-gray-600 transition-colors">
               Contact <ArrowUpDown className="w-3 h-3" />
             </button>
@@ -207,6 +253,9 @@ export default function ContactsPage() {
               Emails <ArrowUpDown className="w-3 h-3" />
             </button>
             <span>Sequences</span>
+            <button onClick={() => handleSort('strength')} className="flex items-center gap-1 hover:text-gray-300 light:hover:text-gray-600 transition-colors">
+              Strength <ArrowUpDown className="w-3 h-3" />
+            </button>
           </div>
 
           {/* Table rows */}
@@ -214,7 +263,7 @@ export default function ContactsPage() {
             <button
               key={contact.email}
               onClick={() => setSelectedContact(contact)}
-              className="w-full text-left grid grid-cols-1 md:grid-cols-[1fr_100px_120px_80px_120px] gap-2 md:gap-4 px-5 py-4 border-b border-[#1E2A4A]/60 light:border-gray-100 hover:bg-white/[0.03] light:hover:bg-gray-50 transition-colors group"
+              className="w-full text-left grid grid-cols-1 md:grid-cols-[1fr_100px_120px_80px_120px_110px] gap-2 md:gap-4 px-5 py-4 border-b border-[#1E2A4A]/60 light:border-gray-100 hover:bg-white/[0.03] light:hover:bg-gray-50 transition-colors group"
             >
               {/* Contact info */}
               <div className="flex items-center gap-3 min-w-0">
@@ -225,8 +274,9 @@ export default function ContactsPage() {
                   {getInitials(contact.name)}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-white light:text-gray-900 truncate">
+                  <div className="text-sm font-medium text-white light:text-gray-900 truncate flex items-center gap-1.5">
                     {contact.name}
+                    <span className="md:hidden"><StrengthIndicator score={calcStrength(contact)} size="dot" /></span>
                   </div>
                   <div className="text-xs text-gray-500 truncate">{contact.email}</div>
                 </div>
@@ -265,6 +315,11 @@ export default function ContactsPage() {
                 {contact.activeSequences === 0 && contact.completedSequences === 0 && (
                   <span className="text-xs text-gray-600 light:text-gray-400">--</span>
                 )}
+              </div>
+
+              {/* Strength */}
+              <div className="hidden md:flex items-center">
+                <StrengthIndicator score={calcStrength(contact)} />
               </div>
             </button>
           ))}
