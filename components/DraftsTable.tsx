@@ -791,8 +791,11 @@ export function DraftsTable({
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-sm text-gray-200 light:text-gray-900 truncate">
-                          {draft.subject}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-sm text-gray-200 light:text-gray-900 truncate">
+                            {draft.subject}
+                          </span>
+                          {renderQualityBadge(draft, true)}
                         </div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
