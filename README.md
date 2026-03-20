@@ -1,27 +1,63 @@
 # ReplySequence
 
-> AI-powered follow-up automation for sales teams. Zoom/Meet/Teams meetings -> Intelligent email drafts -> Auto-logged to CRM.
+> Every tool records the meeting. None of them send the follow-up.
 
-**Status:** Week 2/12 MVP Sprint (Target: March 2026 Pilot Launch)
+ReplySequence turns every sales call into personalized follow-ups, multi-step sequences, tracked next steps, and CRM updates -- automatically.
+
+**Production:** https://www.replysequence.com
 
 ---
 
-## What It Does
+## How It Works
 
-ReplySequence transforms meeting recordings into personalized follow-up emails automatically:
+1. **Have your meeting** -- Zoom, Google Meet, or Microsoft Teams. ReplySequence captures the transcript automatically via Recall.ai.
+2. **AI generates everything** -- Personalized follow-up email, multi-step sequence, next steps with due dates, deal risk flags, and CRM updates. All from the transcript, in seconds.
+3. **Review, approve, automate** -- Send the follow-up. Activate the sequence. Confirm next steps. The pipeline runs itself.
 
-1. **Meeting Happens** - Zoom, Google Meet, or Microsoft Teams
-2. **Transcript Captured** - VTT file downloaded via webhook
-3. **AI Generates Draft** - Claude analyzes conversation, creates email
-4. **Review & Send** - User reviews in dashboard, clicks send
-5. **CRM Logged** - Email automatically logged to Airtable
+---
 
-**Key Features:**
-- Multi-platform support (Zoom, Teams, Meet)
-- Context-aware draft generation with quality scoring
-- Action item extraction
-- Meeting type detection (sales call, internal sync, etc.)
-- Onboarding flow with sample draft generation
+## Features
+
+### Core Platform
+- **AI Follow-Ups** -- Draft emails that reference the real conversation, not generic templates
+- **Multi-Step Sequences** -- Automated nurture flows triggered by each meeting
+- **Meeting Intelligence** -- Next steps extracted with due dates, risk flags for budget/timeline/champion gaps
+- **Pipeline Automation** -- CRM updates, deal health scores, and opportunity tracking
+
+### Dashboard
+- **Command Center** -- Post-call system panel with draft review, sequence status, and next steps
+- **Pipeline Intelligence** -- Opportunity health scoring, deals at risk alerts, time savings tracking
+- **Meeting Inbox** -- All meetings with status badges, platform filters, and follow-up tracking
+- **Drafts** -- Review and send AI-generated emails with quality scores
+- **Sequences** -- Monitor multi-step follow-up campaigns with step-level status
+- **Contacts** -- Auto-populated from meeting participants with relationship strength indicators
+- **Analytics** -- Follow-up coverage, ROI calculator, engagement metrics, sequence performance
+- **Settings** -- Email tone selection, AI instructions, integration management
+
+### Integrations
+- **Meeting platforms:** Zoom, Google Meet, Microsoft Teams (via Recall.ai)
+- **CRM:** HubSpot, Salesforce, Google Sheets
+- **Email:** Gmail, Outlook (via Resend for sending)
+- **Calendar:** Google Calendar, Outlook Calendar
+- **Billing:** Stripe (Free / Pro $19/mo / Team $29/mo)
+
+---
+
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 16 (App Router) |
+| Database | PostgreSQL + Drizzle ORM (45 tables) |
+| Auth | Clerk |
+| AI | Claude (Anthropic SDK) |
+| Email Sending | Resend |
+| Meeting Recording | Recall.ai |
+| CRM | HubSpot, Salesforce, Google Sheets |
+| Payments | Stripe |
+| Analytics | PostHog |
+| Error Tracking | Sentry |
+| Deployment | Vercel |
 
 ---
 
@@ -31,28 +67,18 @@ ReplySequence transforms meeting recordings into personalized follow-up emails a
 
 - Node.js 18+
 - PostgreSQL database
-- Redis instance
-- Clerk account (authentication)
+- Clerk account
 - Anthropic API key
 
 ### Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/replysequence.git
+git clone https://github.com/alittlenerdy/replysequence.git
 cd replysequence
-
-# Install dependencies
 npm install
-
-# Set up environment variables
 cp .env.example .env.local
 # Edit .env.local with your keys
-
-# Run database migrations
 npm run db:push
-
-# Start development server
 npm run dev
 ```
 
@@ -65,128 +91,63 @@ Visit http://localhost:3000
 ```
 replysequence/
 ├── app/                          # Next.js App Router
-│   ├── api/                      # API routes
-│   │   ├── webhooks/             # Platform webhooks (zoom, teams, meet)
-│   │   ├── drafts/               # Draft CRUD endpoints
-│   │   ├── auth/                 # OAuth callback handlers
-│   │   ├── integrations/         # Platform status/disconnect
+│   ├── api/                      # 100+ API routes
+│   │   ├── webhooks/             # Platform webhooks (zoom, teams, meet, calendar, recall)
+│   │   ├── drafts/               # Draft CRUD, send, regenerate, refine
+│   │   ├── sequences/            # Sequence management, step rewriting
+│   │   ├── meetings/             # Meeting detail, intelligence queries
+│   │   ├── contacts/             # Contact aggregation
+│   │   ├── analytics/            # Analytics data endpoints
+│   │   ├── keywords/             # Keyword and topic tracking
+│   │   ├── auth/                 # OAuth callbacks (zoom, teams, meet, gmail, etc.)
 │   │   ├── stripe/               # Billing webhooks
+│   │   ├── cron/                 # 14 scheduled jobs
 │   │   └── onboarding/           # Onboarding progress
-│   ├── dashboard/                # User dashboard pages
-│   ├── onboarding/               # Onboarding flow
+│   ├── dashboard/                # 8 dashboard pages
+│   │   ├── meetings/             # Meeting inbox
+│   │   ├── drafts/               # Draft review
+│   │   ├── sequences/            # Sequence management
+│   │   ├── contacts/             # Contact list
+│   │   ├── analytics/            # Analytics dashboard
+│   │   └── settings/             # AI, integrations, email, account
+│   ├── blog/                     # Blog with 22 articles
+│   ├── compare/                  # Comparison pages (9 competitors)
+│   ├── demo/                     # Interactive demo
+│   ├── pricing/                  # Pricing page
 │   └── (auth)/                   # Clerk auth pages
 ├── components/                   # React components
-│   ├── analytics/                # Charts and stats
-│   ├── dashboard/                # Dashboard components
-│   ├── onboarding/               # Onboarding steps
-│   ├── processing/               # Processing animations
-│   └── ui/                       # UI primitives
+│   ├── analytics/                # Charts (recharts), stats, engagement
+│   ├── dashboard/                # Dashboard widgets and cards
+│   ├── landing/                  # Marketing page components
+│   ├── layout/                   # Header, Footer
+│   └── ui/                       # UI primitives (badges, buttons, modals)
 ├── lib/                          # Business logic
-│   ├── db/                       # Drizzle ORM (schema, client)
-│   ├── zoom/                     # Zoom webhook verification
-│   ├── teams/                    # Teams types
-│   ├── meet/                     # Meet types
-│   ├── prompts/                  # AI prompts
-│   ├── transcript/               # VTT parser, downloader
+│   ├── db/                       # Drizzle ORM schema (45 tables)
+│   ├── agents/                   # AI agent definitions
+│   ├── prompts/                  # AI prompt templates
 │   ├── security/                 # Rate limiting, validation
-│   ├── generate-draft.ts         # AI draft generation
-│   ├── claude-client.ts          # Claude SDK client
-│   ├── email.ts                  # Resend integration
-│   ├── airtable.ts               # CRM integration
-│   └── webhook-retry.ts          # Retry logic
-├── scripts/                      # Testing scripts
+│   ├── generate-draft.ts         # AI draft generation pipeline
+│   ├── sequence-scheduler.ts     # Sequence step scheduling
+│   ├── process-*-event.ts        # Platform-specific processing
+│   └── dashboard-queries.ts      # Dashboard data queries
 └── drizzle/                      # Database migrations
 ```
 
 ---
 
-## Platform Setup
+## Database
 
-### Zoom Integration
+45 tables covering:
 
-1. Create a Server-to-Server OAuth app in [Zoom Marketplace](https://marketplace.zoom.us/)
-2. Add these scopes: `recording:read`, `meeting:read`
-3. Enable webhooks for: `recording.completed`, `recording.transcript_completed`
-4. Set webhook URL to: `https://yourdomain.com/api/webhooks/zoom`
-5. Copy credentials to `.env.local`:
-   ```
-   ZOOM_ACCOUNT_ID=xxx
-   ZOOM_CLIENT_ID=xxx
-   ZOOM_CLIENT_SECRET=xxx
-   ZOOM_WEBHOOK_SECRET_TOKEN=xxx
-   ```
-
-### Microsoft Teams Integration
-
-1. Register an app in [Azure Portal](https://portal.azure.com/) > App Registrations
-2. Add API permissions:
-   - `OnlineMeetingTranscript.Read.All` (Application)
-   - `OnlineMeeting.Read.All` (Application)
-3. Grant admin consent for your organization
-4. Create a Graph API subscription for transcript notifications:
-   ```
-   POST https://graph.microsoft.com/v1.0/subscriptions
-   {
-     "changeType": "created",
-     "notificationUrl": "https://yourdomain.com/api/webhooks/teams",
-     "resource": "communications/onlineMeetings/getAllTranscripts",
-     "expirationDateTime": "2025-02-01T00:00:00Z",
-     "clientState": "your_webhook_secret"
-   }
-   ```
-5. Copy credentials to `.env.local`:
-   ```
-   MICROSOFT_TEAMS_TENANT_ID=xxx
-   MICROSOFT_TEAMS_CLIENT_ID=xxx
-   MICROSOFT_TEAMS_CLIENT_SECRET=xxx
-   MICROSOFT_TEAMS_WEBHOOK_SECRET=xxx
-   ```
-
-**Note**: Teams transcript notifications may have reliability issues. See [Microsoft docs](https://learn.microsoft.com/en-us/graph/teams-changenotifications-callrecording-and-calltranscript) for known limitations.
-
-### Google Meet Integration
-
-1. Create OAuth credentials in [Google Cloud Console](https://console.cloud.google.com/)
-2. Enable Google Meet API
-3. Set redirect URI: `https://yourdomain.com/api/auth/meet/callback`
-
----
-
-## Environment Variables
-
-Create `.env.local` (see `.env.example` for full list):
-
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `REDIS_URL` | Redis connection string |
-| `ZOOM_*` | Zoom Server-to-Server OAuth credentials |
-| `MICROSOFT_TEAMS_*` | Azure AD App Registration credentials |
-| `ANTHROPIC_API_KEY` | Claude API key for draft generation |
-| `RESEND_API_KEY` | Resend API key for email sending |
-| `CLERK_*` | Clerk authentication keys |
-| `AIRTABLE_*` | Airtable CRM credentials |
-| `STRIPE_*` | Stripe billing credentials |
-| `POSTHOG_*` | PostHog analytics keys |
-
----
-
-## Database Schema
-
-Key tables:
-
-| Table | Purpose |
-|-------|---------|
-| `meetings` | Meeting records from all platforms |
-| `transcripts` | Parsed transcript content |
-| `drafts` | AI-generated email drafts |
-| `users` | Clerk users and platform connections |
-| `zoom_connections` | Encrypted Zoom OAuth tokens |
-| `teams_connections` | Encrypted Teams OAuth tokens |
-| `meet_connections` | Encrypted Google OAuth tokens |
-| `webhook_failures` | Failed webhooks for retry |
-
-Database commands:
+| Domain | Tables |
+|--------|--------|
+| Core | users, meetings, transcripts, drafts |
+| Connections | zoom, teams, meet, calendar, outlook, hubspot, salesforce, sheets, gmail |
+| Intelligence | signals, dealContexts, mutualActionPlans, mapSteps, trackedKeywords |
+| Sequences | emailSequences, sequenceSteps |
+| Engagement | emailEvents, emailConnections, emailTemplates |
+| Contacts | contacts, contactMemories, meetingMemories |
+| Operations | webhookFailures, deadLetterQueue, agentActions |
 
 ```bash
 npm run db:push      # Push schema changes
@@ -197,101 +158,28 @@ npm run db:studio    # Open Drizzle Studio
 
 ---
 
-## API Endpoints
-
-### Webhooks
-
-| Endpoint | Purpose |
-|----------|---------|
-| `POST /api/webhooks/zoom` | Zoom recording events |
-| `POST /api/webhooks/teams` | Teams recording events |
-| `POST /api/webhooks/meet` | Meet recording events |
-
-### Draft Management
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /api/drafts` | List user's drafts |
-| `GET /api/drafts/[id]` | Get draft by ID |
-| `POST /api/drafts/send` | Send draft via email |
-| `PUT /api/drafts/update` | Update draft content |
-
-### OAuth
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /api/auth/zoom` | Initiate Zoom OAuth |
-| `GET /api/auth/teams` | Initiate Teams OAuth |
-| `GET /api/auth/meet` | Initiate Google OAuth |
-
----
-
-## Testing
-
-### Local Development
-
-```bash
-npm run dev           # Start dev server
-npm run build         # Production build (type checks)
-```
-
-### Testing Webhooks
-
-```bash
-# Expose local server (requires ngrok)
-ngrok http 3000
-
-# Use ngrok URL in platform webhook settings
-```
-
----
-
 ## Deployment
 
-**Production:** https://www.replysequence.com
-
-### Deploy to Vercel
+Auto-deploys to Vercel on push to `main`.
 
 ```bash
-# Push to main branch (auto-deploys)
-git push origin main
-
-# Or manual deploy
-vercel
+npm run build        # Production build
+npm run lint         # Lint check
+git push origin main # Deploy
 ```
 
-Add all environment variables in Vercel project settings.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/replysequence)
-
 ---
 
-## Tech Stack
+## Documentation
 
-| Category | Technology |
-|----------|------------|
-| Framework | Next.js 16 (App Router) |
-| Database | PostgreSQL + Drizzle ORM |
-| Auth | Clerk |
-| AI | Claude (Anthropic SDK) |
-| Email | Resend |
-| CRM | Airtable |
-| Payments | Stripe |
-| Queue | Redis + BullMQ |
-| Analytics | PostHog |
-| Error Tracking | Sentry |
-| Deployment | Vercel |
-
----
-
-## Additional Documentation
-
-- [CLAUDE.md](./CLAUDE.md) - AI assistant reference for developers
+- [CLAUDE.md](./CLAUDE.md) -- AI assistant configuration
+- [DESIGN.md](./DESIGN.md) -- Design system and visual guidelines
 
 ---
 
 ## Support
 
 **Creator:** Jimmy Hackett
+**Company:** Playground Giants
 **Email:** jimmy@playgroundgiants.com
-**Project:** https://www.replysequence.com
+**Website:** https://www.replysequence.com
