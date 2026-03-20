@@ -224,6 +224,17 @@ export type DraftTone = 'formal' | 'casual' | 'neutral';
 // Bounce type for email bounce tracking
 export type BounceType = 'hard_bounce' | 'soft_bounce' | 'complaint';
 
+// Reply intent classification types
+export type ReplyIntent =
+  | 'interested'
+  | 'meeting_requested'
+  | 'more_info'
+  | 'not_now'
+  | 'objection'
+  | 'unsubscribe'
+  | 'auto_reply'
+  | 'other';
+
 // Action item structure
 export interface ActionItem {
   owner: string;
@@ -318,6 +329,10 @@ export const drafts = pgTable(
     bounceType: text('bounce_type').$type<BounceType>(),
     bounceReason: text('bounce_reason'),
     bouncedAt: timestamp('bounced_at', { withTimezone: true }),
+    // Reply intent classification
+    replyIntent: varchar('reply_intent', { length: 30 }).$type<ReplyIntent>(),
+    replyIntentConfidence: decimal('reply_intent_confidence', { precision: 5, scale: 4 }),
+    replyIntentSummary: text('reply_intent_summary'),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),

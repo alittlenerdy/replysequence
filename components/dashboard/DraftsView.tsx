@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
-import type { DraftStatus } from '@/lib/db/schema';
+import type { DraftStatus, ReplyIntent } from '@/lib/db/schema';
 import { DraftCardStack } from './DraftCardStack';
 import { EmptyState } from '../EmptyState';
 import { SkeletonTable } from '../ui/SkeletonTable';
@@ -54,6 +54,7 @@ export function DraftsView({
   const [status, setStatus] = useState<DraftStatus | 'all'>('all');
   const [search, setSearch] = useState('');
   const [dateRange, setDateRange] = useState<'week' | 'month' | 'all'>('all');
+  const [replyIntentFilter, setReplyIntentFilter] = useState<ReplyIntent | 'all'>('all');
 
   const fetchDrafts = useCallback(async () => {
     setIsLoading(true);
@@ -64,6 +65,7 @@ export function DraftsView({
         status,
         search,
         dateRange,
+        ...(replyIntentFilter !== 'all' && { replyIntent: replyIntentFilter }),
       });
 
       const response = await fetch(`/api/drafts?${params}`);
@@ -86,7 +88,7 @@ export function DraftsView({
     } finally {
       setIsLoading(false);
     }
-  }, [page, status, search, dateRange]);
+  }, [page, status, search, dateRange, replyIntentFilter]);
 
   // Debounce search (fires on clear too so results restore)
   useEffect(() => {
@@ -101,7 +103,7 @@ export function DraftsView({
   // Fetch on filter changes (except search which is debounced)
   useEffect(() => {
     fetchDrafts();
-  }, [page, status, dateRange]);
+  }, [page, status, dateRange, replyIntentFilter]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -121,6 +123,12 @@ export function DraftsView({
     setStatus('all');
     setSearch('');
     setDateRange('all');
+    setReplyIntentFilter('all');
+    setPage(1);
+  };
+
+  const handleReplyIntentChange = (intent: ReplyIntent | 'all') => {
+    setReplyIntentFilter(intent);
     setPage(1);
   };
 
@@ -128,7 +136,7 @@ export function DraftsView({
     fetchDrafts();
   };
 
-  const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all';
+  const hasActiveFilters = status !== 'all' || search !== '' || dateRange !== 'all' || replyIntentFilter !== 'all';
 
   // Track processing meetings for live updates
   const { meetings: processingMeetings, refresh: refreshProcessing } = useProcessingMeetings();
@@ -209,6 +217,26 @@ export function DraftsView({
             {f.label}
           </button>
         ))}
+        {/* Reply intent filter */}
+        <select
+          value={replyIntentFilter}
+          onChange={(e) => handleReplyIntentChange(e.target.value as ReplyIntent | 'all')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 appearance-none cursor-pointer ${
+            replyIntentFilter !== 'all'
+              ? 'bg-[#F59E0B] text-black border-[#F59E0B] shadow-sm shadow-[#F59E0B]/25'
+              : 'bg-transparent text-[#8892B0] light:text-gray-500 border-[#1E2A4A] light:border-gray-200 hover:border-white/20 light:hover:border-gray-300 hover:text-white light:hover:text-gray-900'
+          }`}
+        >
+          <option value="all">Reply Intent</option>
+          <option value="interested">Interested</option>
+          <option value="meeting_requested">Meeting Requested</option>
+          <option value="more_info">More Info</option>
+          <option value="not_now">Not Now</option>
+          <option value="objection">Objection</option>
+          <option value="unsubscribe">Unsubscribe</option>
+          <option value="auto_reply">Auto Reply</option>
+        </select>
+
         {search && (
           <button
             onClick={() => { setSearch(''); setPage(1); }}

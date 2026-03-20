@@ -34,6 +34,27 @@ interface MeetingIntelligence {
   actionItems: Array<{ owner: string; task: string; deadline: string }> | null;
 }
 
+const INTENT_BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
+  interested:         { label: 'Interested',         color: 'text-green-400',  bg: 'bg-green-500/10',  border: 'border-green-500/20' },
+  meeting_requested:  { label: 'Meeting Requested',  color: 'text-green-400',  bg: 'bg-green-500/10',  border: 'border-green-500/20' },
+  more_info:          { label: 'More Info',           color: 'text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-500/20' },
+  not_now:            { label: 'Not Now',             color: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/20' },
+  objection:          { label: 'Objection',           color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
+  unsubscribe:        { label: 'Unsubscribe',         color: 'text-red-400',    bg: 'bg-red-500/10',    border: 'border-red-500/20' },
+  auto_reply:         { label: 'Auto Reply',          color: 'text-gray-400',   bg: 'bg-gray-500/10',   border: 'border-gray-500/20' },
+  other:              { label: 'Other',               color: 'text-gray-400',   bg: 'bg-gray-500/10',   border: 'border-gray-500/20' },
+};
+
+function ReplyIntentBadge({ intent }: { intent: string }) {
+  const config = INTENT_BADGE_CONFIG[intent];
+  if (!config) return null;
+  return (
+    <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold rounded-full ${config.color} ${config.bg} border ${config.border} shrink-0`}>
+      {config.label}
+    </span>
+  );
+}
+
 const TEMPLATE_ICON_COLORS: Record<string, string> = {
   sales: 'text-amber-400 bg-amber-500/20 border-amber-500/30',
   team: 'text-[#6366F1] bg-[#6366F1]/20 border-[#6366F1]/30',
@@ -409,6 +430,18 @@ export function DraftInlinePanel({
                 <p className="text-xs text-gray-400 light:text-gray-500 px-1">
                   Sent to: {draft.meetingHostEmail}
                 </p>
+              )}
+
+              {/* Reply intent badge + summary */}
+              {draft.replyIntent && (
+                <div className="flex items-start gap-2 px-1">
+                  <ReplyIntentBadge intent={draft.replyIntent} />
+                  {draft.replyIntentSummary && (
+                    <span className="text-xs text-[#8892B0] light:text-gray-500">
+                      {draft.replyIntentSummary}
+                    </span>
+                  )}
+                </div>
               )}
 
               {/* Body — editor or preview */}

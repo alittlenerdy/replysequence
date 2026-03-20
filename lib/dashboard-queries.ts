@@ -72,6 +72,10 @@ export interface DraftWithMeeting {
   draftType: DraftType | null;
   // Demo flag
   isDemo: boolean;
+  // Reply intent classification
+  replyIntent: string | null;
+  replyIntentConfidence: string | null;
+  replyIntentSummary: string | null;
   // Data flywheel fields
   originalBody: string | null;
   flywheelContextUsed: boolean | null;
@@ -94,6 +98,7 @@ export interface DraftsQueryParams {
   draftType?: DraftType | 'all';
   search?: string;
   dateRange?: 'week' | 'month' | 'all';
+  replyIntent?: string;
 }
 
 export interface DraftsQueryResult {
@@ -110,7 +115,7 @@ export interface DraftsQueryResult {
 export async function getDraftsWithMeetings(
   params: DraftsQueryParams = {}
 ): Promise<DraftsQueryResult> {
-  const { page = 1, limit = 10, status = 'all', draftType = 'all', search = '', dateRange = 'all' } = params;
+  const { page = 1, limit = 10, status = 'all', draftType = 'all', search = '', dateRange = 'all', replyIntent } = params;
   const offset = (page - 1) * limit;
 
   // Get current user for filtering
@@ -148,6 +153,11 @@ export async function getDraftsWithMeetings(
     conditions.push(sql`${drafts.createdAt} >= NOW() - INTERVAL '7 days'`);
   } else if (dateRange === 'month') {
     conditions.push(sql`${drafts.createdAt} >= NOW() - INTERVAL '30 days'`);
+  }
+
+  // Reply intent filter
+  if (replyIntent) {
+    conditions.push(eq(drafts.replyIntent, replyIntent));
   }
 
   // Search filter (searches subject and meeting topic)
@@ -215,6 +225,10 @@ export async function getDraftsWithMeetings(
       meetingType: drafts.meetingType,
       // Document type
       draftType: drafts.draftType,
+      // Reply intent classification
+      replyIntent: drafts.replyIntent,
+      replyIntentConfidence: drafts.replyIntentConfidence,
+      replyIntentSummary: drafts.replyIntentSummary,
       // Data flywheel fields
       flywheelContextUsed: drafts.flywheelContextUsed,
       flywheelMetadata: drafts.flywheelMetadata,
@@ -280,6 +294,10 @@ export async function getDraftById(id: string): Promise<DraftWithMeeting | null>
       meetingType: drafts.meetingType,
       // Document type
       draftType: drafts.draftType,
+      // Reply intent classification
+      replyIntent: drafts.replyIntent,
+      replyIntentConfidence: drafts.replyIntentConfidence,
+      replyIntentSummary: drafts.replyIntentSummary,
       // Data flywheel fields
       originalBody: drafts.originalBody,
       flywheelContextUsed: drafts.flywheelContextUsed,
@@ -406,6 +424,9 @@ export async function getMeetingDetail(meetingId: string): Promise<MeetingDetail
       userRating: drafts.userRating,
       userFeedback: drafts.userFeedback,
       meetingType: drafts.meetingType,
+      replyIntent: drafts.replyIntent,
+      replyIntentConfidence: drafts.replyIntentConfidence,
+      replyIntentSummary: drafts.replyIntentSummary,
       })
       .from(drafts)
       .leftJoin(meetings, eq(drafts.meetingId, meetings.id))

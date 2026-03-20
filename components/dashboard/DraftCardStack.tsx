@@ -19,6 +19,27 @@ function getConfidenceState(draft: DraftWithMeeting): { label: string; color: st
   return { label: 'Ready to send', color: '#06B6D4', bg: 'bg-[#06B6D4]/10' };
 }
 
+const INTENT_BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
+  interested:         { label: 'Interested',         color: 'text-green-400',  bg: 'bg-green-500/10',  border: 'border-green-500/20' },
+  meeting_requested:  { label: 'Meeting Requested',  color: 'text-green-400',  bg: 'bg-green-500/10',  border: 'border-green-500/20' },
+  more_info:          { label: 'More Info',           color: 'text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-500/20' },
+  not_now:            { label: 'Not Now',             color: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/20' },
+  objection:          { label: 'Objection',           color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
+  unsubscribe:        { label: 'Unsubscribe',         color: 'text-red-400',    bg: 'bg-red-500/10',    border: 'border-red-500/20' },
+  auto_reply:         { label: 'Auto Reply',          color: 'text-gray-400',   bg: 'bg-gray-500/10',   border: 'border-gray-500/20' },
+  other:              { label: 'Other',               color: 'text-gray-400',   bg: 'bg-gray-500/10',   border: 'border-gray-500/20' },
+};
+
+function ReplyIntentBadge({ intent }: { intent: string }) {
+  const config = INTENT_BADGE_CONFIG[intent];
+  if (!config) return null;
+  return (
+    <span className={`inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded-full ${config.color} ${config.bg} border ${config.border} shrink-0`}>
+      {config.label}
+    </span>
+  );
+}
+
 interface DraftCardStackProps {
   drafts: DraftWithMeeting[];
   total: number;
@@ -86,14 +107,19 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
                     </p>
                   </div>
 
-                  {/* Confidence state */}
-                  <span
-                    className={`hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${confidence.bg} shrink-0`}
-                    style={{ color: confidence.color }}
-                  >
-                    {confidence.label === 'Ready to send' && <CheckCircle2 className="w-3 h-3" />}
-                    {confidence.label}
-                  </span>
+                  {/* Confidence state + reply intent badge */}
+                  <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+                    {draft.replyIntent && (
+                      <ReplyIntentBadge intent={draft.replyIntent} />
+                    )}
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${confidence.bg}`}
+                      style={{ color: confidence.color }}
+                    >
+                      {confidence.label === 'Ready to send' && <CheckCircle2 className="w-3 h-3" />}
+                      {confidence.label}
+                    </span>
+                  </div>
 
                   {/* Right: actions */}
                   <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>

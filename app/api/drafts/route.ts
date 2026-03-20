@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { getDraftsWithMeetings, getDraftStats, getUserHasConnectedPlatforms } from '@/lib/dashboard-queries';
-import type { DraftStatus } from '@/lib/db/schema';
+import type { DraftStatus, ReplyIntent } from '@/lib/db/schema';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
 
 // Allow longer timeout for cold starts
@@ -33,11 +33,12 @@ export async function GET(request: NextRequest) {
     const status = (searchParams.get('status') || 'all') as DraftStatus | 'all';
     const search = searchParams.get('search') || '';
     const dateRange = (searchParams.get('dateRange') || 'all') as 'week' | 'month' | 'all';
+    const replyIntent = searchParams.get('replyIntent') as ReplyIntent | null;
 
-    console.log('[DASHBOARD-1] Fetching drafts API, filters:', { page, status, search, dateRange });
+    console.log('[DASHBOARD-1] Fetching drafts API, filters:', { page, status, search, dateRange, replyIntent });
 
     const [draftsResult, stats, hasConnectedPlatforms] = await Promise.all([
-      getDraftsWithMeetings({ page, limit, status, search, dateRange }),
+      getDraftsWithMeetings({ page, limit, status, search, dateRange, replyIntent: replyIntent || undefined }),
       getDraftStats(),
       getUserHasConnectedPlatforms(),
     ]);
