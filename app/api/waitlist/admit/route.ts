@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       admittedAt: user.admittedAt?.toISOString() || null,
     });
   } catch (error) {
-    console.error('[WAITLIST-ADMIT] Error checking admission:', error);
+    console.error('[WAITLIST-ADMIT] Error checking admission:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       admittedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('[WAITLIST-ADMIT] Error admitting user:', error);
+    console.error('[WAITLIST-ADMIT] Error admitting user:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

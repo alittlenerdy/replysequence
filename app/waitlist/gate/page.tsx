@@ -48,7 +48,6 @@ export default function WaitlistGatePage() {
         }
       }
     } catch (error) {
-      console.error('[WAITLIST-GATE] Error:', error);
     } finally {
       setLoading(false);
     }

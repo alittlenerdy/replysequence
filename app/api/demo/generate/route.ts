@@ -144,7 +144,7 @@ ${transcript}`;
       topic,
     });
   } catch (error) {
-    console.error('[DEMO] Generation error:', error);
+    console.error('[DEMO] Generation error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json(
       { error: 'Demo generation failed. Please try again.' },
       { status: 500 }

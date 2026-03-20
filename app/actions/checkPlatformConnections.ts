@@ -73,15 +73,12 @@ export interface PlatformConnectionsResult {
  * Creates user record if it doesn't exist.
  */
 export async function checkPlatformConnections(): Promise<PlatformConnectionsResult> {
-  console.log('[CHECK-CONNECTION] ==== Starting platform connection check ====');
 
   try {
     const { userId } = await auth();
 
-    console.log('[CHECK-CONNECTION] Clerk auth result:', { clerkUserId: userId, hasUserId: !!userId });
 
     if (!userId) {
-      console.log('[CHECK-CONNECTION] No userId from Clerk auth');
       return {
         connected: false,
         platforms: { zoom: false, teams: false, meet: false, calendar: false, outlookCalendar: false, hubspot: false, gmail: false, outlook: false, google_sheets: false, salesforce: false },
@@ -113,14 +110,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     .where(eq(users.clerkId, userId))
     .limit(1);
 
-  console.log('[CHECK-CONNECTION] User query result', {
-    found: !!existingUser,
-    userId: existingUser?.id,
-    clerkId: existingUser?.clerkId,
-    zoomConnected: existingUser?.zoomConnected,
-    teamsConnected: existingUser?.teamsConnected,
-    meetConnected: existingUser?.meetConnected,
-  });
 
   if (existingUser) {
     // Database stores boolean values directly
@@ -129,12 +118,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     const meetConnected = existingUser.meetConnected === true;
     const hasConnection = zoomConnected || teamsConnected || meetConnected;
 
-    console.log('[CHECK-CONNECTION] Connection status', {
-      zoomConnected,
-      teamsConnected,
-      meetConnected,
-      hasConnection,
-    });
 
     const now = new Date();
 
@@ -262,7 +245,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
       };
-      console.log('[CHECK-CONNECTION] Zoom connection found', { zoomEmail, hasRefreshToken });
     }
 
     // Process Teams connection details
@@ -280,7 +262,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
       };
-      console.log('[CHECK-CONNECTION] Teams connection found', { teamsEmail, hasRefreshToken });
     }
 
     // Process Meet connection details (supports multiple connections)
@@ -305,10 +286,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
           connectedAt: c.connectedAt,
         })),
       };
-      console.log('[CHECK-CONNECTION] Meet connections found', {
-        count: allMeetConnections.length,
-        primaryEmail: meetEmail,
-      });
     }
 
     // Process Google Calendar connection details
@@ -327,7 +304,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
       };
-      console.log('[CHECK-CONNECTION] Google Calendar connection found', { calendarEmail, hasRefreshToken });
     }
 
     // Process Outlook Calendar connection details
@@ -346,7 +322,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
       };
-      console.log('[CHECK-CONNECTION] Outlook Calendar connection found', { outlookCalendarEmail, hasRefreshToken });
     }
 
     // Process HubSpot CRM connection details
@@ -368,7 +343,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         needsReconnect,
         lastSyncAt: hubspotConnection.lastSyncAt ?? undefined,
       };
-      console.log('[CHECK-CONNECTION] HubSpot connection found', { hubspotPortalId, hasRefreshToken });
     }
 
     // Process Gmail email connection details
@@ -387,7 +361,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
       };
-      console.log('[CHECK-CONNECTION] Gmail connection found', { gmailEmail, hasRefreshToken });
     }
 
     // Process Outlook email connection details
@@ -406,7 +379,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpired: !hasRefreshToken,
         isExpiringSoon: false,
       };
-      console.log('[CHECK-CONNECTION] Outlook email connection found', { outlookEmail, hasRefreshToken });
     }
 
     // Process Google Sheets CRM connection details
@@ -448,7 +420,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
         isExpiringSoon: false,
         lastSyncAt: salesforceConnection.lastSyncAt ?? undefined,
       };
-      console.log('[CHECK-CONNECTION] Salesforce connection found', { salesforceOrgId, hasRefreshToken });
     }
 
     const hasAnyConnection = zoomConnected || teamsConnected || meetConnected || calendarConnected || outlookCalendarConnected || hubspotConnected || gmailConnected || outlookEmailConnected || sheetsConnected || salesforceConnected;
@@ -493,7 +464,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
   }
 
   // User doesn't exist, create them
-  console.log('[CHECK-CONNECTION] Creating new user for clerkId:', userId);
   const clerkUser = await currentUser();
   const email = clerkUser?.emailAddresses?.[0]?.emailAddress || '';
   const name = clerkUser?.fullName || clerkUser?.firstName || '';
@@ -509,7 +479,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
       meetConnected: false,
     })
     .returning({ id: users.id });
-  console.log('[CHECK-CONNECTION] Created new user', { userId: newUser.id });
 
   return {
     connected: false,
@@ -529,7 +498,6 @@ export async function checkPlatformConnections(): Promise<PlatformConnectionsRes
     userId: newUser.id,
   };
   } catch (error) {
-    console.error('[CHECK-CONNECTION] FATAL ERROR:', error);
     // Return disconnected state on error to show integration cards
     return {
       connected: false,
@@ -585,23 +553,9 @@ export async function updatePlatformConnection(
       .set(updateData)
       .where(eq(users.clerkId, userId));
 
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Platform connection updated',
-      platform,
-      connected,
-      userId,
-    }));
 
     return { success: true };
   } catch (error) {
-    console.log(JSON.stringify({
-      level: 'error',
-      message: 'Failed to update platform connection',
-      platform,
-      error: error instanceof Error ? error.message : String(error),
-    }));
-
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

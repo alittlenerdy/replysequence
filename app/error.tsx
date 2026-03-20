@@ -10,7 +10,7 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('[PAGE ERROR]', error)
+    console.error('[PAGE ERROR]', error.message)
   }, [error])
 
   return (

@@ -16,7 +16,6 @@ export default async function DashboardLayout({
   const { userId } = await auth();
 
   if (!userId) {
-    console.log('[ONBOARDING-GATE] No user, redirecting to sign-in');
     redirect('/sign-in');
   }
 
@@ -32,7 +31,7 @@ export default async function DashboardLayout({
       .where(eq(userOnboarding.clerkId, userId))
       .limit(1)
       .catch((error) => {
-        console.error('[ONBOARDING-GATE] Database error:', error);
+        console.error('[ONBOARDING-GATE] Database error');
         return [] as { completedAt: Date | null; currentStep: number }[];
       }),
     getDraftStats().catch(() => ({ total: 0, generated: 0, sent: 0, failed: 0, avgCost: 0, avgLatency: 0, meetingsProcessed: 0 })),
