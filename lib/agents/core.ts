@@ -43,7 +43,8 @@ export type AgentName =
   | 'draft-grading'
   | 'pre-meeting-briefing'
   | 'reply-classification'
-  | 'sequence-rewrite';
+  | 'sequence-rewrite'
+  | 'pipeline-stage-detection';
 
 export interface AgentTokens {
   input: number;

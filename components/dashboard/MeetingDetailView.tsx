@@ -278,15 +278,24 @@ export function MeetingDetailView({ meeting }: MeetingDetailViewProps) {
         )}
       </div>
 
-      {/* Meeting Summary */}
-      {meeting.summary && (
-        <MeetingSummaryCard
-          summary={meeting.summary}
-          keyTopics={meeting.keyTopics}
-          keyDecisions={meeting.keyDecisions}
-          actionItems={meeting.actionItems}
-        />
-      )}
+      {/* Pipeline Stage + Meeting Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {(meeting.status === 'completed' || meeting.status === 'ready') && (
+          <div className="lg:col-span-1">
+            <PipelineStageIndicator meetingId={meeting.id} initialStage={null} compact />
+          </div>
+        )}
+        {meeting.summary && (
+          <div className={meeting.status === 'completed' || meeting.status === 'ready' ? 'lg:col-span-3' : 'lg:col-span-4'}>
+            <MeetingSummaryCard
+              summary={meeting.summary}
+              keyTopics={meeting.keyTopics}
+              keyDecisions={meeting.keyDecisions}
+              actionItems={meeting.actionItems}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Sentiment Analysis Card */}
       {meeting.sentimentAnalysis && (
