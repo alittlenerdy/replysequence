@@ -49,6 +49,7 @@ const STEP_STATUS_CONFIG: Record<SequenceStepStatus, { icon: string; color: stri
   pending: { icon: 'clock', color: 'text-gray-400' },
   scheduled: { icon: 'calendar', color: 'text-blue-400' },
   sent: { icon: 'check', color: 'text-emerald-400' },
+  paused: { icon: 'pause', color: 'text-amber-400' },
   skipped: { icon: 'skip', color: 'text-gray-500' },
   failed: { icon: 'x', color: 'text-red-400' },
 };
@@ -94,6 +95,12 @@ function StepStatusIcon({ status }: { status: SequenceStepStatus }) {
       return (
         <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+        </svg>
+      );
+    case 'pause':
+      return (
+        <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       );
     default: // clock
