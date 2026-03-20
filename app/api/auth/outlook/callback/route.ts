@@ -42,15 +42,26 @@ export async function GET(request: NextRequest) {
     error: error || 'none',
   });
 
-  // Handle OAuth errors from Microsoft
+  // Handle OAuth errors from Microsoft (including user clicking "Deny")
   if (error) {
     console.error('[OUTLOOK-OAUTH-CALLBACK-ERROR] OAuth error from Microsoft:', {
       error,
       description: errorDescription,
     });
-    return NextResponse.redirect(
-      new URL(`/dashboard/settings?error=outlook_denied&message=${encodeURIComponent(errorDescription || error)}`, baseUrl)
-    );
+
+    // Check if the user came from onboarding via the state param
+    let errorRedirect = `/dashboard/settings?error=outlook_denied&message=${encodeURIComponent(errorDescription || error)}`;
+    if (state) {
+      try {
+        const decoded = Buffer.from(state, 'base64').toString('utf-8');
+        const parsed = JSON.parse(decoded);
+        if (parsed.returnTo?.startsWith('/onboarding')) {
+          errorRedirect = '/onboarding?step=3&oauth_denied=true&provider=outlook';
+        }
+      } catch { /* fall through to default redirect */ }
+    }
+
+    return NextResponse.redirect(new URL(errorRedirect, baseUrl));
   }
 
   if (!code) {

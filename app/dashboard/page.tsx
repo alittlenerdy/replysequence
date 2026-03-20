@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { auth } from '@clerk/nextjs/server';
 import { OpportunityHealth } from '@/components/dashboard/OpportunityHealth';
 import { AIInsightsPanel } from '@/components/dashboard/AIInsightsPanel';
 import { MeetingJobsTable } from '@/components/dashboard/MeetingJobsTable';
@@ -14,7 +15,9 @@ import {
   getLatestMeetingInsights,
   getLatestSequencePreview,
   getLatestReadyDraft,
+  getUserHasConnectedPlatforms,
 } from '@/lib/dashboard-queries';
+import { shouldSeedDemoMeeting, seedDemoMeeting } from '@/lib/seed-demo-meeting';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -25,7 +28,20 @@ export const metadata = {
 };
 
 async function CommandCenterContent() {
-  const [stats, missionControl, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview, latestDraft] = await Promise.all([
+  // Seed demo meeting for new users who completed onboarding but have no meetings
+  const { userId: clerkId } = await auth();
+  if (clerkId) {
+    try {
+      const { shouldSeed, userId } = await shouldSeedDemoMeeting(clerkId);
+      if (shouldSeed && userId) {
+        await seedDemoMeeting(userId);
+      }
+    } catch {
+      // Non-blocking — if seeding fails, user still sees the dashboard
+    }
+  }
+
+  const [stats, missionControl, recentMeetings, processingStatus, activityEvents, meetingInsights, sequencePreview, latestDraft, hasConnectedPlatforms] = await Promise.all([
     getDraftStats(),
     getMissionControlData(),
     getRecentMeetingsForDashboard(),
@@ -34,6 +50,7 @@ async function CommandCenterContent() {
     getLatestMeetingInsights(),
     getLatestSequencePreview(),
     getLatestReadyDraft(),
+    getUserHasConnectedPlatforms(),
   ]);
 
   // Determine if we're in a processing state
@@ -77,6 +94,7 @@ async function CommandCenterContent() {
         sequence={sequencePreview}
         nextSteps={nextSteps}
         riskFlag={riskFlag}
+        hasConnectedPlatforms={hasConnectedPlatforms}
       />
 
       {/* ═══════ 2. PIPELINE INTELLIGENCE ═══════ */}

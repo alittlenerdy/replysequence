@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const [draft] = await db
-      .select({ id: drafts.id })
+      .select({ id: drafts.id, status: drafts.status })
       .from(drafts)
       .innerJoin(meetings, eq(drafts.meetingId, meetings.id))
       .where(and(eq(drafts.id, draftId), eq(meetings.userId, dbUser.id)))
@@ -45,6 +45,14 @@ export async function POST(request: NextRequest) {
 
     if (!draft) {
       return NextResponse.json({ error: 'Draft not found' }, { status: 404 });
+    }
+
+    if (draft.status === 'sending') {
+      return NextResponse.json({ error: 'Draft is currently being sent and cannot be edited' }, { status: 409 });
+    }
+
+    if (draft.status === 'sent') {
+      return NextResponse.json({ error: 'Draft has already been sent' }, { status: 409 });
     }
 
     const updateData: { subject?: string; body?: string } = {};

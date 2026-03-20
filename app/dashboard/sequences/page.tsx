@@ -168,15 +168,15 @@ export default function SequencesPage() {
       {/* Sequences list */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#7A5CFF]/10 mb-6">
-            <Layers className="w-8 h-8 text-[#7A5CFF]" strokeWidth={1.5} />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#7A5CFF]/10 mb-4">
+            <Layers className="w-6 h-6 text-[#7A5CFF]" strokeWidth={1.5} />
           </div>
           <h2 className="text-lg font-semibold text-white light:text-gray-900 mb-2">
             {filter === 'all' ? 'No sequences yet' : `No ${filter} sequences`}
           </h2>
-          <p className="text-sm text-gray-400 light:text-gray-500 max-w-sm">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm">
             {filter === 'all'
-              ? 'Sequences are multi-step follow-up flows created from meetings. Open a meeting detail page and click "New Sequence" to start one.'
+              ? 'Multi-step follow-up sequences will appear here after your first draft sends. Each meeting generates a personalized nurture flow.'
               : `You don't have any ${filter} sequences. Change your filter to see other sequences.`}
           </p>
         </div>

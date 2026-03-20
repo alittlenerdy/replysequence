@@ -55,12 +55,20 @@ export async function GET(request: NextRequest) {
     return '/dashboard/settings';
   })() : '/dashboard/settings';
 
-  // Handle OAuth errors from Google
+  // Handle OAuth errors from Google (including user clicking "Deny")
   if (error) {
     console.error('[GMAIL-OAUTH-CALLBACK-ERROR] OAuth error from Google:', {
       error,
       description: errorDescription,
     });
+
+    // For access_denied during onboarding, use the oauth_denied param for a friendlier UX
+    if (error === 'access_denied' && errorRedirectBase.startsWith('/onboarding')) {
+      return NextResponse.redirect(
+        new URL('/onboarding?step=3&oauth_denied=true&provider=gmail', baseUrl)
+      );
+    }
+
     const separator = errorRedirectBase.includes('?') ? '&' : '?';
     return NextResponse.redirect(
       new URL(`${errorRedirectBase}${separator}email_error=auth_failed`, baseUrl)

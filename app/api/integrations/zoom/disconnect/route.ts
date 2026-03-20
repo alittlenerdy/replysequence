@@ -6,7 +6,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, users, zoomConnections } from '@/lib/db';
+import { db, users, zoomConnections, teamsConnections, meetConnections, userOnboarding } from '@/lib/db';
 
 export async function DELETE() {
   const { userId: clerkUserId } = await auth();
@@ -40,6 +40,19 @@ export async function DELETE() {
         updatedAt: new Date(),
       })
       .where(eq(users.id, user.id));
+
+    // Check if any platform connections remain; if not, reset onboarding platformConnected
+    const [remainingTeams, remainingMeet] = await Promise.all([
+      db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1),
+      db.select({ id: meetConnections.id }).from(meetConnections).where(eq(meetConnections.userId, user.id)).limit(1),
+    ]);
+
+    if (remainingTeams.length === 0 && remainingMeet.length === 0) {
+      await db
+        .update(userOnboarding)
+        .set({ platformConnected: null, updatedAt: new Date() })
+        .where(eq(userOnboarding.clerkId, clerkUserId));
+    }
 
     console.log('[ZOOM-DISCONNECT] Disconnected Zoom for user:', {
       clerkUserId,

@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN consented_at TIMESTAMPTZ;

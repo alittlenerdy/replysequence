@@ -4,6 +4,8 @@ import type { NextRequest } from 'next/server'
 
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
+  '/onboarding(.*)',
+  '/waitlist/gate',
   '/api/drafts(.*)',
   '/api/analytics(.*)',
   '/api/billing(.*)',
@@ -12,6 +14,20 @@ const isProtectedRoute = createRouteMatcher([
   '/api/onboarding(.*)',
   '/api/stripe/create-checkout(.*)',
   '/api/stripe/create-portal(.*)',
+])
+
+// Routes that require the waitlist gate check (redirect unadmitted users)
+const isWaitlistGatedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/onboarding(.*)',
+])
+
+// Routes that unadmitted users CAN access (waitlist gate page, admit check, auth callbacks)
+const isWaitlistExemptRoute = createRouteMatcher([
+  '/waitlist/gate',
+  '/api/waitlist(.*)',
+  '/api/auth(.*)',
+  '/api/onboarding/progress',
 ])
 
 // Generate a random nonce for CSP
@@ -37,6 +53,22 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   if (isProtectedRoute(req)) {
     await auth.protect()
+  }
+
+  // Waitlist gate: redirect unadmitted authenticated users to /waitlist/gate
+  // Uses Clerk publicMetadata (set when user is admitted) to avoid DB queries in middleware.
+  // publicMetadata is included in the session JWT as `metadata` by default in Clerk v5+.
+  if (isWaitlistGatedRoute(req) && !isWaitlistExemptRoute(req)) {
+    const session = await auth()
+    if (session.userId) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const publicMetadata = (session.sessionClaims as any)?.metadata as Record<string, unknown> | undefined
+      const isAdmitted = publicMetadata?.admitted === true
+      if (!isAdmitted) {
+        const url = new URL('/waitlist/gate', req.url)
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   // Generate nonce for CSP

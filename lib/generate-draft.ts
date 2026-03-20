@@ -458,13 +458,21 @@ export async function generateDraft(input: GenerateDraftInput): Promise<Generate
         subject: parsed.subject.substring(0, 60),
       });
 
-      // Log usage for free tier tracking
+      // Log usage for free tier tracking (skip demo meetings)
       if (userId) {
-        await logUsage(userId, 'draft_generated', {
-          draftId: draft.id,
-          meetingId,
-          costUsd,
-        });
+        const [meetingRecord] = await db
+          .select({ isDemo: meetings.isDemo })
+          .from(meetings)
+          .where(eq(meetings.id, meetingId))
+          .limit(1);
+
+        if (!meetingRecord?.isDemo) {
+          await logUsage(userId, 'draft_generated', {
+            draftId: draft.id,
+            meetingId,
+            costUsd,
+          });
+        }
       }
 
       // Track analytics event (must await for serverless flush)

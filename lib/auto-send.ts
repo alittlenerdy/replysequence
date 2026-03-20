@@ -18,7 +18,7 @@ import { syncSentEmailToHubSpot, refreshHubSpotToken } from './hubspot';
 import { syncSentEmailToSheets } from './google-sheets';
 import { syncSentEmailToSalesforce, refreshSalesforceToken } from './salesforce';
 import { decrypt, encrypt } from './encryption';
-import { markDraftAsSent } from './dashboard-queries';
+import { markDraftAsSent, claimDraftForSending, revertDraftFromSending } from './dashboard-queries';
 import { scheduleFollowUpSequence } from './sequence-scheduler';
 import type { Participant } from './db/schema';
 
@@ -171,6 +171,19 @@ export async function attemptAutoSend(params: {
       return { autoSent: false, reason: draft ? 'already_sent' : 'draft_not_found' };
     }
 
+    // 4b. Atomically claim the draft for sending (prevents race with user edits)
+    const claimed = await claimDraftForSending(draftId);
+    if (!claimed) {
+      console.log(JSON.stringify({
+        level: 'info',
+        tag: '[AUTO-SEND]',
+        message: 'Draft claim failed — status changed (user editing or already sending)',
+        draftId,
+        currentStatus: draft.status,
+      }));
+      return { autoSent: false, reason: 'draft_claimed_by_another' };
+    }
+
     // 5. Inject tracking
     let emailBody = draft.body;
     if (draft.trackingId) {
@@ -233,10 +246,12 @@ export async function attemptAutoSend(params: {
     }
 
     if (!result.success) {
+      // Revert status back to 'generated' so the user can still edit/resend
+      await revertDraftFromSending(draftId);
       console.error(JSON.stringify({
         level: 'error',
         tag: '[AUTO-SEND]',
-        message: 'Auto-send failed',
+        message: 'Auto-send failed, reverted draft to generated',
         draftId,
         recipientEmail,
         error: result.error,
@@ -333,10 +348,12 @@ export async function attemptAutoSend(params: {
       messageId: result.messageId,
     };
   } catch (error) {
+    // Best-effort revert in case we claimed the draft before the error
+    await revertDraftFromSending(draftId).catch(() => {});
     console.error(JSON.stringify({
       level: 'error',
       tag: '[AUTO-SEND]',
-      message: 'Auto-send unexpected error',
+      message: 'Auto-send unexpected error, reverted draft to generated',
       draftId,
       error: error instanceof Error ? error.message : String(error),
     }));

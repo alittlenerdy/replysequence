@@ -210,7 +210,7 @@ export const rawEvents = pgTable(
 );
 
 // Draft status enum values
-export type DraftStatus = 'pending' | 'generating' | 'generated' | 'sent' | 'failed';
+export type DraftStatus = 'pending' | 'generating' | 'generated' | 'sending' | 'sent' | 'failed';
 
 // Document type for multi-format drafts (email is default for backward compatibility)
 export type DraftType = 'email' | 'proposal' | 'recap' | 'crm_notes' | 'internal_summary';
@@ -425,6 +425,10 @@ export const users = pgTable(
     // Email complaint tracking (auto-pause sending after 3 complaints)
     emailComplaintCount: integer('email_complaint_count').notNull().default(0),
     emailSendingPaused: boolean('email_sending_paused').notNull().default(false),
+    // Privacy consent
+    consentedAt: timestamp('consented_at', { withTimezone: true }),
+    // Waitlist gate: set when user is admitted (null = still on waitlist)
+    admittedAt: timestamp('admitted_at', { withTimezone: true }),
     // Timestamps
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

@@ -35,12 +35,23 @@ export async function GET(request: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-  // Handle OAuth errors from Zoom
+  // Handle OAuth errors from Zoom (including user clicking "Deny")
   if (error) {
     console.error('[ZOOM-CALLBACK] OAuth error from Zoom:', error);
-    return NextResponse.redirect(
-      new URL(`/dashboard/settings?error=zoom_denied&message=${encodeURIComponent(error)}`, baseUrl)
-    );
+
+    // Check if the user came from onboarding via the state param
+    let errorRedirect = `/dashboard/settings?error=zoom_denied&message=${encodeURIComponent(error)}`;
+    if (state) {
+      try {
+        const decoded = Buffer.from(state, 'base64').toString('utf-8');
+        const parsed = JSON.parse(decoded);
+        if (parsed.returnTo?.startsWith('/onboarding')) {
+          errorRedirect = '/onboarding?step=2&oauth_denied=true&provider=zoom';
+        }
+      } catch { /* fall through to default redirect */ }
+    }
+
+    return NextResponse.redirect(new URL(errorRedirect, baseUrl));
   }
 
   if (!code) {
@@ -208,6 +219,14 @@ export async function GET(request: NextRequest) {
 
     // Note: userOnboarding step advancement is handled client-side by onboarding/page.tsx
     // to avoid race conditions between server and client step updates.
+
+    // Auto-admit user through waitlist gate on first platform connect
+    try {
+      const { admitUser } = await import('@/lib/waitlist-gate');
+      await admitUser(clerkUserId);
+    } catch (admitError) {
+      console.error('[ZOOM-CALLBACK] Non-critical: waitlist auto-admit failed:', admitError);
+    }
 
     console.log('[ZOOM-CALLBACK] OAuth flow completed successfully', {
       clerkUserId,

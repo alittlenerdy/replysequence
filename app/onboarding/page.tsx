@@ -69,6 +69,7 @@ function OnboardingContent() {
 
   const [showExitModal, setShowExitModal] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [oauthDeniedMessage, setOauthDeniedMessage] = useState<string | null>(null);
 
   // Load existing progress
   const loadProgress = useCallback(async () => {
@@ -195,6 +196,32 @@ function OnboardingContent() {
       window.history.replaceState({}, '', '/onboarding');
     }
 
+    // Handle OAuth denied (user clicked "Deny" on consent screen)
+    const oauthDenied = searchParams.get('oauth_denied');
+    const deniedProvider = searchParams.get('provider');
+    if (oauthDenied === 'true' && deniedProvider) {
+      const providerNames: Record<string, string> = {
+        gmail: 'Gmail',
+        outlook: 'Outlook',
+        meet: 'Google Meet',
+        zoom: 'Zoom',
+        teams: 'Microsoft Teams',
+      };
+      const friendlyName = providerNames[deniedProvider] || deniedProvider;
+      const isPlatformStep = ['meet', 'zoom', 'teams'].includes(deniedProvider);
+
+      if (isPlatformStep) {
+        setOauthDeniedMessage(
+          `To use ReplySequence with your meetings, we need access to ${friendlyName}. Click "Connect" to try again, or skip this step for now.`
+        );
+      } else {
+        setOauthDeniedMessage(
+          `To send follow-up emails, we need access to ${friendlyName}. Click "Connect" to try again, or skip this step for now.`
+        );
+      }
+      window.history.replaceState({}, '', '/onboarding');
+    }
+
     if (step) {
       const stepNum = parseInt(step, 10);
       if (stepNum >= 1 && stepNum <= 6) {
@@ -240,6 +267,7 @@ function OnboardingContent() {
   // Navigation handlers
   const goToStep = (step: OnboardingStep) => {
     setState(prev => ({ ...prev, currentStep: step }));
+    setOauthDeniedMessage(null);
     saveProgress({ currentStep: step as number });
     trackEvent('step_viewed', step as number);
   };
@@ -404,6 +432,16 @@ function OnboardingContent() {
             <p className="text-[#6366F1] text-sm">
               Welcome back! Let&apos;s continue where you left off.
             </p>
+          </motion.div>
+        )}
+
+        {oauthDeniedMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+          >
+            <p className="text-amber-400 text-sm">{oauthDeniedMessage}</p>
           </motion.div>
         )}
 

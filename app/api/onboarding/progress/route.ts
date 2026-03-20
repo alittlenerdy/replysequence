@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { userOnboarding, users, zoomConnections, teamsConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, sheetsConnections, salesforceConnections } from '@/lib/db/schema';
+import { userOnboarding, users, zoomConnections, teamsConnections, meetConnections, calendarConnections, outlookCalendarConnections, emailConnections, hubspotConnections, sheetsConnections, salesforceConnections } from '@/lib/db/schema';
 import type { OnboardingStep, ConnectedPlatform, EmailPreference } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { rateLimit, RATE_LIMITS, getClientIdentifier, getRateLimitHeaders } from '@/lib/security/rate-limit';
@@ -49,10 +49,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ...newRecord, connectedPlatforms: [], googleCalendarConnected: false, outlookCalendarConnected: false });
     }
 
-    // Fetch actual connection statuses from the database
-    // Include meetConnected in user query to avoid a second users table lookup
+    // Fetch user record for joins
     const [user] = await db
-      .select({ id: users.id, meetConnected: users.meetConnected })
+      .select({ id: users.id })
       .from(users)
       .where(eq(users.clerkId, userId))
       .limit(1);
@@ -69,9 +68,11 @@ export async function GET(request: NextRequest) {
 
     if (user) {
       // Run all platform connection queries in parallel — each is independent
+      // Always query actual connection tables (not cached flags) for fresh state
       const [
         zoomConnRows,
         teamsConnRows,
+        meetConnRows,
         googleCalRows,
         outlookCalRows,
         emailConnRows,
@@ -81,6 +82,7 @@ export async function GET(request: NextRequest) {
       ] = await Promise.all([
         db.select({ id: zoomConnections.id }).from(zoomConnections).where(eq(zoomConnections.userId, user.id)).limit(1),
         db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1),
+        db.select({ id: meetConnections.id }).from(meetConnections).where(eq(meetConnections.userId, user.id)).limit(1),
         db.select({ id: calendarConnections.id }).from(calendarConnections).where(eq(calendarConnections.userId, user.id)).limit(1),
         db.select({ id: outlookCalendarConnections.id }).from(outlookCalendarConnections).where(eq(outlookCalendarConnections.userId, user.id)).limit(1),
         db.select({ id: emailConnections.id, email: emailConnections.email, provider: emailConnections.provider }).from(emailConnections).where(eq(emailConnections.userId, user.id)).limit(1),
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
 
       if (zoomConnRows[0]) connectedPlatforms.push('zoom');
       if (teamsConnRows[0]) connectedPlatforms.push('teams');
-      if (user.meetConnected) connectedPlatforms.push('meet');
+      if (meetConnRows[0]) connectedPlatforms.push('meet');
 
       googleCalendarConnected = !!googleCalRows[0];
       outlookCalendarConnected = !!outlookCalRows[0];

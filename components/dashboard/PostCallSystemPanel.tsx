@@ -45,6 +45,7 @@ interface PostCallSystemPanelProps {
   sequence: SequenceData | null;
   nextSteps: NextStepItem[];
   riskFlag?: string | null;
+  hasConnectedPlatforms?: boolean;
 }
 
 /* ──────────────────────────────────────────────
@@ -268,7 +269,7 @@ const idleSteps = [
   { icon: '05', label: 'Next steps tracked', color: '#06B6D4' },
 ];
 
-function IdlePanel() {
+function IdlePanel({ hasConnectedPlatforms }: { hasConnectedPlatforms?: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -286,11 +287,25 @@ function IdlePanel() {
           </div>
 
           <h2 className="text-base font-bold text-white light:text-gray-900 mb-2">
-            When your next meeting is captured, it will appear here.
+            Your command center is warming up.
           </h2>
-          <p className="text-sm text-[#8892B0] light:text-gray-500 leading-relaxed max-w-md">
-            ReplySequence will process the recording, generate your follow-up, start the sequence, and extract next steps — automatically.
+          <p className="text-sm text-[#8892B0] light:text-gray-500 leading-relaxed max-w-md mb-2">
+            After your next meeting, you&apos;ll see AI-generated follow-ups, action items, and deal intelligence right here.
           </p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            {hasConnectedPlatforms
+              ? 'Your calendar is connected — we\'ll be ready when your next meeting wraps up.'
+              : 'Connect your calendar in Settings to see upcoming meetings.'}
+          </p>
+          {!hasConnectedPlatforms && (
+            <Link
+              href="/dashboard/settings"
+              className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 text-xs font-medium text-[#06B6D4] border border-[#06B6D4]/20 rounded-lg hover:bg-[#06B6D4]/5 transition-colors"
+            >
+              <Calendar className="w-3 h-3" />
+              Connect Calendar
+            </Link>
+          )}
         </div>
 
         {/* Right: flow preview */}
@@ -319,7 +334,7 @@ function IdlePanel() {
    MAIN EXPORT — persistent panel, 3 states
    Priority: Processing > Output > Idle
    ────────────────────────────────────────────── */
-export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, riskFlag }: PostCallSystemPanelProps) {
+export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, riskFlag, hasConnectedPlatforms }: PostCallSystemPanelProps) {
   const searchParams = useSearchParams();
   const debugProcessing = searchParams.get('debugProcessing') === '1';
 
@@ -344,7 +359,7 @@ export function PostCallSystemPanel({ processing, draft, sequence, nextSteps, ri
           <OutputPanel key="output" draft={draft} sequence={sequence} nextSteps={nextSteps} riskFlag={riskFlag} />
         )}
         {state === 'idle' && (
-          <IdlePanel key="idle" />
+          <IdlePanel key="idle" hasConnectedPlatforms={hasConnectedPlatforms} />
         )}
       </AnimatePresence>
     </div>

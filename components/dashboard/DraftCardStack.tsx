@@ -13,6 +13,7 @@ function formatDate(date: Date | string | null): string {
 
 function getConfidenceState(draft: DraftWithMeeting): { label: string; color: string; bg: string } {
   if (draft.status === 'sent') return { label: 'Sent', color: '#22C55E', bg: 'bg-green-500/10' };
+  if (draft.status === 'sending') return { label: 'Sending...', color: '#F59E0B', bg: 'bg-amber-500/10' };
   if (draft.status === 'failed') return { label: 'Failed', color: '#EF4444', bg: 'bg-red-500/10' };
   // For generated drafts, check quality
   return { label: 'Ready to send', color: '#06B6D4', bg: 'bg-[#06B6D4]/10' };
@@ -36,6 +37,8 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
         {drafts.map((draft) => {
           const isExpanded = expandedId === draft.id;
           const isSent = draft.status === 'sent';
+          const isSending = draft.status === 'sending';
+          const isLocked = isSent || isSending;
           const confidence = getConfidenceState(draft);
           const bodyPreview = (draft.body || '').replace(/<[^>]*>/g, '').slice(0, 180);
 
@@ -55,9 +58,16 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
                 <div className="p-4 flex items-center gap-4">
                   {/* Left: meeting + recipient + time */}
                   <div className="flex-shrink-0 w-32 min-w-0">
-                    <p className="text-xs font-medium text-white light:text-gray-900 truncate">
-                      {draft.meetingTopic || 'Meeting'}
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-medium text-white light:text-gray-900 truncate">
+                        {draft.meetingTopic || 'Meeting'}
+                      </p>
+                      {draft.isDemo && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded bg-[#7A5CFF]/15 text-[#7A5CFF] border border-[#7A5CFF]/20 shrink-0">
+                          Demo
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[10px] text-[#8892B0] light:text-gray-500 truncate">
                       {draft.sentTo || draft.meetingHostEmail}
                     </p>
@@ -87,7 +97,7 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
 
                   {/* Right: actions */}
                   <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                    {!isSent && (
+                    {!isLocked && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -100,7 +110,7 @@ export function DraftCardStack({ drafts, total, page, totalPages, onPageChange, 
                         Send
                       </button>
                     )}
-                    {!isSent && (
+                    {!isLocked && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

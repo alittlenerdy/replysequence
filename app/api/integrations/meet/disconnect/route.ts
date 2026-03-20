@@ -8,7 +8,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, and } from 'drizzle-orm';
-import { db, users, meetConnections } from '@/lib/db';
+import { db, users, meetConnections, zoomConnections, teamsConnections, userOnboarding } from '@/lib/db';
 
 export async function DELETE(request: NextRequest) {
   const { userId: clerkUserId } = await auth();
@@ -57,6 +57,19 @@ export async function DELETE(request: NextRequest) {
           .update(users)
           .set({ meetConnected: false, updatedAt: new Date() })
           .where(eq(users.id, user.id));
+
+        // Check if any platform connections remain; if not, reset onboarding platformConnected
+        const [remainingZoom, remainingTeams] = await Promise.all([
+          db.select({ id: zoomConnections.id }).from(zoomConnections).where(eq(zoomConnections.userId, user.id)).limit(1),
+          db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1),
+        ]);
+
+        if (remainingZoom.length === 0 && remainingTeams.length === 0) {
+          await db
+            .update(userOnboarding)
+            .set({ platformConnected: null, updatedAt: new Date() })
+            .where(eq(userOnboarding.clerkId, clerkUserId));
+        }
       } else if (deleted.isPrimary && !remaining.some(c => c.isPrimary)) {
         // Deleted the primary - promote the first remaining connection
         await db
@@ -80,6 +93,19 @@ export async function DELETE(request: NextRequest) {
         .update(users)
         .set({ meetConnected: false, updatedAt: new Date() })
         .where(eq(users.id, user.id));
+
+      // Check if any platform connections remain; if not, reset onboarding platformConnected
+      const [remainingZoomAll, remainingTeamsAll] = await Promise.all([
+        db.select({ id: zoomConnections.id }).from(zoomConnections).where(eq(zoomConnections.userId, user.id)).limit(1),
+        db.select({ id: teamsConnections.id }).from(teamsConnections).where(eq(teamsConnections.userId, user.id)).limit(1),
+      ]);
+
+      if (remainingZoomAll.length === 0 && remainingTeamsAll.length === 0) {
+        await db
+          .update(userOnboarding)
+          .set({ platformConnected: null, updatedAt: new Date() })
+          .where(eq(userOnboarding.clerkId, clerkUserId));
+      }
 
       console.log('[MEET-DISCONNECT] Disconnected all Meet connections for user:', {
         clerkUserId,

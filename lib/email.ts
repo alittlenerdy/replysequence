@@ -61,67 +61,122 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
     };
   }
 
-  try {
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Sending email via Resend',
-      to,
-      subject: subject.substring(0, 50),
-      from,
-      includeSignature,
-    }));
+  console.log(JSON.stringify({
+    level: 'info',
+    message: 'Sending email via Resend',
+    to,
+    subject: subject.substring(0, 50),
+    from,
+    includeSignature,
+  }));
 
-    // Add signature footer if enabled
-    const bodyWithFooter = includeSignature ? appendPlainTextFooter(body, utmContent) : body;
-    // Use pre-composed HTML if provided, otherwise convert plain text to HTML
-    const htmlBody = html || formatBodyAsHtml(body, includeSignature, utmContent);
+  // Add signature footer if enabled
+  const bodyWithFooter = includeSignature ? appendPlainTextFooter(body, utmContent) : body;
+  // Use pre-composed HTML if provided, otherwise convert plain text to HTML
+  const htmlBody = html || formatBodyAsHtml(body, includeSignature, utmContent);
 
-    const { data, error } = await resend.emails.send({
-      from,
-      to: [to],
-      subject,
-      html: htmlBody,
-      text: bodyWithFooter,
-      replyTo: replyTo,
-    });
+  const MAX_RETRIES = 3;
+  const RETRY_DELAYS = [1000, 2000, 4000]; // exponential backoff: 1s, 2s, 4s
+  let lastError: string = 'Unknown error';
 
-    if (error) {
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const { data, error } = await resend.emails.send({
+        from,
+        to: [to],
+        subject,
+        html: htmlBody,
+        text: bodyWithFooter,
+        replyTo: replyTo,
+      });
+
+      if (error) {
+        lastError = error.message;
+        // 4xx errors are client errors (bad request, invalid API key, etc.) — don't retry
+        const is4xx = error.message.includes('422') ||
+          error.message.includes('400') ||
+          error.message.includes('401') ||
+          error.message.includes('403') ||
+          error.message.includes('404');
+
+        if (is4xx) {
+          console.error(JSON.stringify({
+            level: 'error',
+            message: 'Resend API client error (not retrying)',
+            error: error.message,
+            to,
+            attempt: attempt + 1,
+          }));
+          return { success: false, error: error.message };
+        }
+
+        // Retryable error (5xx, rate limit, etc.)
+        if (attempt < MAX_RETRIES - 1) {
+          console.warn(JSON.stringify({
+            level: 'warn',
+            message: `Resend API error — retrying in ${RETRY_DELAYS[attempt]}ms`,
+            error: error.message,
+            to,
+            attempt: attempt + 1,
+            maxRetries: MAX_RETRIES,
+          }));
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAYS[attempt]));
+          continue;
+        }
+
+        // Final attempt failed
+        console.error(JSON.stringify({
+          level: 'error',
+          message: 'Resend API error — all retries exhausted',
+          error: error.message,
+          to,
+          attempts: MAX_RETRIES,
+        }));
+        return { success: false, error: error.message };
+      }
+
+      console.log(JSON.stringify({
+        level: 'info',
+        message: 'Email sent successfully',
+        messageId: data?.id,
+        to,
+        ...(attempt > 0 ? { retriesUsed: attempt } : {}),
+      }));
+
+      return {
+        success: true,
+        messageId: data?.id,
+      };
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : 'Unknown error';
+
+      if (attempt < MAX_RETRIES - 1) {
+        console.warn(JSON.stringify({
+          level: 'warn',
+          message: `Resend send threw exception — retrying in ${RETRY_DELAYS[attempt]}ms`,
+          error: lastError,
+          to,
+          attempt: attempt + 1,
+          maxRetries: MAX_RETRIES,
+        }));
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAYS[attempt]));
+        continue;
+      }
+
       console.error(JSON.stringify({
         level: 'error',
-        message: 'Resend API error',
-        error: error.message,
+        message: 'Failed to send email — all retries exhausted',
+        error: lastError,
         to,
+        attempts: MAX_RETRIES,
       }));
-      return {
-        success: false,
-        error: error.message,
-      };
     }
-
-    console.log(JSON.stringify({
-      level: 'info',
-      message: 'Email sent successfully',
-      messageId: data?.id,
-      to,
-    }));
-
-    return {
-      success: true,
-      messageId: data?.id,
-    };
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.error(JSON.stringify({
-      level: 'error',
-      message: 'Failed to send email',
-      error: errorMessage,
-      to,
-    }));
-    return {
-      success: false,
-      error: errorMessage,
-    };
   }
+
+  return {
+    success: false,
+    error: lastError,
+  };
 }
 
 /**
@@ -186,6 +241,80 @@ Try it free → ${signatureUrl}
 export function appendPlainTextFooter(body: string, utmContent?: string): string {
   const footer = generatePlainTextFooter(utmContent);
   return `${body}\n\n${footer}`;
+}
+
+// ── Welcome Email ────────────────────────────────────────────────────────────
+
+interface WelcomeEmailParams {
+  email: string;
+  name: string | null;
+  connectedPlatforms: string[];
+  emailConnected: boolean;
+  crmConnected: string | null; // 'hubspot' | 'salesforce' | 'sheets' | null
+}
+
+/**
+ * Send a welcome email when a user completes onboarding.
+ * Fire-and-forget — callers should not await this.
+ */
+export async function sendWelcomeEmail(params: WelcomeEmailParams): Promise<SendEmailResult> {
+  const { email, name, connectedPlatforms, emailConnected, crmConnected } = params;
+  const greeting = name ? `Hi ${name}` : 'Hi there';
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.replysequence.com'}/dashboard`;
+
+  // Build a summary of what they connected
+  const connectionLines: string[] = [];
+  if (connectedPlatforms.length > 0) {
+    const platformNames = connectedPlatforms.map(p =>
+      p === 'meet' ? 'Google Meet' : p === 'teams' ? 'Microsoft Teams' : p.charAt(0).toUpperCase() + p.slice(1)
+    );
+    connectionLines.push(`Meeting platform: ${platformNames.join(', ')}`);
+  }
+  if (emailConnected) {
+    connectionLines.push('Email: Connected');
+  }
+  if (crmConnected) {
+    const crmName = crmConnected === 'hubspot' ? 'HubSpot' : crmConnected === 'salesforce' ? 'Salesforce' : 'Google Sheets';
+    connectionLines.push(`CRM: ${crmName}`);
+  }
+
+  const connectionSummary = connectionLines.length > 0
+    ? `Here is what you have set up:\n${connectionLines.map(l => `  - ${l}`).join('\n')}`
+    : 'You can connect your meeting platform, email, and CRM from the dashboard at any time.';
+
+  const body = [
+    `${greeting},`,
+    '',
+    'Welcome to ReplySequence! You are all set.',
+    '',
+    connectionSummary,
+    '',
+    'What happens next:',
+    '  - After your next meeting, we will generate a follow-up draft within 5 minutes.',
+    '  - You will get a notification to review and send it -- or it sends automatically if you chose that option.',
+    '',
+    `Head back to your dashboard whenever you are ready: ${dashboardUrl}`,
+    '',
+    'If you have any questions, just reply to this email.',
+    '',
+    'Thanks,',
+    'The ReplySequence Team',
+  ].join('\n');
+
+  console.log(JSON.stringify({
+    level: 'info',
+    tag: '[WELCOME]',
+    message: 'Sending welcome email',
+    to: email,
+  }));
+
+  return sendEmail({
+    to: email,
+    subject: "You're all set -- ReplySequence is ready",
+    body,
+    replyTo: 'support@replysequence.com',
+    includeSignature: false,
+  });
 }
 
 /**

@@ -13,6 +13,13 @@ export interface ConnectedEmailResult {
 // Token Refresh
 // ---------------------------------------------------------------------------
 
+export class TokenRevokedError extends Error {
+  constructor(public provider: 'gmail' | 'outlook', public userId?: string) {
+    super(`${provider} refresh token has been revoked`);
+    this.name = 'TokenRevokedError';
+  }
+}
+
 export async function refreshGmailToken(
   refreshToken: string
 ): Promise<{ accessToken: string; expiresIn: number }> {
@@ -29,6 +36,24 @@ export async function refreshGmailToken(
 
   if (!response.ok) {
     const errorText = await response.text();
+    // Detect revoked/invalid refresh tokens (user changed password, revoked access, etc.)
+    const isTokenRevoked =
+      response.status === 401 ||
+      errorText.includes('invalid_grant') ||
+      errorText.includes('Token has been expired or revoked');
+
+    if (isTokenRevoked) {
+      console.log(JSON.stringify({
+        level: 'warn',
+        tag: '[EMAIL-SENDER]',
+        service: 'email',
+        message: 'Gmail token revoked — user likely changed password or revoked access',
+        status: response.status,
+        timestamp: new Date().toISOString(),
+      }));
+      throw new TokenRevokedError('gmail');
+    }
+
     console.log(JSON.stringify({
       level: 'error',
       tag: '[EMAIL-SENDER]',
@@ -76,6 +101,25 @@ export async function refreshOutlookToken(
 
   if (!response.ok) {
     const errorText = await response.text();
+    // Detect revoked/invalid refresh tokens
+    const isTokenRevoked =
+      response.status === 401 ||
+      errorText.includes('invalid_grant') ||
+      errorText.includes('AADSTS700082') || // expired refresh token
+      errorText.includes('AADSTS50173'); // revoked refresh token
+
+    if (isTokenRevoked) {
+      console.log(JSON.stringify({
+        level: 'warn',
+        tag: '[EMAIL-SENDER]',
+        service: 'email',
+        message: 'Outlook token revoked — user likely changed password or revoked access',
+        status: response.status,
+        timestamp: new Date().toISOString(),
+      }));
+      throw new TokenRevokedError('outlook');
+    }
+
     console.log(JSON.stringify({
       level: 'error',
       tag: '[EMAIL-SENDER]',
@@ -440,6 +484,38 @@ export async function sendViaConnectedAccount(params: {
       });
     }
   } catch (error) {
+    // Handle revoked tokens: delete the connection so the user is prompted to reconnect
+    if (error instanceof TokenRevokedError) {
+      console.log(JSON.stringify({
+        level: 'warn',
+        tag: '[EMAIL-SENDER]',
+        service: 'email',
+        message: 'Gmail token revoked — deleting stale connection',
+        userId: connection.id,
+        provider: connection.provider,
+        timestamp: new Date().toISOString(),
+      }));
+      try {
+        await db
+          .delete(emailConnections)
+          .where(eq(emailConnections.id, connection.id));
+      } catch (deleteErr) {
+        console.log(JSON.stringify({
+          level: 'error',
+          tag: '[EMAIL-SENDER]',
+          message: 'Failed to delete revoked connection',
+          connectionId: connection.id,
+          error: deleteErr instanceof Error ? deleteErr.message : String(deleteErr),
+          timestamp: new Date().toISOString(),
+        }));
+      }
+      return {
+        success: false,
+        error: `Your ${connection.provider === 'gmail' ? 'Gmail' : 'Outlook'} connection has expired. Please reconnect your email account.`,
+        provider: connection.provider,
+      };
+    }
+
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.log(JSON.stringify({
       level: 'error',

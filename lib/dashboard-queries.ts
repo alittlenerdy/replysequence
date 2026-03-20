@@ -441,13 +441,41 @@ export async function getMeetingDetail(meetingId: string): Promise<MeetingDetail
 }
 
 /**
- * Update a draft's content
+ * Update a draft's content.
+ * Blocks updates if the draft is currently being sent (status = 'sending').
  */
 export async function updateDraft(
   id: string,
   data: { subject?: string; body?: string }
 ): Promise<void> {
-  await db.update(drafts).set(data).where(eq(drafts.id, id));
+  await db
+    .update(drafts)
+    .set(data)
+    .where(and(eq(drafts.id, id), sql`${drafts.status} NOT IN ('sending', 'sent')`));
+}
+
+/**
+ * Atomically claim a draft for sending by transitioning status from 'generated' to 'sending'.
+ * Returns true if the claim succeeded (this caller owns the send), false if the draft
+ * was already claimed by another process (e.g., user editing, or another auto-send).
+ */
+export async function claimDraftForSending(id: string): Promise<boolean> {
+  const result = await db
+    .update(drafts)
+    .set({ status: 'sending' as const })
+    .where(and(eq(drafts.id, id), eq(drafts.status, 'generated')));
+  // Drizzle pg/neon returns { rowCount }, check rows affected
+  return (result as unknown as { rowCount: number }).rowCount > 0;
+}
+
+/**
+ * Revert a draft from 'sending' back to 'generated' (e.g., after a send failure).
+ */
+export async function revertDraftFromSending(id: string): Promise<void> {
+  await db
+    .update(drafts)
+    .set({ status: 'generated' as const })
+    .where(and(eq(drafts.id, id), eq(drafts.status, 'sending')));
 }
 
 /**
@@ -489,6 +517,7 @@ export interface MeetingListItem {
   draftCount: number;
   sentCount: number;
   createdAt: Date;
+  isDemo: boolean;
 }
 
 export interface MeetingsQueryParams {
@@ -556,6 +585,7 @@ export async function getMeetingsList(
         status: meetings.status,
         summary: meetings.summary,
         createdAt: meetings.createdAt,
+        isDemo: meetings.isDemo,
       })
       .from(meetings)
       .where(whereClause)
@@ -603,6 +633,7 @@ export async function getMeetingsList(
     draftCount: draftCounts[m.id]?.total || 0,
     sentCount: draftCounts[m.id]?.sent || 0,
     createdAt: m.createdAt,
+    isDemo: m.isDemo,
   }));
 
   return {

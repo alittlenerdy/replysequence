@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Users, Send, RefreshCw, Crown, Star, Clock, CheckCircle2, Mail, ExternalLink } from 'lucide-react';
+import { Users, Send, RefreshCw, Crown, Star, Clock, CheckCircle2, Mail, ExternalLink, UserCheck } from 'lucide-react';
 
 interface WaitlistEntry {
   id: string;
@@ -48,6 +48,8 @@ export function WaitlistAdmin() {
   const [inviting, setInviting] = useState(false);
   const [inviteResult, setInviteResult] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [admittingEmail, setAdmittingEmail] = useState<string | null>(null);
+  const [admitResult, setAdmitResult] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -92,6 +94,29 @@ export function WaitlistAdmin() {
       setInviteResult('Failed to send invites.');
     } finally {
       setInviting(false);
+    }
+  }
+
+  async function handleAdmit(email: string) {
+    setAdmittingEmail(email);
+    setAdmitResult(null);
+    try {
+      const res = await fetch('/api/waitlist/admit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setAdmitResult(`Error admitting ${email}: ${json.error}`);
+        return;
+      }
+      setAdmitResult(`Admitted ${email} successfully.`);
+      fetchData();
+    } catch {
+      setAdmitResult(`Failed to admit ${email}.`);
+    } finally {
+      setAdmittingEmail(null);
     }
   }
 
@@ -182,6 +207,11 @@ export function WaitlistAdmin() {
             {inviteResult}
           </p>
         )}
+        {admitResult && (
+          <p className={`mt-3 text-sm ${admitResult.startsWith('Error') ? 'text-red-400' : 'text-green-400'}`}>
+            {admitResult}
+          </p>
+        )}
       </div>
 
       {/* Status filter chips */}
@@ -230,12 +260,13 @@ export function WaitlistAdmin() {
                 <th className="text-left px-4 py-3 text-gray-400 light:text-gray-500 font-medium">Referrals</th>
                 <th className="text-left px-4 py-3 text-gray-400 light:text-gray-500 font-medium">Source</th>
                 <th className="text-left px-4 py-3 text-gray-400 light:text-gray-500 font-medium">Joined</th>
+                <th className="text-left px-4 py-3 text-gray-400 light:text-gray-500 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={9} className="px-4 py-12 text-center text-gray-500">
                     No entries found.
                   </td>
                 </tr>
@@ -264,6 +295,20 @@ export function WaitlistAdmin() {
                       <td className="px-4 py-3 text-gray-400 light:text-gray-500 text-xs">{entry.utmSource || 'direct'}</td>
                       <td className="px-4 py-3 text-gray-400 light:text-gray-500 text-xs whitespace-nowrap">
                         {new Date(entry.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </td>
+                      <td className="px-4 py-3">
+                        {entry.status === 'accepted' ? (
+                          <span className="text-xs text-green-400">Admitted</span>
+                        ) : (
+                          <button
+                            onClick={() => handleAdmit(entry.email)}
+                            disabled={admittingEmail === entry.email}
+                            className="px-2.5 py-1 bg-green-600/20 hover:bg-green-600/30 disabled:opacity-50 text-green-400 rounded text-xs font-medium transition-colors flex items-center gap-1 outline-none focus-visible:ring-2 focus-visible:ring-green-500/70"
+                          >
+                            <UserCheck className="w-3 h-3" />
+                            {admittingEmail === entry.email ? 'Admitting...' : 'Admit'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

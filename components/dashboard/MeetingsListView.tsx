@@ -297,19 +297,15 @@ export function MeetingsListView() {
         <div className="text-center py-16 bg-gray-900/30 light:bg-white border border-gray-700/50 light:border-gray-200 rounded-2xl light:shadow-sm">
           {meetings.length === 0 ? (
             <>
-              <svg className="w-16 h-16 text-gray-600 light:text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No meetings yet</h3>
-              <p className="text-gray-400 light:text-gray-500 text-sm max-w-md mx-auto">
-                Connect a meeting platform in Settings to start capturing transcripts and generating follow-up emails automatically.
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#06B6D4]/10 mx-auto mb-4">
+                <svg className="w-6 h-6 text-[#06B6D4]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-white light:text-gray-900 mb-2">No meetings recorded yet</h3>
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-md mx-auto">
+                After your next call on Zoom, Meet, or Teams, it will appear here with a full transcript and AI analysis.
               </p>
-              <Link
-                href="/dashboard/settings"
-                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#4F46E5] hover:bg-[#6366F1] text-white text-sm font-medium rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
-              >
-                Connect Platform
-              </Link>
             </>
           ) : (
             <>
@@ -346,6 +342,11 @@ export function MeetingsListView() {
                       <h3 className="text-sm font-semibold text-white light:text-gray-900 group-hover:text-[#6366F1] light:group-hover:text-[#4F46E5] transition-colors truncate">
                         {meeting.topic || 'Untitled Meeting'}
                       </h3>
+                      {meeting.isDemo && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold rounded bg-[#7A5CFF]/15 text-[#7A5CFF] border border-[#7A5CFF]/20 shrink-0">
+                          Demo
+                        </span>
+                      )}
                       <FollowUpBadge status={followUp} />
                     </div>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-[11px] text-[#8892B0] light:text-gray-500">

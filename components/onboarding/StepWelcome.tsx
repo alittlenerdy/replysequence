@@ -1,13 +1,32 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap, Clock, Mail } from 'lucide-react';
+import Link from 'next/link';
 
 interface StepWelcomeProps {
   onNext: () => void;
 }
 
 export function StepWelcome({ onNext }: StepWelcomeProps) {
+  const [consented, setConsented] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleContinue = async () => {
+    if (!consented || saving) return;
+    setSaving(true);
+    try {
+      await fetch('/api/onboarding/consent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (err) {
+      console.error('[ONBOARDING] Failed to save consent:', err);
+    }
+    setSaving(false);
+    onNext();
+  };
   const features = [
     {
       icon: Zap,
@@ -84,16 +103,36 @@ export function StepWelcome({ onNext }: StepWelcomeProps) {
         ))}
       </motion.div>
 
-      <motion.button
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
-        onClick={onNext}
-        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#6366F1] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4F46E5] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#6366F1]/25"
+        className="flex flex-col items-center gap-4"
       >
-        Start Setup
-        <ArrowRight className="w-5 h-5" />
-      </motion.button>
+        <label className="flex items-start gap-3 max-w-lg text-left cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={consented}
+            onChange={(e) => setConsented(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-800 text-[#6366F1] focus:ring-[#6366F1] focus:ring-offset-0 cursor-pointer accent-[#6366F1]"
+          />
+          <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+            I agree to ReplySequence storing my meeting transcripts and email content to generate AI-powered follow-ups.{' '}
+            <Link href="/privacy" className="text-[#6366F1] hover:text-[#818CF8] underline underline-offset-2">
+              Privacy Policy
+            </Link>
+          </span>
+        </label>
+
+        <button
+          onClick={handleContinue}
+          disabled={!consented || saving}
+          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#6366F1] to-[#3A4BDD] text-white font-semibold rounded-xl hover:from-[#4F46E5] hover:to-[#2A3ACC] transition-[color,background-color,box-shadow] duration-200 shadow-lg shadow-[#6366F1]/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-[#6366F1] disabled:hover:to-[#3A4BDD]"
+        >
+          Start Setup
+          <ArrowRight className="w-5 h-5" />
+        </button>
+      </motion.div>
     </div>
   );
 }
