@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
   // Encode returnTo in state along with userId for CSRF protection
   const statePayload = JSON.stringify({ userId, returnTo });
-  const state = Buffer.from(statePayload).toString('base64');
+  const state = Buffer.from(statePayload).toString('base64url');
 
   // Build Microsoft OAuth URL
   const params = new URLSearchParams({

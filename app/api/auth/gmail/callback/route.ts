@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
   // Determine error redirect target (onboarding vs settings)
   const errorRedirectBase = state ? (() => {
     try {
-      const decoded = Buffer.from(state, 'base64').toString('utf-8');
+      const decoded = Buffer.from(state, 'base64url').toString('utf-8');
       const parsed = JSON.parse(decoded);
       if (parsed.returnTo?.startsWith('/onboarding')) return '/onboarding?step=3';
     } catch { /* fall through */ }
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
   let stateNonce: string | undefined;
 
   try {
-    const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
+    const decoded = Buffer.from(state || '', 'base64url').toString('utf-8');
     const parsed = JSON.parse(decoded);
     stateUserId = parsed.userId;
     returnTo = parsed.returnTo || returnTo;

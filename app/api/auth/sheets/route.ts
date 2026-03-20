@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   const scopes = scopesList.join(' ');
 
   const statePayload = JSON.stringify({ userId, returnTo });
-  const state = Buffer.from(statePayload).toString('base64');
+  const state = Buffer.from(statePayload).toString('base64url');
 
   const params = new URLSearchParams({
     client_id: clientId,

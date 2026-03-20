@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
   let returnTo = '/dashboard?calendar_connected=true';
 
   try {
-    const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
+    const decoded = Buffer.from(state || '', 'base64url').toString('utf-8');
     const parsed = JSON.parse(decoded);
     stateUserId = parsed.userId;
     returnTo = parsed.returnTo || returnTo;

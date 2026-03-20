@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
   // Encode returnTo in state along with userId and CSRF nonce
   const statePayload = JSON.stringify({ userId, returnTo, nonce: csrfNonce });
-  const state = Buffer.from(statePayload).toString('base64');
+  const state = Buffer.from(statePayload).toString('base64url');
 
   console.log('[ZOOM-OAUTH] URL construction:', {
     rawAppUrl,

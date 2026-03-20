@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     let errorRedirect = `/dashboard/settings?error=zoom_denied&message=${encodeURIComponent(error)}`;
     if (state) {
       try {
-        const decoded = Buffer.from(state, 'base64').toString('utf-8');
+        const decoded = Buffer.from(state, 'base64url').toString('utf-8');
         const parsed = JSON.parse(decoded);
         if (parsed.returnTo?.startsWith('/onboarding')) {
           errorRedirect = '/onboarding?step=2&oauth_denied=true&provider=zoom';
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   let stateNonce: string | undefined;
 
   try {
-    const decoded = Buffer.from(state || '', 'base64').toString('utf-8');
+    const decoded = Buffer.from(state || '', 'base64url').toString('utf-8');
     const parsed = JSON.parse(decoded);
     stateUserId = parsed.userId;
     returnTo = parsed.returnTo || returnTo;

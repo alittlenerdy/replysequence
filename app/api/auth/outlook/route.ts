@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       userId,
       returnTo: redirect,
       nonce: csrfNonce,
-    })).toString('base64');
+    })).toString('base64url');
 
     const params = new URLSearchParams({
       client_id: clientId,

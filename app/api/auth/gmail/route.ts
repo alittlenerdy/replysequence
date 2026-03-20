@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     const csrfNonce = crypto.randomUUID();
     const state = Buffer.from(
       JSON.stringify({ userId, returnTo: redirect, nonce: csrfNonce })
-    ).toString('base64');
+    ).toString('base64url');
 
     // 7. Build Google OAuth URL
     const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
