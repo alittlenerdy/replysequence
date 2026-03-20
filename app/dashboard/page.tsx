@@ -4,6 +4,7 @@ import { OpportunityHealth } from '@/components/dashboard/OpportunityHealth';
 import { AIInsightsPanel } from '@/components/dashboard/AIInsightsPanel';
 import { MeetingJobsTable } from '@/components/dashboard/MeetingJobsTable';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
+import { AIActionsFeed } from '@/components/dashboard/AIActionsFeed';
 import { ProcessingStatusCard } from '@/components/dashboard/ProcessingStatusCard';
 import { PostCallSystemPanel } from '@/components/dashboard/PostCallSystemPanel';
 import {
@@ -143,8 +144,9 @@ async function CommandCenterContent() {
             )}
             <MeetingJobsTable meetings={recentMeetings.length > 0 ? recentMeetings : undefined} />
           </div>
-          <div>
+          <div className="space-y-4">
             <ActivityFeed events={activityEvents.length > 0 ? activityEvents : undefined} />
+            <AIActionsFeed />
           </div>
         </div>
       </div>
