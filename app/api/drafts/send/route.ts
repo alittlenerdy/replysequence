@@ -18,6 +18,7 @@ import { z } from 'zod';
 import { parseBody } from '@/lib/api-validation';
 import { scheduleFollowUpSequence } from '@/lib/sequence-scheduler';
 import { incrementContactEmailsSent } from '@/lib/contacts';
+import { validateEmail } from '@/lib/email-validation';
 
 const sendDraftSchema = z.object({
   draftId: z.string().uuid(),
@@ -136,6 +137,31 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Validate recipient email before sending
+    const validation = await validateEmail(recipientEmail);
+    console.log(JSON.stringify({
+      level: 'info',
+      message: 'Email validation result',
+      draftId,
+      recipientEmail,
+      deliverability: validation.deliverability,
+      valid: validation.valid,
+      reason: validation.reason,
+    }));
+
+    if (validation.deliverability === 'undeliverable') {
+      return NextResponse.json(
+        {
+          error: `Email validation failed: ${validation.reason || 'Address is undeliverable'}`,
+          validation: {
+            deliverability: validation.deliverability,
+            reason: validation.reason,
+          },
+        },
+        { status: 422 }
+      );
+    }
+
     console.log('[SEND-1] Sending email, to:', recipientEmail);
     console.log(JSON.stringify({
       level: 'info',
@@ -144,6 +170,7 @@ export async function POST(request: NextRequest) {
       recipientEmail,
       subject: draft.subject,
       hasTracking: !!draft.trackingId,
+      emailValidation: validation.deliverability,
     }));
 
     // Build properly formatted HTML email with footer and tracking
@@ -583,6 +610,9 @@ export async function POST(request: NextRequest) {
       message: 'Email sent successfully',
       messageId: result.messageId,
       hubspotDetails,
+      emailValidation: validation.deliverability !== 'deliverable'
+        ? { deliverability: validation.deliverability, reason: validation.reason }
+        : undefined,
     });
   } catch (error) {
     Sentry.captureException(error, {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, type JSX } from 'react';
+import { useState, useEffect, useCallback, useRef, type JSX } from 'react';
 import dynamic from 'next/dynamic';
 import type { DraftWithMeeting } from '@/lib/dashboard-queries';
 import type { MeetingTemplate } from '@/lib/meeting-templates';
@@ -159,6 +159,45 @@ export function DraftInlinePanel({
       .catch(() => {})
       .finally(() => setLoadingRecipients(false));
   }, [draft.meetingId, draft.status]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Email validation state
+  const [emailValidation, setEmailValidation] = useState<{
+    deliverability: 'deliverable' | 'undeliverable' | 'risky' | 'unknown';
+    reason?: string;
+  } | null>(null);
+  const [validating, setValidating] = useState(false);
+  const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Validate email with debounce when recipient changes
+  useEffect(() => {
+    if (draft.status === 'sent' || !recipientEmail || recipientEmail.length < 5 || !recipientEmail.includes('@')) {
+      setEmailValidation(null);
+      return;
+    }
+    // Clear any pending validation
+    if (validationTimeoutRef.current) clearTimeout(validationTimeoutRef.current);
+    // Debounce 800ms
+    const timer = setTimeout(async () => {
+      setValidating(true);
+      try {
+        const res = await fetch('/api/email/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: recipientEmail }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setEmailValidation({ deliverability: data.deliverability, reason: data.reason });
+        }
+      } catch {
+        // Silently fail — validation is a bonus
+      } finally {
+        setValidating(false);
+      }
+    }, 800);
+    validationTimeoutRef.current = timer;
+    return () => clearTimeout(timer);
+  }, [recipientEmail, draft.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Action state
   const [isSending, setIsSending] = useState(false);
@@ -595,24 +634,65 @@ export function DraftInlinePanel({
                     </div>
                   )}
 
-                  {/* Recipient input + Send button */}
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      placeholder="Recipient email address"
-                      value={recipientEmail}
-                      onChange={(e) => setRecipientEmail(e.target.value)}
-                      className="flex-1 px-3 py-2 text-sm text-white light:text-gray-900 bg-gray-900/60 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] outline-none placeholder:text-gray-500"
-                      autoComplete="email"
-                    />
-                    <button
-                      onClick={handleSend}
-                      disabled={isSending || !recipientEmail}
-                      className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#3A4BDD] shadow-sm shadow-[#6366F1]/25 disabled:opacity-50 transition-all"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                      {isSending ? 'Sending\u2026' : 'Send'}
-                    </button>
+                  {/* Recipient input + Validation badge + Send button */}
+                  <div className="space-y-1.5">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="email"
+                          placeholder="Recipient email address"
+                          value={recipientEmail}
+                          onChange={(e) => setRecipientEmail(e.target.value)}
+                          className="w-full px-3 py-2 pr-8 text-sm text-white light:text-gray-900 bg-gray-900/60 light:bg-white border border-gray-600 light:border-gray-300 rounded-lg focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] outline-none placeholder:text-gray-500"
+                          autoComplete="email"
+                        />
+                        {/* Inline validation indicator */}
+                        <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                          {validating && (
+                            <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                          )}
+                          {!validating && emailValidation?.deliverability === 'deliverable' && (
+                            <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" title="Email verified">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          )}
+                          {!validating && emailValidation?.deliverability === 'risky' && (
+                            <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" title={emailValidation.reason || 'Risky email'}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                          )}
+                          {!validating && emailValidation?.deliverability === 'undeliverable' && (
+                            <svg className="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" title={emailValidation.reason || 'Undeliverable'}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleSend}
+                        disabled={isSending || !recipientEmail || emailValidation?.deliverability === 'undeliverable'}
+                        className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#3A4BDD] shadow-sm shadow-[#6366F1]/25 disabled:opacity-50 transition-all"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                        {isSending ? 'Sending\u2026' : 'Send'}
+                      </button>
+                    </div>
+                    {/* Validation message below input */}
+                    {emailValidation?.deliverability === 'undeliverable' && (
+                      <p className="text-xs text-red-400 flex items-center gap-1 px-1">
+                        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" /></svg>
+                        {emailValidation.reason || 'This email address appears undeliverable'}
+                      </p>
+                    )}
+                    {emailValidation?.deliverability === 'risky' && (
+                      <p className="text-xs text-amber-400 flex items-center gap-1 px-1">
+                        <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" /></svg>
+                        {emailValidation.reason || 'Delivery may be unreliable'}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
