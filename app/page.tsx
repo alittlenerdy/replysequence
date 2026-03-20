@@ -240,18 +240,21 @@ export default function LandingPage() {
                 before: '44% of reps never follow up at all',
                 process: 'AI drafts follow-up + triggers a sequence',
                 after: 'Every call gets a multi-step follow-up plan',
+                color: '#6366F1',
               },
               {
                 icon: FileX,
                 before: 'Generic "Great speaking with you" emails',
                 process: 'AI pulls specific topics from the transcript',
                 after: 'Each sequence step references the real conversation',
+                color: '#06B6D4',
               },
               {
                 icon: Zap,
                 before: 'Action items forgotten after the call',
                 process: 'AI extracts next steps with due dates',
                 after: 'Every commitment tracked, reminders sent when overdue',
+                color: '#F59E0B',
               },
             ].map((item, index) => (
               <motion.div
@@ -262,16 +265,19 @@ export default function LandingPage() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="rounded-2xl bg-[#0F172A] light:bg-white border border-[#1E2A4A] light:border-gray-200 p-6 shadow-lg shadow-black/10 light:shadow-gray-200/50 flex flex-col items-center text-center"
               >
-                <div className="w-12 h-12 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6 text-[#06B6D4]" aria-hidden="true" />
+                <div
+                  className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"
+                  style={{ backgroundColor: `${item.color}15`, border: `1px solid ${item.color}30` }}
+                >
+                  <item.icon className="w-6 h-6" style={{ color: item.color }} aria-hidden="true" />
                 </div>
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 light:text-gray-500 mb-2">Before</span>
                 <p className="text-sm text-gray-300 light:text-gray-700 mb-3">{item.before}</p>
 
-                <ArrowDown className="w-4 h-4 text-[#06B6D4]/60 mb-1" aria-hidden="true" />
-                <p className="text-xs text-[#06B6D4] light:text-teal-600 mb-1 font-medium">{item.process}</p>
-                <ArrowDown className="w-4 h-4 text-[#06B6D4]/60 mb-3" aria-hidden="true" />
+                <ArrowDown className="w-4 h-4 mb-1" style={{ color: `${item.color}99` }} aria-hidden="true" />
+                <p className="text-xs font-medium mb-1" style={{ color: item.color }}>{item.process}</p>
+                <ArrowDown className="w-4 h-4 mb-3" style={{ color: `${item.color}99` }} aria-hidden="true" />
 
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#F59E0B] light:text-amber-600 mb-2">After</span>
                 <p className="text-sm text-white light:text-gray-900 font-medium">{item.after}</p>
