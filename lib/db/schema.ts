@@ -127,6 +127,8 @@ export const meetings = pgTable(
     processingCompletedAt: timestamp('processing_completed_at', { withTimezone: true }),
     processingError: text('processing_error'),
     isDemo: boolean('is_demo').notNull().default(false),
+    // Language detection: ISO 639-1 code detected from transcript
+    detectedLanguage: varchar('detected_language', { length: 10 }),
     // Context Store: optional link to accumulated deal context
     dealContextId: uuid('deal_context_id'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -323,6 +325,8 @@ export const drafts = pgTable(
       referencedMeetingIds: string[];
       referencedDraftIds: string[];
     }>(),
+    // A/B testing: alternative subject line
+    subjectVariantB: varchar('subject_variant_b', { length: 500 }),
     // Resend message ID (for webhook event correlation)
     resendMessageId: varchar('resend_message_id', { length: 255 }),
     // Email bounce tracking
@@ -448,6 +452,8 @@ export const users = pgTable(
       sequenceStepSent: boolean;
       weeklySummary: boolean;
     }>(),
+    // Language preference for draft generation (ISO 639-1 code, null = auto-detect)
+    responseLanguage: varchar('response_language', { length: 10 }),
     // Privacy consent
     consentedAt: timestamp('consented_at', { withTimezone: true }),
     // Waitlist gate: set when user is admitted (null = still on waitlist)
@@ -1944,6 +1950,10 @@ export const contacts = pgTable(
     lastMeetingId: uuid('last_meeting_id').references(() => meetings.id),
     emailsSent: integer('emails_sent').notNull().default(0),
     lastEmailedAt: timestamp('last_emailed_at', { withTimezone: true }),
+    linkedinUrl: varchar('linkedin_url', { length: 500 }),
+    avatarUrl: varchar('avatar_url', { length: 500 }),
+    enrichedAt: timestamp('enriched_at', { withTimezone: true }),
+    enrichmentSource: varchar('enrichment_source', { length: 50 }),
     notes: text('notes'),
     tags: jsonb('tags').$type<string[]>().default([]),
     metadata: jsonb('metadata').$type<Record<string, unknown>>(),

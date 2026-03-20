@@ -32,6 +32,11 @@ interface ContactRecord {
   emailsSent: number;
   activeSequences: number;
   completedSequences: number;
+  company: string | null;
+  title: string | null;
+  linkedinUrl: string | null;
+  avatarUrl: string | null;
+  enrichedAt: string | null;
 }
 
 export async function GET(request: NextRequest) {
@@ -73,6 +78,11 @@ export async function GET(request: NextRequest) {
       lastMeetingAt: contacts.lastMeetingAt,
       lastMeetingId: contacts.lastMeetingId,
       emailsSent: contacts.emailsSent,
+      company: contacts.company,
+      title: contacts.title,
+      linkedinUrl: contacts.linkedinUrl,
+      avatarUrl: contacts.avatarUrl,
+      enrichedAt: contacts.enrichedAt,
     })
     .from(contacts)
     .where(and(...conditions))
@@ -131,6 +141,11 @@ export async function GET(request: NextRequest) {
     emailsSent: c.emailsSent,
     activeSequences: seqActive.get(c.email.toLowerCase()) || 0,
     completedSequences: seqCompleted.get(c.email.toLowerCase()) || 0,
+    company: c.company || null,
+    title: c.title || null,
+    linkedinUrl: c.linkedinUrl || null,
+    avatarUrl: c.avatarUrl || null,
+    enrichedAt: c.enrichedAt?.toISOString() || null,
   }));
 
   return NextResponse.json({ contacts: contactList, total: contactList.length });
