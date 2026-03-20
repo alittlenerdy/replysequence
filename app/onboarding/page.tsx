@@ -70,6 +70,29 @@ function OnboardingContent() {
   const [showExitModal, setShowExitModal] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [oauthDeniedMessage, setOauthDeniedMessage] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [completionError, setCompletionError] = useState<string | null>(null);
+  const [oauthInFlight, setOauthInFlight] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('oauth_in_flight') === 'true';
+    }
+    return false;
+  });
+
+  // Bug #4: Persist OAuth callback params to sessionStorage immediately
+  // This runs during render (before useEffect) so params survive a refresh
+  if (typeof window !== 'undefined') {
+    const oauthKeys = ['platform_connected', 'email_connected', 'crm_connected', 'oauth_denied', 'provider', 'success', 'email_error'] as const;
+    const hasOAuthParam = oauthKeys.some(key => searchParams.get(key) !== null);
+    if (hasOAuthParam) {
+      for (const key of oauthKeys) {
+        const value = searchParams.get(key);
+        if (value !== null) {
+          sessionStorage.setItem(`oauth_cb_${key}`, value);
+        }
+      }
+    }
+  }
 
   // Load existing progress
   const loadProgress = useCallback(async () => {
@@ -124,10 +147,12 @@ function OnboardingContent() {
         }));
       } else {
         setState(prev => ({ ...prev, isLoading: false }));
+        setLoadError(true);
       }
     } catch (error) {
       console.error('[ONBOARDING] Error loading progress:', error);
       setState(prev => ({ ...prev, isLoading: false }));
+      setLoadError(true);
     }
   }, [router]);
 
@@ -135,13 +160,22 @@ function OnboardingContent() {
     loadProgress();
   }, [loadProgress]);
 
-  // Handle OAuth callback params
+  // Handle OAuth callback params (with sessionStorage fallback for Bug #4)
   useEffect(() => {
-    const platform = searchParams.get('platform_connected');
-    const emailConnectedParam = searchParams.get('email_connected');
-    const crmConnectedParam = searchParams.get('crm_connected');
+    const getParam = (key: string): string | null => {
+      return searchParams.get(key) ?? sessionStorage.getItem(`oauth_cb_${key}`) ?? null;
+    };
+    const platform = getParam('platform_connected');
+    const emailConnectedParam = getParam('email_connected');
+    const crmConnectedParam = getParam('crm_connected');
     const step = searchParams.get('step');
-    const success = searchParams.get('success');
+    const success = getParam('success');
+
+    // Clear oauth_in_flight when we get a callback
+    if (platform || emailConnectedParam || crmConnectedParam || searchParams.get('oauth_denied')) {
+      sessionStorage.removeItem('oauth_in_flight');
+      setOauthInFlight(false);
+    }
 
     if (platform && success === 'true') {
       const connectedPlatform = platform as ConnectedPlatform;
@@ -167,7 +201,7 @@ function OnboardingContent() {
     }
 
     // Handle email OAuth error
-    const emailErrorParam = searchParams.get('email_error');
+    const emailErrorParam = getParam('email_error');
     if (emailErrorParam) {
       const errorMessages: Record<string, string> = {
         auth_failed: 'Authorization was denied or cancelled. Please try again.',
@@ -197,8 +231,8 @@ function OnboardingContent() {
     }
 
     // Handle OAuth denied (user clicked "Deny" on consent screen)
-    const oauthDenied = searchParams.get('oauth_denied');
-    const deniedProvider = searchParams.get('provider');
+    const oauthDenied = getParam('oauth_denied');
+    const deniedProvider = getParam('provider');
     if (oauthDenied === 'true' && deniedProvider) {
       const providerNames: Record<string, string> = {
         gmail: 'Gmail',
@@ -227,6 +261,12 @@ function OnboardingContent() {
       if (stepNum >= 1 && stepNum <= 6) {
         setState(prev => ({ ...prev, currentStep: stepNum as 1 | 2 | 3 | 4 | 5 | 6 }));
       }
+    }
+
+    // Bug #4: Clear persisted OAuth callback params after processing
+    const oauthStorageKeys = ['platform_connected', 'email_connected', 'crm_connected', 'oauth_denied', 'provider', 'success', 'email_error'];
+    for (const key of oauthStorageKeys) {
+      sessionStorage.removeItem(`oauth_cb_${key}`);
     }
   }, [searchParams]);
 
@@ -342,13 +382,22 @@ function OnboardingContent() {
 
   const handlePreferenceSaved = async (preference: EmailPreference) => {
     setState(prev => ({ ...prev, emailPreference: preference }));
+    setCompletionError(null);
     await saveProgress({ emailPreference: preference });
     trackEvent('preferences_saved', 6, { preference });
 
     // Complete onboarding
-    await fetch('/api/onboarding/complete', { method: 'POST' });
-    trackEvent('onboarding_completed', 6);
-    goToStep('complete');
+    try {
+      const res = await fetch('/api/onboarding/complete', { method: 'POST' });
+      if (!res.ok) {
+        throw new Error(`Completion failed: ${res.status}`);
+      }
+      trackEvent('onboarding_completed', 6);
+      goToStep('complete');
+    } catch (error) {
+      console.error('[ONBOARDING] Error completing onboarding:', error);
+      setCompletionError('Something went wrong. Please try again.');
+    }
   };
 
   const handleSkipPlatform = () => {
@@ -380,6 +429,31 @@ function OnboardingContent() {
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-[#6366F1] animate-spin mx-auto" />
           <p className="mt-4 text-gray-400">Loading your progress\u2026</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Bug #1: Error state when loadProgress fails
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-[#060B18] flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+            <X className="w-6 h-6 text-red-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Something went wrong</h2>
+          <p className="text-gray-400 mb-6">We couldn&apos;t load your onboarding progress. Please try again.</p>
+          <button
+            onClick={() => {
+              setLoadError(false);
+              setState(prev => ({ ...prev, isLoading: true }));
+              loadProgress();
+            }}
+            className="px-6 py-2.5 rounded-lg font-medium text-white bg-[#6366F1] hover:bg-[#4F46E5] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060B18]"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -445,6 +519,26 @@ function OnboardingContent() {
           </motion.div>
         )}
 
+        {/* Bug #2: Completion error banner */}
+        {completionError && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-between"
+          >
+            <p className="text-red-400 text-sm">{completionError}</p>
+            <button
+              onClick={() => {
+                setCompletionError(null);
+                handlePreferenceSaved(state.emailPreference);
+              }}
+              className="ml-4 px-4 py-1.5 text-sm font-medium text-white bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-red-500/70"
+            >
+              Try Again
+            </button>
+          </motion.div>
+        )}
+
         <AnimatePresence mode="wait">
           {state.currentStep === 1 && (
             <motion.div
@@ -471,6 +565,7 @@ function OnboardingContent() {
                 connectedPlatforms={state.connectedPlatforms}
                 onPlatformConnected={handlePlatformConnected}
                 onSkip={handleSkipPlatform}
+                oauthInFlight={oauthInFlight}
               />
             </motion.div>
           )}

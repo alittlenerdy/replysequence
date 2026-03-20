@@ -11,6 +11,7 @@ interface StepConnectPlatformProps {
   connectedPlatforms?: string[];
   onPlatformConnected: (platform: ConnectedPlatform) => void;
   onSkip: () => void;
+  oauthInFlight?: boolean;
 }
 
 export function StepConnectPlatform({
@@ -18,14 +19,37 @@ export function StepConnectPlatform({
   connectedPlatforms = [],
   onPlatformConnected,
   onSkip,
+  oauthInFlight = false,
 }: StepConnectPlatformProps) {
-  const [connecting, setConnecting] = useState<string | null>(null);
+  const [connecting, setConnecting] = useState<string | null>(() => {
+    // Restore connecting state if OAuth redirect is in flight
+    if (oauthInFlight && typeof window !== 'undefined') {
+      return sessionStorage.getItem('onboarding_platform') || null;
+    }
+    return null;
+  });
   const [showSkipWarning, setShowSkipWarning] = useState(false);
 
+  // Bug #3: Clear oauth_in_flight after 30s timeout
+  useState(() => {
+    if (typeof window === 'undefined') return;
+    const startTime = sessionStorage.getItem('oauth_in_flight_ts');
+    if (startTime && Date.now() - parseInt(startTime, 10) > 30000) {
+      sessionStorage.removeItem('oauth_in_flight');
+      sessionStorage.removeItem('oauth_in_flight_ts');
+      setConnecting(null);
+    }
+  });
+
   const handleConnect = (platform: 'zoom' | 'teams' | 'meet') => {
+    // Bug #3: Prevent double-click race condition
+    if (connecting || oauthInFlight) return;
     setConnecting(platform);
     // Store which platform we're connecting so callback knows
     sessionStorage.setItem('onboarding_platform', platform);
+    // Set oauth_in_flight flag to persist across redirect
+    sessionStorage.setItem('oauth_in_flight', 'true');
+    sessionStorage.setItem('oauth_in_flight_ts', Date.now().toString());
     // Redirect to OAuth - encode the full redirect URL to preserve query params
     const redirectUrl = `/onboarding?platform_connected=${platform}&success=true`;
     window.location.href = `/api/auth/${platform}?redirect=${encodeURIComponent(redirectUrl)}`;
