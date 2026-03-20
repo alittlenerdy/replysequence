@@ -50,3 +50,4 @@ tsconfig.tsbuildinfo
 # worktrees
 .worktrees/
 .env*.local
+.gstack/
