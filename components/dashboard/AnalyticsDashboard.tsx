@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { Calendar, Mail, Clock, RefreshCw, BarChart3, DollarSign, Zap, Target, Shield } from 'lucide-react';
+import { Calendar, Mail, Clock, RefreshCw, BarChart3, DollarSign, Zap, Target, Shield, ListOrdered } from 'lucide-react';
 import { StatCard } from '@/components/analytics/StatCard';
 import { EmailFunnel } from '@/components/analytics/EmailFunnel';
 import { ROICalculator } from '@/components/analytics/ROICalculator';
@@ -383,6 +383,72 @@ export function AnalyticsDashboard() {
             conversionRate={analytics.emailFunnel.conversionRate}
           />
         </div>
+      )}
+
+      {/* 8b. Sequence Step Performance */}
+      {hasData && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+        >
+          <div className="bg-gray-900/60 border border-gray-700/50 light:bg-white light:border-gray-200 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: 'rgba(99, 102, 241, 0.15)' }}
+              >
+                <ListOrdered className="w-5 h-5 text-[#6366F1]" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-white light:text-gray-900">
+                  Sequence Step Performance
+                </h3>
+                <p className="text-xs text-gray-500">
+                  How recipients engage across your follow-up steps
+                </p>
+              </div>
+            </div>
+
+            {analytics.emailsSent > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200">
+                  <div className="text-2xl font-bold text-white light:text-gray-900 tabular-nums">
+                    {analytics.emailsSent}
+                  </div>
+                  <div className="text-xs text-gray-400 light:text-gray-500 mt-1">Emails Sent</div>
+                </div>
+                <div className="p-4 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200">
+                  <div className="text-2xl font-bold tabular-nums" style={{ color: '#6366F1' }}>
+                    {analytics.engagement.openRate}%
+                  </div>
+                  <div className="text-xs text-gray-400 light:text-gray-500 mt-1">Open Rate</div>
+                </div>
+                <div className="p-4 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200">
+                  <div className="text-2xl font-bold tabular-nums" style={{ color: '#3B82F6' }}>
+                    {analytics.engagement.clickRate}%
+                  </div>
+                  <div className="text-xs text-gray-400 light:text-gray-500 mt-1">Click Rate</div>
+                </div>
+                <div className="p-4 bg-gray-800/50 light:bg-gray-50 rounded-xl border border-white/[0.06] light:border-gray-200">
+                  <div className="text-2xl font-bold tabular-nums" style={{ color: '#10B981' }}>
+                    {analytics.engagement.replyRate}%
+                  </div>
+                  <div className="text-xs text-gray-400 light:text-gray-500 mt-1">Reply Rate</div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-sm text-gray-400 light:text-gray-500">
+                  Send follow-up emails to see step-by-step engagement trends
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Per-step breakdowns will appear once you have active sequences
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
       )}
 
       {/* 9. AI Usage Stats — hidden until admin role is implemented */}
