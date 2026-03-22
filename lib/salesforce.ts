@@ -381,18 +381,45 @@ export async function syncSentEmailToSalesforce(
   log('info', 'Starting Salesforce CRM sync', { recipientEmail, meetingTitle, platform });
 
   try {
-    // 1. Find the contact/lead
-    const contact = await findSalesforceContact(instanceUrl, accessToken, recipientEmail);
+    // 1. Find or create the contact/lead
+    let contact = await findSalesforceContact(instanceUrl, accessToken, recipientEmail);
     if (!contact) {
-      log('info', 'No matching Contact/Lead found in Salesforce', { recipientEmail });
-      return { success: true }; // Not an error, just no contact to link
-    }
+      log('info', 'No matching Contact/Lead found, auto-creating Contact', { recipientEmail });
 
-    log('info', 'Found Salesforce record', {
-      contactId: contact.id,
-      contactType: contact.type,
-      contactName: contact.name,
-    });
+      // Parse email for name parts (best-effort: "first.last@domain" or "first@domain")
+      const localPart = recipientEmail.split('@')[0];
+      const nameParts = localPart.split(/[._-]/);
+      const firstName = nameParts[0] ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1) : '';
+      const lastName = nameParts.length > 1
+        ? nameParts.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ')
+        : recipientEmail.split('@')[1]?.split('.')[0] || 'Unknown';
+
+      const createResponse = await sfFetchWithRetry(instanceUrl, accessToken, '/sobjects/Contact', {
+        method: 'POST',
+        body: JSON.stringify({
+          FirstName: firstName,
+          LastName: lastName,
+          Email: recipientEmail,
+          Description: 'Auto-created by ReplySequence CRM sync',
+        }),
+      });
+
+      if (createResponse.ok) {
+        const result = await createResponse.json();
+        contact = { id: result.id, type: 'Contact', name: `${firstName} ${lastName}`.trim(), email: recipientEmail };
+        log('info', 'Auto-created Salesforce Contact', { contactId: result.id, name: contact.name });
+      } else {
+        const error = await createResponse.text();
+        log('warn', 'Failed to auto-create Salesforce Contact', { error, recipientEmail });
+        return { success: true, error: `Contact auto-create failed: ${error}` };
+      }
+    } else {
+      log('info', 'Found Salesforce record', {
+        contactId: contact.id,
+        contactType: contact.type,
+        contactName: contact.name,
+      });
+    }
 
     // 2. Create an Event (meeting activity)
     const platformLabel = platform === 'zoom' ? 'Zoom' : platform === 'microsoft_teams' ? 'Teams' : 'Google Meet';

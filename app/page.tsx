@@ -653,6 +653,42 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ============ FOUNDER VIDEO ============ */}
+      <section className="py-20 md:py-28 px-4 relative z-10 bg-[#0A1020] light:bg-white">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <p className="text-sm font-semibold text-[#F59E0B] uppercase tracking-wider mb-3">From the Founder</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white light:text-gray-900 text-pretty">
+              Why I Built <span className="bg-gradient-to-r from-[#F59E0B] to-[#FF9D2D] bg-clip-text text-transparent">ReplySequence</span>
+            </h2>
+            <p className="text-[#C0C8E0] light:text-gray-600 max-w-xl mx-auto mb-8">
+              After years of writing follow-up emails from memory, I built the tool I wished existed.
+            </p>
+
+            <div className="rounded-2xl overflow-hidden border border-white/10 light:border-gray-200 shadow-[0_0_60px_rgba(245,158,11,0.1),0_25px_50px_rgba(0,0,0,0.3)] light:shadow-xl">
+              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+                <iframe
+                  src="https://www.loom.com/embed/fb2e9df9d997430fb16bacd98a6eaad4"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="autoplay; fullscreen"
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                  title="Why I Built ReplySequence — Founder Video"
+                />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-[#F59E0B]/20 light:via-gray-200 to-transparent" />
+
       {/* ============ 7. CTA ============ */}
       <section id="waitlist" className="py-20 md:py-28 px-4 relative z-10 overflow-hidden bg-[#0A1020] light:bg-white">
         {/* Amber glow orb */}
