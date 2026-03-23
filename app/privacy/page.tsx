@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPage() {
-  const lastUpdated = 'February 8, 2026';
+  const lastUpdated = 'March 22, 2026';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 light:from-white light:via-gray-50 light:to-white">
@@ -141,7 +141,45 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">8. Cookies</h2>
+            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">8. AI/ML Processing and Google Workspace Data</h2>
+            <p className="text-gray-300 light:text-gray-700 leading-relaxed mb-4">
+              ReplySequence uses artificial intelligence to process your meeting data. This section
+              describes how AI is used and how your Google Workspace data is handled.
+            </p>
+            <h3 className="text-xl font-medium text-white light:text-gray-900 mt-6 mb-3">8.1 How AI Processes Your Data</h3>
+            <ul className="list-disc pl-6 text-gray-300 light:text-gray-700 space-y-2">
+              <li>Meeting transcripts are sent to Anthropic&apos;s Claude API to generate follow-up email drafts, extract action items, detect meeting sentiment, and identify deal risk signals.</li>
+              <li>AI processing occurs on-demand when a meeting is processed. Transcripts are not stored by the AI provider after processing.</li>
+              <li>AI-generated drafts are stored in your account and are never sent without your explicit approval.</li>
+            </ul>
+            <h3 className="text-xl font-medium text-white light:text-gray-900 mt-6 mb-3">8.2 AI/ML Model Training</h3>
+            <p className="text-gray-300 light:text-gray-700 leading-relaxed">
+              <strong>Your data is never used to train AI models.</strong> We do not use your meeting
+              transcripts, email drafts, or any personal data to train, fine-tune, or improve any
+              machine learning or artificial intelligence models. Your data is used solely to provide
+              the ReplySequence service to you.
+            </p>
+            <h3 className="text-xl font-medium text-white light:text-gray-900 mt-6 mb-3">8.3 Google Workspace Data</h3>
+            <p className="text-gray-300 light:text-gray-700 leading-relaxed mb-4">
+              ReplySequence accesses the following Google Workspace data with your explicit consent:
+            </p>
+            <ul className="list-disc pl-6 text-gray-300 light:text-gray-700 space-y-2">
+              <li><strong>Google Calendar (read-only):</strong> We read your calendar events to detect upcoming meetings and automatically schedule meeting bots to capture transcripts.</li>
+              <li><strong>Google Meet (read-only):</strong> We access meeting transcript data to generate personalized follow-up emails.</li>
+              <li><strong>Google Drive (read-only):</strong> We access meeting recordings and transcript documents stored in Google Drive when they are not available through the Meet API directly.</li>
+            </ul>
+            <p className="text-gray-300 light:text-gray-700 leading-relaxed mt-4">
+              ReplySequence&apos;s use and transfer of information received from Google APIs adheres to the{' '}
+              <a href="https://developers.google.com/terms/api-services-user-data-policy" className="text-[#6366F1] hover:text-[#818CF8] light:text-[#4F46E5] light:hover:text-[#3A4BDD]" target="_blank" rel="noopener noreferrer">
+                Google API Services User Data Policy
+              </a>, including the Limited Use requirements. We only access Google Workspace data
+              necessary to provide the service, and we do not use this data for advertising,
+              market research, or any purpose unrelated to the functionality of ReplySequence.
+            </p>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">9. Cookies</h2>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed">
               We use essential cookies for authentication and session management.
               We do not use tracking cookies for advertising purposes.
@@ -149,7 +187,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">9. Children&apos;s Privacy</h2>
+            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">10. Children&apos;s Privacy</h2>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed">
               Our service is not intended for users under 18 years of age. We do not
               knowingly collect data from children.
@@ -157,7 +195,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">10. Changes to This Policy</h2>
+            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">11. Changes to This Policy</h2>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed">
               We may update this Privacy Policy from time to time. We will notify you
               of any changes by posting the new policy on this page and updating the
@@ -166,7 +204,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">11. Contact Us</h2>
+            <h2 className="text-2xl font-semibold text-white light:text-gray-900 mb-4">12. Contact Us</h2>
             <p className="text-gray-300 light:text-gray-700 leading-relaxed">
               If you have questions about this Privacy Policy or our data practices,
               please contact us:
